@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/addFeed"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/add_feed"/>
+ 	<item
+        android:id="@+id/addFilter"
+        android:orderInCategory="90"
+        android:showAsAction="never"
+        android:title="@string/add_filter"/>
+    
+</menu>
