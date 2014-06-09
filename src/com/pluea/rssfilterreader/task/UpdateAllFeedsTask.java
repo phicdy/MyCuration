@@ -37,25 +37,27 @@ public class UpdateAllFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boole
     private int numOfUnreadArticles;
     private int feedId;
     private boolean showProgress = false;
+    private boolean isRunning = false;
     
     //Singleton
-    private static UpdateAllFeedsTask updateTask = new UpdateAllFeedsTask();
+    private static UpdateAllFeedsTask updateTask;
     
     private static final String LOG_TAG = "RSS_READER."+UpdateAllFeedsTask.class.getName();
     
-    private UpdateAllFeedsTask() {
+    private UpdateAllFeedsTask(Context context) {
         Log.i(LOG_TAG, "Create instance");
-    }
-  
-    public static UpdateAllFeedsTask getInstance() {
-    	return updateTask;
-    }
-    
-    public void setActivity(Context context) {
-    	context_  = context;
+        context_  = context;
         rssParser  = new RssParser(context_);
         filterTask = new FilterTask(context_);
         dbAdapter  = new DatabaseAdapter(context_);
+        isRunning = false;
+    }
+  
+    public static UpdateAllFeedsTask getInstance(Context context) {
+    	if(updateTask == null) {
+    		updateTask = new UpdateAllFeedsTask(context);
+    	}
+    	return updateTask;
     }
     
     public void setProgressVisibility(boolean showProgress) {
@@ -83,7 +85,7 @@ public class UpdateAllFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boole
 		}
     	
     	//initialize task because task can execute only one time
-    	updateTask = new UpdateAllFeedsTask();
+    	updateTask = null;
     }
     /**
      * Execute before doing task
@@ -155,6 +157,10 @@ public class UpdateAllFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boole
 	protected void onCancelled() {
 		Log.i(LOG_TAG, "task is canceled complete");
 		super.onCancelled();
+	}
+	
+	public boolean isRunning() {
+		return isRunning;
 	}
      
 
