@@ -1,4 +1,4 @@
-package com.example.rssfilterreader;
+package com.pleua.rssfilterreader.rss;
  
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.xmlpull.v1.XmlPullParser;
+
+import com.example.rssfilterreader.R;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.util.DateParser;
 
 import android.content.Context;
 import android.util.Log;

@@ -1,6 +1,8 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.filter;
   
 import java.util.ArrayList;
+
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
 
 import android.content.Context;
   

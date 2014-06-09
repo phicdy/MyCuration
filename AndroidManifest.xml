@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.rssfilterreader.StartActivity"
+            android:name="com.pluea.rssfilterreader.ui.StartActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
             <intent-filter>
@@ -30,28 +30,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.rssfilterreader.MainActivity"
+            android:namcom.pluea.rssfilterreader.ui.MainActivityity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.rssfilterreader.ArticlesList"
+            android:com.pluea.rssfilterreader.ui.ArticlesListesList"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.rssfilterreader.FilterList"
+            android:com.pluea.rssfilterreader.ui.FilterListerList"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.rssfilterreader.RegisterFilter"
+            android:name="com.pluea.rssfilterreader.RegisterFilter"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
 
         <receiver 
-            android:name="com.example.rssfilterreader.AutoUpdateBroadcastReciever"
+            android:name="com.pluea.rssfilterreader.AutoUpdateBroadcastReciever"
             android:process=":process" >
         </receiver>
     </application>

@@ -1,4 +1,4 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.task;
   
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,6 +6,11 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.xmlpull.v1.XmlPullParser;
+
+import com.example.rssfilterreader.R;
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pleua.rssfilterreader.rss.RssParser;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;

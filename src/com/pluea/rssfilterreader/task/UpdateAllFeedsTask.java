@@ -1,6 +1,14 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.task;
   
 import java.util.ArrayList;
+
+import com.example.rssfilterreader.R;
+import com.pleua.rssfilterreader.rss.Article;
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pleua.rssfilterreader.rss.RssParser;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.filter.FilterTask;
+import com.pluea.rssfilterreader.ui.MainActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -108,6 +116,14 @@ public class UpdateAllFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boole
 	            //Set URL string and id
 	            String urlString = feed.getUrl();
 	            feedId = feed.getId();
+	            
+	            ArrayList<Article> articles = dbAdapter.getUnreadArticlesInAFeed(feedId);
+	            for(int i=0;i<articles.size();i++) {
+	    			Article article = articles.get(i);
+	    			article.setArrayIndex(i);
+	    			GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(context_);
+	    			hatenaTask.execute(article);
+	    		}
 	            
 	        	//Parse XML
 	            boolean parseResult = rssParser.parseXml(urlString, feedId);

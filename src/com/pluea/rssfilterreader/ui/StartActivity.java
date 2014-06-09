@@ -1,5 +1,7 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.ui;
   
+import com.example.rssfilterreader.R;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

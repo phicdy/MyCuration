@@ -1,7 +1,14 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.ui;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
+import com.example.rssfilterreader.R;
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.alarm.AlarmManagerTaskManager;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.task.InsertNewFeedTask;
+import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
 
 import android.R.id;
 import android.app.AlertDialog;
@@ -54,14 +61,14 @@ public class MainActivity extends ListActivity {
 		setContentView(R.layout.main_activity);
 
 		alertMessageView = (TextView) findViewById(R.id.selection);
-
 		feedsListView = (ListView) findViewById(id.list);
 		registerForContextMenu(feedsListView);
-		displayFeedsList();
 
 		setAllListener();
 		setBroadCastReceiver();
 		setAlarmManager();
+		
+		feeds = dbAdapter.getAllFeeds();
 	}
 
 	private void setAllListener() {
@@ -158,6 +165,10 @@ public class MainActivity extends ListActivity {
 
 	@Override
 	protected void onResume() {
+		if(feeds.isEmpty()) {
+			feeds = dbAdapter.getAllFeeds();
+		}
+		updateAllFeeds();
 		updateNumOfUnreadArticles();
 
 		// Set ListView
@@ -231,28 +242,25 @@ public class MainActivity extends ListActivity {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void displayFeedsList() {
+	private void updateAllFeeds() {
+		if (feeds.isEmpty()) {
+			return;
+		} 
 		updateTask = UpdateAllFeedsTask.getInstance();
 
 		// Get feeds from DB if other update task is not running
 		if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
-			feeds = dbAdapter.getAllFeeds();
-
-			if (feeds.isEmpty()) {
-				// Show no feed message
-				alertMessageView.setText(R.string.no_feed_message);
-			} else {
-				// Don't show message
-				alertMessageView.setVisibility(View.INVISIBLE);
-
-				// Set num of unread articles before updating
-				updateNumOfUnreadArticles();
-
-				// Update Feeds
-				updateTask.setActivity(MainActivity.this);
-				updateTask.setProgressVisibility(true);
-				updateTask.execute(feeds);
-			}
+			
+			// Don't show message
+			alertMessageView.setVisibility(View.INVISIBLE);
+	
+			// Set num of unread articles before updating
+			updateNumOfUnreadArticles();
+	
+			// Update Feeds
+			updateTask.setActivity(MainActivity.this);
+			updateTask.setProgressVisibility(true);
+			updateTask.execute(feeds);
 		} else {
 			// Show uncancelable alert dialog
 			final View addView = this.getLayoutInflater().inflate(
@@ -285,6 +293,9 @@ public class MainActivity extends ListActivity {
 			int numOfUnreadArticles = dbAdapter.getNumOfUnreadArtilces(feed
 					.getId());
 			feed.setUnreadArticlesCount(numOfUnreadArticles);
+		}
+		if(rssFeedListAdapter != null) {
+			rssFeedListAdapter.notifyDataSetChanged();
 		}
 	}
 

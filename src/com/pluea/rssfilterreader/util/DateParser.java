@@ -1,4 +1,4 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

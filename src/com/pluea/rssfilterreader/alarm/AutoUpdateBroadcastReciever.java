@@ -1,7 +1,11 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.alarm;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

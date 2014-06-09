@@ -1,4 +1,4 @@
-package com.example.rssfilterreader;
+package com.pleua.rssfilterreader.rss;
 
 
 public class Article {

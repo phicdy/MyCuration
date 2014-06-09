@@ -1,6 +1,10 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.db;
 
 import java.util.ArrayList;
+
+import com.pleua.rssfilterreader.rss.Article;
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.filter.Filter;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -34,9 +38,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-	public void close() {
-		db.close();
-	}
 
 	public void saveNewArticles(ArrayList<Article> articles, int feedId) {
 		if(articles.isEmpty()) {
@@ -65,7 +66,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "insertNewArticles finished");
 	}
 
@@ -84,7 +85,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "calcNumOfUnreadArticles finished");
 		return unreadArticlesCount;
 	}
@@ -104,7 +105,7 @@ public class DatabaseAdapter {
 			}
 		}
 		cursor.close();
-		close();
+		
 		Log.i(LOG_TAG, "getAllFeeds finished");
 		return feedList;
 	}
@@ -121,7 +122,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "saveStatusBeforeUpdate finished");
 	}
 	
@@ -137,7 +138,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "saveStatus finished");
 	}
 	
@@ -153,7 +154,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "saveHatenaPoint finished");
 	}
 
@@ -172,7 +173,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "getStatus finished");
 		return status;
 	}
@@ -190,7 +191,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "deleteFeed finished");
 	}
 
@@ -215,7 +216,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "getFeedByUrl finished");
 		return feed;
 	}
@@ -252,7 +253,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		if (sameFeedExist) {
 			return null;
 		}
@@ -276,7 +277,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "changeArticlesStatusToRead finished");
 		return true;
 	}
@@ -299,7 +300,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "getNumOfUnreadArtilces finished");
 		return num;
 	}
@@ -328,12 +329,12 @@ public class DatabaseAdapter {
 			cursor.close();
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
-			close();
+			
 			return articles;
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "getUnreadArticlesInAFeed finished");
 		return articles;
 	}
@@ -365,7 +366,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "getFiltersOfFeed finished");
 		return filterList;
 	}
@@ -403,12 +404,12 @@ public class DatabaseAdapter {
 			} catch (Exception e) {
 				Log.e("Apply Filtering", "Article can't be updated.Feed ID = "
 						+ feedId);
-				close();
+				
 				return false;
 			} finally {
 				db.endTransaction();
 			}
-			close();
+			
 		}
 		Log.i(LOG_TAG, "applyFiltersOfFeed finished");
 		return true;
@@ -424,7 +425,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "deleteFilter finished");
 	}
 
@@ -445,7 +446,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		Log.i(LOG_TAG, "getNumOfFeeds finished");
 		return num;
 	}
@@ -479,7 +480,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 	}
 
 	public static String sanitizing(String str) {
@@ -589,7 +590,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		// Log.i(LOG_TAG, "saveNewFeed finished");
 	}
 
@@ -615,7 +616,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		close();
+		
 		if(num > 0) {
 			Log.d(LOG_TAG, "article exists!");
 			Log.d(LOG_TAG, "title:" + article.getTitle());

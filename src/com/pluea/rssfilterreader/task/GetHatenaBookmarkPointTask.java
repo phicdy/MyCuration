@@ -1,4 +1,4 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.task;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -8,6 +8,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+
+import com.pleua.rssfilterreader.rss.Article;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +30,6 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	 *            : submit data type when task will finish
 	 */
 
-	private Context context;
 	private DatabaseAdapter dbAdapter;
 	private static final String GET_HATENA_BOOKMARK_COUNT_URL = "http://api.b.st-hatena.com/entry.count";
 	private static final String CHAR_SET = "UTF-8";
@@ -38,7 +40,6 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	public static final String LOG_TAG = "RSSReader.GetHatena";
 
 	public GetHatenaBookmarkPointTask(Context context) {
-		this.context = context;
 		dbAdapter = new DatabaseAdapter(context);
 	}
 
@@ -47,12 +48,6 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	 */
 	@Override
 	protected void onPostExecute(Article result) {
-		Intent intent = new Intent();
-		intent.setAction(FINISH_GET_HATENA);
-		intent.putExtra(ARTICLE_ID, result.getId());
-		intent.putExtra(ARTICLE_ARRAY_INDEX, result.getArrayIndex());
-		intent.putExtra(ARTICLE_POINT, result.getPoint());
-		context.sendBroadcast(intent);
 	}
 
 	/**

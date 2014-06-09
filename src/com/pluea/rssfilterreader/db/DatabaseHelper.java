@@ -1,5 +1,7 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.db;
   
+import com.pleua.rssfilterreader.rss.Article;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;

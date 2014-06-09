@@ -1,8 +1,14 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.ui;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import com.example.rssfilterreader.R;
+import com.pleua.rssfilterreader.rss.Article;
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
 
 import android.R.id;
 import android.app.ListActivity;
@@ -27,7 +33,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ArticlesList extends ListActivity {
 
@@ -71,7 +76,6 @@ public class ArticlesList extends ListActivity {
 
 		setBroadCastReceiver();
 		displayUnreadArticles();
-		getAllArticlesHatenabookmark();
 	}
 
 	@Override
@@ -146,18 +150,14 @@ public class ArticlesList extends ListActivity {
 
 					if (event1.getX() - event2.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-						Toast.makeText(ArticlesList.this, "右から左",
-								Toast.LENGTH_SHORT).show();
-						setReadStatusToTouchedView(Color.BLACK, Article.UNREAD);
-						isSwipeRightToLeft = true;
+						setReadStatusToTouchedView(Color.GRAY, Article.TOREAD);
+						isSwipeLeftToRight = true;
 					} else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 						// 終了位置から開始位置の移動距離が指定値より大きい
 						// X軸の移動速度が指定値より大きい
-						Toast.makeText(ArticlesList.this, "左から右",
-								Toast.LENGTH_SHORT).show();
-						setReadStatusToTouchedView(Color.GRAY, Article.TOREAD);
-						isSwipeLeftToRight = true;
+						setReadStatusToTouchedView(Color.BLACK, Article.UNREAD);
+						isSwipeRightToLeft = true;
 					}
 
 				} catch (Exception e) {
@@ -180,23 +180,11 @@ public class ArticlesList extends ListActivity {
 				if(action.equals(MainActivity.UPDATE_NUM_OF_ARTICLES)) {
 					displayUnreadArticles();
 					articlesListAdapter.notifyDataSetChanged();
-				}else if(action.equals(GetHatenaBookmarkPointTask.FINISH_GET_HATENA)) {
-//					Log.d(LOG_TAG, "article size onRecieve():" + articles.size());
-					int arrayIndex = intent.getIntExtra(GetHatenaBookmarkPointTask.ARTICLE_ARRAY_INDEX, 0);
-					int articleId = intent.getIntExtra(GetHatenaBookmarkPointTask.ARTICLE_ID, 0);;
-					String point = intent.getStringExtra(GetHatenaBookmarkPointTask.ARTICLE_POINT);
-					Article article = articles.get(arrayIndex);
-					// For reload before getting hatenabookmark point
-					if(article.getId() == articleId) {
-						article.setPoint(point);
-						articlesListAdapter.notifyDataSetChanged();
-					}
 				}
 			}
 		};
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(MainActivity.UPDATE_NUM_OF_ARTICLES);
-		filter.addAction(GetHatenaBookmarkPointTask.FINISH_GET_HATENA);
 		registerReceiver(receiver, filter);
 	}
 
@@ -219,15 +207,35 @@ public class ArticlesList extends ListActivity {
 		postedTime.setTextColor(color);
 		point.setTextColor(color);
 
-		// Change read status
+		Log.d(LOG_TAG, "touched article title:" + title.getText());
 		for (Article article : articles) {
 			if (title.getText().equals(article.getTitle())) {
-				dbAdapter.saveStatus(article.getId(), status);
+				Log.d(LOG_TAG, "touched article id:" + article.getId());
 				article.setStatus(status);
 				break;
 			}
 		}
+		
 		articlesListAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Change read status
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for (Article article : articles) {
+					if (article.getStatus().equals(Article.TOREAD)) {
+						Log.d(LOG_TAG, "save status, article title:" + article.getTitle());
+						dbAdapter.saveStatus(article.getId(), Article.TOREAD);
+					}
+				}
+				Intent intent = new Intent(MainActivity.UPDATE_NUM_OF_ARTICLES);
+				sendBroadcast(intent);
+			}
+		}).start();
 	}
 
 	// If Back button pushed
@@ -238,15 +246,6 @@ public class ArticlesList extends ListActivity {
 		super.onDestroy();
 	}
 	
-	private void getAllArticlesHatenabookmark() {
-		for(int i=0;i<articles.size();i++) {
-			Article article = articles.get(i);
-			article.setArrayIndex(i);
-			GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(this);
-			hatenaTask.execute(article);
-		}
-	}
-
 	/**
 	 * 
 	 * @author kyamaguchi Display articles list

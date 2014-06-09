@@ -1,4 +1,4 @@
-package com.example.rssfilterreader;
+package com.pluea.rssfilterreader.filter;
 
 
 public class Filter {
