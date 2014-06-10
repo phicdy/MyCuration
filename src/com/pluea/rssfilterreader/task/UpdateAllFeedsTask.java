@@ -44,24 +44,21 @@ public class UpdateAllFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boole
     
     private static final String LOG_TAG = "RSS_READER."+UpdateAllFeedsTask.class.getName();
     
-    private UpdateAllFeedsTask(Context context) {
+    private UpdateAllFeedsTask(Context context, boolean showProgress) {
         Log.i(LOG_TAG, "Create instance");
         context_  = context;
         rssParser  = new RssParser(context_);
         filterTask = new FilterTask(context_);
         dbAdapter  = new DatabaseAdapter(context_);
+        this.showProgress = showProgress;
         isRunning = false;
     }
   
-    public static UpdateAllFeedsTask getInstance(Context context) {
+    public static UpdateAllFeedsTask getInstance(Context context, boolean showProgress) {
     	if(updateTask == null) {
-    		updateTask = new UpdateAllFeedsTask(context);
+    		updateTask = new UpdateAllFeedsTask(context, showProgress);
     	}
     	return updateTask;
-    }
-    
-    public void setProgressVisibility(boolean showProgress) {
-    	this.showProgress = showProgress;
     }
     
     /**
