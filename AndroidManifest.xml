@@ -30,17 +30,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:namcom.pluea.rssfilterreader.ui.MainActivityity"
+            android:name="com.pluea.rssfilterreader.ui.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:com.pluea.rssfilterreader.ui.ArticlesListesList"
+            android:name="com.pluea.rssfilterreader.ui.ArticlesListesList"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:com.pluea.rssfilterreader.ui.FilterListerList"
+            android:name="com.pluea.rssfilterreader.ui.FilterListerList"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
