@@ -35,17 +35,17 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.pluea.rssfilterreader.ui.ArticlesListesList"
+            android:name="com.pluea.rssfilterreader.ui.ArticlesList"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.pluea.rssfilterreader.ui.FilterListerList"
+            android:name="com.pluea.rssfilterreader.ui.FilterList"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.pluea.rssfilterreader.RegisterFilter"
+            android:name="com.pluea.rssfilterreader.ui.RegisterFilter"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
         </activity>
