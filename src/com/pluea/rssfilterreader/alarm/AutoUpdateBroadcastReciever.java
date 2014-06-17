@@ -1,18 +1,15 @@
 package com.pluea.rssfilterreader.alarm;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
-import com.pleua.rssfilterreader.rss.Feed;
-import com.pluea.rssfilterreader.db.DatabaseAdapter;
-import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
 
 public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 
@@ -22,13 +19,11 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		dbAdapter = new DatabaseAdapter(context);
-		UpdateAllFeedsTask updateTask = UpdateAllFeedsTask.getInstance();
+		UpdateAllFeedsTask updateTask = UpdateAllFeedsTask.getInstance(context, false);
 		if (updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
 			return;
 		} else {
 			feeds = dbAdapter.getAllFeeds();
-			updateTask.setActivity(context);
-			updateTask.setProgressVisibility(false);
 			updateTask.execute(feeds);
 
 			// Save new time

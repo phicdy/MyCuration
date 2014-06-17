@@ -122,13 +122,11 @@ public class ArticlesList extends ListActivity {
 
 			public void onClick(View v) {
 				UpdateAllFeedsTask updateTask = UpdateAllFeedsTask
-						.getInstance();
+						.getInstance(getApplicationContext(), false);
 				if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
 					// Update Feeds
 					ArrayList<Feed> feeds = new ArrayList<Feed>();
 					feeds.add(new Feed(feedId, null, feedUrl));
-					updateTask.setActivity(ArticlesList.this);
-					updateTask.setProgressVisibility(true);
 					updateTask.execute(feeds);
 				}
 			}
@@ -144,7 +142,6 @@ public class ArticlesList extends ListActivity {
 					touchedPosition = articlesListView.pointToPosition(
 							(int) event1.getX(), (int) event1.getY());
 					if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
-						// 縦の移動距離が大きすぎる場合は無視
 						return false;
 					}
 
@@ -154,8 +151,6 @@ public class ArticlesList extends ListActivity {
 						isSwipeLeftToRight = true;
 					} else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-						// 終了位置から開始位置の移動距離が指定値より大きい
-						// X軸の移動速度が指定値より大きい
 						setReadStatusToTouchedView(Color.BLACK, Article.UNREAD);
 						isSwipeRightToLeft = true;
 					}

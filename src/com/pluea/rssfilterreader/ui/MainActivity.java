@@ -246,7 +246,7 @@ public class MainActivity extends ListActivity {
 		if (feeds.isEmpty()) {
 			return;
 		} 
-		updateTask = UpdateAllFeedsTask.getInstance();
+		updateTask = UpdateAllFeedsTask.getInstance(getApplicationContext(), true);
 
 		// Get feeds from DB if other update task is not running
 		if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
@@ -258,8 +258,6 @@ public class MainActivity extends ListActivity {
 			updateNumOfUnreadArticles();
 	
 			// Update Feeds
-			updateTask.setActivity(MainActivity.this);
-			updateTask.setProgressVisibility(true);
 			updateTask.execute(feeds);
 		} else {
 			// Show uncancelable alert dialog
