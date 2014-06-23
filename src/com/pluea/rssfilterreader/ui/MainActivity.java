@@ -3,13 +3,6 @@ package com.pluea.rssfilterreader.ui;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import com.example.rssfilterreader.R;
-import com.pleua.rssfilterreader.rss.Feed;
-import com.pluea.rssfilterreader.alarm.AlarmManagerTaskManager;
-import com.pluea.rssfilterreader.db.DatabaseAdapter;
-import com.pluea.rssfilterreader.task.InsertNewFeedTask;
-import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
-
 import android.R.id;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -36,16 +29,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rssfilterreader.R;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.alarm.AlarmManagerTaskManager;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.task.InsertNewFeedTask;
+import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
+
 public class MainActivity extends ListActivity {
 
 	private ArrayList<Feed> feeds = new ArrayList<Feed>();
 	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
-	private ListView feedsListView;
+	private PullToRefreshListView feedsListView;
 	private RssFeedListAdapter rssFeedListAdapter;
 	private BroadcastReceiver receiver;
 	private Intent intent;
 	private UpdateAllFeedsTask updateTask;
-	private TextView alertMessageView;
 
 	private static final int DELETEFEEDMENUID = 0;
 	public static final int BAD_RECIEVED_VALUE = -1;
@@ -60,8 +62,7 @@ public class MainActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
 
-		alertMessageView = (TextView) findViewById(R.id.selection);
-		feedsListView = (ListView) findViewById(id.list);
+		feedsListView = (PullToRefreshListView) findViewById(R.id.feedList);
 		registerForContextMenu(feedsListView);
 
 		setAllListener();
@@ -81,12 +82,19 @@ public class MainActivity extends ListActivity {
 							int position, long id) {
 						intent = new Intent(MainActivity.this,
 								ArticlesList.class);
-						intent.putExtra(FEED_ID, feeds.get(position).getId());
-						intent.putExtra(FEED_URL, feeds.get(position).getUrl());
+						intent.putExtra(FEED_ID, feeds.get(position-1).getId());
+						intent.putExtra(FEED_URL, feeds.get(position-1).getUrl());
 						startActivity(intent);
 					}
 
 				});
+		feedsListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
+
+			@Override
+			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+				updateAllFeeds();
+			}
+		});
 	}
 
 	private void setBroadCastReceiver() {
@@ -98,6 +106,7 @@ public class MainActivity extends ListActivity {
 				// Set num of unread articles and update UI
 				if (intent.getAction().equals(UPDATE_NUM_OF_ARTICLES)) {
 					updateNumOfUnreadArticles();
+					feedsListView.onRefreshComplete();
 				}
 			}
 		};
@@ -224,15 +233,11 @@ public class MainActivity extends ListActivity {
 										rssFeedListAdapter
 												.notifyDataSetChanged();
 
-										// Don't show message
-										alertMessageView
-												.setVisibility(View.INVISIBLE);
+										//TODO Don't show message
 									}
 								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								} catch (ExecutionException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 
@@ -244,15 +249,15 @@ public class MainActivity extends ListActivity {
 	@SuppressWarnings("unchecked")
 	private void updateAllFeeds() {
 		if (feeds.isEmpty()) {
+			feedsListView.onRefreshComplete();
 			return;
 		} 
-		updateTask = UpdateAllFeedsTask.getInstance(getApplicationContext(), true);
+		updateTask = UpdateAllFeedsTask.getInstance(getApplicationContext(), false);
 
 		// Get feeds from DB if other update task is not running
 		if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
 			
-			// Don't show message
-			alertMessageView.setVisibility(View.INVISIBLE);
+			// TODO Don't show message
 	
 			// Set num of unread articles before updating
 			updateNumOfUnreadArticles();
