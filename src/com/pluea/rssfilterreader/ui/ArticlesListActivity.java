@@ -34,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ArticlesList extends ListActivity {
+public class ArticlesListActivity extends ListActivity {
 
 	private ArrayList<Article> articles;
 	private static final int BAD_FEED_ID = -1;
@@ -66,10 +66,10 @@ public class ArticlesList extends ListActivity {
 
 		// Set feed id and url from main activity
 		intent = getIntent();
-		feedId = intent.getIntExtra(MainActivity.FEED_ID, BAD_FEED_ID);
-		feedUrl = intent.getStringExtra(MainActivity.FEED_URL);
+		feedId = intent.getIntExtra(FeedListActivity.FEED_ID, BAD_FEED_ID);
+		feedUrl = intent.getStringExtra(FeedListActivity.FEED_URL);
 
-		intent.putExtra(MainActivity.FEED_ID, feedId);
+		intent.putExtra(FeedListActivity.FEED_ID, feedId);
 		// intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
 
 		setAllListener();
@@ -172,14 +172,14 @@ public class ArticlesList extends ListActivity {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				String action = intent.getAction();
-				if(action.equals(MainActivity.UPDATE_NUM_OF_ARTICLES)) {
+				if(action.equals(FeedListActivity.UPDATE_NUM_OF_ARTICLES)) {
 					displayUnreadArticles();
 					articlesListAdapter.notifyDataSetChanged();
 				}
 			}
 		};
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(MainActivity.UPDATE_NUM_OF_ARTICLES);
+		filter.addAction(FeedListActivity.UPDATE_NUM_OF_ARTICLES);
 		registerReceiver(receiver, filter);
 	}
 
@@ -227,7 +227,7 @@ public class ArticlesList extends ListActivity {
 						dbAdapter.saveStatus(article.getId(), Article.TOREAD);
 					}
 				}
-				Intent intent = new Intent(MainActivity.UPDATE_NUM_OF_ARTICLES);
+				Intent intent = new Intent(FeedListActivity.UPDATE_NUM_OF_ARTICLES);
 				sendBroadcast(intent);
 			}
 		}).start();
@@ -254,7 +254,7 @@ public class ArticlesList extends ListActivity {
 			 * 
 			 * @param T[] objects : data list
 			 */
-			super(ArticlesList.this, R.layout.articles_list, articles);
+			super(ArticlesListActivity.this, R.layout.articles_list, articles);
 		}
 
 		@Override

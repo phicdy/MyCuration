@@ -24,7 +24,7 @@ public class StartActivity extends Activity {
 		Handler mHandler = new Handler();
 	    Runnable mUpdateTimeTask = new Runnable() {
 	    	public void run() {
-	    		startActivity(new Intent(StartActivity.this, MainActivity.class));
+	    		startActivity(new Intent(StartActivity.this, FeedListActivity.class));
 	        }
 		};
 

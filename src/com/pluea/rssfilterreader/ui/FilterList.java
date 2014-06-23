@@ -75,7 +75,7 @@ public class FilterList extends ListActivity {
 		//If no feeds are added , back to main activity
 		if(dbAdapter.getNumOfFeeds() == 0) {
 			Toast.makeText(this, R.string.feed_not_exist, Toast.LENGTH_SHORT).show();
-			startActivity(new Intent(FilterList.this, MainActivity.class));
+			startActivity(new Intent(FilterList.this, FeedListActivity.class));
 		}
 		
 		//Get filters from DB 
@@ -122,7 +122,7 @@ public class FilterList extends ListActivity {
 		//If "+" button don't clicked, intent == null
 		if(intent == null) {
 			//Back to main
-			intent = new Intent(FilterList.this,MainActivity.class);
+			intent = new Intent(FilterList.this,FeedListActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
 		}

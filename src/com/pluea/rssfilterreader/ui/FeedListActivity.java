@@ -39,7 +39,7 @@ import com.pluea.rssfilterreader.db.DatabaseAdapter;
 import com.pluea.rssfilterreader.task.InsertNewFeedTask;
 import com.pluea.rssfilterreader.task.UpdateFeedsTask;
 
-public class MainActivity extends ListActivity {
+public class FeedListActivity extends ListActivity {
 
 	private ArrayList<Feed> feeds = new ArrayList<Feed>();
 	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
@@ -55,7 +55,7 @@ public class MainActivity extends ListActivity {
 	public static final String FEED_URL = "FEED_URL";
 	public static final String UPDATE_NUM_OF_ARTICLES = "UPDATE_NUM_OF_ARTICLES";
 	private static final String LOG_TAG = "RSSREADER."
-			+ MainActivity.class.getName();
+			+ FeedListActivity.class.getName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +80,8 @@ public class MainActivity extends ListActivity {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						intent = new Intent(MainActivity.this,
-								ArticlesList.class);
+						intent = new Intent(FeedListActivity.this,
+								ArticlesListActivity.class);
 						intent.putExtra(FEED_ID, feeds.get(position-1).getId());
 						intent.putExtra(FEED_URL, feeds.get(position-1).getUrl());
 						startActivity(intent);
@@ -137,7 +137,7 @@ public class MainActivity extends ListActivity {
 			addFeed();
 			break;
 		case R.id.addFilter:
-			intent = new Intent(MainActivity.this, FilterList.class);
+			intent = new Intent(FeedListActivity.this, FilterList.class);
 			startActivity(intent);
 			break;
 		default:
@@ -213,7 +213,7 @@ public class MainActivity extends ListActivity {
 										.toString();
 
 								InsertNewFeedTask task = new InsertNewFeedTask(
-										MainActivity.this);
+										FeedListActivity.this);
 								task.execute(feedUrlStr);
 
 								// Update feed list
@@ -224,7 +224,7 @@ public class MainActivity extends ListActivity {
 										Log.w("add a new feed",
 												"Can't get feed url = "
 														+ feedUrlStr);
-										Toast.makeText(MainActivity.this,
+										Toast.makeText(FeedListActivity.this,
 												R.string.add_feed_error,
 												Toast.LENGTH_SHORT).show();
 									} else {
@@ -308,7 +308,7 @@ public class MainActivity extends ListActivity {
 	 */
 	class RssFeedListAdapter extends ArrayAdapter<Feed> {
 		public RssFeedListAdapter(ArrayList<Feed> feeds) {
-			super(MainActivity.this, R.layout.feeds_list, feeds);
+			super(FeedListActivity.this, R.layout.feeds_list, feeds);
 		}
 
 		@Override

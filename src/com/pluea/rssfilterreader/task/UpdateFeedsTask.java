@@ -8,7 +8,7 @@ import com.pleua.rssfilterreader.rss.Feed;
 import com.pleua.rssfilterreader.rss.RssParser;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
 import com.pluea.rssfilterreader.filter.FilterTask;
-import com.pluea.rssfilterreader.ui.MainActivity;
+import com.pluea.rssfilterreader.ui.FeedListActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -74,7 +74,7 @@ public class UpdateFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boolean>
     		Toast.makeText(context_, R.string.article_update_error, Toast.LENGTH_SHORT).show();
     	}
     	//Broadcast updating num of articles
-		intent.setAction(MainActivity.UPDATE_NUM_OF_ARTICLES);
+		intent.setAction(FeedListActivity.UPDATE_NUM_OF_ARTICLES);
 		context_.sendBroadcast(intent);
     	
 		if(showProgress) {
