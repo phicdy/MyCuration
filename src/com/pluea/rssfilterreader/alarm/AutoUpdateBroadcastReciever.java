@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 
 import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
-import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
+import com.pluea.rssfilterreader.task.UpdateFeedsTask;
 
 public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 
@@ -19,7 +19,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		dbAdapter = new DatabaseAdapter(context);
-		UpdateAllFeedsTask updateTask = UpdateAllFeedsTask.getInstance(context, false);
+		UpdateFeedsTask updateTask = UpdateFeedsTask.getInstance(context, false);
 		if (updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
 			return;
 		} else {

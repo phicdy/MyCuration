@@ -37,7 +37,7 @@ import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.alarm.AlarmManagerTaskManager;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
 import com.pluea.rssfilterreader.task.InsertNewFeedTask;
-import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
+import com.pluea.rssfilterreader.task.UpdateFeedsTask;
 
 public class MainActivity extends ListActivity {
 
@@ -47,7 +47,7 @@ public class MainActivity extends ListActivity {
 	private RssFeedListAdapter rssFeedListAdapter;
 	private BroadcastReceiver receiver;
 	private Intent intent;
-	private UpdateAllFeedsTask updateTask;
+	private UpdateFeedsTask updateTask;
 
 	private static final int DELETEFEEDMENUID = 0;
 	public static final int BAD_RECIEVED_VALUE = -1;
@@ -252,7 +252,7 @@ public class MainActivity extends ListActivity {
 			feedsListView.onRefreshComplete();
 			return;
 		} 
-		updateTask = UpdateAllFeedsTask.getInstance(getApplicationContext(), false);
+		updateTask = UpdateFeedsTask.getInstance(getApplicationContext(), false);
 
 		// Get feeds from DB if other update task is not running
 		if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {

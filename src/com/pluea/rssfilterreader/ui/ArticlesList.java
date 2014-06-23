@@ -8,7 +8,7 @@ import com.example.rssfilterreader.R;
 import com.pleua.rssfilterreader.rss.Article;
 import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
-import com.pluea.rssfilterreader.task.UpdateAllFeedsTask;
+import com.pluea.rssfilterreader.task.UpdateFeedsTask;
 
 import android.R.id;
 import android.app.ListActivity;
@@ -121,7 +121,7 @@ public class ArticlesList extends ListActivity {
 		updateView.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				UpdateAllFeedsTask updateTask = UpdateAllFeedsTask
+				UpdateFeedsTask updateTask = UpdateFeedsTask
 						.getInstance(getApplicationContext(), false);
 				if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
 					// Update Feeds
