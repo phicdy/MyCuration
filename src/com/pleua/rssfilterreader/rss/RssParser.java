@@ -4,24 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.xmlpull.v1.XmlPullParser;
+
+import android.content.Context;
+import android.util.Xml;
+import android.widget.Toast;
 
 import com.example.rssfilterreader.R;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
 import com.pluea.rssfilterreader.util.DateParser;
-
-import android.content.Context;
-import android.util.Log;
-import android.util.Xml;
-import android.widget.Toast;
  
 public class RssParser {
      
@@ -79,7 +72,7 @@ public class RssParser {
                             article.setUrl(parser.nextText());
                         }
                         if(itemFlag && (tag.equals("date") || tag.equals("pubDate")) && (article.getPostedDate() == 0)) {
-                            article.setPostedDate(changeToJapaneseDate(parser.nextText()));
+                            article.setPostedDate(DateParser.changeToJapaneseDate(parser.nextText()));
                         }
                         break;
                      
@@ -130,25 +123,4 @@ public class RssParser {
         }
     }
      
-    private long changeToJapaneseDate(String dateBeforeChange) {
-    	Log.d(LOG_TAG, "date before change:" + dateBeforeChange);
-    	int year = DateParser.getYear(dateBeforeChange);
-    	int month = DateParser.getMonth(dateBeforeChange);
-    	int day = DateParser.getDay(dateBeforeChange);
-    	int hour = DateParser.getHour(dateBeforeChange);
-    	int minute = DateParser.getMinute(dateBeforeChange);
-    	int sec = DateParser.getSec(dateBeforeChange);
-    	Log.d(LOG_TAG, "date after change:" + year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + sec);
-    	
-    	if(year == -1 || month == -1 || day == -1 || hour == -1 || minute == -1 || sec == -1) {
-    		return 0;
-    	}else {
-    		Calendar cal = Calendar.getInstance();
-    		cal.clear();
-    		// month starts from 0 to 11
-    		cal.set(year, month-1, day, hour, minute, sec);
-    		
-    		return cal.getTimeInMillis();
-    	}
-    }
 }
