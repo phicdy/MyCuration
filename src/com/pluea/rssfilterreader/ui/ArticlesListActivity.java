@@ -4,12 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.example.rssfilterreader.R;
-import com.pleua.rssfilterreader.rss.Article;
-import com.pleua.rssfilterreader.rss.Feed;
-import com.pluea.rssfilterreader.db.DatabaseAdapter;
-import com.pluea.rssfilterreader.task.UpdateFeedsTask;
-
 import android.R.id;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
@@ -34,6 +28,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.rssfilterreader.R;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.pleua.rssfilterreader.rss.Article;
+import com.pleua.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.task.UpdateFeedsTask;
+
 public class ArticlesListActivity extends ListActivity {
 
 	private ArrayList<Article> articles;
@@ -43,7 +46,7 @@ public class ArticlesListActivity extends ListActivity {
 	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
 	private Intent intent;
 	private BroadcastReceiver receiver;
-	private ListView articlesListView;
+	private PullToRefreshListView articlesListView;
 	private ArticlesListAdapter articlesListAdapter;
 	private ImageView updateView;
 	private int touchedPosition;
@@ -84,8 +87,7 @@ public class ArticlesListActivity extends ListActivity {
 	}
 
 	private void setAllListener() {
-		articlesListView = (ListView) findViewById(id.list);
-		updateView = (ImageView) findViewById(R.id.update);
+		articlesListView = (PullToRefreshListView) findViewById(R.id.articleListRefresh);
 
 		// When an article selected, open this URL in default browser
 		articlesListView
@@ -99,7 +101,7 @@ public class ArticlesListActivity extends ListActivity {
 							touchedPosition = position;
 							setReadStatusToTouchedView(Color.GRAY, Article.TOREAD);
 							Uri uri = Uri
-									.parse(articles.get(position).getUrl());
+									.parse(articles.get(position-1).getUrl());
 							intent = new Intent(Intent.ACTION_VIEW, uri);
 							startActivity(intent);
 						}
@@ -117,10 +119,11 @@ public class ArticlesListActivity extends ListActivity {
 			}
 
 		});
+		
+		articlesListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 
-		updateView.setOnClickListener(new View.OnClickListener() {
-
-			public void onClick(View v) {
+			@Override
+			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
 				UpdateFeedsTask updateTask = UpdateFeedsTask
 						.getInstance(getApplicationContext(), false);
 				if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
@@ -139,7 +142,8 @@ public class ArticlesListActivity extends ListActivity {
 				isSwipeLeftToRight = false;
 				isSwipeRightToLeft = false;
 				try {
-					touchedPosition = articlesListView.pointToPosition(
+					
+					touchedPosition = articlesListView.getRefreshableView().pointToPosition(
 							(int) event1.getX(), (int) event1.getY());
 					if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
 						return false;
@@ -175,6 +179,7 @@ public class ArticlesListActivity extends ListActivity {
 				if(action.equals(FeedListActivity.UPDATE_NUM_OF_ARTICLES)) {
 					displayUnreadArticles();
 					articlesListAdapter.notifyDataSetChanged();
+					articlesListView.onRefreshComplete();
 				}
 			}
 		};
