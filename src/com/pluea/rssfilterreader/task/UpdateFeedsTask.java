@@ -25,7 +25,7 @@ import android.widget.Toast;
  * @param  String : data type for displaying the progress
  * @param  Integer : submit data type when task will finish 
  */
-public class UpdateAllFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boolean>{
+public class UpdateFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boolean>{
   
     private Context context_;
     private ProgressDialog progress_;
@@ -40,11 +40,11 @@ public class UpdateAllFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boole
     private boolean isRunning = false;
     
     //Singleton
-    private static UpdateAllFeedsTask updateTask;
+    private static UpdateFeedsTask updateTask;
     
-    private static final String LOG_TAG = "RSS_READER."+UpdateAllFeedsTask.class.getName();
+    private static final String LOG_TAG = "RSS_READER."+UpdateFeedsTask.class.getName();
     
-    private UpdateAllFeedsTask(Context context, boolean showProgress) {
+    private UpdateFeedsTask(Context context, boolean showProgress) {
         Log.i(LOG_TAG, "Create instance");
         context_  = context;
         rssParser  = new RssParser(context_);
@@ -54,9 +54,9 @@ public class UpdateAllFeedsTask extends AsyncTask<ArrayList<Feed>, String, Boole
         isRunning = false;
     }
   
-    public static UpdateAllFeedsTask getInstance(Context context, boolean showProgress) {
+    public static UpdateFeedsTask getInstance(Context context, boolean showProgress) {
     	if(updateTask == null) {
-    		updateTask = new UpdateAllFeedsTask(context, showProgress);
+    		updateTask = new UpdateFeedsTask(context, showProgress);
     	}
     	return updateTask;
     }
