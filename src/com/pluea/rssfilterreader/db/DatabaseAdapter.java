@@ -43,7 +43,6 @@ public class DatabaseAdapter {
 		if(articles.isEmpty()) {
 			return;
 		}
-		Log.i(LOG_TAG, "insertNewArticles starts");
 		open("write");
 		db.beginTransaction();
 		try {
@@ -67,11 +66,9 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "insertNewArticles finished");
 	}
 
 	public int calcNumOfUnreadArticles(int feedId) {
-		Log.i(LOG_TAG, "calcNumOfUnreadArticles starts");
 		open("write");
 		int unreadArticlesCount = 0;
 		db.beginTransaction();
@@ -86,12 +83,10 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "calcNumOfUnreadArticles finished");
 		return unreadArticlesCount;
 	}
 
 	public ArrayList<Feed> getAllFeeds() {
-		Log.i(LOG_TAG, "getAllFeeds starts");
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		open("write");
 		String sql = "select _id,title,url from feeds order by title";
@@ -106,12 +101,10 @@ public class DatabaseAdapter {
 		}
 		cursor.close();
 		
-		Log.i(LOG_TAG, "getAllFeeds finished");
 		return feedList;
 	}
 
 	public void saveStatusBeforeUpdate(int articleId) {
-		Log.i(LOG_TAG, "saveStatusBeforeUpdate starts");
 		open("write");
 		db.beginTransaction();
 		try {
@@ -122,12 +115,9 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
-		Log.i(LOG_TAG, "saveStatusBeforeUpdate finished");
 	}
 	
 	public void saveStatus(int articleId, String status) {
-		Log.i(LOG_TAG, "saveStatus starts");
 		open("write");
 		db.beginTransaction();
 		try {
@@ -139,11 +129,9 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "saveStatus finished");
 	}
 	
 	public void saveHatenaPoint(int articleId, String point) {
-		Log.i(LOG_TAG, "saveHatenaPoint starts");
 		open("write");
 		db.beginTransaction();
 		try {
@@ -154,12 +142,9 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
-		Log.i(LOG_TAG, "saveHatenaPoint finished");
 	}
 
 	public String getStatus(int articleId) {
-		Log.i(LOG_TAG, "getStatus starts");
 		String status = null;
 		open("write");
 		db.beginTransaction();
@@ -174,12 +159,10 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "getStatus finished");
 		return status;
 	}
 
 	public void deleteFeed(int feedId) {
-		Log.i(LOG_TAG, "deleteFeed starts");
 		open("write");
 		db.beginTransaction();
 		try {
@@ -191,12 +174,9 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
-		Log.i(LOG_TAG, "deleteFeed finished");
 	}
 
 	public Feed getFeedByUrl(String feedUrl) {
-		Log.i(LOG_TAG, "getFeedByUrl starts");
 		Feed feed = null;
 		open("write");
 		db.beginTransaction();
@@ -216,13 +196,10 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
-		Log.i(LOG_TAG, "getFeedByUrl finished");
 		return feed;
 	}
 
 	public Feed saveNewFeed(String feedTitle, String feedUrl, String format) {
-		// Log.i(LOG_TAG, "saveNewFeed starts");
 		boolean sameFeedExist = false;
 
 		// Use writeable DB
@@ -257,12 +234,10 @@ public class DatabaseAdapter {
 		if (sameFeedExist) {
 			return null;
 		}
-		// Log.i(LOG_TAG, "saveNewFeed finished");
 		return getFeedByUrl(feedUrl);
 	}
 
 	public boolean changeArticlesStatusToRead() {
-		Log.i(LOG_TAG, "changeArticlesStatusToRead starts");
 		// Use writeable DB
 		open("write");
 		db.beginTransaction();
@@ -278,12 +253,10 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "changeArticlesStatusToRead finished");
 		return true;
 	}
 
 	public int getNumOfUnreadArtilces(int feedId) {
-		Log.i(LOG_TAG, "getNumOfUnreadArtilces starts");
 		int num = 0;
 		open("write");
 		db.beginTransaction();
@@ -301,12 +274,10 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "getNumOfUnreadArtilces finished");
 		return num;
 	}
 
 	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId) {
-		Log.i(LOG_TAG, "getUnreadArticlesInAFeed starts");
 		ArrayList<Article> articles = new ArrayList<Article>();
 		open("write");
 		db.beginTransaction();
@@ -335,12 +306,10 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "getUnreadArticlesInAFeed finished");
 		return articles;
 	}
 
 	public ArrayList<Filter> getFiltersOfFeed(int feedId) {
-		Log.i(LOG_TAG, "getFiltersOfFeed starts");
 		ArrayList<Filter> filterList = new ArrayList<Filter>();
 		open("write");
 
@@ -367,12 +336,10 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "getFiltersOfFeed finished");
 		return filterList;
 	}
 
 	public boolean applyFiltersOfFeed(ArrayList<Filter> filterList, int feedId) {
-		Log.i(LOG_TAG, "applyFiltersOfFeed starts");
 		// If articles are hit in condition, Set articles status to "read"
 		ContentValues value = new ContentValues();
 		value.put("status", "read");
@@ -411,12 +378,10 @@ public class DatabaseAdapter {
 			}
 			
 		}
-		Log.i(LOG_TAG, "applyFiltersOfFeed finished");
 		return true;
 	}
 
 	public void deleteFilter(int filterId) {
-		Log.i(LOG_TAG, " deleteFilter starts");
 		open("write");
 		db.beginTransaction();
 		try {
@@ -425,12 +390,9 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
-		Log.i(LOG_TAG, "deleteFilter finished");
 	}
 
 	public int getNumOfFeeds() {
-		Log.i(LOG_TAG, "getNumOfFeeds starts");
 		int num = 0;
 		open("write");
 		db.beginTransaction();
@@ -447,7 +409,6 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
-		Log.i(LOG_TAG, "getNumOfFeeds finished");
 		return num;
 	}
 
@@ -494,26 +455,24 @@ public class DatabaseAdapter {
 	}
 
 	public void addManyFeeds() {
-		// Log.i(LOG_TAG, "saveNewFeed starts");
-
 		ArrayList<Feed> feeds = new ArrayList<Feed>();
 		//RSS 2.0
 		feeds.add(new Feed(0, "スポーツナビ - ピックアップ　ゲーム",
 				"http://sports.yahoo.co.jp/rss/pickup_game/pc"));
-		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - トップ",
-				"http://rss.dailynews.yahoo.co.jp/fc/rss.xml"));
-		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 海外",
-				"http://rss.dailynews.yahoo.co.jp/fc/world/rss.xml"));
-		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 経済",
-				"http://rss.dailynews.yahoo.co.jp/fc/economy/rss.xml"));
-		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
-				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
+//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - トップ",
+//				"http://rss.dailynews.yahoo.co.jp/fc/rss.xml"));
+//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 海外",
+//				"http://rss.dailynews.yahoo.co.jp/fc/world/rss.xml"));
+//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 経済",
+//				"http://rss.dailynews.yahoo.co.jp/fc/economy/rss.xml"));
+//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
+//				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
 		//atom
-		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
-				"http://feeds.feedburner.com/tb-hotentry"));
+//		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
+//				"http://feeds.feedburner.com/tb-hotentry"));
 		//RDF
-		feeds.add(new Feed(0, "二十歳街道まっしぐら",
-				"http://20kaido.com/index.rdf"));
+//		feeds.add(new Feed(0, "二十歳街道まっしぐら",
+//				"http://20kaido.com/index.rdf"));
 		
 		// Use writeable DB
 		open("write");
@@ -534,12 +493,9 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
-		// Log.i(LOG_TAG, "saveNewFeed finished");
 	}
 
 	public boolean isArticle(Article article) {
-		Log.i(LOG_TAG, "isArticle starts");
 		int num = 0;
 		open("write");
 		db.beginTransaction();
@@ -549,7 +505,6 @@ public class DatabaseAdapter {
 					+ article.getTitle() + "' and " + "url = '"
 					+ article.getUrl() + "' and " + "date = '"
 					+ article.getPostedDate() + "';";
-			Log.d(LOG_TAG, "SQL:" + sql);
 			
 			Cursor cursor = db.rawQuery(sql, null);
 			num = cursor.getCount();
@@ -562,8 +517,6 @@ public class DatabaseAdapter {
 		}
 		
 		if(num > 0) {
-			Log.d(LOG_TAG, "article exists!");
-			Log.d(LOG_TAG, "title:" + article.getTitle());
 			return true;
 		}
 		return false;
