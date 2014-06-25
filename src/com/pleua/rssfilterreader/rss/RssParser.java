@@ -118,9 +118,9 @@ public class RssParser {
 	        //Get InputStream
 	        return con.getInputStream();
         }catch(IOException e) {
-        	Toast.makeText(context_, R.string.network_error, Toast.LENGTH_SHORT).show();
-        	return null;
+        	e.printStackTrace();
         }
+        return null;
     }
      
 }
