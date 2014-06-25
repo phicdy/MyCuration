@@ -20,6 +20,14 @@ public class DateParser {
 			return input.parse(pubDate);
 		} catch (ParseException e) {
 			e.printStackTrace();
+			//2014-06-25 17:24:07
+			DateFormat noTimezone = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+					Locale.JAPAN);
+			try {
+				return noTimezone.parse(pubDate);
+			} catch (ParseException e2) {
+				e2.printStackTrace();
+			}
 		}
 		return null;
 	}
@@ -27,7 +35,9 @@ public class DateParser {
 	public static long changeToJapaneseDate(String dateBeforeChange) {
 		Log.d(LOG_TAG, "date before change:" + dateBeforeChange);
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(getPubDate(dateBeforeChange));
+		Date date = getPubDate(dateBeforeChange);
+		Log.d(LOG_TAG, date.toString());
+		cal.setTime(date);
 
 		return cal.getTimeInMillis();
 	}
