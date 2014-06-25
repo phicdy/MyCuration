@@ -497,80 +497,24 @@ public class DatabaseAdapter {
 		// Log.i(LOG_TAG, "saveNewFeed starts");
 
 		ArrayList<Feed> feeds = new ArrayList<Feed>();
-		feeds.add(new Feed(0, "ƒsƒbƒNƒAƒbƒvƒQ[ƒ€",
+		//RSS 2.0
+		feeds.add(new Feed(0, "ã‚¹ãƒãƒ¼ãƒ„ãƒŠãƒ“ - ãƒ”ãƒƒã‚¯ã‚¢ãƒƒãƒ—ã€€ã‚²ãƒ¼ãƒ ",
 				"http://sports.yahoo.co.jp/rss/pickup_game/pc"));
-		feeds.add(new Feed(0, "Androidƒjƒ…[ƒX",
-				"http://market.yahoo.co.jp/app/android/articles/rss"));
-		feeds.add(new Feed(0, "ƒAƒvƒŠƒgƒsƒbƒNƒX",
-				"http://market.yahoo.co.jp/app/android/topics/rss"));
-		feeds.add(new Feed(0, "ƒRƒ‰ƒ€[—L–¼l‚Ì‚¨‹à‚Ìg‚¢•û",
-				"http://biz.yahoo.co.jp/column/company/ead/rss/index.xml"));
-		feeds.add(new Feed(0, "‘‡iV’…j",
-				"http://gyao.yahoo.co.jp/rss/newlypg/all/"));
-		feeds.add(new Feed(0, "‰f‰æiV’…j",
-				"http://gyao.yahoo.co.jp/rss/newly/movie/"));
-		feeds.add(new Feed(0, "ƒhƒ‰ƒ}",
-				"http://gyao.yahoo.co.jp/rss/newlypg/drama/"));
-		feeds.add(new Feed(0, "‰¹Šy",
-				"http://gyao.yahoo.co.jp/rss/newlypg/music/"));
-		feeds.add(new Feed(0, "ƒAƒjƒ",
-				"http://gyao.yahoo.co.jp/rss/newlypg/anime/"));
-		feeds.add(new Feed(0, "‚¨Î‚¢",
-				"http://gyao.yahoo.co.jp/rss/newlypg/owarai/"));
-		feeds.add(new Feed(0, "ƒoƒ‰ƒGƒeƒB",
-				"http://gyao.yahoo.co.jp/rss/newlypg/variety/"));
-		feeds.add(new Feed(0, "‘‡ƒ‰ƒ“ƒLƒ“ƒO",
-				"http://gyao.yahoo.co.jp/rss/ranking/c/daily/all/"));
-		feeds.add(new Feed(0, "‰f‰æƒ‰ƒ“ƒLƒ“ƒO",
-				"http://gyao.yahoo.co.jp/rss/ranking/c/daily/movie/"));
-		feeds.add(new Feed(0, "ƒhƒ‰ƒ}ƒ‰ƒ“ƒLƒ“ƒO",
-				"http://gyao.yahoo.co.jp/rss/ranking/c/daily/drama/"));
-		feeds.add(new Feed(0, "‰¹Šyƒ‰ƒ“ƒLƒ“ƒO",
-				"http://gyao.yahoo.co.jp/rss/ranking/c/daily/music/"));
-		feeds.add(new Feed(0, "ƒAƒjƒƒ‰ƒ“ƒLƒ“ƒO",
-				"http://gyao.yahoo.co.jp/rss/ranking/c/daily/anime/"));
-		feeds.add(new Feed(0, "‚¨Î‚¢ƒ‰ƒ“ƒLƒ“ƒO",
-				"http://gyao.yahoo.co.jp/rss/ranking/c/daily/owarai/"));
-		feeds.add(new Feed(0, "ƒoƒ‰ƒGƒeƒBƒ‰ƒ“ƒLƒ“ƒO",
-				"http://gyao.yahoo.co.jp/rss/ranking/c/daily/variety/"));
-		feeds.add(new Feed(0, "ƒXƒ|[ƒc",
-				"http://streaming.yahoo.co.jp/rss/newlypg/sports/"));
-		feeds.add(new Feed(0, "ƒOƒ‰ƒrƒA",
-				"http://streaming.yahoo.co.jp/rss/newlypg/gravure/"));
-		feeds.add(new Feed(0, "ï–¡‚Æ‹³—{",
-				"http://streaming.yahoo.co.jp/rss/newlypg/hobby_culture/"));
-		feeds.add(new Feed(0, "‘‰ï‹cˆõ‚İ‚ñ‚È‚Ì•]‰¿",
-				"http://seiji.yahoo.co.jp/giin/rev/newlist/rss.xml"));
-		feeds.add(new Feed(0, "‘‰ï‹cˆõŠˆ“®ƒŒƒ|[ƒg",
-				"http://seiji.yahoo.co.jp/newlist/giin/rss.xml"));
-		feeds.add(new Feed(0, "­¡ƒNƒ[ƒYƒAƒbƒvƒJƒŒƒ“ƒ_[",
-				"http://seiji.yahoo.co.jp/close_up/rss.xml"));
-		feeds.add(new Feed(0, "­¡“Š•[", "http://seiji.yahoo.co.jp/vote/rss.xml"));
-		feeds.add(new Feed(0, "YahooƒVƒ‡ƒbƒsƒ“ƒOƒJ[ƒgÅV‹L–",
-				"http://topics.shopping.yahoo.co.jp/blog/rss.xml"));
-		feeds.add(new Feed(0, "ƒlƒbƒgLƒKƒCƒh",
-				"http://trend.netadguide.yahoo.co.jp/rss/index.php"));
-		feeds.add(new Feed(0, "‹}ã¸ƒ[ƒhƒ‰ƒ“ƒLƒ“ƒO",
-				"http://searchranking.yahoo.co.jp/rss/burst_ranking-rss.xml"));
-		feeds.add(new Feed(0, "ŒŸõŒ”ƒ‰ƒ“ƒLƒ“ƒO",
-				"http://searchranking.yahoo.co.jp/rss/total_ranking-general-rss.xml"));
-		feeds.add(new Feed(0, "ƒgƒŒƒ“ƒhƒT[ƒtƒBƒ“",
-				"http://searchranking.yahoo.co.jp/rss/trend-rss.xml"));
-		feeds.add(new Feed(0, "ƒŒƒ“ƒ^ƒ‹DVDV’…î•ñ",
-				"http://rental.movies.yahoo.co.jp/rss/arrival"));
-		feeds.add(new Feed(0, "ƒŒƒ“ƒ^ƒ‹DVD‚à‚¤‚·‚®“ü‰×",
-				"http://rental.movies.yahoo.co.jp/rss/coming"));
-		feeds.add(new Feed(0, "‚©‚ç‚¾‘Š’k",
-				"http://health.yahoo.co.jp/soudan/list/rss.xml?t=new"));
-		feeds.add(new Feed(0, "‘“àÅV‚Ì—·“ú‹L",
-				"http://community.travel.yahoo.co.jp/domestic/blog.html?m=rss"));
-		feeds.add(new Feed(0, "‘“àÅV‚ÌŒûƒRƒ~ˆê——",
-				"http://community.travel.yahoo.co.jp/abroad/blog.html?m=rss"));
-		feeds.add(new Feed(0, "ŠCŠOÅV‚Ì—·“ú‹L",
-				"http://community.travel.yahoo.co.jp/abroad/blog.html?m=rss"));
-		feeds.add(new Feed(0, "ŠCŠOÅV‚ÌŒûƒRƒ~ˆê——",
-				"http://community.travel.yahoo.co.jp/abroad/buzz.html?m=rss"));
-
+		feeds.add(new Feed(0, "Yahoo!ãƒ‹ãƒ¥ãƒ¼ã‚¹ãƒ»ãƒˆãƒ”ãƒƒã‚¯ã‚¹ - ãƒˆãƒƒãƒ—",
+				"http://rss.dailynews.yahoo.co.jp/fc/rss.xml"));
+		feeds.add(new Feed(0, "Yahoo!ãƒ‹ãƒ¥ãƒ¼ã‚¹ãƒ»ãƒˆãƒ”ãƒƒã‚¯ã‚¹ - æµ·å¤–",
+				"http://rss.dailynews.yahoo.co.jp/fc/world/rss.xml"));
+		feeds.add(new Feed(0, "Yahoo!ãƒ‹ãƒ¥ãƒ¼ã‚¹ãƒ»ãƒˆãƒ”ãƒƒã‚¯ã‚¹ - çµŒæ¸ˆ",
+				"http://rss.dailynews.yahoo.co.jp/fc/economy/rss.xml"));
+		feeds.add(new Feed(0, "Yahoo!ãƒ‹ãƒ¥ãƒ¼ã‚¹ãƒ»ãƒˆãƒ”ãƒƒã‚¯ã‚¹ - ã‚¨ãƒ³ã‚¿ãƒ¼ãƒ†ã‚¤ãƒ³ãƒ¡ãƒ³ãƒˆ",
+				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
+		//atom
+		feeds.add(new Feed(0, "TweetBuzz - æ³¨ç›®ã‚¨ãƒ³ãƒˆãƒªãƒ¼",
+				"http://feeds.feedburner.com/tb-hotentry"));
+		//RDF
+		feeds.add(new Feed(0, "äºŒåæ­³è¡—é“ã¾ã£ã—ãã‚‰",
+				"http://20kaido.com/index.rdf"));
+		
 		// Use writeable DB
 		open("write");
 		db.beginTransaction();
