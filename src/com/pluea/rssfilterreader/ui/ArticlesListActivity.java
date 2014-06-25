@@ -35,7 +35,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.pleua.rssfilterreader.rss.Article;
 import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
-import com.pluea.rssfilterreader.task.UpdateFeedsTask;
+import com.pluea.rssfilterreader.task.UpdateTaskManager;
 
 public class ArticlesListActivity extends ListActivity {
 
@@ -124,14 +124,12 @@ public class ArticlesListActivity extends ListActivity {
 
 			@Override
 			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-				UpdateFeedsTask updateTask = UpdateFeedsTask
-						.getInstance(getApplicationContext(), false);
-				if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
+				UpdateTaskManager updateTaskManager = UpdateTaskManager
+						.getInstance(getApplicationContext());
 					// Update Feeds
-					ArrayList<Feed> feeds = new ArrayList<Feed>();
-					feeds.add(new Feed(feedId, null, feedUrl));
-					updateTask.execute(feeds);
-				}
+				ArrayList<Feed> feeds = new ArrayList<Feed>();
+				feeds.add(new Feed(feedId, null, feedUrl));
+				updateTaskManager.updateAllFeeds(feeds);
 			}
 		});
 

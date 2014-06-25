@@ -37,7 +37,7 @@ import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.alarm.AlarmManagerTaskManager;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
 import com.pluea.rssfilterreader.task.InsertNewFeedTask;
-import com.pluea.rssfilterreader.task.UpdateFeedsTask;
+import com.pluea.rssfilterreader.task.UpdateTaskManager;
 
 public class FeedListActivity extends ListActivity {
 
@@ -47,7 +47,7 @@ public class FeedListActivity extends ListActivity {
 	private RssFeedListAdapter rssFeedListAdapter;
 	private BroadcastReceiver receiver;
 	private Intent intent;
-	private UpdateFeedsTask updateTask;
+	private UpdateTaskManager updateTaskManager;
 
 	private static final int DELETEFEEDMENUID = 0;
 	public static final int BAD_RECIEVED_VALUE = -1;
@@ -69,7 +69,7 @@ public class FeedListActivity extends ListActivity {
 		setBroadCastReceiver();
 		setAlarmManager();
 		
-		dbAdapter.addManyFeeds();
+//		dbAdapter.addManyFeeds();
 		feeds = dbAdapter.getAllFeeds();
 	}
 
@@ -107,7 +107,9 @@ public class FeedListActivity extends ListActivity {
 				// Set num of unread articles and update UI
 				if (intent.getAction().equals(UPDATE_NUM_OF_ARTICLES)) {
 					updateNumOfUnreadArticles();
-					feedsListView.onRefreshComplete();
+					if(!updateTaskManager.isUpdating()) {
+						feedsListView.onRefreshComplete();
+					}
 				}
 			}
 		};
@@ -247,25 +249,18 @@ public class FeedListActivity extends ListActivity {
 						}).setNegativeButton(R.string.cancel, null).show();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void updateAllFeeds() {
 		if (feeds.isEmpty()) {
 			feedsListView.onRefreshComplete();
 			return;
 		} 
-		updateTask = UpdateFeedsTask.getInstance(getApplicationContext(), false);
+		updateTaskManager = UpdateTaskManager.getInstance(getApplicationContext());
 
 		// Get feeds from DB if other update task is not running
-		if (!updateTask.isRunning()) {
-			
-			// TODO Don't show message
-	
-			// Set num of unread articles before updating
-			updateNumOfUnreadArticles();
-	
-			// Update Feeds
-			updateTask.execute(feeds);
-		} 
+		if (updateTaskManager.updateAllFeeds(feeds)) {
+		} else {
+			feedsListView.onRefreshComplete();
+		}
 	}
 
 	private void updateNumOfUnreadArticles() {
