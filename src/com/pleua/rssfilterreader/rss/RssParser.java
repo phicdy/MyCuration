@@ -97,6 +97,10 @@ public class RssParser {
                 	break;
                 }
                 eventType = parser.next();
+                tag = parser.getName();
+                if(eventType == XmlPullParser.END_TAG && (tag.equals("rss") || tag.equals("rdf"))) {
+                	break;
+                }
             }
             //Save new articles
             dbAdapter.saveNewArticles(articles, feedId);
