@@ -69,6 +69,7 @@ public class FeedListActivity extends ListActivity {
 		setBroadCastReceiver();
 		setAlarmManager();
 		
+		dbAdapter.addManyFeeds();
 		feeds = dbAdapter.getAllFeeds();
 	}
 
@@ -255,7 +256,7 @@ public class FeedListActivity extends ListActivity {
 		updateTask = UpdateFeedsTask.getInstance(getApplicationContext(), false);
 
 		// Get feeds from DB if other update task is not running
-		if (!updateTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
+		if (!updateTask.isRunning()) {
 			
 			// TODO Don't show message
 	
@@ -264,28 +265,7 @@ public class FeedListActivity extends ListActivity {
 	
 			// Update Feeds
 			updateTask.execute(feeds);
-		} else {
-			// Show uncancelable alert dialog
-			final View addView = this.getLayoutInflater().inflate(
-					R.layout.task_exists_error, null);
-
-			new AlertDialog.Builder(this)
-					// Dialog can't cancel
-					.setCancelable(false)
-					// .setTitle(R.string.task_exists_error)
-					.setView(addView)
-					.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									finish();
-								}
-							}).show();
-
-			// Cancel updating
-			// updateTask.cancel(true);
-		}
+		} 
 	}
 
 	private void updateNumOfUnreadArticles() {
