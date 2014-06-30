@@ -7,16 +7,16 @@ import java.net.URLConnection;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Xml;
+import android.widget.Toast;
+
 import com.example.rssfilterreader.R;
 import com.pleua.rssfilterreader.rss.Feed;
 import com.pleua.rssfilterreader.rss.RssParser;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
-
-import android.app.ListActivity;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
-import android.util.Xml;
-import android.widget.Toast;
   
 /**
  * 
@@ -27,15 +27,15 @@ import android.widget.Toast;
  */
 public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
   
-    private ListActivity   activity_;
+    private Context context;
     private ProgressDialog progress_;
     private DatabaseAdapter dbAdapter;
     private RssParser rssParser;
       
-    public InsertNewFeedTask(ListActivity activity) {
-        activity_ = activity;
-        dbAdapter  = new DatabaseAdapter(activity_);
-        rssParser  = new RssParser(activity_);
+    public InsertNewFeedTask(Context context) {
+        this.context = context;
+        dbAdapter  = new DatabaseAdapter(context);
+        rssParser  = new RssParser(context);
     }
   
     /**
@@ -45,9 +45,9 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
     protected void onPostExecute(Feed result) {
         progress_.dismiss();
         if(result == null) {
-        	Toast.makeText(activity_, R.string.add_feed_error, Toast.LENGTH_SHORT).show();
+        	Toast.makeText(context, R.string.add_feed_error, Toast.LENGTH_SHORT).show();
         }else {
-        	Toast.makeText(activity_, R.string.add_feed_success, Toast.LENGTH_SHORT).show();
+        	Toast.makeText(context, R.string.add_feed_success, Toast.LENGTH_SHORT).show();
         }
     }
     /**
@@ -56,7 +56,7 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
     @Override
     protected void onPreExecute() {
         //Display a dialog
-        progress_ = new ProgressDialog(activity_);
+        progress_ = new ProgressDialog(context);
         progress_.setMessage("Now loading");
         progress_.show();
     }
@@ -119,7 +119,7 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
             String format = new String();
               
             //RSS Format is 
-            //<feed><title>ÅEÅEÅE or <rdf(or rss)><channel><title>ÅEÅEÅE , 
+            //<feed><title>ÔøΩEÔøΩEÔøΩE or <rdf(or rss)><channel><title>ÔøΩEÔøΩEÔøΩE , 
             //so check start tag <feed> or <rdf> or <rss> and then <title>
             parser.setInput(is, "UTF-8");
             int eventType = parser.getEventType();
