@@ -290,7 +290,12 @@ public class ArticlesListActivity extends ListActivity {
 				// set RSS Feed unread article count
 				TextView articlePoint = (TextView) row
 						.findViewById(R.id.articlePoint);
-				articlePoint.setText(article.getPoint());
+				String hatenaPoint = article.getPoint();
+				if(hatenaPoint.equals(DatabaseAdapter.DEDAULT_HATENA_POINT)) {
+					articlePoint.setText(hatenaPoint);
+				}else {
+					articlePoint.setText(getString(R.string.not_get_hatena_point));
+				}
 
 				articleTitle.setTextColor(Color.BLACK);
 				articlePostedTime.setTextColor(Color.BLACK);
