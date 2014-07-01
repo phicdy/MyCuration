@@ -3,15 +3,13 @@ package com.pluea.rssfilterreader.ui;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import android.R.id;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -39,7 +37,7 @@ import com.pluea.rssfilterreader.db.DatabaseAdapter;
 import com.pluea.rssfilterreader.task.InsertNewFeedTask;
 import com.pluea.rssfilterreader.task.UpdateTaskManager;
 
-public class FeedListActivity extends ListActivity {
+public class FeedListActivity extends Activity {
 
 	private ArrayList<Feed> feeds = new ArrayList<Feed>();
 	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
@@ -63,14 +61,17 @@ public class FeedListActivity extends ListActivity {
 		setContentView(R.layout.main_activity);
 
 		feedsListView = (PullToRefreshListView) findViewById(R.id.feedList);
-		registerForContextMenu(feedsListView);
-
+		
 		setAllListener();
 		setBroadCastReceiver();
 		setAlarmManager();
 		
-//		dbAdapter.addManyFeeds();
+		if(dbAdapter.getNumOfFeeds() == 0) {
+			dbAdapter.addManyFeeds();
+		}
 		feeds = dbAdapter.getAllFeeds();
+		
+		registerForContextMenu(feedsListView.getRefreshableView());
 	}
 
 	private void setAllListener() {
@@ -166,8 +167,9 @@ public class FeedListActivity extends ListActivity {
 
 		switch (item.getItemId()) {
 		case DELETEFEEDMENUID:
-			dbAdapter.deleteFeed(feeds.get(info.position).getId());
-			feeds.remove(info.position);
+			Feed selectedFeed = feeds.get(info.position-1);
+			dbAdapter.deleteFeed(selectedFeed.getId());
+			feeds.remove(info.position-1);
 			rssFeedListAdapter.notifyDataSetChanged();
 			return true;
 		default:
@@ -180,7 +182,7 @@ public class FeedListActivity extends ListActivity {
 		if(feeds.isEmpty()) {
 			feeds = dbAdapter.getAllFeeds();
 		}
-		updateAllFeeds();
+//		updateAllFeeds();
 		updateNumOfUnreadArticles();
 
 		// Set ListView
@@ -216,7 +218,7 @@ public class FeedListActivity extends ListActivity {
 										.toString();
 
 								InsertNewFeedTask task = new InsertNewFeedTask(
-										FeedListActivity.this);
+										getApplicationContext());
 								task.execute(feedUrlStr);
 
 								// Update feed list
