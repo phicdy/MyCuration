@@ -34,4 +34,6 @@
     <string name="filter_title">フィルター名</string>
     <string name="add_filter">フィルター登録</string>
     <string name="delete_filter">フィルター削除</string>
+    
+    <string name="not_get_hatena_point">取得中</string>
 </resources>
