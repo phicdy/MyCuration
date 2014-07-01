@@ -14,8 +14,9 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 public class DatabaseAdapter {
-	static final String DATABASENAME = "rss_manage";
-	static final int DATABASEVERSION = 1;
+	public static final String DATABASENAME = "rss_manage";
+	public static final int DATABASEVERSION = 1;
+	public static final String DEDAULT_HATENA_POINT = "-1";
 
 	private Context context;
 	private static DatabaseHelper dbHelper;
@@ -54,7 +55,7 @@ public class DatabaseAdapter {
 				insertSt.bindString(1, sanitizing(article.getTitle()));
 				insertSt.bindString(2, article.getUrl());
 				insertSt.bindString(3, "unread");
-				insertSt.bindString(4, "10");
+				insertSt.bindString(4, DEDAULT_HATENA_POINT);
 				Log.d(LOG_TAG, "insert date:" + article.getPostedDate());
 				insertSt.bindLong(5, article.getPostedDate());
 				insertSt.bindString(6, String.valueOf(feedId));
@@ -459,14 +460,14 @@ public class DatabaseAdapter {
 		//RSS 2.0
 		feeds.add(new Feed(0, "スポーツナビ - ピックアップ　ゲーム",
 				"http://sports.yahoo.co.jp/rss/pickup_game/pc"));
-//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - トップ",
-//				"http://rss.dailynews.yahoo.co.jp/fc/rss.xml"));
-//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 海外",
-//				"http://rss.dailynews.yahoo.co.jp/fc/world/rss.xml"));
-//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 経済",
-//				"http://rss.dailynews.yahoo.co.jp/fc/economy/rss.xml"));
-//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
-//				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
+		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - トップ",
+				"http://rss.dailynews.yahoo.co.jp/fc/rss.xml"));
+		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 海外",
+				"http://rss.dailynews.yahoo.co.jp/fc/world/rss.xml"));
+		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 経済",
+				"http://rss.dailynews.yahoo.co.jp/fc/economy/rss.xml"));
+		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
+				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
 		//atom
 //		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
 //				"http://feeds.feedburner.com/tb-hotentry"));
@@ -481,13 +482,7 @@ public class DatabaseAdapter {
 
 			// If there aren't same feeds in DB,Insert into DB
 			for (Feed feed : feeds) {
-				ContentValues values = new ContentValues();
-				values.put("title", feed.getTitle());
-				values.put("url", feed.getUrl());
-				values.put("format", "RSS2.0");
-				if (db.insert("feeds", null, values) == -1) {
-					Log.v("insert error", "error occurred");
-				}
+				saveNewFeed(feed.getTitle(), feed.getUrl(), "RSS2.0");
 			}
 			db.setTransactionSuccessful();
 		} finally {
