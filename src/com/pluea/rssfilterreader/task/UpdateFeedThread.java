@@ -34,16 +34,6 @@ public class UpdateFeedThread extends Thread {
 
 		DatabaseAdapter dbAdapter = new DatabaseAdapter(context);
 		
-		ArrayList<Article> articles = dbAdapter
-				.getUnreadArticlesInAFeed(feedId);
-		for (int i = 0; i < articles.size(); i++) {
-			Article article = articles.get(i);
-			article.setArrayIndex(i);
-			GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(
-					context);
-			hatenaTask.execute(article);
-		}
-
 		// Parse XML
 		RssParser rssParser = new RssParser(context);
 		boolean parseResult;
@@ -65,6 +55,17 @@ public class UpdateFeedThread extends Thread {
 			e.printStackTrace();
 		}
 
+		// Update Hatena point
+		ArrayList<Article> articles = dbAdapter
+				.getUnreadArticlesInAFeed(feedId);
+		for (int i = 0; i < articles.size(); i++) {
+			Article article = articles.get(i);
+			article.setArrayIndex(i);
+			GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(
+					context);
+			hatenaTask.execute(article);
+		}
+		
 		isRunning = false;
 		
 		// Broadcast updating num of articles
