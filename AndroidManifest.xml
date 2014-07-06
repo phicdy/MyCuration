@@ -51,8 +51,12 @@
         </activity>
 
         <receiver 
-            android:name="com.pluea.rssfilterreader.AutoUpdateBroadcastReciever"
-            android:process=":process" >
+            android:name="com.pluea.rssfilterreader.alarm.AutoUpdateBroadcastReciever"
+            android:process=":remote"
+            android:exported="false" >
+            <intent-filter >
+                <action android:name="autoUpdateFeed"/>
+            </intent-filter>
         </receiver>
     </application>
 
