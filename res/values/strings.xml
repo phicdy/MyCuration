@@ -34,6 +34,9 @@
     <string name="filter_title">フィルター名</string>
     <string name="add_filter">フィルター登録</string>
     <string name="delete_filter">フィルター削除</string>
-    
     <string name="not_get_hatena_point">取得中</string>
+    
+    <string name="setting">設定</string>
+    <string name="interval">自動更新の頻度</string>
+    <string name="hour">時間</string>
 </resources>
