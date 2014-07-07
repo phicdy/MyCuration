@@ -144,6 +144,9 @@ public class FeedListActivity extends Activity {
 			intent = new Intent(FeedListActivity.this, FilterList.class);
 			startActivity(intent);
 			break;
+		case R.id.setting:
+			startActivity(new Intent(getApplicationContext(), SettingActivity.class));
+			break;
 		default:
 			break;
 		}
