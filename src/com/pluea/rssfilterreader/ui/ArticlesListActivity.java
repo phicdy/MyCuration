@@ -98,7 +98,7 @@ public class ArticlesListActivity extends ListActivity {
 							int position, long id) {
 
 						if(!isSwipeLeftToRight && !isSwipeRightToLeft) {
-							touchedPosition = position;
+							touchedPosition = position - 1;
 							setReadStatusToTouchedView(Color.GRAY, Article.TOREAD);
 							Uri uri = Uri
 									.parse(articles.get(position-1).getUrl());
