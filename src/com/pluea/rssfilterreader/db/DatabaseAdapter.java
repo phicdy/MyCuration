@@ -458,16 +458,28 @@ public class DatabaseAdapter {
 	public void addManyFeeds() {
 		ArrayList<Feed> feeds = new ArrayList<Feed>();
 		//RSS 2.0
-		feeds.add(new Feed(0, "スポーツナビ - ピックアップ　ゲーム",
-				"http://sports.yahoo.co.jp/rss/pickup_game/pc"));
-		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - トップ",
-				"http://rss.dailynews.yahoo.co.jp/fc/rss.xml"));
-		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 海外",
-				"http://rss.dailynews.yahoo.co.jp/fc/world/rss.xml"));
-		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 経済",
-				"http://rss.dailynews.yahoo.co.jp/fc/economy/rss.xml"));
-		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
-				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
+//		feeds.add(new Feed(0, "スポーツナビ - ピックアップ　ゲーム",
+//				"http://sports.yahoo.co.jp/rss/pickup_game/pc"));
+//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - トップ",
+//				"http://rss.dailynews.yahoo.co.jp/fc/rss.xml"));
+//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 海外",
+//				"http://rss.dailynews.yahoo.co.jp/fc/world/rss.xml"));
+//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 経済",
+//				"http://rss.dailynews.yahoo.co.jp/fc/economy/rss.xml"));
+//		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
+//				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
+		feeds.add(new Feed(0, "IT速報",
+				"http://blog.livedoor.jp/itsoku/index.rdf"));
+		feeds.add(new Feed(0, "あじゃじゃしたー",
+				"http://blog.livedoor.jp/chihhylove/index.rdf"));
+		feeds.add(new Feed(0, "はてなブログ人気エントリー",
+				"http://b.hatena.ne.jp/hotentry.rss"));
+		feeds.add(new Feed(0, "暇人速報",
+				"http://himasoku.com/index.rdf"));
+		feeds.add(new Feed(0, "ドメサカブログ",
+				"http://blog.livedoor.jp/domesoccer/index.rdf"));
+		feeds.add(new Feed(0, "きんどう",
+				"http://kindou.info/feed"));
 		//atom
 //		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
 //				"http://feeds.feedburner.com/tb-hotentry"));
