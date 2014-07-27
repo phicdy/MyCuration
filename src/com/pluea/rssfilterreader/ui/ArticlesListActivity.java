@@ -292,9 +292,9 @@ public class ArticlesListActivity extends ListActivity {
 						.findViewById(R.id.articlePoint);
 				String hatenaPoint = article.getPoint();
 				if(hatenaPoint.equals(DatabaseAdapter.DEDAULT_HATENA_POINT)) {
-					articlePoint.setText(hatenaPoint);
-				}else {
 					articlePoint.setText(getString(R.string.not_get_hatena_point));
+				}else {
+					articlePoint.setText(hatenaPoint);
 				}
 
 				articleTitle.setTextColor(Color.BLACK);

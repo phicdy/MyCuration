@@ -48,8 +48,6 @@ public class UpdateFeedThread extends Thread {
 			// Filter articles
 			if (parseResult) {
 				new FilterTask(context).applyFiltering(feedId);
-			} else {
-				return;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
