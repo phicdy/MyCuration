@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.rssfilterreader.R;
+import com.pluea.rssfilterreader.alarm.AlarmManagerTaskManager;
 import com.pluea.rssfilterreader.util.PreferenceManager;
   
 public class SettingActivity extends Activity {
@@ -37,6 +38,8 @@ public class SettingActivity extends Activity {
 				String input = intervalText.getText().toString();
 				PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
 				mgr.setAutoUpdateInterval(Integer.valueOf(input));
+				
+				AlarmManagerTaskManager.setNewAlarm(getApplicationContext());
 			}
 		});
     }
