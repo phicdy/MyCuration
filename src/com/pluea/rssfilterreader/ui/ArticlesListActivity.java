@@ -36,6 +36,7 @@ import com.pleua.rssfilterreader.rss.Article;
 import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
 import com.pluea.rssfilterreader.task.UpdateTaskManager;
+import com.pluea.rssfilterreader.util.PreferenceManager;
 
 public class ArticlesListActivity extends ListActivity {
 
@@ -200,9 +201,12 @@ public class ArticlesListActivity extends ListActivity {
 	}
 
 	private void displayUnreadArticles() {
-		articles = dbAdapter.getUnreadArticlesInAFeed(feedId);
+		PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
+		boolean isNewestArticleTop = mgr.getSortNewArticleTop();
+		
+		articles = dbAdapter.getUnreadArticlesInAFeed(feedId, isNewestArticleTop);
 		if(articles.size() == 0 && dbAdapter.calcNumOfArticles(feedId) > 0) {
-			articles = dbAdapter.getAllArticlesInAFeed(feedId);
+			articles = dbAdapter.getAllArticlesInAFeed(feedId, isNewestArticleTop);
 		}
 		Log.d(LOG_TAG, "article size displayUnreadArticles():" + articles.size());
 		articlesListAdapter = new ArticlesListAdapter(articles);

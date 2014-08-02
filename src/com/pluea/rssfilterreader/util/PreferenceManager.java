@@ -8,6 +8,7 @@ public class PreferenceManager extends Activity {
 
 	private static final String PREF_KEY = "FilterPref";
 	private static final String KEY_AUTO_UPDATE_INTERVAL = "autoUpdateInterval";
+	private static final String KEY_SORT_NEW_ARTICLE_TOP = "sortNewArticleTop";
 	public static int DEFAULT_VALUE = 0;
 	private static PreferenceManager preMgr;
 	private SharedPreferences pref = null;
@@ -35,6 +36,19 @@ public class PreferenceManager extends Activity {
 	public void setAutoUpdateInterval(int interval) {
 		editor = pref.edit();
 		editor.putInt(KEY_AUTO_UPDATE_INTERVAL, interval);
+		editor.commit();
+	}
+	
+	public boolean getSortNewArticleTop() {
+		if(pref.contains(KEY_SORT_NEW_ARTICLE_TOP)) {
+			return pref.getBoolean(KEY_SORT_NEW_ARTICLE_TOP, true);
+		}
+		return true;
+	}
+
+	public void setSortNewArticleTop(boolean isNewArticleTop) {
+		editor = pref.edit();
+		editor.putBoolean(KEY_SORT_NEW_ARTICLE_TOP, isNewArticleTop);
 		editor.commit();
 	}
 }

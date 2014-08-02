@@ -55,7 +55,7 @@ public class UpdateFeedThread extends Thread {
 
 		// Update Hatena point
 		ArrayList<Article> articles = dbAdapter
-				.getUnreadArticlesInAFeed(feedId);
+				.getUnreadArticlesInAFeed(feedId, true);
 		for (int i = 0; i < articles.size(); i++) {
 			Article article = articles.get(i);
 			article.setArrayIndex(i);

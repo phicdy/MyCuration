@@ -296,14 +296,19 @@ public class DatabaseAdapter {
 		return num;
 	}
 
-	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId) {
+	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
 		open("write");
 		db.beginTransaction();
 		try {
 			// Get unread articles
 			String sql = "select _id,title,url,point,date from articles where status = \"unread\" and feedId = "
-					+ feedId + " order by date desc";
+					+ feedId + " order by date ";
+			if(isNewestArticleTop) {
+				sql += "desc";
+			}else {
+				sql += "asc";
+			}
 			Cursor cursor = db.rawQuery(sql, null);
 			while (cursor.moveToNext()) {
 				int id = cursor.getInt(0);
@@ -328,14 +333,19 @@ public class DatabaseAdapter {
 		return articles;
 	}
 	
-	public ArrayList<Article> getAllArticlesInAFeed(int feedId) {
+	public ArrayList<Article> getAllArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
 		open("write");
 		db.beginTransaction();
 		try {
 			// Get unread articles
 			String sql = "select _id,title,url,status,point,date from articles where feedId = "
-					+ feedId + " order by date desc";
+					+ feedId + " order by date ";
+			if(isNewestArticleTop) {
+				sql += "desc";
+			}else {
+				sql += "asc";
+			}
 			Cursor cursor = db.rawQuery(sql, null);
 			while (cursor.moveToNext()) {
 				int id = cursor.getInt(0);

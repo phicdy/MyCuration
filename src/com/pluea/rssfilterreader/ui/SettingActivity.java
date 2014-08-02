@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -14,6 +15,8 @@ import com.pluea.rssfilterreader.util.PreferenceManager;
   
 public class SettingActivity extends Activity {
   
+	private CheckBox cbSortNewArticleTop;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -24,9 +27,14 @@ public class SettingActivity extends Activity {
 	}
     
     private void initView() {
+    	PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
+    	
     	EditText input = (EditText)findViewById(R.id.inputInterval);
-    	int savedInterval = PreferenceManager.getInstance(getApplicationContext()).getAutoUpdateInterval();
+    	int savedInterval = mgr.getAutoUpdateInterval();
     	input.setText(String.valueOf(savedInterval));
+    	
+    	cbSortNewArticleTop = (CheckBox)findViewById(R.id.cb_article_sort);
+    	cbSortNewArticleTop.setChecked(mgr.getSortNewArticleTop());
     }
     
     private void setLitener() {
@@ -39,6 +47,8 @@ public class SettingActivity extends Activity {
 				String input = intervalText.getText().toString();
 				PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
 				mgr.setAutoUpdateInterval(Integer.valueOf(input));
+				
+				mgr.setSortNewArticleTop(cbSortNewArticleTop.isChecked());
 				
 				AlarmManagerTaskManager.setNewAlarm(getApplicationContext());
 				
