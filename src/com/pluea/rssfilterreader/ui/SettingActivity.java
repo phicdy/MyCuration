@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.rssfilterreader.R;
 import com.pluea.rssfilterreader.alarm.AlarmManagerTaskManager;
@@ -40,6 +41,8 @@ public class SettingActivity extends Activity {
 				mgr.setAutoUpdateInterval(Integer.valueOf(input));
 				
 				AlarmManagerTaskManager.setNewAlarm(getApplicationContext());
+				
+				Toast.makeText(getApplicationContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
 			}
 		});
     }
