@@ -14,7 +14,7 @@
         android:id="@+id/all_read"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
+        android:gravity="bottom|center"
         android:text="@string/all_read" />
 
 </LinearLayout>

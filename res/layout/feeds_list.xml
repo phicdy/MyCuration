@@ -6,9 +6,10 @@
     <TextView
         android:id="@+id/feedTitle"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginBottom="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:layout_weight="90"
         android:gravity="center_vertical"
         android:textSize="18sp" />
@@ -16,10 +17,12 @@
     <TextView
         android:id="@+id/feedCount"
         android:layout_width="0dp"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:layout_weight="10"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical|right" />
 
 </LinearLayout>

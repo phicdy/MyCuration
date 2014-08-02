@@ -6,7 +6,8 @@
         android:id="@+id/articleTitle"
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        android:paddingLeft="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_height="70dp" />
         <!-- android:onClick="displayArticle" -->
     <LinearLayout 
@@ -17,7 +18,8 @@
 	        android:id="@+id/articlePostedTime"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:paddingLeft="20dp"
+	        android:layout_marginLeft="8dp"
+	        android:layout_marginRight="8dp"
 	        android:textSize="12sp"
 	        android:layout_weight="90" />
 	    <TextView 
