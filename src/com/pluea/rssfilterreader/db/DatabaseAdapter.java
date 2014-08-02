@@ -86,6 +86,24 @@ public class DatabaseAdapter {
 		
 		return unreadArticlesCount;
 	}
+	
+	public int calcNumOfArticles(int feedId) {
+		open("write");
+		int unreadArticlesCount = 0;
+		db.beginTransaction();
+		try {
+			String getArticlesCountsql = "select _id from articles where feedId = "
+					+ feedId;
+			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
+			unreadArticlesCount = countCursor.getCount();
+			countCursor.close();
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		
+		return unreadArticlesCount;
+	}
 
 	public ArrayList<Feed> getAllFeeds() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
@@ -294,6 +312,38 @@ public class DatabaseAdapter {
 				String status = "unread";
 				String point = cursor.getString(3);
 				long dateLong = cursor.getLong(4);
+				Article article = new Article(id, title, url, status, point,
+						dateLong, feedId);
+				articles.add(article);
+			}
+			cursor.close();
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			
+			return articles;
+		} finally {
+			db.endTransaction();
+		}
+		
+		return articles;
+	}
+	
+	public ArrayList<Article> getAllArticlesInAFeed(int feedId) {
+		ArrayList<Article> articles = new ArrayList<Article>();
+		open("write");
+		db.beginTransaction();
+		try {
+			// Get unread articles
+			String sql = "select _id,title,url,status,point,date from articles where feedId = "
+					+ feedId + " order by date desc";
+			Cursor cursor = db.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				int id = cursor.getInt(0);
+				String title = cursor.getString(1);
+				String url = cursor.getString(2);
+				String status = cursor.getString(3);
+				String point = cursor.getString(4);
+				long dateLong = cursor.getLong(5);
 				Article article = new Article(id, title, url, status, point,
 						dateLong, feedId);
 				articles.add(article);

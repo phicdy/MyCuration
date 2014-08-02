@@ -76,6 +76,7 @@ public class ArticlesListActivity extends ListActivity {
 		// intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
 
 		setAllListener();
+		articlesListView.getRefreshableView().setEmptyView(findViewById(R.id.emptyView));
 
 		setBroadCastReceiver();
 		displayUnreadArticles();
@@ -200,6 +201,9 @@ public class ArticlesListActivity extends ListActivity {
 
 	private void displayUnreadArticles() {
 		articles = dbAdapter.getUnreadArticlesInAFeed(feedId);
+		if(articles.size() == 0 && dbAdapter.calcNumOfArticles(feedId) > 0) {
+			articles = dbAdapter.getAllArticlesInAFeed(feedId);
+		}
 		Log.d(LOG_TAG, "article size displayUnreadArticles():" + articles.size());
 		articlesListAdapter = new ArticlesListAdapter(articles);
 		articlesListView.setAdapter(articlesListAdapter);
@@ -317,7 +321,7 @@ public class ArticlesListActivity extends ListActivity {
 				// if(readStatus.containsKey(String.valueOf(position)) &&
 				// readStatus.getInt(String.valueOf(position)) ==
 				// article.getId()) {
-				if (article.getStatus().equals("toRead")) {
+				if (article.getStatus().equals(Article.TOREAD) || article.getStatus().equals(Article.READ)) {
 					articleTitle.setTextColor(Color.GRAY);
 					articlePostedTime.setTextColor(Color.GRAY);
 					articlePoint.setTextColor(Color.GRAY);
