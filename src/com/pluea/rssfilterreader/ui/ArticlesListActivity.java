@@ -90,7 +90,7 @@ public class ArticlesListActivity extends ListActivity {
 		articlesListView = (PullToRefreshListView) findViewById(R.id.articleListRefresh);
 
 		// When an article selected, open this URL in default browser
-		articlesListView
+		articlesListView.getRefreshableView()
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 					@Override
@@ -111,7 +111,7 @@ public class ArticlesListActivity extends ListActivity {
 
 				});
 
-		articlesListView.setOnTouchListener(new OnTouchListener() {
+		articlesListView.getRefreshableView().setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -142,7 +142,7 @@ public class ArticlesListActivity extends ListActivity {
 				try {
 					
 					touchedPosition = articlesListView.getRefreshableView().pointToPosition(
-							(int) event1.getX(), (int) event1.getY());
+							(int) event1.getX(), (int) event1.getY()) -1;
 					if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
 						return false;
 					}
