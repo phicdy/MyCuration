@@ -3,10 +3,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-     <com.handmark.pulltorefresh.library.PullToRefreshListView
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
         android:id="@+id/articleListRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:drawSelectorOnTop="false" />
+
+    <Button
+        android:id="@+id/all_read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:text="@string/all_read" />
 
 </LinearLayout>

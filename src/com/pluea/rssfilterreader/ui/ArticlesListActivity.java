@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import android.R.id;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -20,10 +18,12 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -165,6 +165,18 @@ public class ArticlesListActivity extends ListActivity {
 
 		};
 		mGestureDetector = new GestureDetector(this, mOnGestureListener);
+		
+		Button allRealButton = (Button)findViewById(R.id.all_read);
+		allRealButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				for (Article article : articles) {
+					article.setStatus(Article.TOREAD);
+				}
+				articlesListAdapter.notifyDataSetChanged();
+			}
+		});
 	}
 
 	private void setBroadCastReceiver() {

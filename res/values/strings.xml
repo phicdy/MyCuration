@@ -40,4 +40,6 @@
     <string name="interval">自動更新の頻度</string>
     <string name="hour">時間</string>
     <string name="save">保存</string>
+    
+    <string name="all_read">全て既読にする</string>
 </resources>
