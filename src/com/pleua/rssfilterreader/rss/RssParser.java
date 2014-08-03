@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.xmlpull.v1.XmlPullParser;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.Xml;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ public class RssParser {
     private static final int READ_TIMEOUT_MS = 60000;
     private static Context context_;
     private boolean isArticleFlag = false;
-    private static final String LOG_TAG = "RSSReader.RssParser";
+    private static final String LOG_TAG = "RSSREADER.RssParser";
      
     public RssParser(Context context) {
         dbAdapter = new DatabaseAdapter(context);
@@ -53,11 +54,10 @@ public class RssParser {
              
             //Start parse to the END_DOCUMENT
             int eventType = parser.getEventType();
+            String tag = parser.getName();
             while (eventType != XmlPullParser.END_DOCUMENT) {
-                String tag = null;
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
-                        tag = parser.getName();
                         //when new Item found, initialize currentItem
                         if(tag.equals("item")) {
                             article  = new  Article(0, null, null, null, "10", 0, 0);
@@ -66,13 +66,19 @@ public class RssParser {
                          
                         //add Title and Link to currentItem
                         if(itemFlag && tag.equals("title") && (article.getTitle() == null)) {
-                            article.setTitle(parser.nextText());
+                        	String title = parser.nextText();
+                        	Log.d(LOG_TAG, "set article title:" + title);
+                            article.setTitle(title);
                         }
                         if(itemFlag && tag.equals("link") && (article.getUrl() == null)) {
-                            article.setUrl(parser.nextText());
+                        	String url = parser.nextText();
+                        	Log.d(LOG_TAG, "set article URL:" + url);
+                            article.setUrl(url);
                         }
                         if(itemFlag && (tag.equals("date") || tag.equals("pubDate")) && (article.getPostedDate() == 0)) {
-                            article.setPostedDate(DateParser.changeToJapaneseDate(parser.nextText()));
+                        	String date = parser.nextText();
+                        	Log.d(LOG_TAG, "set article date:" + date);
+                        	article.setPostedDate(DateParser.changeToJapaneseDate(date));
                         }
                         break;
                      
@@ -127,4 +133,32 @@ public class RssParser {
         return null;
     }
      
+    private String translateEventType(int eventType) {
+    	String eventTypeString = "";
+    	switch (eventType) {
+		case XmlPullParser.START_TAG:
+			eventTypeString = "START_TAG";
+			break;
+		case XmlPullParser.END_TAG:
+			eventTypeString = "END_TAG";
+			break;
+		case XmlPullParser.START_DOCUMENT:
+			eventTypeString = "START_DOCUMENT";
+			break;
+		case XmlPullParser.END_DOCUMENT:
+			eventTypeString = "END_DOCUMENT";
+			break;
+		case XmlPullParser.ENTITY_REF:
+			eventTypeString = "ENTITY_REF";
+			break;
+		case XmlPullParser.TEXT:
+			eventTypeString = "TEXT";
+			break;
+		default:
+			eventTypeString = "Others:" + eventType;
+			break;
+		}
+    	
+    	return eventTypeString;
+    }
 }
