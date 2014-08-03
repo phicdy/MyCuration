@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -97,6 +98,17 @@ public class FeedListActivity extends Activity {
 				updateAllFeeds();
 			}
 		});
+		
+		TextView allUnread = (TextView)findViewById(R.id.allUnreadFeed);
+		allUnread.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				intent = new Intent(FeedListActivity.this,
+						ArticlesListActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	private void setBroadCastReceiver() {
@@ -107,6 +119,7 @@ public class FeedListActivity extends Activity {
 			public void onReceive(Context context, Intent intent) {
 				// Set num of unread articles and update UI
 				if (intent.getAction().equals(UPDATE_NUM_OF_ARTICLES)) {
+					Log.d(LOG_TAG, "onReceive");
 					updateNumOfUnreadArticles();
 					if(!UpdateTaskManager.getInstance(getApplicationContext()).isUpdating()) {
 						feedsListView.onRefreshComplete();

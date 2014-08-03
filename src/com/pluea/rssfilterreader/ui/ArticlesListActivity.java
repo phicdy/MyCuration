@@ -78,7 +78,7 @@ public class ArticlesListActivity extends ListActivity {
 
 		setAllListener();
 		articlesListView.getRefreshableView().setEmptyView(findViewById(R.id.emptyView));
-
+		
 		setBroadCastReceiver();
 		displayUnreadArticles();
 	}
@@ -204,9 +204,16 @@ public class ArticlesListActivity extends ListActivity {
 		PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
 		boolean isNewestArticleTop = mgr.getSortNewArticleTop();
 		
-		articles = dbAdapter.getUnreadArticlesInAFeed(feedId, isNewestArticleTop);
-		if(articles.size() == 0 && dbAdapter.calcNumOfArticles(feedId) > 0) {
-			articles = dbAdapter.getAllArticlesInAFeed(feedId, isNewestArticleTop);
+		if(feedId == BAD_FEED_ID) {
+			articles = dbAdapter.getAllUnreadArticles(isNewestArticleTop);
+			if(articles.size() == 0 && dbAdapter.calcNumOfArticles() > 0) {
+				articles = dbAdapter.getAllArticles(isNewestArticleTop);
+			}
+		}else {
+			articles = dbAdapter.getUnreadArticlesInAFeed(feedId, isNewestArticleTop);
+			if(articles.size() == 0 && dbAdapter.calcNumOfArticles(feedId) > 0) {
+				articles = dbAdapter.getAllArticlesInAFeed(feedId, isNewestArticleTop);
+			}
 		}
 		Log.d(LOG_TAG, "article size displayUnreadArticles():" + articles.size());
 		articlesListAdapter = new ArticlesListAdapter(articles);

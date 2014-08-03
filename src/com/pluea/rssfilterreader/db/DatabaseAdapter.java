@@ -104,6 +104,23 @@ public class DatabaseAdapter {
 		
 		return unreadArticlesCount;
 	}
+	
+	public int calcNumOfArticles() {
+		open("write");
+		int unreadArticlesCount = 0;
+		db.beginTransaction();
+		try {
+			String getArticlesCountsql = "select _id from articles";
+			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
+			unreadArticlesCount = countCursor.getCount();
+			countCursor.close();
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		
+		return unreadArticlesCount;
+	}
 
 	public ArrayList<Feed> getAllFeeds() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
@@ -256,23 +273,21 @@ public class DatabaseAdapter {
 		return getFeedByUrl(feedUrl);
 	}
 
-	public boolean changeArticlesStatusToRead() {
+	public void changeArticlesStatusToRead() {
 		// Use writeable DB
 		open("write");
 		db.beginTransaction();
 		try {
 			// Update articles read status in the "readstatus" to DB
 			ContentValues value = new ContentValues();
-			value.put("status", "write");
-			db.update("articles", value, "status = \"toRead\"", null);
+			value.put("status", Article.READ);
+			db.update("articles", value, "status = \"" + Article.TOREAD + "\"", null);
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
-			return false;
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
-		
-		return true;
 	}
 
 	public int getNumOfUnreadArtilces(int feedId) {
@@ -296,6 +311,81 @@ public class DatabaseAdapter {
 		return num;
 	}
 
+	public ArrayList<Article> getAllUnreadArticles(boolean isNewestArticleTop) {
+		ArrayList<Article> articles = new ArrayList<Article>();
+		open("write");
+		db.beginTransaction();
+		try {
+			// Get unread articles
+			String sql = "select _id,title,url,point,date,feedId from articles where status = \"unread\""
+					+ " order by date ";
+			if(isNewestArticleTop) {
+				sql += "desc";
+			}else {
+				sql += "asc";
+			}
+			Cursor cursor = db.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				int id = cursor.getInt(0);
+				String title = cursor.getString(1);
+				String url = cursor.getString(2);
+				String status = Article.UNREAD;
+				String point = cursor.getString(3);
+				long dateLong = cursor.getLong(4);
+				int feedId = cursor.getInt(5);
+				Article article = new Article(id, title, url, status, point,
+						dateLong, feedId);
+				articles.add(article);
+			}
+			cursor.close();
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			
+			return articles;
+		} finally {
+			db.endTransaction();
+		}
+		
+		return articles;
+	}
+	
+	public ArrayList<Article> getAllArticles(boolean isNewestArticleTop) {
+		ArrayList<Article> articles = new ArrayList<Article>();
+		open("write");
+		db.beginTransaction();
+		try {
+			// Get unread articles
+			String sql = "select _id,title,url,status,point,date,feedId from articles order by date ";
+			if(isNewestArticleTop) {
+				sql += "desc";
+			}else {
+				sql += "asc";
+			}
+			Cursor cursor = db.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				int id = cursor.getInt(0);
+				String title = cursor.getString(1);
+				String url = cursor.getString(2);
+				String status = cursor.getString(3);
+				String point = cursor.getString(4);
+				long dateLong = cursor.getLong(5);
+				int feedId = cursor.getInt(6);
+				Article article = new Article(id, title, url, status, point,
+						dateLong, feedId);
+				articles.add(article);
+			}
+			cursor.close();
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			
+			return articles;
+		} finally {
+			db.endTransaction();
+		}
+		
+		return articles;
+	}
+	
 	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
 		open("write");

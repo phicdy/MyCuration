@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.pleua.rssfilterreader.rss.Article;
 import com.pleua.rssfilterreader.rss.Feed;
@@ -18,6 +19,9 @@ public class UpdateFeedThread extends Thread {
 	private Context context;
 	private Feed feed;
 	private boolean isRunning = false;
+	
+	private static final String LOG_TAG = "RSSREADER."
+			+ UpdateFeedThread.class.getName();
 	
 	public UpdateFeedThread(Context context, Feed feed) {
 		this.context = context;
@@ -41,15 +45,14 @@ public class UpdateFeedThread extends Thread {
 			parseResult = rssParser.parseXml(urlString,
 					feedId);
 			// Update articles "toRead" status to "read"
-			if (!dbAdapter.changeArticlesStatusToRead()) {
-				return;
-			}
+			dbAdapter.changeArticlesStatusToRead();
 			
 			// Filter articles
 			if (parseResult) {
 				new FilterTask(context).applyFiltering(feedId);
 			}
 		} catch (IOException e) {
+			Log.d(LOG_TAG, "Parse error");
 			e.printStackTrace();
 		}
 

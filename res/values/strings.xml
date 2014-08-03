@@ -44,5 +44,6 @@
     <string name="saved">設定が保存されました</string>
     
     <string name="all_read">全て既読にする</string>
+    <string name="all_unread">未読記事一覧</string>
     <string name="no_article">未読の記事がありません</string>
 </resources>
