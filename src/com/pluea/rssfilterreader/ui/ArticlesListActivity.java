@@ -45,6 +45,7 @@ public class ArticlesListActivity extends ListActivity {
 	private int feedId;
 	private String feedUrl;
 	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
+	private PreferenceManager prefMgr;
 	private Intent intent;
 	private BroadcastReceiver receiver;
 	private PullToRefreshListView articlesListView;
@@ -76,6 +77,8 @@ public class ArticlesListActivity extends ListActivity {
 		intent.putExtra(FeedListActivity.FEED_ID, feedId);
 		// intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
 
+		prefMgr = PreferenceManager.getInstance(getApplicationContext());
+		
 		setAllListener();
 		articlesListView.getRefreshableView().setEmptyView(findViewById(R.id.emptyView));
 		
@@ -101,7 +104,7 @@ public class ArticlesListActivity extends ListActivity {
 
 						if(!isSwipeLeftToRight && !isSwipeRightToLeft) {
 							touchedPosition = position - 1;
-							setReadStatusToTouchedView(Color.GRAY, Article.TOREAD);
+							setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, false);
 							Uri uri = Uri
 									.parse(articles.get(position-1).getUrl());
 							intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -151,11 +154,11 @@ public class ArticlesListActivity extends ListActivity {
 
 					if (event1.getX() - event2.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-						setReadStatusToTouchedView(Color.GRAY, Article.TOREAD);
+						setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, prefMgr.getAllReadBack());
 						isSwipeLeftToRight = true;
 					} else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-						setReadStatusToTouchedView(Color.BLACK, Article.UNREAD);
+						setReadStatusToTouchedView(Color.BLACK, Article.UNREAD, prefMgr.getAllReadBack());
 						isSwipeRightToLeft = true;
 					}
 
@@ -177,6 +180,9 @@ public class ArticlesListActivity extends ListActivity {
 					article.setStatus(Article.TOREAD);
 				}
 				articlesListAdapter.notifyDataSetChanged();
+				if(prefMgr.getAllReadBack()) {
+					startActivity(new Intent(getApplicationContext(), FeedListActivity.class));
+				}
 			}
 		});
 	}
@@ -220,7 +226,7 @@ public class ArticlesListActivity extends ListActivity {
 		articlesListView.setAdapter(articlesListAdapter);
 	}
 
-	private void setReadStatusToTouchedView(int color, String status) {
+	private void setReadStatusToTouchedView(int color, String status, boolean isAllReadBack) {
 		View row = articlesListAdapter.getView(touchedPosition, null,
 				articlesListView);
 		// Change selected article's view
@@ -242,6 +248,19 @@ public class ArticlesListActivity extends ListActivity {
 		}
 		
 		articlesListAdapter.notifyDataSetChanged();
+		
+		if(isAllReadBack) {
+			boolean isAllRead = true;
+			for (Article article : articles) {
+				if(article.getStatus().equals(Article.UNREAD)) {
+					isAllRead = false;
+					break;
+				}
+			}
+			if(isAllRead) {
+				startActivity(new Intent(getApplicationContext(), FeedListActivity.class));
+			}
+		}
 	}
 
 	@Override

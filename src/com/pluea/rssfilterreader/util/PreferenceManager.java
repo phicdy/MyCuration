@@ -9,6 +9,8 @@ public class PreferenceManager extends Activity {
 	private static final String PREF_KEY = "FilterPref";
 	private static final String KEY_AUTO_UPDATE_INTERVAL = "autoUpdateInterval";
 	private static final String KEY_SORT_NEW_ARTICLE_TOP = "sortNewArticleTop";
+	private static final String KEY_ALL_READ_BACK = "allReadBack";
+	
 	public static int DEFAULT_VALUE = 0;
 	private static PreferenceManager preMgr;
 	private SharedPreferences pref = null;
@@ -49,6 +51,19 @@ public class PreferenceManager extends Activity {
 	public void setSortNewArticleTop(boolean isNewArticleTop) {
 		editor = pref.edit();
 		editor.putBoolean(KEY_SORT_NEW_ARTICLE_TOP, isNewArticleTop);
+		editor.commit();
+	}
+	
+	public boolean getAllReadBack() {
+		if(pref.contains(KEY_ALL_READ_BACK)) {
+			return pref.getBoolean(KEY_ALL_READ_BACK, true);
+		}
+		return true;
+	}
+
+	public void setAllReadBack(boolean isAllReadBack) {
+		editor = pref.edit();
+		editor.putBoolean(KEY_ALL_READ_BACK, isAllReadBack);
 		editor.commit();
 	}
 }

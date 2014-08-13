@@ -16,6 +16,7 @@ import com.pluea.rssfilterreader.util.PreferenceManager;
 public class SettingActivity extends Activity {
   
 	private CheckBox cbSortNewArticleTop;
+	private CheckBox cbAllReadBack;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,9 @@ public class SettingActivity extends Activity {
     	
     	cbSortNewArticleTop = (CheckBox)findViewById(R.id.cb_article_sort);
     	cbSortNewArticleTop.setChecked(mgr.getSortNewArticleTop());
+    	
+    	cbAllReadBack = (CheckBox)findViewById(R.id.cb_all_read_back);
+    	cbAllReadBack.setChecked(mgr.getAllReadBack());
     }
     
     private void setLitener() {
@@ -49,6 +53,7 @@ public class SettingActivity extends Activity {
 				mgr.setAutoUpdateInterval(Integer.valueOf(input));
 				
 				mgr.setSortNewArticleTop(cbSortNewArticleTop.isChecked());
+				mgr.setAllReadBack(cbAllReadBack.isChecked());
 				
 				AlarmManagerTaskManager.setNewAlarm(getApplicationContext());
 				
