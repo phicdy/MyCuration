@@ -100,7 +100,7 @@ public class RssParser {
                 }
                 // If article is already saved, stop parse
                 if(isArticleFlag) {
-                	break;
+//                	break;
                 }
                 eventType = parser.next();
                 tag = parser.getName();
