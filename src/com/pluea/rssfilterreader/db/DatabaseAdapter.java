@@ -52,7 +52,7 @@ public class DatabaseAdapter {
 					.compileStatement("insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);");
 			// articles passed isArticle(), so not need to check same article exist
 			for (Article article : articles) {
-				insertSt.bindString(1, sanitizing(article.getTitle()));
+				insertSt.bindString(1, article.getTitle());
 				insertSt.bindString(2, article.getUrl());
 				insertSt.bindString(3, "unread");
 				insertSt.bindString(4, DEDAULT_HATENA_POINT);
@@ -658,10 +658,8 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get same article
-			String sql = "select _id from articles where title = '"
-					+ article.getTitle() + "' and " + "url = '"
-					+ article.getUrl() + "' and " + "date = '"
-					+ article.getPostedDate() + "';";
+			String sql = "select _id from articles where url = '"
+					+ article.getUrl() + "';";
 			
 			Cursor cursor = db.rawQuery(sql, null);
 			num = cursor.getCount();
