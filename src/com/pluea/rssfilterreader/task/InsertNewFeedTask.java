@@ -58,7 +58,7 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
         //Display a dialog
         progress_ = new ProgressDialog(context);
         progress_.setMessage("Now loading");
-        progress_.show();
+//        progress_.show();
     }
   
     @Override
