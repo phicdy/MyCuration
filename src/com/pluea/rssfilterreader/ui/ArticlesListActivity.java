@@ -179,9 +179,10 @@ public class ArticlesListActivity extends ListActivity {
 				for (Article article : articles) {
 					article.setStatus(Article.TOREAD);
 				}
-				articlesListAdapter.notifyDataSetChanged();
 				if(prefMgr.getAllReadBack()) {
 					startActivity(new Intent(getApplicationContext(), FeedListActivity.class));
+				}else {
+					articlesListAdapter.notifyDataSetChanged();
 				}
 			}
 		});
