@@ -133,7 +133,7 @@ public class ArticlesListActivity extends ListActivity {
 						.getInstance(getApplicationContext());
 					// Update Feeds
 				ArrayList<Feed> feeds = new ArrayList<Feed>();
-				feeds.add(new Feed(feedId, null, feedUrl));
+				feeds.add(new Feed(feedId, null, feedUrl, "", ""));
 				updateTaskManager.updateAllFeeds(feeds);
 			}
 		});
@@ -248,8 +248,6 @@ public class ArticlesListActivity extends ListActivity {
 			}
 		}
 		
-		articlesListAdapter.notifyDataSetChanged();
-		
 		if(isAllReadBack) {
 			boolean isAllRead = true;
 			for (Article article : articles) {
@@ -262,6 +260,8 @@ public class ArticlesListActivity extends ListActivity {
 				startActivity(new Intent(getApplicationContext(), FeedListActivity.class));
 			}
 		}
+		
+		articlesListAdapter.notifyDataSetChanged();
 	}
 
 	@Override

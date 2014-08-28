@@ -51,7 +51,7 @@ public class RegisterFilter extends Activity {
 				int id = cur.getInt(0);
 				String title = cur.getString(1);
 				String url = cur.getString(2);
-				Feed feed = new Feed(id,title,url);
+				Feed feed = new Feed(id,title,url,"", "");
 				feedsList.add(feed);
 				indent++;
 			}

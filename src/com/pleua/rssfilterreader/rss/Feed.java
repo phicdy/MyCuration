@@ -6,14 +6,26 @@ public class Feed {
 	private int id_;
 	private String title_;
 	private String url_;
+	private String iconPath;
 	private int unreadAriticlesCount_;
+	private String siteUrl;
 	
-	public Feed(int id,String title,String url) {
+	public Feed(int id,String title,String url, String iconPath, String siteUrl) {
 		id_    = id;
 		title_ = title;
 		url_   = url;
+		this.iconPath = iconPath;
+		this.siteUrl = siteUrl;
 	}
 	
+	public String getSiteUrl() {
+		return siteUrl;
+	}
+
+	public void setSiteUrl(String siteUrl) {
+		this.siteUrl = siteUrl;
+	}
+
 	public void setTitle(String title) {
 		title_ = title;
 	}
@@ -45,5 +57,10 @@ public class Feed {
 	public String getUrl() {
 		return url_;
 	}
+
+	public String getIconPath() {
+		return iconPath;
+	}
+	
 	
 }

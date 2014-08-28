@@ -1,5 +1,6 @@
 package com.pluea.rssfilterreader.ui;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -10,6 +11,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -24,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,8 +37,10 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.pleua.rssfilterreader.rss.Feed;
+import com.pleua.rssfilterreader.rss.IconParser;
 import com.pluea.rssfilterreader.alarm.AlarmManagerTaskManager;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.task.GetFeedIconTask;
 import com.pluea.rssfilterreader.task.InsertNewFeedTask;
 import com.pluea.rssfilterreader.task.UpdateTaskManager;
 
@@ -71,6 +77,8 @@ public class FeedListActivity extends Activity {
 			dbAdapter.addManyFeeds();
 		}
 		feeds = dbAdapter.getAllFeeds();
+		getFeedIconIfNeeded(feeds);
+		
 		
 		registerForContextMenu(feedsListView.getRefreshableView());
 	}
@@ -295,6 +303,15 @@ public class FeedListActivity extends Activity {
 		}
 	}
 
+	private void getFeedIconIfNeeded(ArrayList<Feed> feeds) {
+		for (Feed feed : feeds) {
+			if(feed.getIconPath() == null || feed.getIconPath().equals(DatabaseAdapter.DEDAULT_ICON_PATH)) {
+				GetFeedIconTask task = new GetFeedIconTask(getApplicationContext());
+				task.execute(feed.getSiteUrl());
+			}
+		}
+	}
+	
 	/**
 	 * 
 	 * @author kyamaguchi Display RSS Feeds List
@@ -316,6 +333,16 @@ public class FeedListActivity extends Activity {
 
 			Feed feed = this.getItem(position);
 
+			ImageView feedIcon = (ImageView)row.findViewById(R.id.feedIcon);
+			String iconPath = feed.getIconPath();
+			if(iconPath != null && !iconPath.equals(DatabaseAdapter.DEDAULT_ICON_PATH)) {
+				File file = new File(iconPath);
+			    if (file.exists()) {
+		            Bitmap bmp = BitmapFactory.decodeFile(file.getPath());
+		            feedIcon.setImageBitmap(bmp); 
+			    }
+			}
+			
 			// set RSS Feed title
 			TextView feedTitle = (TextView) row.findViewById(R.id.feedTitle);
 			feedTitle.setText(feed.getTitle());

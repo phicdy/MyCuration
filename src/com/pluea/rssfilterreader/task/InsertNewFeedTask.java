@@ -58,12 +58,10 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
         //Display a dialog
         progress_ = new ProgressDialog(context);
         progress_.setMessage("Now loading");
-//        progress_.show();
     }
   
     @Override
     protected void onProgressUpdate(String... values) {
-        // TODO Auto-generated method stub
         super.onProgressUpdate(values);
     }
       
@@ -109,6 +107,10 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
     }
       
     private Feed judgeXml(InputStream is,String feedUrl) throws IOException{
+    	String format = null;
+    	String feedTitle = null;
+    	String siteURL = null;
+    	
         try {
             //Initialize XmlPullParser
             XmlPullParser parser = Xml.newPullParser();
@@ -116,10 +118,9 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
             //Whether FileType is RSS
             boolean rssFlag = false;
             //RSS Format
-            String format = new String();
-              
+            
             //RSS Format is 
-            //<feed><title>�E�E�E or <rdf(or rss)><channel><title>�E�E�E , 
+            //<feed><title> or <rdf(or rss)><channel><title> , 
             //so check start tag <feed> or <rdf> or <rss> and then <title>
             parser.setInput(is, "UTF-8");
             int eventType = parser.getEventType();
@@ -142,17 +143,24 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
                       
                     if(rssFlag && tag.equals("title")) {
                         //Feed title
-                        String feedTitle = parser.nextText();
-                        return dbAdapter.saveNewFeed(feedTitle,feedUrl,format);
+                        feedTitle = parser.nextText();
+                    }
+                    
+                  //Site title exist first "link" tag before item
+                    if(rssFlag && tag.equals("link")) {
+                    	siteURL = parser.nextText();
                     }
                       
                 }
                 eventType = parser.next();
+                if(format != null && feedTitle != null && siteURL != null) {
+                	break;
+                }
             }
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return dbAdapter.saveNewFeed(feedTitle,feedUrl,format, siteURL);
     }
       
  

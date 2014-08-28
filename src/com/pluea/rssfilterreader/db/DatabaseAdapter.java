@@ -17,6 +17,7 @@ public class DatabaseAdapter {
 	public static final String DATABASENAME = "rss_manage";
 	public static final int DATABASEVERSION = 1;
 	public static final String DEDAULT_HATENA_POINT = "-1";
+	public static final String DEDAULT_ICON_PATH = "defaultIconPath";
 
 	private Context context;
 	private static DatabaseHelper dbHelper;
@@ -125,14 +126,16 @@ public class DatabaseAdapter {
 	public ArrayList<Feed> getAllFeeds() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		open("write");
-		String sql = "select _id,title,url from feeds order by title";
+		String sql = "select _id,title,url,iconPath,siteUrl from feeds order by title";
 		Cursor cursor = db.rawQuery(sql, null);
 		if (cursor != null) {
 			while (cursor.moveToNext()) {
 				int id = cursor.getInt(0);
 				String title = cursor.getString(1);
 				String url = cursor.getString(2);
-				feedList.add(new Feed(id, title, url));
+				String iconPath = cursor.getString(3);
+				String siteUrl = cursor.getString(4);
+				feedList.add(new Feed(id, title, url, iconPath, siteUrl));
 			}
 		}
 		cursor.close();
@@ -160,6 +163,20 @@ public class DatabaseAdapter {
 			ContentValues values = new ContentValues();
 			values.put("status", status);
 			db.update("articles", values, "_id = " + articleId, null);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		
+	}
+	
+	public void saveIconPath(String siteUrl, String iconPath) {
+		open("write");
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put("iconPath", iconPath);
+			db.update("feeds", values, "siteUrl = '" + siteUrl + "'", null);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -218,15 +235,17 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get feed
-			String getFeedSql = "select _id,title from feeds where url = \""
+			String getFeedSql = "select _id,title,iconPath,siteUrl from feeds where url = \""
 					+ feedUrl + "\"";
 			Cursor cur = db.rawQuery(getFeedSql, null);
 			if (cur.getCount() != 0) {
 				cur.moveToNext();
 				int feedId = cur.getInt(0);
 				String feedTitle = cur.getString(1);
+				String iconPath = cur.getString(2);
+				String siteUrl = cur.getString(3);
 
-				feed = new Feed(feedId, feedTitle, feedUrl);
+				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, siteUrl);
 			}
 			db.setTransactionSuccessful();
 		} finally {
@@ -235,7 +254,7 @@ public class DatabaseAdapter {
 		return feed;
 	}
 
-	public Feed saveNewFeed(String feedTitle, String feedUrl, String format) {
+	public Feed saveNewFeed(String feedTitle, String feedUrl, String format, String siteUrl) {
 		boolean sameFeedExist = false;
 
 		// Use writeable DB
@@ -254,6 +273,8 @@ public class DatabaseAdapter {
 				values.put("title", feedTitle);
 				values.put("url", feedUrl);
 				values.put("format", format);
+				values.put("iconPath", DEDAULT_ICON_PATH);
+				values.put("siteUrl", siteUrl);
 				if (db.insert("feeds", null, values) == -1) {
 					Log.v("insert error", "error occurred");
 				}
@@ -355,7 +376,7 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select _id,title,url,status,point,date,feedId from articles order by date ";
+			String sql = "select _id,title,url,status,point,date from articles order by date ";
 			if(isNewestArticleTop) {
 				sql += "desc";
 			}else {
@@ -444,6 +465,8 @@ public class DatabaseAdapter {
 				String status = cursor.getString(3);
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
+				String siteUrl = cursor.getString(6);
+				String iconPath = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
 						dateLong, feedId);
 				articles.add(article);
@@ -619,17 +642,26 @@ public class DatabaseAdapter {
 //		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
 //				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
 		feeds.add(new Feed(0, "IT速報",
-				"http://blog.livedoor.jp/itsoku/index.rdf"));
+				"http://blog.livedoor.jp/itsoku/index.rdf","", "http://blog.livedoor.jp/itsoku/"));
 		feeds.add(new Feed(0, "あじゃじゃしたー",
-				"http://blog.livedoor.jp/chihhylove/index.rdf"));
+				"http://blog.livedoor.jp/chihhylove/index.rdf","", "http://blog.livedoor.jp/chihhylove/"));
 		feeds.add(new Feed(0, "はてなブログ人気エントリー",
-				"http://b.hatena.ne.jp/hotentry.rss"));
+				"http://b.hatena.ne.jp/hotentry.rss","", "http://b.hatena.ne.jp"));
+		feeds.add(new Feed(0, "はてなブックマーク - 人気エントリー - テクノロジー",
+				"http://b.hatena.ne.jp/hotentry/it.rss","", "http://b.hatena.ne.jp/hotentry"));
 		feeds.add(new Feed(0, "暇人速報",
-				"http://himasoku.com/index.rdf"));
+				"http://himasoku.com/index.rdf","", "http://himasoku.com"));
 		feeds.add(new Feed(0, "ドメサカブログ",
-				"http://blog.livedoor.jp/domesoccer/index.rdf"));
+				"http://blog.livedoor.jp/domesoccer/index.rdf","", "http://blog.livedoor.jp/domesoccer/"));
 		feeds.add(new Feed(0, "きんどう",
-				"http://kindou.info/feed"));
+				"http://kindou.info/feed","", "http://kindou.info"));
+		feeds.add(new Feed(0, "GGSOKU - ガジェット速報",
+				"http://ggsoku.com/feed","", "http://ggsoku.com"));
+		feeds.add(new Feed(0, "すまほん!!",
+				"http://smhn.info/feed","", "http://smhn.info"));
+		feeds.add(new Feed(0, "すまほん!!",
+				"http://smhn.info/feed","", "http://smhn.info"));
+		
 		//atom
 //		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
 //				"http://feeds.feedburner.com/tb-hotentry"));
@@ -644,7 +676,7 @@ public class DatabaseAdapter {
 
 			// If there aren't same feeds in DB,Insert into DB
 			for (Feed feed : feeds) {
-				saveNewFeed(feed.getTitle(), feed.getUrl(), "RSS2.0");
+				saveNewFeed(feed.getTitle(), feed.getUrl(), "RSS2.0", feed.getSiteUrl());
 			}
 			db.setTransactionSuccessful();
 		} finally {

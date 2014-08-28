@@ -9,8 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper{
   
     public DatabaseHelper(Context context) {
-        //String extraStoragePath = Environment.getExternalStorageDirectory()+"/rss_manage";
-        super(context, "rss_manage", null, 3);
+        super(context, "rss_manage", null, 1);
     }
   
     //onCreate() is called when database is created
@@ -20,7 +19,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 "create table feeds(_id integer primary key autoincrement,"+
                 "title text,"+
                 "url text,"+
-                "format text)";
+                "format text," +
+                "siteUrl text," + 
+                "iconPath text)";
         String createArticlesTableSQL =
                 "create table articles(_id integer primary key autoincrement,"+
                 "title text,"+
@@ -62,11 +63,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     //onUpgrade() is called when database version changes
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//        // TODO Auto-generated method stub
-//        if(oldVersion < newVersion) {
-//        String sql = "alter table filters add title text";
-//        db.execSQL(sql);
-//        }
     }
   
 }
