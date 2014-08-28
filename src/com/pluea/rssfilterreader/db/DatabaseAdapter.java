@@ -465,8 +465,6 @@ public class DatabaseAdapter {
 				String status = cursor.getString(3);
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
-				String siteUrl = cursor.getString(6);
-				String iconPath = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
 						dateLong, feedId);
 				articles.add(article);
