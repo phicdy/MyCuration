@@ -82,7 +82,6 @@ public class ArticlesListActivity extends ListActivity {
 		setAllListener();
 		articlesListView.getRefreshableView().setEmptyView(findViewById(R.id.emptyView));
 		
-		setBroadCastReceiver();
 		displayUnreadArticles();
 	}
 
@@ -188,25 +187,6 @@ public class ArticlesListActivity extends ListActivity {
 		});
 	}
 
-	private void setBroadCastReceiver() {
-		// receive from Update Task after update task finished
-		receiver = new BroadcastReceiver() {
-
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				String action = intent.getAction();
-				if(action.equals(FeedListActivity.UPDATE_NUM_OF_ARTICLES)) {
-					displayUnreadArticles();
-					articlesListAdapter.notifyDataSetChanged();
-					articlesListView.onRefreshComplete();
-				}
-			}
-		};
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(FeedListActivity.UPDATE_NUM_OF_ARTICLES);
-		registerReceiver(receiver, filter);
-	}
-
 	private void displayUnreadArticles() {
 		PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
 		boolean isNewestArticleTop = mgr.getSortNewArticleTop();
@@ -287,7 +267,6 @@ public class ArticlesListActivity extends ListActivity {
 	@Override
 	protected void onDestroy() {
 		// onSaveInstanceState(readStatus);
-		unregisterReceiver(receiver);
 		super.onDestroy();
 	}
 	
