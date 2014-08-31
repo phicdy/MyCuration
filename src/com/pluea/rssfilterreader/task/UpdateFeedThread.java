@@ -7,11 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.pleua.rssfilterreader.rss.Article;
-import com.pleua.rssfilterreader.rss.Feed;
-import com.pleua.rssfilterreader.rss.RssParser;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
 import com.pluea.rssfilterreader.filter.FilterTask;
+import com.pluea.rssfilterreader.rss.Article;
+import com.pluea.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.rss.RssParser;
 import com.pluea.rssfilterreader.ui.FeedListActivity;
 
 public class UpdateFeedThread extends Thread {

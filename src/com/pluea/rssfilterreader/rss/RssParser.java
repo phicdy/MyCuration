@@ -1,4 +1,4 @@
-package com.pleua.rssfilterreader.rss;
+package com.pluea.rssfilterreader.rss;
  
 import java.io.IOException;
 import java.io.InputStream;

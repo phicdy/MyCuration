@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.task.UpdateTaskManager;
 
 public class AutoUpdateBroadcastReciever extends BroadcastReceiver {

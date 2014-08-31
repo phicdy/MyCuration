@@ -14,9 +14,9 @@ import android.util.Xml;
 import android.widget.Toast;
 
 import com.example.rssfilterreader.R;
-import com.pleua.rssfilterreader.rss.Feed;
-import com.pleua.rssfilterreader.rss.RssParser;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.rss.RssParser;
   
 /**
  * 

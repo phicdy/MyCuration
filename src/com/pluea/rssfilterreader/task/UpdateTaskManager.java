@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 
-import com.pleua.rssfilterreader.rss.Feed;
+import com.pluea.rssfilterreader.rss.Feed;
 
 
 public class UpdateTaskManager {

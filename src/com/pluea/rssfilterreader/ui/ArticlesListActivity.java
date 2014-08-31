@@ -32,9 +32,9 @@ import com.example.rssfilterreader.R;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.pleua.rssfilterreader.rss.Article;
-import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.rss.Article;
+import com.pluea.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.task.UpdateTaskManager;
 import com.pluea.rssfilterreader.util.PreferenceManager;
 

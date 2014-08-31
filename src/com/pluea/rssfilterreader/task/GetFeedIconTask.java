@@ -15,9 +15,9 @@ import java.net.URL;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.pleua.rssfilterreader.rss.Article;
-import com.pleua.rssfilterreader.rss.IconParser;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.rss.Article;
+import com.pluea.rssfilterreader.rss.IconParser;
 import com.pluea.rssfilterreader.util.FileUtil;
 
 public class GetFeedIconTask extends AsyncTask<String, Void, Void> {

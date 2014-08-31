@@ -9,8 +9,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-import com.pleua.rssfilterreader.rss.Article;
 import com.pluea.rssfilterreader.db.DatabaseAdapter;
+import com.pluea.rssfilterreader.rss.Article;
 
 import android.content.Context;
 import android.content.Intent;
@@ -94,9 +94,9 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	private int getHatenaCount(URL url) throws IOException {
 		int count = 0;
 		try {
-			// Ú‘±
+			// ï¿½Ú‘ï¿½
 			URLConnection uc = url.openConnection();
-			// HTML‚ð“Ç‚Ýž‚Þ
+			// HTMLï¿½ï¿½Ç‚Ýï¿½ï¿½ï¿½
 			BufferedInputStream bis = new BufferedInputStream(
 					uc.getInputStream());
 			BufferedReader br = new BufferedReader(new InputStreamReader(bis,

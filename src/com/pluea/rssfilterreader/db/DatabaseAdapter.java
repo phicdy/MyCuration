@@ -2,9 +2,9 @@ package com.pluea.rssfilterreader.db;
 
 import java.util.ArrayList;
 
-import com.pleua.rssfilterreader.rss.Article;
-import com.pleua.rssfilterreader.rss.Feed;
 import com.pluea.rssfilterreader.filter.Filter;
+import com.pluea.rssfilterreader.rss.Article;
+import com.pluea.rssfilterreader.rss.Feed;
 
 import android.content.ContentValues;
 import android.content.Context;
