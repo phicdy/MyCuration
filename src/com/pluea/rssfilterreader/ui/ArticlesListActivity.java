@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.rssfilterreader.R;
@@ -78,11 +81,49 @@ public class ArticlesListActivity extends ListActivity {
 		// intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
 
 		prefMgr = PreferenceManager.getInstance(getApplicationContext());
+		if(feedId != BAD_FEED_ID) {
+			prefMgr.setSearchFeedId(feedId);
+		}
 		
 		setAllListener();
 		articlesListView.getRefreshableView().setEmptyView(findViewById(R.id.emptyView));
 		
-		displayUnreadArticles();
+		handleIntent(getIntent());
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_article, menu);
+
+		// Associate searchable configuration with the SearchView
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView = (SearchView) menu.findItem(R.id.search)
+				.getActionView();
+		searchView.setSearchableInfo(searchManager
+				.getSearchableInfo(getComponentName()));
+
+		return true;
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		handleIntent(intent);
+	}
+
+	private void handleIntent(Intent intent) {
+
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			boolean isNewestArticleTop = prefMgr.getSortNewArticleTop();
+
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			articles = dbAdapter.searchArticles(query, prefMgr.getSearchFeedId(),
+					isNewestArticleTop);
+			articlesListAdapter = new ArticlesListAdapter(articles);
+			articlesListView.setAdapter(articlesListAdapter);
+		} else {
+			displayUnreadArticles();
+		}
 	}
 
 	@Override

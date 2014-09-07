@@ -407,6 +407,47 @@ public class DatabaseAdapter {
 		return articles;
 	}
 	
+	public ArrayList<Article> searchArticles(String keyword, int feedId, boolean isNewestArticleTop) {
+		ArrayList<Article> articles = new ArrayList<Article>();
+		open("write");
+		db.beginTransaction();
+		try {
+			if(keyword.contains("%")) {
+				keyword.replace("%", "$%");
+			}
+			if(keyword.contains("_")) {
+				keyword.replace("_", "$_");
+			}
+			String sql = "select _id,title,url,status,point,date from articles " +
+					"where title like '%" + keyword + "%' escape '$' and feedId = " + feedId + " order by date";
+			if(isNewestArticleTop) {
+				sql += " desc";
+			}else {
+				sql += " asc";
+			}
+			Cursor cursor = db.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				int id = cursor.getInt(0);
+				String title = cursor.getString(1);
+				String url = cursor.getString(2);
+				String status = cursor.getString(3);
+				String point = cursor.getString(4);
+				long dateLong = cursor.getLong(5);
+				Article article = new Article(id, title, url, status, point,
+						dateLong, feedId);
+				articles.add(article);
+			}
+			cursor.close();
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+		
+		return articles;
+	}
+	
 	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
 		open("write");

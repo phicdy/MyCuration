@@ -10,6 +10,7 @@ public class PreferenceManager extends Activity {
 	private static final String KEY_AUTO_UPDATE_INTERVAL = "autoUpdateInterval";
 	private static final String KEY_SORT_NEW_ARTICLE_TOP = "sortNewArticleTop";
 	private static final String KEY_ALL_READ_BACK = "allReadBack";
+	private static final String KEY_SEARCH_FEED_ID = "searchFeedId";
 	
 	public static int DEFAULT_VALUE = 0;
 	private static PreferenceManager preMgr;
@@ -64,6 +65,19 @@ public class PreferenceManager extends Activity {
 	public void setAllReadBack(boolean isAllReadBack) {
 		editor = pref.edit();
 		editor.putBoolean(KEY_ALL_READ_BACK, isAllReadBack);
+		editor.commit();
+	}
+	
+	public int getSearchFeedId() {
+		if(pref.contains(KEY_SEARCH_FEED_ID)) {
+			return pref.getInt(KEY_SEARCH_FEED_ID, DEFAULT_VALUE);
+		}
+		return DEFAULT_VALUE;
+	}
+
+	public void setSearchFeedId(int feedId) {
+		editor = pref.edit();
+		editor.putInt(KEY_SEARCH_FEED_ID, feedId);
 		editor.commit();
 	}
 }

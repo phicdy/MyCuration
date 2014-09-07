@@ -49,4 +49,6 @@
     <string name="no_article">未読の記事がありません</string>
     
     <string name="icon">アイコン</string>
+    
+    <string name="search_article">記事を検索</string>
 </resources>
