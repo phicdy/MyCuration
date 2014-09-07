@@ -22,6 +22,7 @@
             android:name="com.pluea.rssfilterreader.ui.StartActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -60,12 +61,12 @@
             android:label="@string/app_name" >
         </activity>
 
-        <receiver 
+        <receiver
             android:name="com.pluea.rssfilterreader.alarm.AutoUpdateBroadcastReciever"
-            android:process=":remote"
-            android:exported="false" >
-            <intent-filter >
-                <action android:name="autoUpdateFeed"/>
+            android:exported="false"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="autoUpdateFeed" />
             </intent-filter>
         </receiver>
     </application>
