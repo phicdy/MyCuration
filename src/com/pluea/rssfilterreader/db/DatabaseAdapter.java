@@ -747,4 +747,15 @@ public class DatabaseAdapter {
 		}
 		return false;
 	}
+	
+	public void deleteAllArticles() {
+		open("write");
+		db.beginTransaction();
+		try {
+			db.delete("articles", "", null);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
 }
