@@ -220,7 +220,7 @@ public class ArticlesListActivity extends ListActivity {
 					article.setStatus(Article.TOREAD);
 				}
 				if(prefMgr.getAllReadBack()) {
-					startActivity(new Intent(getApplicationContext(), FeedListActivity.class));
+					finish();
 				}else {
 					articlesListAdapter.notifyDataSetChanged();
 				}
