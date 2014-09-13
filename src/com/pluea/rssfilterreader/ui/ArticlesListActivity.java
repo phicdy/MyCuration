@@ -60,6 +60,7 @@ public class ArticlesListActivity extends ListActivity {
 	private static final int SWIPE_MAX_OFF_PATH = 250;
 	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 	private static final int NO_SWIPE_WIDTH = 10;
+	public static final String OPEN_URL_ID = "openUrl";
 	private static final String LOG_TAG = "RSSReader.ArticlesList";
 
 	private GestureDetector mGestureDetector;
@@ -145,10 +146,16 @@ public class ArticlesListActivity extends ListActivity {
 						if(!isSwipeLeftToRight && !isSwipeRightToLeft) {
 							touchedPosition = position - 1;
 							setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, false);
-							Uri uri = Uri
-									.parse(articles.get(position-1).getUrl());
-							intent = new Intent(Intent.ACTION_VIEW, uri);
+							if(prefMgr.isOpenInternal()) {
+								intent = new Intent(getApplicationContext(), InternalWebViewActivity.class);
+								intent.putExtra(OPEN_URL_ID, articles.get(position-1).getUrl());
+							}else {
+								Uri uri = Uri
+										.parse(articles.get(position-1).getUrl());
+								intent = new Intent(Intent.ACTION_VIEW, uri);
+							}
 							startActivity(intent);
+							
 						}
 						isSwipeRightToLeft = false;
 						isSwipeLeftToRight = false;

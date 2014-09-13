@@ -11,6 +11,7 @@ public class PreferenceManager extends Activity {
 	private static final String KEY_SORT_NEW_ARTICLE_TOP = "sortNewArticleTop";
 	private static final String KEY_ALL_READ_BACK = "allReadBack";
 	private static final String KEY_SEARCH_FEED_ID = "searchFeedId";
+	private static final String KEY_OPEN_INTERNAL_ID = "openInternal";
 	
 	public static int DEFAULT_VALUE = 0;
 	private static PreferenceManager preMgr;
@@ -78,6 +79,19 @@ public class PreferenceManager extends Activity {
 	public void setSearchFeedId(int feedId) {
 		editor = pref.edit();
 		editor.putInt(KEY_SEARCH_FEED_ID, feedId);
+		editor.commit();
+	}
+	
+	public boolean isOpenInternal() {
+		if(pref.contains(KEY_OPEN_INTERNAL_ID)) {
+			return pref.getBoolean(KEY_OPEN_INTERNAL_ID, false);
+		}
+		return false;
+	}
+
+	public void setOpenInternal(boolean isOpenInternal) {
+		editor = pref.edit();
+		editor.putBoolean(KEY_OPEN_INTERNAL_ID, isOpenInternal);
 		editor.commit();
 	}
 }

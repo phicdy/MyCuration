@@ -17,6 +17,7 @@ public class SettingActivity extends Activity {
   
 	private CheckBox cbSortNewArticleTop;
 	private CheckBox cbAllReadBack;
+	private CheckBox cbOpenInternal;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,9 @@ public class SettingActivity extends Activity {
     	
     	cbAllReadBack = (CheckBox)findViewById(R.id.cb_all_read_back);
     	cbAllReadBack.setChecked(mgr.getAllReadBack());
+    	
+    	cbOpenInternal = (CheckBox)findViewById(R.id.cb_open_internal);
+    	cbOpenInternal.setChecked(mgr.isOpenInternal());
     }
     
     private void setLitener() {
@@ -54,6 +58,7 @@ public class SettingActivity extends Activity {
 				
 				mgr.setSortNewArticleTop(cbSortNewArticleTop.isChecked());
 				mgr.setAllReadBack(cbAllReadBack.isChecked());
+				mgr.setOpenInternal(cbOpenInternal.isChecked());
 				
 				AlarmManagerTaskManager.setNewAlarm(getApplicationContext());
 				
