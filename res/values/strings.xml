@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">RSSFilterReader</string>
+    <string name="app_name">FilFeed</string>
     <string name="action_settings">Settings</string>
     <string name="add_filter_button">+</string>
     <string name="keyword">キーワード</string>
