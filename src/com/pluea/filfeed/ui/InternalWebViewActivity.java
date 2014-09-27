@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
 
-import com.example.rssfilterreader.R;
+import com.pluea.filfeed.R;
 
 public class InternalWebViewActivity extends Activity {
 	

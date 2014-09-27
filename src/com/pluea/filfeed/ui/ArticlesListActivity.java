@@ -31,10 +31,10 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.example.rssfilterreader.R;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.pluea.filfeed.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.rss.Article;
 import com.pluea.filfeed.rss.Feed;

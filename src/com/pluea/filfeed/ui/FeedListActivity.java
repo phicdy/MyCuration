@@ -32,14 +32,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.rssfilterreader.R;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.pluea.filfeed.R;
 import com.pluea.filfeed.alarm.AlarmManagerTaskManager;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.rss.Feed;
-import com.pluea.filfeed.rss.IconParser;
 import com.pluea.filfeed.task.GetFeedIconTask;
 import com.pluea.filfeed.task.InsertNewFeedTask;
 import com.pluea.filfeed.task.UpdateTaskManager;

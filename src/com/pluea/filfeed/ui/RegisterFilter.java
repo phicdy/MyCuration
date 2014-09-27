@@ -2,11 +2,6 @@ package com.pluea.filfeed.ui;
 
 import java.util.ArrayList;
 
-import com.example.rssfilterreader.R;
-import com.pluea.filfeed.db.DatabaseAdapter;
-import com.pluea.filfeed.db.DatabaseHelper;
-import com.pluea.filfeed.rss.Feed;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,6 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.pluea.filfeed.R;
+import com.pluea.filfeed.db.DatabaseAdapter;
+import com.pluea.filfeed.db.DatabaseHelper;
+import com.pluea.filfeed.rss.Feed;
 
 public class RegisterFilter extends Activity {
 

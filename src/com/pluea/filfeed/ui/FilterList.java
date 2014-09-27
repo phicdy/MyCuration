@@ -2,11 +2,6 @@ package com.pluea.filfeed.ui;
 
 import java.util.ArrayList;
 
-import com.example.rssfilterreader.R;
-import com.pluea.filfeed.db.DatabaseAdapter;
-import com.pluea.filfeed.db.DatabaseHelper;
-import com.pluea.filfeed.filter.Filter;
-
 import android.R.id;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -14,17 +9,22 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.pluea.filfeed.R;
+import com.pluea.filfeed.db.DatabaseAdapter;
+import com.pluea.filfeed.db.DatabaseHelper;
+import com.pluea.filfeed.filter.Filter;
 
 public class FilterList extends ListActivity {
 

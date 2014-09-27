@@ -9,7 +9,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.rssfilterreader.R;
+import com.pluea.filfeed.R;
 import com.pluea.filfeed.alarm.AlarmManagerTaskManager;
 import com.pluea.filfeed.util.PreferenceManager;
   
