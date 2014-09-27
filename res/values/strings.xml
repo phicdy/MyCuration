@@ -3,6 +3,10 @@
 
     <string name="app_name">FilFeed</string>
     <string name="action_settings">Settings</string>
+    
+    <string name="all_unread">未読記事一覧</string>
+    <string name="show_no_unread_feed">未読のないフィードを表示する</string>
+    
     <string name="add_filter_button">+</string>
     <string name="keyword">キーワード</string>
     <string name="include">を含む</string>
@@ -46,7 +50,6 @@
     <string name="saved">設定が保存されました</string>
     
     <string name="all_read">全て既読にする</string>
-    <string name="all_unread">未読記事一覧</string>
     <string name="no_article">未読の記事がありません</string>
     
     <string name="icon">アイコン</string>

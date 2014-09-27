@@ -116,6 +116,20 @@ public class FeedListActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		
+		TextView showNoUnread = (TextView)findViewById(R.id.showNoUnread);
+		showNoUnread.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				feeds = dbAdapter.getAllFeeds();
+				updateNumOfUnreadArticles(false);
+
+				// Set ListView
+				rssFeedListAdapter = new RssFeedListAdapter(feeds);
+				feedsListView.setAdapter(rssFeedListAdapter);
+			}
+		});
 	}
 
 	private void setBroadCastReceiver() {
@@ -129,7 +143,7 @@ public class FeedListActivity extends Activity {
 					Log.d(LOG_TAG, "onReceive");
 					if(!UpdateTaskManager.getInstance(getApplicationContext()).isUpdating()) {
 						feedsListView.onRefreshComplete();
-						updateNumOfUnreadArticles();
+						updateNumOfUnreadArticles(true);
 					}
 				}
 			}
@@ -206,7 +220,7 @@ public class FeedListActivity extends Activity {
 			feeds = dbAdapter.getAllFeeds();
 		}
 //		updateAllFeeds();
-		updateNumOfUnreadArticles();
+		updateNumOfUnreadArticles(true);
 
 		// Set ListView
 		rssFeedListAdapter = new RssFeedListAdapter(feeds);
@@ -288,14 +302,24 @@ public class FeedListActivity extends Activity {
 		}
 	}
 
-	private void updateNumOfUnreadArticles() {
+	private void updateNumOfUnreadArticles(boolean isHide) {
 		if (feeds.isEmpty()) {
 			return;
 		}
+		ArrayList<Feed> hideList = new ArrayList<Feed>(); 
 		for (Feed feed : feeds) {
 			int numOfUnreadArticles = dbAdapter.getNumOfUnreadArtilces(feed
 					.getId());
-			feed.setUnreadArticlesCount(numOfUnreadArticles);
+			if(numOfUnreadArticles == 0) {
+				hideList.add(feed);
+			}else {
+				feed.setUnreadArticlesCount(numOfUnreadArticles);
+			}
+		}
+		if(isHide) {
+			for(Feed feed : hideList) {
+				feeds.remove(feed);
+			}
 		}
 		if(rssFeedListAdapter != null) {
 			rssFeedListAdapter.notifyDataSetChanged();
