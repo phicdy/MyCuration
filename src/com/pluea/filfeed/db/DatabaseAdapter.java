@@ -16,9 +16,7 @@ import android.util.Log;
 public class DatabaseAdapter {
 	public static final String DATABASENAME = "rss_manage";
 	public static final int DATABASEVERSION = 1;
-	public static final String DEDAULT_HATENA_POINT = "-1";
-	public static final String DEDAULT_ICON_PATH = "defaultIconPath";
-
+	
 	private Context context;
 	private static DatabaseHelper dbHelper;
 	private static SQLiteDatabase db;
@@ -56,7 +54,7 @@ public class DatabaseAdapter {
 				insertSt.bindString(1, article.getTitle());
 				insertSt.bindString(2, article.getUrl());
 				insertSt.bindString(3, "unread");
-				insertSt.bindString(4, DEDAULT_HATENA_POINT);
+				insertSt.bindString(4, Feed.DEDAULT_HATENA_POINT);
 				Log.d(LOG_TAG, "insert date:" + article.getPostedDate());
 				insertSt.bindLong(5, article.getPostedDate());
 				insertSt.bindString(6, String.valueOf(feedId));
@@ -273,7 +271,7 @@ public class DatabaseAdapter {
 				values.put("title", feedTitle);
 				values.put("url", feedUrl);
 				values.put("format", format);
-				values.put("iconPath", DEDAULT_ICON_PATH);
+				values.put("iconPath", Feed.DEDAULT_ICON_PATH);
 				values.put("siteUrl", siteUrl);
 				if (db.insert("feeds", null, values) == -1) {
 					Log.v("insert error", "error occurred");

@@ -304,7 +304,7 @@ public class FeedListActivity extends Activity {
 
 	private void getFeedIconIfNeeded(ArrayList<Feed> feeds) {
 		for (Feed feed : feeds) {
-			if(feed.getIconPath() == null || feed.getIconPath().equals(DatabaseAdapter.DEDAULT_ICON_PATH)) {
+			if(feed.getIconPath() == null || feed.getIconPath().equals(Feed.DEDAULT_ICON_PATH)) {
 				GetFeedIconTask task = new GetFeedIconTask(getApplicationContext());
 				task.execute(feed.getSiteUrl());
 			}
@@ -334,7 +334,7 @@ public class FeedListActivity extends Activity {
 
 			ImageView feedIcon = (ImageView)row.findViewById(R.id.feedIcon);
 			String iconPath = feed.getIconPath();
-			if(iconPath != null && !iconPath.equals(DatabaseAdapter.DEDAULT_ICON_PATH)) {
+			if(iconPath != null && !iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
 				File file = new File(iconPath);
 			    if (file.exists()) {
 		            Bitmap bmp = BitmapFactory.decodeFile(file.getPath());

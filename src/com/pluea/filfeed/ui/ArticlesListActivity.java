@@ -386,7 +386,7 @@ public class ArticlesListActivity extends ListActivity {
 				TextView articlePoint = (TextView) row
 						.findViewById(R.id.articlePoint);
 				String hatenaPoint = article.getPoint();
-				if(hatenaPoint.equals(DatabaseAdapter.DEDAULT_HATENA_POINT)) {
+				if(hatenaPoint.equals(Feed.DEDAULT_HATENA_POINT)) {
 					articlePoint.setText(getString(R.string.not_get_hatena_point));
 				}else {
 					articlePoint.setText(hatenaPoint);

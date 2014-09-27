@@ -10,6 +10,9 @@ public class Feed {
 	private int unreadAriticlesCount_;
 	private String siteUrl;
 	
+	public static final String DEDAULT_HATENA_POINT = "-1";
+	public static final String DEDAULT_ICON_PATH = "defaultIconPath";
+	
 	public Feed(int id,String title,String url, String iconPath, String siteUrl) {
 		id_    = id;
 		title_ = title;
