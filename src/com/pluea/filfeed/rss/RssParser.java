@@ -11,9 +11,7 @@ import org.xmlpull.v1.XmlPullParser;
 import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
-import android.widget.Toast;
 
-import com.example.rssfilterreader.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.util.DateParser;
  
@@ -133,6 +131,81 @@ public class RssParser {
         return null;
     }
      
+    public Feed parseFeedInfo(String feedUrl) throws IOException{
+    	if(feedUrl == null || feedUrl.equals("")) {
+    		return null;
+    	}
+    	if(!(feedUrl.startsWith("http://") || feedUrl.startsWith("https://"))) {
+    		return null;
+    	}
+    	
+    	URL url = new URL(feedUrl);
+        URLConnection con = url.openConnection();
+        //Set Timeout 1min
+        con.setConnectTimeout(60000);
+        con.setReadTimeout(60000);
+          
+        //Get InputStream
+        InputStream is = con.getInputStream();
+    	
+    	String format = null;
+    	String feedTitle = null;
+    	String siteURL = null;
+    	
+        try {
+            //Initialize XmlPullParser
+            XmlPullParser parser = Xml.newPullParser();
+              
+            //Whether FileType is RSS
+            boolean rssFlag = false;
+            //RSS Format
+            
+            //RSS Format is 
+            //<feed><title> or <rdf(or rss)><channel><title> , 
+            //so check start tag <feed> or <rdf> or <rss> and then <title>
+            parser.setInput(is, "UTF-8");
+            int eventType = parser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                String tag = parser.getName();
+                Log.d(LOG_TAG, "tag: " + tag);
+                if(eventType == XmlPullParser.START_TAG) {
+                      
+                    //Atom
+                    /*if(tag.toLowerCase().equals("feed")) {
+                        rssFlag = true;
+                        format  = "Atom";
+                    }else */if(tag.toLowerCase().equals("rdf")){
+                        //RSS 1.0,2.0
+                        rssFlag = true;
+                        format  = "RSS1.0";
+                    }else if(tag.toLowerCase().equals("rss")) {
+                        rssFlag = true;
+                        format  = "RSS2.0";
+                    }
+                      
+                    if(rssFlag && tag.equals("title")) {
+                        //Feed title
+                        feedTitle = parser.nextText();
+                    }
+                    
+                  //Site title exist first "link" tag before item
+                    if(rssFlag && tag.equals("link")) {
+                    	siteURL = parser.nextText();
+                    	Log.d(LOG_TAG, siteURL);
+                    }
+                      
+                }
+                eventType = parser.next();
+                if(format != null && feedTitle != null && !feedTitle.equals("") && siteURL != null && !siteURL.equals("")) {
+                	break;
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dbAdapter.saveNewFeed(feedTitle,feedUrl,format, siteURL);
+    }
+    
     private String translateEventType(int eventType) {
     	String eventTypeString = "";
     	switch (eventType) {
