@@ -9,6 +9,7 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Xml;
 import android.widget.Toast;
@@ -31,6 +32,9 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
     private ProgressDialog progress_;
     private DatabaseAdapter dbAdapter;
     private RssParser rssParser;
+    
+    public static final String FINISH_INSERT_SUCCEEDED = "FINISH_INSERT_SUCCEEDED";
+    public static final String FINISH_INSERT_FAILED = "FINISH_INSERT_FAILED";
       
     public InsertNewFeedTask(Context context) {
         this.context = context;
@@ -46,8 +50,10 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
         progress_.dismiss();
         if(result == null) {
         	Toast.makeText(context, R.string.add_feed_error, Toast.LENGTH_SHORT).show();
+        	context.sendBroadcast(new Intent(FINISH_INSERT_SUCCEEDED));
         }else {
         	Toast.makeText(context, R.string.add_feed_success, Toast.LENGTH_SHORT).show();
+        	context.sendBroadcast(new Intent(FINISH_INSERT_FAILED));
         }
     }
     /**

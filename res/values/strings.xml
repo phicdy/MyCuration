@@ -27,6 +27,8 @@
     <string name="add_feed">フィード登録</string>
     <string name="add_feed_success">"フィード登録に成功しました。"</string>
     <string name="add_feed_error">フィード登録に失敗しました。</string>
+    <string name="adding_feed">フィードを追加しています。</string>
+    
     <string name="delete_feed">フィード削除</string>
     <string name="target_feed">対象フィード</string>
     <string name="feed_url">Feed URL:</string>
