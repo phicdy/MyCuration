@@ -324,7 +324,7 @@ public class ArticlesListActivity extends ListActivity {
 				for (Article article : articles) {
 					if (article.getStatus().equals(Article.TOREAD)) {
 						Log.d(LOG_TAG, "save status, article title:" + article.getTitle());
-						dbAdapter.saveStatus(article.getId(), Article.TOREAD);
+						dbAdapter.saveStatus(article.getId(), Article.READ);
 					}
 				}
 				Intent intent = new Intent(FeedListActivity.UPDATE_NUM_OF_ARTICLES);
