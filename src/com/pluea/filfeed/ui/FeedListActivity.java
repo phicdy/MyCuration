@@ -313,7 +313,7 @@ public class FeedListActivity extends Activity {
 				feed.setUnreadArticlesCount(numOfUnreadArticles);
 			}
 		}
-		if(isHide) {
+		if(isHide && feeds.size() != hideList.size()) {
 			for(Feed feed : hideList) {
 				feeds.remove(feed);
 			}
