@@ -78,7 +78,6 @@ public class FeedListActivity extends Activity {
 		feeds = dbAdapter.getAllFeeds();
 		getFeedIconIfNeeded(feeds);
 		
-		
 		registerForContextMenu(feedsListView.getRefreshableView());
 	}
 
@@ -216,9 +215,6 @@ public class FeedListActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		if(feeds.isEmpty()) {
-			feeds = dbAdapter.getAllFeeds();
-		}
 //		updateAllFeeds();
 		updateNumOfUnreadArticles(true);
 
@@ -303,6 +299,7 @@ public class FeedListActivity extends Activity {
 	}
 
 	private void updateNumOfUnreadArticles(boolean isHide) {
+		feeds = dbAdapter.getAllFeeds();
 		if (feeds.isEmpty()) {
 			return;
 		}
