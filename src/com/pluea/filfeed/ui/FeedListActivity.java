@@ -48,6 +48,7 @@ public class FeedListActivity extends Activity {
 	private ArrayList<Feed> feeds = new ArrayList<Feed>();
 	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
 	private PullToRefreshListView feedsListView;
+	private TextView showNoUnread;
 	private RssFeedListAdapter rssFeedListAdapter;
 	private BroadcastReceiver receiver;
 	private Intent intent;
@@ -116,7 +117,7 @@ public class FeedListActivity extends Activity {
 			}
 		});
 		
-		TextView showNoUnread = (TextView)findViewById(R.id.showNoUnread);
+		showNoUnread = (TextView)findViewById(R.id.showNoUnread);
 		showNoUnread.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -313,11 +314,15 @@ public class FeedListActivity extends Activity {
 				feed.setUnreadArticlesCount(numOfUnreadArticles);
 			}
 		}
-		if(isHide && feeds.size() != hideList.size()) {
+		if(feeds.size() == hideList.size()) {
+			showNoUnread.setVisibility(View.GONE);
+		}else if(isHide) {
+			showNoUnread.setVisibility(View.VISIBLE);
 			for(Feed feed : hideList) {
 				feeds.remove(feed);
 			}
 		}
+		
 		if(rssFeedListAdapter != null) {
 			rssFeedListAdapter.notifyDataSetChanged();
 		}
