@@ -223,12 +223,13 @@ public class ArticlesListActivity extends ListActivity {
 			
 			@Override
 			public void onClick(View v) {
-				for (Article article : articles) {
-					article.setStatus(Article.TOREAD);
-				}
 				if(prefMgr.getAllReadBack()) {
+					dbAdapter.saveStatusToRead(feedId);
 					finish();
 				}else {
+					for (Article article : articles) {
+						article.setStatus(Article.TOREAD);
+					}
 					articlesListAdapter.notifyDataSetChanged();
 				}
 			}

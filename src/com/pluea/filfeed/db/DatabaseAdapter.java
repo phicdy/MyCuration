@@ -154,6 +154,21 @@ public class DatabaseAdapter {
 		}
 	}
 	
+	public void saveStatusToRead(int feedId) {
+		open("write");
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put("status", Article.READ);
+			String whereClause = "feedId = " + feedId;
+			db.update("articles", values, whereClause, null);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		
+	}
+	
 	public void saveStatus(int articleId, String status) {
 		open("write");
 		db.beginTransaction();
