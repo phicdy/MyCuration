@@ -64,4 +64,6 @@
     
     <string name="search_article">記事を検索</string>
     <string name="open_all_articles">全ての記事を開く</string>
+    
+    <string name="hatena">はてな</string>
 </resources>

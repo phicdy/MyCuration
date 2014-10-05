@@ -18,14 +18,24 @@
 	        android:id="@+id/articlePostedTime"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
 	        android:layout_marginLeft="8dp"
 	        android:layout_marginRight="8dp"
 	        android:textSize="12sp"
 	        android:layout_weight="90" />
+        <ImageView 
+	        android:id="@+id/hatenaIcon"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="0dp"
+	        android:src="@drawable/hatena"
+	        android:contentDescription="@string/hatena" />
 	    <TextView 
 	        android:id="@+id/articlePoint"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
+	        android:layout_marginLeft="4dp"
 	        android:textSize="12sp"
 	        android:layout_weight="10" />
     </LinearLayout>
