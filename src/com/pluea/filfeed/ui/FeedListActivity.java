@@ -314,7 +314,7 @@ public class FeedListActivity extends Activity {
 				feed.setUnreadArticlesCount(numOfUnreadArticles);
 			}
 		}
-		if(feeds.size() == hideList.size()) {
+		if(feeds.size() == hideList.size() || hideList.size() == 0) {
 			showNoUnread.setVisibility(View.GONE);
 		}else if(isHide) {
 			showNoUnread.setVisibility(View.VISIBLE);
