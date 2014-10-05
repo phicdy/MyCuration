@@ -323,9 +323,9 @@ public class FeedListActivity extends Activity {
 			}
 		}
 		
-		if(rssFeedListAdapter != null) {
-			rssFeedListAdapter.notifyDataSetChanged();
-		}
+		rssFeedListAdapter = new RssFeedListAdapter(feeds);
+		feedsListView.setAdapter(rssFeedListAdapter);
+		rssFeedListAdapter.notifyDataSetChanged();
 	}
 
 	private void getFeedIconIfNeeded(ArrayList<Feed> feeds) {
