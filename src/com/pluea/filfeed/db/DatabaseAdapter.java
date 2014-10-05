@@ -209,6 +209,21 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 	}
+	
+	public int saveNewTitle(int feedId, String newTitle) {
+		int numOfUpdated = 0;
+		open("write");
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put("title", newTitle);
+			numOfUpdated = db.update("feeds", values, "_id = " + feedId, null);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		return numOfUpdated;
+	}
 
 	public String getStatus(int articleId) {
 		String status = null;

@@ -30,6 +30,12 @@
     <string name="adding_feed">フィードを追加しています。</string>
     
     <string name="delete_feed">フィード削除</string>
+    <string name="edit_feed_title">フィードのタイトルを編集</string>
+    <string name="new_title">新しいタイトル</string>
+    <string name="empty_title">新しいタイトルが空になっています。</string>
+    <string name="edit_feed_title_success">タイトルを編集しました。</string>
+    <string name="edit_feed_title_error">タイトルを編集に失敗しました。</string>
+    
     <string name="target_feed">対象フィード</string>
     <string name="feed_url">Feed URL:</string>
     <string name="feed_not_exist">フィードが登録されていないため、\nフィルターを登録できません。</string>

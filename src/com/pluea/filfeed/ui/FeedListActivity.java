@@ -54,7 +54,9 @@ public class FeedListActivity extends Activity {
 	private Intent intent;
 	private UpdateTaskManager updateTaskManager;
 
-	private static final int DELETEFEEDMENUID = 0;
+	private static final int DELETE_FEED_MENU_ID = 0;
+	private static final int EDIT_FEED_TITLE_MENU_ID = 1;
+	
 	public static final int BAD_RECIEVED_VALUE = -1;
 	public static final String FEED_ID = "FEED_ID";
 	public static final String FEED_URL = "FEED_URL";
@@ -194,20 +196,24 @@ public class FeedListActivity extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		// Menu.add(int groupId, int itemId, int order, CharSequence title)
-		menu.add(0, DELETEFEEDMENUID, 0, R.string.delete_feed);
+		menu.add(0, DELETE_FEED_MENU_ID, 0, R.string.delete_feed);
+		menu.add(0, EDIT_FEED_TITLE_MENU_ID, 1, R.string.edit_feed_title);
 	}
 
 	public boolean onContextItemSelected(MenuItem item) {
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
+		Feed selectedFeed = feeds.get(info.position-1);
 
 		switch (item.getItemId()) {
-		case DELETEFEEDMENUID:
-			Feed selectedFeed = feeds.get(info.position-1);
+		case DELETE_FEED_MENU_ID:
 			dbAdapter.deleteFeed(selectedFeed.getId());
 			feeds.remove(info.position-1);
 			rssFeedListAdapter.notifyDataSetChanged();
+			return true;
+		case EDIT_FEED_TITLE_MENU_ID:
+			showEditTitleDialog(selectedFeed);
 			return true;
 		default:
 			return super.onContextItemSelected(item);
@@ -285,6 +291,38 @@ public class FeedListActivity extends Activity {
 						}).setNegativeButton(R.string.cancel, null).show();
 	}
 
+	private void showEditTitleDialog(final Feed selectedFeed) {
+		final View addView = getLayoutInflater().inflate(R.layout.edit_feed_title, null);
+		EditText editTitleView = (EditText) addView.findViewById(R.id.editFeedTitle);
+		editTitleView.setText(selectedFeed.getTitle());
+
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.edit_feed_title)
+				.setView(addView)
+				.setPositiveButton(R.string.save,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								EditText editTitleView = (EditText) addView
+										.findViewById(R.id.editFeedTitle);
+								String newTitle = editTitleView.getText().toString();
+								if(newTitle == null || newTitle.equals("")) {
+									Toast.makeText(getApplicationContext(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show();
+								}else {
+									int numOfUpdate = dbAdapter.saveNewTitle(selectedFeed.getId(), newTitle);
+									if(numOfUpdate == 1) {
+										Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_success), Toast.LENGTH_SHORT).show();
+										updateNumOfUnreadArticles(true);
+									}else {
+										Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_error), Toast.LENGTH_SHORT).show();
+									}
+								}
+							}
+
+						}).setNegativeButton(R.string.cancel, null).show();
+	}
+	
 	private void updateAllFeeds() {
 		if (feeds.isEmpty()) {
 			feedsListView.onRefreshComplete();
