@@ -27,7 +27,7 @@
 	        android:id="@+id/hatenaIcon"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="0dp"
+	        android:layout_gravity="center_vertical"
 	        android:src="@drawable/hatena"
 	        android:contentDescription="@string/hatena" />
 	    <TextView 
