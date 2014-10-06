@@ -169,6 +169,20 @@ public class DatabaseAdapter {
 		
 	}
 	
+	public void saveAllStatusToRead() {
+		open("write");
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put("status", Article.READ);
+			db.update("articles", values, null, null);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		
+	}
+	
 	public void saveStatus(int articleId, String status) {
 		open("write");
 		db.beginTransaction();

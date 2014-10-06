@@ -44,7 +44,6 @@ import com.pluea.filfeed.util.PreferenceManager;
 public class ArticlesListActivity extends ListActivity {
 
 	private ArrayList<Article> articles;
-	private static final int BAD_FEED_ID = -1;
 	private int feedId;
 	private String feedUrl;
 	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
@@ -75,14 +74,14 @@ public class ArticlesListActivity extends ListActivity {
 
 		// Set feed id and url from main activity
 		intent = getIntent();
-		feedId = intent.getIntExtra(FeedListActivity.FEED_ID, BAD_FEED_ID);
+		feedId = intent.getIntExtra(FeedListActivity.FEED_ID, Feed.ALL_FEED_ID);
 		feedUrl = intent.getStringExtra(FeedListActivity.FEED_URL);
 
 		intent.putExtra(FeedListActivity.FEED_ID, feedId);
 		// intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
 
 		prefMgr = PreferenceManager.getInstance(getApplicationContext());
-		if(feedId != BAD_FEED_ID) {
+		if(feedId != Feed.ALL_FEED_ID) {
 			prefMgr.setSearchFeedId(feedId);
 		}
 		
@@ -224,7 +223,11 @@ public class ArticlesListActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				if(prefMgr.getAllReadBack()) {
-					dbAdapter.saveStatusToRead(feedId);
+					if(feedId == Feed.ALL_FEED_ID) {
+						dbAdapter.saveAllStatusToRead();
+					}else {
+						dbAdapter.saveStatusToRead(feedId);
+					}
 					finish();
 				}else {
 					for (Article article : articles) {
@@ -261,7 +264,7 @@ public class ArticlesListActivity extends ListActivity {
 		PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
 		boolean isNewestArticleTop = mgr.getSortNewArticleTop();
 		
-		if(feedId == BAD_FEED_ID) {
+		if(feedId == Feed.ALL_FEED_ID) {
 			articles = dbAdapter.getAllUnreadArticles(isNewestArticleTop);
 			if(articles.size() == 0 && dbAdapter.calcNumOfArticles() > 0) {
 				articles = dbAdapter.getAllArticles(isNewestArticleTop);
