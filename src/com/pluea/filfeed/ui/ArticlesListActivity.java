@@ -258,6 +258,23 @@ public class ArticlesListActivity extends ListActivity {
 				}
 			}
 		});
+		
+		Button scrollButton = (Button)findViewById(R.id.btn_scroll);
+		scrollButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ListView listView = articlesListView.getRefreshableView();
+				int firstPosition = listView.getFirstVisiblePosition();  
+				int lastPosition = listView.getLastVisiblePosition();
+				int movedPosition = lastPosition + (lastPosition - firstPosition) - 2;
+				for (int i = firstPosition; i < lastPosition -1; i++) {
+					articles.get(i).setStatus(Article.TOREAD);
+				}
+				articlesListAdapter.notifyDataSetChanged();
+				articlesListView.getRefreshableView().smoothScrollToPosition(movedPosition);
+			}
+		});
 	}
 
 	private void displayUnreadArticles() {
