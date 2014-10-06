@@ -70,7 +70,7 @@ public class ArticlesListActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.articles_activity);
+		setContentView(R.layout.activity_articles_list);
 
 		// Set feed id and url from main activity
 		intent = getIntent();
