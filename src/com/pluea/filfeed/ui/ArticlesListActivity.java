@@ -271,6 +271,25 @@ public class ArticlesListActivity extends ListActivity {
 				for (int i = firstPosition; i < lastPosition -1; i++) {
 					articles.get(i).setStatus(Article.TOREAD);
 				}
+				
+				// Back option if all articles are read
+				if(prefMgr.getAllReadBack()) {
+					boolean isAllRead = true;
+					for(Article article: articles) {
+						if(article.getStatus().equals(Article.UNREAD)) {
+							isAllRead = false;
+							break;
+						}
+					}
+					if(isAllRead) {
+						if(feedId == Feed.ALL_FEED_ID) {
+							dbAdapter.saveAllStatusToRead();
+						}else {
+							dbAdapter.saveStatusToRead(feedId);
+						}
+						finish();
+					}
+				}
 				articlesListAdapter.notifyDataSetChanged();
 				articlesListView.getRefreshableView().smoothScrollToPosition(movedPosition);
 			}
