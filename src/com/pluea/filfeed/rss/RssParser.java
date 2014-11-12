@@ -181,6 +181,10 @@ public class RssParser {
                     }else if(tag.toLowerCase().equals("rss")) {
                         rssFlag = true;
                         format  = "RSS2.0";
+                    }else if(tag.toLowerCase().equals("feed")) {
+                    	rssFlag = true;
+                    	format  = "ATOM";
+                    	
                     }
                       
                     if(rssFlag && tag.equals("title")) {
@@ -191,6 +195,39 @@ public class RssParser {
                   //Site title exist first "link" tag before item
                     if(rssFlag && tag.equals("link")) {
                     	siteURL = parser.nextText();
+                    	if(siteURL == null || siteURL.equals("")) {
+                    		String attributeName;
+                    		String attributeValue;
+                    		boolean isAlternate = false;
+                    		boolean isTextHtml = false;
+                    		boolean isHref = false;
+                    		for(int i=0;i<parser.getAttributeCount();i++) {
+                    			attributeName = parser.getAttributeName(i);
+                    			attributeValue = parser.getAttributeValue(i);
+                    			if(attributeName == null || attributeValue == null) {
+                    				continue;
+                    			}
+                    			
+                    			if(attributeName.equals("rel") && attributeValue.equals("alternate")) {
+                    				isAlternate = true;
+                    				continue;
+                    			}
+                    			if(attributeName.equals("type") && attributeValue.equals("text/html")) {
+                    				isTextHtml = true;
+                    				continue;
+                    			}
+                    			if(attributeName.equals("href")) {
+                    				isHref = true;
+                    			}
+                    			
+                    			if(isAlternate && isTextHtml && isHref) {
+                    				siteURL = attributeValue;
+                    				if(siteURL.startsWith("http://") || siteURL.startsWith("https://")) {
+                    					break;
+                    				}
+                    			}
+                    		}
+                    	}
                     	Log.d(LOG_TAG, siteURL);
                     }
                       
