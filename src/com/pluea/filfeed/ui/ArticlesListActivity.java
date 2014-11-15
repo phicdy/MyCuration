@@ -21,9 +21,11 @@ import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -161,6 +163,21 @@ public class ArticlesListActivity extends ListActivity {
 					}
 
 				});
+		
+		articlesListView.getRefreshableView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Log.d(LOG_TAG, "onLongClick");
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_TEXT, articles.get(position-1).getUrl());
+				startActivity(intent);
+				return true;
+			}
+			
+		});
 
 		articlesListView.getRefreshableView().setOnTouchListener(new OnTouchListener() {
 
