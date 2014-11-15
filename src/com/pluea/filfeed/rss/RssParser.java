@@ -57,7 +57,7 @@ public class RssParser {
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
                         //when new Item found, initialize currentItem
-                        if(tag.equals("item")) {
+                        if(tag.equals("item") || tag.equals("entry")) {
                             article  = new  Article(0, null, null, null, "10", 0, 0);
                             itemFlag = true;
                         }
@@ -69,11 +69,44 @@ public class RssParser {
                             article.setTitle(title);
                         }
                         if(itemFlag && tag.equals("link") && (article.getUrl() == null)) {
-                        	String url = parser.nextText();
-                        	Log.d(LOG_TAG, "set article URL:" + url);
-                            article.setUrl(url);
+                        	String articleURL = parser.nextText();
+                        	if(articleURL == null || articleURL.equals("")) {
+                        		String attributeName;
+                        		String attributeValue;
+                        		boolean isAlternate = false;
+                        		boolean isTextHtml = false;
+                        		boolean isHref = false;
+                        		for(int i=0;i<parser.getAttributeCount();i++) {
+                        			attributeName = parser.getAttributeName(i);
+                        			attributeValue = parser.getAttributeValue(i);
+                        			if(attributeName == null || attributeValue == null) {
+                        				continue;
+                        			}
+                        			
+                        			if(attributeName.equals("rel") && attributeValue.equals("alternate")) {
+                        				isAlternate = true;
+                        				continue;
+                        			}
+                        			if(attributeName.equals("type") && attributeValue.equals("text/html")) {
+                        				isTextHtml = true;
+                        				continue;
+                        			}
+                        			if(attributeName.equals("href")) {
+                        				isHref = true;
+                        			}
+                        			
+                        			if(isAlternate && isTextHtml && isHref) {
+                        				articleURL = attributeValue;
+                        				if(articleURL.startsWith("http://") || articleURL.startsWith("https://")) {
+                        					break;
+                        				}
+                        			}
+                        		}
+                        	}
+                        	Log.d(LOG_TAG, "set article URL:" + articleURL);
+                            article.setUrl(articleURL);
                         }
-                        if(itemFlag && (tag.equals("date") || tag.equals("pubDate")) && (article.getPostedDate() == 0)) {
+                        if(itemFlag && (tag.equals("date") || tag.equals("pubDate") || tag.equals("published")) && (article.getPostedDate() == 0)) {
                         	String date = parser.nextText();
                         	Log.d(LOG_TAG, "set article date:" + date);
                         	article.setPostedDate(DateParser.changeToJapaneseDate(date));
@@ -83,7 +116,7 @@ public class RssParser {
                     //When </Item> add currentItem to DB
                     case XmlPullParser.END_TAG:
                         tag = parser.getName();
-                        if (tag.equals("item")) {
+                        if (tag.equals("item") || tag.equals("entry")) {
                         	if(dbAdapter.isArticle(article)) {
                         		isArticleFlag = true;
                         	}else {
@@ -102,7 +135,7 @@ public class RssParser {
                 }
                 eventType = parser.next();
                 tag = parser.getName();
-                if(eventType == XmlPullParser.END_TAG && (tag.equals("rss") || tag.equals("rdf"))) {
+                if(eventType == XmlPullParser.END_TAG && (tag.equals("rss") || tag.equals("rdf") || tag.equals("feed"))) {
                 	break;
                 }
             }
