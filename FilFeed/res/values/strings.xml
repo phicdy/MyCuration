@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FilFeed</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="all_unread">未読記事一覧</string>
+    <string name="show_no_unread_feed">未読のないフィードを表示する</string>
+    
+    <string name="add_filter_button">+</string>
+    <string name="keyword">キーワード</string>
+    <string name="include">を含む</string>
+    <string name="article_url">記事URL</string>
+    <string name="register">登録</string>
+    <string name="cancel">キャンセル</string>
+    <string name="title_empty_error">タイトルを入力してください。</string>
+    <string name="both_keyword_and_url_empty_error">キーワードと記事URLどちらかを入力してください。</string>
+    <string name="same_filter_exists_error">既に同じフィルターが登録されています。</string>
+    <string name="article_updated">記事を更新しました。</string>
+    <string name="article_update_error">記事の更新に失敗しました。</string>
+    <string name="network_error">ネットワークエラー</string>
+    <string name="task_exists_error">更新が実行中です。しばらくお待ち下さい。</string>
+    <string name="ok">OK</string>
+    <string name="app_icon_description">icon</string>
+    <string name="no_feed_message">"フィードをメニューから登録してください。"</string>
+    
+    <string name="add_feed">フィード登録</string>
+    <string name="add_feed_success">"フィード登録に成功しました。"</string>
+    <string name="add_feed_error">フィード登録に失敗しました。</string>
+    <string name="adding_feed">フィードを追加しています。</string>
+    
+    <string name="delete_feed">フィード削除</string>
+    <string name="edit_feed_title">フィードのタイトルを編集</string>
+    <string name="new_title">新しいタイトル</string>
+    <string name="empty_title">新しいタイトルが空になっています。</string>
+    <string name="edit_feed_title_success">タイトルを編集しました。</string>
+    <string name="edit_feed_title_error">タイトルを編集に失敗しました。</string>
+    
+    <string name="target_feed">対象フィード</string>
+    <string name="feed_url">Feed URL:</string>
+    <string name="feed_not_exist">フィードが登録されていないため、\nフィルターを登録できません。</string>
+
+    <string name="filter_saved">フィルターを登録しました。</string>
+    <string name="filter_saved_error">フィルターの登録に失敗しました。</string>
+    <string name="percent_only_error">この単語では登録できません。</string>
+    <string name="filter_title">フィルター名</string>
+    <string name="add_filter">フィルター登録</string>
+    <string name="delete_filter">フィルター削除</string>
+    <string name="not_get_hatena_point">取得中</string>
+    
+    <string name="setting">設定</string>
+    <string name="interval">自動更新の頻度</string>
+    <string name="hour">時間</string>
+    <string name="article_sort">新しい記事を一番上にする</string>
+    <string name="all_read_back">全既読になったらフィード一覧に自動で戻る</string>
+    <string name="open_internal">内蔵のブラウザで開く</string>
+    <string name="save">保存</string>
+    <string name="saved">設定が保存されました</string>
+    
+    <string name="all_read">全て既読にする</string>
+    <string name="no_article">未読の記事がありません</string>
+    
+    <string name="icon">アイコン</string>
+    
+    <string name="search_article">記事を検索</string>
+    <string name="open_all_articles">全ての記事を開く</string>
+    <string name="next_page">次のページ</string>
+    
+    <string name="hatena">はてな</string>
+    
+    <string name="share">共有</string>
+</resources>
