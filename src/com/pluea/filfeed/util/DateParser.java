@@ -37,6 +37,11 @@ public class DateParser {
 				//2014-07-27T14:38:34+09:00
 				if(pubDate.contains("T")) {
 					String replaced = pubDate.replace("T", " ");
+					if(pubDate.contains("Z")) {
+						//2014-07-27T14:38:34Z
+						replaced = replaced.replace("Z", "+09:00");
+					}
+					
 					DateFormat w3cdtf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ",
 							Locale.US);
 					Date formatWithW3cdtf = null;
