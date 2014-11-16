@@ -11,7 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public DatabaseHelper(Context context) {
         super(context, "rss_manage", null, 1);
     }
-  //
+
     //onCreate() is called when database is created
     @Override
     public void onCreate(SQLiteDatabase db) {
