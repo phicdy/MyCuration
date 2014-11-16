@@ -73,6 +73,22 @@ public class RssParserTest extends AndroidTestCase {
 //			e.printStackTrace();
 //			fail();
 //		}
+		
+		// Test top URL
+		try {
+			Feed addedFeed = parser.parseFeedInfo("http://jp.techcrunch.com");
+				Thread.sleep(5000);
+			
+			assertNotNull(addedFeed);
+			assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
+			assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
+			assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void testParseXml() {
