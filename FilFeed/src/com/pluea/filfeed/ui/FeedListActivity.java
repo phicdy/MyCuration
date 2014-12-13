@@ -324,7 +324,7 @@ public class FeedListActivity extends Activity {
 	}
 	
 	private void updateAllFeeds() {
-		if (feeds.isEmpty()) {
+		if (feeds == null || feeds.isEmpty()) {
 			feedsListView.onRefreshComplete();
 			return;
 		} 
