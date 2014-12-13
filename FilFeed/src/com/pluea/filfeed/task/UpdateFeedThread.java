@@ -56,17 +56,6 @@ public class UpdateFeedThread extends Thread {
 			e.printStackTrace();
 		}
 
-		// Update Hatena point
-		ArrayList<Article> articles = dbAdapter
-				.getUnreadArticlesInAFeed(feedId, true);
-		for (int i = 0; i < articles.size(); i++) {
-			Article article = articles.get(i);
-			article.setArrayIndex(i);
-			GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(
-					context);
-			hatenaTask.execute(article);
-		}
-		
 		isRunning = false;
 		
 		// Broadcast updating num of articles

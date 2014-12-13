@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.pluea.filfeed.db.DatabaseAdapter;
+import com.pluea.filfeed.rss.Article;
 import com.pluea.filfeed.rss.Feed;
+import com.pluea.filfeed.task.GetHatenaBookmarkPointTask;
 import com.pluea.filfeed.task.UpdateTaskManager;
 
 public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 
 	public static final String AUTO_UPDATE_ACTION = "autoUpdateFeed";
+	public static final String AUTO_UPDATE_HATENA_ACTION = "autoUpdateHatena";
 	
 	DatabaseAdapter dbAdapter;
 
@@ -23,14 +26,38 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 		if(intent == null) {
 			return;
 		}
+		dbAdapter = DatabaseAdapter.getInstance(context);
 		if(intent.getAction().equals(AUTO_UPDATE_ACTION)) {
-			dbAdapter = DatabaseAdapter.getInstance(context);
 			UpdateTaskManager updateTask = UpdateTaskManager.getInstance(context);
 	
 			updateTask.updateAllFeeds(dbAdapter.getAllFeeds());
+			AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
 			
 			// Save new time
 			AlarmManagerTaskManager.setNewAlarm(context);
+		}else if(intent.getAction().equals(AUTO_UPDATE_HATENA_ACTION)) {
+			// Update Hatena point
+			ArrayList<Feed> feeds = dbAdapter.getAllFeeds();
+			if (feeds == null || feeds.isEmpty()) {
+				return;
+			}
+			for (Feed feed : feeds) {
+				ArrayList<Article> unreadArticles = dbAdapter
+						.getUnreadArticlesInAFeed(feed.getId(), true);
+				if (unreadArticles == null || unreadArticles.isEmpty()) {
+					continue;
+				}
+				for (int i = 0; i < unreadArticles.size(); i++) {
+					Article unreadArticle = unreadArticles.get(i);
+					if (unreadArticle == null) {
+						continue;
+					}
+					GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(
+							context);
+					hatenaTask.execute(unreadArticle);
+				}
+			}
+			
 		}
 	}
 }

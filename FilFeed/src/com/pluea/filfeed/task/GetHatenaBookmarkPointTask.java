@@ -117,8 +117,8 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	}
 	
 	private void saveHatenaCount(Article article) {
-//		Log.d(LOG_TAG, "article id:" + article.getId());
-//		Log.d(LOG_TAG, "article point:" + article.getPoint());
+		Log.d(LOG_TAG, "article id:" + article.getId());
+		Log.d(LOG_TAG, "article point:" + article.getPoint());
 		dbAdapter.saveHatenaPoint(article.getId(), article.getPoint());
 	}
 

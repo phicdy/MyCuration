@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 
+import com.pluea.filfeed.alarm.AlarmManagerTaskManager;
 import com.pluea.filfeed.rss.Feed;
 
 
@@ -34,6 +35,7 @@ public class UpdateTaskManager {
 			updateFeedThreads.add(thread);
 			thread.start();
 		}
+		AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
 		return true;
 	}
 	

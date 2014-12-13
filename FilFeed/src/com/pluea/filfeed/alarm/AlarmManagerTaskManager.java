@@ -11,22 +11,31 @@ import android.util.Log;
 
 public class AlarmManagerTaskManager {
 
-	private static final int INTERVAL = 60*60*1;
+	private static final int FEED_UPDATE_INTERVAL = 60*60*1;
+	private static final int HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE = 60*5*1;
 	
 	private AlarmManagerTaskManager() {
 		
 	}
 	
 	public static void setNewAlarm(Context context) {
+		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION, FEED_UPDATE_INTERVAL);
+	}
+	
+	public static void setNewHatenaUpdateAlarm(Context context) {
+		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_HATENA_ACTION, HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE);
+	}
+	
+	private static void setAlarm(Context context, String action, int intervalSec) {
 		Intent i = new Intent(context, AutoUpdateBroadcastReciever.class);
-		i.setAction(AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION);
+		i.setAction(action);
 		
 		PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
 		AlarmManager alm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis());
-		calendar.add(Calendar.SECOND, INTERVAL);
+		calendar.add(Calendar.SECOND, intervalSec);
 		Log.d("AlarmManagerTaskManager", "Set alarm : " + calendar.getTime().toString());
 		
 		alm.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
