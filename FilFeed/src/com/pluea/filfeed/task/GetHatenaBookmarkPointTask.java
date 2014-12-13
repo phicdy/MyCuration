@@ -37,7 +37,7 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	public static final String ARTICLE_ID = "articleId";
 	public static final String ARTICLE_ARRAY_INDEX = "articleArrayIndex";
 	public static final String ARTICLE_POINT = "articlePoint";
-	public static final String LOG_TAG = "RSSReader.GetHatena";
+	private static final String LOG_TAG = "RSSReader.GetHatena";
 
 	public GetHatenaBookmarkPointTask(Context context) {
 		dbAdapter = DatabaseAdapter.getInstance(context);
