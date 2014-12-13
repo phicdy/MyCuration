@@ -14,7 +14,8 @@
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="@android:windowBackground">@drawable/window_bg</item>
+        <item name="@android:colorBackground">@color/window_bg</item>
     </style>
 
 </resources>
