@@ -331,7 +331,7 @@ public class FeedListActivity extends Activity {
 		updateTaskManager = UpdateTaskManager.getInstance(getApplicationContext());
 
 		// Get feeds from DB if other update task is not running
-		if (updateTaskManager.updateAllFeeds(dbAdapter.getAllFeeds())) {
+		if (updateTaskManager.updateAllFeeds(feeds)) {
 		} else {
 			feedsListView.onRefreshComplete();
 		}
