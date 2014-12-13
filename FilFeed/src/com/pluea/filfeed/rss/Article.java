@@ -9,7 +9,6 @@ public class Article {
 	private String point_;
 	private long postedDate_;
 	private int feedId_;
-	private int arrayIndex_;
 	
 	public static final String UNREAD = "unread";
 	public static final String TOREAD = "toRead";
@@ -82,13 +81,4 @@ public class Article {
 	public long getPostedDate() {
 		return postedDate_;
 	}
-	
-	public int getArrayIndex() {
-		return arrayIndex_;
-	}
-
-	public void setArrayIndex(int arrayIndex_) {
-		this.arrayIndex_ = arrayIndex_;
-	}
-
 }
