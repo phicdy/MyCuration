@@ -24,7 +24,7 @@ public class RssParser {
 	private static final String LOG_TAG = "RSSREADER.RssParser";
 
 	public RssParser(Context context) {
-		dbAdapter = new DatabaseAdapter(context);
+		dbAdapter = DatabaseAdapter.getInstance(context);
 	}
 
 	public boolean parseXml(String urlString, int feedId) throws IOException {

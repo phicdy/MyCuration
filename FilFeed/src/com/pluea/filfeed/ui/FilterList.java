@@ -41,7 +41,7 @@ public class FilterList extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.filters_activity);
-		dbAdapter = new DatabaseAdapter(this);
+		dbAdapter = DatabaseAdapter.getInstance(this);
 		displayFilters();
 		registerForContextMenu(filtersListView);
 	}

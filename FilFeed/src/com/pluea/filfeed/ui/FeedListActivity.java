@@ -46,7 +46,7 @@ import com.pluea.filfeed.task.UpdateTaskManager;
 public class FeedListActivity extends Activity {
 
 	private ArrayList<Feed> feeds = new ArrayList<Feed>();
-	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
+	private DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
 	private PullToRefreshListView feedsListView;
 	private TextView showNoUnread;
 	private RssFeedListAdapter rssFeedListAdapter;

@@ -20,7 +20,7 @@ public class FilterTask {
       
     public FilterTask(Context context) {
         context_ = context;
-        dbAdapter = new DatabaseAdapter(context_);
+        dbAdapter = DatabaseAdapter.getInstance(context);
     }
   
       

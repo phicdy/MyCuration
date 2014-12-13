@@ -36,7 +36,7 @@ public class UpdateFeedThread extends Thread {
 		String urlString = feed.getUrl();
 		int feedId = feed.getId();
 
-		DatabaseAdapter dbAdapter = new DatabaseAdapter(context);
+		DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
 		
 		// Parse XML
 		RssParser rssParser = new RssParser(context);

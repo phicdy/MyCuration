@@ -33,7 +33,7 @@ public class RegisterFilter extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.register_filter);
 		
-		dbAdapter = new DatabaseAdapter(this);
+		dbAdapter = DatabaseAdapter.getInstance(this);
 		
 		//Select All feeds
 		SQLiteDatabase rdb = dbHelper.getReadableDatabase();

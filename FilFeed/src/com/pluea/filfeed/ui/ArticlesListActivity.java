@@ -48,7 +48,7 @@ public class ArticlesListActivity extends ListActivity {
 	private ArrayList<Article> articles;
 	private int feedId;
 	private String feedUrl;
-	private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
+	private DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
 	private PreferenceManager prefMgr;
 	private Intent intent;
 	private BroadcastReceiver receiver;

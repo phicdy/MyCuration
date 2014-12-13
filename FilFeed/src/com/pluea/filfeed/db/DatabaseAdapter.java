@@ -17,13 +17,21 @@ public class DatabaseAdapter {
 	
 	private Context context;
 	private static DatabaseHelper dbHelper;
+	private static DatabaseAdapter sharedDbAdapter;
 	private static SQLiteDatabase db;
 	private static final String LOG_TAG = "RSSReader."
 			+ DatabaseAdapter.class.getName();
 
-	public DatabaseAdapter(Context context) {
+	private DatabaseAdapter(Context context) {
 		this.context = context;
 		dbHelper = new DatabaseHelper(this.context);
+	}
+	
+	public static DatabaseAdapter getInstance(Context context) {
+		if (sharedDbAdapter == null) {
+			sharedDbAdapter = new DatabaseAdapter(context);
+		}
+		return sharedDbAdapter;
 	}
 
 	public void open(String readOrWrite) {

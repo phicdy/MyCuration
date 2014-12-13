@@ -38,7 +38,7 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
       
     public InsertNewFeedTask(Context context) {
         this.context = context;
-        dbAdapter  = new DatabaseAdapter(context);
+        dbAdapter  = DatabaseAdapter.getInstance(context);
         rssParser  = new RssParser(context);
     }
   

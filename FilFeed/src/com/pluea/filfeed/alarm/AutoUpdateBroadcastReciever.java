@@ -21,7 +21,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Log.d("AutoUpdateBroadcastReciever", "onReceive");
 		if(intent.getAction().equals(AUTO_UPDATE_ACTION)) {
-			dbAdapter = new DatabaseAdapter(context);
+			dbAdapter = DatabaseAdapter.getInstance(context);
 			UpdateTaskManager updateTask = UpdateTaskManager.getInstance(context);
 	
 			updateTask.updateAllFeeds(dbAdapter.getAllFeeds());
