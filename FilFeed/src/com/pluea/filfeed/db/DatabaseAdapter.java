@@ -14,8 +14,6 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 public class DatabaseAdapter {
-	public static final String DATABASENAME = "rss_manage";
-	public static final int DATABASEVERSION = 1;
 	
 	private Context context;
 	private static DatabaseHelper dbHelper;

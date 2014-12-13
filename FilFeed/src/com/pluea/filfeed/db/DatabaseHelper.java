@@ -8,8 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper;
   
 public class DatabaseHelper extends SQLiteOpenHelper{
   
+	private static final String DATABASE_NAME = "rss_manage";
+	private static final int DATABASE_VERSION = 1;
+	
     public DatabaseHelper(Context context) {
-        super(context, "rss_manage", null, 1);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     //onCreate() is called when database is created
