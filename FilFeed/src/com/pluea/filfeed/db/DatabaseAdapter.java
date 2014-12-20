@@ -388,7 +388,7 @@ public class DatabaseAdapter {
 			// Get unread articles
 			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title " +
 					"from articles inner join feeds " +
-					"where articles.status = \"unread\" " +
+					"where articles.status = \"unread\" and articles.feedId = feeds._id " +
 					"order by date ";
 			if(isNewestArticleTop) {
 				sql += "desc";
@@ -429,6 +429,7 @@ public class DatabaseAdapter {
 			// Get unread articles
 			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title " +
 					"from articles inner join feeds " +
+					"where articles.feedId = feeds._id " +
 					"order by date ";
 			if(isNewestArticleTop) {
 				sql += "desc";
@@ -474,7 +475,9 @@ public class DatabaseAdapter {
 			}
 			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,feeds.title " +
 					"from articles inner join feeds " +
-					"where articles.title like '%" + keyword + "%' escape '$' and articles.feedId = " + feedId + " order by date";
+					"where articles.title like '%" + keyword + "%' escape '$' and " +
+					"articles.feedId = " + feedId + " and articles.feedId = feeds._id " +
+					" order by date";
 			if(isNewestArticleTop) {
 				sql += " desc";
 			}else {
