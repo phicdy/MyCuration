@@ -9,6 +9,7 @@ public class Article {
 	private String point_;
 	private long postedDate_;
 	private int feedId_;
+	private String feedTitle;
 	
 	public static final String UNREAD = "unread";
 	public static final String TOREAD = "toRead";
@@ -16,7 +17,7 @@ public class Article {
 	
 	
 	public Article(int id, String title, String url, String status, 
-			String point, long postDate, int feedId) {
+			String point, long postDate, int feedId, String feedTitle) {
 		id_    = id;
 		title_ = title;
 		status_ = status;
@@ -24,8 +25,17 @@ public class Article {
 		point_ = point;
 		postedDate_ = postDate;
 		feedId_ = feedId;
+		this.feedTitle = feedTitle;
 	}
 	
+	public String getFeedTitle() {
+		return feedTitle;
+	}
+
+	public void setFeedTitle(String feedTitle) {
+		this.feedTitle = feedTitle;
+	}
+
 	public void setTitle(String title) {
 		title_ = title;
 	}

@@ -386,8 +386,10 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select _id,title,url,point,date,feedId from articles where status = \"unread\""
-					+ " order by date ";
+			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title " +
+					"from articles inner join feeds " +
+					"where articles.status = \"unread\" " +
+					"order by date ";
 			if(isNewestArticleTop) {
 				sql += "desc";
 			}else {
@@ -402,8 +404,9 @@ public class DatabaseAdapter {
 				String point = cursor.getString(3);
 				long dateLong = cursor.getLong(4);
 				int feedId = cursor.getInt(5);
+				String feedTitle = cursor.getString(6);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId);
+						dateLong, feedId, feedTitle);
 				articles.add(article);
 			}
 			cursor.close();
@@ -424,7 +427,9 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select _id,title,url,status,point,date from articles order by date ";
+			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title " +
+					"from articles inner join feeds " +
+					"order by date ";
 			if(isNewestArticleTop) {
 				sql += "desc";
 			}else {
@@ -439,8 +444,9 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				int feedId = cursor.getInt(6);
+				String feedTitle = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId);
+						dateLong, feedId, feedTitle);
 				articles.add(article);
 			}
 			cursor.close();
@@ -466,8 +472,9 @@ public class DatabaseAdapter {
 			if(keyword.contains("_")) {
 				keyword.replace("_", "$_");
 			}
-			String sql = "select _id,title,url,status,point,date from articles " +
-					"where title like '%" + keyword + "%' escape '$' and feedId = " + feedId + " order by date";
+			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,feeds.title " +
+					"from articles inner join feeds " +
+					"where articles.title like '%" + keyword + "%' escape '$' and articles.feedId = " + feedId + " order by date";
 			if(isNewestArticleTop) {
 				sql += " desc";
 			}else {
@@ -481,8 +488,9 @@ public class DatabaseAdapter {
 				String status = cursor.getString(3);
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
+				String feedTitle = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId);
+						dateLong, feedId, feedTitle);
 				articles.add(article);
 			}
 			cursor.close();
@@ -518,7 +526,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(3);
 				long dateLong = cursor.getLong(4);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId);
+						dateLong, feedId, null);
 				articles.add(article);
 			}
 			cursor.close();
@@ -555,7 +563,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId);
+						dateLong, feedId, null);
 				articles.add(article);
 			}
 			cursor.close();

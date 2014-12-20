@@ -455,6 +455,15 @@ public class ArticlesListActivity extends ListActivity {
 				}else {
 					articlePoint.setText(hatenaPoint);
 				}
+				
+				TextView feedTitleView = (TextView) row
+						.findViewById(R.id.feedTitle);
+				String feedTitle = article.getFeedTitle();
+				if(feedTitle == null) {
+					feedTitleView.setVisibility(View.GONE);
+				}else {
+					feedTitleView.setText(feedTitle);
+				}
 
 				articleTitle.setTextColor(Color.BLACK);
 				articlePostedTime.setTextColor(Color.BLACK);
