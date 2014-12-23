@@ -21,7 +21,7 @@ public class UpdateFeedThread extends Thread {
 	private boolean isRunning = false;
 	
 	private static final String LOG_TAG = "RSSREADER."
-			+ UpdateFeedThread.class.getName();
+			+ UpdateFeedThread.class.getSimpleName();
 	
 	public UpdateFeedThread(Context context, Feed feed) {
 		this.context = context;
