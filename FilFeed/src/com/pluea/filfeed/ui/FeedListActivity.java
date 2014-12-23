@@ -62,7 +62,7 @@ public class FeedListActivity extends Activity {
 	public static final String FEED_URL = "FEED_URL";
 	public static final String UPDATE_NUM_OF_ARTICLES = "UPDATE_NUM_OF_ARTICLES";
 	private static final String LOG_TAG = "RSSREADER."
-			+ FeedListActivity.class.getName();
+			+ FeedListActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
