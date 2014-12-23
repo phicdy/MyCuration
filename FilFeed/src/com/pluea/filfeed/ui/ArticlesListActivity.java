@@ -468,6 +468,7 @@ public class ArticlesListActivity extends ListActivity {
 				articleTitle.setTextColor(Color.BLACK);
 				articlePostedTime.setTextColor(Color.BLACK);
 				articlePoint.setTextColor(Color.BLACK);
+				feedTitleView.setTextColor(Color.BLACK);
 
 				// If readStaus exists,change status
 				// if(readStatus.containsKey(String.valueOf(position)) &&
@@ -477,6 +478,7 @@ public class ArticlesListActivity extends ListActivity {
 					articleTitle.setTextColor(Color.GRAY);
 					articlePostedTime.setTextColor(Color.GRAY);
 					articlePoint.setTextColor(Color.GRAY);
+					feedTitleView.setTextColor(Color.GRAY);
 				}
 			}
 
