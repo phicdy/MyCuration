@@ -14,12 +14,13 @@ public class Feed {
 	public static final String DEDAULT_ICON_PATH = "defaultIconPath";
 	public static final int ALL_FEED_ID = -1;
 	
-	public Feed(int id,String title,String url, String iconPath, String siteUrl) {
+	public Feed(int id,String title,String url, String iconPath, String siteUrl, int unreadAriticlesCount) {
 		id_    = id;
 		title_ = title;
 		url_   = url;
 		this.iconPath = iconPath;
 		this.siteUrl = siteUrl;
+		unreadAriticlesCount_ = unreadAriticlesCount;
 	}
 	
 	public String getSiteUrl() {

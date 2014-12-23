@@ -196,7 +196,7 @@ public class ArticlesListActivity extends ListActivity {
 						.getInstance(getApplicationContext());
 					// Update Feeds
 				ArrayList<Feed> feeds = new ArrayList<Feed>();
-				feeds.add(new Feed(feedId, null, feedUrl, "", ""));
+				feeds.add(new Feed(feedId, null, feedUrl, "", "", 0));
 				updateTaskManager.updateAllFeeds(feeds);
 			}
 		});
