@@ -155,6 +155,36 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
+		if (feedList.size() == 0) {
+			feedList = getAllFeedsWithNoUnreadArticles();
+		}
+		return feedList;
+	}
+	
+	private ArrayList<Feed> getAllFeedsWithNoUnreadArticles() {
+		ArrayList<Feed> feedList = new ArrayList<Feed>();
+		String[] columns = {"_id","title","url","iconPath","siteUrl"};
+		String orderBy = "title";
+		open("write");
+		db.beginTransaction();
+		try {
+			Cursor cursor = db.query("feeds", columns, null, null, null, null, orderBy);
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					int id = cursor.getInt(0);
+					String title = cursor.getString(1);
+					String url = cursor.getString(2);
+					String iconPath = cursor.getString(3);
+					String siteUrl = cursor.getString(4);
+					feedList.add(new Feed(id, title, url, iconPath, siteUrl, 0));
+				}
+				cursor.close();
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		
 		return feedList;
 	}
 
