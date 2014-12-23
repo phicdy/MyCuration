@@ -344,8 +344,7 @@ public class FeedListActivity extends Activity {
 		}
 		ArrayList<Feed> hideList = new ArrayList<Feed>(); 
 		for (Feed feed : feeds) {
-			int numOfUnreadArticles = dbAdapter.getNumOfUnreadArtilces(feed
-					.getId());
+			int numOfUnreadArticles = feed.getUnreadAriticlesCount();
 			if(numOfUnreadArticles == 0) {
 				hideList.add(feed);
 			}else {

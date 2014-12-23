@@ -130,19 +130,30 @@ public class DatabaseAdapter {
 	public ArrayList<Feed> getAllFeeds() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		open("write");
-		String sql = "select _id,title,url,iconPath,siteUrl from feeds order by title";
-		Cursor cursor = db.rawQuery(sql, null);
-		if (cursor != null) {
-			while (cursor.moveToNext()) {
-				int id = cursor.getInt(0);
-				String title = cursor.getString(1);
-				String url = cursor.getString(2);
-				String iconPath = cursor.getString(3);
-				String siteUrl = cursor.getString(4);
-				feedList.add(new Feed(id, title, url, iconPath, siteUrl));
+		db.beginTransaction();
+		try {
+			String sql = "select feeds._id,feeds.title,feeds.url,feeds.iconPath,feeds.siteUrl,count(articles._id) " +
+					"from feeds inner join articles " +
+					"where feeds._id = articles.feedId and articles.status = \"unread\"" +
+					"group by feeds.title " + 
+					"order by feeds.title";
+			Cursor cursor = db.rawQuery(sql, null);
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					int id = cursor.getInt(0);
+					String title = cursor.getString(1);
+					String url = cursor.getString(2);
+					String iconPath = cursor.getString(3);
+					String siteUrl = cursor.getString(4);
+					int unreadAriticlesCount = cursor.getInt(5);
+					feedList.add(new Feed(id, title, url, iconPath, siteUrl, unreadAriticlesCount));
+				}
+				cursor.close();
 			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
 		}
-		cursor.close();
 		
 		return feedList;
 	}
@@ -293,7 +304,7 @@ public class DatabaseAdapter {
 				String iconPath = cur.getString(2);
 				String siteUrl = cur.getString(3);
 
-				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, siteUrl);
+				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, siteUrl, 0);
 			}
 			db.setTransactionSuccessful();
 		} finally {
@@ -740,25 +751,25 @@ public class DatabaseAdapter {
 //		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
 //				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
 		feeds.add(new Feed(0, "IT速報",
-				"http://blog.livedoor.jp/itsoku/index.rdf","", "http://blog.livedoor.jp/itsoku/"));
+				"http://blog.livedoor.jp/itsoku/index.rdf","", "http://blog.livedoor.jp/itsoku/", 0));
 		feeds.add(new Feed(0, "あじゃじゃしたー",
-				"http://blog.livedoor.jp/chihhylove/index.rdf","", "http://blog.livedoor.jp/chihhylove/"));
+				"http://blog.livedoor.jp/chihhylove/index.rdf","", "http://blog.livedoor.jp/chihhylove/", 0));
 		feeds.add(new Feed(0, "はてなブログ人気エントリー",
-				"http://b.hatena.ne.jp/hotentry.rss","", "http://b.hatena.ne.jp"));
+				"http://b.hatena.ne.jp/hotentry.rss","", "http://b.hatena.ne.jp", 0));
 		feeds.add(new Feed(0, "はてなブックマーク - 人気エントリー - テクノロジー",
-				"http://b.hatena.ne.jp/hotentry/it.rss","", "http://b.hatena.ne.jp/hotentry"));
+				"http://b.hatena.ne.jp/hotentry/it.rss","", "http://b.hatena.ne.jp/hotentry", 0));
 		feeds.add(new Feed(0, "暇人速報",
-				"http://himasoku.com/index.rdf","", "http://himasoku.com"));
+				"http://himasoku.com/index.rdf","", "http://himasoku.com", 0));
 		feeds.add(new Feed(0, "ドメサカブログ",
-				"http://blog.livedoor.jp/domesoccer/index.rdf","", "http://blog.livedoor.jp/domesoccer/"));
+				"http://blog.livedoor.jp/domesoccer/index.rdf","", "http://blog.livedoor.jp/domesoccer/", 0));
 		feeds.add(new Feed(0, "きんどう",
-				"http://kindou.info/feed","", "http://kindou.info"));
+				"http://kindou.info/feed","", "http://kindou.info", 0));
 		feeds.add(new Feed(0, "GGSOKU - ガジェット速報",
-				"http://ggsoku.com/feed","", "http://ggsoku.com"));
+				"http://ggsoku.com/feed","", "http://ggsoku.com", 0));
 		feeds.add(new Feed(0, "すまほん!!",
-				"http://smhn.info/feed","", "http://smhn.info"));
+				"http://smhn.info/feed","", "http://smhn.info", 0));
 		feeds.add(new Feed(0, "すまほん!!",
-				"http://smhn.info/feed","", "http://smhn.info"));
+				"http://smhn.info/feed","", "http://smhn.info", 0));
 		
 		//atom
 //		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
