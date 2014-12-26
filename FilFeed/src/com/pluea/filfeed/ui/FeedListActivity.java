@@ -229,11 +229,16 @@ public class FeedListActivity extends Activity {
 		rssFeedListAdapter = new RssFeedListAdapter(feeds);
 		feedsListView.setAdapter(rssFeedListAdapter);
 		super.onResume();
+	@Override
+	protected void onPause() {
+		if (receiver != null) {
+			unregisterReceiver(receiver);
+		}
+		super.onPause();
 	}
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(receiver);
 		super.onDestroy();
 	}
 
