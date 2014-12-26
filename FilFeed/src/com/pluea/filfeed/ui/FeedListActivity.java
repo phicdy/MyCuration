@@ -78,7 +78,7 @@ public class FeedListActivity extends Activity {
 		if(dbAdapter.getNumOfFeeds() == 0) {
 			dbAdapter.addManyFeeds();
 		}
-		feeds = dbAdapter.getAllFeeds();
+		feeds = dbAdapter.getAllFeedsThatHaveUnreadArticles();
 		getFeedIconIfNeeded(feeds);
 		
 		registerForContextMenu(feedsListView.getRefreshableView());
@@ -124,7 +124,7 @@ public class FeedListActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				feeds = dbAdapter.getAllFeeds();
+				feeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
 				updateNumOfUnreadArticles(false);
 
 				// Set ListView
@@ -338,7 +338,7 @@ public class FeedListActivity extends Activity {
 	}
 
 	private void updateNumOfUnreadArticles(boolean isHide) {
-		feeds = dbAdapter.getAllFeeds();
+		feeds = dbAdapter.getAllFeedsThatHaveUnreadArticles();
 		if (feeds.isEmpty()) {
 			return;
 		}

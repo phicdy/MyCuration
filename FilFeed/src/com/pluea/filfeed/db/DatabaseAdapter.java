@@ -127,7 +127,7 @@ public class DatabaseAdapter {
 		return unreadArticlesCount;
 	}
 
-	public ArrayList<Feed> getAllFeeds() {
+	public ArrayList<Feed> getAllFeedsThatHaveUnreadArticles() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		open("write");
 		db.beginTransaction();
@@ -156,12 +156,46 @@ public class DatabaseAdapter {
 		}
 		
 		if (feedList.size() == 0) {
-			feedList = getAllFeedsWithNoUnreadArticles();
+			feedList = getAllFeedsWithoutNumOfUnreadArticles();
 		}
 		return feedList;
 	}
 	
-	private ArrayList<Feed> getAllFeedsWithNoUnreadArticles() {
+	public ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
+		ArrayList<Feed> feedList = new ArrayList<Feed>();
+		open("write");
+		db.beginTransaction();
+		try {
+			String sql = "select feeds._id,feeds.title,feeds.url,feeds.iconPath,feeds.siteUrl,count(articles._id) " +
+					"from feeds inner join articles " +
+					"where feeds._id = articles.feedId" +
+					"group by feeds.title " + 
+					"order by feeds.title";
+			Cursor cursor = db.rawQuery(sql, null);
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					int id = cursor.getInt(0);
+					String title = cursor.getString(1);
+					String url = cursor.getString(2);
+					String iconPath = cursor.getString(3);
+					String siteUrl = cursor.getString(4);
+					int unreadAriticlesCount = cursor.getInt(5);
+					feedList.add(new Feed(id, title, url, iconPath, siteUrl, unreadAriticlesCount));
+				}
+				cursor.close();
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		
+		if (feedList.size() == 0) {
+			feedList = getAllFeedsWithoutNumOfUnreadArticles();
+		}
+		return feedList;
+	}
+	
+	public ArrayList<Feed> getAllFeedsWithoutNumOfUnreadArticles() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		String[] columns = {"_id","title","url","iconPath","siteUrl"};
 		String orderBy = "title";

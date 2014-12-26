@@ -30,14 +30,14 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 		if(intent.getAction().equals(AUTO_UPDATE_ACTION)) {
 			UpdateTaskManager updateTask = UpdateTaskManager.getInstance(context);
 	
-			updateTask.updateAllFeeds(dbAdapter.getAllFeeds());
+			updateTask.updateAllFeeds(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles());
 			AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
 			
 			// Save new time
 			AlarmManagerTaskManager.setNewAlarm(context);
 		}else if(intent.getAction().equals(AUTO_UPDATE_HATENA_ACTION)) {
 			// Update Hatena point
-			ArrayList<Feed> feeds = dbAdapter.getAllFeeds();
+			ArrayList<Feed> feeds = dbAdapter.getAllFeedsThatHaveUnreadArticles();
 			if (feeds == null || feeds.isEmpty()) {
 				return;
 			}

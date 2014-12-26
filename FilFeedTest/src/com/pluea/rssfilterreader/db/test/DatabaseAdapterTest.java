@@ -80,7 +80,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 	
 	private void deleteAllFeeds() {
-		for (Feed feed : adapter.getAllFeeds()) {
+		for (Feed feed : adapter.getAllFeedsWithoutNumOfUnreadArticles()) {
 			adapter.deleteFeed(feed.getId());
 		}
 	}
