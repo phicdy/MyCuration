@@ -39,25 +39,26 @@ public class UpdateFeedThread extends Thread {
 		// Parse XML
 		RssParser rssParser = new RssParser(context);
 		boolean parseResult;
-		try {
-			parseResult = rssParser.parseXml(urlString,
-					feedId);
-			// Update articles "toRead" status to "read"
-			dbAdapter.changeArticlesStatusToRead();
+//		try {
+////			parseResult = rssParser.parseXml(urlString,
+////					feedId);
+//			// Update articles "toRead" status to "read"
+//			dbAdapter.changeArticlesStatusToRead();
 			
 			// Filter articles
-			if (parseResult) {
-				new FilterTask(context).applyFiltering(feedId);
-			}
-		} catch (IOException e) {
-			Log.d(LOG_TAG, "Parse error");
-			e.printStackTrace();
-		}
+//			if (parseResult) {
+//				new FilterTask(context).applyFiltering(feedId);
+//			}
+//		} catch (IOException e) {
+//			Log.d(LOG_TAG, "Parse error");
+//			e.printStackTrace();
+//		}
 
 		isRunning = false;
 		
 		// Broadcast updating num of articles
 		context.sendBroadcast(new Intent(FeedListActivity.UPDATE_NUM_OF_ARTICLES));
+//		Log.d(LOG_TAG, "finish update, title:" + feed.getTitle() + ", time:" + (System.currentTimeMillis() - start));
 	}
 
 	public boolean isRunning() {

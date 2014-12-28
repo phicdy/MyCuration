@@ -80,10 +80,10 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
             if(newFeed != null) {
 	            //Get Feed id from feed URL
 	            Feed feed = dbAdapter.getFeedByUrl(urlString);
-	            int feedId = feed.getId();
 	            
 	        	//Parse XML and get new Articles
-	            rssParser.parseXml(urlString, feedId);
+	            UpdateTaskManager taskManager = UpdateTaskManager.getInstance(context);
+	            taskManager.updateFeed(feed);
 	            
 	            //Set num of unread articles
 	            newFeed.setUnreadArticlesCount(dbAdapter.calcNumOfUnreadArticles(newFeed.getId()));

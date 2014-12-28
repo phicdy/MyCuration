@@ -27,11 +27,8 @@ public class RssParser {
 		dbAdapter = DatabaseAdapter.getInstance(context);
 	}
 
-	public boolean parseXml(String urlString, int feedId) throws IOException {
-		InputStream is = setInputStream(urlString);
-		if (is == null) {
-			return false;
-		}
+	public boolean parseXml(InputStream is, int feedId) throws IOException {
+		Log.d(LOG_TAG, "Parse start");
 
 		boolean result = true;
 		ArrayList<Article> articles = new ArrayList<Article>();
