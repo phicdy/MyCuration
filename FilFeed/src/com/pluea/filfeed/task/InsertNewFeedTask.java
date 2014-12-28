@@ -1,17 +1,9 @@
 package com.pluea.filfeed.task;
   
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
-import org.xmlpull.v1.XmlPullParser;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Xml;
 import android.widget.Toast;
 
 import com.pluea.filfeed.R;

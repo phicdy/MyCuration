@@ -1,7 +1,6 @@
 package com.pluea.filfeed.task;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.util.Log;
 
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.filter.FilterTask;
-import com.pluea.filfeed.rss.Article;
 import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.rss.RssParser;
 import com.pluea.filfeed.ui.FeedListActivity;
