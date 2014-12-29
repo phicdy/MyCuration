@@ -236,6 +236,9 @@ public class FeedListActivity extends Activity {
 		if (receiver != null) {
 			unregisterReceiver(receiver);
 		}
+		if (UpdateTaskManager.getInstance(getApplicationContext()).isUpdating()) {
+			feedsListView.onRefreshComplete();
+		}
 		super.onPause();
 	}
 
