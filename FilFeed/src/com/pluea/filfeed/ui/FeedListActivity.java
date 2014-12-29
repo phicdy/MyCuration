@@ -410,7 +410,9 @@ public class FeedListActivity extends Activity {
 
 			ImageView feedIcon = (ImageView)row.findViewById(R.id.feedIcon);
 			String iconPath = feed.getIconPath();
-			if(iconPath != null && !iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
+			if(iconPath == null || iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
+				feedIcon.setImageResource(R.drawable.no_icon);
+			}else {
 				File file = new File(iconPath);
 			    if (file.exists()) {
 		            Bitmap bmp = BitmapFactory.decodeFile(file.getPath());
