@@ -6,7 +6,6 @@ import java.util.Date;
 
 import android.app.ListActivity;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,14 +20,12 @@ import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -51,16 +48,13 @@ public class ArticlesListActivity extends ListActivity {
 	private DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
 	private PreferenceManager prefMgr;
 	private Intent intent;
-	private BroadcastReceiver receiver;
 	private PullToRefreshListView articlesListView;
 	private ArticlesListAdapter articlesListAdapter;
-	private ImageView updateView;
 	private int touchedPosition;
 
 	private static final int SWIPE_MIN_WIDTH = 120;
 	private static final int SWIPE_MAX_OFF_PATH = 250;
 	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-	private static final int NO_SWIPE_WIDTH = 10;
 	public static final String OPEN_URL_ID = "openUrl";
 	private static final String LOG_TAG = "RSSReader.ArticlesList";
 
