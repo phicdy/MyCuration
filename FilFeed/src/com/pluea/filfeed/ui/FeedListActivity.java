@@ -229,6 +229,9 @@ public class FeedListActivity extends Activity {
 		// Set ListView
 		rssFeedListAdapter = new RssFeedListAdapter(feeds);
 		feedsListView.setAdapter(rssFeedListAdapter);
+		if (UpdateTaskManager.getInstance(getApplicationContext()).isUpdating()) {
+			feedsListView.setRefreshing(true);
+		}
 	}
 	
 	@Override
