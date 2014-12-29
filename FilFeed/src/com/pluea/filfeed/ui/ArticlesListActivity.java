@@ -255,27 +255,6 @@ public class ArticlesListActivity extends ListActivity {
 			}
 		});
 		
-		Button openAllButton = (Button)findViewById(R.id.btn_open_all_articles);
-		openAllButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				ArrayList<Article> openArticles = new ArrayList<Article>();
-				for (Article article : articles) {
-					if(article.getStatus().equals(Article.UNREAD)) {
-						article.setStatus(Article.TOREAD);
-						openArticles.add(article);
-					}
-				}
-				articlesListAdapter.notifyDataSetChanged();
-				for (Article article : openArticles) {
-					Uri uri = Uri.parse(article.getUrl());
-					intent = new Intent(Intent.ACTION_VIEW, uri);
-					startActivity(intent);
-				}
-			}
-		});
-		
 		Button scrollButton = (Button)findViewById(R.id.btn_scroll);
 		scrollButton.setOnClickListener(new OnClickListener() {
 			
