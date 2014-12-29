@@ -32,6 +32,7 @@
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_gravity="center_horizontal"
+	            android:layout_marginBottom="4dp"
 				android:textSize="14sp"	            
 	            android:text="@string/all_read" />
         </LinearLayout>
@@ -52,6 +53,7 @@
 	        <TextView
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
+	            android:layout_marginBottom="4dp"
 	            android:layout_gravity="center_horizontal"
 				android:textSize="14sp"	            
 	            android:text="@string/next_page" />
