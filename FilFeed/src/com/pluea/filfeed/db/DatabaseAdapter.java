@@ -830,11 +830,28 @@ public class DatabaseAdapter {
 				"http://kindou.info/feed","", "http://kindou.info", 0));
 		feeds.add(new Feed(0, "GGSOKU - ガジェット速報",
 				"http://ggsoku.com/feed","", "http://ggsoku.com", 0));
-		feeds.add(new Feed(0, "すまほん!!",
-				"http://smhn.info/feed","", "http://smhn.info", 0));
-		feeds.add(new Feed(0, "すまほん!!",
-				"http://smhn.info/feed","", "http://smhn.info", 0));
-		
+		feeds.add(new Feed(0, "Act as Professional",
+				"http://hiroki.jp/feed/","", "http://hiroki.jp", 0));
+		feeds.add(new Feed(0, "Developers.IO",
+				"http://dev.classmethod.jp/feed/","", "http://dev.classmethod.jp", 0));
+		feeds.add(new Feed(0, "GREE Engineers' Blog",
+				"http://labs.gree.jp/blog/feed","", "http://labs.gree.jp/blog", 0));
+		feeds.add(new Feed(0, "HTC速報",
+				"http://htcsoku.info/feed/","", "http://htcsoku.info", 0));
+		feeds.add(new Feed(0, "Hatena Developer Blog",
+				"http://developer.hatenastaff.com/rss","", "http://developer.hatenastaff.com/", 0));
+		feeds.add(new Feed(0, "ITmedia 総合記事一覧",
+				"http://rss.rssad.jp/rss/itmtop/2.0/itmedia_all.xml","", "http://www.itmedia.co.jp/", 0));
+		feeds.add(new Feed(0, "Publickey",
+				"http://www.publickey1.jp/atom.xml","", "http://www.publickey1.jp/", 0));
+		feeds.add(new Feed(0, "Tech Booster",
+				"http://techbooster.jpn.org/feed/","", "http://techbooster.jpn.org", 0));
+		feeds.add(new Feed(0, "TechCrunch Japan",
+				"http://jp.techcrunch.com/feed/","", "http://jp.techcrunch.com", 0));
+		feeds.add(new Feed(0, "あんどろいど速報",
+				"http://androidken.blog119.fc2.com/?xml","", "http://androidken.blog119.fc2.com/", 0));
+		feeds.add(new Feed(0, "＠IT 全フォーラム 最新記事一覧",
+				"http://www.atmarkit.co.jp/","", "http://rss.rssad.jp/rss/itmatmarkit/rss.xml", 0));
 		//atom
 //		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
 //				"http://feeds.feedburner.com/tb-hotentry"));
