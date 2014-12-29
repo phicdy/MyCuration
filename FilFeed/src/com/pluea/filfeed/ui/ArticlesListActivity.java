@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -228,8 +229,8 @@ public class ArticlesListActivity extends ListActivity {
 		};
 		mGestureDetector = new GestureDetector(this, mOnGestureListener);
 		
-		Button allRealButton = (Button)findViewById(R.id.all_read);
-		allRealButton.setOnClickListener(new OnClickListener() {
+		LinearLayout allReadView = (LinearLayout)findViewById(R.id.ll_all_read);
+		allReadView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -249,8 +250,8 @@ public class ArticlesListActivity extends ListActivity {
 			}
 		});
 		
-		Button scrollButton = (Button)findViewById(R.id.btn_scroll);
-		scrollButton.setOnClickListener(new OnClickListener() {
+		LinearLayout scrollView = (LinearLayout)findViewById(R.id.ll_scroll);
+		scrollView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
