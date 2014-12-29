@@ -502,7 +502,7 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title " +
+			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title " +
 					"from articles inner join feeds " +
 					"where articles.feedId = feeds._id " +
 					"order by date ";
