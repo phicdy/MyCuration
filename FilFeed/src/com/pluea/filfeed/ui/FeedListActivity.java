@@ -72,7 +72,6 @@ public class FeedListActivity extends Activity {
 		feedsListView = (PullToRefreshListView) findViewById(R.id.feedList);
 		
 		setAllListener();
-		setBroadCastReceiver();
 		setAlarmManager();
 		
 		if(dbAdapter.getNumOfFeeds() == 0) {
@@ -222,13 +221,16 @@ public class FeedListActivity extends Activity {
 
 	@Override
 	protected void onResume() {
+		super.onResume();
+		setBroadCastReceiver();
 //		updateAllFeeds();
 		updateNumOfUnreadArticles(true);
 
 		// Set ListView
 		rssFeedListAdapter = new RssFeedListAdapter(feeds);
 		feedsListView.setAdapter(rssFeedListAdapter);
-		super.onResume();
+	}
+	
 	@Override
 	protected void onPause() {
 		if (receiver != null) {
