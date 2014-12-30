@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response.ErrorListener;
@@ -14,6 +15,7 @@ import com.android.volley.toolbox.Volley;
 import com.pluea.filfeed.alarm.AlarmManagerTaskManager;
 import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.rss.RssParser;
+import com.pluea.filfeed.ui.FeedListActivity;
 
 public class UpdateTaskManager {
 
@@ -61,7 +63,8 @@ public class UpdateTaskManager {
 			            RssParser parser = new RssParser(context); 
 			            try {
 							parser.parseXml(in, feed.getId());
-							in.close();  
+							in.close();
+							context.sendBroadcast(new Intent(FeedListActivity.UPDATE_NUM_OF_ARTICLES));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
