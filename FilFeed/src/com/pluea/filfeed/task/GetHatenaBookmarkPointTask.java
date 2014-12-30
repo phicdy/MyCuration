@@ -9,13 +9,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-import com.pluea.filfeed.db.DatabaseAdapter;
-import com.pluea.filfeed.rss.Article;
-
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.pluea.filfeed.db.DatabaseAdapter;
+import com.pluea.filfeed.rss.Article;
 
 public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Article> {
 

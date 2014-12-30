@@ -1,17 +1,9 @@
 package com.pluea.filfeed.task;
   
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
-import org.xmlpull.v1.XmlPullParser;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Xml;
 import android.widget.Toast;
 
 import com.pluea.filfeed.R;
@@ -88,10 +80,10 @@ public class InsertNewFeedTask extends AsyncTask<String, String, Feed>{
             if(newFeed != null) {
 	            //Get Feed id from feed URL
 	            Feed feed = dbAdapter.getFeedByUrl(urlString);
-	            int feedId = feed.getId();
 	            
 	        	//Parse XML and get new Articles
-	            rssParser.parseXml(urlString, feedId);
+	            UpdateTaskManager taskManager = UpdateTaskManager.getInstance(context);
+	            taskManager.updateFeed(feed);
 	            
 	            //Set num of unread articles
 	            newFeed.setUnreadArticlesCount(dbAdapter.calcNumOfUnreadArticles(newFeed.getId()));
