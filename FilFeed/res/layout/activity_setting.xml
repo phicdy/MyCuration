@@ -24,13 +24,15 @@
 	        android:gravity="right"
 	        android:orientation="horizontal" >
         
-	        <EditText
-	            android:id="@+id/inputInterval"
-	            android:layout_width="32dp"
-	            android:layout_height="wrap_content"
+	        <Spinner
+		        android:id="@+id/sp_update_interval"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+	            android:gravity="right"
 	            android:layout_marginLeft="12dp"
 	            android:layout_marginTop="12dp"
-	            android:inputType="number" />
+		        android:prompt="@string/interval"
+		        android:entries="@array/update_interval_items" />
 	
 	        <TextView
 	            android:id="@+id/hour"
@@ -166,8 +168,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginTop="12dp"
 	        android:prompt="@string/swipe_direction"
-	        android:entries="@array/swipe_direction_items"
-	        />
+	        android:entries="@array/swipe_direction_items" />
     </LinearLayout>
     
     <View

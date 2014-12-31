@@ -18,6 +18,7 @@ public class PreferenceManager extends Activity {
 	public static final int SWIPE_LEFT_TO_RIGHT = 1;
 	public static final int SWIPE_DEFAULT = SWIPE_RIGHT_TO_LEFT;
 	private static final int[] SWIPE_DIRECTIONS = {SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT};
+	private static final int DEFAULT_UPDATE_INTERVAL_SECOND = 1 * 60 * 60;
 	
 	public static int DEFAULT_VALUE = 0;
 	private static PreferenceManager preMgr;
@@ -36,16 +37,16 @@ public class PreferenceManager extends Activity {
 	}
 
 	
-	public int getAutoUpdateInterval() {
+	public int getAutoUpdateIntervalSecond() {
 		if(pref.contains(KEY_AUTO_UPDATE_INTERVAL)) {
-			return pref.getInt(KEY_AUTO_UPDATE_INTERVAL, DEFAULT_VALUE);
+			return pref.getInt(KEY_AUTO_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_SECOND);
 		}
-		return DEFAULT_VALUE;
+		return DEFAULT_UPDATE_INTERVAL_SECOND;
 	}
 
-	public void setAutoUpdateInterval(int interval) {
+	public void setAutoUpdateIntervalSecond(int intervalSecond) {
 		editor = pref.edit();
-		editor.putInt(KEY_AUTO_UPDATE_INTERVAL, interval);
+		editor.putInt(KEY_AUTO_UPDATE_INTERVAL, intervalSecond);
 		editor.commit();
 	}
 	

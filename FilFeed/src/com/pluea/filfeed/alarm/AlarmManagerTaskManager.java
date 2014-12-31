@@ -2,6 +2,8 @@ package com.pluea.filfeed.alarm;
 
 import java.util.Calendar;
 
+import com.pluea.filfeed.util.PreferenceManager;
+
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -11,7 +13,6 @@ import android.util.Log;
 
 public class AlarmManagerTaskManager {
 
-	private static final int FEED_UPDATE_INTERVAL = 60*60*1;
 	private static final int HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE = 10;
 	
 	private AlarmManagerTaskManager() {
@@ -19,7 +20,8 @@ public class AlarmManagerTaskManager {
 	}
 	
 	public static void setNewAlarm(Context context) {
-		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION, FEED_UPDATE_INTERVAL);
+		PreferenceManager mgr = PreferenceManager.getInstance(context);
+		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION, mgr.getAutoUpdateIntervalSecond());
 	}
 	
 	public static void setNewHatenaUpdateAlarm(Context context) {

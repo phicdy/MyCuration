@@ -16,6 +16,7 @@ import com.pluea.filfeed.util.PreferenceManager;
   
 public class SettingActivity extends Activity {
   
+	private Spinner spUpdateInterval;
 	private CheckBox cbSortNewArticleTop;
 	private CheckBox cbAllReadBack;
 	private CheckBox cbOpenInternal;
@@ -33,9 +34,17 @@ public class SettingActivity extends Activity {
     private void initView() {
     	PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
     	
-    	EditText input = (EditText)findViewById(R.id.inputInterval);
-    	int savedInterval = mgr.getAutoUpdateInterval();
-    	input.setText(String.valueOf(savedInterval));
+    	spUpdateInterval = (Spinner)findViewById(R.id.sp_update_interval);
+    	// Set stored position of value
+    	int autoUpdateIntervalSecond = mgr.getAutoUpdateIntervalSecond();
+    	int autoUpdateIntervalHour = autoUpdateIntervalSecond / (60 * 60);
+    	String updateIntervalHourItems[] = getResources().getStringArray(R.array.update_interval_items);
+    	for (int indexOfSpinner = 0; indexOfSpinner < updateIntervalHourItems.length; indexOfSpinner++) {
+    		if (Integer.valueOf(updateIntervalHourItems[indexOfSpinner]) == autoUpdateIntervalHour) {
+    			spUpdateInterval.setSelection(indexOfSpinner);
+    			break;
+    		}
+		}
     	
     	cbSortNewArticleTop = (CheckBox)findViewById(R.id.cb_article_sort);
     	cbSortNewArticleTop.setChecked(mgr.getSortNewArticleTop());
@@ -56,11 +65,12 @@ public class SettingActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// Save update interval
-				EditText intervalText = (EditText)findViewById(R.id.inputInterval);
-				String input = intervalText.getText().toString();
 				PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
-				mgr.setAutoUpdateInterval(Integer.valueOf(input));
+				
+				// Save update interval
+				int intervalHour = Integer.valueOf((String)spUpdateInterval.getSelectedItem());
+				int intervalSecond = intervalHour * 60 * 60;
+				mgr.setAutoUpdateIntervalSecond(intervalSecond);
 				
 				mgr.setSortNewArticleTop(cbSortNewArticleTop.isChecked());
 				mgr.setAllReadBack(cbAllReadBack.isChecked());
