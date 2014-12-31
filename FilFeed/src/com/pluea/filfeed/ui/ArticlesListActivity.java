@@ -213,11 +213,11 @@ public class ArticlesListActivity extends ListActivity {
 					if (event1.getX() - event2.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 						setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, prefMgr.getAllReadBack());
-						isSwipeLeftToRight = true;
+						isSwipeRightToLeft = true;
 					} else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 						setReadStatusToTouchedView(Color.BLACK, Article.UNREAD, prefMgr.getAllReadBack());
-						isSwipeRightToLeft = true;
+						isSwipeLeftToRight = true;
 					}
 
 				} catch (Exception e) {
