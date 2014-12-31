@@ -37,7 +37,7 @@ public class UpdateTaskManager {
 		return updateTaskManager;
 	}
 	
-	public boolean updateAllFeeds(ArrayList<Feed> feeds) {
+	public boolean updateAllFeeds(final ArrayList<Feed> feeds) {
 		if(isUpdating()) {
 			return false;
 		}
@@ -45,6 +45,7 @@ public class UpdateTaskManager {
 		for(final Feed feed : feeds) {
 			updateFeed(feed);
 		}
+		// After update feed, update hatena point with interval
 		AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
 		return true;
 	}
@@ -54,19 +55,26 @@ public class UpdateTaskManager {
 			       new Listener<InputStream>() {  
 			  
 			        @Override  
-			        public void onResponse(InputStream in) {  
+			        public void onResponse(final InputStream in) {
 			        	if (in == null) {
 			        		return;
 			        	}
-			            RssParser parser = new RssParser(context); 
-			            try {
-							parser.parseXml(in, feed.getId());
 							in.close();
-							context.sendBroadcast(new Intent(FeedListActivity.UPDATE_NUM_OF_ARTICLES));
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+			        	new Thread(new Runnable() {
+			    			
+			    			@Override
+			    			public void run() {
+					            RssParser parser = new RssParser(context); 
+					            try {
+									parser.parseXml(in, feed.getId());
+								} catch (IOException e) {
+									e.printStackTrace();
+								} finally {
 									finishOneRequest();
+									context.sendBroadcast(new Intent(FeedListActivity.UPDATE_NUM_OF_ARTICLES));
+								}
+					    	}
+			        	}).start();
 			        }  
 			    }, new ErrorListener() {  
 			  
