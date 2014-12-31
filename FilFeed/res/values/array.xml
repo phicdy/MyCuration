@@ -1,0 +1,6 @@
+<resources>
+    <string-array name="swipe_direction_items">
+        <item>右から左</item>
+        <item>左から右</item>
+    </string-array>
+</resources>

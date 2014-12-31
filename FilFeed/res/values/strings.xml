@@ -53,12 +53,14 @@
     <string name="delete_filter">フィルター削除</string>
     <string name="not_get_hatena_point">取得中</string>
     
+    <!-- 設定 -->
     <string name="setting">設定</string>
     <string name="interval">自動更新の頻度</string>
     <string name="hour">時間</string>
     <string name="article_sort">新しい記事を一番上にする</string>
     <string name="all_read_back">全既読になったらフィード一覧に自動で戻る</string>
     <string name="open_internal">内蔵のブラウザで開く</string>
+    <string name="swipe_direction">スワイプで記事を既読にする</string>
     <string name="save">保存</string>
     <string name="saved">設定が保存されました</string>
     

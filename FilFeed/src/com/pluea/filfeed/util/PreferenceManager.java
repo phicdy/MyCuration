@@ -12,6 +12,12 @@ public class PreferenceManager extends Activity {
 	private static final String KEY_ALL_READ_BACK = "allReadBack";
 	private static final String KEY_SEARCH_FEED_ID = "searchFeedId";
 	private static final String KEY_OPEN_INTERNAL_ID = "openInternal";
+	private static final String KEY_SWIPE_DIRECTION = "swipeDirection";
+	
+	public static final int SWIPE_RIGHT_TO_LEFT = 0;
+	public static final int SWIPE_LEFT_TO_RIGHT = 1;
+	public static final int SWIPE_DEFAULT = SWIPE_RIGHT_TO_LEFT;
+	private static final int[] SWIPE_DIRECTIONS = {SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT};
 	
 	public static int DEFAULT_VALUE = 0;
 	private static PreferenceManager preMgr;
@@ -93,5 +99,24 @@ public class PreferenceManager extends Activity {
 		editor = pref.edit();
 		editor.putBoolean(KEY_OPEN_INTERNAL_ID, isOpenInternal);
 		editor.commit();
+	}
+	
+	public int getSwipeDirection() {
+		if(pref.contains(KEY_SWIPE_DIRECTION)) {
+			return pref.getInt(KEY_SWIPE_DIRECTION, SWIPE_DEFAULT);
+		}
+		return SWIPE_DEFAULT;
+	}
+	
+	public boolean setSwipeDirection(int newSwipeDirection) {
+		for (int direction : SWIPE_DIRECTIONS) {
+			if (direction == newSwipeDirection) {
+				editor = pref.edit();
+				editor.putInt(KEY_SWIPE_DIRECTION, newSwipeDirection);
+				editor.commit();
+				return true;
+			}
+		}
+		return false;
 	}
 }

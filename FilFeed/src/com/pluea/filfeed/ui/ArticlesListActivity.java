@@ -62,6 +62,8 @@ public class ArticlesListActivity extends ListActivity {
 	private SimpleOnGestureListener mOnGestureListener;
 	private boolean isSwipeRightToLeft = false;
 	private boolean isSwipeLeftToRight = false;
+	
+	private int swipeDirectionOption = PreferenceManager.SWIPE_DEFAULT;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class ArticlesListActivity extends ListActivity {
 		// intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
 
 		prefMgr = PreferenceManager.getInstance(getApplicationContext());
+		swipeDirectionOption = prefMgr.getSwipeDirection();
 		if(feedId != Feed.ALL_FEED_ID) {
 			prefMgr.setSearchFeedId(feedId);
 			setTitle(dbAdapter.getFeedByUrl(feedUrl).getTitle());
@@ -196,6 +199,7 @@ public class ArticlesListActivity extends ListActivity {
 			}
 		});
 
+		// Handle swipe event
 		mOnGestureListener = new SimpleOnGestureListener() {
 			@Override
 			public boolean onFling(MotionEvent event1, MotionEvent event2,
@@ -203,21 +207,47 @@ public class ArticlesListActivity extends ListActivity {
 				isSwipeLeftToRight = false;
 				isSwipeRightToLeft = false;
 				try {
-					
+					// Set touched position in articles list from touch event
 					touchedPosition = articlesListView.getRefreshableView().pointToPosition(
 							(int) event1.getX(), (int) event1.getY()) -1;
 					if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
 						return false;
 					}
 
+					// event1 is first motion event and event2 is second motion event.
+					// So, if the distance from event1'x to event2'x is longer than a certain value, it is swipe 
+					// And if event1'x is bigger than event2'x, it is swipe from right
+					// And if event1'x is smaller than event2'x, it is swipe from left
 					if (event1.getX() - event2.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-						setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, prefMgr.getAllReadBack());
+						// Right to Left
 						isSwipeRightToLeft = true;
+						switch (swipeDirectionOption) {
+						case PreferenceManager.SWIPE_RIGHT_TO_LEFT:
+							setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, prefMgr.getAllReadBack());
+							break;
+						case PreferenceManager.SWIPE_LEFT_TO_RIGHT:
+							setReadStatusToTouchedView(Color.BLACK, Article.UNREAD, prefMgr.getAllReadBack());
+							break;
+
+						default:
+							break;
+						}
 					} else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
 							&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-						setReadStatusToTouchedView(Color.BLACK, Article.UNREAD, prefMgr.getAllReadBack());
+						// Left to Right
 						isSwipeLeftToRight = true;
+						switch (swipeDirectionOption) {
+						case PreferenceManager.SWIPE_RIGHT_TO_LEFT:
+							setReadStatusToTouchedView(Color.BLACK, Article.UNREAD, prefMgr.getAllReadBack());
+							break;
+						case PreferenceManager.SWIPE_LEFT_TO_RIGHT:
+							setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, prefMgr.getAllReadBack());
+							break;
+							
+						default:
+							break;
+						}
 					}
 
 				} catch (Exception e) {

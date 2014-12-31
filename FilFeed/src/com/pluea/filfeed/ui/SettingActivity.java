@@ -7,6 +7,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pluea.filfeed.R;
@@ -18,6 +19,7 @@ public class SettingActivity extends Activity {
 	private CheckBox cbSortNewArticleTop;
 	private CheckBox cbAllReadBack;
 	private CheckBox cbOpenInternal;
+	private Spinner spSwipeDirection;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,9 @@ public class SettingActivity extends Activity {
     	
     	cbOpenInternal = (CheckBox)findViewById(R.id.cb_open_internal);
     	cbOpenInternal.setChecked(mgr.isOpenInternal());
+    	
+    	spSwipeDirection = (Spinner)findViewById(R.id.sp_swipe_direction);
+    	spSwipeDirection.setSelection(mgr.getSwipeDirection());
     }
     
     private void setLitener() {
@@ -51,6 +56,7 @@ public class SettingActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				// Save update interval
 				EditText intervalText = (EditText)findViewById(R.id.inputInterval);
 				String input = intervalText.getText().toString();
 				PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
@@ -59,6 +65,9 @@ public class SettingActivity extends Activity {
 				mgr.setSortNewArticleTop(cbSortNewArticleTop.isChecked());
 				mgr.setAllReadBack(cbAllReadBack.isChecked());
 				mgr.setOpenInternal(cbOpenInternal.isChecked());
+				
+				// Save swipe direction
+				mgr.setSwipeDirection(spSwipeDirection.getSelectedItemPosition());
 				
 				AlarmManagerTaskManager.setNewAlarm(getApplicationContext());
 				
