@@ -70,7 +70,7 @@ public class FeedListActivity extends Activity {
 		setContentView(R.layout.activity_feed_list);
 
 		feedsListView = (PullToRefreshListView) findViewById(R.id.feedList);
-		
+		updateTaskManager = UpdateTaskManager.getInstance(getApplicationContext());
 		setAllListener();
 		setAlarmManager();
 		
@@ -339,7 +339,6 @@ public class FeedListActivity extends Activity {
 			feedsListView.onRefreshComplete();
 			return;
 		} 
-		updateTaskManager = UpdateTaskManager.getInstance(getApplicationContext());
 
 		// Get feeds from DB if other update task is not running
 		if (updateTaskManager.updateAllFeeds(feeds)) {
