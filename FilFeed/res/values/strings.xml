@@ -30,6 +30,11 @@
     <string name="adding_feed">フィードを追加しています。</string>
     
     <string name="delete_feed">フィード削除</string>
+    <string name="delete_feed_alert">フィードを削除してもよろしいですか？</string>
+    <string name="delete">削除</string>
+    <string name="finish_delete_feed_success">フィードを削除しました</string>
+    <string name="finish_delete_feed_fail">フィードの削除に失敗しました</string>
+    
     <string name="edit_feed_title">フィードのタイトルを編集</string>
     <string name="new_title">新しいタイトル</string>
     <string name="empty_title">新しいタイトルが空になっています。</string>

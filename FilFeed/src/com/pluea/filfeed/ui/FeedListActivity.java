@@ -207,9 +207,7 @@ public class FeedListActivity extends Activity {
 
 		switch (item.getItemId()) {
 		case DELETE_FEED_MENU_ID:
-			dbAdapter.deleteFeed(selectedFeed.getId());
-			feeds.remove(info.position-1);
-			rssFeedListAdapter.notifyDataSetChanged();
+			showDeleteFeedAlertDialog(selectedFeed, info.position-1);
 			return true;
 		case EDIT_FEED_TITLE_MENU_ID:
 			showEditTitleDialog(selectedFeed);
@@ -330,6 +328,26 @@ public class FeedListActivity extends Activity {
 									}else {
 										Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_error), Toast.LENGTH_SHORT).show();
 									}
+								}
+							}
+
+						}).setNegativeButton(R.string.cancel, null).show();
+	}
+	
+	private void showDeleteFeedAlertDialog(final Feed selectedFeed, final int position) {
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.delete_feed_alert)
+				.setPositiveButton(R.string.delete,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								if(dbAdapter.deleteFeed(selectedFeed.getId())) {
+									feeds.remove(position);
+									rssFeedListAdapter.notifyDataSetChanged();
+									Toast.makeText(getApplicationContext(), getString(R.string.finish_delete_feed_success), Toast.LENGTH_SHORT).show();
+								}else {
+									Toast.makeText(getApplicationContext(), getString(R.string.finish_delete_feed_fail), Toast.LENGTH_SHORT).show();
 								}
 							}
 

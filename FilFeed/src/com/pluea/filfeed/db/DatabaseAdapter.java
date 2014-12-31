@@ -338,18 +338,23 @@ public class DatabaseAdapter {
 		return status;
 	}
 
-	public void deleteFeed(int feedId) {
+	public boolean deleteFeed(int feedId) {
 		open("write");
+		int numOfDeleted = 0;
 		db.beginTransaction();
 		try {
 			db.delete("articles", "feedId = " + feedId, null);
 			db.delete("filters", "feedId = " + feedId, null);
 			// db.delete("priorities","feedId = "+feedId,null);
-			db.delete("feeds", "_id = " + feedId, null);
+			numOfDeleted = db.delete("feeds", "_id = " + feedId, null);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
+		if (numOfDeleted == 1) {
+			return true;
+		}
+		return false;
 	}
 
 	public Feed getFeedByUrl(String feedUrl) {
