@@ -20,9 +20,10 @@ import com.pluea.filfeed.ui.FeedListActivity;
 public class UpdateTaskManager {
 
 	private static UpdateTaskManager updateTaskManager;
-	private ArrayList<UpdateFeedThread> updateFeedThreads = new ArrayList<UpdateFeedThread>();
 	private Context context;
 	private RequestQueue mQueue;
+	// Manage queue status
+	private int numOfRequest = 0;
 	
 	private UpdateTaskManager(Context context) {
 		this.context = context;
@@ -40,7 +41,7 @@ public class UpdateTaskManager {
 		if(isUpdating()) {
 			return false;
 		}
-		updateFeedThreads.clear();
+		numOfRequest = 0;
 		for(final Feed feed : feeds) {
 			updateFeed(feed);
 		}
@@ -49,9 +50,6 @@ public class UpdateTaskManager {
 	}
 	
 	public void updateFeed(final Feed feed) {
-//		UpdateFeedThread thread = new UpdateFeedThread(context, feed);
-//		updateFeedThreads.add(thread);
-//		thread.start();
 		InputStreamRequest request = new InputStreamRequest(feed.getUrl(),   
 			       new Listener<InputStream>() {  
 			  
@@ -68,6 +66,7 @@ public class UpdateTaskManager {
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
+									finishOneRequest();
 			        }  
 			    }, new ErrorListener() {  
 			  
@@ -77,18 +76,22 @@ public class UpdateTaskManager {
 			        }  
 			    });  
 			  
+		addNumOfRequest();
 		mQueue.add(request);
 	}
 	
-	public boolean isUpdating() {
-		if(updateFeedThreads == null || updateFeedThreads.size() == 0) {
+	private synchronized void addNumOfRequest() {
+		numOfRequest++;
+	}
+	
+	private synchronized void finishOneRequest() {
+		numOfRequest--;
+	}
+	
+	public synchronized boolean isUpdating() {
+		if (numOfRequest == 0) {
 			return false;
 		}
-		for(UpdateFeedThread thread : updateFeedThreads) {
-			if(thread.isRunning()) {
-				return true;
-			}
-		}
-		return false;
+		return true;
 	}
 }
