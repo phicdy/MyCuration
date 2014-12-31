@@ -41,6 +41,11 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 			if (feeds == null || feeds.isEmpty()) {
 				return;
 			}
+			// Update has higher priority
+			if (UpdateTaskManager.getInstance(context).isUpdating()) {
+				AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
+				return;
+			}
 			for (Feed feed : feeds) {
 				ArrayList<Article> unreadArticles = dbAdapter
 						.getUnreadArticlesInAFeed(feed.getId(), true);
