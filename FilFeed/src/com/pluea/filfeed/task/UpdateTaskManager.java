@@ -59,7 +59,6 @@ public class UpdateTaskManager {
 			        	if (in == null) {
 			        		return;
 			        	}
-							in.close();
 			        	new Thread(new Runnable() {
 			    			
 			    			@Override
@@ -70,6 +69,11 @@ public class UpdateTaskManager {
 								} catch (IOException e) {
 									e.printStackTrace();
 								} finally {
+									try {
+										in.close();
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
 									finishOneRequest();
 									context.sendBroadcast(new Intent(FeedListActivity.UPDATE_NUM_OF_ARTICLES));
 								}
