@@ -335,13 +335,14 @@ public class FeedListActivity extends Activity {
 	}
 	
 	private void updateAllFeeds() {
-		if (feeds == null || feeds.isEmpty()) {
+		ArrayList<Feed> allFeeds = dbAdapter.getAllFeedsWithoutNumOfUnreadArticles();
+		if (allFeeds == null || allFeeds.isEmpty()) {
 			feedsListView.onRefreshComplete();
 			return;
 		} 
 
-		// Get feeds from DB if other update task is not running
-		if (updateTaskManager.updateAllFeeds(feeds)) {
+		// Get allFeeds from DB if other update task is not running
+		if (updateTaskManager.updateAllFeeds(allFeeds)) {
 		} else {
 			feedsListView.onRefreshComplete();
 		}
