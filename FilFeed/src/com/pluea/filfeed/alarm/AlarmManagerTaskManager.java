@@ -12,7 +12,7 @@ import android.util.Log;
 public class AlarmManagerTaskManager {
 
 	private static final int FEED_UPDATE_INTERVAL = 60*60*1;
-	private static final int HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE = 60*5*1;
+	private static final int HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE = 10;
 	
 	private AlarmManagerTaskManager() {
 		
