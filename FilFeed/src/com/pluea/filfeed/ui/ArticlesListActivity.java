@@ -80,6 +80,7 @@ public class ArticlesListActivity extends ListActivity {
 		prefMgr = PreferenceManager.getInstance(getApplicationContext());
 		if(feedId != Feed.ALL_FEED_ID) {
 			prefMgr.setSearchFeedId(feedId);
+			setTitle(dbAdapter.getFeedByUrl(feedUrl).getTitle());
 		}
 		
 		setAllListener();
