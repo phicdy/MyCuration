@@ -142,8 +142,10 @@ public class FeedListActivity extends Activity {
 				// Set num of unread articles and update UI
 				if (intent.getAction().equals(UPDATE_NUM_OF_ARTICLES)) {
 					Log.d(LOG_TAG, "onReceive");
-					feedsListView.onRefreshComplete();
-					updateNumOfUnreadArticles(true);
+					if (feedsListView.isRefreshing() && !updateTaskManager.isUpdating()) {
+						feedsListView.onRefreshComplete();
+						updateNumOfUnreadArticles(true);
+					}
 				}
 			}
 		};
