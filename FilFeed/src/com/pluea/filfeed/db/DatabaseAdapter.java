@@ -25,31 +25,26 @@ public class DatabaseAdapter {
 	private DatabaseAdapter(Context context) {
 		this.context = context;
 		dbHelper = new DatabaseHelper(this.context);
+		if (db == null) {
+			db = dbHelper.getWritableDatabase();
+		}
 	}
 	
 	public static DatabaseAdapter getInstance(Context context) {
 		if (sharedDbAdapter == null) {
-			sharedDbAdapter = new DatabaseAdapter(context);
+			synchronized (DatabaseAdapter.class) {
+				if (sharedDbAdapter == null) {
+					sharedDbAdapter = new DatabaseAdapter(context);
+				}
+			}
 		}
 		return sharedDbAdapter;
 	}
-
-	public void open(String readOrWrite) {
-		if (db == null || !db.isOpen()) {
-			if (readOrWrite.equals("write")) {
-				db = dbHelper.getWritableDatabase();
-			} else if (readOrWrite.equals("read")) {
-				db = dbHelper.getReadableDatabase();
-			}
-		}
-	}
-
 
 	public void saveNewArticles(ArrayList<Article> articles, int feedId) {
 		if(articles.isEmpty()) {
 			return;
 		}
-		open("write");
 		db.beginTransaction();
 		try {
 			// db.delete("articles", "title like '%PR%'", null);
@@ -75,7 +70,6 @@ public class DatabaseAdapter {
 	}
 
 	public int calcNumOfUnreadArticles(int feedId) {
-		open("write");
 		int unreadArticlesCount = 0;
 		db.beginTransaction();
 		try {
@@ -93,7 +87,6 @@ public class DatabaseAdapter {
 	}
 	
 	public int calcNumOfArticles(int feedId) {
-		open("write");
 		int unreadArticlesCount = 0;
 		db.beginTransaction();
 		try {
@@ -111,7 +104,6 @@ public class DatabaseAdapter {
 	}
 	
 	public int calcNumOfArticles() {
-		open("write");
 		int unreadArticlesCount = 0;
 		db.beginTransaction();
 		try {
@@ -129,7 +121,6 @@ public class DatabaseAdapter {
 
 	public ArrayList<Feed> getAllFeedsThatHaveUnreadArticles() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
-		open("write");
 		db.beginTransaction();
 		try {
 			String sql = "select feeds._id,feeds.title,feeds.url,feeds.iconPath,feeds.siteUrl,count(articles._id) " +
@@ -163,7 +154,6 @@ public class DatabaseAdapter {
 	
 	public ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
-		open("write");
 		db.beginTransaction();
 		try {
 			String sql = "select feeds._id,feeds.title,feeds.url,feeds.iconPath,feeds.siteUrl,count(articles._id) " +
@@ -199,7 +189,6 @@ public class DatabaseAdapter {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		String[] columns = {"_id","title","url","iconPath","siteUrl"};
 		String orderBy = "title";
-		open("write");
 		db.beginTransaction();
 		try {
 			Cursor cursor = db.query("feeds", columns, null, null, null, null, orderBy);
@@ -223,7 +212,6 @@ public class DatabaseAdapter {
 	}
 
 	public void saveStatusBeforeUpdate(int articleId) {
-		open("write");
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
@@ -236,7 +224,6 @@ public class DatabaseAdapter {
 	}
 	
 	public void saveStatusToRead(int feedId) {
-		open("write");
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
@@ -251,7 +238,6 @@ public class DatabaseAdapter {
 	}
 	
 	public void saveAllStatusToRead() {
-		open("write");
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
@@ -265,7 +251,6 @@ public class DatabaseAdapter {
 	}
 	
 	public void saveStatus(int articleId, String status) {
-		open("write");
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
@@ -279,7 +264,6 @@ public class DatabaseAdapter {
 	}
 	
 	public void saveIconPath(String siteUrl, String iconPath) {
-		open("write");
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
@@ -293,7 +277,6 @@ public class DatabaseAdapter {
 	}
 	
 	public void saveHatenaPoint(int articleId, String point) {
-		open("write");
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
@@ -307,7 +290,6 @@ public class DatabaseAdapter {
 	
 	public int saveNewTitle(int feedId, String newTitle) {
 		int numOfUpdated = 0;
-		open("write");
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
@@ -322,7 +304,6 @@ public class DatabaseAdapter {
 
 	public String getStatus(int articleId) {
 		String status = null;
-		open("write");
 		db.beginTransaction();
 		try {
 			String sql = "select status from articles where _id = " + articleId;
@@ -339,7 +320,6 @@ public class DatabaseAdapter {
 	}
 
 	public boolean deleteFeed(int feedId) {
-		open("write");
 		int numOfDeleted = 0;
 		db.beginTransaction();
 		try {
@@ -359,7 +339,6 @@ public class DatabaseAdapter {
 
 	public Feed getFeedByUrl(String feedUrl) {
 		Feed feed = null;
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get feed
@@ -384,9 +363,6 @@ public class DatabaseAdapter {
 
 	public Feed saveNewFeed(String feedTitle, String feedUrl, String format, String siteUrl) {
 		boolean sameFeedExist = false;
-
-		// Use writeable DB
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get same feeds from DB
@@ -423,8 +399,6 @@ public class DatabaseAdapter {
 	}
 
 	public void changeArticlesStatusToRead() {
-		// Use writeable DB
-		open("write");
 		db.beginTransaction();
 		try {
 			// Update articles read status in the "readstatus" to DB
@@ -441,7 +415,6 @@ public class DatabaseAdapter {
 
 	public int getNumOfUnreadArtilces(int feedId) {
 		int num = 0;
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get unread articles and set num of unread articles
@@ -462,7 +435,6 @@ public class DatabaseAdapter {
 
 	public ArrayList<Article> getAllUnreadArticles(boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get unread articles
@@ -503,7 +475,6 @@ public class DatabaseAdapter {
 	
 	public ArrayList<Article> getAllArticles(boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get unread articles
@@ -544,7 +515,6 @@ public class DatabaseAdapter {
 	
 	public ArrayList<Article> searchArticles(String keyword, int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
-		open("write");
 		db.beginTransaction();
 		try {
 			if(keyword.contains("%")) {
@@ -589,7 +559,6 @@ public class DatabaseAdapter {
 	
 	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get unread articles
@@ -626,7 +595,6 @@ public class DatabaseAdapter {
 	
 	public ArrayList<Article> getAllArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get unread articles
@@ -663,8 +631,6 @@ public class DatabaseAdapter {
 
 	public ArrayList<Filter> getFiltersOfFeed(int feedId) {
 		ArrayList<Filter> filterList = new ArrayList<Filter>();
-		open("write");
-
 		db.beginTransaction();
 		try {
 			// Get all filters which feed ID is "feedId"
@@ -696,7 +662,6 @@ public class DatabaseAdapter {
 		ContentValues value = new ContentValues();
 		value.put("status", "read");
 		for (Filter filter : filterList) {
-			open("write");
 			db.beginTransaction();
 			try {
 				// Initialize condition
@@ -734,7 +699,6 @@ public class DatabaseAdapter {
 	}
 
 	public void deleteFilter(int filterId) {
-		open("write");
 		db.beginTransaction();
 		try {
 			db.delete("filters", "_id = " + filterId, null);
@@ -746,7 +710,6 @@ public class DatabaseAdapter {
 
 	public int getNumOfFeeds() {
 		int num = 0;
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get unread feeds and set num of unread feeds
@@ -766,8 +729,6 @@ public class DatabaseAdapter {
 
 	public void saveNewFilter(String title, int selectedFeedId, String keyword,
 			String filterUrl) {
-
-		open("write");
 		db.beginTransaction();
 		try {
 			// Check same fileter exists in DB
@@ -864,8 +825,6 @@ public class DatabaseAdapter {
 //		feeds.add(new Feed(0, "二十歳街道まっしぐら",
 //				"http://20kaido.com/index.rdf"));
 		
-		// Use writeable DB
-		open("write");
 		db.beginTransaction();
 		try {
 
@@ -881,7 +840,6 @@ public class DatabaseAdapter {
 
 	public boolean isArticle(Article article) {
 		int num = 0;
-		open("write");
 		db.beginTransaction();
 		try {
 			// Get same article
@@ -905,7 +863,6 @@ public class DatabaseAdapter {
 	}
 	
 	public void deleteAllArticles() {
-		open("write");
 		db.beginTransaction();
 		try {
 			db.delete("articles", "", null);
