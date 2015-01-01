@@ -81,8 +81,7 @@
 
         <receiver
             android:name="com.pluea.filfeed.alarm.AutoUpdateBroadcastReciever"
-            android:exported="false"
-            android:process=":remote" >
+            android:exported="false" >
             <intent-filter>
                 <action android:name="autoUpdateFeed" />
             </intent-filter>
