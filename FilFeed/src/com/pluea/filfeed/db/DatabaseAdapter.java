@@ -840,20 +840,17 @@ public class DatabaseAdapter {
 
 	public boolean isArticle(Article article) {
 		int num = 0;
-		db.beginTransaction();
 		try {
 			// Get same article
-			String sql = "select _id from articles where url = '"
-					+ article.getUrl() + "';";
-			
-			Cursor cursor = db.rawQuery(sql, null);
+			String[] columns = {"_id"};
+			String selection = "url = ?";
+			String[] selectionArgs = {article.getUrl()};
+			Cursor cursor = db.query("articles", columns, selection, selectionArgs, null, null, null);
 			num = cursor.getCount();
 			cursor.close();
-			db.setTransactionSuccessful();
 		} catch (Exception e) {
 			num = -1;
 		} finally {
-			db.endTransaction();
 		}
 		
 		if(num > 0) {
