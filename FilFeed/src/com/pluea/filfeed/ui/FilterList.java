@@ -11,9 +11,10 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
@@ -40,10 +41,30 @@ public class FilterList extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.filters_activity);
+		setContentView(R.layout.activity_filter_list);
 		dbAdapter = DatabaseAdapter.getInstance(this);
 		displayFilters();
 		registerForContextMenu(filtersListView);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_filter_list, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case R.id.add_filter:
+			startActivity(new Intent(FilterList.this,RegisterFilter.class));
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -100,36 +121,15 @@ public class FilterList extends ListActivity {
 		filtersListAdapter        = new FiltersListAdapter(filters);
 		filtersListView.setAdapter(filtersListAdapter);
 		
-		TextView addTextView = (TextView)findViewById(R.id.addFilter);
-		addTextView.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				intent = new Intent(FilterList.this,RegisterFilter.class);
-				startActivity(intent);
-			}
-		});
-		
 		//Close DB
 		rdb.close();
 
 	}
-
-
 	
 	@Override
 	protected void onPause() {
-		//If "+" button don't clicked, intent == null
-		if(intent == null) {
-			//Back to main
-			intent = new Intent(FilterList.this,FeedListActivity.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-		}
 		super.onPause();
 	}
-
-
 
 	/**
 	 * 
