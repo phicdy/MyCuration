@@ -61,6 +61,7 @@ public class FeedListActivity extends Activity {
 	public static final String FEED_ID = "FEED_ID";
 	public static final String FEED_URL = "FEED_URL";
 	public static final String UPDATE_NUM_OF_ARTICLES = "UPDATE_NUM_OF_ARTICLES";
+	public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
 	private static final String LOG_TAG = "RSSREADER."
 			+ FeedListActivity.class.getSimpleName();
 
@@ -140,17 +141,20 @@ public class FeedListActivity extends Activity {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				// Set num of unread articles and update UI
-				if (intent.getAction().equals(UPDATE_NUM_OF_ARTICLES)) {
+				if (intent.getAction().equals(FINISH_UPDATE_ACTION)) {
 					Log.d(LOG_TAG, "onReceive");
 					if (feedsListView.isRefreshing() && !updateTaskManager.isUpdating()) {
 						feedsListView.onRefreshComplete();
 						updateNumOfUnreadArticles(true);
 					}
+				}else if (intent.getAction().equals(UPDATE_NUM_OF_ARTICLES)) {
+					updateNumOfUnreadArticles(true);
 				}
 			}
 		};
 
 		IntentFilter filter = new IntentFilter();
+		filter.addAction(FINISH_UPDATE_ACTION);
 		filter.addAction(UPDATE_NUM_OF_ARTICLES);
 		registerReceiver(receiver, filter);
 

@@ -75,7 +75,7 @@ public class UpdateTaskManager {
 										e.printStackTrace();
 									}
 									finishOneRequest();
-									context.sendBroadcast(new Intent(FeedListActivity.UPDATE_NUM_OF_ARTICLES));
+									context.sendBroadcast(new Intent(FeedListActivity.FINISH_UPDATE_ACTION));
 								}
 					    	}
 			        	}).start();
