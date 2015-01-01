@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response.ErrorListener;
@@ -24,6 +25,8 @@ public class UpdateTaskManager {
 	private RequestQueue mQueue;
 	// Manage queue status
 	private int numOfRequest = 0;
+	
+	private static final String LOG_TAG = "RSSReader.UpdateTaskManager";
 	
 	private UpdateTaskManager(Context context) {
 		this.context = context;
@@ -84,7 +87,9 @@ public class UpdateTaskManager {
 			  
 			        @Override  
 			        public void onErrorResponse(VolleyError error) {  
-			            // error  
+			        	Log.d("LOG_TAG", "Request error:" + error.getMessage());
+			        	finishOneRequest();
+			        	context.sendBroadcast(new Intent(FeedListActivity.FINISH_UPDATE_ACTION));
 			        }  
 			    });  
 			  
