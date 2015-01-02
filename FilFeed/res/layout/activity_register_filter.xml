@@ -5,6 +5,7 @@
      <TextView 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
         android:text="@string/filter_title"
         android:textSize="20sp"/>
      <EditText 
@@ -15,6 +16,7 @@
     <TextView 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
         android:text="@string/target_feed"
         android:layout_marginTop="20dp"
         android:textSize="20sp"/>
@@ -27,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/keyword"
+        android:layout_marginLeft="4dp"
         android:layout_marginTop="20dp"
         android:textSize="20sp"/>
     <LinearLayout 
@@ -49,6 +52,7 @@
     <TextView 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
         android:layout_marginTop="20dp"
         android:text="@string/article_url"
         android:textSize="20sp"/>
