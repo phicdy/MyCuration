@@ -40,17 +40,6 @@ public class FilterListActivity extends ListActivity {
 		setTitle(R.string.filter);
 		
 		dbAdapter = DatabaseAdapter.getInstance(this);
-		filters = dbAdapter.getAllFilters();
-		
-		//If no feeds are added, back to main activity
-		if(dbAdapter.getNumOfFeeds() == 0) {
-			Toast.makeText(this, R.string.feed_not_exist, Toast.LENGTH_SHORT).show();
-			finish();
-			return;
-		}
-		
-		initListView();
-		registerForContextMenu(filtersListView);
 	}
 	
 	@Override
@@ -97,6 +86,22 @@ public class FilterListActivity extends ListActivity {
 	    }
 	}
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		filters = dbAdapter.getAllFilters();
+		
+		//If no feeds are added, back to main activity
+		if(dbAdapter.getNumOfFeeds() == 0) {
+			Toast.makeText(this, R.string.feed_not_exist, Toast.LENGTH_SHORT).show();
+			finish();
+			return;
+		}
+		
+		initListView();
+		registerForContextMenu(filtersListView);
+	}
+
 	private void initListView() {
 		//Set ListView
 		filtersListView = (ListView)findViewById(id.list); 
