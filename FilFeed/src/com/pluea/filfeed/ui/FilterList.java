@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import android.R.id;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -24,13 +22,11 @@ import android.widget.Toast;
 
 import com.pluea.filfeed.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
-import com.pluea.filfeed.db.DatabaseHelper;
 import com.pluea.filfeed.filter.Filter;
 
 public class FilterList extends ListActivity {
 
 	private ArrayList<Filter> filters;
-	private DatabaseHelper dbHelper = new DatabaseHelper(this);
 	private DatabaseAdapter dbAdapter;
 	private FiltersListAdapter filtersListAdapter;
 	private ListView filtersListView;
@@ -42,8 +38,18 @@ public class FilterList extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_filter_list);
 		setTitle(R.string.filter);
+		
 		dbAdapter = DatabaseAdapter.getInstance(this);
-		displayFilters();
+		filters = dbAdapter.getAllFilters();
+		
+		//If no feeds are added, back to main activity
+		if(dbAdapter.getNumOfFeeds() == 0) {
+			Toast.makeText(this, R.string.feed_not_exist, Toast.LENGTH_SHORT).show();
+			finish();
+			return;
+		}
+		
+		initListView();
 		registerForContextMenu(filtersListView);
 	}
 	
@@ -91,39 +97,11 @@ public class FilterList extends ListActivity {
 	    }
 	}
 	
-	private void displayFilters() {
-		
-		//If no feeds are added , back to main activity
-		if(dbAdapter.getNumOfFeeds() == 0) {
-			Toast.makeText(this, R.string.feed_not_exist, Toast.LENGTH_SHORT).show();
-			startActivity(new Intent(FilterList.this, FeedListActivity.class));
-		}
-		
-		//Get filters from DB 
-		SQLiteDatabase rdb = dbHelper.getReadableDatabase();
-		String sql         = "select _id,title,keyword,url,feedId from filters";
-		Cursor cursor      = rdb.rawQuery(sql, null);
-		filters = new ArrayList<Filter>();
-		if(cursor != null) {
-			while(cursor.moveToNext()) {
-				int id         = cursor.getInt(0);
-				String title   = cursor.getString(1);
-				String keyword = cursor.getString(2);
-				String url     = cursor.getString(3);
-				int feedId     = cursor.getInt(4);
-				Filter filter  = new Filter(id,title,keyword,url,feedId);
-				filters.add(filter);
-			}
-		}
-		
+	private void initListView() {
 		//Set ListView
 		filtersListView = (ListView)findViewById(id.list); 
-		filtersListAdapter        = new FiltersListAdapter(filters);
+		filtersListAdapter = new FiltersListAdapter(filters);
 		filtersListView.setAdapter(filtersListAdapter);
-		
-		//Close DB
-		rdb.close();
-
 	}
 	
 	@Override
@@ -164,7 +142,7 @@ public class FilterList extends ListActivity {
 				filterTitle.setText(filter.getTitle());
 			}
 			
-			return(row);
+			return row;
 		}
 		
 		

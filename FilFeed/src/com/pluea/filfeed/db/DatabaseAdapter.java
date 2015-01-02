@@ -868,4 +868,23 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 	}
+	
+	public ArrayList<Filter> getAllFilters() {
+		ArrayList<Filter> filters = new ArrayList<Filter>();
+		String[] columns = {"_id","title","keyword","url","feedId"};
+		Cursor cursor    = db.query("filters", columns, null, null, null, null, null);
+		if(cursor != null) {
+			while(cursor.moveToNext()) {
+				int id         = cursor.getInt(0);
+				String title   = cursor.getString(1);
+				String keyword = cursor.getString(2);
+				String url     = cursor.getString(3);
+				int feedId     = cursor.getInt(4);
+				Filter filter  = new Filter(id,title,keyword,url,feedId);
+				filters.add(filter);
+			}
+			cursor.close();
+		}
+		return filters;
+	}
 }
