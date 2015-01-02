@@ -54,6 +54,7 @@
     <string name="add_filter">フィルター登録</string>
     <string name="delete_filter">フィルター削除</string>
     <string name="not_get_hatena_point">取得中</string>
+    <string name="none">なし</string>
     
     <!-- 設定 -->
     <string name="setting">設定</string>

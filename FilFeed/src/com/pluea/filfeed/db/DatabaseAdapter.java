@@ -644,7 +644,7 @@ public class DatabaseAdapter {
 				String title = cur.getString(1);
 				String keyword = cur.getString(2);
 				String url = cur.getString(3);
-				filterList.add(new Filter(id, title, keyword, url, feedId));
+				filterList.add(new Filter(id, title, keyword, url, feedId, null));
 			}
 			cur.close();
 			db.setTransactionSuccessful();
@@ -871,16 +871,18 @@ public class DatabaseAdapter {
 	
 	public ArrayList<Filter> getAllFilters() {
 		ArrayList<Filter> filters = new ArrayList<Filter>();
-		String[] columns = {"_id","title","keyword","url","feedId"};
-		Cursor cursor    = db.query("filters", columns, null, null, null, null, null);
+		String[] columns = {"filters._id","filters.title","filters.keyword","filters.url","filters.feedId","feeds.title"};
+		String selection = "filters.feedId = feeds._id";
+		Cursor cursor    = db.query("filters inner join feeds", columns, selection, null, null, null, null);
 		if(cursor != null) {
 			while(cursor.moveToNext()) {
-				int id         = cursor.getInt(0);
-				String title   = cursor.getString(1);
-				String keyword = cursor.getString(2);
-				String url     = cursor.getString(3);
-				int feedId     = cursor.getInt(4);
-				Filter filter  = new Filter(id,title,keyword,url,feedId);
+				int id           = cursor.getInt(0);
+				String title     = cursor.getString(1);
+				String keyword   = cursor.getString(2);
+				String url       = cursor.getString(3);
+				int feedId       = cursor.getInt(4);
+				String feedTitle = cursor.getString(5);
+				Filter filter  = new Filter(id,title,keyword,url,feedId,feedTitle);
 				filters.add(filter);
 			}
 			cursor.close();

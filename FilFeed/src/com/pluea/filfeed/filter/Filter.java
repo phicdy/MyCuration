@@ -7,13 +7,15 @@ public class Filter {
 	private String keyword_;
 	private String url_;
 	private int feedId_;
+	private String feedTitle;
 	
-	public Filter(int id,String title,String keyword,String url,int feedId) {
+	public Filter(int id,String title,String keyword,String url,int feedId,String feedTitle) {
 		id_      = id;
 		title_   = title;
 		keyword_ = keyword;
 		url_     = url;
 		feedId_  = feedId;
+		this.feedTitle = feedTitle;
 	}
 	
 	public void setTitle(String title) {
@@ -38,5 +40,13 @@ public class Filter {
 	
 	public String getUrl() {
 		return url_;
+	}
+
+	public String getFeedTitle() {
+		return feedTitle;
+	}
+
+	public void setFeedTitle(String feedTitle) {
+		this.feedTitle = feedTitle;
 	}
 }

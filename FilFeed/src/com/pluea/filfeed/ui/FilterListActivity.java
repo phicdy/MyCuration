@@ -145,6 +145,23 @@ public class FilterListActivity extends ListActivity {
 				//set filter title
 				TextView filterTitle = (TextView)row.findViewById(R.id.filterTitle);
 				filterTitle.setText(filter.getTitle());
+				
+				TextView feedTitle = (TextView)row.findViewById(R.id.filterTargetFeed);
+				feedTitle.setText(filter.getFeedTitle());
+				
+				TextView filterKeyword = (TextView)row.findViewById(R.id.filterKeyword);
+				String keyword = filter.getKeyword();
+				if (keyword == null || keyword.equals("")) {
+					keyword = getString(R.string.none);
+				}
+				filterKeyword.setText(getString(R.string.keyword) + ": " + keyword);
+				
+				TextView filterUrl = (TextView)row.findViewById(R.id.filterUrl);
+				String url = filter.getUrl();
+				if (url == null || url.equals("")) {
+					url = getString(R.string.none);
+				}
+				filterUrl.setText("URL: " + url);
 			}
 			
 			return row;
