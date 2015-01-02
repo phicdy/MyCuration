@@ -14,6 +14,7 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.pluea.filfeed.alarm.AlarmManagerTaskManager;
+import com.pluea.filfeed.filter.FilterTask;
 import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.rss.RssParser;
 import com.pluea.filfeed.ui.FeedListActivity;
@@ -69,6 +70,7 @@ public class UpdateTaskManager {
 					            RssParser parser = new RssParser(context); 
 					            try {
 									parser.parseXml(in, feed.getId());
+									new FilterTask(context).applyFiltering(feed.getId());
 								} catch (IOException e) {
 									e.printStackTrace();
 								} finally {
