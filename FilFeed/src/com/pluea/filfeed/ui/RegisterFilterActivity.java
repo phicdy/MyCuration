@@ -20,7 +20,7 @@ import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.db.DatabaseHelper;
 import com.pluea.filfeed.rss.Feed;
 
-public class RegisterFilter extends Activity {
+public class RegisterFilterActivity extends Activity {
 
 	private DatabaseHelper dbHelper = new DatabaseHelper(this);
 	private DatabaseAdapter dbAdapter;
@@ -60,7 +60,7 @@ public class RegisterFilter extends Activity {
 		
 			//Set spinner
 			Spinner targetFeedSpin = (Spinner)findViewById(R.id.targetFeed);
-			ArrayAdapter<String> aa = new ArrayAdapter<String>(RegisterFilter.this,android.R.layout.simple_spinner_item,feedTitles);
+			ArrayAdapter<String> aa = new ArrayAdapter<String>(RegisterFilterActivity.this,android.R.layout.simple_spinner_item,feedTitles);
 			aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			
 			targetFeedSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -101,14 +101,14 @@ public class RegisterFilter extends Activity {
 				
 				//Check title and keyword or filter URL has the text
 				if(titleText.equals("")) {
-					Toast.makeText(RegisterFilter.this, R.string.title_empty_error, Toast.LENGTH_SHORT).show();
+					Toast.makeText(RegisterFilterActivity.this, R.string.title_empty_error, Toast.LENGTH_SHORT).show();
 				}else if((keywordText.equals("")) && (filterUrlText.equals(""))) {
-					Toast.makeText(RegisterFilter.this, R.string.both_keyword_and_url_empty_error, Toast.LENGTH_SHORT).show();
+					Toast.makeText(RegisterFilterActivity.this, R.string.both_keyword_and_url_empty_error, Toast.LENGTH_SHORT).show();
 				}else if(keywordText.equals("%") || filterUrlText.equals("%")) {
-					Toast.makeText(RegisterFilter.this, R.string.percent_only_error, Toast.LENGTH_SHORT).show();
+					Toast.makeText(RegisterFilterActivity.this, R.string.percent_only_error, Toast.LENGTH_SHORT).show();
 				}else {
 					dbAdapter.saveNewFilter(titleText, selectedFeedId, keywordText, filterUrlText);
-					startActivity(new Intent(RegisterFilter.this,FilterList.class));
+					startActivity(new Intent(RegisterFilterActivity.this,FilterListActivity.class));
 				}
 			}
 		});
@@ -119,7 +119,7 @@ public class RegisterFilter extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(RegisterFilter.this,FilterList.class));
+				startActivity(new Intent(RegisterFilterActivity.this,FilterListActivity.class));
 			}
 		});
 	}

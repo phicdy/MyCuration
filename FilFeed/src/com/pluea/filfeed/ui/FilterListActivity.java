@@ -24,7 +24,7 @@ import com.pluea.filfeed.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.filter.Filter;
 
-public class FilterList extends ListActivity {
+public class FilterListActivity extends ListActivity {
 
 	private ArrayList<Filter> filters;
 	private DatabaseAdapter dbAdapter;
@@ -65,7 +65,7 @@ public class FilterList extends ListActivity {
 
 		switch (item.getItemId()) {
 		case R.id.add_filter:
-			startActivity(new Intent(FilterList.this,RegisterFilter.class));
+			startActivity(new Intent(FilterListActivity.this,RegisterFilterActivity.class));
 			break;
 		default:
 			break;
@@ -121,7 +121,7 @@ public class FilterList extends ListActivity {
 			 * @param int : Resource ID
 			 * @param T[] objects : data list
 			 */
-			super(FilterList.this,R.layout.filters_list,filters);
+			super(FilterListActivity.this,R.layout.filters_list,filters);
 		}
 
 		@Override

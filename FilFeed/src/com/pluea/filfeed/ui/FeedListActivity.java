@@ -181,7 +181,7 @@ public class FeedListActivity extends Activity {
 			addFeed();
 			break;
 		case R.id.addFilter:
-			intent = new Intent(FeedListActivity.this, FilterList.class);
+			intent = new Intent(FeedListActivity.this, FilterListActivity.class);
 			startActivity(intent);
 			break;
 		case R.id.setting:
