@@ -31,7 +31,7 @@ public class RegisterFilter extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.register_filter);
+		setContentView(R.layout.activity_register_filter);
 		
 		setTitle(R.string.add_filter);
 		
