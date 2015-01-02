@@ -33,6 +33,8 @@ public class RegisterFilter extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.register_filter);
 		
+		setTitle(R.string.add_filter);
+		
 		dbAdapter = DatabaseAdapter.getInstance(this);
 		
 		//Select All feeds

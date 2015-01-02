@@ -34,7 +34,6 @@ public class FilterList extends ListActivity {
 	private DatabaseAdapter dbAdapter;
 	private FiltersListAdapter filtersListAdapter;
 	private ListView filtersListView;
-	private Intent intent;
 	
 	private static final int DELETE_FILTER_MENU_ID = 0;
 	
@@ -42,6 +41,7 @@ public class FilterList extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_filter_list);
+		setTitle(R.string.filter);
 		dbAdapter = DatabaseAdapter.getInstance(this);
 		displayFilters();
 		registerForContextMenu(filtersListView);
