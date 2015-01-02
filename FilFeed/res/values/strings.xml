@@ -4,8 +4,10 @@
     <string name="app_name">FilFeed</string>
     <string name="action_settings">Settings</string>
     
+    <!-- フィード一覧 -->
     <string name="all_unread">未読記事一覧</string>
     <string name="show_no_unread_feed">未読のないフィードを表示する</string>
+    <string name="show_hided_feed">未読のないフィードを非表示にする</string>
     
     <string name="add_filter_button">+</string>
     <string name="keyword">キーワード</string>

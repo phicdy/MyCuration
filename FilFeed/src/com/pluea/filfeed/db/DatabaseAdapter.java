@@ -156,12 +156,9 @@ public class DatabaseAdapter {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		db.beginTransaction();
 		try {
-			String sql = "select feeds._id,feeds.title,feeds.url,feeds.iconPath,feeds.siteUrl,count(articles._id) " +
-					"from feeds inner join articles " +
-					"where feeds._id = articles.feedId" +
-					"group by feeds.title " + 
-					"order by feeds.title";
-			Cursor cursor = db.rawQuery(sql, null);
+			String[] columns = {"_id","title","url","iconPath","siteUrl"};
+			String orderBy = "title";
+			Cursor cursor = db.query("feeds", columns, null, null, null, null, orderBy);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					int id = cursor.getInt(0);
@@ -169,7 +166,7 @@ public class DatabaseAdapter {
 					String url = cursor.getString(2);
 					String iconPath = cursor.getString(3);
 					String siteUrl = cursor.getString(4);
-					int unreadAriticlesCount = cursor.getInt(5);
+					int unreadAriticlesCount = getNumOfUnreadArtilces(id);
 					feedList.add(new Feed(id, title, url, iconPath, siteUrl, unreadAriticlesCount));
 				}
 				cursor.close();

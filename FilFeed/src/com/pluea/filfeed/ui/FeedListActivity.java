@@ -54,6 +54,9 @@ public class FeedListActivity extends Activity {
 	private Intent intent;
 	private UpdateTaskManager updateTaskManager;
 
+	// Manage hide feed status
+	private boolean isHided = true;
+	
 	private static final int DELETE_FEED_MENU_ID = 0;
 	private static final int EDIT_FEED_TITLE_MENU_ID = 1;
 	
@@ -125,8 +128,14 @@ public class FeedListActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				feeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
-				updateNumOfUnreadArticles(false);
+				if (isHided) {
+					isHided = false;
+					showNoUnread.setText(R.string.show_hided_feed);
+				}else {
+					isHided = true;
+					showNoUnread.setText(R.string.show_no_unread_feed);
+				}
+				updateNumOfUnreadArticles();
 
 				// Set ListView
 				rssFeedListAdapter = new RssFeedListAdapter(feeds);
@@ -146,10 +155,10 @@ public class FeedListActivity extends Activity {
 					Log.d(LOG_TAG, "onReceive");
 					if (feedsListView.isRefreshing() && !updateTaskManager.isUpdating()) {
 						feedsListView.onRefreshComplete();
-						updateNumOfUnreadArticles(true);
+						updateNumOfUnreadArticles();
 					}
 				}else if (intent.getAction().equals(UPDATE_NUM_OF_ARTICLES)) {
-					updateNumOfUnreadArticles(true);
+					updateNumOfUnreadArticles();
 				}
 			}
 		};
@@ -227,7 +236,7 @@ public class FeedListActivity extends Activity {
 		super.onResume();
 		setBroadCastReceiver();
 //		updateAllFeeds();
-		updateNumOfUnreadArticles(true);
+		updateNumOfUnreadArticles();
 
 		// Set ListView
 		rssFeedListAdapter = new RssFeedListAdapter(feeds);
@@ -329,7 +338,7 @@ public class FeedListActivity extends Activity {
 									int numOfUpdate = dbAdapter.saveNewTitle(selectedFeed.getId(), newTitle);
 									if(numOfUpdate == 1) {
 										Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_success), Toast.LENGTH_SHORT).show();
-										updateNumOfUnreadArticles(true);
+										updateNumOfUnreadArticles();
 									}else {
 										Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_error), Toast.LENGTH_SHORT).show();
 									}
@@ -373,8 +382,8 @@ public class FeedListActivity extends Activity {
 		}
 	}
 
-	private void updateNumOfUnreadArticles(boolean isHide) {
-		feeds = dbAdapter.getAllFeedsThatHaveUnreadArticles();
+	private void updateNumOfUnreadArticles() {
+		feeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
 		if (feeds.isEmpty()) {
 			return;
 		}
@@ -389,7 +398,7 @@ public class FeedListActivity extends Activity {
 		}
 		if(feeds.size() == hideList.size() || hideList.size() == 0) {
 			showNoUnread.setVisibility(View.GONE);
-		}else if(isHide) {
+		}else if(isHided) {
 			showNoUnread.setVisibility(View.VISIBLE);
 			for(Feed feed : hideList) {
 				feeds.remove(feed);
