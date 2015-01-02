@@ -19,7 +19,7 @@
             android:id="@+id/ll_all_read"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:background="#99CC00"
+	        android:background="@drawable/view_button_selected"
 	        android:layout_weight="1"
 	        android:orientation="vertical" >
 	         <ImageView
@@ -46,7 +46,7 @@
             android:id="@+id/ll_scroll"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:background="#99CC00"
+	        android:background="@drawable/view_button_selected"
 	        android:layout_weight="1"
 	        android:orientation="vertical" >
 	         <ImageView
