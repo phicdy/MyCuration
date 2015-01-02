@@ -1,5 +1,6 @@
 package com.pluea.filfeed.ui;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +10,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -82,7 +84,22 @@ public class ArticlesListActivity extends ListActivity {
 		swipeDirectionOption = prefMgr.getSwipeDirection();
 		if(feedId != Feed.ALL_FEED_ID) {
 			prefMgr.setSearchFeedId(feedId);
-			setTitle(dbAdapter.getFeedByUrl(feedUrl).getTitle());
+			
+			// Init action bar
+			Feed selectedFeed = dbAdapter.getFeedByUrl(feedUrl);
+			
+			// title
+			setTitle(selectedFeed.getTitle());
+			
+			// icon
+			String iconPath = selectedFeed.getIconPath();
+			if(iconPath != null && !iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
+				File file = new File(iconPath);
+			    if (file.exists()) {
+		            Drawable icon = Drawable.createFromPath(iconPath);
+		            getActionBar().setIcon(icon);
+			    }
+			}
 		}
 		
 		setAllListener();
