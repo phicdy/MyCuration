@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,74 +15,45 @@ import android.widget.Toast;
 
 import com.pluea.filfeed.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
-import com.pluea.filfeed.db.DatabaseHelper;
 import com.pluea.filfeed.rss.Feed;
 
 public class RegisterFilterActivity extends Activity {
 
-	private DatabaseHelper dbHelper = new DatabaseHelper(this);
 	private DatabaseAdapter dbAdapter;
 	private String[] feedTitles;
 	private ArrayList<Feed> feedsList;
 	private int selectedFeedId; 
+	
+	private Spinner targetFeedSpin;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register_filter);
 		
+		dbAdapter = DatabaseAdapter.getInstance(this);
+		initView();
+		initData();
+	}
+	
+	private void initView() {
 		setTitle(R.string.add_filter);
 		
-		dbAdapter = DatabaseAdapter.getInstance(this);
-		
-		//Select All feeds
-		SQLiteDatabase rdb = dbHelper.getReadableDatabase();
-		String getAllFeedsSql = "select _id,title,url from feeds";
-		Cursor cur = rdb.rawQuery(getAllFeedsSql, null);
-		if(cur.getCount() == 0) {
-			//back
-		}else {
-			//Get all feeds
-			feedTitles = new String[cur.getCount()];
-			feedsList  = new ArrayList<Feed>();
-			int indent = 0;
-			while(cur.moveToNext()) {
-				feedTitles[indent] = cur.getString(1);
-				int id = cur.getInt(0);
-				String title = cur.getString(1);
-				String url = cur.getString(2);
-				Feed feed = new Feed(id,title,url,"", "", 0);
-				feedsList.add(feed);
-				indent++;
+		//Set spinner
+		targetFeedSpin = (Spinner)findViewById(R.id.targetFeed);
+		targetFeedSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				//Update selected feed ID
+				selectedFeedId = feedsList.get(position).getId();
 			}
-		
-			//Set spinner
-			Spinner targetFeedSpin = (Spinner)findViewById(R.id.targetFeed);
-			ArrayAdapter<String> aa = new ArrayAdapter<String>(RegisterFilterActivity.this,android.R.layout.simple_spinner_item,feedTitles);
-			aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			
-			targetFeedSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-				@Override
-				public void onItemSelected(AdapterView<?> parent, View view,
-						int position, long id) {
-					//Update selected feed ID
-					selectedFeedId = feedsList.get(position).getId();
-				}
 	
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-			});
-			//Set default selected Feed ID
-			selectedFeedId = feedsList.get(0).getId();
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
 			
-			targetFeedSpin.setAdapter(aa);
-		
-			rdb.close();
-		}
+		});
 		
 		//If register button clicked, insert filter into DB
 		Button registerButton = (Button)findViewById(R.id.registerFilter);
@@ -108,7 +77,7 @@ public class RegisterFilterActivity extends Activity {
 					Toast.makeText(RegisterFilterActivity.this, R.string.percent_only_error, Toast.LENGTH_SHORT).show();
 				}else {
 					dbAdapter.saveNewFilter(titleText, selectedFeedId, keywordText, filterUrlText);
-					startActivity(new Intent(RegisterFilterActivity.this,FilterListActivity.class));
+					finish();
 				}
 			}
 		});
@@ -119,10 +88,28 @@ public class RegisterFilterActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(RegisterFilterActivity.this,FilterListActivity.class));
+				finish();
 			}
 		});
 	}
 	
-
+	private void initData() {
+		feedsList = dbAdapter.getAllFeedsWithoutNumOfUnreadArticles();
+		if(feedsList.size() == 0) {
+			finish();
+		}else {
+			// Init feed title list for spinner
+			feedTitles = new String[feedsList.size()];
+			for (int i = 0; i < feedsList.size(); i++) {
+				feedTitles[i] = feedsList.get(i).getTitle();
+			}
+		}
+		//Set default selected Feed ID
+		selectedFeedId = feedsList.get(0).getId();
+		
+		// Set data for spinner
+		ArrayAdapter<String> aa = new ArrayAdapter<String>(RegisterFilterActivity.this,android.R.layout.simple_spinner_item,feedTitles);
+		aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		targetFeedSpin.setAdapter(aa);
+	}
 }
