@@ -19,6 +19,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,6 +68,8 @@ public class ArticlesListActivity extends ListActivity {
 	
 	private int swipeDirectionOption = PreferenceManager.SWIPE_DEFAULT;
 
+	private SearchView searchView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -115,15 +118,29 @@ public class ArticlesListActivity extends ListActivity {
 
 		// Associate searchable configuration with the SearchView
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.search)
-				.getActionView();
+		final MenuItem searchMenuView = menu.findItem(R.id.search);
+		searchView = (SearchView)searchMenuView.getActionView();
 		searchView.setSearchableInfo(searchManager
 				.getSearchableInfo(getComponentName()));
-
+		searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+	        @Override
+	        public void onFocusChange(View view, boolean queryTextFocused) {
+	            if(!queryTextFocused) {
+	            	searchMenuView.collapseActionView();
+	                searchView.setQuery("", false);
+	            }
+	        }
+	    });
+		
 		return true;
 	}
 	
 	@Override
+	protected void onResume() {
+		super.onResume();
+		if (searchView != null) {
+			searchView.onActionViewCollapsed();
+			searchView.setQuery("",false);
 		}
 	}
 
