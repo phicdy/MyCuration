@@ -105,7 +105,7 @@ public class ArticlesListActivity extends ListActivity {
 		setAllListener();
 		articlesListView.getRefreshableView().setEmptyView(findViewById(R.id.emptyView));
 		
-		handleIntent(getIntent());
+		displayUnreadArticles();
 	}
 	
 	@Override
@@ -124,22 +124,6 @@ public class ArticlesListActivity extends ListActivity {
 	}
 	
 	@Override
-	protected void onNewIntent(Intent intent) {
-		handleIntent(intent);
-	}
-
-	private void handleIntent(Intent intent) {
-
-		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			boolean isNewestArticleTop = prefMgr.getSortNewArticleTop();
-
-			String query = intent.getStringExtra(SearchManager.QUERY);
-			articles = dbAdapter.searchArticles(query, prefMgr.getSearchFeedId(),
-					isNewestArticleTop);
-			articlesListAdapter = new ArticlesListAdapter(articles);
-			articlesListView.setAdapter(articlesListAdapter);
-		} else {
-			displayUnreadArticles();
 		}
 	}
 
