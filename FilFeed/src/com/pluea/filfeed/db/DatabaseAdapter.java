@@ -510,7 +510,7 @@ public class DatabaseAdapter {
 		return articles;
 	}
 	
-	public ArrayList<Article> searchArticles(String keyword, int feedId, boolean isNewestArticleTop) {
+	public ArrayList<Article> searchArticles(String keyword, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
 		db.beginTransaction();
 		try {
@@ -523,8 +523,8 @@ public class DatabaseAdapter {
 			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,feeds.title " +
 					"from articles inner join feeds " +
 					"where articles.title like '%" + keyword + "%' escape '$' and " +
-					"articles.feedId = " + feedId + " and articles.feedId = feeds._id " +
-					" order by date";
+					"articles.feedId = feeds._id " +
+					"order by date";
 			if(isNewestArticleTop) {
 				sql += " desc";
 			}else {
@@ -538,9 +538,9 @@ public class DatabaseAdapter {
 				String status = cursor.getString(3);
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
-				String feedTitle = cursor.getString(7);
+				String feedTitle = cursor.getString(6);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle);
+						dateLong, 0, feedTitle);
 				articles.add(article);
 			}
 			cursor.close();
