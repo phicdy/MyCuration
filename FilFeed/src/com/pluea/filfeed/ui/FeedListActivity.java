@@ -63,7 +63,7 @@ public class FeedListActivity extends Activity {
 	public static final int BAD_RECIEVED_VALUE = -1;
 	public static final String FEED_ID = "FEED_ID";
 	public static final String FEED_URL = "FEED_URL";
-	public static final String UPDATE_NUM_OF_ARTICLES = "UPDATE_NUM_OF_ARTICLES";
+	public static final String ACTION_UPDATE_NUM_OF_ARTICLES_NOW = "UPDATE_NUM_OF_ARTICLES";
 	public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
 	private static final String LOG_TAG = "RSSREADER."
 			+ FeedListActivity.class.getSimpleName();
@@ -157,7 +157,7 @@ public class FeedListActivity extends Activity {
 						feedsListView.onRefreshComplete();
 						updateNumOfUnreadArticles();
 					}
-				}else if (intent.getAction().equals(UPDATE_NUM_OF_ARTICLES)) {
+				}else if (intent.getAction().equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
 					updateNumOfUnreadArticles();
 				}
 			}
@@ -165,7 +165,7 @@ public class FeedListActivity extends Activity {
 
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(FINISH_UPDATE_ACTION);
-		filter.addAction(UPDATE_NUM_OF_ARTICLES);
+		filter.addAction(ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
 		registerReceiver(receiver, filter);
 
 	}

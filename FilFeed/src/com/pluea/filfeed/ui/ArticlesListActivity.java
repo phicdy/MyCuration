@@ -411,7 +411,7 @@ public class ArticlesListActivity extends ListActivity {
 						dbAdapter.saveStatus(article.getId(), Article.READ);
 					}
 				}
-				Intent intent = new Intent(FeedListActivity.FINISH_UPDATE_ACTION);
+				Intent intent = new Intent(FeedListActivity.ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
