@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -48,9 +49,10 @@ public class ArticleSearchResultActivity extends ListActivity {
 
 		prefMgr = PreferenceManager.getInstance(getApplicationContext());
 
-			// title
+		// title
 		setTitle(getString(R.string.search_result));
 
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		resultListView = getListView();
 		resultListView.setEmptyView(findViewById(R.id.emptyView));
@@ -74,6 +76,22 @@ public class ArticleSearchResultActivity extends ListActivity {
 			articlesListAdapter = new ArticlesListAdapter(articles);
 			resultListView.setAdapter(articlesListAdapter);
 		}
+	}
+
+	
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+
+		default:
+			break;
+		}
+		
+		return super.onMenuItemSelected(featureId, item);
 	}
 
 	private void setAllListener() {
