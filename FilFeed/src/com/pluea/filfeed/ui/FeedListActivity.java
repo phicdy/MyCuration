@@ -133,7 +133,7 @@ public class FeedListActivity extends ActionBarActivity {
 					showNoUnread.setText(R.string.show_hided_feed);
 				}else {
 					isHided = true;
-					showNoUnread.setText(R.string.show_no_unread_feed);
+					showNoUnread.setText(R.string.show_all_feeds);
 				}
 				updateNumOfUnreadArticles();
 

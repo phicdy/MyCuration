@@ -5,8 +5,8 @@
     <string name="action_settings">Settings</string>
     
     <!-- フィード一覧 -->
-    <string name="all_unread">未読記事一覧</string>
-    <string name="show_no_unread_feed">未読のないフィードを表示する</string>
+    <string name="all">全ての記事</string>
+    <string name="show_all_feeds">全てのフィードを表示する</string>
     <string name="show_hided_feed">未読のないフィードを非表示にする</string>
     
     <string name="add_filter_button">+</string>
