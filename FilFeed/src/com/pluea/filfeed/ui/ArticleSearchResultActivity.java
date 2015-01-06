@@ -162,55 +162,59 @@ public class ArticleSearchResultActivity extends ListActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-
+			ViewHolder holder = null;
+			
 			// Use contentView
 			View row = convertView;
 			if (convertView == null) {
 				LayoutInflater inflater = getLayoutInflater();
 				row = inflater.inflate(R.layout.articles_list, parent, false);
+				holder.articleTitle = (TextView) row
+						.findViewById(R.id.articleTitle);
+				holder.articlePostedTime = (TextView) row
+						.findViewById(R.id.articlePostedTime);
+				holder.articlePoint = (TextView) row
+						.findViewById(R.id.articlePoint);
+				holder.feedTitleView = (TextView) row
+						.findViewById(R.id.feedTitle);
+				row.setTag(holder);
+			}else {
+				holder = (ViewHolder)row.getTag();
 			}
 
 			Article article = this.getItem(position);
 
 			if (article != null) {
 				// set RSS Feed title
-				TextView articleTitle = (TextView) row
-						.findViewById(R.id.articleTitle);
-				articleTitle.setText(article.getTitle());
+				holder.articleTitle.setText(article.getTitle());
 
 				// set RSS posted date
-				TextView articlePostedTime = (TextView) row
-						.findViewById(R.id.articlePostedTime);
 				SimpleDateFormat format = new SimpleDateFormat(
 						"yyyy/MM/dd HH:mm:ss");
 				String dateString = format.format(new Date(article
 						.getPostedDate()));
-				articlePostedTime.setText(dateString);
+				holder.articlePostedTime.setText(dateString);
 
 				// set RSS Feed unread article count
-				TextView articlePoint = (TextView) row
-						.findViewById(R.id.articlePoint);
 				String hatenaPoint = article.getPoint();
 				if (hatenaPoint.equals(Feed.DEDAULT_HATENA_POINT)) {
-					articlePoint
+					holder.articlePoint
 							.setText(getString(R.string.not_get_hatena_point));
 				} else {
-					articlePoint.setText(hatenaPoint);
+					holder.articlePoint.setText(hatenaPoint);
 				}
 
-				TextView feedTitleView = (TextView) row
-						.findViewById(R.id.feedTitle);
 				String feedTitle = article.getFeedTitle();
 				if (feedTitle == null) {
-					feedTitleView.setVisibility(View.GONE);
+					holder.feedTitleView.setVisibility(View.GONE);
 				} else {
-					feedTitleView.setText(feedTitle);
+					holder.feedTitleView.setText(feedTitle);
 				}
 
-				articleTitle.setTextColor(Color.BLACK);
-				articlePostedTime.setTextColor(Color.BLACK);
-				articlePoint.setTextColor(Color.BLACK);
-				feedTitleView.setTextColor(Color.BLACK);
+				holder.articleTitle.setTextColor(Color.BLACK);
+				holder.articlePostedTime.setTextColor(Color.BLACK);
+				holder.articlePoint.setTextColor(Color.BLACK);
+				holder.feedTitleView.setTextColor(Color.BLACK);
 
 				// If readStaus exists,change status
 				// if(readStatus.containsKey(String.valueOf(position)) &&
@@ -218,15 +222,21 @@ public class ArticleSearchResultActivity extends ListActivity {
 				// article.getId()) {
 				if (article.getStatus().equals(Article.TOREAD)
 						|| article.getStatus().equals(Article.READ)) {
-					articleTitle.setTextColor(Color.GRAY);
-					articlePostedTime.setTextColor(Color.GRAY);
-					articlePoint.setTextColor(Color.GRAY);
-					feedTitleView.setTextColor(Color.GRAY);
+					holder.articleTitle.setTextColor(Color.GRAY);
+					holder.articlePostedTime.setTextColor(Color.GRAY);
+					holder.articlePoint.setTextColor(Color.GRAY);
+					holder.feedTitleView.setTextColor(Color.GRAY);
 				}
 			}
 
-			return (row);
+			return row;
 		}
 
+		private class ViewHolder {
+			TextView articleTitle;
+			TextView articlePostedTime;
+			TextView articlePoint;
+			TextView feedTitleView;
+		}
 	}
 }

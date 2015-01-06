@@ -131,42 +131,52 @@ public class FilterListActivity extends ListActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder holder = null;
 			
 			//Use contentView
 			View row = convertView;
 			if(convertView == null) {
 				LayoutInflater inflater = getLayoutInflater();
 				row = inflater.inflate(R.layout.filters_list, parent, false);
+				holder = new ViewHolder();
+				holder.filterTitle = (TextView)row.findViewById(R.id.filterTitle);
+				holder.feedTitle = (TextView) row.findViewById(R.id.filterTargetFeed);
+				holder.filterKeyword = (TextView) row.findViewById(R.id.filterKeyword);
+				holder.filterUrl = (TextView) row.findViewById(R.id.filterUrl);
+				row.setTag(holder);
+			}else {
+				holder = (ViewHolder)row.getTag();
 			}
 			
 			Filter filter = this.getItem(position);
 			
 			if(filter != null) {
 				//set filter title
-				TextView filterTitle = (TextView)row.findViewById(R.id.filterTitle);
-				filterTitle.setText(filter.getTitle());
+				holder.filterTitle.setText(filter.getTitle());
 				
-				TextView feedTitle = (TextView)row.findViewById(R.id.filterTargetFeed);
-				feedTitle.setText(filter.getFeedTitle());
+				holder.feedTitle.setText(filter.getFeedTitle());
 				
-				TextView filterKeyword = (TextView)row.findViewById(R.id.filterKeyword);
 				String keyword = filter.getKeyword();
 				if (keyword == null || keyword.equals("")) {
 					keyword = getString(R.string.none);
 				}
-				filterKeyword.setText(getString(R.string.keyword) + ": " + keyword);
+				holder.filterKeyword.setText(getString(R.string.keyword) + ": " + keyword);
 				
-				TextView filterUrl = (TextView)row.findViewById(R.id.filterUrl);
 				String url = filter.getUrl();
 				if (url == null || url.equals("")) {
 					url = getString(R.string.none);
 				}
-				filterUrl.setText("URL: " + url);
+				holder.filterUrl.setText("URL: " + url);
 			}
 			
 			return row;
 		}
 		
-		
+		private class ViewHolder {
+			TextView filterTitle;
+			TextView feedTitle;
+			TextView filterKeyword;
+			TextView filterUrl;
+		}
 	}
 }

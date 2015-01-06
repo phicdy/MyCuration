@@ -430,38 +430,48 @@ public class FeedListActivity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-
-			// Use contentView
+			ViewHolder holder = null;
+			
+			// Use contentView and setup ViewHolder
 			View row = convertView;
 			if (convertView == null) {
 				LayoutInflater inflater = getLayoutInflater();
 				row = inflater.inflate(R.layout.feeds_list, parent, false);
+				holder = new ViewHolder();
+				holder.feedIcon = (ImageView)row.findViewById(R.id.feedIcon);
+				holder.feedTitle = (TextView) row.findViewById(R.id.feedTitle);
+				holder.feedCount = (TextView) row.findViewById(R.id.feedCount);
+				row.setTag(holder);
+			}else {
+				holder = (ViewHolder)row.getTag();
 			}
 
 			Feed feed = this.getItem(position);
 
-			ImageView feedIcon = (ImageView)row.findViewById(R.id.feedIcon);
 			String iconPath = feed.getIconPath();
 			if(iconPath == null || iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
-				feedIcon.setImageResource(R.drawable.no_icon);
+				holder.feedIcon.setImageResource(R.drawable.no_icon);
 			}else {
 				File file = new File(iconPath);
 			    if (file.exists()) {
 		            Bitmap bmp = BitmapFactory.decodeFile(file.getPath());
-		            feedIcon.setImageBitmap(bmp); 
+		            holder.feedIcon.setImageBitmap(bmp); 
 			    }
 			}
 			
 			// set RSS Feed title
-			TextView feedTitle = (TextView) row.findViewById(R.id.feedTitle);
-			feedTitle.setText(feed.getTitle());
+			holder.feedTitle.setText(feed.getTitle());
 
 			// set RSS Feed unread article count
-			TextView feedCount = (TextView) row.findViewById(R.id.feedCount);
-			feedCount.setText(String.valueOf(feed.getUnreadAriticlesCount()));
+			holder.feedCount.setText(String.valueOf(feed.getUnreadAriticlesCount()));
 
 			return (row);
 		}
 
+		private class ViewHolder {
+			ImageView feedIcon;
+			TextView feedTitle;
+			TextView feedCount;
+		}
 	}
 }
