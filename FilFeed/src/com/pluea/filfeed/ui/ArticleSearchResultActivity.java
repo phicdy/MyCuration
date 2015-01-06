@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,7 +28,7 @@ import com.pluea.filfeed.rss.Article;
 import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.util.PreferenceManager;
 
-public class ArticleSearchResultActivity extends ListActivity {
+public class ArticleSearchResultActivity extends ActionBarActivity {
 
 	private ArrayList<Article> articles;
 	private DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
@@ -54,7 +55,7 @@ public class ArticleSearchResultActivity extends ListActivity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		resultListView = getListView();
+		resultListView = (ListView)findViewById(android.R.id.list);
 		resultListView.setEmptyView(findViewById(R.id.emptyView));
 		setAllListener();
 
@@ -79,9 +80,9 @@ public class ArticleSearchResultActivity extends ListActivity {
 	}
 
 	
+	
 	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			finish();
@@ -91,7 +92,7 @@ public class ArticleSearchResultActivity extends ListActivity {
 			break;
 		}
 		
-		return super.onMenuItemSelected(featureId, item);
+		return true;
 	}
 
 	private void setAllListener() {

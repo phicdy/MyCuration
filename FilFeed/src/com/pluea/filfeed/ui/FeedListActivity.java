@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -43,7 +43,7 @@ import com.pluea.filfeed.task.GetFeedIconTask;
 import com.pluea.filfeed.task.InsertNewFeedTask;
 import com.pluea.filfeed.task.UpdateTaskManager;
 
-public class FeedListActivity extends Activity {
+public class FeedListActivity extends ActionBarActivity {
 
 	private ArrayList<Feed> feeds = new ArrayList<Feed>();
 	private DatabaseAdapter dbAdapter;

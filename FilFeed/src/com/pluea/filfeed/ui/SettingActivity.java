@@ -1,12 +1,11 @@
 package com.pluea.filfeed.ui;
   
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -14,7 +13,7 @@ import com.pluea.filfeed.R;
 import com.pluea.filfeed.alarm.AlarmManagerTaskManager;
 import com.pluea.filfeed.util.PreferenceManager;
   
-public class SettingActivity extends Activity {
+public class SettingActivity extends ActionBarActivity {
   
 	private Spinner spUpdateInterval;
 	private CheckBox cbSortNewArticleTop;

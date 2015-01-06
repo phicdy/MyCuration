@@ -5,14 +5,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -30,7 +33,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -43,7 +45,7 @@ import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.task.UpdateTaskManager;
 import com.pluea.filfeed.util.PreferenceManager;
 
-public class ArticlesListActivity extends ListActivity {
+public class ArticlesListActivity extends ActionBarActivity {
 
 	private ArrayList<Article> articles;
 	private int feedId;
@@ -100,7 +102,7 @@ public class ArticlesListActivity extends ListActivity {
 				File file = new File(iconPath);
 			    if (file.exists()) {
 		            Drawable icon = Drawable.createFromPath(iconPath);
-		            getActionBar().setIcon(icon);
+		            getSupportActionBar().setIcon(icon);
 			    }
 			}
 		}
@@ -118,15 +120,15 @@ public class ArticlesListActivity extends ListActivity {
 
 		// Associate searchable configuration with the SearchView
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		final MenuItem searchMenuView = menu.findItem(R.id.search);
-		searchView = (SearchView)searchMenuView.getActionView();
+		final MenuItem searchMenuItem = menu.findItem(R.id.search);
+		searchView = (SearchView)MenuItemCompat.getActionView(searchMenuItem);
 		searchView.setSearchableInfo(searchManager
 				.getSearchableInfo(getComponentName()));
 		searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
 	        @Override
 	        public void onFocusChange(View view, boolean queryTextFocused) {
 	            if(!queryTextFocused) {
-	            	searchMenuView.collapseActionView();
+	            	searchMenuItem.collapseActionView();
 	                searchView.setQuery("", false);
 	            }
 	        }

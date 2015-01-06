@@ -3,9 +3,9 @@ package com.pluea.filfeed.ui;
 import java.util.ArrayList;
 
 import android.R.id;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -24,7 +24,7 @@ import com.pluea.filfeed.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.filter.Filter;
 
-public class FilterListActivity extends ListActivity {
+public class FilterListActivity extends ActionBarActivity {
 
 	private ArrayList<Filter> filters;
 	private DatabaseAdapter dbAdapter;

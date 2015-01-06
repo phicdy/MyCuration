@@ -2,9 +2,8 @@ package com.pluea.filfeed.ui;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,7 +16,7 @@ import com.pluea.filfeed.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.rss.Feed;
 
-public class RegisterFilterActivity extends Activity {
+public class RegisterFilterActivity extends ActionBarActivity {
 
 	private DatabaseAdapter dbAdapter;
 	private String[] feedTitles;

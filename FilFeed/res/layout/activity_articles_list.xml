@@ -33,13 +33,14 @@
 	            android:layout_height="wrap_content"
 	            android:layout_gravity="center_horizontal"
 	            android:layout_marginBottom="4dp"
-				android:textSize="14sp"	            
-	            android:text="@string/all_read" />
+				android:textSize="14sp"
+				android:textColor="@color/text_primary"
+				android:text="@string/all_read" />
         </LinearLayout>
 
         <View
 		    android:layout_width="1dp"
-		    android:layout_height="88dp"
+		    android:layout_height="match_parent"
 		    android:background="@android:color/black" />
         
         <LinearLayout
@@ -60,8 +61,9 @@
 	            android:layout_height="wrap_content"
 	            android:layout_marginBottom="4dp"
 	            android:layout_gravity="center_horizontal"
-				android:textSize="14sp"	            
-	            android:text="@string/next_page" />
+				android:textSize="14sp"
+				android:textColor="@color/text_primary"
+				android:text="@string/next_page" />
         </LinearLayout>
     </LinearLayout>
 

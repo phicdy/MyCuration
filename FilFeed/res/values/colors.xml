@@ -1,4 +1,9 @@
 <resources>
 	<color name="window_bg">#ededf0</color>
 	<drawable name="window_bg">@color/window_bg</drawable>
+
+	<color name="primary">#FF5722</color>
+	<color name="primary_dark">#E64A19</color>
+	<color name="accent">#E91E63</color>
+	<color name="text_primary">#ffffff</color>
 </resources>
