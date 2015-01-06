@@ -53,7 +53,7 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 		// title
 		setTitle(getString(R.string.search_result));
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		resultListView = (ListView)findViewById(android.R.id.list);
 		resultListView.setEmptyView(findViewById(R.id.emptyView));
@@ -170,6 +170,7 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 			if (convertView == null) {
 				LayoutInflater inflater = getLayoutInflater();
 				row = inflater.inflate(R.layout.articles_list, parent, false);
+				holder = new ViewHolder();
 				holder.articleTitle = (TextView) row
 						.findViewById(R.id.articleTitle);
 				holder.articlePostedTime = (TextView) row
