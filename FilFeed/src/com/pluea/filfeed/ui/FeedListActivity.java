@@ -28,6 +28,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -112,7 +113,7 @@ public class FeedListActivity extends ActionBarActivity {
 			}
 		});
 		
-		TextView allUnread = (TextView)findViewById(R.id.allUnreadFeed);
+		LinearLayout allUnread = (LinearLayout)findViewById(R.id.ll_all_unread);
 		allUnread.setOnClickListener(new OnClickListener() {
 			
 			@Override
