@@ -401,10 +401,4 @@ public class RssParser {
 		return null;
 	}
 	
-	private boolean isCorrectUrl(String url) {
-		if(url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
-			return true;
-		}
-		return false;
-	}
 }
