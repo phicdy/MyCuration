@@ -14,6 +14,7 @@ import android.util.Xml;
 
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.util.DateParser;
+import com.pluea.filfeed.util.UrlUtil;
 
 public class RssParser {
 
@@ -349,7 +350,7 @@ public class RssParser {
 	
 							if (isRssHtml && isHref) {
 								rssURL = attributeValue;
-								if (isCorrectUrl(rssURL)) {
+								if (UrlUtil.isCorrectUrl(rssURL)) {
 									is.close();
 									return parseFeedInfo(rssURL);
 								}
