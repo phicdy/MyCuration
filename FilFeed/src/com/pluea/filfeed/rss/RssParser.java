@@ -153,7 +153,6 @@ public class RssParser {
 			}
 			// Save new articles
 			dbAdapter.saveNewArticles(articles, feedId);
-			Log.d(LOG_TAG, "Store articles, time:" + (System.currentTimeMillis() - start));
 		} catch (XmlPullParserException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
