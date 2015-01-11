@@ -85,4 +85,11 @@
     <string name="hatena">はてな</string>
     
     <string name="share">共有</string>
+    
+    <!-- エラー -->
+    <string name="error_xml_parse">サイトの解析に失敗しました</string>
+    <string name="error_io">接続に失敗しました</string>
+    <string name="error_rss_is_not_found">フィードが見つかりませんでした</string>
+    <string name="error_invalid_rss_url">不正なフィードのURLです</string>
+    <string name="error_invalid_html">サイトのHTMLが不正です</string>
 </resources>

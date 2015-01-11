@@ -7,6 +7,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.pluea.filfeed.util.UrlUtil;
 public class RssParser {
 
 	private DatabaseAdapter dbAdapter;
+	private Context context;
 	private static final int CONNCT_TIMEOUT_MS = 20000;
 	private static final int READ_TIMEOUT_MS = 60000;
 	private boolean isArticleFlag = false;
@@ -26,10 +28,11 @@ public class RssParser {
 
 	public RssParser(Context context) {
 		dbAdapter = DatabaseAdapter.getInstance(context);
+		this.context = context;
 	}
 
 	public boolean parseXml(InputStream is, int feedId) throws IOException {
-		Log.d(LOG_TAG, "Parse start");
+//		Log.d(LOG_TAG, "Parse start");
 
 		boolean result = true;
 		ArrayList<Article> articles = new ArrayList<Article>();
@@ -150,7 +153,10 @@ public class RssParser {
 			}
 			// Save new articles
 			dbAdapter.saveNewArticles(articles, feedId);
-		} catch (Exception e) {
+			Log.d(LOG_TAG, "Store articles, time:" + (System.currentTimeMillis() - start));
+		} catch (XmlPullParserException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return result;
@@ -178,7 +184,8 @@ public class RssParser {
 		if (!UrlUtil.isCorrectUrl(feedUrl)) {
 			return null;
 		}
-
+		Log.i(LOG_TAG, "Feed URL to parse:" + feedUrl);
+		
 		// Get InputStream
 		InputStream is = setInputStream(feedUrl);
 
@@ -228,6 +235,8 @@ public class RssParser {
 						}else if (UrlUtil.hasParameterUrl(feedUrl)) {
 							parseFeedInfo(UrlUtil.removeUrlParameter(feedUrl));
 						}
+						// Feed is not found in original URL and URL that parameter is removed
+						errorCode = ParseError.ERROR_FEED_IS_NOT_FOUND;
 					}
 
 					if (rssFlag && tag.equals("title")) {
@@ -283,14 +292,27 @@ public class RssParser {
 				if (format != null && feedTitle != null
 						&& !feedTitle.equals("") && siteURL != null
 						&& !siteURL.equals("")) {
+					errorCode = ParseError.NOT_ERROR;
 					break;
 				}
 			}
-		} catch (Exception e) {
+			
+			if (!rssFlag) {
+				errorCode = ParseError.ERROR_INVALID_RSS_URL;
+			}
+		} catch (XmlPullParserException e) {
+			errorCode = ParseError.ERROR_XML_PARSE;
+			e.printStackTrace();
+		} catch (IOException e) {
+			errorCode = ParseError.ERROR_IO;
 			e.printStackTrace();
 		}
 		is.close();
-		return dbAdapter.saveNewFeed(feedTitle, feedUrl, format, siteURL);
+		if (errorCode == ParseError.NOT_ERROR) {
+			return dbAdapter.saveNewFeed(feedTitle, feedUrl, format, siteURL);
+		}
+		ParseError.showErrorToast(context, errorCode);
+		return null;
 	}
 
 	private String translateEventType(int eventType) {
@@ -325,8 +347,9 @@ public class RssParser {
 	private Feed parseTopHtml(XmlPullParser parser, InputStream is) {
 		String rssURL = "";
 		String tag = "";
+		int eventType;
 		try {
-			int eventType = parser.getEventType();
+			eventType = parser.getEventType();
 			while (eventType != XmlPullParser.END_DOCUMENT) {
 				tag = parser.getName();
 				Log.d(LOG_TAG, "tag: " + tag);
@@ -358,6 +381,7 @@ public class RssParser {
 								rssURL = attributeValue;
 								if (UrlUtil.isCorrectUrl(rssURL)) {
 									is.close();
+									// RSS is found
 									return parseFeedInfo(rssURL);
 								}
 							}
@@ -366,8 +390,12 @@ public class RssParser {
 				}
 				eventType = parser.next();
 			}
+			// RSS is not found
 			is.close();
-		} catch (Exception e) {
+			
+		} catch (XmlPullParserException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
