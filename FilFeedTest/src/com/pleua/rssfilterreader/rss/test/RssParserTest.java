@@ -3,6 +3,7 @@ package com.pleua.rssfilterreader.rss.test;
 import java.io.IOException;
 import java.io.InputStream;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.pluea.filfeed.db.DatabaseAdapter;
+import com.pluea.filfeed.db.DatabaseHelper;
 import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.rss.RssParser;
 import com.pluea.filfeed.task.InputStreamRequest;
@@ -100,8 +102,25 @@ public class RssParserTest extends AndroidTestCase {
 	public void testParseXml() {
 		DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
 		
+		// Delete all feeds
+		DatabaseHelper dbHelper = new DatabaseHelper(getContext());
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			db.delete("filters", "", null);
+			db.delete("articles", "", null);
+			db.delete("feeds", "", null);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		// Add a test feed
+		adapter.saveNewFeed("Publickey","http://www.publickey1.jp/atom.xml", "", "http://www.publickey1.jp/");
 		String publicKeyUrl = "http://www.publickey1.jp/atom.xml";
 		final Feed feed = adapter.getFeedByUrl(publicKeyUrl);
+		if (feed == null) {
+			fail("PublicKey feed is not found");
+		}
 		InputStreamRequest request = new InputStreamRequest(feed.getUrl(),   
 			       new Listener<InputStream>() {  
 			  
