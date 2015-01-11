@@ -83,20 +83,35 @@ public class RssParserTest extends AndroidTestCase {
 //		}
 		
 		// Test top URL
-		try {
-			Feed addedFeed = parser.parseFeedInfo("http://jp.techcrunch.com");
-				Thread.sleep(5000);
-			
-			assertNotNull(addedFeed);
-			assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
-			assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
-			assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Feed addedFeed = parser.parseFeedInfo("http://jp.techcrunch.com");
+//				Thread.sleep(5000);
+//			
+//			assertNotNull(addedFeed);
+//			assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
+//			assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
+//			assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			fail();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		try {
+//			Feed surigomaFeed = parser.parseFeedInfo("http://ground-sesame.hatenablog.jp");
+//			Thread.sleep(7000);
+//			
+//			assertNotNull(surigomaFeed);
+//			assertEquals("http://ground-sesame.hatenablog.jp/", surigomaFeed.getUrl());
+//			assertEquals("http://ground-sesame.hatenablog.jp/feed", surigomaFeed.getSiteUrl());
+//			assertEquals(surigomaFeed.DEDAULT_ICON_PATH, surigomaFeed.getIconPath());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			fail();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public void testParseXml() {
