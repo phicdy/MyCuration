@@ -174,10 +174,8 @@ public class RssParser {
 	}
 
 	public Feed parseFeedInfo(String feedUrl) throws IOException {
-		if (feedUrl == null || feedUrl.equals("")) {
-			return null;
-		}
-		if (!(feedUrl.startsWith("http://") || feedUrl.startsWith("https://"))) {
+		int errorCode = ParseError.ERROR_XML_PARSE;
+		if (!UrlUtil.isCorrectUrl(feedUrl)) {
 			return null;
 		}
 
