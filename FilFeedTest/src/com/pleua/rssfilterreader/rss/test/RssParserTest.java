@@ -1,14 +1,20 @@
 package com.pleua.rssfilterreader.rss.test;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import android.test.AndroidTestCase;
-import android.test.suitebuilder.TestSuiteBuilder.FailedToCreateTests;
+import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.rss.RssParser;
-import com.pluea.filfeed.task.InsertNewFeedTask;
+import com.pluea.filfeed.task.InputStreamRequest;
 
 public class RssParserTest extends AndroidTestCase {
 
@@ -26,7 +32,7 @@ public class RssParserTest extends AndroidTestCase {
 	
 	public void testParseFeedInfo() {
 		// Delete test feed
-		DatabaseAdapter adapter = new DatabaseAdapter(getContext());
+		DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
 		Feed feed = adapter.getFeedByUrl("http://jp.techcrunch.com/feed/");
 		if(feed != null) {
 			adapter.deleteFeed(feed.getId());
@@ -92,17 +98,50 @@ public class RssParserTest extends AndroidTestCase {
 	}
 
 	public void testParseXml() {
-		RssParser parser = new RssParser(getContext());
-		DatabaseAdapter adapter = new DatabaseAdapter(getContext());
+		DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
 		
 		String publicKeyUrl = "http://www.publickey1.jp/atom.xml";
-		Feed feed = adapter.getFeedByUrl(publicKeyUrl);
-		try {
-			boolean result = parser.parseXml(publicKeyUrl, feed.getId());
-			assertEquals(true, result);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
+		final Feed feed = adapter.getFeedByUrl(publicKeyUrl);
+		InputStreamRequest request = new InputStreamRequest(feed.getUrl(),   
+			       new Listener<InputStream>() {  
+			  
+			        @Override  
+			        public void onResponse(final InputStream in) {
+			        	if (in == null) {
+			        		return;
+			        	}
+			        	new Thread(new Runnable() {
+			    			
+			    			@Override
+			    			public void run() {
+					            RssParser parser = new RssParser(getContext()); 
+					            boolean result =  false;
+					            try {
+									result = parser.parseXml(in, feed.getId());
+								} catch (IOException e) {
+									e.printStackTrace();
+									fail();
+								} finally {
+									try {
+										in.close();
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+									assertEquals(true, result);
+								}
+					    	}
+			        	}).start();
+			        }  
+			    }, new ErrorListener() {  
+			  
+			        @Override  
+			        public void onErrorResponse(VolleyError error) {  
+			        	Log.d("LOG_TAG", "Request error:" + error.getMessage());
+			        	fail();
+			        }  
+			    });  
+			  
+		RequestQueue mQueue = Volley.newRequestQueue(getContext());
+		mQueue.add(request);
 	}
 }

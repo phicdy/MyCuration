@@ -22,7 +22,7 @@ public class InsertNewFeedTaskTest extends AndroidTestCase {
 	
 	public void testDoInBackground() {
 		// Delete test feed
-		DatabaseAdapter adapter = new DatabaseAdapter(getContext());
+		DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
 		Feed feed = adapter.getFeedByUrl("http://jp.techcrunch.com/feed/");
 		if(feed != null) {
 			adapter.deleteFeed(feed.getId());

@@ -19,7 +19,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 	
 	protected void setUp() {
-		adapter  = new DatabaseAdapter(getContext());
+		adapter  = DatabaseAdapter.getInstance(getContext());
 		insertTestData();
 	}
 
@@ -45,8 +45,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 	
 	public void testSearchArticles() {
-		Feed testFeed = adapter.getFeedByUrl("http://www.yahoo.co.jp");
-		ArrayList<Article> list = adapter.searchArticles("記事1abdｄｆｇ", testFeed.getId(), true);
+		ArrayList<Article> list = adapter.searchArticles("記事1abdｄｆｇ", true);
 		assertEquals(1, list.size());
 		assertEquals("記事1abdｄｆｇ", list.get(0).getTitle());
 	}
@@ -56,20 +55,20 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 	
 	private void insertTestData() {
-		DatabaseAdapter adapter = new DatabaseAdapter(getContext());
+		DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
 
 		adapter.saveNewFeed("testfeed", "http://www.yahoo.co.jp", "RSS", "http://www.yahoo.co.jp");
 		Feed testFeed = adapter.getFeedByUrl("http://www.yahoo.co.jp");
 		
 		long now = new Date().getTime();
 		Article article = new Article(1, "title1", "http://www.google.com",
-				"unread", "", now, testFeed.getId());
+				"unread", "", now, testFeed.getId(), "");
 		Article quotationTitle = new Article(1, "title'",
-				"http://www.google.com", "unread", "", now + 1, testFeed.getId());
+				"http://www.google.com", "unread", "", now + 1, testFeed.getId(), "");
 		Article doubleQuotationTitle = new Article(1, "title" + '"',
-				"http://www.google.com", "unread", "", now + 2, testFeed.getId());
+				"http://www.google.com", "unread", "", now + 2, testFeed.getId(), "");
 		Article japaneseTitle = new Article(1, "記事1abdｄｆｇ",
-				"http://www.google.com", "unread", "", now + 2, testFeed.getId());
+				"http://www.google.com", "unread", "", now + 2, testFeed.getId(), "");
 
 		testArticles = new ArrayList<Article>();
 		testArticles.add(article);
