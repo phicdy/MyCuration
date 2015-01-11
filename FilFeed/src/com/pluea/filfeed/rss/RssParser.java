@@ -218,8 +218,16 @@ public class RssParser {
 					} else if (tag.toLowerCase().equals("feed")) {
 						rssFlag = true;
 						format = "ATOM";
-					} else if (tag.toLowerCase().equals("html")) {
-						return parseTopHtml(parser, is);
+					} else if (!rssFlag && tag.toLowerCase().equals("html")) {
+						// If parsed URL is not feed, parse top domain URL
+						Feed parsedFeed = parseTopHtml(parser, is);
+						// If feed is not found and feed URL has parameter, 
+						// remove parameter and retry to parse
+						if (parsedFeed != null) {
+							return parsedFeed;
+						}else if (UrlUtil.hasParameterUrl(feedUrl)) {
+							parseFeedInfo(UrlUtil.removeUrlParameter(feedUrl));
+						}
 					}
 
 					if (rssFlag && tag.equals("title")) {
