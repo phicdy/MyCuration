@@ -31,7 +31,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 			UpdateTaskManager updateTask = UpdateTaskManager.getInstance(context);
 	
 			updateTask.updateAllFeeds(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles());
-			AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
+			AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 			
 			// Save new time
 			AlarmManagerTaskManager.setNewAlarm(context);
@@ -43,7 +43,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 			}
 			// Update has higher priority
 			if (UpdateTaskManager.getInstance(context).isUpdatingFeed()) {
-				AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
+				AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 				return;
 			}
 			for (Feed feed : feeds) {
@@ -63,6 +63,8 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				}
 			}
 			
+			// Update hatena bookmark point after interval
+			AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
 		}
 	}
 }

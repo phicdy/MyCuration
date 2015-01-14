@@ -50,7 +50,7 @@ public class UpdateTaskManager {
 			updateFeed(feed);
 		}
 		// After update feed, update hatena point with interval
-		AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
+		AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 		return true;
 	}
 	

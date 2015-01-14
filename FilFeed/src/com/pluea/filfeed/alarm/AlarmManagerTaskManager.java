@@ -13,7 +13,8 @@ import android.util.Log;
 
 public class AlarmManagerTaskManager {
 
-	private static final int HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE = 10;
+	private static final int HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE_SECOND = 10;
+	private static final int HATENA_UPDATE_INTERVAL_SECOND = 60 * 60 * 3;
 	
 	private AlarmManagerTaskManager() {
 		
@@ -24,8 +25,12 @@ public class AlarmManagerTaskManager {
 		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION, mgr.getAutoUpdateIntervalSecond());
 	}
 	
+	public static void setNewHatenaUpdateAlarmAfterFeedUpdate(Context context) {
+		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_HATENA_ACTION, HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE_SECOND);
+	}
+	
 	public static void setNewHatenaUpdateAlarm(Context context) {
-		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_HATENA_ACTION, HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE);
+		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_HATENA_ACTION, HATENA_UPDATE_INTERVAL_SECOND);
 	}
 	
 	private static void setAlarm(Context context, String action, int intervalSec) {
