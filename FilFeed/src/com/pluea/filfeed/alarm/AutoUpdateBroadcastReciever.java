@@ -42,7 +42,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				return;
 			}
 			// Update has higher priority
-			if (UpdateTaskManager.getInstance(context).isUpdating()) {
+			if (UpdateTaskManager.getInstance(context).isUpdatingFeed()) {
 				AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
 				return;
 			}

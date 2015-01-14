@@ -25,7 +25,7 @@ public class UpdateTaskManager {
 	private Context context;
 	private RequestQueue mQueue;
 	// Manage queue status
-	private int numOfRequest = 0;
+	private int numOfFeedRequest = 0;
 	
 	private static final String LOG_TAG = "RSSReader.UpdateTaskManager";
 	
@@ -42,10 +42,10 @@ public class UpdateTaskManager {
 	}
 	
 	public boolean updateAllFeeds(final ArrayList<Feed> feeds) {
-		if(isUpdating()) {
+		if(isUpdatingFeed()) {
 			return false;
 		}
-		numOfRequest = 0;
+		numOfFeedRequest = 0;
 		for(final Feed feed : feeds) {
 			updateFeed(feed);
 		}
@@ -100,15 +100,15 @@ public class UpdateTaskManager {
 	}
 	
 	private synchronized void addNumOfRequest() {
-		numOfRequest++;
+		numOfFeedRequest++;
 	}
 	
 	private synchronized void finishOneRequest() {
-		numOfRequest--;
+		numOfFeedRequest--;
 	}
 	
-	public synchronized boolean isUpdating() {
-		if (numOfRequest == 0) {
+	public synchronized boolean isUpdatingFeed() {
+		if (numOfFeedRequest == 0) {
 			return false;
 		}
 		return true;

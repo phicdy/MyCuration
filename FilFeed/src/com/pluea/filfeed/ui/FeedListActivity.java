@@ -154,7 +154,7 @@ public class FeedListActivity extends ActionBarActivity {
 				// Set num of unread articles and update UI
 				if (intent.getAction().equals(FINISH_UPDATE_ACTION)) {
 					Log.d(LOG_TAG, "onReceive");
-					if (feedsListView.isRefreshing() && !updateTaskManager.isUpdating()) {
+					if (feedsListView.isRefreshing() && !updateTaskManager.isUpdatingFeed()) {
 						feedsListView.onRefreshComplete();
 						updateNumOfUnreadArticles();
 					}
@@ -242,7 +242,7 @@ public class FeedListActivity extends ActionBarActivity {
 		// Set ListView
 		rssFeedListAdapter = new RssFeedListAdapter(feeds);
 		feedsListView.setAdapter(rssFeedListAdapter);
-		if (UpdateTaskManager.getInstance(getApplicationContext()).isUpdating()) {
+		if (UpdateTaskManager.getInstance(getApplicationContext()).isUpdatingFeed()) {
 			feedsListView.setRefreshing(true);
 		}
 	}
@@ -252,7 +252,7 @@ public class FeedListActivity extends ActionBarActivity {
 		if (receiver != null) {
 			unregisterReceiver(receiver);
 		}
-		if (UpdateTaskManager.getInstance(getApplicationContext()).isUpdating()) {
+		if (UpdateTaskManager.getInstance(getApplicationContext()).isUpdatingFeed()) {
 			feedsListView.onRefreshComplete();
 		}
 		super.onPause();
