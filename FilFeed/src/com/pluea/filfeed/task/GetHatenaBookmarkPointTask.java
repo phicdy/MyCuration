@@ -3,20 +3,21 @@ package com.pluea.filfeed.task;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
+import java.io.UnsupportedEncodingException;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.rss.Article;
 
-public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Article> {
+public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void> {
 
 	/**
 	 * 
@@ -30,12 +31,11 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	 */
 
 	private DatabaseAdapter dbAdapter;
+	private Article targetArticle;
+	private Context context;
+	
 	private static final String GET_HATENA_BOOKMARK_COUNT_URL = "http://api.b.st-hatena.com/entry.count";
 	private static final String CHAR_SET = "UTF-8";
-	public static final String FINISH_GET_HATENA = "finishGetHatena";
-	public static final String ARTICLE_ID = "articleId";
-	public static final String ARTICLE_ARRAY_INDEX = "articleArrayIndex";
-	public static final String ARTICLE_POINT = "articlePoint";
 	private static final String LOG_TAG = "RSSReader.GetHatena";
 
 	public GetHatenaBookmarkPointTask(Context context) {
@@ -46,7 +46,7 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	 * Execute on main thread
 	 */
 	@Override
-	protected void onPostExecute(Article result) {
+	protected void onPostExecute(Void result) {
 	}
 
 	/**
@@ -58,7 +58,6 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 
 	@Override
 	protected void onProgressUpdate(String... values) {
-		// TODO Auto-generated method stub
 		super.onProgressUpdate(values);
 	}
 
@@ -68,57 +67,97 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Artic
 	 * @return
 	 */
 	@Override
-	protected Article doInBackground(Article... setting) {
-		Article article = setting[0];
-		try {
-			// Set URLConnection
-			String getBookmarkUrlString = article.getUrl();
-			URL url = new URL(GET_HATENA_BOOKMARK_COUNT_URL + "?url="
-					+ getBookmarkUrlString);
-			URLConnection con = url.openConnection();
-			// Set Timeout 1min
-			con.setConnectTimeout(60000);
-			con.setReadTimeout(60000);
-
-			int point = getHatenaCount(url);
-			article.setPoint(String.valueOf(point));
-			saveHatenaCount(article);
-		} catch (Exception e) {
-			e.printStackTrace();
+	protected Void doInBackground(Article... setting) {
+		if ((setting == null) || (setting.length != 1) || (setting[0] == null)) {
+			return null;
 		}
-		return article;
-
+		
+		targetArticle = setting[0];
+		addUpdateRequetToQueue();
+		return null;
 	}
 
-	private int getHatenaCount(URL url) throws IOException {
-		int count = 0;
+	private void addUpdateRequetToQueue() {
+		UpdateTaskManager mgr = UpdateTaskManager.getInstance(context);
+		mgr.addHatenaBookmarkUpdateRequest(createRequest());
+		return;
+	}
+	
+	private InputStreamRequest createRequest() {
+		String requestUrl = generateRequestUrlString();
+		if (requestUrl == null || requestUrl.equals("")) {
+			return null;
+		}
+		return new InputStreamRequest(requestUrl,   
+			       new Listener<InputStream>() {  
+			  
+			        @Override  
+			        public void onResponse(final InputStream in) {
+			        	if (in == null) {
+			        		return;
+			        	}
+			        	// Read response and save to db
+			        	int point = readHatenaBookmarkApiResponse(in);
+						saveHatenaBookmarkPoint(point);
+			        }  
+			    }, new ErrorListener() {  
+			  
+			        @Override  
+			        public void onErrorResponse(VolleyError error) {  
+			        	Log.d("LOG_TAG", "Request error:" + error.getMessage());
+			        }  
+			    });
+	}
+	
+	private int readHatenaBookmarkApiResponse(InputStream in) {
+    	// Hatena bookmark API returns only that URL's point
+    	BufferedInputStream bis = new BufferedInputStream(in);
+		BufferedReader br = null;
+		int point = 0;
 		try {
-			// �ڑ�
-			URLConnection uc = url.openConnection();
-			// HTML��ǂݍ���
-			BufferedInputStream bis = new BufferedInputStream(
-					uc.getInputStream());
-			BufferedReader br = new BufferedReader(new InputStreamReader(bis,
-					CHAR_SET));
+			br = new BufferedReader(new InputStreamReader(bis, CHAR_SET));
 			String line;
 			while ((line = br.readLine()) != null) {
-				count = Integer.valueOf(line);
+				point = Integer.valueOf(line);
 			}
-		} catch (MalformedURLException e) {
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		} catch (UnknownHostException e) {
+		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			// Close for memory leak
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (br != null) {
+					br.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-
-		return count;
+		
+		return point;
 	}
 	
-	private void saveHatenaCount(Article article) {
-		Log.d(LOG_TAG, "article id:" + article.getId());
-		Log.d(LOG_TAG, "article point:" + article.getPoint());
-		dbAdapter.saveHatenaPoint(article.getId(), article.getPoint());
+	private void saveHatenaBookmarkPoint(int point) {
+		// Save hatena bookmark point
+		if (targetArticle != null && point > -1) {
+			dbAdapter.saveHatenaPoint(targetArticle.getId(), String.valueOf(point));
+		}
 	}
-
+	
+	private String generateRequestUrlString() {
+		if (targetArticle == null) {
+			return null;
+		}
+		return GET_HATENA_BOOKMARK_COUNT_URL + "?url=" + targetArticle.getUrl();
+	}
 }

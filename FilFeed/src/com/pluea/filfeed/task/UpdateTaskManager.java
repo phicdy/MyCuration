@@ -113,4 +113,10 @@ public class UpdateTaskManager {
 		}
 		return true;
 	}
+	
+	public void addHatenaBookmarkUpdateRequest(InputStreamRequest request) {
+		if (request != null) {
+			mQueue.add(request);
+		}
+	}
 }
