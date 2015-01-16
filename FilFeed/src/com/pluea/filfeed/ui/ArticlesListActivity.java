@@ -307,8 +307,9 @@ public class ArticlesListActivity extends ActionBarActivity {
 				ListView listView = articlesListView.getRefreshableView();
 				int firstPosition = listView.getFirstVisiblePosition();  
 				int lastPosition = listView.getLastVisiblePosition();
-				int movedPosition = lastPosition + (lastPosition - firstPosition) - 2;
-				for (int i = firstPosition; i < lastPosition -1; i++) {
+				
+				// Row in last visible position is hidden by buttons, don't change status
+				for (int i = firstPosition; i < lastPosition - 1; i++) {
 					articles.get(i).setStatus(Article.TOREAD);
 				}
 				
@@ -338,7 +339,8 @@ public class ArticlesListActivity extends ActionBarActivity {
 					}
 				}
 				articlesListAdapter.notifyDataSetChanged();
-				articlesListView.getRefreshableView().smoothScrollToPosition(movedPosition);
+				// Row in last visible position is hidden by buttons, so scroll to it
+				articlesListView.getRefreshableView().smoothScrollToPositionFromTop(lastPosition, 4);
 			}
 		});
 	}
