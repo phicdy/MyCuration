@@ -312,6 +312,9 @@ public class ArticlesListActivity extends ActionBarActivity {
 				for (int i = firstPosition; i < lastPosition - 1; i++) {
 					articles.get(i).setStatus(Article.TOREAD);
 				}
+				articlesListAdapter.notifyDataSetChanged();
+				// Row in last visible position is hidden by buttons, so scroll to it
+				articlesListView.getRefreshableView().smoothScrollToPositionFromTop(lastPosition, 4);
 				
 				// Back option if all articles are read
 				if(prefMgr.getAllReadBack()) {
@@ -338,9 +341,6 @@ public class ArticlesListActivity extends ActionBarActivity {
 						finish();
 					}
 				}
-				articlesListAdapter.notifyDataSetChanged();
-				// Row in last visible position is hidden by buttons, so scroll to it
-				articlesListView.getRefreshableView().smoothScrollToPositionFromTop(lastPosition, 4);
 			}
 		});
 	}
