@@ -326,18 +326,6 @@ public class ArticlesListActivity extends ActionBarActivity {
 						}
 					}
 					if(isAllRead) {
-						new Thread(new Runnable() {
-							
-							@Override
-							public void run() {
-								if(feedId == Feed.ALL_FEED_ID) {
-									dbAdapter.saveAllStatusToRead();
-								}else {
-									dbAdapter.saveStatusToRead(feedId);
-								}
-								
-							}
-						}).start();
 						finish();
 					}
 				}
