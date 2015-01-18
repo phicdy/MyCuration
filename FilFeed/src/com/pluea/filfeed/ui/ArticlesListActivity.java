@@ -417,7 +417,7 @@ public class ArticlesListActivity extends ActionBarActivity {
 				}
 				Intent intent = new Intent(FeedListActivity.ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(300);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
