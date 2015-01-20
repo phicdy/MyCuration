@@ -66,7 +66,7 @@ public class FeedListActivity extends ActionBarActivity {
 	public static final String FEED_URL = "FEED_URL";
 	public static final String ACTION_UPDATE_NUM_OF_ARTICLES_NOW = "UPDATE_NUM_OF_ARTICLES";
 	public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
-	private static final String LOG_TAG = "RSSREADER."
+	private static final String LOG_TAG = "RSSReader."
 			+ FeedListActivity.class.getSimpleName();
 
 	@Override

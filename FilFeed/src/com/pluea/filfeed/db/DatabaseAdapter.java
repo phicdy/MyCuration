@@ -20,7 +20,7 @@ public class DatabaseAdapter {
 	private static DatabaseAdapter sharedDbAdapter;
 	private static SQLiteDatabase db;
 	private static final String LOG_TAG = "RSSReader."
-			+ DatabaseAdapter.class.getName();
+			+ DatabaseAdapter.class.getSimpleName();
 
 	private DatabaseAdapter(Context context) {
 		this.context = context;
@@ -56,7 +56,6 @@ public class DatabaseAdapter {
 				insertSt.bindString(2, article.getUrl());
 				insertSt.bindString(3, "unread");
 				insertSt.bindString(4, Feed.DEDAULT_HATENA_POINT);
-				Log.d(LOG_TAG, "insert date:" + article.getPostedDate());
 				insertSt.bindLong(5, article.getPostedDate());
 				insertSt.bindString(6, String.valueOf(feedId));
 
