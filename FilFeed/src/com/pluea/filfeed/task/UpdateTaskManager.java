@@ -89,7 +89,7 @@ public class UpdateTaskManager {
 			  
 			        @Override  
 			        public void onErrorResponse(VolleyError error) {  
-			        	Log.d("LOG_TAG", "Request error:" + error.getMessage());
+			        	Log.d(LOG_TAG, "Request error:" + error.getMessage());
 			        	finishOneRequest();
 			        	context.sendBroadcast(new Intent(FeedListActivity.FINISH_UPDATE_ACTION));
 			        }  
