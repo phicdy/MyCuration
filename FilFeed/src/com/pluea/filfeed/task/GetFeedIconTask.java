@@ -134,11 +134,4 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 		}
 
 	}
-
-	private void saveIcon(Article article) {
-		// Log.d(LOG_TAG, "article id:" + article.getId());
-		// Log.d(LOG_TAG, "article point:" + article.getPoint());
-		dbAdapter.saveHatenaPoint(article.getId(), article.getPoint());
-	}
-
 }
