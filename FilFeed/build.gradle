@@ -1,0 +1,34 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "com.pluea.filfeed"
+        minSdkVersion 14
+        targetSdkVersion 17
+
+        testApplicationId "com.example.rssfilterreader.test"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile project(':pullToReflresh')
+    compile 'com.mcxiaoke.volley:library:1.0.+'
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile files('libs/jsoup-1.7.3.jar')
+}
