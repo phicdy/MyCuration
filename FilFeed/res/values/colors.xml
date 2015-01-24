@@ -2,7 +2,7 @@
 	<color name="window_bg">#ededf0</color>
 	<drawable name="window_bg">@color/window_bg</drawable>
 	
-	<color name="all_pressed">#669900</color>
+	<color name="all_pressed">#727272</color>
 
 	<color name="primary">#FF5722</color>
 	<color name="primary_dark">#E64A19</color>
