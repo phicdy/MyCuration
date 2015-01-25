@@ -44,7 +44,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private ArrayList<Article> articles;
     private int feedId;
     private String feedUrl;
-    private DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
+    private DatabaseAdapter dbAdapter;
     private PreferenceManager prefMgr;
     private Intent intent;
     private PullToRefreshListView articlesListView;
@@ -65,7 +65,10 @@ public class ArticlesListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_articles_list);
-// Set feed id and url from main activity
+
+        dbAdapter  = DatabaseAdapter.getInstance(getApplicationContext());
+
+        // Set feed id and url from main activity
         intent = getIntent();
         feedId = intent.getIntExtra(FeedListActivity.FEED_ID, Feed.ALL_FEED_ID);
         feedUrl = intent.getStringExtra(FeedListActivity.FEED_URL);
