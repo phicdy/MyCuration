@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.melnykov.fab.FloatingActionButton;
 import com.pluea.filfeed.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.rss.Article;
@@ -237,27 +238,9 @@ public class ArticlesListActivity extends ActionBarActivity {
             }
         };
         mGestureDetector = new GestureDetector(this, mOnGestureListener);
-        LinearLayout allReadView = (LinearLayout)findViewById(R.id.ll_all_read);
-        allReadView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(prefMgr.getAllReadBack()) {
-                    if(feedId == Feed.ALL_FEED_ID) {
-                        dbAdapter.saveAllStatusToRead();
-                    }else {
-                        dbAdapter.saveStatusToRead(feedId);
-                    }
-                    finish();
-                }else {
-                    for (Article article : articles) {
-                        article.setStatus(Article.TOREAD);
-                    }
-                    articlesListAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-        LinearLayout scrollView = (LinearLayout)findViewById(R.id.ll_scroll);
-        scrollView.setOnClickListener(new OnClickListener() {
+
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 ListView listView = articlesListView.getRefreshableView();

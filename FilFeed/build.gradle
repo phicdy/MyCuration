@@ -31,4 +31,5 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.+'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile files('libs/jsoup-1.7.3.jar')
+    compile 'com.melnykov:floatingactionbutton:1.1.0'
 }
