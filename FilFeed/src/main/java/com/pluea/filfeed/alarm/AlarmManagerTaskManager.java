@@ -28,11 +28,7 @@ public class AlarmManagerTaskManager {
 	public static void setNewHatenaUpdateAlarmAfterFeedUpdate(Context context) {
 		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_HATENA_ACTION, HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE_SECOND);
 	}
-	
-	public static void setNewHatenaUpdateAlarm(Context context) {
-		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_HATENA_ACTION, HATENA_UPDATE_INTERVAL_SECOND);
-	}
-	
+
 	private static void setAlarm(Context context, String action, int intervalSec) {
 		Intent i = new Intent(context, AutoUpdateBroadcastReciever.class);
 		i.setAction(action);

@@ -62,9 +62,6 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 					hatenaTask.execute(unreadArticle);
 				}
 			}
-			
-			// Update hatena bookmark point after interval
-			AlarmManagerTaskManager.setNewHatenaUpdateAlarm(context);
 		}
 	}
 }
