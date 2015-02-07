@@ -148,35 +148,6 @@ public class FeedListFragment extends Fragment {
         rssFeedListAdapter.notifyDataSetChanged();
     }
 
-    public String getFeedTitleAtPosition (int position) {
-        if (position < 0 || feeds == null || position > feeds.size()-1) {
-            return null;
-        }
-        return feeds.get(position).getTitle();
-    }
-
-    public int getFeedIdAtPosition (int position) {
-        if (position < 0 || feeds == null || position > feeds.size()-1) {
-            return -1;
-        }
-        return feeds.get(position).getId();
-    }
-
-    public String getFeedUrlAtPosition (int position) {
-        if (position < 0 || feeds == null || position > feeds.size()-1) {
-            return null;
-        }
-        return feeds.get(position).getUrl();
-    }
-
-    public boolean isNoUnreadArticleFeedHided() {
-        return isHided;
-    }
-
-    public void setNoUnreadArticleFeedHided(boolean isHided) {
-        this.isHided = isHided;
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
