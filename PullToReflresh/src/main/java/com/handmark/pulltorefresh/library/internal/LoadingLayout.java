@@ -300,7 +300,8 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 
 	public void setRefreshingLabel(CharSequence refreshingLabel) {
 		mRefreshingLabel = refreshingLabel;
-	}
+        mHeaderText.setText(mRefreshingLabel);
+    }
 
 	public void setReleaseLabel(CharSequence releaseLabel) {
 		mReleaseLabel = releaseLabel;

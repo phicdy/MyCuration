@@ -94,10 +94,12 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 				// Set num of unread articles and update UI
 				if (intent.getAction().equals(FINISH_UPDATE_ACTION)) {
 					Log.d(LOG_TAG, "onReceive");
-					if (!updateTaskManager.isUpdatingFeed()) {
+					if (updateTaskManager.isUpdatingFeed()) {
+                        listFragment.updateProgress();
+                    }else {
 						listFragment.onRefreshComplete();
 						listFragment.updateNumOfUnreadArticles();
-					}
+                    }
 				}else if (intent.getAction().equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
 					listFragment.updateNumOfUnreadArticles();
 				}

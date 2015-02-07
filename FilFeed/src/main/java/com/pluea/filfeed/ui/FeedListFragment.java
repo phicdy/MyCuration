@@ -39,6 +39,8 @@ public class FeedListFragment extends Fragment {
     // Manage hide feed status
     private boolean isHided = true;
 
+    private int numOfAllFeeds = 0;
+
     public static FeedListFragment newInstance(ArrayList<Feed> feeds) {
         return new FeedListFragment(feeds);
     }
@@ -61,11 +63,14 @@ public class FeedListFragment extends Fragment {
         super.onResume();
         updateNumOfUnreadArticles();
 
+        numOfAllFeeds = dbAdapter.getNumOfFeeds();
+
         // Set ListView
         rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
         feedsListView.setAdapter(rssFeedListAdapter);
         if (UpdateTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
             feedsListView.setRefreshing(true);
+            updateProgress();
         }
     }
 
@@ -188,6 +193,7 @@ public class FeedListFragment extends Fragment {
 
     public void onRefreshComplete() {
         feedsListView.onRefreshComplete();
+        updateProgress();
     }
 
     public void addFeed(Feed newFeed) {
@@ -199,6 +205,16 @@ public class FeedListFragment extends Fragment {
         dbAdapter.deleteFeed(feeds.get(position).getId());
         feeds.remove(position);
         rssFeedListAdapter.notifyDataSetChanged();
+    }
+
+    public void updateProgress() {
+        UpdateTaskManager updateTaskManager = UpdateTaskManager.getInstance(getActivity());
+        int updatedFeed = numOfAllFeeds - updateTaskManager.getFeedRequestCountInQueue();
+        if ((updatedFeed == numOfAllFeeds) && !updateTaskManager.isUpdatingFeed()) {
+            updatedFeed = 0;
+        }
+        feedsListView.getLoadingLayoutProxy()
+                .setRefreshingLabel(getString(R.string.loading) + "(" + updatedFeed + "/" + numOfAllFeeds + ")");
     }
 
     /**

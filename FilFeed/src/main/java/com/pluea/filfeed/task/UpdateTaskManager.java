@@ -119,4 +119,8 @@ public class UpdateTaskManager {
 			mQueue.add(request);
 		}
 	}
+
+    public synchronized int getFeedRequestCountInQueue() {
+        return numOfFeedRequest;
+    }
 }
