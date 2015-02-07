@@ -32,21 +32,10 @@
 	        android:text="@string/all"/>
     </LinearLayout>
     
-    <com.handmark.pulltorefresh.library.PullToRefreshListView 
-        android:id="@+id/feedList" 
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"/>
-    
-    <TextView
-        android:id="@+id/showNoUnread" 
-        android:layout_height="wrap_content" 
-        android:layout_width="wrap_content" 
-        android:layout_gravity="center"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:textSize="18sp"
-        android:text="@string/show_all_feeds"/>
+        android:layout_height="wrap_content">
+
+        </FrameLayout>
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.pluea.filfeed.R;
 import com.pluea.filfeed.db.DatabaseAdapter;
 import com.pluea.filfeed.rss.Feed;
+import com.pluea.filfeed.task.UpdateTaskManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,18 +29,18 @@ import java.util.ArrayList;
 public class FeedListFragment extends Fragment {
 
     private PullToRefreshListView feedsListView;
+    private TextView showNoUnread;
     private RssFeedListAdapter rssFeedListAdapter;
     private OnFeedListFragmentListener mListener;
 
-    private ArrayList<Feed> feeds = new ArrayList<Feed>();
+    private ArrayList<Feed> feeds = new ArrayList<>();
     private DatabaseAdapter dbAdapter;
 
     // Manage hide feed status
     private boolean isHided = true;
 
     public static FeedListFragment newInstance(ArrayList<Feed> feeds) {
-        FeedListFragment fragment = new FeedListFragment(feeds);
-        return fragment;
+        return new FeedListFragment(feeds);
     }
 
     public FeedListFragment(ArrayList<Feed> feeds) {
@@ -52,7 +54,28 @@ public class FeedListFragment extends Fragment {
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
         feeds = dbAdapter.getAllFeedsThatHaveUnreadArticles();
 //        getFeedIconIfNeeded(feeds);
-        setAllListener();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateNumOfUnreadArticles();
+
+        // Set ListView
+        rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
+        feedsListView.setAdapter(rssFeedListAdapter);
+        if (UpdateTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
+            feedsListView.setRefreshing(true);
+        }
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (UpdateTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
+            feedsListView.onRefreshComplete();
+        }
     }
 
     private void setAllListener() {
@@ -74,6 +97,25 @@ public class FeedListFragment extends Fragment {
                 mListener.onRefreshList();
             }
         });
+
+        showNoUnread.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (isHided) {
+                    isHided = false;
+                    showNoUnread.setText(R.string.show_hided_feed);
+                }else {
+                    isHided = true;
+                    showNoUnread.setText(R.string.show_all_feeds);
+                }
+                updateNumOfUnreadArticles();
+
+                // Set ListView
+                rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
+                feedsListView.setAdapter(rssFeedListAdapter);
+            }
+        });
     }
 
     @Override
@@ -91,8 +133,17 @@ public class FeedListFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        feedsListView = (PullToRefreshListView) activity.findViewById(R.id.feedList);
-        activity.registerForContextMenu(feedsListView.getRefreshableView());
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        feedsListView = (PullToRefreshListView) getActivity().findViewById(R.id.feedList);
+        TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView);
+        feedsListView.setEmptyView(emptyView);
+        showNoUnread = (TextView)getActivity().findViewById(R.id.showNoUnread);
+        getActivity().registerForContextMenu(feedsListView.getRefreshableView());
+        setAllListener();
     }
 
     @Override
@@ -115,7 +166,7 @@ public class FeedListFragment extends Fragment {
         if (feeds.isEmpty()) {
             return;
         }
-        ArrayList<Feed> hideList = new ArrayList<Feed>();
+        ArrayList<Feed> hideList = new ArrayList<>();
         for (Feed feed : feeds) {
             int numOfUnreadArticles = feed.getUnreadAriticlesCount();
             if(numOfUnreadArticles == 0) {
@@ -125,6 +176,7 @@ public class FeedListFragment extends Fragment {
             }
         }
         if(feeds.size() == hideList.size() || hideList.size() == 0) {
+            showNoUnread.setVisibility(View.GONE);
         }else if(isHided) {
             for(Feed feed : hideList) {
                 feeds.remove(feed);
@@ -144,6 +196,7 @@ public class FeedListFragment extends Fragment {
     }
 
     public void removeFeedAtPosition(int position) {
+        dbAdapter.deleteFeed(feeds.get(position).getId());
         feeds.remove(position);
         rssFeedListAdapter.notifyDataSetChanged();
     }
@@ -175,7 +228,7 @@ public class FeedListFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
+            ViewHolder holder;
 
             // Use contentView and setup ViewHolder
             View row = convertView;

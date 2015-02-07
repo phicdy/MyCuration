@@ -15,5 +15,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/no_article" />
+        android:text="@string/no_feed_message" />
+
+    <TextView
+        android:id="@+id/showNoUnread"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:textSize="18sp"
+        android:text="@string/show_all_feeds"/>
 </LinearLayout>
