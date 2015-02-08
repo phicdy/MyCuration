@@ -53,8 +53,6 @@ public class FeedListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
-        feeds = dbAdapter.getAllFeedsThatHaveUnreadArticles();
-//        getFeedIconIfNeeded(feeds);
     }
 
     @Override
