@@ -185,7 +185,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
         transaction.commit();
 
         feeds = dbAdapter.getAllFeedsThatHaveUnreadArticles();
-        listFragment = new FeedListFragment(feeds);
+        listFragment = new FeedListFragment();
         FragmentTransaction listReplaceTransaction = manager.beginTransaction();
         listReplaceTransaction.replace(R.id.container, listFragment);
         listReplaceTransaction.commit();

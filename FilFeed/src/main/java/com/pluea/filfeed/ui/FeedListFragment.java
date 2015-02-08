@@ -41,12 +41,11 @@ public class FeedListFragment extends Fragment {
 
     private int numOfAllFeeds = 0;
 
-    public static FeedListFragment newInstance(ArrayList<Feed> feeds) {
-        return new FeedListFragment(feeds);
+    public static FeedListFragment newInstance() {
+        return new FeedListFragment();
     }
 
-    public FeedListFragment(ArrayList<Feed> feeds) {
-        this.feeds = feeds;
+    public FeedListFragment() {
     }
 
     @Override
