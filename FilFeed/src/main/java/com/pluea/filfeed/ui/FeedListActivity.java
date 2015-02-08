@@ -64,9 +64,6 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 		setAllListener();
 		setAlarmManager();
 		
-		if(dbAdapter.getNumOfFeeds() == 0) {
-			dbAdapter.addManyFeeds();
-		}
 		getFeedIconIfNeeded(feeds);
 	}
 
