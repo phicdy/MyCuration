@@ -214,6 +214,29 @@ public class FeedListFragment extends Fragment {
                 .setRefreshingLabel(getString(R.string.loading) + "(" + updatedFeed + "/" + numOfAllFeeds + ")");
     }
 
+    public int getFeedIdAtPosition (int position) {
+        if (position < 0 || feeds == null || position > feeds.size()-1) {
+            return -1;
+        }
+        return feeds.get(position).getId();
+    }
+
+    public String getFeedTitleAtPosition (int position) {
+        if (position < 0 || feeds == null || position > feeds.size()-1) {
+            return null;
+        }
+        return feeds.get(position).getTitle();
+    }
+
+
+    public String getFeedUrlAtPosition (int position) {
+        if (position < 0 || feeds == null || position > feeds.size()-1) {
+            return null;
+        }
+        return feeds.get(position).getUrl();
+    }
+
+
     public interface OnFeedListFragmentListener {
         // TODO: Update argument type and name
         public void onListClicked(int position);

@@ -157,14 +157,13 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
-		Feed selectedFeed = feeds.get(info.position-1);
 
 		switch (item.getItemId()) {
 		case DELETE_FEED_MENU_ID:
-			showDeleteFeedAlertDialog(selectedFeed, info.position-1);
+			showDeleteFeedAlertDialog(info.position-1);
 			return true;
 		case EDIT_FEED_TITLE_MENU_ID:
-			showEditTitleDialog(selectedFeed);
+			showEditTitleDialog(info.position-1);
 			return true;
 		default:
 			return super.onContextItemSelected(item);
@@ -254,10 +253,10 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 						}).setNegativeButton(R.string.cancel, null).show();
 	}
 
-	private void showEditTitleDialog(final Feed selectedFeed) {
+	private void showEditTitleDialog(final int position) {
 		final View addView = getLayoutInflater().inflate(R.layout.edit_feed_title, null);
 		EditText editTitleView = (EditText) addView.findViewById(R.id.editFeedTitle);
-		editTitleView.setText(selectedFeed.getTitle());
+		editTitleView.setText(listFragment.getFeedTitleAtPosition(position));
 
 		new AlertDialog.Builder(this)
 				.setTitle(R.string.edit_feed_title)
@@ -273,7 +272,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 								if(newTitle == null || newTitle.equals("")) {
 									Toast.makeText(getApplicationContext(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show();
 								}else {
-									int numOfUpdate = dbAdapter.saveNewTitle(selectedFeed.getId(), newTitle);
+									int numOfUpdate = dbAdapter.saveNewTitle(listFragment.getFeedIdAtPosition(position), newTitle);
 									if(numOfUpdate == 1) {
 										Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_success), Toast.LENGTH_SHORT).show();
 										listFragment.updateNumOfUnreadArticles();
@@ -286,7 +285,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 						}).setNegativeButton(R.string.cancel, null).show();
 	}
 	
-	private void showDeleteFeedAlertDialog(final Feed selectedFeed, final int position) {
+	private void showDeleteFeedAlertDialog(final int position) {
 		new AlertDialog.Builder(this)
 				.setTitle(R.string.delete_feed_alert)
 				.setPositiveButton(R.string.delete,
@@ -294,7 +293,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								if(dbAdapter.deleteFeed(selectedFeed.getId())) {
+								if(dbAdapter.deleteFeed(listFragment.getFeedIdAtPosition(position))) {
                                     listFragment.removeFeedAtPosition(position);
 									Toast.makeText(getApplicationContext(), getString(R.string.finish_delete_feed_success), Toast.LENGTH_SHORT).show();
 								}else {
@@ -328,8 +327,8 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
     public void onListClicked(int position) {
         intent = new Intent(FeedListActivity.this,
                 ArticlesListActivity.class);
-        intent.putExtra(FEED_ID, feeds.get(position).getId());
-        intent.putExtra(FEED_URL, feeds.get(position).getUrl());
+        intent.putExtra(FEED_ID, listFragment.getFeedIdAtPosition(position));
+        intent.putExtra(FEED_URL, listFragment.getFeedUrlAtPosition(position));
         startActivity(intent);
     }
 
