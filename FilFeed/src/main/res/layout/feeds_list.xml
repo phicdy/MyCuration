@@ -8,9 +8,9 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="8dp"
         android:layout_marginBottom="12dp"
         android:layout_marginTop="12dp"
-        android:layout_weight="10"
         android:contentDescription="@string/icon"
         android:src="@drawable/no_icon" />
 
@@ -18,21 +18,23 @@
         android:id="@+id/feedTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:layout_marginBottom="12dp"
-        android:layout_marginLeft="0dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginTop="12dp"
-        android:layout_weight="80"
         android:gravity="center_vertical"
         android:textSize="18sp" />
 
     <TextView
         android:id="@+id/feedCount"
-        android:layout_width="0dp"
+        android:layout_width="24dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
         android:layout_marginBottom="12dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="12dp"
-        android:layout_weight="10"
+        android:textSize="14sp"
+        android:layout_gravity="center_vertical"
         android:gravity="center_vertical|right" />
 
 </LinearLayout>
