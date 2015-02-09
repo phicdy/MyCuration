@@ -248,7 +248,14 @@ public class ArticlesListActivity extends ActionBarActivity {
                 int lastPosition = listView.getLastVisiblePosition();
 // Row in last visible position is hidden by buttons, don't change status
                 for (int i = firstPosition; i < lastPosition - 1; i++) {
-                    articles.get(i).setStatus(Article.TOREAD);
+                    final Article article = articles.get(i);
+                   article.setStatus(Article.TOREAD);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dbAdapter.saveStatus(article.getId(), Article.TOREAD);
+                        }
+                    }).start();
                 }
                 articlesListAdapter.notifyDataSetChanged();
 // Row in last visible position is hidden by buttons, so scroll to it
@@ -287,7 +294,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         articlesListAdapter = new ArticlesListAdapter(articles);
         articlesListView.setAdapter(articlesListAdapter);
     }
-    private void setReadStatusToTouchedView(int color, String status, boolean isAllReadBack) {
+    private void setReadStatusToTouchedView(int color, final String status, boolean isAllReadBack) {
         View row = articlesListAdapter.getView(touchedPosition, null,
                 articlesListView);
 // Change selected article's view
@@ -299,10 +306,16 @@ public class ArticlesListActivity extends ActionBarActivity {
         postedTime.setTextColor(color);
         point.setTextColor(color);
         Log.d(LOG_TAG, "touched article title:" + title.getText());
-        for (Article article : articles) {
+        for (final Article article : articles) {
             if (title.getText().equals(article.getTitle())) {
                 Log.d(LOG_TAG, "touched article id:" + article.getId());
                 article.setStatus(status);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dbAdapter.saveStatus(article.getId(), status);
+                    }
+                }).start();
                 break;
             }
         }
