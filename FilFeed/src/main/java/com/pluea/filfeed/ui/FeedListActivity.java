@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pluea.filfeed.R;
@@ -43,6 +44,8 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 	private UpdateTaskManager updateTaskManager;
 
     private FeedListFragment listFragment;
+    private TextView showNoUnread;
+    private LinearLayout llShowNoUnread;
 
 	private static final int DELETE_FEED_MENU_ID = 0;
 	private static final int EDIT_FEED_TITLE_MENU_ID = 1;
@@ -80,7 +83,19 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 			}
 		});
 
+        llShowNoUnread = (LinearLayout)findViewById(R.id.ll_all_feed);
+        showNoUnread = (TextView)findViewById(R.id.showNoUnread);
+        llShowNoUnread.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+                if (listFragment.changeHideStatus()) {
+                    showNoUnread.setText(R.string.show_all_feeds);
+                }else {
+                    showNoUnread.setText(R.string.show_hided_feed);
+                }
+            }
+        });
 	}
 
 	private void setBroadCastReceiver() {
@@ -341,5 +356,15 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
     @Override
     public void onRefreshList() {
         updateAllFeeds();
+    }
+
+    @Override
+    public void setShowAllFeedsGone() {
+        llShowNoUnread.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void setShowAllFeedsVisible() {
+        llShowNoUnread.setVisibility(View.VISIBLE);
     }
 }

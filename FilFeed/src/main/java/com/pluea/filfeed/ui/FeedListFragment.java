@@ -30,11 +30,11 @@ import java.util.ArrayList;
 public class FeedListFragment extends Fragment {
 
     private PullToRefreshListView feedsListView;
-    private TextView showNoUnread;
     private RssFeedListAdapter rssFeedListAdapter;
     private OnFeedListFragmentListener mListener;
 
     private ArrayList<Feed> feeds = new ArrayList<>();
+    private ArrayList<Feed> allFeeds = new ArrayList<>();
     private DatabaseAdapter dbAdapter;
 
     // Manage hide feed status
@@ -89,25 +89,6 @@ public class FeedListFragment extends Fragment {
                 mListener.onRefreshList();
             }
         });
-
-        showNoUnread.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isHided) {
-                    isHided = false;
-                    showNoUnread.setText(R.string.show_hided_feed);
-                }else {
-                    isHided = true;
-                    showNoUnread.setText(R.string.show_all_feeds);
-                }
-                updateNumOfUnreadArticles();
-
-                // Set ListView
-                rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
-                feedsListView.setAdapter(rssFeedListAdapter);
-            }
-        });
     }
 
     @Override
@@ -133,7 +114,6 @@ public class FeedListFragment extends Fragment {
         feedsListView = (PullToRefreshListView) getActivity().findViewById(R.id.feedList);
         TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView);
         feedsListView.setEmptyView(emptyView);
-        showNoUnread = (TextView)getActivity().findViewById(R.id.showNoUnread);
         getActivity().registerForContextMenu(feedsListView.getRefreshableView());
         setAllListener();
 
@@ -169,12 +149,13 @@ public class FeedListFragment extends Fragment {
         if (dbAdapter == null) {
             dbAdapter = DatabaseAdapter.getInstance(getActivity());
         }
-        feeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
-        if (feeds.isEmpty()) {
+        allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
+        feeds = (ArrayList<Feed>)allFeeds.clone();
+        if (allFeeds.isEmpty()) {
             return;
         }
         ArrayList<Feed> hideList = new ArrayList<>();
-        for (Feed feed : feeds) {
+        for (Feed feed : allFeeds) {
             int numOfUnreadArticles = feed.getUnreadAriticlesCount();
             if(numOfUnreadArticles == 0) {
                 hideList.add(feed);
@@ -182,15 +163,18 @@ public class FeedListFragment extends Fragment {
                 feed.setUnreadArticlesCount(numOfUnreadArticles);
             }
         }
-        if(feeds.size() == hideList.size() || hideList.size() == 0) {
-            showNoUnread.setVisibility(View.GONE);
-        }else if(isHided) {
-            for(Feed feed : hideList) {
-                feeds.remove(feed);
+        if(allFeeds.size() == hideList.size() || hideList.size() == 0) {
+            mListener.setShowAllFeedsGone();
+            refreshList(allFeeds);
+        }else {
+            mListener.setShowAllFeedsVisible();
+            if(isHided) {
+                for(Feed feed : hideList) {
+                    feeds.remove(feed);
+                }
             }
+            refreshList(feeds);
         }
-
-        refreshList(feeds);
     }
 
     public void onRefreshComplete() {
@@ -241,11 +225,26 @@ public class FeedListFragment extends Fragment {
         return feeds.get(position).getUrl();
     }
 
+    public boolean changeHideStatus() {
+        if (isHided) {
+            isHided = false;
+            rssFeedListAdapter = new RssFeedListAdapter(allFeeds, getActivity());
+        }else {
+            isHided = true;
+            rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
+        }
+
+        // Set ListView
+        feedsListView.setAdapter(rssFeedListAdapter);
+        return isHided;
+    }
 
     public interface OnFeedListFragmentListener {
         // TODO: Update argument type and name
         public void onListClicked(int position);
         public void onRefreshList();
+        public void setShowAllFeedsGone();
+        public void setShowAllFeedsVisible();
     }
 
     /**
