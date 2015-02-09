@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,17 +59,6 @@ public class FeedListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateNumOfUnreadArticles();
-
-        numOfAllFeeds = dbAdapter.getNumOfFeeds();
-
-        // Set ListView
-        rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
-        feedsListView.setAdapter(rssFeedListAdapter);
-        if (UpdateTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
-            feedsListView.setRefreshing(true);
-            updateProgress();
-        }
     }
 
 
@@ -146,6 +136,21 @@ public class FeedListFragment extends Fragment {
         showNoUnread = (TextView)getActivity().findViewById(R.id.showNoUnread);
         getActivity().registerForContextMenu(feedsListView.getRefreshableView());
         setAllListener();
+
+        Log.d("Time", "onActivityCreated");
+        long start = System.currentTimeMillis();
+        updateNumOfUnreadArticles();
+        Log.d("Time", "finish updateNumOfUnreadArticles:" + (System.currentTimeMillis() - start));
+
+        numOfAllFeeds = dbAdapter.getNumOfFeeds();
+
+        // Set ListView
+        rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
+        feedsListView.setAdapter(rssFeedListAdapter);
+        if (UpdateTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
+            feedsListView.setRefreshing(true);
+            updateProgress();
+        }
     }
 
     @Override
