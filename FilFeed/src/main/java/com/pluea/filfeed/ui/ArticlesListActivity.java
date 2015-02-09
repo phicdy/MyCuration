@@ -337,24 +337,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
 // Change read status
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (Article article : articles) {
-                    if (article.getStatus().equals(Article.TOREAD)) {
-                        Log.d(LOG_TAG, "save status, article title:" + article.getTitle());
-                        dbAdapter.saveStatus(article.getId(), Article.READ);
-                    }
-                }
-                Intent intent = new Intent(FeedListActivity.ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                sendBroadcast(intent);
-            }
-        }).start();
+
     }
     // If Back button pushed
     @Override

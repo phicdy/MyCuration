@@ -246,6 +246,20 @@ public class DatabaseAdapter {
 		}
 		
 	}
+
+    public void saveAllStatusToReadFromToRead() {
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put("status", Article.READ);
+            String condition = "status = '" + Article.TOREAD + "'";
+            db.update("articles", values, condition, null);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+    }
 	
 	public void saveStatus(int articleId, String status) {
 		db.beginTransaction();

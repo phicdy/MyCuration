@@ -77,7 +77,31 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		testArticles.add(japaneseTitle);
 		adapter.saveNewArticles(testArticles, testFeed.getId());
 	}
-	
+
+    public void testSaveAllStatusToReadFromToRead() {
+        Feed testFeed = adapter.getFeedByUrl("http://www.yahoo.co.jp");
+
+        ArrayList<Article> articles = new ArrayList<>();
+        long now = System.currentTimeMillis();
+        Article toReadArticle = new Article(1, "toread_article",
+                "http://www.google.com", Article.TOREAD, "", now + 1, testFeed.getId(), "");
+        Article toReadArticle2 = new Article(1, "toread_article2",
+                "http://www.google.com/hogehoge", Article.TOREAD, "", now + 2, testFeed.getId(), "");
+        articles.add(toReadArticle);
+        articles.add(toReadArticle2);
+        adapter.saveNewArticles(articles, testFeed.getId());
+
+        adapter.saveAllStatusToReadFromToRead();
+        ArrayList<Article> changedArticles = adapter.getAllArticles(true);
+        boolean existToReadArticle = false;
+        for (Article article : changedArticles) {
+            if (article.getStatus().equals(Article.TOREAD)) {
+                existToReadArticle = true;
+            }
+        }
+        assertEquals(false, existToReadArticle);
+    }
+
 	private void deleteAllFeeds() {
 		for (Feed feed : adapter.getAllFeedsWithoutNumOfUnreadArticles()) {
 			adapter.deleteFeed(feed.getId());

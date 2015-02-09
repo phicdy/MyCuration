@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.pluea.filfeed.R;
 import com.pluea.filfeed.alarm.AlarmManagerTaskManager;
 import com.pluea.filfeed.db.DatabaseAdapter;
+import com.pluea.filfeed.rss.Article;
 import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.task.GetFeedIconTask;
 import com.pluea.filfeed.task.InsertNewFeedTask;
@@ -185,6 +186,12 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
         listReplaceTransaction.replace(R.id.container, listFragment);
         listReplaceTransaction.commit();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dbAdapter.saveAllStatusToReadFromToRead();
+            }
+        }).start();
 	}
 	
 	@Override
