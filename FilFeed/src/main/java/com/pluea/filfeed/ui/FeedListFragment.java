@@ -35,6 +35,7 @@ public class FeedListFragment extends Fragment {
 
     private ArrayList<Feed> feeds = new ArrayList<>();
     private ArrayList<Feed> allFeeds = new ArrayList<>();
+    private ArrayList<Feed> hideList = new ArrayList<>();
     private DatabaseAdapter dbAdapter;
 
     // Manage hide feed status
@@ -118,10 +119,7 @@ public class FeedListFragment extends Fragment {
         setAllListener();
 
         Log.d("Time", "onActivityCreated");
-        long start = System.currentTimeMillis();
-        updateNumOfUnreadArticles();
-        Log.d("Time", "finish updateNumOfUnreadArticles:" + (System.currentTimeMillis() - start));
-
+        refreshList();
         numOfAllFeeds = dbAdapter.getNumOfFeeds();
 
         // Set ListView
@@ -139,41 +137,44 @@ public class FeedListFragment extends Fragment {
         mListener = null;
     }
 
-    public void refreshList(ArrayList<Feed> feeds) {
+    public void refreshList() {
+        if(allFeeds.size() == hideList.size() || hideList.size() == 0) {
+            mListener.setShowAllFeedsGone();
+        }else {
+            mListener.setShowAllFeedsVisible();
+        }
+
         rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
-		feedsListView.setAdapter(rssFeedListAdapter);
+        feedsListView.setAdapter(rssFeedListAdapter);
         rssFeedListAdapter.notifyDataSetChanged();
     }
 
-    public void updateNumOfUnreadArticles() {
+    public void setAllFeeds(ArrayList<Feed> allFeeds) {
+        this.allFeeds = allFeeds;
+        generateHidedFeedList();
+    }
+
+    private void generateHidedFeedList() {
         if (dbAdapter == null) {
             dbAdapter = DatabaseAdapter.getInstance(getActivity());
         }
-        allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
-        feeds = (ArrayList<Feed>)allFeeds.clone();
+        long start = System.currentTimeMillis();
+
         if (allFeeds.isEmpty()) {
             return;
         }
-        ArrayList<Feed> hideList = new ArrayList<>();
+        feeds = (ArrayList<Feed>)allFeeds.clone();
+        hideList = new ArrayList<>();
         for (Feed feed : allFeeds) {
             int numOfUnreadArticles = feed.getUnreadAriticlesCount();
-            if(numOfUnreadArticles == 0) {
+            if (numOfUnreadArticles == 0) {
                 hideList.add(feed);
-            }else {
-                feed.setUnreadArticlesCount(numOfUnreadArticles);
             }
         }
-        if(allFeeds.size() == hideList.size() || hideList.size() == 0) {
-            mListener.setShowAllFeedsGone();
-            refreshList(allFeeds);
-        }else {
-            mListener.setShowAllFeedsVisible();
-            if(isHided) {
-                for(Feed feed : hideList) {
-                    feeds.remove(feed);
-                }
+        if(allFeeds.size() != hideList.size() && hideList.size() != 0) {
+            for(Feed feed : hideList) {
+                feeds.remove(feed);
             }
-            refreshList(feeds);
         }
     }
 

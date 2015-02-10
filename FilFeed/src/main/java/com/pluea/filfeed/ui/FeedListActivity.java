@@ -111,10 +111,10 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
                         listFragment.updateProgress();
                     }else {
 						listFragment.onRefreshComplete();
-						listFragment.updateNumOfUnreadArticles();
+                        refleshFeedList();
                     }
 				}else if (intent.getAction().equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
-					listFragment.updateNumOfUnreadArticles();
+                    refleshFeedList();
 				}
 			}
 		};
@@ -191,15 +191,8 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 		super.onResume();
 		setBroadCastReceiver();
 
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.container, new FeedUpdateProgressFragment());
-        transaction.commit();
-
         listFragment = new FeedListFragment();
-        FragmentTransaction listReplaceTransaction = manager.beginTransaction();
-        listReplaceTransaction.replace(R.id.container, listFragment);
-        listReplaceTransaction.commit();
+        refleshFeedList();
 
         new Thread(new Runnable() {
             @Override
@@ -207,8 +200,29 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
                 dbAdapter.saveAllStatusToReadFromToRead();
             }
         }).start();
-	}
-	
+    }
+
+    private void refleshFeedList() {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.container, new FeedUpdateProgressFragment());
+        transaction.commit();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                listFragment.setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
+                showFeedList();
+            }
+        }).start();
+    }
+
+    private void showFeedList() {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction listReplaceTransaction = manager.beginTransaction();
+        listReplaceTransaction.replace(R.id.container, listFragment);
+        listReplaceTransaction.commit();
+    }
+
 	@Override
 	protected void onPause() {
 		if (receiver != null) {
@@ -296,7 +310,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 									int numOfUpdate = dbAdapter.saveNewTitle(listFragment.getFeedIdAtPosition(position), newTitle);
 									if(numOfUpdate == 1) {
 										Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_success), Toast.LENGTH_SHORT).show();
-										listFragment.updateNumOfUnreadArticles();
+                                        refleshFeedList();
 									}else {
 										Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_error), Toast.LENGTH_SHORT).show();
 									}
