@@ -46,6 +46,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
     private FeedListFragment listFragment;
     private TextView showNoUnread;
     private LinearLayout llShowNoUnread;
+    private TextView tvAllUnreadArticleCount;
 
 	private static final int DELETE_FEED_MENU_ID = 0;
 	private static final int EDIT_FEED_TITLE_MENU_ID = 1;
@@ -57,6 +58,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 	public static final String FEED_URL = "FEED_URL";
 	public static final String ACTION_UPDATE_NUM_OF_ARTICLES_NOW = "UPDATE_NUM_OF_ARTICLES";
 	public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
+    private static final String ACTION_UPDATE_ALL_UNREAD_ARTICLES = "ACTION_UPDATE_ALL_UNREAD_ARTICLES";
 	private static final String LOG_TAG = "RSSReader."
 			+ FeedListActivity.class.getSimpleName();
 
@@ -69,6 +71,8 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 		updateTaskManager = UpdateTaskManager.getInstance(getApplicationContext());
 		setAllListener();
 		setAlarmManager();
+
+        tvAllUnreadArticleCount = (TextView)findViewById(R.id.allUnreadCount);
 		
 		getFeedIconIfNeeded(feeds);
 	}
@@ -117,13 +121,16 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
                     }
 				}else if (intent.getAction().equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
                     refleshFeedList();
-				}
+				}else if (intent.getAction().equals(ACTION_UPDATE_ALL_UNREAD_ARTICLES)) {
+                    updateAllUnreadArticlesCount();
+                }
 			}
 		};
 
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(FINISH_UPDATE_ACTION);
 		filter.addAction(ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
+        filter.addAction(ACTION_UPDATE_ALL_UNREAD_ARTICLES);
 		registerReceiver(receiver, filter);
 
 	}
@@ -216,9 +223,17 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
                 listFragment.setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
                 if (isForeground) {
                     showFeedList();
+                    sendBroadcast(new Intent(ACTION_UPDATE_ALL_UNREAD_ARTICLES));
                 }
             }
         }).start();
+    }
+
+    private void updateAllUnreadArticlesCount() {
+        if (listFragment == null) {
+            return;
+        }
+        tvAllUnreadArticleCount.setText(String.valueOf(listFragment.countAllUnreadArticles()));
     }
 
     private void showFeedList() {

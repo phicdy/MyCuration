@@ -242,6 +242,17 @@ public class FeedListFragment extends Fragment {
         return isHided;
     }
 
+    public int countAllUnreadArticles() {
+        if (feeds.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+        for (Feed feed : feeds) {
+            count += feed.getUnreadAriticlesCount();
+        }
+        return count;
+    }
+
     public interface OnFeedListFragmentListener {
         // TODO: Update argument type and name
         public void onListClicked(int position);
