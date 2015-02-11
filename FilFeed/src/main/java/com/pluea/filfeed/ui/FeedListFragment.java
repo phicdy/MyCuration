@@ -138,12 +138,6 @@ public class FeedListFragment extends Fragment {
     }
 
     public void refreshList() {
-        if(allFeeds.size() == hideList.size() || hideList.size() == 0) {
-            mListener.setShowAllFeedsGone();
-        }else {
-            mListener.setShowAllFeedsVisible();
-        }
-
         rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
         feedsListView.setAdapter(rssFeedListAdapter);
         rssFeedListAdapter.notifyDataSetChanged();
@@ -257,8 +251,6 @@ public class FeedListFragment extends Fragment {
         // TODO: Update argument type and name
         public void onListClicked(int position);
         public void onRefreshList();
-        public void setShowAllFeedsGone();
-        public void setShowAllFeedsVisible();
     }
 
     /**

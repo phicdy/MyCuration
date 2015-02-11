@@ -43,37 +43,6 @@
             android:gravity="center_vertical|right" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_all_feed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/view_selected"
-        android:orientation="horizontal" >
-
-        <ImageView
-            android:id="@+id/allFeedIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center_vertical|center"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/ic_action_view_as_list"
-            android:contentDescription="@string/all" />
-
-        <TextView
-            android:id="@+id/showNoUnread"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="12dp"
-            android:textSize="18sp"
-            android:text="@string/show_all_feeds"/>
-
-    </LinearLayout>
-
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"

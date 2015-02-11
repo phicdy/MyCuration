@@ -1,19 +1,26 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/allFeeds"
+        android:icon="@drawable/ic_all_hide"
+        app:showAsAction="collapseActionView|ifRoom"
+        android:title="@string/all"/>
 
     <item
         android:id="@+id/addFeed"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/add_feed"/>
  	<item
         android:id="@+id/addFilter"
         android:orderInCategory="90"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/add_filter"/>
  	<item
         android:id="@+id/setting"
         android:orderInCategory="80"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/setting"/>
     
 </menu>
