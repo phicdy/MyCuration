@@ -200,8 +200,10 @@ public class FeedListFragment extends Fragment {
         if ((updatedFeed == numOfAllFeeds) && !updateTaskManager.isUpdatingFeed()) {
             updatedFeed = 0;
         }
-        feedsListView.getLoadingLayoutProxy()
-                .setRefreshingLabel(getString(R.string.loading) + "(" + updatedFeed + "/" + numOfAllFeeds + ")");
+        if (feedsListView != null ){
+            feedsListView.getLoadingLayoutProxy()
+                    .setRefreshingLabel(getString(R.string.loading) + "(" + updatedFeed + "/" + numOfAllFeeds + ")");
+        }
     }
 
     public int getFeedIdAtPosition (int position) {
