@@ -94,7 +94,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
                 if (listFragment.changeHideStatus()) {
                     showNoUnread.setText(R.string.show_all_feeds);
                 }else {
-                    showNoUnread.setText(R.string.show_hided_feed);
+                    llShowNoUnread.setVisibility(View.GONE);
                 }
             }
         });
