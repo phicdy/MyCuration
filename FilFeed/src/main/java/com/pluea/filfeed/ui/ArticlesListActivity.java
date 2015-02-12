@@ -118,6 +118,32 @@ public class ArticlesListActivity extends ActionBarActivity {
         });
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.all_read:
+                if (feedId == Feed.ALL_FEED_ID) {
+                    dbAdapter.saveAllStatusToRead();
+                }else {
+                    dbAdapter.saveStatusToRead(feedId);
+                }
+                if (prefMgr.getAllReadBack()) {
+                    finish();
+                }else {
+                    for (Article article : articles) {
+                        article.setStatus(Article.READ);
+                    }
+                    articlesListAdapter.notifyDataSetChanged();
+                }
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
