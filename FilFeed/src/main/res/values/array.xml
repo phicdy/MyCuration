@@ -1,7 +1,7 @@
 <resources>
     <string-array name="swipe_direction_items">
-        <item>右から左</item>
-        <item>左から右</item>
+        <item>右から左で記事を既読</item>
+        <item>左から右で記事を既読</item>
     </string-array>
     
     <string-array name="update_interval_items">
