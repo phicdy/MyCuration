@@ -18,7 +18,7 @@ public class PreferenceManager extends Activity {
 	public static final int SWIPE_LEFT_TO_RIGHT = 1;
 	public static final int SWIPE_DEFAULT = SWIPE_RIGHT_TO_LEFT;
 	private static final int[] SWIPE_DIRECTIONS = {SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT};
-	private static final int DEFAULT_UPDATE_INTERVAL_SECOND = 1 * 60 * 60;
+	private static final int DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60;
 	
 	public static int DEFAULT_VALUE = 0;
 	private static PreferenceManager preMgr;
