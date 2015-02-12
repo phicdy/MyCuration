@@ -31,6 +31,7 @@ public class SettingActivity extends ActionBarActivity {
 	}
     
     private void initView() {
+        setTitle(getString(R.string.setting));
     	PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
     	
     	spUpdateInterval = (Spinner)findViewById(R.id.sp_update_interval);
