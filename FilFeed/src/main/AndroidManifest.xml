@@ -94,6 +94,11 @@
                 <action android:name="autoUpdateFeed" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".ui.LicenseActivity"
+            android:label="@string/title_activity_license" >
+        </activity>
     </application>
 
 </manifest>

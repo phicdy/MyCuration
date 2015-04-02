@@ -148,6 +148,9 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 		case R.id.setting:
 			startActivity(new Intent(getApplicationContext(), SettingActivity.class));
 			break;
+        case R.id.license:
+            startActivity(new Intent(getApplicationContext(), LicenseActivity.class));
+            break;
 		default:
 			break;
 		}
