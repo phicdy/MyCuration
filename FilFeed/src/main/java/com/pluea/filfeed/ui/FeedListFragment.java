@@ -138,7 +138,11 @@ public class FeedListFragment extends Fragment {
     }
 
     public void refreshList() {
-        rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
+        if (isHided) {
+            rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
+        }else {
+            rssFeedListAdapter = new RssFeedListAdapter(allFeeds, getActivity());
+        }
         feedsListView.setAdapter(rssFeedListAdapter);
         rssFeedListAdapter.notifyDataSetChanged();
     }
@@ -178,13 +182,27 @@ public class FeedListFragment extends Fragment {
     }
 
     public void addFeed(Feed newFeed) {
-        feeds.add(newFeed);
+        if (newFeed.getUnreadAriticlesCount() > 0) {
+            feeds.add(newFeed);
+        }
+        allFeeds.add(newFeed);
         rssFeedListAdapter.notifyDataSetChanged();
     }
 
     public void removeFeedAtPosition(int position) {
-        dbAdapter.deleteFeed(feeds.get(position).getId());
-        feeds.remove(position);
+        if (isHided) {
+            dbAdapter.deleteFeed(feeds.get(position).getId());
+            feeds.remove(position);
+        }else {
+            Feed deletedFeed = allFeeds.get(position);
+            dbAdapter.deleteFeed(deletedFeed.getId());
+            allFeeds.remove(position);
+            for (int i = 0;i < feeds.size();i++) {
+                if (feeds.get(i).getId() == deletedFeed.getId()) {
+                    feeds.remove(i);
+                }
+            }
+        }
         rssFeedListAdapter.notifyDataSetChanged();
     }
 
@@ -201,25 +219,50 @@ public class FeedListFragment extends Fragment {
     }
 
     public int getFeedIdAtPosition (int position) {
-        if (position < 0 || feeds == null || position > feeds.size()-1) {
+        if (position < 0) {
             return -1;
         }
-        return feeds.get(position).getId();
+
+        if (isHided) {
+            if (feeds == null || position > feeds.size()-1) {
+                return -1;
+            }
+            return feeds.get(position).getId();
+        }else {
+            if (allFeeds == null || position > allFeeds.size()-1) {
+                return -1;
+            }
+        }
+        return allFeeds.get(position).getId();
     }
 
     public String getFeedTitleAtPosition (int position) {
         if (position < 0 || feeds == null || position > feeds.size()-1) {
             return null;
         }
-        return feeds.get(position).getTitle();
+        if (isHided) {
+            feeds.get(position).getTitle();
+        }
+        return allFeeds.get(position).getTitle();
     }
 
 
     public String getFeedUrlAtPosition (int position) {
-        if (position < 0 || feeds == null || position > feeds.size()-1) {
+        if (position < 0) {
             return null;
         }
-        return feeds.get(position).getUrl();
+        if (isHided) {
+            if (feeds == null || position > feeds.size()-1) {
+                return null;
+            }
+            return feeds.get(position).getUrl();
+        }else {
+            if (allFeeds == null || position > allFeeds.size()-1) {
+                return null;
+            }
+            return allFeeds.get(position).getUrl();
+        }
+
     }
 
     public boolean changeHideStatus() {
