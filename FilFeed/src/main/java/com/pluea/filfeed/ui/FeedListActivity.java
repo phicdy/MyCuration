@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -381,5 +382,14 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
     @Override
     public void onRefreshList() {
         updateAllFeeds();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode== KeyEvent.KEYCODE_BACK){
+            finish();
+            return true;
+        }
+        return false;
     }
 }
