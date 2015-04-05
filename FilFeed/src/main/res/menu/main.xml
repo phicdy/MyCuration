@@ -9,18 +9,24 @@
 
     <item
         android:id="@+id/addFeed"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         app:showAsAction="never"
         android:title="@string/add_feed"/>
  	<item
         android:id="@+id/addFilter"
-        android:orderInCategory="90"
+        android:orderInCategory="2"
         app:showAsAction="never"
         android:title="@string/add_filter"/>
  	<item
         android:id="@+id/setting"
-        android:orderInCategory="80"
+        android:orderInCategory="3"
         app:showAsAction="never"
         android:title="@string/setting"/>
+
+    <item
+        android:id="@+id/license"
+        android:orderInCategory="4"
+        app:showAsAction="never"
+        android:title="@string/license"/>
     
 </menu>

@@ -73,7 +73,9 @@
     <string name="no_article">未読の記事がありません</string>
     
     <string name="icon">アイコン</string>
-    
+    <string name="license">ライセンス</string>
+
+
     <!-- 記事検索 -->
     <string name="search_article">記事を検索</string>
     <string name="no_search_result">該当する記事はありません</string>
