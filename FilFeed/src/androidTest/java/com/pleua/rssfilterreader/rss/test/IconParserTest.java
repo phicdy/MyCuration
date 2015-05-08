@@ -21,7 +21,7 @@ public class IconParserTest extends AndroidTestCase {
 	public void testParseXml() {
 		IconParser parser = new IconParser();
 		assertEquals("http://gigazine.net/favicon.ico", parser.parseHtml("http://gigazine.net"));
-		assertEquals("http://s0.wp.com/wp-content/themes/vip/tctechcrunch2/images/favicon.ico?m=1357660109g", parser.parseHtml("http://jp.techcrunch.com"));
+		assertEquals("https://s0.wp.com/wp-content/themes/vip/techcrunch-jp-2015/assets/images/favicon.ico", parser.parseHtml("http://jp.techcrunch.com"));
 		assertEquals((Object)"http://b.hatena.ne.jp/favicon.ico", (Object)parser.parseHtml("http://b.hatena.ne.jp"));
 		assertEquals(null, parser.parseHtml("http://hogehoge"));
 	}
