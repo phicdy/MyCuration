@@ -20,3 +20,15 @@ local.properties
 .project
 .settings/
 .metadata/
+FilFeed/build/
+PullToReflresh/build/
+PullToReflresh/pullToReflresh.iml
+FilFeed/filFeed.iml
+FilFeed.iml
+main/main.iml
+build/
+.idea/misc.xml
+.idea/libraries/
+.gradle/
+.idea/modules.xml
+.idea/workspace.xml
