@@ -30,6 +30,9 @@ public class RssParserTest extends AndroidTestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
+		adapter.deleteAllArticles();
+		adapter.deleteAllFeeds();
 	}
 	
 	public void testParseFeedInfo() {
