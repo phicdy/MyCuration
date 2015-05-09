@@ -42,46 +42,47 @@ public class RssParserTest extends AndroidTestCase {
 		}
 		
 		RssParser parser = new RssParser(getContext());
-//		try {
-//			Feed addedFeed = parser.parseFeedInfo("http://jp.techcrunch.com/feed/");
-//			try {
-//				Thread.sleep(5000);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//			
-//			assertNotNull(addedFeed);
-//			assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
-//			assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
-//			assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			fail();
-//		}
+		try {
+			Feed addedFeed = parser.parseFeedInfo("http://jp.techcrunch.com/feed/");
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			assertNotNull(addedFeed);
+			assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
+			assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
+			assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+		adapter.deleteAllFeeds();
 		
-//		String publicKeyFeedUrl = "http://www.publickey1.jp/atom.xml";
-//		Feed publicKeyFeed = adapter.getFeedByUrl(publicKeyFeedUrl);
-//		if(publicKeyFeed != null) {
-//			adapter.deleteFeed(publicKeyFeed.getId());
-//		}
-//		
-//		try {
-//			publicKeyFeed = parser.parseFeedInfo(publicKeyFeedUrl);
-//			try {
-//				Thread.sleep(5000);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//			
-//			assertNotNull(publicKeyFeed);
-//			assertEquals("Publickey", publicKeyFeed.getTitle());
-//			assertEquals(publicKeyFeedUrl, publicKeyFeed.getUrl());
-//			assertEquals("http://www.publickey1.jp/", publicKeyFeed.getSiteUrl());
-//			assertEquals(Feed.DEDAULT_ICON_PATH, publicKeyFeed.getIconPath());
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			fail();
-//		}
+		String publicKeyFeedUrl = "http://www.publickey1.jp/atom.xml";
+		Feed publicKeyFeed = adapter.getFeedByUrl(publicKeyFeedUrl);
+		if(publicKeyFeed != null) {
+			adapter.deleteFeed(publicKeyFeed.getId());
+		}
+
+		try {
+			publicKeyFeed = parser.parseFeedInfo(publicKeyFeedUrl);
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			assertNotNull(publicKeyFeed);
+			assertEquals("Publickey", publicKeyFeed.getTitle());
+			assertEquals(publicKeyFeedUrl, publicKeyFeed.getUrl());
+			assertEquals("http://www.publickey1.jp/", publicKeyFeed.getSiteUrl());
+			assertEquals(Feed.DEDAULT_ICON_PATH, publicKeyFeed.getIconPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
 		
 		// Test top URL
 //		try {
