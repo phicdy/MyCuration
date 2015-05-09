@@ -102,18 +102,8 @@ public class DatabaseAdapterTest extends AndroidTestCase {
         assertEquals(false, existToReadArticle);
     }
 
-	private void deleteAllFeeds() {
-		for (Feed feed : adapter.getAllFeedsWithoutNumOfUnreadArticles()) {
-			adapter.deleteFeed(feed.getId());
-		}
-	}
-	
-	private void deleteAllArticles() {
-		adapter.deleteAllArticles();
-	}
-	
 	protected void tearDown() {
-		deleteAllFeeds();
-		deleteAllArticles();
+		adapter.deleteAllArticles();
+		adapter.deleteAllFeeds();
 	}
 }
