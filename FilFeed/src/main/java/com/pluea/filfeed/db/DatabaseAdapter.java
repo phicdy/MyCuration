@@ -879,6 +879,16 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 	}
+
+	public void deleteAllFeeds() {
+		db.beginTransaction();
+		try {
+			db.delete("feeds", "", null);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
 	
 	public ArrayList<Filter> getAllFilters() {
 		ArrayList<Filter> filters = new ArrayList<Filter>();
