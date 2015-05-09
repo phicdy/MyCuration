@@ -140,8 +140,20 @@ public class RssParserTest extends AndroidTestCase {
 					            RssParser parser = new RssParser(getContext()); 
 					            boolean result =  false;
 					            try {
-									result = parser.parseXml(in, feed.getId());
-								} catch (IOException e) {
+									if (adapter.getFeedByUrl(feed.getUrl()) == null) {
+										Log.d("RssParserTest", "publickey was removed");
+										adapter.saveNewFeed("Publickey","http://www.publickey1.jp/atom.xml", "", "http://www.publickey1.jp/");
+										String publicKeyUrl = "http://www.publickey1.jp/atom.xml";
+										Feed publickey = adapter.getFeedByUrl(publicKeyUrl);
+										if (publickey == null) {
+											fail("PublicKey feed is not found");
+										}
+										result = parser.parseXml(in, publickey.getId());
+									}else {
+										result = parser.parseXml(in, feed.getId());
+									}
+
+								} catch (Exception e) {
 									e.printStackTrace();
 									fail();
 								} finally {
