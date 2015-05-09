@@ -166,5 +166,10 @@ public class RssParserTest extends AndroidTestCase {
 			  
 		RequestQueue mQueue = Volley.newRequestQueue(getContext());
 		mQueue.add(request);
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
