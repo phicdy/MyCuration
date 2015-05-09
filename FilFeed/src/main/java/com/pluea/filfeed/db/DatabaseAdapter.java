@@ -9,6 +9,7 @@ import com.pluea.filfeed.rss.Feed;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
@@ -63,6 +64,8 @@ public class DatabaseAdapter {
 				insertSt.executeInsert();
 			}
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -79,6 +82,9 @@ public class DatabaseAdapter {
 			unreadArticlesCount = countCursor.getCount();
 			countCursor.close();
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			unreadArticlesCount = -1;
 		} finally {
 			db.endTransaction();
 		}
@@ -96,6 +102,9 @@ public class DatabaseAdapter {
 			unreadArticlesCount = countCursor.getCount();
 			countCursor.close();
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			unreadArticlesCount = -1;
 		} finally {
 			db.endTransaction();
 		}
@@ -112,6 +121,9 @@ public class DatabaseAdapter {
 			unreadArticlesCount = countCursor.getCount();
 			countCursor.close();
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			unreadArticlesCount = -1;
 		} finally {
 			db.endTransaction();
 		}
@@ -142,6 +154,8 @@ public class DatabaseAdapter {
 				cursor.close();
 			}
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -172,6 +186,8 @@ public class DatabaseAdapter {
 				cursor.close();
 			}
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -201,6 +217,8 @@ public class DatabaseAdapter {
 				cursor.close();
 			}
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -215,6 +233,8 @@ public class DatabaseAdapter {
 			values.put("status", "toRead");
 			db.update("articles", values, "_id = " + articleId, null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -228,6 +248,8 @@ public class DatabaseAdapter {
 			String whereClause = "feedId = " + feedId;
 			db.update("articles", values, whereClause, null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -241,6 +263,8 @@ public class DatabaseAdapter {
 			values.put("status", Article.READ);
 			db.update("articles", values, null, null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -255,7 +279,9 @@ public class DatabaseAdapter {
             String condition = "status = '" + Article.TOREAD + "'";
             db.update("articles", values, condition, null);
             db.setTransactionSuccessful();
-        } finally {
+        } catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
             db.endTransaction();
         }
 
@@ -268,6 +294,8 @@ public class DatabaseAdapter {
 			values.put("status", status);
 			db.update("articles", values, "_id = " + articleId, null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -281,6 +309,8 @@ public class DatabaseAdapter {
 			values.put("iconPath", iconPath);
 			db.update("feeds", values, "siteUrl = '" + siteUrl + "'", null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -294,6 +324,8 @@ public class DatabaseAdapter {
 			values.put("point", point);
 			db.update("articles", values, "_id = " + articleId, null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -307,6 +339,8 @@ public class DatabaseAdapter {
 			values.put("title", newTitle);
 			numOfUpdated = db.update("feeds", values, "_id = " + feedId, null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -323,6 +357,8 @@ public class DatabaseAdapter {
 			status = cur.getString(0);
 			cur.close();
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -339,6 +375,8 @@ public class DatabaseAdapter {
 			// db.delete("priorities","feedId = "+feedId,null);
 			numOfDeleted = db.delete("feeds", "_id = " + feedId, null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -366,6 +404,8 @@ public class DatabaseAdapter {
 				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, siteUrl, 0);
 			}
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -399,6 +439,8 @@ public class DatabaseAdapter {
 			}
 			cursor.close();
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			 e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -475,7 +517,6 @@ public class DatabaseAdapter {
 			cursor.close();
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
-			
 			return articles;
 		} finally {
 			db.endTransaction();
@@ -515,7 +556,6 @@ public class DatabaseAdapter {
 			cursor.close();
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
-			
 			return articles;
 		} finally {
 			db.endTransaction();
@@ -595,7 +635,6 @@ public class DatabaseAdapter {
 			cursor.close();
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
-			
 			return articles;
 		} finally {
 			db.endTransaction();
@@ -631,7 +670,6 @@ public class DatabaseAdapter {
 			cursor.close();
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
-			
 			return articles;
 		} finally {
 			db.endTransaction();
@@ -699,7 +737,7 @@ public class DatabaseAdapter {
 			} catch (Exception e) {
 				Log.e("Apply Filtering", "Article can't be updated.Feed ID = "
 						+ feedId);
-				
+				db.endTransaction();
 				return false;
 			} finally {
 				db.endTransaction();
@@ -714,6 +752,8 @@ public class DatabaseAdapter {
 		try {
 			db.delete("filters", "_id = " + filterId, null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -844,6 +884,8 @@ public class DatabaseAdapter {
 				saveNewFeed(feed.getTitle(), feed.getUrl(), "RSS2.0", feed.getSiteUrl());
 			}
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -885,6 +927,8 @@ public class DatabaseAdapter {
 		try {
 			db.delete("feeds", "", null);
 			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
@@ -894,19 +938,26 @@ public class DatabaseAdapter {
 		ArrayList<Filter> filters = new ArrayList<Filter>();
 		String[] columns = {"filters._id","filters.title","filters.keyword","filters.url","filters.feedId","feeds.title"};
 		String selection = "filters.feedId = feeds._id";
-		Cursor cursor    = db.query("filters inner join feeds", columns, selection, null, null, null, null);
-		if(cursor != null) {
-			while(cursor.moveToNext()) {
-				int id           = cursor.getInt(0);
-				String title     = cursor.getString(1);
-				String keyword   = cursor.getString(2);
-				String url       = cursor.getString(3);
-				int feedId       = cursor.getInt(4);
-				String feedTitle = cursor.getString(5);
-				Filter filter  = new Filter(id,title,keyword,url,feedId,feedTitle);
-				filters.add(filter);
+		try {
+			Cursor cursor = db.query("filters inner join feeds", columns, selection, null, null, null, null);
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					int id = cursor.getInt(0);
+					String title = cursor.getString(1);
+					String keyword = cursor.getString(2);
+					String url = cursor.getString(3);
+					int feedId = cursor.getInt(4);
+					String feedTitle = cursor.getString(5);
+					Filter filter = new Filter(id, title, keyword, url, feedId, feedTitle);
+					filters.add(filter);
+				}
+				cursor.close();
 			}
-			cursor.close();
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
 		}
 		return filters;
 	}
