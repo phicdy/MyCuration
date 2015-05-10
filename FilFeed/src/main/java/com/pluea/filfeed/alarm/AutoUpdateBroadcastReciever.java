@@ -12,6 +12,7 @@ import com.pluea.filfeed.rss.Article;
 import com.pluea.filfeed.rss.Feed;
 import com.pluea.filfeed.task.GetHatenaBookmarkPointTask;
 import com.pluea.filfeed.task.UpdateTaskManager;
+import com.pluea.filfeed.util.NetworkUtil;
 
 public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 
@@ -46,6 +47,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 				return;
 			}
+			boolean isWifiConnected = NetworkUtil.isWifiConnected(context);
 			for (Feed feed : feeds) {
 				ArrayList<Article> unreadArticles = dbAdapter
 						.getUnreadArticlesInAFeed(feed.getId(), true);
@@ -55,6 +57,10 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				for (int i = 0; i < unreadArticles.size(); i++) {
 					Article unreadArticle = unreadArticles.get(i);
 					if (unreadArticle == null) {
+						continue;
+					}
+					if ((unreadArticle.getPoint() != Article.DEDAULT_HATENA_POINT) && !isWifiConnected) {
+						Log.d("AutoUpdate", "Device is not connected with Wi-Fi");
 						continue;
 					}
 					GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(
