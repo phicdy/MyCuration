@@ -22,7 +22,12 @@ public class AlarmManagerTaskManager {
 	
 	public static void setNewAlarm(Context context) {
 		PreferenceManager mgr = PreferenceManager.getInstance(context);
-		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION, mgr.getAutoUpdateIntervalSecond());
+		int intervalSec = mgr.getAutoUpdateIntervalSecond();
+		if (intervalSec == 0) {
+			cancelAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION);
+			return;
+		}
+		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION, intervalSec);
 	}
 	
 	public static void setNewHatenaUpdateAlarmAfterFeedUpdate(Context context) {
@@ -42,5 +47,14 @@ public class AlarmManagerTaskManager {
 		Log.d("AlarmManagerTaskManager", "Set alarm : " + calendar.getTime().toString());
 		
 		alm.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
+	}
+
+	private static void cancelAlarm(Context context, String action) {
+		Intent i = new Intent(context, AutoUpdateBroadcastReciever.class);
+		i.setAction(action);
+
+		PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+		AlarmManager alm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		alm.cancel(pi);
 	}
 }
