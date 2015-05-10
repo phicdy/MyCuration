@@ -204,20 +204,28 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
     }
 
     private void refleshFeedList() {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.container, new FeedUpdateProgressFragment());
-        transaction.commit();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                listFragment.setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
-                if (isForeground) {
-                    showFeedList();
-                    sendBroadcast(new Intent(ACTION_UPDATE_ALL_UNREAD_ARTICLES));
-                }
-            }
-        }).start();
+		if (feeds != null && feeds.size() > 10) {
+			FragmentManager manager = getSupportFragmentManager();
+			FragmentTransaction transaction = manager.beginTransaction();
+			transaction.replace(R.id.container, new FeedUpdateProgressFragment());
+			transaction.commit();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					listFragment.setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
+					if (isForeground) {
+						showFeedList();
+						sendBroadcast(new Intent(ACTION_UPDATE_ALL_UNREAD_ARTICLES));
+					}
+				}
+			}).start();
+		}else {
+			listFragment.setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
+			if (isForeground) {
+				showFeedList();
+				sendBroadcast(new Intent(ACTION_UPDATE_ALL_UNREAD_ARTICLES));
+			}
+		}
     }
 
     private void updateAllUnreadArticlesCount() {
