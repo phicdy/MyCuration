@@ -56,7 +56,7 @@ public class DatabaseAdapter {
 				insertSt.bindString(1, article.getTitle());
 				insertSt.bindString(2, article.getUrl());
 				insertSt.bindString(3, "unread");
-				insertSt.bindString(4, Feed.DEDAULT_HATENA_POINT);
+				insertSt.bindString(4, article.getPoint());
 				Log.d(LOG_TAG, "insert date:" + article.getPostedDate());
 				insertSt.bindLong(5, article.getPostedDate());
 				insertSt.bindString(6, String.valueOf(feedId));

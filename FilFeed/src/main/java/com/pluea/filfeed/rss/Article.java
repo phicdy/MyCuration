@@ -14,7 +14,8 @@ public class Article {
 	public static final String UNREAD = "unread";
 	public static final String TOREAD = "toRead";
 	public static final String READ = "read";
-	
+
+	public static final String DEDAULT_HATENA_POINT = "-1";
 	
 	public Article(int id, String title, String url, String status, 
 			String point, long postDate, int feedId, String feedTitle) {

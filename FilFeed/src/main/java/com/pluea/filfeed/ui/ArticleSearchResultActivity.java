@@ -199,7 +199,7 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 
 				// set RSS Feed unread article count
 				String hatenaPoint = article.getPoint();
-				if (hatenaPoint.equals(Feed.DEDAULT_HATENA_POINT)) {
+				if (hatenaPoint.equals(Article.DEDAULT_HATENA_POINT)) {
 					holder.articlePoint
 							.setText(getString(R.string.not_get_hatena_point));
 				} else {
