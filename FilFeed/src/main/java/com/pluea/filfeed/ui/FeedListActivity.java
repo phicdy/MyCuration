@@ -204,7 +204,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
     }
 
     private void refleshFeedList() {
-		if (feeds != null && feeds.size() > 10) {
+		if (dbAdapter.getNumOfFeeds() > 10) {
 			FragmentManager manager = getSupportFragmentManager();
 			FragmentTransaction transaction = manager.beginTransaction();
 			transaction.replace(R.id.container, new FeedUpdateProgressFragment());
