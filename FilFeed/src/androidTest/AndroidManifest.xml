@@ -6,7 +6,7 @@
     <uses-sdk android:minSdkVersion="8" />
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="com.pluea.filfeed" />
+        android:targetPackage="com.phicdy.filfeed" />
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >

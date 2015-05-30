@@ -5,9 +5,9 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.pluea.filfeed"
+        applicationId "com.phicdy.filfeed"
         minSdkVersion 14
-        targetSdkVersion 17
+        targetSdkVersion 21
 
         testApplicationId "com.example.rssfilterreader.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
