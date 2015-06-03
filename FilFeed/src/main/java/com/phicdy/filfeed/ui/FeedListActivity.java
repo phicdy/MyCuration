@@ -30,7 +30,6 @@ import android.widget.Toast;
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
 import com.phicdy.filfeed.db.DatabaseAdapter;
-import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.task.GetFeedIconTask;
 import com.phicdy.filfeed.task.InsertNewFeedTask;
@@ -56,7 +55,6 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 
     private boolean isForeground = true;
 
-	public static final int BAD_RECIEVED_VALUE = -1;
 	public static final String FEED_ID = "FEED_ID";
 	public static final String FEED_URL = "FEED_URL";
 	public static final String ACTION_UPDATE_NUM_OF_ARTICLES_NOW = "UPDATE_NUM_OF_ARTICLES";
