@@ -1,8 +1,8 @@
-package com.pluea.rssfilterreader.util.test;
+package com.phicdy.filfeed.util.test;
 
 import android.test.AndroidTestCase;
 
-import com.pluea.filfeed.util.UrlUtil;
+import com.phicdy.filfeed.util.UrlUtil;
 
 public class UrlUtilTest extends AndroidTestCase {
 

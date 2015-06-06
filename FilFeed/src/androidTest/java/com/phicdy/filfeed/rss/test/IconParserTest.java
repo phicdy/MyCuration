@@ -1,8 +1,8 @@
-package com.pleua.rssfilterreader.rss.test;
+package com.phicdy.filfeed.rss.test;
 
 import android.test.AndroidTestCase;
 
-import com.pluea.filfeed.rss.IconParser;
+import com.phicdy.filfeed.rss.IconParser;
 
 public class IconParserTest extends AndroidTestCase {
 

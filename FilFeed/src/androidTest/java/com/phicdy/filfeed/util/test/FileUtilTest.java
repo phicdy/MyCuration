@@ -1,11 +1,8 @@
-package com.pluea.rssfilterreader.util.test;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+package com.phicdy.filfeed.util.test;
 
 import android.test.AndroidTestCase;
 
-import com.pluea.filfeed.util.FileUtil;
+import com.phicdy.filfeed.util.FileUtil;
 
 public class FileUtilTest extends AndroidTestCase {
 
@@ -22,18 +19,18 @@ public class FileUtilTest extends AndroidTestCase {
 	}
 
 	public void testAppPath() {
-		assertEquals("/data/data/com.pluea.filfeed/",
+		assertEquals("/data/data/com.phicdy.filfeed/",
 				FileUtil.getAppPath(getContext()));
 	}
 
 	public void testGetIconSavePath() {
-		assertEquals("/data/data/com.pluea.filfeed/icons/",
+		assertEquals("/data/data/com.phicdy.filfeed/icons/",
 				FileUtil.iconSaveFolder(getContext()));
 	}
 
 	public void testGenerateIconFileName() {
 		assertEquals(
-				"/data/data/com.pluea.filfeed/icons/gigazine.net.png",
+				"/data/data/com.phicdy.filfeed/icons/gigazine.net.png",
 				FileUtil.generateIconFilePath(getContext(), "http://gigazine.net/"));
 	}
 }

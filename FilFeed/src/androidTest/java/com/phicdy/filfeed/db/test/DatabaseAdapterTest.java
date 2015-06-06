@@ -1,13 +1,13 @@
-package com.pluea.rssfilterreader.db.test;
-
-import java.util.ArrayList;
-import java.util.Date;
+package com.phicdy.filfeed.db.test;
 
 import android.test.AndroidTestCase;
 
-import com.pluea.filfeed.db.DatabaseAdapter;
-import com.pluea.filfeed.rss.Article;
-import com.pluea.filfeed.rss.Feed;
+import com.phicdy.filfeed.db.DatabaseAdapter;
+import com.phicdy.filfeed.rss.Article;
+import com.phicdy.filfeed.rss.Feed;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class DatabaseAdapterTest extends AndroidTestCase {
 

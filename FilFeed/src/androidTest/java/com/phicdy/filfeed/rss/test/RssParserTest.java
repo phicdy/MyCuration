@@ -1,7 +1,4 @@
-package com.pleua.rssfilterreader.rss.test;
-
-import java.io.IOException;
-import java.io.InputStream;
+package com.phicdy.filfeed.rss.test;
 
 import android.test.AndroidTestCase;
 import android.util.Log;
@@ -11,10 +8,13 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.pluea.filfeed.db.DatabaseAdapter;
-import com.pluea.filfeed.rss.Feed;
-import com.pluea.filfeed.rss.RssParser;
-import com.pluea.filfeed.task.InputStreamRequest;
+import com.phicdy.filfeed.db.DatabaseAdapter;
+import com.phicdy.filfeed.rss.Feed;
+import com.phicdy.filfeed.rss.RssParser;
+import com.phicdy.filfeed.task.InputStreamRequest;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class RssParserTest extends AndroidTestCase {
 

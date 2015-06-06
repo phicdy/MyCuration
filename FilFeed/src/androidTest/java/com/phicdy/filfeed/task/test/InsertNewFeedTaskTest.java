@@ -1,10 +1,10 @@
-package com.pluea.rssfilterreader.task.test;
+package com.phicdy.filfeed.task.test;
 
 import android.test.AndroidTestCase;
 
-import com.pluea.filfeed.db.DatabaseAdapter;
-import com.pluea.filfeed.rss.Feed;
-import com.pluea.filfeed.task.InsertNewFeedTask;
+import com.phicdy.filfeed.db.DatabaseAdapter;
+import com.phicdy.filfeed.rss.Feed;
+import com.phicdy.filfeed.task.InsertNewFeedTask;
 
 public class InsertNewFeedTaskTest extends AndroidTestCase {
 
