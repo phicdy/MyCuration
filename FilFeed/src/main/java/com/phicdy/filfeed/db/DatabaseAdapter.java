@@ -1,18 +1,24 @@
 package com.phicdy.filfeed.db;
 
-import java.util.ArrayList;
-
-import com.phicdy.filfeed.filter.Filter;
-import com.phicdy.filfeed.rss.Article;
-import com.phicdy.filfeed.rss.Feed;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.os.Environment;
 import android.util.Log;
+
+import com.phicdy.filfeed.filter.Filter;
+import com.phicdy.filfeed.rss.Article;
+import com.phicdy.filfeed.rss.Feed;
+import com.phicdy.filfeed.util.FileUtil;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
 public class DatabaseAdapter {
 	
@@ -20,6 +26,9 @@ public class DatabaseAdapter {
 	private static DatabaseHelper dbHelper;
 	private static DatabaseAdapter sharedDbAdapter;
 	private static SQLiteDatabase db;
+
+	private static final String BACKUP_FOLDER = "filfeed_backup";
+
 	private static final String LOG_TAG = "RSSReader."
 			+ DatabaseAdapter.class.getName();
 
@@ -961,4 +970,83 @@ public class DatabaseAdapter {
 		}
 		return filters;
 	}
+
+
+	public void exportDb() {
+		try {
+			File backupStrage;
+			String sdcardRootPath = FileUtil.getSDCardRootPath();
+			if (FileUtil.isSDCardMouted(sdcardRootPath)) {
+				Log.d(LOG_TAG, "SD card is mounted");
+				backupStrage = new File(FileUtil.getSDCardRootPath());
+			}else {
+				Log.d(LOG_TAG, "not mounted");
+				backupStrage = Environment.getExternalStorageDirectory();
+			}
+			if (backupStrage.canWrite()) {
+				Log.d(LOG_TAG, "Backup storage is writable");
+
+				String backupDBFolderPath = BACKUP_FOLDER + "/";
+				File backupDBFolder = new File(backupStrage, backupDBFolderPath);
+				backupDBFolder.delete();
+				if (backupDBFolder.mkdir()) {
+					Log.d(LOG_TAG, "Succeeded to make directory");
+
+				}else {
+					Log.d(LOG_TAG, "Failed to make directory");
+				}
+				File backupDB = new File(backupStrage, backupDBFolderPath + DatabaseHelper.DATABASE_NAME);
+
+				String  currentDBPath= "/data/data/" + context.getPackageName()
+						+ "/databases/" + DatabaseHelper.DATABASE_NAME;
+				File currentDB = new File(currentDBPath);
+
+				// Copy database
+				FileChannel src = new FileInputStream(currentDB).getChannel();
+				FileChannel dst = new FileOutputStream(backupDB).getChannel();
+				dst.transferFrom(src, 0, src.size());
+				src.close();
+				dst.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void importDB() {
+		try {
+			File backupStrage;
+			String sdcardRootPath = FileUtil.getSDCardRootPath();
+			if (FileUtil.isSDCardMouted(sdcardRootPath)) {
+				Log.d(LOG_TAG, "SD card is mounted");
+				backupStrage = new File(FileUtil.getSDCardRootPath());
+			}else {
+				Log.d(LOG_TAG, "not mounted");
+				backupStrage = Environment.getExternalStorageDirectory();
+				Log.d(LOG_TAG, "path:" + backupStrage.getAbsolutePath());
+			}
+			if (backupStrage.canRead()) {
+				Log.d(LOG_TAG, "Backup storage is readable");
+
+				String backupDBPath = BACKUP_FOLDER + "/" + DatabaseHelper.DATABASE_NAME;
+				File newDB  = new File(backupStrage, backupDBPath);
+				if (!newDB.exists()) {
+					return;
+				}
+
+				String  currentDBPath= "/data/data/" + context.getPackageName()
+						+ "/databases/" + DatabaseHelper.DATABASE_NAME;
+				File currentDB = new File(currentDBPath);
+
+				FileChannel src = new FileInputStream(newDB).getChannel();
+				FileChannel dst = new FileOutputStream(currentDB).getChannel();
+				dst.transferFrom(src, 0, src.size());
+				src.close();
+				dst.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
