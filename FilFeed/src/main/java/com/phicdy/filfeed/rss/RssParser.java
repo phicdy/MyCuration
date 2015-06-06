@@ -1,21 +1,22 @@
 package com.phicdy.filfeed.rss;
  
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
 
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.util.DateParser;
+import com.phicdy.filfeed.util.TextUtil;
 import com.phicdy.filfeed.util.UrlUtil;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 
 public class RssParser {
 
@@ -64,7 +65,7 @@ public class RssParser {
 					// add Title and Link to currentItem
 					if (itemFlag && tag.equals("title")
 							&& (article.getTitle() == null)) {
-						String title = parser.nextText();
+						String title = TextUtil.removeLineFeed(parser.nextText());
 						Log.d(LOG_TAG, "set article title:" + title);
 						article.setTitle(title);
 					}
