@@ -1,9 +1,5 @@
 package com.phicdy.filfeed.task;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -18,6 +14,10 @@ import com.phicdy.filfeed.filter.FilterTask;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.RssParser;
 import com.phicdy.filfeed.ui.FeedListActivity;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 public class UpdateTaskManager {
 
@@ -48,6 +48,10 @@ public class UpdateTaskManager {
 		numOfFeedRequest = 0;
 		for(final Feed feed : feeds) {
 			updateFeed(feed);
+			if(feed.getIconPath() == null || feed.getIconPath().equals(Feed.DEDAULT_ICON_PATH)) {
+				GetFeedIconTask task = new GetFeedIconTask(context);
+				task.execute(feed.getSiteUrl());
+			}
 		}
 		// After update feed, update hatena point with interval
 		AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);

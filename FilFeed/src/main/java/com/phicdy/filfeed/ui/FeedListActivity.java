@@ -40,7 +40,6 @@ import java.util.concurrent.ExecutionException;
 
 public class FeedListActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener {
 
-	private ArrayList<Feed> feeds = new ArrayList<>();
 	private DatabaseAdapter dbAdapter;
 	private BroadcastReceiver receiver;
 	private Intent intent;
@@ -75,7 +74,6 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 
         tvAllUnreadArticleCount = (TextView)findViewById(R.id.allUnreadCount);
 		
-		getFeedIconIfNeeded(feeds);
 	}
 
 	private void setAllListener() {
@@ -388,15 +386,6 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 		} 
 
 		updateTaskManager.updateAllFeeds(allFeeds);
-	}
-
-	private void getFeedIconIfNeeded(ArrayList<Feed> feeds) {
-		for (Feed feed : feeds) {
-			if(feed.getIconPath() == null || feed.getIconPath().equals(Feed.DEDAULT_ICON_PATH)) {
-				GetFeedIconTask task = new GetFeedIconTask(getApplicationContext());
-				task.execute(feed.getSiteUrl());
-			}
-		}
 	}
 
     @Override
