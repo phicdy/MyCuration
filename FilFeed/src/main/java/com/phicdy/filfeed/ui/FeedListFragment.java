@@ -333,6 +333,8 @@ public class FeedListFragment extends Fragment {
                 if (file.exists()) {
                     Bitmap bmp = BitmapFactory.decodeFile(file.getPath());
                     holder.feedIcon.setImageBitmap(bmp);
+                } else {
+                    dbAdapter.saveIconPath(feed.getSiteUrl(), Feed.DEDAULT_ICON_PATH);
                 }
             }
 
