@@ -12,8 +12,9 @@ import java.util.Date;
 public class DatabaseAdapterTest extends AndroidTestCase {
 
 	private DatabaseAdapter adapter;
-	private ArrayList<Article> testArticles;
-	
+	private ArrayList<Article> testUnreadArticles = new ArrayList<>();
+	private ArrayList<Article> testReadArticles = new ArrayList<>();
+
 	private static final String TEST_FEED_TITLE = "testfeed";
 	private static final String TEST_FEED_URL = "http://www.yahoo.co.jp";
 
@@ -27,7 +28,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 
 	public void testIsArticle() {
-		for (Article testArticle : testArticles) {
+		for (Article testArticle : testUnreadArticles) {
 			assertEquals(true, adapter.isArticle(testArticle));
 		}
 
@@ -38,12 +39,16 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		if(savedArticles.size() != 0) {
 			Article savedArticle1 = savedArticles.get(0);
 			assertEquals("title1", savedArticle1.getTitle());
-			
+			assertEquals(Article.UNREAD, savedArticle1.getStatus());
+
 			Article savedArticle2 = savedArticles.get(1);
-			assertEquals("title'", savedArticle2.getTitle());
-			
+			assertEquals("readArticle", savedArticle2.getTitle());
+			assertEquals(Article.READ, savedArticle2.getStatus());
+
 			Article savedArticle3 = savedArticles.get(2);
-			assertEquals("title" + '"', savedArticle3.getTitle());
+			assertEquals("title'", savedArticle3.getTitle());
+			assertEquals(Article.UNREAD, savedArticle3.getStatus());
+
 		}
 	}
 	
@@ -73,12 +78,18 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		Article japaneseTitle = new Article(1, "記事1abdｄｆｇ",
 				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "");
 
-		testArticles = new ArrayList<Article>();
-		testArticles.add(article);
-		testArticles.add(quotationTitle);
-		testArticles.add(doubleQuotationTitle);
-		testArticles.add(japaneseTitle);
-		adapter.saveNewArticles(testArticles, testFeed.getId());
+		testUnreadArticles.clear();
+		testUnreadArticles.add(article);
+		testUnreadArticles.add(quotationTitle);
+		testUnreadArticles.add(doubleQuotationTitle);
+		testUnreadArticles.add(japaneseTitle);
+		adapter.saveNewArticles(testUnreadArticles, testFeed.getId());
+
+		Article readArticle = new Article(1, "readArticle", "http://www.google.com/read",
+				Article.READ, "", now, testFeed.getId(), "");
+		testReadArticles.clear();
+		testReadArticles.add(readArticle);
+		adapter.saveNewArticles(testReadArticles, testFeed.getId());
 	}
 
     public void testSaveAllStatusToReadFromToRead() {
@@ -104,6 +115,16 @@ public class DatabaseAdapterTest extends AndroidTestCase {
         }
         assertEquals(false, existToReadArticle);
     }
+
+	public void testGetAllFeedsWithNumOfUnreadArticles() {
+		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
+		assertNotNull(feeds);
+		assertEquals(1, feeds.size());
+		Feed testFeed = feeds.get(0);
+		assertEquals(TEST_FEED_TITLE, testFeed.getTitle());
+		assertEquals(TEST_FEED_URL, testFeed.getUrl());
+		assertEquals(testUnreadArticles.size(), testFeed.getUnreadAriticlesCount());
+	}
 
 	protected void tearDown() {
 		adapter.deleteAllArticles();
