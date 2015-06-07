@@ -14,6 +14,9 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	private DatabaseAdapter adapter;
 	private ArrayList<Article> testArticles;
 	
+	private static final String TEST_FEED_TITLE = "testfeed";
+	private static final String TEST_FEED_URL = "http://www.yahoo.co.jp";
+
 	public DatabaseAdapterTest() {
 		super();
 	}
@@ -57,18 +60,18 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	private void insertTestData() {
 		DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
 
-		adapter.saveNewFeed("testfeed", "http://www.yahoo.co.jp", "RSS", "http://www.yahoo.co.jp");
-		Feed testFeed = adapter.getFeedByUrl("http://www.yahoo.co.jp");
+		adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL);
+		Feed testFeed = adapter.getFeedByUrl(TEST_FEED_URL);
 		
 		long now = new Date().getTime();
 		Article article = new Article(1, "title1", "http://www.google.com",
-				"unread", "", now, testFeed.getId(), "");
+				Article.UNREAD, "", now, testFeed.getId(), "");
 		Article quotationTitle = new Article(1, "title'",
-				"http://www.google.com", "unread", "", now + 1, testFeed.getId(), "");
+				"http://www.google.com", Article.UNREAD, "", now + 1, testFeed.getId(), "");
 		Article doubleQuotationTitle = new Article(1, "title" + '"',
-				"http://www.google.com", "unread", "", now + 2, testFeed.getId(), "");
+				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "");
 		Article japaneseTitle = new Article(1, "記事1abdｄｆｇ",
-				"http://www.google.com", "unread", "", now + 2, testFeed.getId(), "");
+				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "");
 
 		testArticles = new ArrayList<Article>();
 		testArticles.add(article);
@@ -79,7 +82,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 
     public void testSaveAllStatusToReadFromToRead() {
-        Feed testFeed = adapter.getFeedByUrl("http://www.yahoo.co.jp");
+        Feed testFeed = adapter.getFeedByUrl(TEST_FEED_URL);
 
         ArrayList<Article> articles = new ArrayList<>();
         long now = System.currentTimeMillis();
