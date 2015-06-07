@@ -947,6 +947,7 @@ public class DatabaseAdapter {
 		ArrayList<Filter> filters = new ArrayList<Filter>();
 		String[] columns = {"filters._id","filters.title","filters.keyword","filters.url","filters.feedId","feeds.title"};
 		String selection = "filters.feedId = feeds._id";
+		db.beginTransaction();
 		try {
 			Cursor cursor = db.query("filters inner join feeds", columns, selection, null, null, null, null);
 			if (cursor != null) {
