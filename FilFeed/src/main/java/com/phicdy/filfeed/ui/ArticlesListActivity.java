@@ -1,8 +1,4 @@
 package com.phicdy.filfeed.ui;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -28,9 +24,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -41,6 +37,11 @@ import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.task.UpdateTaskManager;
 import com.phicdy.filfeed.util.PreferenceManager;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 public class ArticlesListActivity extends ActionBarActivity {
     private ArrayList<Article> articles;
     private int feedId;
@@ -74,16 +75,18 @@ public class ArticlesListActivity extends ActionBarActivity {
         feedId = intent.getIntExtra(FeedListActivity.FEED_ID, Feed.ALL_FEED_ID);
         feedUrl = intent.getStringExtra(FeedListActivity.FEED_URL);
         intent.putExtra(FeedListActivity.FEED_ID, feedId);
-// intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
+        // intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
         prefMgr = PreferenceManager.getInstance(getApplicationContext());
         swipeDirectionOption = prefMgr.getSwipeDirection();
-        if(feedId != Feed.ALL_FEED_ID) {
+        if(feedId == Feed.ALL_FEED_ID) {
+            setTitle(getString(R.string.all));
+        }else {
             prefMgr.setSearchFeedId(feedId);
-// Init action bar
+            // Init action bar
             Feed selectedFeed = dbAdapter.getFeedByUrl(feedUrl);
-// title
+            // title
             setTitle(selectedFeed.getTitle());
-// icon
+            // icon
             String iconPath = selectedFeed.getIconPath();
             if(iconPath != null && !iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
                 File file = new File(iconPath);

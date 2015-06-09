@@ -31,7 +31,6 @@ import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Feed;
-import com.phicdy.filfeed.task.GetFeedIconTask;
 import com.phicdy.filfeed.task.InsertNewFeedTask;
 import com.phicdy.filfeed.task.UpdateTaskManager;
 
@@ -66,6 +65,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_feed_list);
+		setTitle(getString(R.string.home));
 
 		dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
 		updateTaskManager = UpdateTaskManager.getInstance(getApplicationContext());
