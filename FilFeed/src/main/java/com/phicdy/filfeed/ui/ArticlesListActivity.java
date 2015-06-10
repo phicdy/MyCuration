@@ -170,12 +170,12 @@ public class ArticlesListActivity extends ActionBarActivity {
                         if(!isSwipeLeftToRight && !isSwipeRightToLeft) {
                             touchedPosition = position - 1;
                             setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, false);
+                            Article clickedArticle = articles.get(position-1);
                             if(prefMgr.isOpenInternal()) {
                                 intent = new Intent(getApplicationContext(), InternalWebViewActivity.class);
-                                intent.putExtra(OPEN_URL_ID, articles.get(position-1).getUrl());
+                                intent.putExtra(OPEN_URL_ID, clickedArticle.getUrl());
                             }else {
-                                Uri uri = Uri
-                                        .parse(articles.get(position-1).getUrl());
+                                Uri uri = Uri.parse(clickedArticle.getUrl());
                                 intent = new Intent(Intent.ACTION_VIEW, uri);
                             }
                             startActivity(intent);
