@@ -103,7 +103,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_article, menu);
-// Associate searchable configuration with the SearchView
+        // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final MenuItem searchMenuItem = menu.findItem(R.id.search);
         searchView = (SearchView)MenuItemCompat.getActionView(searchMenuItem);
@@ -112,7 +112,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean queryTextFocused) {
-                if(!queryTextFocused) {
+                if (!queryTextFocused) {
                     searchMenuItem.collapseActionView();
                     searchView.setQuery("", false);
                 }
@@ -160,7 +160,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     }
     private void setAllListener() {
         articlesListView = (PullToRefreshListView) findViewById(R.id.articleListRefresh);
-// When an article selected, open this URL in default browser
+        // When an article selected, open this URL in default browser
         articlesListView.getRefreshableView()
                 .setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -207,13 +207,13 @@ public class ArticlesListActivity extends ActionBarActivity {
             public void onRefresh(PullToRefreshBase<ListView> refreshView) {
                 UpdateTaskManager updateTaskManager = UpdateTaskManager
                         .getInstance(getApplicationContext());
-// Update Feeds
+                // Update Feeds
                 ArrayList<Feed> feeds = new ArrayList<Feed>();
                 feeds.add(new Feed(feedId, null, feedUrl, "", "", 0));
                 updateTaskManager.updateAllFeeds(feeds);
             }
         });
-// Handle swipe event
+        // Handle swipe event
         mOnGestureListener = new SimpleOnGestureListener() {
             @Override
             public boolean onFling(MotionEvent event1, MotionEvent event2,
@@ -221,19 +221,19 @@ public class ArticlesListActivity extends ActionBarActivity {
                 isSwipeLeftToRight = false;
                 isSwipeRightToLeft = false;
                 try {
-// Set touched position in articles list from touch event
-                    touchedPosition = articlesListView.getRefreshableView().pointToPosition(
+                    // Set touched position in articles list from touch event
+                    int touchedPosition = articlesListView.getRefreshableView().pointToPosition(
                             (int) event1.getX(), (int) event1.getY()) -1;
                     if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
                         return false;
                     }
-// event1 is first motion event and event2 is second motion event.
-// So, if the distance from event1'x to event2'x is longer than a certain value, it is swipe
-// And if event1'x is bigger than event2'x, it is swipe from right
-// And if event1'x is smaller than event2'x, it is swipe from left
+                    // event1 is first motion event and event2 is second motion event.
+                    // So, if the distance from event1'x to event2'x is longer than a certain value, it is swipe
+                    // And if event1'x is bigger than event2'x, it is swipe from right
+                    // And if event1'x is smaller than event2'x, it is swipe from left
                     if (event1.getX() - event2.getX() > SWIPE_MIN_WIDTH
                             && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-// Right to Left
+                        // Right to Left
                         isSwipeRightToLeft = true;
                         switch (swipeDirectionOption) {
                             case PreferenceManager.SWIPE_RIGHT_TO_LEFT:
@@ -247,7 +247,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                         }
                     } else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
                             && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-// Left to Right
+                        // Left to Right
                         isSwipeLeftToRight = true;
                         switch (swipeDirectionOption) {
                             case PreferenceManager.SWIPE_RIGHT_TO_LEFT:
@@ -261,7 +261,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                         }
                     }
                 } catch (Exception e) {
-// nothing
+                    // nothing
                 }
                 return false;
             }
@@ -275,13 +275,12 @@ public class ArticlesListActivity extends ActionBarActivity {
                 ListView listView = articlesListView.getRefreshableView();
                 int firstPosition = listView.getFirstVisiblePosition();
                 int lastPosition = listView.getLastVisiblePosition();
-// Row in last visible position is hidden by buttons, don't change status
+                // Row in last visible position is hidden by buttons, don't change status
                 for (int i = firstPosition; i < lastPosition - 1; i++) {
                     setReadStatusToTouchedView(i, Article.TOREAD, prefMgr.getAllReadBack());
                 }
-// Row in last visible position is hidden by buttons, so scroll to it
+                // Row in last visible position is hidden by buttons, so scroll to it
                 articlesListView.getRefreshableView().smoothScrollToPositionFromTop(lastPosition, 4);
-// Back option if all articles are read
             }
         });
     }
@@ -307,7 +306,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private void changeRowColor(int position, String status) {
         View row = articlesListAdapter.getView(position, null,
                 articlesListView);
-// Change selected article's view
+        // Change selected article's view
         TextView title = (TextView) row.findViewById(R.id.articleTitle);
         TextView postedTime = (TextView) row
                 .findViewById(R.id.articlePostedTime);
@@ -367,13 +366,10 @@ public class ArticlesListActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-// Change read status
-
     }
-    // If Back button pushed
+
     @Override
     protected void onDestroy() {
-// onSaveInstanceState(readStatus);
         super.onDestroy();
     }
     /**
@@ -382,18 +378,18 @@ public class ArticlesListActivity extends ActionBarActivity {
      */
     class ArticlesListAdapter extends ArrayAdapter<Article> {
         public ArticlesListAdapter(ArrayList<Article> articles) {
-/*
-* @param cotext
-*
-* @param int : Resource ID
-*
-* @param T[] objects : data list
-*/
+            /*
+            * @param cotext
+            *
+            * @param int : Resource ID
+            *
+            * @param T[] objects : data list
+            */
             super(ArticlesListActivity.this, R.layout.articles_list, articles);
         }
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-// Use contentView
+            // Use contentView
             View row = convertView;
             if (convertView == null) {
                 LayoutInflater inflater = getLayoutInflater();
@@ -401,11 +397,11 @@ public class ArticlesListActivity extends ActionBarActivity {
             }
             Article article = this.getItem(position);
             if (article != null) {
-// set RSS Feed title
+                // set RSS Feed title
                 TextView articleTitle = (TextView) row
                         .findViewById(R.id.articleTitle);
                 articleTitle.setText(article.getTitle());
-// set RSS posted date
+                // set RSS posted date
                 TextView articlePostedTime = (TextView) row
                         .findViewById(R.id.articlePostedTime);
                 SimpleDateFormat format = new SimpleDateFormat(
@@ -413,7 +409,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 String dateString = format.format(new Date(article
                         .getPostedDate()));
                 articlePostedTime.setText(dateString);
-// set RSS Feed unread article count
+                // set RSS Feed unread article count
                 TextView articlePoint = (TextView) row
                         .findViewById(R.id.articlePoint);
                 String hatenaPoint = article.getPoint();
@@ -434,10 +430,10 @@ public class ArticlesListActivity extends ActionBarActivity {
                 articlePostedTime.setTextColor(Color.BLACK);
                 articlePoint.setTextColor(Color.BLACK);
                 feedTitleView.setTextColor(Color.BLACK);
-// If readStaus exists,change status
-// if(readStatus.containsKey(String.valueOf(position)) &&
-// readStatus.getInt(String.valueOf(position)) ==
-// article.getId()) {
+                // If readStaus exists,change status
+                // if(readStatus.containsKey(String.valueOf(position)) &&
+                // readStatus.getInt(String.valueOf(position)) ==
+                // article.getId()) {
                 if (article.getStatus().equals(Article.TOREAD) || article.getStatus().equals(Article.READ)) {
                     articleTitle.setTextColor(Color.GRAY);
                     articlePostedTime.setTextColor(Color.GRAY);
