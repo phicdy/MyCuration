@@ -9,7 +9,16 @@ public class Feed {
 	private String iconPath;
 	private int unreadAriticlesCount_;
 	private String siteUrl;
-	
+
+	public static final String TABLE_NAME = "feeds";
+	public static final String TITLE = "title";
+	public static final String ID = "_id";
+	public static final String URL = "url";
+	public static final String FORMAT = "format";
+	public static final String SITE_URL = "siteUrl text";
+	public static final String ICON_PATH = "iconPath";
+	public static final String UNREAD_ARTICLE = "unreadArticle";
+
 	public static final String DEDAULT_ICON_PATH = "defaultIconPath";
 	public static final int ALL_FEED_ID = -1;
     public static final int DEFAULT_NUM_OF_UNREAD = -1;

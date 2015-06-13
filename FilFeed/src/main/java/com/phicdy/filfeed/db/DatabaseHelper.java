@@ -1,11 +1,13 @@
 package com.phicdy.filfeed.db;
   
-import com.phicdy.filfeed.rss.Article;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-  
+import android.util.Log;
+
+import com.phicdy.filfeed.rss.Article;
+import com.phicdy.filfeed.rss.Feed;
+
 public class DatabaseHelper extends SQLiteOpenHelper{
   
 	public static final String DATABASE_NAME = "rss_manage";
@@ -18,13 +20,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     //onCreate() is called when database is created
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createFeedsTableSQL = 
-                "create table feeds(_id integer primary key autoincrement,"+
-                "title text,"+
-                "url text,"+
-                "format text," +
-                "siteUrl text," + 
-                "iconPath text)";
+        String createFeedsTableSQL =
+                "create table " + Feed.TABLE_NAME + "(" +
+                Feed.ID + " integer primary key autoincrement,"+
+                Feed.TITLE + " text,"+
+                Feed.URL + " text,"+
+                Feed.FORMAT + " text," +
+                Feed.SITE_URL + " text," +
+                Feed.ICON_PATH + " text," +
+                Feed.UNREAD_ARTICLE + " integer)";
         String createArticlesTableSQL =
                 "create table articles(_id integer primary key autoincrement,"+
                 "title text,"+

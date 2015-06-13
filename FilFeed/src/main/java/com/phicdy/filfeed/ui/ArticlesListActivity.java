@@ -51,7 +51,6 @@ public class ArticlesListActivity extends ActionBarActivity {
     private Intent intent;
     private PullToRefreshListView articlesListView;
     private ArticlesListAdapter articlesListAdapter;
-    private int touchedPosition;
     private static final int SWIPE_MIN_WIDTH = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
@@ -168,9 +167,10 @@ public class ArticlesListActivity extends ActionBarActivity {
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
                         if(!isSwipeLeftToRight && !isSwipeRightToLeft) {
-                            touchedPosition = position - 1;
-                            setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, false);
-                            Article clickedArticle = articles.get(position-1);
+                            int touchedPosition = position - 1;
+                            setReadStatusToTouchedView(touchedPosition, Article.TOREAD, false);
+                            Article clickedArticle = articles.get(touchedPosition);
+                            dbAdapter.updateUnreadArticleCount(clickedArticle.getFeedId());
                             if(prefMgr.isOpenInternal()) {
                                 intent = new Intent(getApplicationContext(), InternalWebViewActivity.class);
                                 intent.putExtra(OPEN_URL_ID, clickedArticle.getUrl());
@@ -237,10 +237,10 @@ public class ArticlesListActivity extends ActionBarActivity {
                         isSwipeRightToLeft = true;
                         switch (swipeDirectionOption) {
                             case PreferenceManager.SWIPE_RIGHT_TO_LEFT:
-                                setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, prefMgr.getAllReadBack());
+                                setReadStatusToTouchedView(touchedPosition, Article.TOREAD, prefMgr.getAllReadBack());
                                 break;
                             case PreferenceManager.SWIPE_LEFT_TO_RIGHT:
-                                setReadStatusToTouchedView(Color.BLACK, Article.UNREAD, prefMgr.getAllReadBack());
+                                setReadStatusToTouchedView(touchedPosition, Article.UNREAD, prefMgr.getAllReadBack());
                                 break;
                             default:
                                 break;
@@ -251,10 +251,10 @@ public class ArticlesListActivity extends ActionBarActivity {
                         isSwipeLeftToRight = true;
                         switch (swipeDirectionOption) {
                             case PreferenceManager.SWIPE_RIGHT_TO_LEFT:
-                                setReadStatusToTouchedView(Color.BLACK, Article.UNREAD, prefMgr.getAllReadBack());
+                                setReadStatusToTouchedView(touchedPosition, Article.UNREAD, prefMgr.getAllReadBack());
                                 break;
                             case PreferenceManager.SWIPE_LEFT_TO_RIGHT:
-                                setReadStatusToTouchedView(Color.GRAY, Article.TOREAD, prefMgr.getAllReadBack());
+                                setReadStatusToTouchedView(touchedPosition, Article.TOREAD, prefMgr.getAllReadBack());
                                 break;
                             default:
                                 break;
@@ -277,31 +277,11 @@ public class ArticlesListActivity extends ActionBarActivity {
                 int lastPosition = listView.getLastVisiblePosition();
 // Row in last visible position is hidden by buttons, don't change status
                 for (int i = firstPosition; i < lastPosition - 1; i++) {
-                    final Article article = articles.get(i);
-                   article.setStatus(Article.TOREAD);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dbAdapter.saveStatus(article.getId(), Article.TOREAD);
-                        }
-                    }).start();
+                    setReadStatusToTouchedView(i, Article.TOREAD, prefMgr.getAllReadBack());
                 }
-                articlesListAdapter.notifyDataSetChanged();
 // Row in last visible position is hidden by buttons, so scroll to it
                 articlesListView.getRefreshableView().smoothScrollToPositionFromTop(lastPosition, 4);
 // Back option if all articles are read
-                if(prefMgr.getAllReadBack()) {
-                    boolean isAllRead = true;
-                    for(Article article: articles) {
-                        if(article.getStatus().equals(Article.UNREAD)) {
-                            isAllRead = false;
-                            break;
-                        }
-                    }
-                    if(isAllRead) {
-                        finish();
-                    }
-                }
             }
         });
     }
@@ -323,41 +303,63 @@ public class ArticlesListActivity extends ActionBarActivity {
         articlesListAdapter = new ArticlesListAdapter(articles);
         articlesListView.setAdapter(articlesListAdapter);
     }
-    private void setReadStatusToTouchedView(int color, final String status, boolean isAllReadBack) {
-        View row = articlesListAdapter.getView(touchedPosition, null,
+
+    private void changeRowColor(int position, String status) {
+        View row = articlesListAdapter.getView(position, null,
                 articlesListView);
 // Change selected article's view
         TextView title = (TextView) row.findViewById(R.id.articleTitle);
         TextView postedTime = (TextView) row
                 .findViewById(R.id.articlePostedTime);
         TextView point = (TextView) row.findViewById(R.id.articlePoint);
+
+        int color = 0;
+        if (status.equals(Article.TOREAD)) {
+            color = Color.GRAY;
+        }else if (status.equals(Article.UNREAD)) {
+            color = Color.BLACK;
+        }
         title.setTextColor(color);
         postedTime.setTextColor(color);
         point.setTextColor(color);
-        Log.d(LOG_TAG, "touched article title:" + title.getText());
-        for (final Article article : articles) {
-            if (title.getText().equals(article.getTitle())) {
-                Log.d(LOG_TAG, "touched article id:" + article.getId());
-                article.setStatus(status);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dbAdapter.saveStatus(article.getId(), status);
-                    }
-                }).start();
+    }
+
+    private boolean isAllRead() {
+        boolean isAllRead = true;
+        for (Article article : articles) {
+            if(article.getStatus().equals(Article.UNREAD)) {
+                isAllRead = false;
                 break;
             }
         }
-        if(isAllReadBack) {
-            boolean isAllRead = true;
-            for (Article article : articles) {
-                if(article.getStatus().equals(Article.UNREAD)) {
-                    isAllRead = false;
-                    break;
-                }
+        return  isAllRead;
+    }
+
+    private void setReadStatusToTouchedView(final int touchedPosition, final String status, boolean isAllReadBack) {
+        final Article touchedArticle = articles.get(touchedPosition);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long now = System.currentTimeMillis();
+                dbAdapter.updateUnreadArticleCount(touchedArticle.getFeedId());
+                Log.d(LOG_TAG, "update unread time:" + (System.currentTimeMillis() - now));
             }
-            if(isAllRead) {
-                startActivity(new Intent(getApplicationContext(), FeedListActivity.class));
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long now = System.currentTimeMillis();
+                dbAdapter.saveStatus(touchedArticle.getId(), status);
+                Log.d(LOG_TAG, "save status time:" + (System.currentTimeMillis() - now));
+            }
+        }).start();
+        changeRowColor(touchedPosition, status);
+
+        Log.d(LOG_TAG, "touched article id:" + touchedArticle.getId());
+        touchedArticle.setStatus(status);
+        if(isAllReadBack) {
+            if(isAllRead()) {
+                finish();
             }
         }
         articlesListAdapter.notifyDataSetChanged();

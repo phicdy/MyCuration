@@ -179,13 +179,9 @@ public class DatabaseAdapter {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		db.beginTransaction();
 		try {
-			String orderBy = "title";
-			String sql = "select feeds._id, feeds.title, feeds.url, feeds.iconPath, feeds.siteUrl, " +
-					"(select count(*) from (select status, feedId from articles where status = '" + Article.UNREAD + "') article " +
-					"where article.feedId = feeds._id) as DistinctCount " +
-					"from feeds " +
-					"order by " + orderBy;
-			Cursor cursor = db.rawQuery(sql, null);
+			String[] columns = {Feed.ID,Feed.TITLE,Feed.URL,Feed.ICON_PATH,Feed.SITE_URL,Feed.UNREAD_ARTICLE};
+			String orderBy = Feed.TITLE;
+			Cursor cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					int id = cursor.getInt(0);
@@ -313,6 +309,22 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		
+	}
+
+	public void updateUnreadArticleCount(int feedId) {
+		int count = getNumOfUnreadArtilces(feedId);
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put("unreadArticle", count);
+			db.update("feeds", values, "_id = " + feedId, null);
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+
 	}
 	
 	public void saveIconPath(String siteUrl, String iconPath) {
