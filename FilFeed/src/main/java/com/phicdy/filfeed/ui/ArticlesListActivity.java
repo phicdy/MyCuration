@@ -336,25 +336,19 @@ public class ArticlesListActivity extends ActionBarActivity {
 
     private void setReadStatusToTouchedView(final int touchedPosition, final String status, boolean isAllReadBack) {
         final Article touchedArticle = articles.get(touchedPosition);
+        dbAdapter.saveStatus(touchedArticle.getId(), status);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 long now = System.currentTimeMillis();
                 dbAdapter.updateUnreadArticleCount(touchedArticle.getFeedId());
-                Log.d(LOG_TAG, "update unread time:" + (System.currentTimeMillis() - now));
-            }
-        }).start();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                long now = System.currentTimeMillis();
-                dbAdapter.saveStatus(touchedArticle.getId(), status);
-                Log.d(LOG_TAG, "save status time:" + (System.currentTimeMillis() - now));
+                Intent intent = new Intent();
+                intent.setAction(FeedListActivity.ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
+                getApplicationContext().sendBroadcast(intent);
             }
         }).start();
         changeRowColor(touchedPosition, status);
 
-        Log.d(LOG_TAG, "touched article id:" + touchedArticle.getId());
         touchedArticle.setStatus(status);
         if(isAllReadBack) {
             if(isAllRead()) {
