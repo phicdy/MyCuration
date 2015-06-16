@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class RssParser {
 
 	private DatabaseAdapter dbAdapter;
+	private UnreadCountManager unreadCountManager;
 	private Context context;
 	private static final int CONNCT_TIMEOUT_MS = 20000;
 	private static final int READ_TIMEOUT_MS = 60000;
@@ -29,6 +30,7 @@ public class RssParser {
 
 	public RssParser(Context context) {
 		dbAdapter = DatabaseAdapter.getInstance(context);
+		unreadCountManager = UnreadCountManager.getInstance(context);
 		this.context = context;
 	}
 
@@ -154,7 +156,8 @@ public class RssParser {
 			}
 			// Save new articles
 			dbAdapter.saveNewArticles(articles, feedId);
-			dbAdapter.updateUnreadArticleCount(feedId);
+			unreadCountManager.addUnreadCount(feedId, articles.size());
+
 		} catch (XmlPullParserException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -311,12 +311,11 @@ public class DatabaseAdapter {
 		
 	}
 
-	public void updateUnreadArticleCount(int feedId) {
-		int count = getNumOfUnreadArtilces(feedId);
+	public void updateUnreadArticleCount(int feedId, int unreadCount) {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put("unreadArticle", count);
+			values.put("unreadArticle", unreadCount);
 			db.update("feeds", values, "_id = " + feedId, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {

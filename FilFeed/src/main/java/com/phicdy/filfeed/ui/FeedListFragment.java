@@ -22,6 +22,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Feed;
+import com.phicdy.filfeed.rss.UnreadCountManager;
 import com.phicdy.filfeed.task.UpdateTaskManager;
 
 import java.io.File;
@@ -37,6 +38,7 @@ public class FeedListFragment extends Fragment {
     private ArrayList<Feed> allFeeds = new ArrayList<>();
     private ArrayList<Feed> hideList = new ArrayList<>();
     private DatabaseAdapter dbAdapter;
+    private UnreadCountManager unreadManager;
 
     // Manage hide feed status
     private boolean isHided = true;
@@ -55,6 +57,7 @@ public class FeedListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        unreadManager = UnreadCountManager.getInstance(getActivity());
     }
 
     @Override
@@ -186,16 +189,20 @@ public class FeedListFragment extends Fragment {
             feeds.add(newFeed);
         }
         allFeeds.add(newFeed);
+        unreadManager.addFeed(newFeed);
         rssFeedListAdapter.notifyDataSetChanged();
     }
 
     public void removeFeedAtPosition(int position) {
         if (isHided) {
-            dbAdapter.deleteFeed(feeds.get(position).getId());
+            Feed deletedFeed = feeds.get(position);
+            dbAdapter.deleteFeed(deletedFeed.getId());
+            unreadManager.deleteFeed(deletedFeed.getId());
             feeds.remove(position);
         }else {
             Feed deletedFeed = allFeeds.get(position);
             dbAdapter.deleteFeed(deletedFeed.getId());
+            unreadManager.deleteFeed(deletedFeed.getId());
             allFeeds.remove(position);
             for (int i = 0;i < feeds.size();i++) {
                 if (feeds.get(i).getId() == deletedFeed.getId()) {
@@ -342,7 +349,7 @@ public class FeedListFragment extends Fragment {
             holder.feedTitle.setText(feed.getTitle());
 
             // set RSS Feed unread article count
-            holder.feedCount.setText(String.valueOf(feed.getUnreadAriticlesCount()));
+            holder.feedCount.setText(String.valueOf(unreadManager.getUnreadCount(feed.getId())));
 
             return (row);
         }

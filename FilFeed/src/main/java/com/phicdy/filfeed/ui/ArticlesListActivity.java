@@ -35,6 +35,7 @@ import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Feed;
+import com.phicdy.filfeed.rss.UnreadCountManager;
 import com.phicdy.filfeed.task.UpdateTaskManager;
 import com.phicdy.filfeed.util.PreferenceManager;
 
@@ -48,6 +49,8 @@ public class ArticlesListActivity extends ActionBarActivity {
     private String feedUrl;
     private DatabaseAdapter dbAdapter;
     private PreferenceManager prefMgr;
+    private UnreadCountManager unreadManager;
+
     private Intent intent;
     private PullToRefreshListView articlesListView;
     private ArticlesListAdapter articlesListAdapter;
@@ -68,6 +71,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         setContentView(R.layout.activity_articles_list);
 
         dbAdapter  = DatabaseAdapter.getInstance(getApplicationContext());
+        unreadManager = UnreadCountManager.getInstance(getApplicationContext());
 
         // Set feed id and url from main activity
         intent = getIntent();
@@ -170,7 +174,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                             int touchedPosition = position - 1;
                             setReadStatusToTouchedView(touchedPosition, Article.TOREAD, false);
                             Article clickedArticle = articles.get(touchedPosition);
-                            dbAdapter.updateUnreadArticleCount(clickedArticle.getFeedId());
+                            unreadManager.conutDownUnreadCount(clickedArticle.getFeedId());
                             if(prefMgr.isOpenInternal()) {
                                 intent = new Intent(getApplicationContext(), InternalWebViewActivity.class);
                                 intent.putExtra(OPEN_URL_ID, clickedArticle.getUrl());
@@ -337,16 +341,11 @@ public class ArticlesListActivity extends ActionBarActivity {
     private void setReadStatusToTouchedView(final int touchedPosition, final String status, boolean isAllReadBack) {
         final Article touchedArticle = articles.get(touchedPosition);
         dbAdapter.saveStatus(touchedArticle.getId(), status);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                long now = System.currentTimeMillis();
-                dbAdapter.updateUnreadArticleCount(touchedArticle.getFeedId());
-                Intent intent = new Intent();
-                intent.setAction(FeedListActivity.ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
-                getApplicationContext().sendBroadcast(intent);
-            }
-        }).start();
+        if (status.equals(Article.TOREAD)) {
+            unreadManager.conutDownUnreadCount(touchedArticle.getFeedId());
+        }else if (status.equals(Article.UNREAD)) {
+            unreadManager.conutUpUnreadCount(touchedArticle.getFeedId());
+        }
         changeRowColor(touchedPosition, status);
 
         touchedArticle.setStatus(status);
