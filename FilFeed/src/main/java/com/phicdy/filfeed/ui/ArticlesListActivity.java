@@ -281,10 +281,26 @@ public class ArticlesListActivity extends ActionBarActivity {
                 int lastPosition = listView.getLastVisiblePosition();
                 // Row in last visible position is hidden by buttons, don't change status
                 for (int i = firstPosition; i < lastPosition - 1; i++) {
-                    setReadStatusToTouchedView(i, Article.TOREAD, prefMgr.getAllReadBack());
+                    final Article touchedArticle = articles.get(i);
+                    changeRowColor(i, Article.TOREAD);
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            unreadManager.conutDownUnreadCount(touchedArticle.getFeedId());
+                            dbAdapter.saveStatus(touchedArticle.getId(), Article.TOREAD);
+                            touchedArticle.setStatus(Article.TOREAD);
+                        }
+                    }.start();
                 }
+                articlesListAdapter.notifyDataSetChanged();
                 // Row in last visible position is hidden by buttons, so scroll to it
                 articlesListView.getRefreshableView().smoothScrollToPositionFromTop(lastPosition, 4);
+                if(prefMgr.getAllReadBack()) {
+                    if(isAllRead()) {
+                        finish();
+                        return;
+                    }
+                }
             }
         });
     }
