@@ -30,11 +30,9 @@ public class UnreadCountManager {
     }
 
     public void init() {
-        synchronized (unreadCountMap) {
-            unreadCountMap.clear();
-        }
         ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         synchronized (unreadCountMap) {
+            unreadCountMap.clear();
             for (Feed feed : feeds) {
                 unreadCountMap.put(feed.getId(), feed.getUnreadAriticlesCount());
             }
