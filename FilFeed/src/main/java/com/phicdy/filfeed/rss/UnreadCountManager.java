@@ -30,10 +30,14 @@ public class UnreadCountManager {
     }
 
     public void init() {
-        unreadCountMap.clear();
+        synchronized (unreadCountMap) {
+            unreadCountMap.clear();
+        }
         ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
-        for (Feed feed : feeds) {
-            unreadCountMap.put(feed.getId(), feed.getUnreadAriticlesCount());
+        synchronized (unreadCountMap) {
+            for (Feed feed : feeds) {
+                unreadCountMap.put(feed.getId(), feed.getUnreadAriticlesCount());
+            }
         }
     }
 
@@ -51,30 +55,36 @@ public class UnreadCountManager {
         unreadCountMap.remove(feedId);
     }
 
-    public void addUnreadCount(int feedId, int addCount) {
-        if (!unreadCountMap.containsKey(feedId)) {
-            return;
+    public synchronized void addUnreadCount(int feedId, int addCount) {
+        synchronized (unreadCountMap) {
+            if (!unreadCountMap.containsKey(feedId)) {
+                return;
+            }
+            int count = unreadCountMap.get(feedId);
+            unreadCountMap.put(feedId, count + addCount);
         }
-        int count = unreadCountMap.get(feedId);
-        unreadCountMap.put(feedId, count + addCount);
         updateDatbase(feedId);
     }
 
     public void conutUpUnreadCount(int feedId) {
-        if (!unreadCountMap.containsKey(feedId)) {
-            return;
+        synchronized (unreadCountMap) {
+            if (!unreadCountMap.containsKey(feedId)) {
+                return;
+            }
+            int count = unreadCountMap.get(feedId);
+            unreadCountMap.put(feedId, ++count);
         }
-        int count = unreadCountMap.get(feedId);
-        unreadCountMap.put(feedId, ++count);
         updateDatbase(feedId);
     }
 
     public void conutDownUnreadCount(int feedId) {
-        if (!unreadCountMap.containsKey(feedId)) {
-            return;
+        synchronized (unreadCountMap) {
+            if (!unreadCountMap.containsKey(feedId)) {
+                return;
+            }
+            int count = unreadCountMap.get(feedId);
+            unreadCountMap.put(feedId, --count);
         }
-        int count = unreadCountMap.get(feedId);
-        unreadCountMap.put(feedId, --count);
         updateDatbase(feedId);
     }
 
