@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UnreadCountManager {
+    private int total = 0;
     private Map<Integer, Integer> unreadCountMap = new HashMap<>();
     private DatabaseAdapter adapter;
     private static UnreadCountManager mgr;
@@ -30,11 +31,13 @@ public class UnreadCountManager {
     }
 
     public void init() {
+        total = 0;
         ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         synchronized (unreadCountMap) {
             unreadCountMap.clear();
             for (Feed feed : feeds) {
                 unreadCountMap.put(feed.getId(), feed.getUnreadAriticlesCount());
+                total += feed.getUnreadAriticlesCount();
             }
         }
     }
@@ -44,12 +47,14 @@ public class UnreadCountManager {
             return;
         }
         unreadCountMap.put(feed.getId(), feed.getUnreadAriticlesCount());
+        total += feed.getUnreadAriticlesCount();
     }
 
     public void deleteFeed(int feedId) {
         if (!unreadCountMap.containsKey(feedId)) {
             return;
         }
+        total -= unreadCountMap.get(feedId);
         unreadCountMap.remove(feedId);
     }
 
@@ -61,6 +66,7 @@ public class UnreadCountManager {
             int count = unreadCountMap.get(feedId);
             unreadCountMap.put(feedId, count + addCount);
         }
+        total += addCount;
         updateDatbase(feedId);
     }
 
@@ -72,6 +78,7 @@ public class UnreadCountManager {
             int count = unreadCountMap.get(feedId);
             unreadCountMap.put(feedId, ++count);
         }
+        total++;
         updateDatbase(feedId);
     }
 
@@ -83,11 +90,16 @@ public class UnreadCountManager {
             int count = unreadCountMap.get(feedId);
             unreadCountMap.put(feedId, --count);
         }
+        total--;
         updateDatbase(feedId);
     }
 
     public int getUnreadCount(int feedId) {
         return unreadCountMap.containsKey(feedId) ? unreadCountMap.get(feedId) : -1;
+    }
+
+    public int getTotal() {
+        return total;
     }
 
     private void updateDatbase(final int feedId) {
@@ -100,6 +112,7 @@ public class UnreadCountManager {
             public void run() {
                 int count = adapter.getNumOfUnreadArtilces(feedId);
                 synchronized (unreadCountMap) {
+                    total = total - unreadCountMap.get(feedId) + count;
                     unreadCountMap.put(feedId, count);
                 }
                 adapter.updateUnreadArticleCount(feedId, count);

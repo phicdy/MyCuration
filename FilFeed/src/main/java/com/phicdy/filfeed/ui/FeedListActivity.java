@@ -31,6 +31,7 @@ import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Feed;
+import com.phicdy.filfeed.rss.UnreadCountManager;
 import com.phicdy.filfeed.task.InsertNewFeedTask;
 import com.phicdy.filfeed.task.UpdateTaskManager;
 
@@ -43,6 +44,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 	private BroadcastReceiver receiver;
 	private Intent intent;
 	private UpdateTaskManager updateTaskManager;
+	private UnreadCountManager unreadCountManager;
 
     private FeedListFragment listFragment;
     private TextView tvAllUnreadArticleCount;
@@ -57,7 +59,6 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 	public static final String FEED_URL = "FEED_URL";
 	public static final String ACTION_UPDATE_NUM_OF_ARTICLES_NOW = "UPDATE_NUM_OF_ARTICLES";
 	public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
-    private static final String ACTION_UPDATE_ALL_UNREAD_ARTICLES = "ACTION_UPDATE_ALL_UNREAD_ARTICLES";
 	private static final String LOG_TAG = "RSSReader."
 			+ FeedListActivity.class.getSimpleName();
 
@@ -69,6 +70,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 
 		dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
 		updateTaskManager = UpdateTaskManager.getInstance(getApplicationContext());
+		unreadCountManager = UnreadCountManager.getInstance(getApplicationContext());
 		setAllListener();
 		setAlarmManager();
 
@@ -106,16 +108,13 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
                     }
 				}else if (intent.getAction().equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
                     refleshFeedList();
-				}else if (intent.getAction().equals(ACTION_UPDATE_ALL_UNREAD_ARTICLES)) {
-                    updateAllUnreadArticlesCount();
-                }
+				}
 			}
 		};
 
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(FINISH_UPDATE_ACTION);
 		filter.addAction(ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
-        filter.addAction(ACTION_UPDATE_ALL_UNREAD_ARTICLES);
 		registerReceiver(receiver, filter);
 
 	}
@@ -226,7 +225,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 		listFragment.setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
 		if (isForeground) {
 			showFeedList();
-			sendBroadcast(new Intent(ACTION_UPDATE_ALL_UNREAD_ARTICLES));
+			updateAllUnreadArticlesCount();
 		}
     }
 
@@ -234,7 +233,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
         if (listFragment == null) {
             return;
         }
-        tvAllUnreadArticleCount.setText(String.valueOf(listFragment.countAllUnreadArticles()));
+        tvAllUnreadArticleCount.setText(String.valueOf(unreadCountManager.getTotal()));
     }
 
     private void showFeedList() {
