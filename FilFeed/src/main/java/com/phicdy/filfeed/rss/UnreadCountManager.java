@@ -100,7 +100,11 @@ public class UnreadCountManager {
         new Thread() {
             @Override
             public void run() {
-                adapter.updateUnreadArticleCount(feedId, unreadCountMap.get(feedId));
+                int count = adapter.getNumOfUnreadArtilces(feedId);
+                synchronized (unreadCountMap) {
+                    unreadCountMap.put(feedId, count);
+                }
+                adapter.updateUnreadArticleCount(feedId, count);
             }
         }.start();
 
