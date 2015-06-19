@@ -100,7 +100,8 @@ public class ArticlesListActivity extends ActionBarActivity {
             }
         }
         setAllListener();
-        articlesListView.getRefreshableView().setEmptyView(findViewById(R.id.emptyView));
+        getListView().setEmptyView(findViewById(R.id.emptyView));
+        getListView().addFooterView(getFooter());
         displayUnreadArticles();
     }
     @Override
@@ -165,7 +166,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private void setAllListener() {
         articlesListView = (PullToRefreshListView) findViewById(R.id.articleListRefresh);
         // When an article selected, open this URL in default browser
-        articlesListView.getRefreshableView()
+        getListView()
                 .setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
@@ -188,7 +189,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                         isSwipeLeftToRight = false;
                     }
                 });
-        articlesListView.getRefreshableView().setOnItemLongClickListener(new OnItemLongClickListener() {
+        getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id) {
@@ -200,7 +201,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 return true;
             }
         });
-        articlesListView.getRefreshableView().setOnTouchListener(new OnTouchListener() {
+        getListView().setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return mGestureDetector.onTouchEvent(event);
@@ -226,7 +227,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 isSwipeRightToLeft = false;
                 try {
                     // Set touched position in articles list from touch event
-                    int touchedPosition = articlesListView.getRefreshableView().pointToPosition(
+                    int touchedPosition = getListView().pointToPosition(
                             (int) event1.getX(), (int) event1.getY()) -1;
                     if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
                         return false;
@@ -276,7 +277,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ListView listView = articlesListView.getRefreshableView();
+                ListView listView = getListView();
                 int firstPosition = listView.getFirstVisiblePosition();
                 int lastPosition = listView.getLastVisiblePosition();
                 // Row in last visible position is hidden by buttons, don't change status
@@ -294,9 +295,9 @@ public class ArticlesListActivity extends ActionBarActivity {
                 }
                 articlesListAdapter.notifyDataSetChanged();
                 // Row in last visible position is hidden by buttons, so scroll to it
-                articlesListView.getRefreshableView().smoothScrollToPositionFromTop(lastPosition, 4);
-                if(prefMgr.getAllReadBack()) {
-                    if(isAllRead()) {
+                getListView().smoothScrollToPositionFromTop(lastPosition, 4);
+                if (prefMgr.getAllReadBack()) {
+                    if (isAllRead()) {
                         finish();
                         return;
                     }
@@ -380,6 +381,9 @@ public class ArticlesListActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+    private ListView getListView() {
+        return articlesListView == null ? null : articlesListView.getRefreshableView();
     }
     /**
      *
