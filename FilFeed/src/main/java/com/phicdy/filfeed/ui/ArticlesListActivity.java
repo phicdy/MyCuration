@@ -1,10 +1,14 @@
 package com.phicdy.filfeed.ui;
+
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -21,11 +25,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AbsListView.OnScrollListener;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -43,28 +49,37 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
+
 public class ArticlesListActivity extends ActionBarActivity {
-    private ArrayList<Article> articles;
+    private ArrayList<Article> allArticles;
+    private ArrayList<Article> loadedArticles = new ArrayList<>();
     private int feedId;
     private String feedUrl;
     private DatabaseAdapter dbAdapter;
     private PreferenceManager prefMgr;
     private UnreadCountManager unreadManager;
-
     private Intent intent;
+
     private PullToRefreshListView articlesListView;
     private ArticlesListAdapter articlesListAdapter;
     private static final int SWIPE_MIN_WIDTH = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     public static final String OPEN_URL_ID = "openUrl";
+    private static final int LOAD_COUNT = 100;
+    private static final String LOAD_ARTICLE = "loadArticle";
     private static final String LOG_TAG = "RSSReader.ArticlesList";
+
     private GestureDetector mGestureDetector;
     private SimpleOnGestureListener mOnGestureListener;
     private boolean isSwipeRightToLeft = false;
     private boolean isSwipeLeftToRight = false;
     private int swipeDirectionOption = PreferenceManager.SWIPE_DEFAULT;
+
     private SearchView searchView;
+    private View footer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +154,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 if (prefMgr.getAllReadBack()) {
                     finish();
                 }else {
-                    for (Article article : articles) {
+                    for (Article article : loadedArticles) {
                         article.setStatus(Article.READ);
                     }
                     articlesListAdapter.notifyDataSetChanged();
@@ -158,11 +173,33 @@ public class ArticlesListActivity extends ActionBarActivity {
             searchView.onActionViewCollapsed();
             searchView.setQuery("",false);
         }
+        setBroadCastReceiver();
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }
+
+    private BroadcastReceiver loadArticleReceiver;
+
+    private void setBroadCastReceiver() {
+        // receive num of unread articles from Update Task
+        loadArticleReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(LOAD_ARTICLE)) {
+                    addArticlesToList();
+                    getListView().invalidateViews();
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(LOAD_ARTICLE);
+        registerReceiver(loadArticleReceiver, filter);
+    }
+
     private void setAllListener() {
         articlesListView = (PullToRefreshListView) findViewById(R.id.articleListRefresh);
         // When an article selected, open this URL in default browser
@@ -174,7 +211,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                         if(!isSwipeLeftToRight && !isSwipeRightToLeft) {
                             int touchedPosition = position - 1;
                             setReadStatusToTouchedView(touchedPosition, Article.TOREAD, false);
-                            Article clickedArticle = articles.get(touchedPosition);
+                            Article clickedArticle = loadedArticles.get(touchedPosition);
                             unreadManager.conutDownUnreadCount(clickedArticle.getFeedId());
                             if(prefMgr.isOpenInternal()) {
                                 intent = new Intent(getApplicationContext(), InternalWebViewActivity.class);
@@ -196,7 +233,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 Log.d(LOG_TAG, "onLongClick");
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, articles.get(position-1).getUrl());
+                intent.putExtra(Intent.EXTRA_TEXT, loadedArticles.get(position - 1).getUrl());
                 startActivity(intent);
                 return true;
             }
@@ -218,6 +255,21 @@ public class ArticlesListActivity extends ActionBarActivity {
                 updateTaskManager.updateAllFeeds(feeds);
             }
         });
+
+        articlesListView.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (totalItemCount == firstVisibleItem + visibleItemCount) {
+                    loadArticles();
+                }
+            }
+        });
+
         // Handle swipe event
         mOnGestureListener = new SimpleOnGestureListener() {
             @Override
@@ -273,7 +325,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         };
         mGestureDetector = new GestureDetector(this, mOnGestureListener);
 
-        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -282,7 +334,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 int lastPosition = listView.getLastVisiblePosition();
                 // Row in last visible position is hidden by buttons, don't change status
                 for (int i = firstPosition; i < lastPosition - 1; i++) {
-                    final Article touchedArticle = articles.get(i);
+                    final Article touchedArticle = loadedArticles.get(i);
                     changeRowColor(i, Article.TOREAD);
                     new Thread() {
                         @Override
@@ -309,18 +361,19 @@ public class ArticlesListActivity extends ActionBarActivity {
         PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
         boolean isNewestArticleTop = mgr.getSortNewArticleTop();
         if(feedId == Feed.ALL_FEED_ID) {
-            articles = dbAdapter.getAllUnreadArticles(isNewestArticleTop);
-            if(articles.size() == 0 && dbAdapter.calcNumOfArticles() > 0) {
-                articles = dbAdapter.getAllArticles(isNewestArticleTop);
+            allArticles = dbAdapter.getAllUnreadArticles(isNewestArticleTop);
+            if(allArticles.size() == 0 && dbAdapter.calcNumOfArticles() > 0) {
+                allArticles = dbAdapter.getAllArticles(isNewestArticleTop);
             }
         }else {
-            articles = dbAdapter.getUnreadArticlesInAFeed(feedId, isNewestArticleTop);
-            if(articles.size() == 0 && dbAdapter.calcNumOfArticles(feedId) > 0) {
-                articles = dbAdapter.getAllArticlesInAFeed(feedId, isNewestArticleTop);
+            allArticles = dbAdapter.getUnreadArticlesInAFeed(feedId, isNewestArticleTop);
+            if(allArticles.size() == 0 && dbAdapter.calcNumOfArticles(feedId) > 0) {
+                allArticles = dbAdapter.getAllArticlesInAFeed(feedId, isNewestArticleTop);
             }
         }
-        Log.d(LOG_TAG, "article size displayUnreadArticles():" + articles.size());
-        articlesListAdapter = new ArticlesListAdapter(articles);
+        addArticlesToList();
+        Log.d(LOG_TAG, "article size displayUnreadArticles():" + allArticles.size());
+        articlesListAdapter = new ArticlesListAdapter(loadedArticles);
         articlesListView.setAdapter(articlesListAdapter);
     }
 
@@ -346,7 +399,7 @@ public class ArticlesListActivity extends ActionBarActivity {
 
     private boolean isAllRead() {
         boolean isAllRead = true;
-        for (Article article : articles) {
+        for (Article article : loadedArticles) {
             if(article.getStatus().equals(Article.UNREAD)) {
                 isAllRead = false;
                 break;
@@ -356,7 +409,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     }
 
     private void setReadStatusToTouchedView(final int touchedPosition, final String status, boolean isAllReadBack) {
-        final Article touchedArticle = articles.get(touchedPosition);
+        final Article touchedArticle = loadedArticles.get(touchedPosition);
         dbAdapter.saveStatus(touchedArticle.getId(), status);
         if (status.equals(Article.TOREAD)) {
             unreadManager.conutDownUnreadCount(touchedArticle.getFeedId());
@@ -376,15 +429,73 @@ public class ArticlesListActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (loadArticleReceiver != null) {
+            unregisterReceiver(loadArticleReceiver);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
+
+    private AsyncTask<Long, Void, Void> mTask;
+
+    private void loadArticles() {
+        if (loadedArticles.size() == allArticles.size()) {
+            // All articles are loaded
+            invisibleFooter();
+            return;
+        }
+
+        if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
+            return;
+        }
+
+        mTask = new AsyncTask<Long, Void, Void>() {
+            @Override
+            protected Void doInBackground(Long[] params) {
+                try {
+                    Thread.sleep(params[0]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            };
+
+            protected void onPostExecute(Void result) {
+                getApplicationContext().sendBroadcast(new Intent(LOAD_ARTICLE));
+            };
+        }.execute(Math.abs(new Random(System.currentTimeMillis()).nextLong() % 1000));
+
+    }
+
+    private void addArticlesToList() {
+        int start = loadedArticles.size();
+        for (int i = start; i < start + LOAD_COUNT; i++) {
+            if (i >= allArticles.size()) {
+                break;
+            }
+            loadedArticles.add(allArticles.get(i));
+        }
+    }
+
     private ListView getListView() {
         return articlesListView == null ? null : articlesListView.getRefreshableView();
     }
+
+    private View getFooter() {
+        if (footer == null) {
+            footer = getLayoutInflater().inflate(R.layout.footer_article_list_activity,
+                    null);
+        }
+        return footer;
+    }
+
+    private void invisibleFooter() {
+        getListView().removeFooterView(getFooter());
+    }
+
     /**
      *
      * @author kyamaguchi Display articles list
