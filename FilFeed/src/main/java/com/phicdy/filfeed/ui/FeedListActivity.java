@@ -98,15 +98,16 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				// Set num of unread articles and update UI
-				if (intent.getAction().equals(FINISH_UPDATE_ACTION)) {
+				String action = intent.getAction();
+				if (action.equals(FINISH_UPDATE_ACTION)) {
 					Log.d(LOG_TAG, "onReceive");
-					if (updateTaskManager.isUpdatingFeed()) {
+					if (networkTaskManager.isUpdatingFeed()) {
                         listFragment.updateProgress();
                     }else {
 						listFragment.onRefreshComplete();
                         refleshFeedList();
                     }
-				}else if (intent.getAction().equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
+				}else if (action.equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
                     refleshFeedList();
 				}
 			}
