@@ -23,7 +23,7 @@ import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.UnreadCountManager;
-import com.phicdy.filfeed.task.UpdateTaskManager;
+import com.phicdy.filfeed.task.NetworkTaskManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class FeedListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (UpdateTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
+        if (NetworkTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
             feedsListView.onRefreshComplete();
         }
     }
@@ -128,7 +128,7 @@ public class FeedListFragment extends Fragment {
         // Set ListView
         rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
         feedsListView.setAdapter(rssFeedListAdapter);
-        if (UpdateTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
+        if (NetworkTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
             feedsListView.setRefreshing(true);
             updateProgress();
         }
@@ -214,9 +214,9 @@ public class FeedListFragment extends Fragment {
     }
 
     public void updateProgress() {
-        UpdateTaskManager updateTaskManager = UpdateTaskManager.getInstance(getActivity());
-        int updatedFeed = numOfAllFeeds - updateTaskManager.getFeedRequestCountInQueue();
-        if ((updatedFeed == numOfAllFeeds) && !updateTaskManager.isUpdatingFeed()) {
+        NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getActivity());
+        int updatedFeed = numOfAllFeeds - networkTaskManager.getFeedRequestCountInQueue();
+        if ((updatedFeed == numOfAllFeeds) && !networkTaskManager.isUpdatingFeed()) {
             updatedFeed = 0;
         }
         if (feedsListView != null ){

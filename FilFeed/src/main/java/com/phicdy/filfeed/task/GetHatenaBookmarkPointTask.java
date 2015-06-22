@@ -78,7 +78,7 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void>
 	}
 
 	private void addUpdateRequetToQueue() {
-		UpdateTaskManager mgr = UpdateTaskManager.getInstance(context);
+		NetworkTaskManager mgr = NetworkTaskManager.getInstance(context);
 		mgr.addHatenaBookmarkUpdateRequest(createRequest());
 		return;
 	}

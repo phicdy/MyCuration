@@ -42,7 +42,7 @@ import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.UnreadCountManager;
-import com.phicdy.filfeed.task.UpdateTaskManager;
+import com.phicdy.filfeed.task.NetworkTaskManager;
 import com.phicdy.filfeed.util.PreferenceManager;
 
 import java.io.File;
@@ -247,12 +247,12 @@ public class ArticlesListActivity extends ActionBarActivity {
         articlesListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
             @Override
             public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-                UpdateTaskManager updateTaskManager = UpdateTaskManager
+                NetworkTaskManager networkTaskManager = NetworkTaskManager
                         .getInstance(getApplicationContext());
                 // Update Feeds
                 ArrayList<Feed> feeds = new ArrayList<Feed>();
                 feeds.add(new Feed(feedId, null, feedUrl, "", "", 0));
-                updateTaskManager.updateAllFeeds(feeds);
+                networkTaskManager.updateAllFeeds(feeds);
             }
         });
 

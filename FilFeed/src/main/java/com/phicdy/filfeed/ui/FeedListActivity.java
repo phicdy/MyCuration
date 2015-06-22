@@ -33,7 +33,7 @@ import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.UnreadCountManager;
 import com.phicdy.filfeed.task.InsertNewFeedTask;
-import com.phicdy.filfeed.task.UpdateTaskManager;
+import com.phicdy.filfeed.task.NetworkTaskManager;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -43,7 +43,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 	private DatabaseAdapter dbAdapter;
 	private BroadcastReceiver receiver;
 	private Intent intent;
-	private UpdateTaskManager updateTaskManager;
+	private NetworkTaskManager networkTaskManager;
 	private UnreadCountManager unreadCountManager;
 
     private FeedListFragment listFragment;
@@ -69,7 +69,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 		setTitle(getString(R.string.home));
 
 		dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
-		updateTaskManager = UpdateTaskManager.getInstance(getApplicationContext());
+		networkTaskManager = NetworkTaskManager.getInstance(getApplicationContext());
 		unreadCountManager = UnreadCountManager.getInstance(getApplicationContext());
 		setAllListener();
 		setAlarmManager();
@@ -367,7 +367,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 			return;
 		} 
 
-		updateTaskManager.updateAllFeeds(allFeeds);
+		networkTaskManager.updateAllFeeds(allFeeds);
 	}
 
     @Override

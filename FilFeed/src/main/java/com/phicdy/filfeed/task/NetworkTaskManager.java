@@ -19,26 +19,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class UpdateTaskManager {
+public class NetworkTaskManager {
 
-	private static UpdateTaskManager updateTaskManager;
+	private static NetworkTaskManager networkTaskManager;
 	private Context context;
 	private RequestQueue mQueue;
 	// Manage queue status
 	private int numOfFeedRequest = 0;
 	
-	private static final String LOG_TAG = "RSSReader.UpdateTaskManager";
+	private static final String LOG_TAG = "RSSReader.NetworkTaskManager";
 	
-	private UpdateTaskManager(Context context) {
+	private NetworkTaskManager(Context context) {
 		this.context = context;
 		mQueue = Volley.newRequestQueue(context);
 	}
 	
-	public static UpdateTaskManager getInstance(Context context) {
-		if(updateTaskManager == null) {
-			updateTaskManager = new UpdateTaskManager(context);
+	public static NetworkTaskManager getInstance(Context context) {
+		if(networkTaskManager == null) {
+			networkTaskManager = new NetworkTaskManager(context);
 		}
-		return updateTaskManager;
+		return networkTaskManager;
 	}
 	
 	public boolean updateAllFeeds(final ArrayList<Feed> feeds) {

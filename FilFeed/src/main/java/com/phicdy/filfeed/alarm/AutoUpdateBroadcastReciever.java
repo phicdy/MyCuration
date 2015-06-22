@@ -11,7 +11,7 @@ import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.task.GetHatenaBookmarkPointTask;
-import com.phicdy.filfeed.task.UpdateTaskManager;
+import com.phicdy.filfeed.task.NetworkTaskManager;
 import com.phicdy.filfeed.util.NetworkUtil;
 
 public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
@@ -29,7 +29,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 		}
 		dbAdapter = DatabaseAdapter.getInstance(context);
 		if(intent.getAction().equals(AUTO_UPDATE_ACTION)) {
-			UpdateTaskManager updateTask = UpdateTaskManager.getInstance(context);
+			NetworkTaskManager updateTask = NetworkTaskManager.getInstance(context);
 	
 			updateTask.updateAllFeeds(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles());
 			AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
@@ -43,7 +43,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				return;
 			}
 			// Update has higher priority
-			if (UpdateTaskManager.getInstance(context).isUpdatingFeed()) {
+			if (NetworkTaskManager.getInstance(context).isUpdatingFeed()) {
 				AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 				return;
 			}
