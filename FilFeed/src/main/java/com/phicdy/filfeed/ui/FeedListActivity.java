@@ -32,11 +32,9 @@ import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.UnreadCountManager;
-import com.phicdy.filfeed.task.InsertNewFeedTask;
 import com.phicdy.filfeed.task.NetworkTaskManager;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class FeedListActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener {
 
@@ -109,6 +107,19 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
                     }
 				}else if (action.equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
                     refleshFeedList();
+				}else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
+					Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
+					if (newFeed == null) {
+						Toast.makeText(FeedListActivity.this,
+								R.string.add_feed_error,
+								Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(FeedListActivity.this,
+								R.string.add_feed_success,
+								Toast.LENGTH_SHORT).show();
+						listFragment.addFeed(newFeed);
+						refleshFeedList();
+					}
 				}
 			}
 		};
@@ -116,6 +127,7 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(FINISH_UPDATE_ACTION);
 		filter.addAction(ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
+		filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
 		registerReceiver(receiver, filter);
 
 	}
@@ -270,41 +282,14 @@ public class FeedListActivity extends ActionBarActivity implements FeedListFragm
 
 							@Override
 							public void onClick(DialogInterface dialog,
-									int which) {
+												int which) {
 								// Set feed URL and judge whether feed URL is
 								// RSS format
 								EditText feedUrl = (EditText) addView
 										.findViewById(R.id.addFeedUrl);
 								String feedUrlStr = feedUrl.getText()
 										.toString();
-
-								InsertNewFeedTask task = new InsertNewFeedTask(
-										getApplicationContext());
-								task.execute(feedUrlStr);
-
-								// Update feed list
-								Feed newFeed;
-								try {
-									newFeed = task.get();
-									if (newFeed == null) {
-										Log.w("add a new feed",
-												"Can't get feed url = "
-														+ feedUrlStr);
-										Toast.makeText(FeedListActivity.this,
-												R.string.add_feed_error,
-												Toast.LENGTH_SHORT).show();
-									} else {
-
-										listFragment.addFeed(newFeed);
-
-										//TODO Don't show message
-									}
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								} catch (ExecutionException e) {
-									e.printStackTrace();
-								}
-
+								NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(feedUrlStr);
 							}
 
 						}).setNegativeButton(R.string.cancel, null).show();

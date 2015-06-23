@@ -21,9 +21,12 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	public DatabaseAdapterTest() {
 		super();
 	}
-	
+
+	@Override
 	protected void setUp() {
 		adapter  = DatabaseAdapter.getInstance(getContext());
+		adapter.deleteAllArticles();
+		adapter.deleteAllFeeds();
 		insertTestData();
 	}
 
@@ -84,6 +87,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		testUnreadArticles.add(doubleQuotationTitle);
 		testUnreadArticles.add(japaneseTitle);
 		adapter.saveNewArticles(testUnreadArticles, testFeed.getId());
+		adapter.updateUnreadArticleCount(testFeed.getId(), testUnreadArticles.size());
 
 		Article readArticle = new Article(1, "readArticle", "http://www.google.com/read",
 				Article.READ, "", now, testFeed.getId(), "");
@@ -126,6 +130,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(testUnreadArticles.size(), testFeed.getUnreadAriticlesCount());
 	}
 
+	@Override
 	protected void tearDown() {
 		adapter.deleteAllArticles();
 		adapter.deleteAllFeeds();

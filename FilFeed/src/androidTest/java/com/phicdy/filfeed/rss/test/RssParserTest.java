@@ -1,20 +1,11 @@
 package com.phicdy.filfeed.rss.test;
 
 import android.test.AndroidTestCase;
-import android.util.Log;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.RssParser;
-import com.phicdy.filfeed.task.InputStreamRequest;
-
-import java.io.IOException;
-import java.io.InputStream;
+import com.phicdy.filfeed.task.NetworkTaskManager;
 
 public class RssParserTest extends AndroidTestCase {
 
@@ -42,25 +33,21 @@ public class RssParserTest extends AndroidTestCase {
 		}
 		
 		RssParser parser = new RssParser(getContext());
+		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://jp.techcrunch.com/feed/");
 		try {
-			Feed addedFeed = parser.parseFeedInfo("http://jp.techcrunch.com/feed/");
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-			assertNotNull(addedFeed);
-			assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
-			assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
-			assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
-		} catch (IOException e) {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
-			fail();
 		}
+
+		Feed addedFeed = adapter.getFeedByUrl("http://jp.techcrunch.com/feed/");
+		assertNotNull(addedFeed);
+		assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
+		assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
+		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 		adapter.deleteAllFeeds();
 		
-		String publicKeyFeedUrl = "http://www.publickey1.jp/atom.xml";
+		/*String publicKeyFeedUrl = "http://www.publickey1.jp/atom.xml";
 		Feed publicKeyFeed = adapter.getFeedByUrl(publicKeyFeedUrl);
 		if(publicKeyFeed != null) {
 			adapter.deleteFeed(publicKeyFeed.getId());
@@ -82,29 +69,33 @@ public class RssParserTest extends AndroidTestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
-		}
+		}*/
 		
 		// Test top URL
+		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://jp.techcrunch.com");
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		addedFeed = adapter.getFeedByUrl("http://jp.techcrunch.com/feed/");
+		assertNotNull(addedFeed);
+		assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
+		assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
+		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
+
 //		try {
-//			Feed addedFeed = parser.parseFeedInfo("http://jp.techcrunch.com");
-//				Thread.sleep(5000);
-//			
-//			assertNotNull(addedFeed);
-//			assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
-//			assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
-//			assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			fail();
+//		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://ground-sesame.hatenablog.jp");
+////			Feed surigomaFeed = parser.parseFeedInfo("http://ground-sesame.hatenablog.jp");
+//		try {
+//			Thread.sleep(7000);
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}
-//		
-//		try {
-//			Feed surigomaFeed = parser.parseFeedInfo("http://ground-sesame.hatenablog.jp");
-//			Thread.sleep(7000);
-//			
-//			assertNotNull(surigomaFeed);
+//
+//		Feed surigomaFeed = adapter.getFeedByUrl("http://ground-sesame.hatenablog.jp");
+//		assertNotNull(surigomaFeed);
 //			assertEquals("http://ground-sesame.hatenablog.jp/", surigomaFeed.getUrl());
 //			assertEquals("http://ground-sesame.hatenablog.jp/feed", surigomaFeed.getSiteUrl());
 //			assertEquals(surigomaFeed.DEDAULT_ICON_PATH, surigomaFeed.getIconPath());
@@ -116,73 +107,4 @@ public class RssParserTest extends AndroidTestCase {
 //		}
 	}
 
-	public void testParseXml() {
-		final DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
-
-		// Add a test feed
-		adapter.saveNewFeed("Publickey","http://www.publickey1.jp/atom.xml", "", "http://www.publickey1.jp/");
-		String publicKeyUrl = "http://www.publickey1.jp/atom.xml";
-		final Feed feed = adapter.getFeedByUrl(publicKeyUrl);
-		if (feed == null) {
-			fail("PublicKey feed is not found");
-		}
-		InputStreamRequest request = new InputStreamRequest(feed.getUrl(),   
-			       new Listener<InputStream>() {  
-			  
-			        @Override  
-			        public void onResponse(final InputStream in) {
-			        	if (in == null) {
-			        		return;
-			        	}
-			        	new Thread(new Runnable() {
-			    			
-			    			@Override
-			    			public void run() {
-					            RssParser parser = new RssParser(getContext()); 
-					            boolean result =  false;
-					            try {
-									if (adapter.getFeedByUrl(feed.getUrl()) == null) {
-										Log.d("RssParserTest", "publickey was removed");
-										adapter.saveNewFeed("Publickey","http://www.publickey1.jp/atom.xml", "", "http://www.publickey1.jp/");
-										String publicKeyUrl = "http://www.publickey1.jp/atom.xml";
-										Feed publickey = adapter.getFeedByUrl(publicKeyUrl);
-										if (publickey == null) {
-											fail("PublicKey feed is not found");
-										}
-										result = parser.parseXml(in, publickey.getId());
-									}else {
-										result = parser.parseXml(in, feed.getId());
-									}
-
-								} catch (Exception e) {
-									e.printStackTrace();
-									fail();
-								} finally {
-									try {
-										in.close();
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-									assertEquals(true, result);
-								}
-					    	}
-			        	}).start();
-			        }  
-			    }, new ErrorListener() {  
-			  
-			        @Override  
-			        public void onErrorResponse(VolleyError error) {  
-			        	Log.d("LOG_TAG", "Request error:" + error.getMessage());
-			        	fail();
-			        }  
-			    });  
-			  
-		RequestQueue mQueue = Volley.newRequestQueue(getContext());
-		mQueue.add(request);
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
 }

@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.phicdy.filfeed.R;
-import com.phicdy.filfeed.task.InsertNewFeedTask;
+import com.phicdy.filfeed.db.DatabaseAdapter;
+import com.phicdy.filfeed.rss.Feed;
+import com.phicdy.filfeed.task.NetworkTaskManager;
 
 public class FeedUrlHookActivity extends Activity {
 
@@ -35,29 +37,29 @@ public class FeedUrlHookActivity extends Activity {
 					@Override
 					public void onReceive(Context context, Intent intent) {
 						String action = intent.getAction();
-						if (action
-								.equals(InsertNewFeedTask.FINISH_INSERT_SUCCEEDED)) {
-							Toast.makeText(context, R.string.add_feed_success,
-									Toast.LENGTH_SHORT).show();
+						if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
+							DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
+							Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
+							if (newFeed == null) {
+								Toast.makeText(getApplicationContext(),
+										R.string.add_feed_error,
+										Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(getApplicationContext(),
+										R.string.add_feed_success,
+										Toast.LENGTH_SHORT).show();
+							}
 							dialog.dismiss();
-						} else if (action
-								.equals(InsertNewFeedTask.FINISH_INSERT_FAILED)) {
-							Toast.makeText(context, R.string.add_feed_error,
-									Toast.LENGTH_SHORT).show();
-							dialog.dismiss();
+							finish();
 						}
-						finish();
 					}
 				};
 				IntentFilter filter = new IntentFilter();
-				filter.addAction(InsertNewFeedTask.FINISH_INSERT_SUCCEEDED);
-				filter.addAction(InsertNewFeedTask.FINISH_INSERT_FAILED);
+				filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
 				registerReceiver(receiver, filter);
 
 				dialog.show();
-				InsertNewFeedTask task = new InsertNewFeedTask(
-						getApplicationContext());
-				task.execute(url);
+				NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(url);
 			}
 		}
 	}

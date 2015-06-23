@@ -1,14 +1,17 @@
 package com.phicdy.filfeed.rss;
- 
+
 import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
 
 import com.phicdy.filfeed.db.DatabaseAdapter;
+import com.phicdy.filfeed.task.NetworkTaskManager;
 import com.phicdy.filfeed.util.DateParser;
 import com.phicdy.filfeed.util.TextUtil;
-import com.phicdy.filfeed.util.UrlUtil;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -183,15 +186,8 @@ public class RssParser {
 		return null;
 	}
 
-	public Feed parseFeedInfo(String feedUrl) throws IOException {
+	public boolean parseFeedInfo(InputStream is, String feedUrl) throws IOException {
 		int errorCode = ParseError.ERROR_XML_PARSE;
-		if (!UrlUtil.isCorrectUrl(feedUrl)) {
-			return null;
-		}
-		Log.i(LOG_TAG, "Feed URL to parse:" + feedUrl);
-		
-		// Get InputStream
-		InputStream is = setInputStream(feedUrl);
 
 		String format = null;
 		String feedTitle = null;
@@ -231,16 +227,8 @@ public class RssParser {
 						format = "ATOM";
 					} else if (!rssFlag && tag.toLowerCase().equals("html")) {
 						// If parsed URL is not feed, parse top domain URL
-						Feed parsedFeed = parseTopHtml(parser, is);
-						// If feed is not found and feed URL has parameter, 
-						// remove parameter and retry to parse
-						if (parsedFeed != null) {
-							return parsedFeed;
-						}else if (UrlUtil.hasParameterUrl(feedUrl)) {
-							parseFeedInfo(UrlUtil.removeUrlParameter(feedUrl));
-						}
-						// Feed is not found in original URL and URL that parameter is removed
-						errorCode = ParseError.ERROR_FEED_IS_NOT_FOUND;
+						parseTopHtml(is, feedUrl);
+						return true;
 					}
 
 					if (rssFlag && tag.equals("title")) {
@@ -313,10 +301,11 @@ public class RssParser {
 		}
 		is.close();
 		if (errorCode == ParseError.NOT_ERROR) {
-			return dbAdapter.saveNewFeed(feedTitle, feedUrl, format, siteURL);
+			dbAdapter.saveNewFeed(feedTitle, feedUrl, format, siteURL);
+			return true;
 		}
 		ParseError.showErrorToast(context, errorCode);
-		return null;
+		return false;
 	}
 
 	private String translateEventType(int eventType) {
@@ -348,61 +337,25 @@ public class RssParser {
 		return eventTypeString;
 	}
 
-	private Feed parseTopHtml(XmlPullParser parser, InputStream is) {
-		String rssURL = "";
-		String tag = "";
-		int eventType;
-		try {
-			eventType = parser.getEventType();
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-				tag = parser.getName();
-				Log.d(LOG_TAG, "tag: " + tag);
-				if (eventType == XmlPullParser.START_TAG) {
-					if (tag.equals("link")) {
-						String attributeName;
-						String attributeValue;
-						boolean isRssHtml = false;
-						boolean isHref = false;
-						for (int i = 0; i < parser.getAttributeCount(); i++) {
-							attributeName = parser.getAttributeName(i);
-							attributeValue = parser.getAttributeValue(i);
-							if (attributeName == null || attributeValue == null) {
-								continue;
-							}
-							if (attributeName.equals("type")) {
-								if(attributeValue.equals("application/rss+xml")) {
-									isRssHtml = true;
-									continue;
-								}else {
-									break;
-								}
-							}
-							if (attributeName.equals("href")) {
-								isHref = true;
-							}
-	
-							if (isRssHtml && isHref) {
-								rssURL = attributeValue;
-								if (UrlUtil.isCorrectUrl(rssURL)) {
-									is.close();
-									// RSS is found
-									return parseFeedInfo(rssURL);
-								}
-							}
-						}
+	//private Feed parseTopHtml(XmlPullParser parser, InputStream is) {
+	private void parseTopHtml(InputStream is, final String baseUrl) {
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					Document document = Jsoup.connect(baseUrl).get();
+					//<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
+					Elements elements = document.getElementsByAttributeValue("type", "application/rss+xml");
+					if (elements.isEmpty()) {
+						return;
 					}
+					String url = elements.get(0).attr("href");
+					NetworkTaskManager.getInstance(context).addNewFeed(url);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				eventType = parser.next();
 			}
-			// RSS is not found
-			is.close();
-			
-		} catch (XmlPullParserException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+		}.start();
 	}
 	
 }
