@@ -11,6 +11,7 @@ import java.util.Map;
 public class UnreadCountManager {
     private int total = 0;
     private Map<Integer, Integer> unreadCountMap = new HashMap<>();
+    private ArrayList<Feed> allFeeds;
     private DatabaseAdapter adapter;
     private static UnreadCountManager mgr;
 
@@ -32,10 +33,10 @@ public class UnreadCountManager {
 
     public void init() {
         total = 0;
-        ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
+        allFeeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         synchronized (unreadCountMap) {
             unreadCountMap.clear();
-            for (Feed feed : feeds) {
+            for (Feed feed : allFeeds) {
                 unreadCountMap.put(feed.getId(), feed.getUnreadAriticlesCount());
                 total += feed.getUnreadAriticlesCount();
             }
@@ -119,6 +120,28 @@ public class UnreadCountManager {
             }
         }.start();
 
+    }
+
+    public void readAll(int feedId) {
+        synchronized (unreadCountMap) {
+            if (!unreadCountMap.containsKey(feedId)) {
+                return;
+            }
+            int count = unreadCountMap.get(feedId);
+            total -= count;
+            unreadCountMap.put(feedId, 0);
+        }
+        updateDatbase(feedId);
+    }
+
+    public void readAll() {
+        synchronized (unreadCountMap) {
+            total = 0;
+            for (Feed feed : allFeeds) {
+                unreadCountMap.put(feed.getId(), 0);
+                updateDatbase(feed.getId());
+            }
+        }
     }
 
 }

@@ -148,13 +148,15 @@ public class ArticlesListActivity extends ActionBarActivity {
             case R.id.all_read:
                 if (feedId == Feed.ALL_FEED_ID) {
                     dbAdapter.saveAllStatusToRead();
+                    unreadManager.readAll();
                 }else {
                     dbAdapter.saveStatusToRead(feedId);
+                    unreadManager.readAll(feedId);
                 }
                 if (prefMgr.getAllReadBack()) {
                     finish();
                 }else {
-                    for (Article article : loadedArticles) {
+                    for (Article article : allArticles) {
                         article.setStatus(Article.READ);
                     }
                     articlesListAdapter.notifyDataSetChanged();
