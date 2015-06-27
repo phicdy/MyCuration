@@ -34,7 +34,7 @@
 
         <TextView
             android:id="@+id/allUnreadCount"
-            android:layout_width="24dp"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="8dp"
