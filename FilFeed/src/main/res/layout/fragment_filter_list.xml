@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/lv_filter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:drawSelectorOnTop="false" />

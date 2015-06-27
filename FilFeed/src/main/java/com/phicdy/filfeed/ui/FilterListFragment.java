@@ -53,6 +53,7 @@ public class FilterListFragment extends Fragment {
 	@Override
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		filtersListView = (ListView)getActivity().findViewById(R.id.lv_filter);
 		}
 		filtersListView.setEmptyView(emptyView);
 	}
@@ -92,7 +93,6 @@ public class FilterListFragment extends Fragment {
 
 	private void initListView() {
 		//Set ListView
-		filtersListView = (ListView)findViewById(id.list); 
 		filtersListAdapter = new FiltersListAdapter(filters);
 		filtersListView.setAdapter(filtersListAdapter);
 	}
