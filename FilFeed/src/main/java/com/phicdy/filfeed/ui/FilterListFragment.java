@@ -54,6 +54,9 @@ public class FilterListFragment extends Fragment {
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		filtersListView = (ListView)getActivity().findViewById(R.id.lv_filter);
+		TextView emptyView = (TextView)getActivity().findViewById(R.id.filter_emptyView);
+		if (dbAdapter.getNumOfFeeds() == 0) {
+			emptyView.setText(R.string.feed_not_exist);
 		}
 		filtersListView.setEmptyView(emptyView);
 	}
