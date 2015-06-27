@@ -60,7 +60,8 @@
     <string name="delete_filter">フィルター削除</string>
     <string name="not_get_hatena_point">取得中</string>
     <string name="none">なし</string>
-    
+    <string name="no_filter">「フィルターを登録」からフィルターを登録してください</string>
+
     <!-- 設定 -->
     <string name="setting">設定</string>
     <string name="interval">自動更新の頻度</string>
