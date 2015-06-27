@@ -427,10 +427,9 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new FeedListFragment();
+                    return listFragment;
                 case 1:
-//                    return new FilterListFragment();
-                    return new FeedListFragment();
+                    return new FilterListFragment();
                 default:
                     return null;
             }
