@@ -89,7 +89,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top);
 
-
+        listFragment = new FeedListFragment();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -141,9 +141,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         super.onResume();
         isForeground = true;
         setBroadCastReceiver();
-
-        listFragment = new FeedListFragment();
-        refleshFeedList();
 
         new Thread(new Runnable() {
             @Override

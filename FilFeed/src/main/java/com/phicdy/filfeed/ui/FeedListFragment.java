@@ -65,6 +65,7 @@ public class FeedListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        refreshList();
     }
 
 
@@ -136,6 +137,11 @@ public class FeedListFragment extends Fragment {
         numOfAllFeeds = dbAdapter.getNumOfFeeds();
 
         tvAllUnreadArticleCount = (TextView)getActivity().findViewById(R.id.allUnreadCount);
+        if (numOfAllFeeds == 0) {
+            tvAllUnreadArticleCount.setVisibility(View.GONE);
+        }else {
+            updateAllUnreadArticlesCount();
+        }
 
         // Set ListView
         rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
@@ -158,8 +164,10 @@ public class FeedListFragment extends Fragment {
         }else {
             rssFeedListAdapter = new RssFeedListAdapter(allFeeds, getActivity());
         }
+        setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
         feedsListView.setAdapter(rssFeedListAdapter);
         rssFeedListAdapter.notifyDataSetChanged();
+        updateAllUnreadArticlesCount();
     }
 
     public void setAllFeeds(ArrayList<Feed> allFeeds) {
