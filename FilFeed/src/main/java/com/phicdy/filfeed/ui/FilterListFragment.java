@@ -1,7 +1,5 @@
 package com.phicdy.filfeed.ui;
 
-import java.util.ArrayList;
-
 import android.R.id;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +22,9 @@ import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.filter.Filter;
 
-public class FilterListActivity extends ActionBarActivity {
+import java.util.ArrayList;
+
+public class FilterListFragment extends ActionBarActivity {
 
 	private ArrayList<Filter> filters;
 	private DatabaseAdapter dbAdapter;
@@ -54,7 +54,7 @@ public class FilterListActivity extends ActionBarActivity {
 
 		switch (item.getItemId()) {
 		case R.id.add_filter:
-			startActivity(new Intent(FilterListActivity.this,RegisterFilterActivity.class));
+			startActivity(new Intent(FilterListFragment.this,RegisterFilterActivity.class));
 			break;
 		default:
 			break;
@@ -126,7 +126,7 @@ public class FilterListActivity extends ActionBarActivity {
 			 * @param int : Resource ID
 			 * @param T[] objects : data list
 			 */
-			super(FilterListActivity.this,R.layout.filters_list,filters);
+			super(FilterListFragment.this,R.layout.filters_list,filters);
 		}
 
 		@Override
