@@ -194,7 +194,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                 addFeed();
                 break;
             case R.id.addFilter:
-                intent = new Intent(getApplicationContext(), FilterListActivity.class);
+                intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
                 startActivity(intent);
                 break;
             case R.id.setting:
