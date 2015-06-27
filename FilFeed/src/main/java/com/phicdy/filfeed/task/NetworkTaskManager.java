@@ -13,7 +13,7 @@ import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.filter.FilterTask;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.RssParser;
-import com.phicdy.filfeed.ui.FeedListActivity;
+import com.phicdy.filfeed.ui.TopActivity;
 import com.phicdy.filfeed.util.UrlUtil;
 
 import java.io.IOException;
@@ -101,7 +101,7 @@ public class NetworkTaskManager {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				finishOneRequest();
-				context.sendBroadcast(new Intent(FeedListActivity.FINISH_UPDATE_ACTION));
+				context.sendBroadcast(new Intent(TopActivity.FINISH_UPDATE_ACTION));
 			}
 		});
 

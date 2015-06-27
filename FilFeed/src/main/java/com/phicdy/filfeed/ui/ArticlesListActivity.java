@@ -90,9 +90,9 @@ public class ArticlesListActivity extends ActionBarActivity {
 
         // Set feed id and url from main activity
         intent = getIntent();
-        feedId = intent.getIntExtra(FeedListActivity.FEED_ID, Feed.ALL_FEED_ID);
-        feedUrl = intent.getStringExtra(FeedListActivity.FEED_URL);
-        intent.putExtra(FeedListActivity.FEED_ID, feedId);
+        feedId = intent.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID);
+        feedUrl = intent.getStringExtra(TopActivity.FEED_URL);
+        intent.putExtra(TopActivity.FEED_ID, feedId);
         // intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
         prefMgr = PreferenceManager.getInstance(getApplicationContext());
         swipeDirectionOption = prefMgr.getSwipeDirection();
