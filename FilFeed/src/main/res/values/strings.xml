@@ -25,7 +25,8 @@
     <string name="ok">OK</string>
     <string name="app_icon_description">icon</string>
     <string name="no_feed_message">"フィードをメニューから登録してください。"</string>
-    
+
+    <string name="feed">フィード</string>
     <string name="add_feed">フィード登録</string>
     <string name="add_feed_success">"フィード登録に成功しました。"</string>
     <string name="add_feed_error">フィード登録に失敗しました。</string>

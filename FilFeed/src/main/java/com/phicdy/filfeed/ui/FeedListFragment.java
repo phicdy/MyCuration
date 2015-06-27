@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 
 public class FeedListFragment extends Fragment {
 
+    private TextView tvAllUnreadArticleCount;
     private PullToRefreshListView feedsListView;
     private RssFeedListAdapter rssFeedListAdapter;
     private OnFeedListFragmentListener mListener;
@@ -93,6 +95,14 @@ public class FeedListFragment extends Fragment {
                 mListener.onRefreshList();
             }
         });
+        LinearLayout allUnread = (LinearLayout)getActivity().findViewById(R.id.ll_all_unread);
+        allUnread.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mListener.onAllUnreadClicked();
+            }
+        });
     }
 
     @Override
@@ -124,6 +134,8 @@ public class FeedListFragment extends Fragment {
         Log.d("Time", "onActivityCreated");
         refreshList();
         numOfAllFeeds = dbAdapter.getNumOfFeeds();
+
+        tvAllUnreadArticleCount = (TextView)getActivity().findViewById(R.id.allUnreadCount);
 
         // Set ListView
         rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
@@ -286,10 +298,16 @@ public class FeedListFragment extends Fragment {
         return isHided;
     }
 
+    public void updateAllUnreadArticlesCount() {
+        if (tvAllUnreadArticleCount != null) {
+            tvAllUnreadArticleCount.setText(String.valueOf(unreadManager.getTotal()));
+        }
+    }
+
     public interface OnFeedListFragmentListener {
-        // TODO: Update argument type and name
         public void onListClicked(int position);
         public void onRefreshList();
+        public void onAllUnreadClicked();
     }
 
     /**
