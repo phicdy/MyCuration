@@ -72,8 +72,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private static final int INDICATOR_OFFSET_DP = 48;
     private int indicatorOffset;
 
-    private static final int DELETE_FEED_MENU_ID = 0;
-    private static final int EDIT_FEED_TITLE_MENU_ID = 1;
+    private static final int DELETE_FEED_MENU_ID = 1000;
+    private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
 
     private boolean isForeground = true;
 

@@ -28,7 +28,7 @@ public class FilterListFragment extends Fragment {
 	private FiltersListAdapter filtersListAdapter;
 	private ListView filtersListView;
 
-	private static final int DELETE_FILTER_MENU_ID = 0;
+	private static final int DELETE_FILTER_MENU_ID = 2000;
 
 	public FilterListFragment(){}
 
@@ -65,7 +65,8 @@ public class FilterListFragment extends Fragment {
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 	   
 	    super.onCreateContextMenu(menu, v, menuInfo);
-	   
+
+		menu.clear();
 	    menu.add(0, DELETE_FILTER_MENU_ID, 0, R.string.delete_filter);
 	}
 	  
