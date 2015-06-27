@@ -1,14 +1,12 @@
 package com.phicdy.filfeed.ui;
 
-import android.R.id;
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.db.DatabaseAdapter;
@@ -24,44 +21,42 @@ import com.phicdy.filfeed.filter.Filter;
 
 import java.util.ArrayList;
 
-public class FilterListFragment extends ActionBarActivity {
+public class FilterListFragment extends Fragment {
 
 	private ArrayList<Filter> filters;
 	private DatabaseAdapter dbAdapter;
 	private FiltersListAdapter filtersListAdapter;
 	private ListView filtersListView;
-	
-	private static final int DELETE_FILTER_MENU_ID = 0;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_filter_list);
-		setTitle(R.string.filter);
-		
-		dbAdapter = DatabaseAdapter.getInstance(this);
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu_filter_list, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
 
-		switch (item.getItemId()) {
-		case R.id.add_filter:
-			startActivity(new Intent(FilterListFragment.this,RegisterFilterActivity.class));
-			break;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
+	private static final int DELETE_FILTER_MENU_ID = 0;
+
+	public FilterListFragment(){}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		dbAdapter = DatabaseAdapter.getInstance(getActivity());
 	}
-	
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+							 Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_filter_list, container, false);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+	}
+
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		}
+		filtersListView.setEmptyView(emptyView);
+	}
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 	   
@@ -87,17 +82,10 @@ public class FilterListFragment extends ActionBarActivity {
 	}
 	
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
 		filters = dbAdapter.getAllFilters();
-		
-		//If no feeds are added, back to main activity
-		if(dbAdapter.getNumOfFeeds() == 0) {
-			Toast.makeText(this, R.string.feed_not_exist, Toast.LENGTH_SHORT).show();
-			finish();
-			return;
-		}
-		
+
 		initListView();
 		registerForContextMenu(filtersListView);
 	}
@@ -110,7 +98,7 @@ public class FilterListFragment extends ActionBarActivity {
 	}
 	
 	@Override
-	protected void onPause() {
+	public void onPause() {
 		super.onPause();
 	}
 
@@ -126,7 +114,7 @@ public class FilterListFragment extends ActionBarActivity {
 			 * @param int : Resource ID
 			 * @param T[] objects : data list
 			 */
-			super(FilterListFragment.this,R.layout.filters_list,filters);
+			super(getActivity(),R.layout.filters_list,filters);
 		}
 
 		@Override
@@ -136,7 +124,7 @@ public class FilterListFragment extends ActionBarActivity {
 			//Use contentView
 			View row = convertView;
 			if(convertView == null) {
-				LayoutInflater inflater = getLayoutInflater();
+				LayoutInflater inflater = getActivity().getLayoutInflater();
 				row = inflater.inflate(R.layout.filters_list, parent, false);
 				holder = new ViewHolder();
 				holder.filterTitle = (TextView)row.findViewById(R.id.filterTitle);
