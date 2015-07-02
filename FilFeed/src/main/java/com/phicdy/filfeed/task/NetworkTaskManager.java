@@ -38,13 +38,13 @@ public class NetworkTaskManager {
 	private NetworkTaskManager(Context context) {
 		this.context = context;
 		mQueue = Volley.newRequestQueue(context);
+		executorService = Executors.newFixedThreadPool(8);
 	}
 
 	public static NetworkTaskManager getInstance(Context context) {
 		if (networkTaskManager == null) {
 			networkTaskManager = new NetworkTaskManager(context);
 		}
-		executorService = Executors.newFixedThreadPool(5);
 		return networkTaskManager;
 	}
 
@@ -74,27 +74,7 @@ public class NetworkTaskManager {
 						if (in == null) {
 							return;
 						}
-						new Thread(new Runnable() {
-
-							@Override
-							public void run() {
-								RssParser parser = new RssParser(context);
-								try {
-									parser.parseXml(in, feed.getId());
-									new FilterTask(context).applyFiltering(feed.getId());
-								} catch (IOException e) {
-									e.printStackTrace();
-								} finally {
-									try {
-										in.close();
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-									finishOneRequest();
-									context.sendBroadcast(new Intent(FeedListActivity.FINISH_UPDATE_ACTION));
-								}
-							}
-						}).start();
+						executorService.execute(new UpdateFeedTask(in, feed.getId()));
 					}
 				}, new ErrorListener() {
 
@@ -175,4 +155,34 @@ public class NetworkTaskManager {
     public synchronized int getFeedRequestCountInQueue() {
         return numOfFeedRequest;
     }
+
+	private class UpdateFeedTask implements Runnable {
+
+		private InputStream in;
+		private int feedId;
+
+		public UpdateFeedTask(InputStream in, int feedId) {
+			this.in = in;
+			this.feedId = feedId;
+		}
+
+		@Override
+		public void run() {
+			RssParser parser = new RssParser(context);
+			try {
+				parser.parseXml(in, feedId);
+				new FilterTask(context).applyFiltering(feedId);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				finishOneRequest();
+				context.sendBroadcast(new Intent(TopActivity.FINISH_UPDATE_ACTION));
+			}
+		}
+	}
 }
