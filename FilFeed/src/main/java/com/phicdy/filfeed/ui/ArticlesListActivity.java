@@ -336,14 +336,14 @@ public class ArticlesListActivity extends ActionBarActivity {
                 int lastPosition = listView.getLastVisiblePosition();
                 // Row in last visible position is hidden by buttons, don't change status
                 for (int i = firstPosition; i < lastPosition - 1; i++) {
-                    final Article touchedArticle = loadedArticles.get(i);
-                    if (touchedArticle.getStatus().equals(Article.UNREAD)) {
-                        touchedArticle.setStatus(Article.TOREAD);
-                        unreadManager.countDownUnreadCount(touchedArticle.getFeedId());
+                    final Article targetArticle = loadedArticles.get(i);
+                    if (targetArticle.getStatus().equals(Article.UNREAD)) {
+                        targetArticle.setStatus(Article.TOREAD);
+                        unreadManager.countDownUnreadCount(targetArticle.getFeedId());
                         new Thread() {
                             @Override
                             public void run() {
-                                dbAdapter.saveStatus(touchedArticle.getId(), Article.TOREAD);
+                                dbAdapter.saveStatus(targetArticle.getId(), Article.TOREAD);
                             }
                         }.start();
                     }
