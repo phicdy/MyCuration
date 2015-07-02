@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +45,8 @@ public class FeedListFragment extends Fragment {
     private boolean isHided = true;
 
     private int numOfAllFeeds = 0;
+
+    private static final String LOG_TAG = "FilFeed.FeedList";
 
     public static FeedListFragment newInstance() {
         return new FeedListFragment();
@@ -134,7 +135,6 @@ public class FeedListFragment extends Fragment {
         getActivity().registerForContextMenu(feedsListView.getRefreshableView());
         setAllListener();
 
-        Log.d("Time", "onActivityCreated");
         refreshList();
         numOfAllFeeds = dbAdapter.getNumOfFeeds();
 

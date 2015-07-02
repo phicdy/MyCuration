@@ -69,7 +69,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     public static final String OPEN_URL_ID = "openUrl";
     private static final int LOAD_COUNT = 100;
     private static final String LOAD_ARTICLE = "loadArticle";
-    private static final String LOG_TAG = "RSSReader.ArticlesList";
+    private static final String LOG_TAG = "FilFeed.ArticlesList";
 
     private GestureDetector mGestureDetector;
     private SimpleOnGestureListener mOnGestureListener;

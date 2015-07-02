@@ -80,8 +80,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     public static final String FEED_ID = "FEED_ID";
     public static final String FEED_URL = "FEED_URL";
     public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
-    private static final String LOG_TAG = "RSSReader."
-            + TopActivity.class.getSimpleName();
+    private static final String LOG_TAG = "FilFeed." + TopActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

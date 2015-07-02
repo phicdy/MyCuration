@@ -29,7 +29,7 @@ public class DatabaseAdapter {
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
 
-	private static final String LOG_TAG = "RSSReader."
+	private static final String LOG_TAG = "FilFeed."
 			+ DatabaseAdapter.class.getName();
 
 	private DatabaseAdapter(Context context) {

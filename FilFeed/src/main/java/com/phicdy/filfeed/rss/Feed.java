@@ -21,8 +21,7 @@ public class Feed {
 
 	public static final String DEDAULT_ICON_PATH = "defaultIconPath";
 	public static final int ALL_FEED_ID = -1;
-    public static final int DEFAULT_NUM_OF_UNREAD = -1;
-	
+
 	public Feed(int id,String title,String url, String iconPath, String siteUrl, int unreadAriticlesCount) {
 		id_    = id;
 		title_ = title;

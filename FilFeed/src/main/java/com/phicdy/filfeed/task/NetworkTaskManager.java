@@ -33,7 +33,7 @@ public class NetworkTaskManager {
 
 	public static final String FINISH_ADD_FEED = "FINISH_ADD_FEED";
 	public static final String ADDED_FEED_URL = "ADDED_FEED_URL";
-	private static final String LOG_TAG = "RSSReader.NetworkTaskManager";
+	private static final String LOG_TAG = "FilFeed.NetworkTaskManager";
 
 	private NetworkTaskManager(Context context) {
 		this.context = context;

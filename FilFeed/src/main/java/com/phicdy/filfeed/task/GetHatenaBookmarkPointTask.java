@@ -1,12 +1,5 @@
 package com.phicdy.filfeed.task;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -16,6 +9,13 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Article;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void> {
 
@@ -36,7 +36,7 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void>
 	
 	private static final String GET_HATENA_BOOKMARK_COUNT_URL = "http://api.b.st-hatena.com/entry.count";
 	private static final String CHAR_SET = "UTF-8";
-	private static final String LOG_TAG = "RSSReader.GetHatena";
+	private static final String LOG_TAG = "FilFeed.GetHatena";
 
 	public GetHatenaBookmarkPointTask(Context context) {
 		dbAdapter = DatabaseAdapter.getInstance(context);

@@ -1,5 +1,12 @@
 package com.phicdy.filfeed.task;
 
+import android.content.Context;
+import android.os.AsyncTask;
+
+import com.phicdy.filfeed.db.DatabaseAdapter;
+import com.phicdy.filfeed.rss.IconParser;
+import com.phicdy.filfeed.util.FileUtil;
+
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,14 +18,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-
-import android.content.Context;
-import android.os.AsyncTask;
-
-import com.phicdy.filfeed.db.DatabaseAdapter;
-import com.phicdy.filfeed.rss.Article;
-import com.phicdy.filfeed.rss.IconParser;
-import com.phicdy.filfeed.util.FileUtil;
 
 public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 
@@ -36,7 +35,7 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 	private DatabaseAdapter dbAdapter;
 	private Context context;
 
-	public static final String LOG_TAG = "RSSReader.GetHatena";
+	public static final String LOG_TAG = "FilFeed.GetIcon";
 
 	public GetFeedIconTask(Context context) {
 		this.context = context;

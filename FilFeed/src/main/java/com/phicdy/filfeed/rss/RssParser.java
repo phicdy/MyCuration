@@ -29,7 +29,7 @@ public class RssParser {
 	private static final int CONNCT_TIMEOUT_MS = 20000;
 	private static final int READ_TIMEOUT_MS = 60000;
 	private boolean isArticleFlag = false;
-	private static final String LOG_TAG = "RSSREADER.RssParser";
+	private static final String LOG_TAG = "FilFeed.RssParser";
 
 	public RssParser(Context context) {
 		dbAdapter = DatabaseAdapter.getInstance(context);

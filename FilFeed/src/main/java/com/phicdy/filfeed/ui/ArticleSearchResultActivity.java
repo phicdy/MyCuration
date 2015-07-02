@@ -1,10 +1,5 @@
 package com.phicdy.filfeed.ui;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,8 +20,11 @@ import android.widget.TextView;
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Article;
-import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.util.PreferenceManager;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class ArticleSearchResultActivity extends ActionBarActivity {
 
@@ -38,7 +36,7 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 	private ArticlesListAdapter articlesListAdapter;
 
 	public static final String OPEN_URL_ID = "openUrl";
-	private static final String LOG_TAG = "RSSReader.ArticlesList";
+	private static final String LOG_TAG = "FilFeed.SearchResult";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
