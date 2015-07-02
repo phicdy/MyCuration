@@ -60,6 +60,7 @@ public class FeedListFragment extends Fragment {
 
         unreadManager = UnreadCountManager.getInstance(getActivity());
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();;
         generateHidedFeedList();
     }
 
@@ -166,15 +167,9 @@ public class FeedListFragment extends Fragment {
         }else {
             rssFeedListAdapter = new RssFeedListAdapter(allFeeds, getActivity());
         }
-        setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
         feedsListView.setAdapter(rssFeedListAdapter);
         rssFeedListAdapter.notifyDataSetChanged();
         updateAllUnreadArticlesCount();
-    }
-
-    public void setAllFeeds(ArrayList<Feed> allFeeds) {
-        this.allFeeds = allFeeds;
-        generateHidedFeedList();
     }
 
     private void generateHidedFeedList() {
