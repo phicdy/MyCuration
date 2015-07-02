@@ -184,7 +184,7 @@ public class FeedListFragment extends Fragment {
         feeds = (ArrayList<Feed>)allFeeds.clone();
         hideList = new ArrayList<>();
         for (Feed feed : allFeeds) {
-            int numOfUnreadArticles = feed.getUnreadAriticlesCount();
+            int numOfUnreadArticles = unreadManager.getUnreadCount(feed.getId());
             if (numOfUnreadArticles == 0) {
                 hideList.add(feed);
             }
