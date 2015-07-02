@@ -309,6 +309,22 @@ public class FeedListFragment extends Fragment {
         }
     }
 
+    public void updateFeedTitle(int feedId, String newTitle) {
+        for (Feed feed : allFeeds) {
+            if (feed.getId() == feedId) {
+                feed.setTitle(newTitle);
+                break;
+            }
+        }
+        for (Feed feed : feeds) {
+            if (feed.getId() == feedId) {
+                feed.setTitle(newTitle);
+                break;
+            }
+        }
+        rssFeedListAdapter.notifyDataSetChanged();
+    }
+
     public interface OnFeedListFragmentListener {
         public void onListClicked(int position);
         public void onRefreshList();

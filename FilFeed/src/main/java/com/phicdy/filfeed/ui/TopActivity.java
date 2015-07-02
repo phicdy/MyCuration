@@ -348,10 +348,11 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                                 if(newTitle == null || newTitle.equals("")) {
                                     Toast.makeText(getApplicationContext(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show();
                                 }else {
-                                    int numOfUpdate = dbAdapter.saveNewTitle(listFragment.getFeedIdAtPosition(position), newTitle);
+                                    int updatedFeedId = listFragment.getFeedIdAtPosition(position);
+                                    int numOfUpdate = dbAdapter.saveNewTitle(updatedFeedId, newTitle);
                                     if(numOfUpdate == 1) {
                                         Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_success), Toast.LENGTH_SHORT).show();
-                                        listFragment.refreshList();
+                                        listFragment.updateFeedTitle(updatedFeedId, newTitle);
                                     }else {
                                         Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_error), Toast.LENGTH_SHORT).show();
                                     }
