@@ -1,6 +1,7 @@
 package com.phicdy.filfeed.rss;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.phicdy.filfeed.db.DatabaseAdapter;
 
@@ -14,6 +15,8 @@ public class UnreadCountManager {
     private ArrayList<Feed> allFeeds;
     private DatabaseAdapter adapter;
     private static UnreadCountManager mgr;
+
+    private static final String LOG_TAG = "FilFeed.Unread";
 
     private UnreadCountManager(Context context) {
         this.adapter = DatabaseAdapter.getInstance(context);
