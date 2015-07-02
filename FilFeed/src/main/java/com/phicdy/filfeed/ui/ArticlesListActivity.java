@@ -214,7 +214,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                             int touchedPosition = position - 1;
                             setReadStatusToTouchedView(touchedPosition, Article.TOREAD, false);
                             Article clickedArticle = loadedArticles.get(touchedPosition);
-                            unreadManager.conutDownUnreadCount(clickedArticle.getFeedId());
+                            unreadManager.countDownUnreadCount(clickedArticle.getFeedId());
                             if(prefMgr.isOpenInternal()) {
                                 intent = new Intent(getApplicationContext(), InternalWebViewActivity.class);
                                 intent.putExtra(OPEN_URL_ID, clickedArticle.getUrl());
@@ -415,7 +415,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         final Article touchedArticle = loadedArticles.get(touchedPosition);
         dbAdapter.saveStatus(touchedArticle.getId(), status);
         if (status.equals(Article.TOREAD)) {
-            unreadManager.conutDownUnreadCount(touchedArticle.getFeedId());
+            unreadManager.countDownUnreadCount(touchedArticle.getFeedId());
         }else if (status.equals(Article.UNREAD)) {
             unreadManager.conutUpUnreadCount(touchedArticle.getFeedId());
         }

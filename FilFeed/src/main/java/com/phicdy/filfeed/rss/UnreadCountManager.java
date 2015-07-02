@@ -83,7 +83,7 @@ public class UnreadCountManager {
         updateDatbase(feedId);
     }
 
-    public void conutDownUnreadCount(int feedId) {
+    public void countDownUnreadCount(int feedId) {
         synchronized (unreadCountMap) {
             if (!unreadCountMap.containsKey(feedId)) {
                 return;
