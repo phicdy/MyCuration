@@ -380,26 +380,6 @@ public class ArticlesListActivity extends ActionBarActivity {
         articlesListView.setAdapter(articlesListAdapter);
     }
 
-    private void changeRowColor(int position, String status) {
-        View row = articlesListAdapter.getView(position, null,
-                articlesListView);
-        // Change selected article's view
-        TextView title = (TextView) row.findViewById(R.id.articleTitle);
-        TextView postedTime = (TextView) row
-                .findViewById(R.id.articlePostedTime);
-        TextView point = (TextView) row.findViewById(R.id.articlePoint);
-
-        int color = 0;
-        if (status.equals(Article.TOREAD)) {
-            color = Color.GRAY;
-        }else if (status.equals(Article.UNREAD)) {
-            color = Color.BLACK;
-        }
-        title.setTextColor(color);
-        postedTime.setTextColor(color);
-        point.setTextColor(color);
-    }
-
     private boolean isAllRead() {
         boolean isAllRead = true;
         for (Article article : loadedArticles) {
@@ -419,7 +399,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         }else if (status.equals(Article.UNREAD)) {
             unreadManager.conutUpUnreadCount(touchedArticle.getFeedId());
         }
-        changeRowColor(touchedPosition, status);
+        touchedArticle.setStatus(status);
 
         touchedArticle.setStatus(status);
         if(isAllReadBack) {
