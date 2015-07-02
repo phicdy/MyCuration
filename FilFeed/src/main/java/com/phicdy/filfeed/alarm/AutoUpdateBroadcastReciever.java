@@ -1,7 +1,5 @@
 package com.phicdy.filfeed.alarm;
 
-import java.util.ArrayList;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +10,8 @@ import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.task.GetHatenaBookmarkPointTask;
 import com.phicdy.filfeed.task.NetworkTaskManager;
 import com.phicdy.filfeed.util.NetworkUtil;
+
+import java.util.ArrayList;
 
 public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 
@@ -58,7 +58,6 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 						continue;
 					}
 					if ((unreadArticle.getPoint() != Article.DEDAULT_HATENA_POINT) && !isWifiConnected) {
-						Log.d("AutoUpdate", "Device is not connected with Wi-Fi");
 						continue;
 					}
 					GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(
