@@ -279,7 +279,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                         listFragment.updateProgress();
                     }else {
                         listFragment.onRefreshComplete();
-                        refleshFeedList();
+                        listFragment.refreshList();
                     }
                 }else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
                     Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
@@ -292,7 +292,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                                 R.string.add_feed_success,
                                 Toast.LENGTH_SHORT).show();
                         listFragment.addFeed(newFeed);
-                        refleshFeedList();
+                        listFragment.refreshList();
                     }
                 }
             }
@@ -303,13 +303,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
         registerReceiver(receiver, filter);
 
-    }
-
-    private void refleshFeedList() {
-        listFragment.setAllFeeds(dbAdapter.getAllFeedsWithNumOfUnreadArticles());
-        if (isForeground) {
-            listFragment.updateAllUnreadArticlesCount();
-        }
     }
 
     private void addFeed() {
@@ -359,7 +352,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                                     int numOfUpdate = dbAdapter.saveNewTitle(listFragment.getFeedIdAtPosition(position), newTitle);
                                     if(numOfUpdate == 1) {
                                         Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_success), Toast.LENGTH_SHORT).show();
-                                        refleshFeedList();
+                                        listFragment.refreshList();
                                     }else {
                                         Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_error), Toast.LENGTH_SHORT).show();
                                     }
