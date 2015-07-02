@@ -79,7 +79,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
     public static final String FEED_ID = "FEED_ID";
     public static final String FEED_URL = "FEED_URL";
-    public static final String ACTION_UPDATE_NUM_OF_ARTICLES_NOW = "UPDATE_NUM_OF_ARTICLES";
     public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
     private static final String LOG_TAG = "RSSReader."
             + TopActivity.class.getSimpleName();
@@ -131,7 +130,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         setTitle(getString(R.string.home));
 
         dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
-//		dbAdapter.importDB();
         networkTaskManager = NetworkTaskManager.getInstance(getApplicationContext());
         setAlarmManager();
     }
@@ -283,8 +281,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                         listFragment.onRefreshComplete();
                         refleshFeedList();
                     }
-                }else if (action.equals(ACTION_UPDATE_NUM_OF_ARTICLES_NOW)) {
-                    refleshFeedList();
                 }else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
                     Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
                     if (newFeed == null) {
@@ -304,7 +300,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(FINISH_UPDATE_ACTION);
-        filter.addAction(ACTION_UPDATE_NUM_OF_ARTICLES_NOW);
         filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
         registerReceiver(receiver, filter);
 
