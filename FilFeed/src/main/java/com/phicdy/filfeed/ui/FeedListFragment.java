@@ -58,8 +58,9 @@ public class FeedListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dbAdapter = DatabaseAdapter.getInstance(getActivity());
         unreadManager = UnreadCountManager.getInstance(getActivity());
+        dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        generateHidedFeedList();
     }
 
     @Override
@@ -159,6 +160,7 @@ public class FeedListFragment extends Fragment {
     }
 
     public void refreshList() {
+        generateHidedFeedList();
         if (isHided) {
             rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
         }else {
