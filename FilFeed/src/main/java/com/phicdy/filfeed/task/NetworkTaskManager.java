@@ -9,7 +9,6 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
-import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.filter.FilterTask;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.RssParser;
@@ -91,45 +90,48 @@ public class NetworkTaskManager {
 
 	public void addNewFeed(String feedUrl) {
 		final String requestUrl = UrlUtil.removeUrlParameter(feedUrl);
-		InputStreamRequest request = new InputStreamRequest(requestUrl,
-				new Listener<InputStream>() {
-
-					@Override
-					public void onResponse(final InputStream in) {
+//		InputStreamRequest request = new InputStreamRequest(requestUrl,
+//				new Listener<InputStream>() {
+//
+//					@Override
+//					public void onResponse(final InputStream in) {
 						RssParser parser = new RssParser(context);
-						try {
-							boolean isSucceeded = parser.parseFeedInfo(in, requestUrl);
-							//Update new feed
-							if(isSucceeded) {
-								//Get Feed id from feed URL
-								DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
-								Feed feed = dbAdapter.getFeedByUrl(requestUrl);
+//						try {
+//							boolean isSucceeded = parser.parseFeedInfo(in, requestUrl);
+		parser.parseRssXml(requestUrl);
+//							//Update new feed
+//							if(isSucceeded) {
+//								//Get Feed id from feed URL
+//								DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
+//								Feed feed = dbAdapter.getFeedByUrl(requestUrl);
+//
+//								//Parse XML and get new Articles
+//								if (feed != null) {
+//									NetworkTaskManager taskManager = NetworkTaskManager.getInstance(context);
+//									taskManager.updateFeed(feed);
+//									Intent intent = new Intent(FINISH_ADD_FEED);
+//									intent.putExtra(ADDED_FEED_URL, requestUrl);
+//									context.sendBroadcast(intent);
+//								}
+//							}else {
+//								Intent intent = new Intent(FINISH_ADD_FEED);
+//								context.sendBroadcast(intent);
+//							}
+//						} catch (IOException e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}, new ErrorListener() {
+//
+//			@Override
+//			public void onErrorResponse(VolleyError error) {
+//			}
+//		});
+//
+//		mQueue.add(request);
 
-								//Parse XML and get new Articles
-								if (feed != null) {
-									NetworkTaskManager taskManager = NetworkTaskManager.getInstance(context);
-									taskManager.updateFeed(feed);
-									Intent intent = new Intent(FINISH_ADD_FEED);
-									intent.putExtra(ADDED_FEED_URL, requestUrl);
-									context.sendBroadcast(intent);
-								}
-							}else {
-								Intent intent = new Intent(FINISH_ADD_FEED);
-								context.sendBroadcast(intent);
-							}
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}, new ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError error) {
-			}
-		});
-
-		mQueue.add(request);
 	}
+
 
 	private synchronized void addNumOfRequest() {
 		numOfFeedRequest++;

@@ -22,6 +22,19 @@ public class Feed {
 	public static final String DEDAULT_ICON_PATH = "defaultIconPath";
 	public static final int ALL_FEED_ID = -1;
 
+	public static final String RSS_1 = "RSS1.0";
+	public static final String RSS_2 = "RSS2.0";
+	public static final String ATOM = "ATOM";
+
+	public Feed() {
+		id_      = 0;
+		title_   = null;
+		url_     = null;
+		iconPath = DEDAULT_ICON_PATH;
+		siteUrl  = null;
+		unreadAriticlesCount_ = 0;
+	}
+
 	public Feed(int id,String title,String url, String iconPath, String siteUrl, int unreadAriticlesCount) {
 		id_    = id;
 		title_ = title;
