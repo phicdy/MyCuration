@@ -91,8 +91,11 @@ public class UnreadCountManager {
             if (!unreadCountMap.containsKey(feedId)) {
                 return;
             }
-            int count = unreadCountMap.get(feedId) - 1;
-            unreadCountMap.put(feedId, count);
+            int count = unreadCountMap.get(feedId);
+            if (count == 0) {
+                return;
+            }
+            unreadCountMap.put(feedId, --count);
         }
         total--;
         updateDatbase(feedId);
