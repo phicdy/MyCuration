@@ -393,6 +393,10 @@ public class ArticlesListActivity extends ActionBarActivity {
 
     private void setReadStatusToTouchedView(final int touchedPosition, final String status, boolean isAllReadBack) {
         final Article touchedArticle = loadedArticles.get(touchedPosition);
+        String oldStatus = touchedArticle.getStatus();
+        if (oldStatus.equals(status) || (oldStatus.equals(Article.READ) && status.equals(Article.TOREAD))) {
+            return;
+        }
         dbAdapter.saveStatus(touchedArticle.getId(), status);
         if (status.equals(Article.TOREAD)) {
             unreadManager.countDownUnreadCount(touchedArticle.getFeedId());
