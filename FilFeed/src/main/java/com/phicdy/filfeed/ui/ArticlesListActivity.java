@@ -331,6 +331,9 @@ public class ArticlesListActivity extends ActionBarActivity {
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
+                    return;
+                }
                 ListView listView = getListView();
                 int firstPosition = listView.getFirstVisiblePosition();
                 int lastPosition = listView.getLastVisiblePosition();
