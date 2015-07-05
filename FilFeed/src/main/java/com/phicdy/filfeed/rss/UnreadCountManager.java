@@ -147,4 +147,17 @@ public class UnreadCountManager {
         }
     }
 
+    public void refreshConut(int feedId) {
+        synchronized (unreadCountMap) {
+            // Decrease original unread count
+            int oldCount = unreadCountMap.get(feedId);
+            total -= oldCount;
+
+            // Calc unread count from database
+            int count = adapter.getNumOfUnreadArtilces(feedId);
+            adapter.updateUnreadArticleCount(feedId, count);
+            unreadCountMap.put(feedId, count);
+            total += count;
+        }
+    }
 }
