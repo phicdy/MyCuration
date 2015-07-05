@@ -114,17 +114,15 @@ public class UnreadCountManager {
             return;
         }
 
-        final int count;
         synchronized (unreadCountMap) {
-            count = unreadCountMap.get(feedId);
+            final int count = unreadCountMap.get(feedId);
+            new Thread() {
+                @Override
+                public void run() {
+                    adapter.updateUnreadArticleCount(feedId, count);
+                }
+            }.start();
         }
-        new Thread() {
-            @Override
-            public void run() {
-                adapter.updateUnreadArticleCount(feedId, count);
-            }
-        }.start();
-
     }
 
     public void readAll(int feedId) {
