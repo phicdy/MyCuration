@@ -69,6 +69,10 @@ public class FeedListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         refreshList();
+        if (NetworkTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
+            feedsListView.setRefreshing(true);
+            updateProgress();
+        }
     }
 
 
@@ -148,10 +152,6 @@ public class FeedListFragment extends Fragment {
         // Set ListView
         rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
         feedsListView.setAdapter(rssFeedListAdapter);
-        if (NetworkTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
-            feedsListView.setRefreshing(true);
-            updateProgress();
-        }
     }
 
     @Override
