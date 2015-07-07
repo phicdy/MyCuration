@@ -26,12 +26,12 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AbsListView.OnScrollListener;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -490,6 +490,9 @@ public class ArticlesListActivity extends ActionBarActivity {
      * @author kyamaguchi Display articles list
      */
     class ArticlesListAdapter extends ArrayAdapter<Article> {
+
+        private ViewHolder holder;
+
         public ArticlesListAdapter(ArrayList<Article> articles) {
             /*
             * @param cotext
@@ -507,54 +510,62 @@ public class ArticlesListActivity extends ActionBarActivity {
             if (convertView == null) {
                 LayoutInflater inflater = getLayoutInflater();
                 row = inflater.inflate(R.layout.articles_list, parent, false);
+                holder = new ViewHolder();
+                holder.articleTitle = (TextView)row.findViewById(R.id.articleTitle);
+                holder.articlePostedTime = (TextView) row.findViewById(R.id.articlePostedTime);
+                holder.articlePoint = (TextView) row.findViewById(R.id.articlePoint);
+                holder.feedTitleView = (TextView) row.findViewById(R.id.feedTitle);
+                row.setTag(holder);
+            }else {
+                holder = (ViewHolder)row.getTag();
             }
+            
             Article article = this.getItem(position);
             if (article != null) {
-                // set RSS Feed title
-                TextView articleTitle = (TextView) row
-                        .findViewById(R.id.articleTitle);
-                articleTitle.setText(article.getTitle());
-                // set RSS posted date
-                TextView articlePostedTime = (TextView) row
-                        .findViewById(R.id.articlePostedTime);
+                holder.articleTitle.setText(article.getTitle());
+
+                // Set article posted date
                 SimpleDateFormat format = new SimpleDateFormat(
                         "yyyy/MM/dd HH:mm:ss");
                 String dateString = format.format(new Date(article
                         .getPostedDate()));
-                articlePostedTime.setText(dateString);
-                // set RSS Feed unread article count
-                TextView articlePoint = (TextView) row
-                        .findViewById(R.id.articlePoint);
+                holder.articlePostedTime.setText(dateString);
+
+                // Set RSS Feed unread article count
                 String hatenaPoint = article.getPoint();
                 if(hatenaPoint.equals(Article.DEDAULT_HATENA_POINT)) {
-                    articlePoint.setText(getString(R.string.not_get_hatena_point));
+                    holder.articlePoint.setText(getString(R.string.not_get_hatena_point));
                 }else {
-                    articlePoint.setText(hatenaPoint);
+                    holder.articlePoint.setText(hatenaPoint);
                 }
-                TextView feedTitleView = (TextView) row
-                        .findViewById(R.id.feedTitle);
+
                 String feedTitle = article.getFeedTitle();
                 if(feedTitle == null) {
-                    feedTitleView.setVisibility(View.GONE);
+                    holder.feedTitleView.setVisibility(View.GONE);
                 }else {
-                    feedTitleView.setText(feedTitle);
+                    holder.feedTitleView.setText(feedTitle);
+                    holder.feedTitleView.setTextColor(Color.BLACK);
                 }
-                articleTitle.setTextColor(Color.BLACK);
-                articlePostedTime.setTextColor(Color.BLACK);
-                articlePoint.setTextColor(Color.BLACK);
-                feedTitleView.setTextColor(Color.BLACK);
-                // If readStaus exists,change status
-                // if(readStatus.containsKey(String.valueOf(position)) &&
-                // readStatus.getInt(String.valueOf(position)) ==
-                // article.getId()) {
+                holder.articleTitle.setTextColor(Color.BLACK);
+                holder.articlePostedTime.setTextColor(Color.BLACK);
+                holder.articlePoint.setTextColor(Color.BLACK);
+
+                // Change color if already be read
                 if (article.getStatus().equals(Article.TOREAD) || article.getStatus().equals(Article.READ)) {
-                    articleTitle.setTextColor(Color.GRAY);
-                    articlePostedTime.setTextColor(Color.GRAY);
-                    articlePoint.setTextColor(Color.GRAY);
-                    feedTitleView.setTextColor(Color.GRAY);
+                    holder.articleTitle.setTextColor(Color.GRAY);
+                    holder.articlePostedTime.setTextColor(Color.GRAY);
+                    holder.articlePoint.setTextColor(Color.GRAY);
+                    holder.feedTitleView.setTextColor(Color.GRAY);
                 }
             }
-            return (row);
+            return row;
+        }
+
+        private class ViewHolder {
+            TextView articleTitle;
+            TextView articlePostedTime;
+            TextView articlePoint;
+            TextView feedTitleView;
         }
     }
 }
