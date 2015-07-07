@@ -62,18 +62,6 @@ public class UnreadCountManager {
         unreadCountMap.remove(feedId);
     }
 
-    public synchronized void addUnreadCount(int feedId, int addCount) {
-        synchronized (unreadCountMap) {
-            if (!unreadCountMap.containsKey(feedId)) {
-                return;
-            }
-            int count = unreadCountMap.get(feedId);
-            unreadCountMap.put(feedId, count + addCount);
-        }
-        total += addCount;
-        updateDatbase(feedId);
-    }
-
     public void conutUpUnreadCount(int feedId) {
         synchronized (unreadCountMap) {
             if (!unreadCountMap.containsKey(feedId)) {
