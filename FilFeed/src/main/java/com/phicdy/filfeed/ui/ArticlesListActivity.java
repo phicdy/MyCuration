@@ -214,7 +214,6 @@ public class ArticlesListActivity extends ActionBarActivity {
                             int touchedPosition = position - 1;
                             setReadStatusToTouchedView(touchedPosition, Article.TOREAD, false);
                             Article clickedArticle = loadedArticles.get(touchedPosition);
-                            unreadManager.countDownUnreadCount(clickedArticle.getFeedId());
                             if(prefMgr.isOpenInternal()) {
                                 intent = new Intent(getApplicationContext(), InternalWebViewActivity.class);
                                 intent.putExtra(OPEN_URL_ID, clickedArticle.getUrl());
