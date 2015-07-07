@@ -63,6 +63,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private BroadcastReceiver receiver;
     private Intent intent;
     private NetworkTaskManager networkTaskManager;
+    private MyProgressDialogFragment progressDialog;
 
     private FeedListFragment listFragment;
     private SearchView searchView;
@@ -293,6 +294,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                         listFragment.addFeed(newFeed);
                         listFragment.refreshList();
                     }
+                    progressDialog.getDialog().dismiss();
                 }
             }
         };
@@ -323,6 +325,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                                         .findViewById(R.id.addFeedUrl);
                                 String feedUrlStr = feedUrl.getText()
                                         .toString();
+                                progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_feed));
+                                progressDialog.show(getFragmentManager(), null);
                                 NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(feedUrlStr);
                             }
 

@@ -1,10 +1,12 @@
 package com.phicdy.filfeed.rss;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.util.Xml;
 
 import com.phicdy.filfeed.db.DatabaseAdapter;
+import com.phicdy.filfeed.task.NetworkTaskManager;
 import com.phicdy.filfeed.util.DateParser;
 import com.phicdy.filfeed.util.TextUtil;
 
@@ -25,11 +27,14 @@ public class RssParser {
 	private DatabaseAdapter dbAdapter;
 	private UnreadCountManager unreadCountManager;
 	private boolean isArticleFlag = false;
+	private Context context;
+
 	private static final String LOG_TAG = "FilFeed.RssParser";
 
 	public RssParser(Context context) {
 		dbAdapter = DatabaseAdapter.getInstance(context);
 		unreadCountManager = UnreadCountManager.getInstance(context);
+		this.context = context;
 	}
 
 	public void parseRssXml(final String baseUrl) {
@@ -112,6 +117,10 @@ public class RssParser {
 
 				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					Intent intent = new Intent(NetworkTaskManager.FINISH_ADD_FEED);
+					intent.putExtra(NetworkTaskManager.ADDED_FEED_URL, baseUrl);
+					context.sendBroadcast(intent);
 				}
 			}
 		}.start();
