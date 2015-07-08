@@ -10,7 +10,16 @@ public class Article {
 	private long postedDate_;
 	private int feedId_;
 	private String feedTitle;
-	
+
+	public static final String TABLE_NAME = "articles";
+	public static final String ID = "_id";
+	public static final String TITLE = "title";
+	public static final String URL = "url";
+	public static final String STATUS = "status";
+	public static final String POINT = "point";
+	public static final String DATE = "date";
+	public static final String FEEDID = "feedId";
+
 	public static final String UNREAD = "unread";
 	public static final String TOREAD = "toRead";
 	public static final String READ = "read";

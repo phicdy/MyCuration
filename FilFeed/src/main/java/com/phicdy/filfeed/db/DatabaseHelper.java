@@ -30,14 +30,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 Feed.ICON_PATH + " text," +
                 Feed.UNREAD_ARTICLE + " integer)";
         String createArticlesTableSQL =
-                "create table articles(_id integer primary key autoincrement,"+
-                "title text,"+
-                "url text,"+
-                "status text default "+ Article.UNREAD+","+
-                "point text,"+
-                "date text,"+
-                "feedId integer,"+
-                "foreign key(feedId) references feeds(_id))";
+                "create table " + Article.TABLE_NAME + "(" +
+                Article.ID + " integer primary key autoincrement,"+
+                Article.TITLE + " text,"+
+                Article.URL + " text,"+
+                Article.STATUS + " text default "+ Article.UNREAD+","+
+                Article.POINT + " text,"+
+                Article.DATE + " text,"+
+                Article.FEEDID + " integer,"+
+                "foreign key(" + Article.FEEDID + ") references " + Feed.TABLE_NAME + "(" + Article.ID + "))";
         String createFiltersTableSQL =
                 "create table filters(_id integer primary key autoincrement,"+
                 "feedId integer,"+

@@ -150,7 +150,7 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void>
 	private void saveHatenaBookmarkPoint(int point) {
 		// Save hatena bookmark point
 		if (targetArticle != null && point > -1) {
-			dbAdapter.saveHatenaPoint(targetArticle.getId(), String.valueOf(point));
+			dbAdapter.saveHatenaPoint(targetArticle.getUrl(), String.valueOf(point));
 		}
 	}
 	

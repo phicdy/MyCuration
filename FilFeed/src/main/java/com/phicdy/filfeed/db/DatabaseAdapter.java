@@ -341,12 +341,12 @@ public class DatabaseAdapter {
 		
 	}
 	
-	public void saveHatenaPoint(int articleId, String point) {
+	public void saveHatenaPoint(String url, String point) {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put("point", point);
-			db.update("articles", values, "_id = " + articleId, null);
+			values.put(Article.POINT, point);
+			db.update(Article.TABLE_NAME, values, Article.URL + " = '" + url + "'", null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
