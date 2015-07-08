@@ -249,6 +249,9 @@ public class RssParser {
 			// Save new articles
 			dbAdapter.saveNewArticles(articles, feedId);
 			unreadCountManager.refreshConut(feedId);
+			for (Article addedArticle : articles) {
+				NetworkTaskManager.getInstance(context).getHatenaPoint(addedArticle);
+			}
 		} catch (XmlPullParserException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

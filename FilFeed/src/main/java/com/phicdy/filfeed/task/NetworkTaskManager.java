@@ -8,7 +8,6 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
 import com.phicdy.filfeed.filter.FilterTask;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.RssParser;
@@ -59,8 +58,6 @@ public class NetworkTaskManager {
 				task.execute(feed.getSiteUrl());
 			}
 		}
-		// After update feed, update hatena point with interval
-		AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 		return true;
 	}
 
@@ -158,6 +155,10 @@ public class NetworkTaskManager {
         return numOfFeedRequest;
     }
 
+	public void getHatenaPoint(Article article) {
+		executorService.execute(new GetHatenaPointTask(article));
+	}
+
 	private class UpdateFeedTask implements Runnable {
 
 		private InputStream in;
@@ -185,6 +186,18 @@ public class NetworkTaskManager {
 				finishOneRequest();
 				context.sendBroadcast(new Intent(TopActivity.FINISH_UPDATE_ACTION));
 			}
+	private class GetHatenaPointTask implements Runnable {
+
+		private Article article;
+
+		public GetHatenaPointTask(Article article) {
+			this.article = article;
+		}
+
+		@Override
+		public void run() {
+			GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(context);
+			hatenaTask.execute(article);
 		}
 	}
 }
