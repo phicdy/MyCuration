@@ -126,7 +126,7 @@ public class RssParser {
 		}.start();
 	}
 
-	public boolean parseXml(InputStream is, int feedId) throws IOException {
+	public boolean parseXml(InputStream is, int feedId) {
 //		Log.d(LOG_TAG, "Parse start");
 
 		boolean result = true;
@@ -248,7 +248,6 @@ public class RssParser {
 			}
 			// Save new articles
 			dbAdapter.saveNewArticles(articles, feedId);
-			unreadCountManager.refreshConut(feedId);
 			for (Article addedArticle : articles) {
 				NetworkTaskManager.getInstance(context).getHatenaPoint(addedArticle);
 			}

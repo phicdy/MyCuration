@@ -9,8 +9,10 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.phicdy.filfeed.filter.FilterTask;
+import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.RssParser;
+import com.phicdy.filfeed.rss.UnreadCountManager;
 import com.phicdy.filfeed.ui.TopActivity;
 import com.phicdy.filfeed.util.UrlUtil;
 
@@ -77,6 +79,7 @@ public class NetworkTaskManager {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				finishOneRequest();
+				UnreadCountManager.getInstance(context).refreshConut(feed.getId());
 				context.sendBroadcast(new Intent(TopActivity.FINISH_UPDATE_ACTION));
 			}
 		});
@@ -172,20 +175,19 @@ public class NetworkTaskManager {
 		@Override
 		public void run() {
 			RssParser parser = new RssParser(context);
+			parser.parseXml(in, feedId);
+			new FilterTask(context).applyFiltering(feedId);
 			try {
-				parser.parseXml(in, feedId);
-				new FilterTask(context).applyFiltering(feedId);
+				in.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				finishOneRequest();
-				context.sendBroadcast(new Intent(TopActivity.FINISH_UPDATE_ACTION));
 			}
+			finishOneRequest();
+			UnreadCountManager.getInstance(context).refreshConut(feedId);
+			context.sendBroadcast(new Intent(TopActivity.FINISH_UPDATE_ACTION));
+		}
+	}
+
 	private class GetHatenaPointTask implements Runnable {
 
 		private Article article;
