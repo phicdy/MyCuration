@@ -436,6 +436,32 @@ public class DatabaseAdapter {
 		return feed;
 	}
 
+	public Feed getFeedById(int feedId) {
+		Feed feed = null;
+		db.beginTransaction();
+		try {
+			// Get feed
+			String[] culumn = {Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL};
+			String selection = Feed.ID + " = " + feedId;
+			Cursor cur = db.query(Feed.TABLE_NAME, culumn, selection, null, null, null, null);
+			if (cur.getCount() != 0) {
+				cur.moveToNext();
+				String feedTitle = cur.getString(0);
+				String feedUrl = cur.getString(1);
+				String iconPath = cur.getString(2);
+				String siteUrl = cur.getString(3);
+
+				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, siteUrl, 0);
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+		return feed;
+	}
+
 	public Feed saveNewFeed(String feedTitle, String feedUrl, String format, String siteUrl) {
 		boolean sameFeedExist = false;
 		db.beginTransaction();
