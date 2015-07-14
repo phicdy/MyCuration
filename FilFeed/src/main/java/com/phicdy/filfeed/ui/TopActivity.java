@@ -76,8 +76,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private static final int DELETE_FEED_MENU_ID = 1000;
     private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
 
-    private boolean isForeground = true;
-
     public static final String FEED_ID = "FEED_ID";
     public static final String FEED_URL = "FEED_URL";
     public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
@@ -137,7 +135,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     @Override
     protected void onResume() {
         super.onResume();
-        isForeground = true;
         setBroadCastReceiver();
 
         new Thread(new Runnable() {
@@ -155,7 +152,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
     @Override
     protected void onPause() {
-        isForeground = false;
         if (receiver != null) {
             unregisterReceiver(receiver);
         }
