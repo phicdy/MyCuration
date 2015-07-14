@@ -9,12 +9,6 @@
         android:title="@string/search_article"/>
 
     <item
-        android:id="@+id/allFeeds"
-        android:icon="@drawable/ic_all_hide"
-        app:showAsAction="collapseActionView|ifRoom"
-        android:title="@string/all"/>
-
-    <item
         android:id="@+id/addFeed"
         android:orderInCategory="1"
         app:showAsAction="never"

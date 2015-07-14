@@ -353,19 +353,28 @@ public class FeedListFragment extends Fragment {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 row = inflater.inflate(R.layout.feeds_list, parent, false);
                 holder = new ViewHolder();
-                holder.feedIcon = (ImageView)row.findViewById(R.id.feedIcon);
+                holder.feedIcon = (ImageView) row.findViewById(R.id.feedIcon);
                 holder.feedTitle = (TextView) row.findViewById(R.id.feedTitle);
                 holder.feedCount = (TextView) row.findViewById(R.id.feedCount);
                 row.setTag(holder);
-            }else {
-                holder = (ViewHolder)row.getTag();
+            } else {
+                holder = (ViewHolder) row.getTag();
             }
 
             Feed feed = this.getItem(position);
 
             String iconPath = feed.getIconPath();
-            if(iconPath == null || iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
+            if (isHided && ((position+1) == feeds.size())) {
+                holder.feedIcon.setVisibility(View.INVISIBLE);
+                holder.feedCount.setVisibility(View.GONE);
+                holder.feedTitle.setText(R.string.show_all_feeds);
+            } else if (!isHided && ((position+1) == allFeeds.size())) {
+                holder.feedIcon.setVisibility(View.INVISIBLE);
+                holder.feedCount.setVisibility(View.GONE);
+                holder.feedTitle.setText(R.string.hide_feeds);
+            }else if(iconPath == null || iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
                 holder.feedIcon.setImageResource(R.drawable.no_icon);
+                holder.feedTitle.setText(feed.getTitle());
             }else {
                 File file = new File(iconPath);
                 if (file.exists()) {
@@ -374,10 +383,8 @@ public class FeedListFragment extends Fragment {
                 } else {
                     dbAdapter.saveIconPath(feed.getSiteUrl(), Feed.DEDAULT_ICON_PATH);
                 }
+                holder.feedTitle.setText(feed.getTitle());
             }
-
-            // set RSS Feed title
-            holder.feedTitle.setText(feed.getTitle());
 
             // set RSS Feed unread article count
             holder.feedCount.setText(String.valueOf(unreadManager.getUnreadCount(feed.getId())));

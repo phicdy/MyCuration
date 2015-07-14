@@ -185,9 +185,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.allFeeds:
-                listFragment.changeHideStatus();
-                break;
             case R.id.addFeed:
                 addFeed();
                 break;
@@ -387,9 +384,14 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
     @Override
     public void onListClicked(int position) {
+        int feedId = listFragment.getFeedIdAtPosition(position);
+        if (feedId == Feed.DEFAULT_FEED_ID) {
+            listFragment.changeHideStatus();
+            return;
+        }
         intent = new Intent(getApplicationContext(),
                 ArticlesListActivity.class);
-        intent.putExtra(FEED_ID, listFragment.getFeedIdAtPosition(position));
+        intent.putExtra(FEED_ID, feedId);
         intent.putExtra(FEED_URL, listFragment.getFeedUrlAtPosition(position));
         startActivity(intent);
     }
