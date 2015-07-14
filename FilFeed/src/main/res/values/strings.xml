@@ -24,7 +24,7 @@
     <string name="task_exists_error">更新が実行中です。しばらくお待ち下さい。</string>
     <string name="ok">OK</string>
     <string name="app_icon_description">icon</string>
-    <string name="no_feed_message">"フィードをメニューから登録してください。"</string>
+    <string name="no_feed_message">"まずはフィードを登録しましょう！"</string>
 
     <string name="feed">フィード</string>
     <string name="add_feed">フィード登録</string>
@@ -60,7 +60,7 @@
     <string name="delete_filter">フィルター削除</string>
     <string name="not_get_hatena_point">取得中</string>
     <string name="none">なし</string>
-    <string name="no_filter">「フィルターを登録」からフィルターを登録してください</string>
+    <string name="no_filter">フィルターを登録しましょう！</string>
 
     <!-- 設定 -->
     <string name="setting">設定</string>
