@@ -72,7 +72,10 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private View indicator;
     private static final int INDICATOR_OFFSET_DP = 48;
     private int indicatorOffset;
+    private int selectedPosition = POSITION_FEED_FRAGMENT;
 
+    private static final int POSITION_FEED_FRAGMENT = 0;
+    private static final int POSITION_FILTER_FRAGMENT = 1;
     private static final int DELETE_FEED_MENU_ID = 1000;
     private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
 
@@ -181,12 +184,21 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.addFeed:
-                addFeed();
-                break;
-            case R.id.addFilter:
-                intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
-                startActivity(intent);
+            case R.id.add:
+                switch (selectedPosition) {
+                    case POSITION_FEED_FRAGMENT:
+                        addFeed();
+                        break;
+                    case POSITION_FILTER_FRAGMENT:
+                        if (dbAdapter.getNumOfFeeds() == 0) {
+                            addFeed();
+                            break;
+                        }
+                        intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
+                        startActivity(intent);
+                        break;
+                    default:
+                }
                 break;
             case R.id.setting:
                 startActivity(new Intent(getApplicationContext(), SettingActivity.class));
@@ -416,9 +428,9 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
+                case POSITION_FEED_FRAGMENT:
                     return listFragment;
-                case 1:
+                case POSITION_FILTER_FRAGMENT:
                     return new FilterListFragment();
                 default:
                     return null;
@@ -433,9 +445,9 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0:
+                case POSITION_FEED_FRAGMENT:
                     return getString(R.string.feed);
-                case 1:
+                case POSITION_FILTER_FRAGMENT:
                     return getString(R.string.filter);
             }
             return null;
@@ -481,6 +493,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
             indicator.setLayoutParams(layoutParams);
 
             trackScroller.scrollTo(indicatorLeft - indicatorOffset, 0);
+
+            selectedPosition = position;
         }
     }
 }

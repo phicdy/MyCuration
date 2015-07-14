@@ -2,22 +2,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/add"
+        android:icon="@drawable/ic_action_new"
+        app:showAsAction="collapseActionView|ifRoom"
+        android:title="@string/add_feed"/>
+
+    <item
         android:id="@+id/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/ic_action_search"
         app:showAsAction="collapseActionView|ifRoom"
         android:title="@string/search_article"/>
 
-    <item
-        android:id="@+id/addFeed"
-        android:orderInCategory="1"
-        app:showAsAction="never"
-        android:title="@string/add_feed"/>
- 	<item
-        android:id="@+id/addFilter"
-        android:orderInCategory="2"
-        app:showAsAction="never"
-        android:title="@string/add_filter"/>
  	<item
         android:id="@+id/setting"
         android:orderInCategory="3"
