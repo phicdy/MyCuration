@@ -31,6 +31,7 @@ import java.util.ArrayList;
 public class FeedListFragment extends Fragment {
 
     private TextView tvAllUnreadArticleCount;
+    private LinearLayout allUnread;
     private PullToRefreshListView feedsListView;
     private RssFeedListAdapter rssFeedListAdapter;
     private OnFeedListFragmentListener mListener;
@@ -61,7 +62,9 @@ public class FeedListFragment extends Fragment {
 
         unreadManager = UnreadCountManager.getInstance(getActivity());
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
-        allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();;
+        allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
+        // For show/hide
+        allFeeds.add(new Feed());
         generateHidedFeedList();
     }
 
@@ -103,7 +106,7 @@ public class FeedListFragment extends Fragment {
                 mListener.onRefreshList();
             }
         });
-        LinearLayout allUnread = (LinearLayout)getActivity().findViewById(R.id.ll_all_unread);
+        allUnread = (LinearLayout)getActivity().findViewById(R.id.ll_all_unread);
         allUnread.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -144,7 +147,7 @@ public class FeedListFragment extends Fragment {
 
         tvAllUnreadArticleCount = (TextView)getActivity().findViewById(R.id.allUnreadCount);
         if (numOfAllFeeds == 0) {
-            tvAllUnreadArticleCount.setVisibility(View.GONE);
+            allUnread.setVisibility(View.GONE);
         }else {
             updateAllUnreadArticlesCount();
         }
