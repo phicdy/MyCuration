@@ -64,7 +64,9 @@ public class FeedListFragment extends Fragment {
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
         allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
         // For show/hide
-        allFeeds.add(new Feed());
+        if (allFeeds.size() != 0) {
+            allFeeds.add(new Feed());
+        }
         generateHidedFeedList();
     }
 
