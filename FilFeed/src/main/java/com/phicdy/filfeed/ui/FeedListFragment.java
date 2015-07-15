@@ -65,7 +65,7 @@ public class FeedListFragment extends Fragment {
         allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
         // For show/hide
         if (allFeeds.size() != 0) {
-            allFeeds.add(new Feed());
+            addShowHideLine(allFeeds);
         }
         generateHidedFeedList();
     }
@@ -207,12 +207,34 @@ public class FeedListFragment extends Fragment {
     }
 
     public void addFeed(Feed newFeed) {
+        deleteShowHideLineIfNeeded();
         if (newFeed.getUnreadAriticlesCount() > 0) {
             feeds.add(newFeed);
+            addShowHideLine(feeds);
         }
         allFeeds.add(newFeed);
+        addShowHideLine(allFeeds);
         unreadManager.addFeed(newFeed);
         rssFeedListAdapter.notifyDataSetChanged();
+    }
+
+    private void deleteShowHideLineIfNeeded() {
+        if (feeds != null && feeds.size() > 0) {
+            int lastIndex = feeds.size() - 1;
+            if (feeds.get(lastIndex).getId() == Feed.DEFAULT_FEED_ID) {
+                feeds.remove(lastIndex);
+            }
+        }
+        if (allFeeds != null && allFeeds.size() > 0) {
+            int lastIndex = allFeeds.size() - 1;
+            if (allFeeds.get(lastIndex).getId() == Feed.DEFAULT_FEED_ID) {
+                allFeeds.remove(lastIndex);
+            }
+        }
+    }
+
+    private void addShowHideLine(ArrayList<Feed> feeds) {
+        feeds.add(new Feed());
     }
 
     public void removeFeedAtPosition(int position) {
