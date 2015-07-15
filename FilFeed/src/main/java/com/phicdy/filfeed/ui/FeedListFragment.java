@@ -393,6 +393,8 @@ public class FeedListFragment extends Fragment {
             Feed feed = this.getItem(position);
 
             String iconPath = feed.getIconPath();
+            holder.feedIcon.setVisibility(View.VISIBLE);
+            holder.feedCount.setVisibility(View.VISIBLE);
             if (isHided && ((position+1) == feeds.size())) {
                 holder.feedIcon.setVisibility(View.INVISIBLE);
                 holder.feedCount.setVisibility(View.GONE);
