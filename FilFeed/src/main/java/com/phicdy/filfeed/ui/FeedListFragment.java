@@ -194,7 +194,7 @@ public class FeedListFragment extends Fragment {
                 hideList.add(feed);
             }
         }
-        if(allFeeds.size() != hideList.size() && hideList.size() != 0) {
+        if((allFeeds.size()-1) != hideList.size() && hideList.size() != 0) {
             for(Feed feed : hideList) {
                 feeds.remove(feed);
             }
