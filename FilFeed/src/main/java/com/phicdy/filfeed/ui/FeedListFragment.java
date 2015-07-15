@@ -221,6 +221,11 @@ public class FeedListFragment extends Fragment {
             dbAdapter.deleteFeed(deletedFeed.getId());
             unreadManager.deleteFeed(deletedFeed.getId());
             feeds.remove(position);
+            for (int i = 0;i < allFeeds.size();i++) {
+                if (allFeeds.get(i).getId() == deletedFeed.getId()) {
+                    allFeeds.remove(i);
+                }
+            }
         }else {
             Feed deletedFeed = allFeeds.get(position);
             dbAdapter.deleteFeed(deletedFeed.getId());
