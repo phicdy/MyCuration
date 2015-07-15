@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.phicdy.filfeed.filter.Filter;
 import com.phicdy.filfeed.rss.Article;
+import com.phicdy.filfeed.rss.Curation;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.util.FileUtil;
 
@@ -174,7 +175,7 @@ public class DatabaseAdapter {
 		}
 		return feedList;
 	}
-	
+
 	public ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		db.beginTransaction();
@@ -1091,4 +1092,11 @@ public class DatabaseAdapter {
 		}
 	}
 
+	public ArrayList<Curation> getAllCurations() {
+		return null;
+	}
+
+	public void deleteCuration(int curationId) {
+
+	}
 }
