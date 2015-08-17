@@ -68,7 +68,7 @@ public class CurationListFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
-                        mListener.onListClicked(position);
+                        mListener.onCurationListClicked(position);
                     }
 
                 });
@@ -95,7 +95,7 @@ public class CurationListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         curationListView = (ListView) getActivity().findViewById(R.id.lv_curation);
-        TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView);
+        TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView_curation);
         curationListView.setEmptyView(emptyView);
         getActivity().registerForContextMenu(curationListView);
         setAllListener();
@@ -143,9 +143,7 @@ public class CurationListFragment extends Fragment {
     }
 
     public interface OnCurationListFragmentListener {
-        public void onListClicked(int position);
-        public void onRefreshList();
-        public void onAllUnreadClicked();
+        public void onCurationListClicked(int position);
     }
 
     /**

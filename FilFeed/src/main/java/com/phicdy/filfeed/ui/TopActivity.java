@@ -42,7 +42,7 @@ import com.phicdy.filfeed.task.NetworkTaskManager;
 
 import java.util.ArrayList;
 
-public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener{
+public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -74,8 +74,9 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private int indicatorOffset;
     private int selectedPosition = POSITION_FEED_FRAGMENT;
 
-    private static final int POSITION_FEED_FRAGMENT = 0;
-    private static final int POSITION_FILTER_FRAGMENT = 1;
+    private static final int POSITION_CURATION_FRAGMENT = 0;
+    private static final int POSITION_FEED_FRAGMENT = 1;
+    private static final int POSITION_FILTER_FRAGMENT = 2;
     private static final int DELETE_FEED_MENU_ID = 1000;
     private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
 
@@ -103,7 +104,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         indicator = (View)findViewById(R.id.indicator);
 
         WindowManager wm = getWindowManager();
-        // Displayのインスタンス取得
         Display disp = wm.getDefaultDisplay();
         Point size = new Point();
         disp.getSize(size);
@@ -186,6 +186,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         switch (item.getItemId()) {
             case R.id.add:
                 switch (selectedPosition) {
+                    case POSITION_CURATION_FRAGMENT:
+                        break;
                     case POSITION_FEED_FRAGMENT:
                         addFeed();
                         break;
@@ -415,6 +417,11 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         startActivity(intent);
     }
 
+    @Override
+    public void onCurationListClicked(int position) {
+
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -428,6 +435,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         @Override
         public Fragment getItem(int position) {
             switch (position) {
+                case POSITION_CURATION_FRAGMENT:
+                    return new CurationListFragment();
                 case POSITION_FEED_FRAGMENT:
                     return listFragment;
                 case POSITION_FILTER_FRAGMENT:
@@ -439,12 +448,14 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
+                case POSITION_CURATION_FRAGMENT:
+                    return getString(R.string.curation);
                 case POSITION_FEED_FRAGMENT:
                     return getString(R.string.feed);
                 case POSITION_FILTER_FRAGMENT:

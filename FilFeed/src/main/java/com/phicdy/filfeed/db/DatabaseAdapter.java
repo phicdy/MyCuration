@@ -1093,7 +1093,7 @@ public class DatabaseAdapter {
 	}
 
 	public ArrayList<Curation> getAllCurations() {
-		return null;
+		return new ArrayList<>();
 	}
 
 	public void deleteCuration(int curationId) {
