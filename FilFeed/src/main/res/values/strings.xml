@@ -3,7 +3,11 @@
 
     <string name="app_name">FilFeed</string>
     <string name="action_settings">Settings</string>
-    
+
+    <!-- キュレーション -->
+    <string name="curation">キュレーション</string>
+    <string name="no_curation_message">キュレーションを登録しましょう！</string>
+
     <!-- フィード一覧 -->
     <string name="all">全ての記事</string>
     <string name="show_all_feeds">全てのフィードを表示</string>
