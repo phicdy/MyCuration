@@ -98,12 +98,16 @@
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value="com.phicdy.filfeed.ui.ArticleSearchResultActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
+        </activity>
+        <activity
+            android:name=".ui.AddCurationActivity"
+            android:label="@string/title_activity_add_curation" >
         </activity>
     </application>
 
