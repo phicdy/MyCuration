@@ -3,50 +3,38 @@ package com.phicdy.filfeed.rss;
 
 
 public class Curation {
-	private int id_;
-	private String title_;
-	private int unreadAriticlesCount_;
+	private int id;
+	private String name;
 
 	public static final String TABLE_NAME = "curations";
-	public static final String TITLE = "title";
+	public static final String NAME = "name";
 	public static final String ID = "_id";
-	public static final String UNREAD_ARTICLE = "unreadArticle";
 
 	public static final int DEFAULT_CURATION_ID = -100;
 
 	public Curation() {
-		id_      = DEFAULT_CURATION_ID;
-		title_   = null;
-		unreadAriticlesCount_ = 0;
+		id = DEFAULT_CURATION_ID;
+		name = null;
 	}
 
-	public Curation(int id, String title, int unreadAriticlesCount) {
-		id_    = id;
-		title_ = title;
-		unreadAriticlesCount_ = unreadAriticlesCount;
+	public Curation(int id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 	
-	public void setTitle(String title) {
-		title_ = title;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public void setId(Integer id) {
-		id_ = id;
-	}
-	
-	public void setUnreadArticlesCount(int unreadArticlesCount) {
-		unreadAriticlesCount_ = unreadArticlesCount;
-	}
-	
-	public int getUnreadAriticlesCount() {
-		return unreadAriticlesCount_;
+		this.id = id;
 	}
 	
 	public Integer getId() {
-		return id_;
+		return id;
 	}
 	
-	public String getTitle() {
-		return title_;
+	public String getName() {
+		return name;
 	}
 }

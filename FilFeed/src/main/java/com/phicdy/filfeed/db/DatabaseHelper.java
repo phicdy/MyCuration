@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.phicdy.filfeed.rss.Article;
+import com.phicdy.filfeed.rss.Curation;
 import com.phicdy.filfeed.rss.Feed;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
@@ -46,17 +47,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 "url text," +
                 "title text,"+
                 "foreign key(feedId) references feeds(_id))";
-        String createPrioritiesTableSQL =
-                "create table priorities(_id integer primary key autoincrement,"+
-                "priorFeedId integer,"+
-                "posteriorFeedId integer,"+
-                "foreign key(priorFeedId) references feeds(_id),"+
-                "foreign key(posteriorFeedId) references feeds(_id))";
-                  
+        String createCurationsTableSQL =
+                "create table " + Curation.TABLE_NAME + "(" +
+                        Curation.ID + " integer primary key autoincrement,"+
+                        Curation.NAME + " text)";
+
         db.execSQL(createFeedsTableSQL);
         db.execSQL(createArticlesTableSQL);
         db.execSQL(createFiltersTableSQL);
-        db.execSQL(createPrioritiesTableSQL);
+        db.execSQL(createCurationsTableSQL);
     }
       
     @Override
