@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Curation;
+import com.phicdy.filfeed.rss.CurationCondition;
 import com.phicdy.filfeed.rss.CurationSelection;
 import com.phicdy.filfeed.rss.Feed;
 
@@ -59,6 +60,12 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                         CurationSelection.ARTICLE_ID + " integer," +
                         "foreign key(" + CurationSelection.CURATION_ID + ") references " + Curation.TABLE_NAME + "(" + Curation.ID + ")," +
                         "foreign key(" + CurationSelection.ARTICLE_ID + ") references " + Article.TABLE_NAME + "(" + Article.ID + "))";
+        String createCurationConditionTableSQL =
+                "create table " + CurationCondition.TABLE_NAME + "(" +
+                        CurationCondition.ID + " integer primary key autoincrement,"+
+                        CurationCondition.WORD + " text," +
+                        CurationCondition.CURATION_ID + " integer," +
+                        "foreign key(" + CurationSelection.CURATION_ID + ") references " + Curation.TABLE_NAME + "(" + Curation.ID + "))";
 
         db.execSQL(createFeedsTableSQL);
         db.execSQL(createArticlesTableSQL);
