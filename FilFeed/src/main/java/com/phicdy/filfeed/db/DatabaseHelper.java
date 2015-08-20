@@ -52,11 +52,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 "create table " + Curation.TABLE_NAME + "(" +
                         Curation.ID + " integer primary key autoincrement,"+
                         Curation.NAME + " text)";
-        String createCurationsSelectionTableSQL =
+        String createCurationSelectionsTableSQL =
                 "create table " + CurationSelection.TABLE_NAME + "(" +
                         CurationSelection.ID + " integer primary key autoincrement,"+
-                        CurationSelection.CURATION_ID + " text," +
-                        CurationSelection.ARTICLE_ID + " text," +
+                        CurationSelection.CURATION_ID + " integer," +
+                        CurationSelection.ARTICLE_ID + " integer," +
                         "foreign key(" + CurationSelection.CURATION_ID + ") references " + Curation.TABLE_NAME + "(" + Curation.ID + ")," +
                         "foreign key(" + CurationSelection.ARTICLE_ID + ") references " + Article.TABLE_NAME + "(" + Article.ID + "))";
 
@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db.execSQL(createArticlesTableSQL);
         db.execSQL(createFiltersTableSQL);
         db.execSQL(createCurationsTableSQL);
-        db.execSQL(createCurationsSelectionTableSQL);
+        db.execSQL(createCurationSelectionsTableSQL);
     }
       
     @Override
