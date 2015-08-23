@@ -4,10 +4,6 @@
     <string name="app_name">FilFeed</string>
     <string name="action_settings">Settings</string>
 
-    <!-- キュレーション -->
-    <string name="curation">キュレーション</string>
-    <string name="no_curation_message">キュレーションを登録しましょう！</string>
-
     <!-- フィード一覧 -->
     <string name="all">全ての記事</string>
     <string name="show_all_feeds">全てのフィードを表示</string>
@@ -103,4 +99,10 @@
     <string name="error_rss_is_not_found">フィードが見つかりませんでした</string>
     <string name="error_invalid_rss_url">不正なフィードのURLです</string>
     <string name="error_invalid_html">サイトのHTMLが不正です</string>
+
+    <!-- キュレーション -->
+    <string name="curation">キュレーション</string>
+    <string name="no_curation_message">キュレーションを登録しましょう！</string>
+    <string name="add_word">追加</string>
+    <string name="title_activity_add_curation">キュレーションを追加</string>
 </resources>
