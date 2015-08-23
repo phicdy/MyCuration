@@ -175,6 +175,7 @@ public class ArticlesListActivity extends ActionBarActivity {
             searchView.onActionViewCollapsed();
             searchView.setQuery("",false);
         }
+        invisibleFooter();
         setBroadCastReceiver();
     }
     @Override
@@ -441,6 +442,7 @@ public class ArticlesListActivity extends ActionBarActivity {
             return;
         }
 
+        getListView().addFooterView(getFooter());
         mTask = new AsyncTask<Long, Void, Void>() {
             @Override
             protected Void doInBackground(Long[] params) {
