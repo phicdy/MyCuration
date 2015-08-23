@@ -165,7 +165,7 @@ public class CurationListFragment extends Fragment {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 row = inflater.inflate(R.layout.curation_list, parent, false);
                 holder = new ViewHolder();
-                holder.curationTitle = (TextView) row.findViewById(R.id.tv_curation_title);
+                holder.curationName = (TextView) row.findViewById(R.id.tv_curation_title);
                 holder.curationCount = (TextView) row.findViewById(R.id.tv_curation_count);
                 row.setTag(holder);
             } else {
@@ -174,16 +174,14 @@ public class CurationListFragment extends Fragment {
 
             Curation curation = this.getItem(position);
 
-            holder.curationTitle.setText(curation.getTitle());
-
-            // set RSS Curation unread article count
+            holder.curationName.setText(curation.getName());
             holder.curationCount.setText(String.valueOf(unreadManager.getUnreadCount(curation.getId())));
 
             return row;
         }
 
         private class ViewHolder {
-            TextView curationTitle;
+            TextView curationName;
             TextView curationCount;
         }
     }
