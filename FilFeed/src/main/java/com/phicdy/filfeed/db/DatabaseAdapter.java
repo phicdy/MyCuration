@@ -12,6 +12,7 @@ import android.util.Log;
 import com.phicdy.filfeed.filter.Filter;
 import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Curation;
+import com.phicdy.filfeed.rss.CurationCondition;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.util.FileUtil;
 
@@ -1092,11 +1093,77 @@ public class DatabaseAdapter {
 		}
 	}
 
+	public boolean saveNewCuration(String name, ArrayList<String> words) {
+		if(words.isEmpty()) {
+			return false;
+		}
+		db.beginTransaction();
+		boolean result = true;
+		try {
+			ContentValues values = new ContentValues();
+			values.put(Curation.NAME, name);
+			long addedCurationId = db.insert(Curation.TABLE_NAME, null, values);
+			for (String word : words) {
+				ContentValues condtionValue = new ContentValues();
+				condtionValue.put(CurationCondition.CURATION_ID, addedCurationId);
+				condtionValue.put(CurationCondition.WORD, word);
+				db.insert(CurationCondition.TABLE_NAME, null, condtionValue);
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			db.endTransaction();
+		}
+		return result;
+	}
+
 	public ArrayList<Curation> getAllCurations() {
-		return new ArrayList<>();
+		ArrayList<Curation> curationList = new ArrayList<>();
+		db.beginTransaction();
+		try {
+			String[] columns = {Curation.ID, Curation.NAME};
+			String orderBy = Curation.NAME;
+			Cursor cursor = db.query(Curation.TABLE_NAME, columns, null, null, null, null, orderBy);
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					int id = cursor.getInt(0);
+					String name = cursor.getString(1);
+					curationList.add(new Curation(id, name));
+				}
+				cursor.close();
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+
+		return curationList;
 	}
 
 	public void deleteCuration(int curationId) {
 
+	}
+
+	public boolean isExistSameNameCuration(String name) {
+		int num = 0;
+		try {
+			String[] columns = {Curation.ID};
+			String selection = Curation.NAME + " = ?";
+			String[] selectionArgs = {name};
+			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+			num = cursor.getCount();
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(num > 0) {
+				return true;
+			}
+			return false;
+		}
 	}
 }
