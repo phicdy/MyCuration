@@ -45,7 +45,6 @@ public class CurationListFragment extends Fragment {
 
         unreadManager = UnreadCountManager.getInstance(getActivity());
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
-        allCurations = dbAdapter.getAllCurations();
     }
 
     @Override
@@ -117,6 +116,7 @@ public class CurationListFragment extends Fragment {
     }
 
     public void refreshList() {
+        allCurations = dbAdapter.getAllCurations();
         curationListAdapter = new CurationListAdapter(allCurations, getActivity());
         curationListView.setAdapter(curationListAdapter);
         curationListAdapter.notifyDataSetChanged();
