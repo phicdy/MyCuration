@@ -122,11 +122,6 @@ public class CurationListFragment extends Fragment {
         curationListAdapter.notifyDataSetChanged();
     }
 
-    public void addCuration(Curation newCuration) {
-        allCurations.add(newCuration);
-        curationListAdapter.notifyDataSetChanged();
-    }
-
     public void removeCurationAtPosition(int position) {
         Curation deletedCuration = allCurations.get(position);
         dbAdapter.deleteCuration(deletedCuration.getId());
