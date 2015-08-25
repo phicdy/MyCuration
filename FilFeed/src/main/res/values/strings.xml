@@ -102,7 +102,16 @@
 
     <!-- キュレーション -->
     <string name="curation">キュレーション</string>
+    <string name="curation_name">キュレーション名</string>
     <string name="no_curation_message">キュレーションを登録しましょう！</string>
     <string name="add_word">追加</string>
+    <string name="word_setting">単語の設定</string>
     <string name="title_activity_add_curation">キュレーションを追加</string>
+    <string name="empty_curation_name">キュレーション名が空です。</string>
+    <string name="empty_word">空の単語は追加できません。</string>
+    <string name="empty_word_list">単語が1つもありません。</string>
+    <string name="duplicate_word">既に同じ単語が入っています。</string>
+    <string name="duplicate_curation_name">既に同じ名前のキュレーションが存在します。</string>
+    <string name="curation_added_success">キュレーションを追加しました。</string>
+    <string name="curation_added_error">キュレーションの追加に失敗しました。</string>
 </resources>
