@@ -72,6 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db.execSQL(createFiltersTableSQL);
         db.execSQL(createCurationsTableSQL);
         db.execSQL(createCurationSelectionsTableSQL);
+        db.execSQL(createCurationConditionTableSQL);
     }
       
     @Override
