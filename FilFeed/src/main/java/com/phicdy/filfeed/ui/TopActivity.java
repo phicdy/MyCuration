@@ -187,6 +187,10 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
             case R.id.add:
                 switch (selectedPosition) {
                     case POSITION_CURATION_FRAGMENT:
+                        if (dbAdapter.getNumOfFeeds() == 0) {
+                            addFeed();
+                            break;
+                        }
 						Intent intent = new Intent(getApplicationContext(), AddCurationActivity.class);
 						startActivity(intent);
                         break;
