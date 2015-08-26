@@ -13,6 +13,7 @@ import com.phicdy.filfeed.filter.Filter;
 import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Curation;
 import com.phicdy.filfeed.rss.CurationCondition;
+import com.phicdy.filfeed.rss.CurationSelection;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.util.FileUtil;
 
@@ -30,6 +31,7 @@ public class DatabaseAdapter {
 	private static SQLiteDatabase db;
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
+	public static final int NOT_FOUND_ID = -1;
 
 	private static final String LOG_TAG = "FilFeed."
 			+ DatabaseAdapter.class.getName();
@@ -1119,6 +1121,36 @@ public class DatabaseAdapter {
 		return result;
 	}
 
+	public boolean adaptCurationToArticles(String curationName, ArrayList<String> words) {
+		int curationId = getCurationIdByName(curationName);
+		if (curationId == NOT_FOUND_ID) {
+			return false;
+		}
+
+		boolean result = true;
+		db.beginTransaction();
+		try {
+			ArrayList<Article> allArticles = getAllUnreadArticles(true);
+			for (Article article : allArticles) {
+				for (String word : words) {
+					if (article.getTitle().contains(word)) {
+						ContentValues values = new ContentValues();
+						values.put(CurationSelection.ARTICLE_ID, article.getId());
+						values.put(CurationSelection.CURATION_ID, curationId);
+						db.insert(CurationSelection.TABLE_NAME, null, values);
+					}
+				}
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			db.endTransaction();
+		}
+		return result;
+	}
+
 	public ArrayList<Curation> getAllCurations() {
 		ArrayList<Curation> curationList = new ArrayList<>();
 		db.beginTransaction();
@@ -1164,6 +1196,145 @@ public class DatabaseAdapter {
 				return true;
 			}
 			return false;
+		}
+	}
+
+	public int getCurationIdByName(String name) {
+		int id = NOT_FOUND_ID;
+		try {
+			String[] columns = {Curation.ID};
+			String selection = Curation.NAME + " = ?";
+			String[] selectionArgs = {name};
+			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+			cursor.moveToFirst();
+			id = cursor.getInt(0);
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return id;
+		}
+	}
+
+	public String getCurationNameById(int curationId) {
+		String name = "";
+		try {
+			String[] columns = {Curation.NAME};
+			String selection = Curation.ID + " = ?";
+			String[] selectionArgs = {String.valueOf(curationId)};
+			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+			cursor.moveToFirst();
+			name = cursor.getString(0);
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return name;
+		}
+	}
+
+	public ArrayList<Article> getAllUnreadArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
+		ArrayList<Article> articles = new ArrayList<>();
+		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
+				Article.TABLE_NAME + "." + Article.TITLE + "," +
+				Article.TABLE_NAME + "." + Article.URL + "," +
+				Article.TABLE_NAME + "." + Article.STATUS + "," +
+				Article.TABLE_NAME + "." + Article.POINT + "," +
+				Article.TABLE_NAME + "." + Article.DATE + "," +
+				Article.TABLE_NAME + "." + Article.FEEDID +
+				" from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
+				" where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
+				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
+				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
+				" order by " + Article.DATE;
+		if(isNewestArticleTop) {
+			sql += " desc";
+		}else {
+			sql += " asc";
+		}
+		try {
+			Cursor cursor = db.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				int id = cursor.getInt(0);
+				String title = cursor.getString(1);
+				String url = cursor.getString(2);
+				String status = cursor.getString(3);
+				String point = cursor.getString(4);
+				long dateLong = cursor.getLong(5);
+				int feedId = cursor.getInt(6);
+				Article article = new Article(id, title, url, status, point,
+						dateLong, feedId, null);
+				articles.add(article);
+			}
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return articles;
+		}
+	}
+	public int calcNumOfAllUnreadArticlesOfCuration(int curationId) {
+		int num = 0;
+		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
+				Article.TABLE_NAME + "." + Article.TITLE + "," +
+				Article.TABLE_NAME + "." + Article.URL + "," +
+				Article.TABLE_NAME + "." + Article.STATUS + "," +
+				Article.TABLE_NAME + "." + Article.POINT + "," +
+				Article.TABLE_NAME + "." + Article.DATE + "," +
+				Article.TABLE_NAME + "." + Article.FEEDID +
+				" from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
+				" where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
+				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
+				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
+				" order by " + Article.DATE;
+		try {
+			Cursor cursor = db.rawQuery(sql, null);
+			num = cursor.getCount();
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return num;
+		}
+	}
+
+	public ArrayList<Article> getAllArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
+		ArrayList<Article> articles = new ArrayList<>();
+		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
+				Article.TABLE_NAME + "." + Article.TITLE + "," +
+				Article.TABLE_NAME + "." + Article.URL + "," +
+				Article.TABLE_NAME + "." + Article.STATUS + "," +
+				Article.TABLE_NAME + "." + Article.POINT + "," +
+				Article.TABLE_NAME + "." + Article.DATE + "," +
+				Article.TABLE_NAME + "." + Article.FEEDID +
+				" from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
+				" where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
+				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
+				" order by " + Article.DATE;
+		if(isNewestArticleTop) {
+			sql += " desc";
+		}else {
+			sql += " asc";
+		}
+		try {
+			Cursor cursor = db.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				int id = cursor.getInt(0);
+				String title = cursor.getString(1);
+				String url = cursor.getString(2);
+				String status = cursor.getString(3);
+				String point = cursor.getString(4);
+				long dateLong = cursor.getLong(5);
+				int feedId = cursor.getInt(6);
+				Article article = new Article(id, title, url, status, point,
+						dateLong, feedId, null);
+				articles.add(article);
+			}
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return articles;
 		}
 	}
 }
