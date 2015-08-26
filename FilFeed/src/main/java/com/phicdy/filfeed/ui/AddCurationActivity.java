@@ -98,6 +98,10 @@ public class AddCurationActivity extends ActionBarActivity {
             ToastHelper.showToast(getApplicationContext(), getString(R.string.duplicate_curation_name), Toast.LENGTH_SHORT);
             return false;
         }
-        return adapter.saveNewCuration(curationName, wordList);
+        boolean result = adapter.saveNewCuration(curationName, wordList);
+        if (result) {
+            adapter.adaptCurationToArticles(curationName, wordList);
+        }
+        return result;
     }
 }
