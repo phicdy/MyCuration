@@ -42,7 +42,6 @@ public class CurationListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         unreadManager = UnreadCountManager.getInstance(getActivity());
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
     }
@@ -86,7 +85,7 @@ public class CurationListFragment extends Fragment {
             mListener = (OnCurationListFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnCurationListFragmentListener");
         }
     }
 
@@ -146,7 +145,6 @@ public class CurationListFragment extends Fragment {
 
     /**
      *
-     * @author kyamaguchi Display RSS Curations List
      */
     class CurationListAdapter extends ArrayAdapter<Curation> {
         public CurationListAdapter(ArrayList<Curation> curations, Context context) {
@@ -173,7 +171,7 @@ public class CurationListFragment extends Fragment {
             Curation curation = this.getItem(position);
 
             holder.curationName.setText(curation.getName());
-            holder.curationCount.setText(String.valueOf(unreadManager.getUnreadCount(curation.getId())));
+            holder.curationCount.setText(String.valueOf(unreadManager.getCurationCount(curation.getId())));
 
             return row;
         }
