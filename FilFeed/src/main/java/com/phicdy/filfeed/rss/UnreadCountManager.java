@@ -1,7 +1,6 @@
 package com.phicdy.filfeed.rss;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.phicdy.filfeed.db.DatabaseAdapter;
 
@@ -147,5 +146,9 @@ public class UnreadCountManager {
             unreadCountMap.put(feedId, count);
             total += count;
         }
+    }
+
+    public int getCurationCount(int curationId) {
+        return adapter.calcNumOfAllUnreadArticlesOfCuration(curationId);
     }
 }
