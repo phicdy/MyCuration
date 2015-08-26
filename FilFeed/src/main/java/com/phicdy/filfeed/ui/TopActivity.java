@@ -66,6 +66,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private MyProgressDialogFragment progressDialog;
 
     private FeedListFragment listFragment;
+    private CurationListFragment curationFragment;
     private SearchView searchView;
     private ViewGroup track;
     private HorizontalScrollView trackScroller;
@@ -81,6 +82,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
 
     public static final String FEED_ID = "FEED_ID";
+    public static final String CURATION_ID = "CURATION_ID";
     public static final String FEED_URL = "FEED_URL";
     public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
     private static final String LOG_TAG = "FilFeed." + TopActivity.class.getSimpleName();
@@ -91,6 +93,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         setContentView(R.layout.activity_top);
 
         listFragment = new FeedListFragment();
+        curationFragment = new CurationListFragment();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -425,7 +428,10 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
     @Override
     public void onCurationListClicked(int position) {
-
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), ArticlesListActivity.class);
+        intent.putExtra(CURATION_ID, curationFragment.getCurationIdAtPosition(position));
+        startActivity(intent);
     }
 
     /**
@@ -442,7 +448,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         public Fragment getItem(int position) {
             switch (position) {
                 case POSITION_CURATION_FRAGMENT:
-                    return new CurationListFragment();
+                    return curationFragment;
                 case POSITION_FEED_FRAGMENT:
                     return listFragment;
                 case POSITION_FILTER_FRAGMENT:

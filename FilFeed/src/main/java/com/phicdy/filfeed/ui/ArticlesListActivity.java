@@ -55,6 +55,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private ArrayList<Article> allArticles;
     private ArrayList<Article> loadedArticles = new ArrayList<>();
     private int feedId;
+    private int curationId;
     private String feedUrl;
     private DatabaseAdapter dbAdapter;
     private PreferenceManager prefMgr;
@@ -68,6 +69,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     public static final String OPEN_URL_ID = "openUrl";
     private static final int LOAD_COUNT = 100;
+    private static final int DEFAULT_CURATION_ID = -1;
     private static final String LOAD_ARTICLE = "loadArticle";
     private static final String LOG_TAG = "FilFeed.ArticlesList";
 
@@ -91,12 +93,15 @@ public class ArticlesListActivity extends ActionBarActivity {
         // Set feed id and url from main activity
         intent = getIntent();
         feedId = intent.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID);
+        curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID);
         feedUrl = intent.getStringExtra(TopActivity.FEED_URL);
         intent.putExtra(TopActivity.FEED_ID, feedId);
         // intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
         prefMgr = PreferenceManager.getInstance(getApplicationContext());
         swipeDirectionOption = prefMgr.getSwipeDirection();
-        if(feedId == Feed.ALL_FEED_ID) {
+        if (curationId != DEFAULT_CURATION_ID) {
+            setTitle(dbAdapter.getCurationNameById(curationId));
+        }else if(feedId == Feed.ALL_FEED_ID) {
             setTitle(getString(R.string.all));
         }else {
             prefMgr.setSearchFeedId(feedId);
@@ -365,7 +370,12 @@ public class ArticlesListActivity extends ActionBarActivity {
     private void displayUnreadArticles() {
         PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
         boolean isNewestArticleTop = mgr.getSortNewArticleTop();
-        if(feedId == Feed.ALL_FEED_ID) {
+        if (curationId != DEFAULT_CURATION_ID) {
+            allArticles = dbAdapter.getAllUnreadArticlesOfCuration(curationId, isNewestArticleTop);
+            if (allArticles.size() == 0) {
+                allArticles = dbAdapter.getAllArticlesOfCuration(curationId, isNewestArticleTop);
+            }
+        }else if(feedId == Feed.ALL_FEED_ID) {
             allArticles = dbAdapter.getAllUnreadArticles(isNewestArticleTop);
             if(allArticles.size() == 0 && dbAdapter.calcNumOfArticles() > 0) {
                 allArticles = dbAdapter.getAllArticles(isNewestArticleTop);
