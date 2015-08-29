@@ -19,6 +19,11 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	private static final String TEST_FEED_TITLE = "testfeed";
 	private static final String TEST_FEED_URL = "http://www.yahoo.co.jp";
 	private static final String TEST_ARTICLE1_TITLE = "title1";
+	private final String TEST_CURATION_NAME = "test";
+	private final String TEST_WORD1 = "word1";
+	private final String TEST_WORD2 = "word2";
+	private final String TEST_WORD3 = "word3";
+	private final int TEST_WORDS_SIZE = 3;
 
 	public DatabaseAdapterTest() {
 		super();
@@ -133,23 +138,16 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 
 	public void testSaveNewCuration() {
-		final String curationName = "test";
-		final String testWord2 = "word2";
-		final String testWord3 = "word3";
-		ArrayList<String> words = new ArrayList<>();
-		words.add(TEST_ARTICLE1_TITLE);
-		words.add(testWord2);
-		words.add(testWord3);
-		assertTrue(adapter.saveNewCuration(curationName, words));
+		insertTestCuration();
 
-		int curationId = adapter.getCurationIdByName(curationName);
+		int curationId = adapter.getCurationIdByName(TEST_CURATION_NAME);
 		Map<Integer, ArrayList<String>> map = adapter.getAllCurationWords();
 		assertTrue(map.containsKey(curationId));
 		ArrayList<String> addedWords = map.get(curationId);
-		assertEquals(words.size(), addedWords.size());
-		assertEquals(TEST_ARTICLE1_TITLE, addedWords.get(0));
-		assertEquals(testWord2, addedWords.get(1));
-		assertEquals(testWord3, addedWords.get(2));
+		assertEquals(TEST_WORDS_SIZE, addedWords.size());
+		assertEquals(TEST_WORD1, addedWords.get(0));
+		assertEquals(TEST_WORD2, addedWords.get(1));
+		assertEquals(TEST_WORD3, addedWords.get(2));
 	}
 
 	public void testGetAllCurationWords() {
@@ -158,24 +156,16 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(0, map.size());
 
 		// 1 curation
-		final String curationName1 = "test1";
-		final String testWord1 = "word1";
-		final String testWord2 = "word2";
-		final String testWord3 = "word3";
-		ArrayList<String> words1 = new ArrayList<>();
-		words1.add(testWord1);
-		words1.add(testWord2);
-		words1.add(testWord3);
-		assertTrue(adapter.saveNewCuration(curationName1, words1));
-		int curationId1 = adapter.getCurationIdByName(curationName1);
+		insertTestCuration();
+		int curationId1 = adapter.getCurationIdByName(TEST_CURATION_NAME);
 
 		map = adapter.getAllCurationWords();
 		assertEquals(1, map.size());
 		assertTrue(map.containsKey(curationId1));
 		ArrayList<String> addedWords1 = map.get(curationId1);
-		assertEquals(testWord1, addedWords1.get(0));
-		assertEquals(testWord2, addedWords1.get(1));
-		assertEquals(testWord3, addedWords1.get(2));
+		assertEquals(TEST_WORD1, addedWords1.get(0));
+		assertEquals(TEST_WORD2, addedWords1.get(1));
+		assertEquals(TEST_WORD3, addedWords1.get(2));
 
 		// 2 curations
 		final String curationName2 = "test2";
@@ -194,9 +184,9 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 
 		assertTrue(map.containsKey(curationId1));
 		addedWords1 = map.get(curationId1);
-		assertEquals(testWord1, addedWords1.get(0));
-		assertEquals(testWord2, addedWords1.get(1));
-		assertEquals(testWord3, addedWords1.get(2));
+		assertEquals(TEST_WORD1, addedWords1.get(0));
+		assertEquals(TEST_WORD2, addedWords1.get(1));
+		assertEquals(TEST_WORD3, addedWords1.get(2));
 
 		assertTrue(map.containsKey(curationId2));
 		ArrayList<String> addedWords2 = map.get(curationId2);
@@ -206,33 +196,25 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 
 	public void testDeleteCuration() {
-		final String curationName = "test";
-		final String testWord1 = "word1";
-		final String testWord2 = "word2";
-		final String testWord3 = "word3";
-		ArrayList<String> words = new ArrayList<>();
-		words.add(testWord1);
-		words.add(testWord2);
-		words.add(testWord3);
-		assertTrue(adapter.saveNewCuration(curationName, words));
-
-		int curationId = adapter.getCurationIdByName(curationName);
+		insertTestCuration();
+		int curationId = adapter.getCurationIdByName(TEST_CURATION_NAME);
 		assertTrue(adapter.deleteCuration(curationId));
-		assertEquals(DatabaseAdapter.NOT_FOUND_ID, adapter.getCurationIdByName(curationName));
+		assertEquals(DatabaseAdapter.NOT_FOUND_ID, adapter.getCurationIdByName(TEST_CURATION_NAME));
 	}
 
 	public void testDeleteAllCuration() {
-		final String curationName = "test";
-		final String testWord2 = "word2";
-		final String testWord3 = "word3";
-		ArrayList<String> words = new ArrayList<>();
-		words.add(TEST_ARTICLE1_TITLE);
-		words.add(testWord2);
-		words.add(testWord3);
-		assertTrue(adapter.saveNewCuration(curationName, words));
+		insertTestCuration();
 		assertTrue(adapter.deleteAllCuration());
 		Map<Integer, ArrayList<String>> map = adapter.getAllCurationWords();
 		assertEquals(0, map.size());
+	}
+
+	private void insertTestCuration() {
+		ArrayList<String> words = new ArrayList<>();
+		words.add(TEST_WORD1);
+		words.add(TEST_WORD2);
+		words.add(TEST_WORD3);
+		assertTrue(adapter.saveNewCuration(TEST_CURATION_NAME, words));
 	}
 
 	@Override
