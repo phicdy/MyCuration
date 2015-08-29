@@ -8,6 +8,7 @@ import com.phicdy.filfeed.rss.Feed;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 public class DatabaseAdapterTest extends AndroidTestCase {
 
@@ -131,6 +132,25 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(testUnreadArticles.size(), testFeed.getUnreadAriticlesCount());
 	}
 
+	public void testSaveNewCuration() {
+		final String curationName = "test";
+		final String testWord2 = "word2";
+		final String testWord3 = "word3";
+		ArrayList<String> words = new ArrayList<>();
+		words.add(TEST_ARTICLE1_TITLE);
+		words.add(testWord2);
+		words.add(testWord3);
+		assertTrue(adapter.saveNewCuration(curationName, words));
+
+		int curationId = adapter.getCurationIdByName(curationName);
+		Map<Integer, ArrayList<String>> map = adapter.getAllCurationWords();
+		assertTrue(map.containsKey(curationId));
+		ArrayList<String> addedWords = map.get(curationId);
+		assertEquals(words.size(), addedWords.size());
+		assertEquals(TEST_ARTICLE1_TITLE, addedWords.get(0));
+		assertEquals(testWord2, addedWords.get(1));
+		assertEquals(testWord3, addedWords.get(2));
+	}
 	public void testDeleteAllCuration() {
 		final String curationName = "test";
 		final String testWord2 = "word2";
