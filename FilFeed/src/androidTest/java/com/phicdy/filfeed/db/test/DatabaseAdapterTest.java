@@ -17,6 +17,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 
 	private static final String TEST_FEED_TITLE = "testfeed";
 	private static final String TEST_FEED_URL = "http://www.yahoo.co.jp";
+	private static final String TEST_ARTICLE1_TITLE = "title1";
 
 	public DatabaseAdapterTest() {
 		super();
@@ -41,7 +42,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		ArrayList<Article> savedArticles = adapter.getAllArticles(false);
 		if(savedArticles.size() != 0) {
 			Article savedArticle1 = savedArticles.get(0);
-			assertEquals("title1", savedArticle1.getTitle());
+			assertEquals(TEST_ARTICLE1_TITLE, savedArticle1.getTitle());
 			assertEquals(Article.UNREAD, savedArticle1.getStatus());
 
 			Article savedArticle2 = savedArticles.get(1);
@@ -72,7 +73,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		Feed testFeed = adapter.getFeedByUrl(TEST_FEED_URL);
 		
 		long now = new Date().getTime();
-		Article article = new Article(1, "title1", "http://www.google.com",
+		Article article = new Article(1, TEST_ARTICLE1_TITLE, "http://www.google.com",
 				Article.UNREAD, "", now, testFeed.getId(), "");
 		Article quotationTitle = new Article(1, "title'",
 				"http://www.google.com", Article.UNREAD, "", now + 1, testFeed.getId(), "");
