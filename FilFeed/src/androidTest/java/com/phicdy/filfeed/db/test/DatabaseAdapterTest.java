@@ -151,6 +151,22 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(testWord2, addedWords.get(1));
 		assertEquals(testWord3, addedWords.get(2));
 	}
+	public void testDeleteCuration() {
+		final String curationName = "test";
+		final String testWord1 = "word1";
+		final String testWord2 = "word2";
+		final String testWord3 = "word3";
+		ArrayList<String> words = new ArrayList<>();
+		words.add(testWord1);
+		words.add(testWord2);
+		words.add(testWord3);
+		assertTrue(adapter.saveNewCuration(curationName, words));
+
+		int curationId = adapter.getCurationIdByName(curationName);
+		assertTrue(adapter.deleteCuration(curationId));
+		assertEquals(DatabaseAdapter.NOT_FOUND_ID, adapter.getCurationIdByName(curationName));
+	}
+
 	public void testDeleteAllCuration() {
 		final String curationName = "test";
 		final String testWord2 = "word2";

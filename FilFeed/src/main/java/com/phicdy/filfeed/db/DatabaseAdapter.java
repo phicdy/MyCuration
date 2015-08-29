@@ -1176,7 +1176,24 @@ public class DatabaseAdapter {
 		return curationList;
 	}
 
-	public void deleteCuration(int curationId) {
+	public boolean deleteCuration(int curationId) {
+		int numOfDeleted = 0;
+		db.beginTransaction();
+		try {
+			db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null);
+			db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null);
+			numOfDeleted = db.delete(Curation.TABLE_NAME, Curation.ID + " = " + curationId, null);
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+		if (numOfDeleted == 1) {
+			return true;
+		}
+		return false;
+	}
 
 	public boolean deleteAllCuration() {
 		boolean result = true;
