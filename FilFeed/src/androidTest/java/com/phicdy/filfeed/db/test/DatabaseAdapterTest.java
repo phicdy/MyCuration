@@ -219,8 +219,8 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 
 	@Override
 	protected void tearDown() {
+		adapter.deleteAllCuration();
 		adapter.deleteAllArticles();
 		adapter.deleteAllFeeds();
-		adapter.deleteAllCuration();
 	}
 }
