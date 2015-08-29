@@ -1235,7 +1235,7 @@ public class DatabaseAdapter {
 		int id = NOT_FOUND_ID;
 		try {
 			String[] columns = {Curation.ID};
-			String selection = Curation.NAME + " = ?";
+			String selection = Curation.NAME + " = '' || ? || ''";
 			String[] selectionArgs = {name};
 			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 			cursor.moveToFirst();
