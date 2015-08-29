@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseAdapter {
 	
@@ -1367,6 +1369,45 @@ public class DatabaseAdapter {
 			e.printStackTrace();
 		} finally {
 			return articles;
+		}
+	}
+
+	public Map<Integer, ArrayList<String>> getAllCurationWords() {
+		Map<Integer, ArrayList<String>> curationWordsMap = new HashMap<>();
+		String sql = "select " + Curation.TABLE_NAME + "." + Curation.ID + "," +
+				CurationCondition.TABLE_NAME + "." + CurationCondition.WORD +
+				" from " + Curation.TABLE_NAME + " inner join " + CurationCondition.TABLE_NAME +
+				" where " + Curation.TABLE_NAME + "." + Curation.ID + " = " + CurationCondition.TABLE_NAME + "." + CurationCondition.CURATION_ID +
+				" order by " + Curation.TABLE_NAME + "." + Curation.ID;
+		try {
+			Cursor cursor = db.rawQuery(sql, null);
+			final int defaultCurationId = -1;
+			int curationId = defaultCurationId;
+			ArrayList<String> words = new ArrayList<>();
+			while (cursor.moveToNext()) {
+				int newCurationId = cursor.getInt(0);
+				if (curationId == defaultCurationId) {
+					curationId = newCurationId;
+				}
+				// Add words of curation to map when curation ID changes
+				if (curationId != newCurationId) {
+					curationWordsMap.put(curationId, words);
+					curationId = newCurationId;
+					words = new ArrayList<>();
+				}
+				String word = cursor.getString(1);
+				words.add(word);
+			}
+			// Add last words of curation
+			if (curationId != defaultCurationId) {
+				curationWordsMap.put(curationId, words);
+			}
+
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return curationWordsMap;
 		}
 	}
 }

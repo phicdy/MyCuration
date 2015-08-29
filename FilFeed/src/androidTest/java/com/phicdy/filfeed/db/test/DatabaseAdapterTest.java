@@ -151,6 +151,60 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(testWord2, addedWords.get(1));
 		assertEquals(testWord3, addedWords.get(2));
 	}
+
+	public void testGetAllCurationWords() {
+		// No data
+		Map<Integer, ArrayList<String>> map = adapter.getAllCurationWords();
+		assertEquals(0, map.size());
+
+		// 1 curation
+		final String curationName1 = "test1";
+		final String testWord1 = "word1";
+		final String testWord2 = "word2";
+		final String testWord3 = "word3";
+		ArrayList<String> words1 = new ArrayList<>();
+		words1.add(testWord1);
+		words1.add(testWord2);
+		words1.add(testWord3);
+		assertTrue(adapter.saveNewCuration(curationName1, words1));
+		int curationId1 = adapter.getCurationIdByName(curationName1);
+
+		map = adapter.getAllCurationWords();
+		assertEquals(1, map.size());
+		assertTrue(map.containsKey(curationId1));
+		ArrayList<String> addedWords1 = map.get(curationId1);
+		assertEquals(testWord1, addedWords1.get(0));
+		assertEquals(testWord2, addedWords1.get(1));
+		assertEquals(testWord3, addedWords1.get(2));
+
+		// 2 curations
+		final String curationName2 = "test2";
+		final String testWord4 = "word4";
+		final String testWord5 = "word5";
+		final String testWord6 = "word6";
+		ArrayList<String> words2 = new ArrayList<>();
+		words2.add(testWord4);
+		words2.add(testWord5);
+		words2.add(testWord6);
+		assertTrue(adapter.saveNewCuration(curationName2, words2));
+		int curationId2 = adapter.getCurationIdByName(curationName2);
+
+		map = adapter.getAllCurationWords();
+		assertEquals(2, map.size());
+
+		assertTrue(map.containsKey(curationId1));
+		addedWords1 = map.get(curationId1);
+		assertEquals(testWord1, addedWords1.get(0));
+		assertEquals(testWord2, addedWords1.get(1));
+		assertEquals(testWord3, addedWords1.get(2));
+
+		assertTrue(map.containsKey(curationId2));
+		ArrayList<String> addedWords2 = map.get(curationId2);
+		assertEquals(testWord4, addedWords2.get(0));
+		assertEquals(testWord5, addedWords2.get(1));
+		assertEquals(testWord6, addedWords2.get(2));
+	}
+
 	public void testDeleteCuration() {
 		final String curationName = "test";
 		final String testWord1 = "word1";
