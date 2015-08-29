@@ -1130,16 +1130,17 @@ public class DatabaseAdapter {
 		}
 
 		boolean result = true;
+		ArrayList<Article> articles = getAllUnreadArticles(true);
+		SQLiteStatement insertSt = db
+				.compileStatement("insert into " + CurationSelection.TABLE_NAME +
+						"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");");
 		db.beginTransaction();
 		try {
-			ArrayList<Article> allArticles = getAllUnreadArticles(true);
-			for (Article article : allArticles) {
+			for (Article article : articles) {
 				for (String word : words) {
 					if (article.getTitle().contains(word)) {
-						ContentValues values = new ContentValues();
-						values.put(CurationSelection.ARTICLE_ID, article.getId());
-						values.put(CurationSelection.CURATION_ID, curationId);
-						db.insert(CurationSelection.TABLE_NAME, null, values);
+						insertSt.bindString(1, String.valueOf(article.getId()));
+						insertSt.executeInsert();
 					}
 				}
 			}

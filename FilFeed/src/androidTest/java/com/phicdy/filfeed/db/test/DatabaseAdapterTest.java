@@ -209,6 +209,21 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(0, map.size());
 	}
 
+	public void testGetAllArticlesOfCuration() {
+		ArrayList<String> words = new ArrayList<>();
+		words.add(TEST_ARTICLE1_TITLE);
+		words.add(TEST_WORD2);
+		words.add(TEST_WORD3);
+		assertTrue(adapter.saveNewCuration(TEST_CURATION_NAME, words));
+		int curationId = adapter.getCurationIdByName(TEST_CURATION_NAME);
+
+		assertTrue(adapter.adaptCurationToArticles(TEST_CURATION_NAME, words));
+		ArrayList<Article> articles = adapter.getAllArticlesOfCuration(curationId, true);
+		assertNotNull(articles);
+		assertEquals(1, articles.size());
+		assertEquals(TEST_ARTICLE1_TITLE, articles.get(0).getTitle());
+	}
+
 	private void insertTestCuration() {
 		ArrayList<String> words = new ArrayList<>();
 		words.add(TEST_WORD1);
