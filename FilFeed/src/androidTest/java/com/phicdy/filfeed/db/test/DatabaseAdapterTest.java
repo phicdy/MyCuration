@@ -130,6 +130,20 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(testUnreadArticles.size(), testFeed.getUnreadAriticlesCount());
 	}
 
+	public void testDeleteAllCuration() {
+		final String curationName = "test";
+		final String testWord2 = "word2";
+		final String testWord3 = "word3";
+		ArrayList<String> words = new ArrayList<>();
+		words.add(TEST_ARTICLE1_TITLE);
+		words.add(testWord2);
+		words.add(testWord3);
+		assertTrue(adapter.saveNewCuration(curationName, words));
+		assertTrue(adapter.deleteAllCuration());
+		Map<Integer, ArrayList<String>> map = adapter.getAllCurationWords();
+		assertEquals(0, map.size());
+	}
+
 	@Override
 	protected void tearDown() {
 		adapter.deleteAllArticles();
