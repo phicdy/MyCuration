@@ -185,5 +185,6 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	protected void tearDown() {
 		adapter.deleteAllArticles();
 		adapter.deleteAllFeeds();
+		adapter.deleteAllCuration();
 	}
 }
