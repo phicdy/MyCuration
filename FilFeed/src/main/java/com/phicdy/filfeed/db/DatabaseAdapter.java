@@ -61,22 +61,36 @@ public class DatabaseAdapter {
 		if(articles.isEmpty()) {
 			return;
 		}
+		Map<Integer, ArrayList<String>> curationWordMap = getAllCurationWords();
+		SQLiteStatement insertArticleSt = db.compileStatement(
+				"insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);");
+		SQLiteStatement insertCurationSelectionSt = db.compileStatement(
+				"insert into " + CurationSelection.TABLE_NAME +
+				"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?,?);");
 		db.beginTransaction();
 		try {
-			// db.delete("articles", "title like '%PR%'", null);
-			SQLiteStatement insertSt = db
-					.compileStatement("insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);");
-			// articles passed isArticle(), so not need to check same article exist
 			for (Article article : articles) {
-				insertSt.bindString(1, article.getTitle());
-				insertSt.bindString(2, article.getUrl());
-				insertSt.bindString(3, article.getStatus());
-				insertSt.bindString(4, article.getPoint());
+				insertArticleSt.bindString(1, article.getTitle());
+				insertArticleSt.bindString(2, article.getUrl());
+				insertArticleSt.bindString(3, article.getStatus());
+				insertArticleSt.bindString(4, article.getPoint());
 				Log.d(LOG_TAG, "insert date:" + article.getPostedDate());
-				insertSt.bindLong(5, article.getPostedDate());
-				insertSt.bindString(6, String.valueOf(feedId));
+				insertArticleSt.bindLong(5, article.getPostedDate());
+				insertArticleSt.bindString(6, String.valueOf(feedId));
 
-				insertSt.executeInsert();
+				long articleId = insertArticleSt.executeInsert();
+				for (Map.Entry<Integer, ArrayList<String>> entry : curationWordMap.entrySet()) {
+					int curationId = entry.getKey();
+					ArrayList<String> words = entry.getValue();
+					for (String word : words) {
+						if (article.getTitle().contains(word)) {
+							insertCurationSelectionSt.bindString(1, String.valueOf(articleId));
+							insertCurationSelectionSt.bindString(2, String.valueOf(curationId));
+							insertCurationSelectionSt.executeInsert();
+							break;
+						}
+					}
+				}
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {

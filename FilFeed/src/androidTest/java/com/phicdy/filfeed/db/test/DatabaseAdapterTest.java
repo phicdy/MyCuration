@@ -45,6 +45,13 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 
 	public void testSaveNewArticles() {
+		// Reset data and insert curation at first
+		adapter.deleteAllCuration();
+		adapter.deleteAllArticles();
+		adapter.deleteAllFeeds();
+		insertTestCurationForArticle1();
+		insertTestData();
+
 		ArrayList<Article> savedArticles = adapter.getAllArticles(false);
 		if(savedArticles.size() != 0) {
 			Article savedArticle1 = savedArticles.get(0);
@@ -58,8 +65,13 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 			Article savedArticle3 = savedArticles.get(2);
 			assertEquals("title'", savedArticle3.getTitle());
 			assertEquals(Article.UNREAD, savedArticle3.getStatus());
-
 		}
+
+		int curatioId = adapter.getCurationIdByName(TEST_CURATION_NAME);
+		ArrayList<Article> articles = adapter.getAllArticlesOfCuration(curatioId, true);
+		assertNotNull(articles);
+		assertEquals(1, articles.size());
+		assertEquals(TEST_ARTICLE1_TITLE, articles.get(0).getTitle());
 	}
 	
 	public void testSearchArticles() {
