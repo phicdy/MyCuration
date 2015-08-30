@@ -210,14 +210,10 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	}
 
 	public void testGetAllArticlesOfCuration() {
-		ArrayList<String> words = new ArrayList<>();
-		words.add(TEST_ARTICLE1_TITLE);
-		words.add(TEST_WORD2);
-		words.add(TEST_WORD3);
-		assertTrue(adapter.saveNewCuration(TEST_CURATION_NAME, words));
+		insertTestCurationForArticle1();
 		int curationId = adapter.getCurationIdByName(TEST_CURATION_NAME);
 
-		assertTrue(adapter.adaptCurationToArticles(TEST_CURATION_NAME, words));
+		assertTrue(adapter.adaptCurationToArticles(TEST_CURATION_NAME, getWordsOfCurationForArticle1()));
 		ArrayList<Article> articles = adapter.getAllArticlesOfCuration(curationId, true);
 		assertNotNull(articles);
 		assertEquals(1, articles.size());
@@ -230,6 +226,22 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		words.add(TEST_WORD2);
 		words.add(TEST_WORD3);
 		assertTrue(adapter.saveNewCuration(TEST_CURATION_NAME, words));
+	}
+
+	private void insertTestCurationForArticle1() {
+		ArrayList<String> words = new ArrayList<>();
+		words.add(TEST_ARTICLE1_TITLE);
+		words.add(TEST_WORD2);
+		words.add(TEST_WORD3);
+		assertTrue(adapter.saveNewCuration(TEST_CURATION_NAME, words));
+	}
+
+	private ArrayList<String> getWordsOfCurationForArticle1() {
+		ArrayList<String> words = new ArrayList<>();
+		words.add(TEST_ARTICLE1_TITLE);
+		words.add(TEST_WORD2);
+		words.add(TEST_WORD3);
+		return words;
 	}
 
 	@Override
