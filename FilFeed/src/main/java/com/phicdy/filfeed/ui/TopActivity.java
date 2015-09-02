@@ -30,8 +30,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.phicdy.filfeed.R;
@@ -114,18 +114,18 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         LayoutInflater inflater = LayoutInflater.from(this);
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
             final int position = i;
-            TextView tv = (TextView)inflater.inflate(R.layout.tab_item, track, false);
-            tv.setText(mSectionsPagerAdapter.getPageTitle(position));
-            tv.setOnClickListener(new View.OnClickListener() {
+            ImageView ivTab = (ImageView)inflater.inflate(R.layout.tab_item, track, false);
+            ivTab.setImageResource(mSectionsPagerAdapter.getImageResource(position));
+            ivTab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mViewPager.setCurrentItem(position);
                 }
             });
-            final LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)tv.getLayoutParams();
+            final LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)ivTab.getLayoutParams();
             layoutParams.width = displayWidth / mSectionsPagerAdapter.getCount();
-            tv.setLayoutParams(layoutParams);
-            track.addView(tv);
+            ivTab.setLayoutParams(layoutParams);
+            track.addView(ivTab);
         }
 
         final float density = getResources().getDisplayMetrics().density;
@@ -475,6 +475,18 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
             }
             return null;
         }
+
+        public int getImageResource(int position) {
+            switch (position) {
+                case POSITION_CURATION_FRAGMENT:
+                    return R.drawable.tab_coffee;
+                case POSITION_FEED_FRAGMENT:
+                    return R.drawable.tab_feed;
+                case POSITION_FILTER_FRAGMENT:
+                    return R.drawable.tab_filter;
+            }
+            return -1;
+        }
     }
 
     private class PageChangeListener implements ViewPager.OnPageChangeListener {
@@ -484,12 +496,14 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             updateIndicatorPosition(position, positionOffset);
+            setTitle(mSectionsPagerAdapter.getPageTitle(position));
         }
 
         @Override
         public void onPageSelected(int position) {
             if (scrollState == ViewPager.SCROLL_STATE_IDLE) {
                 updateIndicatorPosition(position, 0);
+                setTitle(mSectionsPagerAdapter.getPageTitle(position));
             }
         }
 
