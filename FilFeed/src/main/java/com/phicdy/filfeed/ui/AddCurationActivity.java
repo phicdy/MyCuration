@@ -28,6 +28,10 @@ public class AddCurationActivity extends ActionBarActivity {
     private DatabaseAdapter adapter;
     private Handler handler;
     private MyProgressDialogFragment progressDialog;
+    private int editCurationid = NOT_EDIT_CURATION_ID;
+
+    public static final String EDIT_CURATION_ID = "editCurationId";
+    public static final int NOT_EDIT_CURATION_ID = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,7 @@ public class AddCurationActivity extends ActionBarActivity {
 
             }
         };
+        editCurationid = getIntent().getIntExtra(EDIT_CURATION_ID, NOT_EDIT_CURATION_ID);
     }
 
     @Override
@@ -74,11 +79,25 @@ public class AddCurationActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initDataForEdit();
+    }
+
     private void initView() {
         wordListFragment = (CurationWordListFragment)getSupportFragmentManager().findFragmentById(R.id.fr_curation_condition);
         btnAdd = (Button)findViewById(R.id.btn_add_word);
         etInput = (EditText)findViewById(R.id.et_curation_word);
         etName = (EditText)findViewById(R.id.et_curation_name);
+    }
+
+    // Don't call this method in onCreate()
+    private void initDataForEdit() {
+        if (editCurationid != NOT_EDIT_CURATION_ID) {
+            etName.setText(adapter.getCurationNameById(editCurationid));
+            wordListFragment.setWords(adapter.getCurationWords(editCurationid));
+        }
     }
 
     private void setAllListener() {

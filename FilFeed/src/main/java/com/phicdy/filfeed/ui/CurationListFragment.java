@@ -2,10 +2,13 @@ package com.phicdy.filfeed.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,6 +33,9 @@ public class CurationListFragment extends Fragment {
     private DatabaseAdapter dbAdapter;
     private UnreadCountManager unreadManager;
 
+    private static final int EDIT_CURATION_MENU_ID = 1;
+    private static final int DELETE_CURATION_MENU_ID = 2;
+
     private static final String LOG_TAG = "FilFeed.CurationList";
 
     public static CurationListFragment newInstance() {
@@ -52,6 +58,33 @@ public class CurationListFragment extends Fragment {
         refreshList();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.clear();
+        menu.add(0, EDIT_CURATION_MENU_ID, 0, R.string.edit_curation);
+        menu.add(0, DELETE_CURATION_MENU_ID, 0, R.string.delete_curation);
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        switch (item.getItemId()) {
+            case EDIT_CURATION_MENU_ID:
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), AddCurationActivity.class);
+                intent.putExtra(AddCurationActivity.EDIT_CURATION_ID, allCurations.get(info.position).getId());
+                startActivity(intent);
+                return true;
+            case DELETE_CURATION_MENU_ID:
+                dbAdapter.deleteCuration(allCurations.get(info.position).getId());
+                allCurations.remove(info.position);
+                curationListAdapter.notifyDataSetChanged();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
 
     @Override
     public void onPause() {
@@ -118,6 +151,7 @@ public class CurationListFragment extends Fragment {
         allCurations = dbAdapter.getAllCurations();
         curationListAdapter = new CurationListAdapter(allCurations, getActivity());
         curationListView.setAdapter(curationListAdapter);
+        registerForContextMenu(curationListView);
         curationListAdapter.notifyDataSetChanged();
     }
 

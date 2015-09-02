@@ -15,12 +15,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.phicdy.filfeed.R;
+import com.phicdy.filfeed.db.DatabaseAdapter;
+
 import java.util.ArrayList;
 
 public class CurationWordListFragment extends Fragment {
 
     private ListView curationWordListView;
     private CurationWordListAdapter curationWordListAdapter;
+
+    private DatabaseAdapter adapter;
 
     private ArrayList<String> addedWords = new ArrayList<>();
 
@@ -65,6 +69,7 @@ public class CurationWordListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         curationWordListView = (ListView) getActivity().findViewById(R.id.lv_curation_word);
+        adapter = DatabaseAdapter.getInstance(getActivity());
 
         refreshList();
 
@@ -99,6 +104,11 @@ public class CurationWordListFragment extends Fragment {
 
     public void removedWordAtPosition(int position) {
         addedWords.remove(position);
+        curationWordListAdapter.notifyDataSetChanged();
+    }
+
+    public void setWords(ArrayList<String> words) {
+        addedWords = words;
         curationWordListAdapter.notifyDataSetChanged();
     }
 

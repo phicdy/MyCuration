@@ -1347,6 +1347,24 @@ public class DatabaseAdapter {
 		}
 	}
 
+	public ArrayList<String> getCurationWords(int curationId) {
+		ArrayList<String> words = new ArrayList<>();
+		String[] columns = {CurationCondition.WORD};
+		String selection = CurationCondition.CURATION_ID + " = ?";
+		String[] selectionArgs = {String.valueOf(curationId)};
+		try {
+			Cursor cursor = db.query(CurationCondition.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+			while (cursor.moveToNext()) {
+				words.add(cursor.getString(0));
+			}
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return words;
+		}
+	}
+
 	public ArrayList<Article> getAllArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<>();
 		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
