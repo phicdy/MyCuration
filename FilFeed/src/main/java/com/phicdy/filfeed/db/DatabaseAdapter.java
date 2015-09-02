@@ -1290,11 +1290,14 @@ public class DatabaseAdapter {
 				Article.TABLE_NAME + "." + Article.STATUS + "," +
 				Article.TABLE_NAME + "." + Article.POINT + "," +
 				Article.TABLE_NAME + "." + Article.DATE + "," +
-				Article.TABLE_NAME + "." + Article.FEEDID +
-				" from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-				" where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
+				Article.TABLE_NAME + "." + Article.FEEDID + "," +
+				Feed.TABLE_NAME + "." + Feed.TITLE +
+				" from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
+				" on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
 				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
-				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
+				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
+				" inner join " + Feed.TABLE_NAME +
+				" on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
 				" order by " + Article.DATE;
 		if(isNewestArticleTop) {
 			sql += " desc";
@@ -1311,8 +1314,9 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				int feedId = cursor.getInt(6);
+				String feedTitle = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null);
+						dateLong, feedId, feedTitle);
 				articles.add(article);
 			}
 			cursor.close();
