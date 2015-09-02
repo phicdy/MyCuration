@@ -1,5 +1,7 @@
 package com.phicdy.filfeed.ui;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,6 +26,8 @@ public class AddCurationActivity extends ActionBarActivity {
     private EditText etName;
 
     private DatabaseAdapter adapter;
+    private Handler handler;
+    private MyProgressDialogFragment progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,21 @@ public class AddCurationActivity extends ActionBarActivity {
         initView();
         setAllListener();
         adapter = DatabaseAdapter.getInstance(getApplicationContext());
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                boolean result = (boolean)msg.obj;
+                if (result) {
+                    ToastHelper.showToast(getApplicationContext(), getString(R.string.curation_added_success), Toast.LENGTH_SHORT);
+                    progressDialog.dismiss();
+                    finish();
+                }else {
+                    ToastHelper.showToast(getApplicationContext(), getString(R.string.curation_added_error), Toast.LENGTH_SHORT);
+                    progressDialog.dismiss();
+                }
+
+            }
+        };
     }
 
     @Override
@@ -46,12 +65,7 @@ public class AddCurationActivity extends ActionBarActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.add_curation:
-                if (insertCurationIntoDb()) {
-                    ToastHelper.showToast(getApplicationContext(), getString(R.string.curation_added_success), Toast.LENGTH_SHORT);
-                    finish();
-                }else {
-                    ToastHelper.showToast(getApplicationContext(), getString(R.string.curation_added_error), Toast.LENGTH_SHORT);
-                }
+                insertCurationIntoDb();
                 break;
             default:
                 break;
@@ -83,25 +97,40 @@ public class AddCurationActivity extends ActionBarActivity {
 
     }
 
-    private boolean insertCurationIntoDb() {
-        String curationName = etName.getText().toString();
-        if (TextUtil.isEmpty(curationName)) {
-            ToastHelper.showToast(getApplicationContext(), getString(R.string.empty_curation_name), Toast.LENGTH_SHORT);
-            return false;
-        }
-        ArrayList<String> wordList = wordListFragment.getWordList();
-        if (wordList == null || wordList.size() == 0) {
-            ToastHelper.showToast(getApplicationContext(), getString(R.string.empty_word_list), Toast.LENGTH_SHORT);
-            return false;
-        }
-        if (adapter.isExistSameNameCuration(curationName)) {
-            ToastHelper.showToast(getApplicationContext(), getString(R.string.duplicate_curation_name), Toast.LENGTH_SHORT);
-            return false;
-        }
-        boolean result = adapter.saveNewCuration(curationName, wordList);
-        if (result) {
-            adapter.adaptCurationToArticles(curationName, wordList);
-        }
-        return result;
+    private void insertCurationIntoDb() {
+        new Thread() {
+            @Override
+            public void run() {
+                Message msg = Message.obtain();
+                String curationName = etName.getText().toString();
+                if (TextUtil.isEmpty(curationName)) {
+                    ToastHelper.showToast(getApplicationContext(), getString(R.string.empty_curation_name), Toast.LENGTH_SHORT);
+                    msg.obj = false;
+                    handler.sendMessage(msg);
+                    return;
+                }
+                ArrayList<String> wordList = wordListFragment.getWordList();
+                if (wordList == null || wordList.size() == 0) {
+                    ToastHelper.showToast(getApplicationContext(), getString(R.string.empty_word_list), Toast.LENGTH_SHORT);
+                    msg.obj = false;
+                    handler.sendMessage(msg);
+                    return;
+                }
+                if (adapter.isExistSameNameCuration(curationName)) {
+                    ToastHelper.showToast(getApplicationContext(), getString(R.string.duplicate_curation_name), Toast.LENGTH_SHORT);
+                    msg.obj = false;
+                    handler.sendMessage(msg);
+                    return;
+                }
+                boolean result = adapter.saveNewCuration(curationName, wordList);
+                if (result) {
+                    adapter.adaptCurationToArticles(curationName, wordList);
+                }
+                msg.obj = true;
+                handler.sendMessage(msg);
+            }
+        }.start();
+        progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_curation));
+        progressDialog.show(getFragmentManager(), null);
     }
 }
