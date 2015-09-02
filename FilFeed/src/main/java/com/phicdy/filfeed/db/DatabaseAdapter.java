@@ -1144,7 +1144,7 @@ public class DatabaseAdapter {
 		}
 
 		boolean result = true;
-		ArrayList<Article> articles = getAllUnreadArticles(true);
+		ArrayList<Article> articles = getAllArticles(true);
 		SQLiteStatement insertSt = db
 				.compileStatement("insert into " + CurationSelection.TABLE_NAME +
 						"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");");
