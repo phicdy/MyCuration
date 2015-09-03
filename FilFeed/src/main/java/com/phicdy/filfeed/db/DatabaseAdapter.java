@@ -595,7 +595,6 @@ public class DatabaseAdapter {
 	}
 	
 	public ArrayList<Article> getAllArticles(boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<Article>();
 		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
@@ -603,12 +602,13 @@ public class DatabaseAdapter {
 			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
 					"from articles inner join feeds " +
 					"where articles.feedId = feeds._id " +
-					"order by date ";
+					"order by articles._id ";
 			if(isNewestArticleTop) {
 				sql += "desc";
 			}else {
 				sql += "asc";
 			}
+			sql += " limit 300";
 			Cursor cursor = db.rawQuery(sql, null);
 			while (cursor.moveToNext()) {
 				int id = cursor.getInt(0);
@@ -627,11 +627,10 @@ public class DatabaseAdapter {
 			cursor.close();
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
-			return articles;
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
-		
 		return articles;
 	}
 	
