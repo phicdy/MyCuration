@@ -347,12 +347,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                     if (targetArticle.getStatus().equals(Article.UNREAD)) {
                         targetArticle.setStatus(Article.TOREAD);
                         unreadManager.countDownUnreadCount(targetArticle.getFeedId());
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                dbAdapter.saveStatus(targetArticle.getId(), Article.TOREAD);
-                            }
-                        }.start();
+                        dbAdapter.saveStatus(targetArticle.getId(), Article.TOREAD);
                     }
                 }
                 articlesListAdapter.notifyDataSetChanged();
