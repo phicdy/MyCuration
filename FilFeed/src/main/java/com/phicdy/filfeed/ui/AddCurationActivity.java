@@ -32,6 +32,7 @@ public class AddCurationActivity extends ActionBarActivity {
 
     public static final String EDIT_CURATION_ID = "editCurationId";
     public static final int NOT_EDIT_CURATION_ID = -1;
+    private static final String INSERT_ERROR_MESSAGE = "insertErrorMessage";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,8 @@ public class AddCurationActivity extends ActionBarActivity {
                     progressDialog.dismiss();
                     finish();
                 }else {
+                    String errorMessage = msg.getData().getString(INSERT_ERROR_MESSAGE);
+                    ToastHelper.showToast(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT);
                     ToastHelper.showToast(getApplicationContext(), getString(R.string.curation_added_error), Toast.LENGTH_SHORT);
                     progressDialog.dismiss();
                 }
@@ -121,28 +124,31 @@ public class AddCurationActivity extends ActionBarActivity {
             @Override
             public void run() {
                 Message msg = Message.obtain();
+                Bundle bundle = new Bundle();
                 String curationName = etName.getText().toString();
                 if (TextUtil.isEmpty(curationName)) {
-                    ToastHelper.showToast(getApplicationContext(), getString(R.string.empty_curation_name), Toast.LENGTH_SHORT);
                     msg.obj = false;
+                    bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.empty_curation_name));
+                    msg.setData(bundle);
                     handler.sendMessage(msg);
                     return;
                 }
                 ArrayList<String> wordList = wordListFragment.getWordList();
                 if (wordList == null || wordList.size() == 0) {
-                    ToastHelper.showToast(getApplicationContext(), getString(R.string.empty_word_list), Toast.LENGTH_SHORT);
                     msg.obj = false;
+                    bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.empty_word_list));
+                    msg.setData(bundle);
                     handler.sendMessage(msg);
                     return;
                 }
-                if (adapter.isExistSameNameCuration(curationName)) {
-                    ToastHelper.showToast(getApplicationContext(), getString(R.string.duplicate_curation_name), Toast.LENGTH_SHORT);
+                if (editCurationid == NOT_EDIT_CURATION_ID && adapter.isExistSameNameCuration(curationName)) {
                     msg.obj = false;
+                    bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name));
+                    msg.setData(bundle);
                     handler.sendMessage(msg);
                     return;
                 }
-                boolean result = adapter.saveNewCuration(curationName, wordList);
-                if (result) {
+                if (adapter.saveNewCuration(curationName, wordList)) {
                     adapter.adaptCurationToArticles(curationName, wordList);
                 }
                 msg.obj = true;
