@@ -561,7 +561,7 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title " +
+			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
 					"from articles inner join feeds " +
 					"where articles.status = \"unread\" and articles.feedId = feeds._id " +
 					"order by date ";
@@ -580,8 +580,9 @@ public class DatabaseAdapter {
 				long dateLong = cursor.getLong(4);
 				int feedId = cursor.getInt(5);
 				String feedTitle = cursor.getString(6);
+				String feedIconPath = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle);
+						dateLong, feedId, feedTitle, feedIconPath);
 				articles.add(article);
 			}
 			cursor.close();
@@ -597,10 +598,11 @@ public class DatabaseAdapter {
 	
 	public ArrayList<Article> getAllArticles(boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<Article>();
+		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title " +
+			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
 					"from articles inner join feeds " +
 					"where articles.feedId = feeds._id " +
 					"order by date ";
@@ -619,8 +621,9 @@ public class DatabaseAdapter {
 				long dateLong = cursor.getLong(5);
 				int feedId = cursor.getInt(6);
 				String feedTitle = cursor.getString(7);
+				String feedIconPath = cursor.getString(8);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle);
+						dateLong, feedId, feedTitle, feedIconPath);
 				articles.add(article);
 			}
 			cursor.close();
@@ -644,7 +647,7 @@ public class DatabaseAdapter {
 			if(keyword.contains("_")) {
 				keyword.replace("_", "$_");
 			}
-			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,feeds.title " +
+			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,feeds.title,feeds.iconPath " +
 					"from articles inner join feeds " +
 					"where articles.title like '%" + keyword + "%' escape '$' and " +
 					"articles.feedId = feeds._id " +
@@ -663,8 +666,9 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				String feedTitle = cursor.getString(6);
+				String feedIconPath = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, 0, feedTitle);
+						dateLong, 0, feedTitle, feedIconPath);
 				articles.add(article);
 			}
 			cursor.close();
@@ -699,7 +703,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(3);
 				long dateLong = cursor.getLong(4);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null);
+						dateLong, feedId, null, null);
 				articles.add(article);
 			}
 			cursor.close();
@@ -734,7 +738,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null);
+						dateLong, feedId, null, null);
 				articles.add(article);
 			}
 			cursor.close();
@@ -1291,7 +1295,8 @@ public class DatabaseAdapter {
 				Article.TABLE_NAME + "." + Article.POINT + "," +
 				Article.TABLE_NAME + "." + Article.DATE + "," +
 				Article.TABLE_NAME + "." + Article.FEEDID + "," +
-				Feed.TABLE_NAME + "." + Feed.TITLE +
+				Feed.TABLE_NAME + "." + Feed.TITLE + "," +
+				Feed.TABLE_NAME + "." + Feed.ICON_PATH +
 				" from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
 				" on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
 				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
@@ -1315,8 +1320,9 @@ public class DatabaseAdapter {
 				long dateLong = cursor.getLong(5);
 				int feedId = cursor.getInt(6);
 				String feedTitle = cursor.getString(7);
+				String feedIconPath = cursor.getString(8);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle);
+						dateLong, feedId, feedTitle, feedIconPath);
 				articles.add(article);
 			}
 			cursor.close();
@@ -1377,10 +1383,14 @@ public class DatabaseAdapter {
 				Article.TABLE_NAME + "." + Article.STATUS + "," +
 				Article.TABLE_NAME + "." + Article.POINT + "," +
 				Article.TABLE_NAME + "." + Article.DATE + "," +
-				Article.TABLE_NAME + "." + Article.FEEDID +
-				" from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-				" where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
+				Article.TABLE_NAME + "." + Article.FEEDID + "," +
+				Feed.TABLE_NAME + "." + Feed.TITLE + "," +
+				Feed.TABLE_NAME + "." + Feed.ICON_PATH +
+				" from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
+				" on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
+				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
+				" inner join " + Feed.TABLE_NAME +
+				" on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
 				" order by " + Article.DATE;
 		if(isNewestArticleTop) {
 			sql += " desc";
@@ -1397,8 +1407,10 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				int feedId = cursor.getInt(6);
+				String feedTitle = cursor.getString(7);
+				String feedIconPath = cursor.getString(8);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null);
+						dateLong, feedId, feedTitle, feedIconPath);
 				articles.add(article);
 			}
 			cursor.close();

@@ -20,15 +20,31 @@
             android:gravity="center_vertical"
             android:minHeight="24dp" />
         <!-- android:onClick="displayArticle" -->
-        <TextView
-            android:id="@+id/feedTitle"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center_vertical"
-            android:textSize="12sp" />
+            android:layout_marginRight="8dp" >
+
+            <ImageView
+                android:id="@+id/iv_feed_icon"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/no_icon" />
+
+            <TextView
+                android:id="@+id/feedTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="aaa"
+                android:layout_gravity="center_vertical"
+                android:textSize="12sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

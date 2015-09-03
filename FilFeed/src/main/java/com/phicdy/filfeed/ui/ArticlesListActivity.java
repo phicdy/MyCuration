@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -30,6 +32,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,6 +47,7 @@ import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.UnreadCountManager;
 import com.phicdy.filfeed.task.NetworkTaskManager;
 import com.phicdy.filfeed.util.PreferenceManager;
+import com.phicdy.filfeed.util.TextUtil;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -520,6 +524,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 holder.articlePostedTime = (TextView) row.findViewById(R.id.articlePostedTime);
                 holder.articlePoint = (TextView) row.findViewById(R.id.articlePoint);
                 holder.feedTitleView = (TextView) row.findViewById(R.id.feedTitle);
+                holder.feedIconView = (ImageView) row.findViewById(R.id.iv_feed_icon);
                 row.setTag(holder);
             }else {
                 holder = (ViewHolder)row.getTag();
@@ -547,9 +552,18 @@ public class ArticlesListActivity extends ActionBarActivity {
                 String feedTitle = article.getFeedTitle();
                 if(feedTitle == null) {
                     holder.feedTitleView.setVisibility(View.GONE);
+                    holder.feedIconView.setVisibility(View.GONE);
                 }else {
                     holder.feedTitleView.setText(feedTitle);
                     holder.feedTitleView.setTextColor(Color.BLACK);
+
+                    String iconPath = article.getFeedIconPath();
+                    if (!TextUtil.isEmpty(iconPath) && new File(iconPath).exists()) {
+                        Bitmap bmp = BitmapFactory.decodeFile(article.getFeedIconPath());
+                        holder.feedIconView.setImageBitmap(bmp);
+                    }else {
+                        holder.feedIconView.setImageResource(R.drawable.no_icon);
+                    }
                 }
                 holder.articleTitle.setTextColor(Color.BLACK);
                 holder.articlePostedTime.setTextColor(Color.BLACK);
@@ -571,6 +585,7 @@ public class ArticlesListActivity extends ActionBarActivity {
             TextView articlePostedTime;
             TextView articlePoint;
             TextView feedTitleView;
+            ImageView feedIconView;
         }
     }
 }
