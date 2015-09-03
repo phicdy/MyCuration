@@ -376,12 +376,12 @@ public class ArticlesListActivity extends ActionBarActivity {
             }
         }else if(feedId == Feed.ALL_FEED_ID) {
             allArticles = dbAdapter.getAllUnreadArticles(isNewestArticleTop);
-            if(allArticles.size() == 0 && dbAdapter.calcNumOfArticles() > 0) {
+            if(allArticles.size() == 0 && dbAdapter.isExistArticle()) {
                 allArticles = dbAdapter.getAllArticles(isNewestArticleTop);
             }
         }else {
             allArticles = dbAdapter.getUnreadArticlesInAFeed(feedId, isNewestArticleTop);
-            if(allArticles.size() == 0 && dbAdapter.calcNumOfArticles(feedId) > 0) {
+            if(allArticles.size() == 0 && dbAdapter.isExistArticle(feedId)) {
                 allArticles = dbAdapter.getAllArticlesInAFeed(feedId, isNewestArticleTop);
             }
         }

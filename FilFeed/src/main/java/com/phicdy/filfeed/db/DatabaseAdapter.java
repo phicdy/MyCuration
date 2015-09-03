@@ -121,43 +121,41 @@ public class DatabaseAdapter {
 		return unreadArticlesCount;
 	}
 	
-	public int calcNumOfArticles(int feedId) {
-		int unreadArticlesCount = 0;
+	public boolean isExistArticle(int feedId) {
+		boolean isExist = false;
 		db.beginTransaction();
 		try {
 			String getArticlesCountsql = "select _id from articles where feedId = "
-					+ feedId;
+					+ feedId + " limit 1";
 			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
-			unreadArticlesCount = countCursor.getCount();
+			isExist = (countCursor.getCount() > 0);
 			countCursor.close();
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			unreadArticlesCount = -1;
 		} finally {
 			db.endTransaction();
 		}
 		
-		return unreadArticlesCount;
+		return isExist;
 	}
 	
-	public int calcNumOfArticles() {
-		int unreadArticlesCount = 0;
+	public boolean isExistArticle() {
+		boolean isExist = false;
 		db.beginTransaction();
 		try {
-			String getArticlesCountsql = "select _id from articles";
+			String getArticlesCountsql = "select _id from articles limit 1";
 			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
-			unreadArticlesCount = countCursor.getCount();
+			isExist = (countCursor.getCount() > 0);
 			countCursor.close();
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			unreadArticlesCount = -1;
 		} finally {
 			db.endTransaction();
 		}
 		
-		return unreadArticlesCount;
+		return isExist;
 	}
 
 	public ArrayList<Feed> getAllFeedsThatHaveUnreadArticles() {
