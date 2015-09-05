@@ -52,7 +52,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		insertTestCurationForArticle1();
 		insertTestData();
 
-		ArrayList<Article> savedArticles = adapter.getAllArticles(false);
+		ArrayList<Article> savedArticles = adapter.getTop300Articles(false);
 		if(savedArticles.size() != 0) {
 			Article savedArticle1 = savedArticles.get(0);
 			assertEquals(TEST_ARTICLE1_TITLE, savedArticle1.getTitle());
@@ -129,7 +129,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
         adapter.saveNewArticles(articles, testFeed.getId());
 
         adapter.saveAllStatusToReadFromToRead();
-        ArrayList<Article> changedArticles = adapter.getAllArticles(true);
+        ArrayList<Article> changedArticles = adapter.getTop300Articles(true);
         boolean existToReadArticle = false;
         for (Article article : changedArticles) {
             if (article.getStatus().equals(Article.TOREAD)) {

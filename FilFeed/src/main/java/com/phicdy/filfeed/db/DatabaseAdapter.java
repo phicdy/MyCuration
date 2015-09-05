@@ -594,7 +594,7 @@ public class DatabaseAdapter {
 		return articles;
 	}
 	
-	public ArrayList<Article> getAllArticles(boolean isNewestArticleTop) {
+	public ArrayList<Article> getTop300Articles(boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {

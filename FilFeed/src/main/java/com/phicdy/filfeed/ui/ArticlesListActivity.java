@@ -377,7 +377,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         }else if(feedId == Feed.ALL_FEED_ID) {
             allArticles = dbAdapter.getAllUnreadArticles(isNewestArticleTop);
             if(allArticles.size() == 0 && dbAdapter.isExistArticle()) {
-                allArticles = dbAdapter.getAllArticles(isNewestArticleTop);
+                allArticles = dbAdapter.getTop300Articles(isNewestArticleTop);
             }
         }else {
             allArticles = dbAdapter.getUnreadArticlesInAFeed(feedId, isNewestArticleTop);
