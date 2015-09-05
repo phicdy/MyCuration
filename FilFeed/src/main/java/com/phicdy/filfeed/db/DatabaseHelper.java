@@ -3,7 +3,6 @@ package com.phicdy.filfeed.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Curation;
