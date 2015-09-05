@@ -141,14 +141,22 @@ public class AddCurationActivity extends ActionBarActivity {
                     handler.sendMessage(msg);
                     return;
                 }
-                if (editCurationid == NOT_EDIT_CURATION_ID && adapter.isExistSameNameCuration(curationName)) {
+
+                boolean isNew = (editCurationid == NOT_EDIT_CURATION_ID);
+                if (isNew && adapter.isExistSameNameCuration(curationName)) {
                     msg.obj = false;
                     bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name));
                     msg.setData(bundle);
                     handler.sendMessage(msg);
                     return;
                 }
-                if (adapter.saveNewCuration(curationName, wordList)) {
+                boolean result;
+                if (isNew) {
+                    result = adapter.saveNewCuration(curationName, wordList);
+                }else {
+                    result = adapter.updateCuration(editCurationid, curationName, wordList);
+                }
+                if (result) {
                     adapter.adaptCurationToArticles(curationName, wordList);
                 }
                 msg.obj = true;

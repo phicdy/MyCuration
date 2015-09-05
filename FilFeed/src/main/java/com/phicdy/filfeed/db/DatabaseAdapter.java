@@ -1112,6 +1112,33 @@ public class DatabaseAdapter {
 		}
 	}
 
+	public boolean updateCuration(int curationId, String name, ArrayList<String> words) {
+		boolean result = true;
+		db.beginTransaction();
+		try {
+			// Update curation name
+			ContentValues values = new ContentValues();
+			values.put(Curation.NAME, name);
+			db.update(Curation.TABLE_NAME, values, Curation.ID + " = " + curationId, null);
+
+			// Delete old curation conditions and insert new one
+			db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null);
+			for (String word : words) {
+				ContentValues condtionValue = new ContentValues();
+				condtionValue.put(CurationCondition.CURATION_ID, curationId);
+				condtionValue.put(CurationCondition.WORD, word);
+				db.insert(CurationCondition.TABLE_NAME, null, condtionValue);
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			db.endTransaction();
+		}
+		return result;
+	}
+
 	public boolean saveNewCuration(String name, ArrayList<String> words) {
 		if(words.isEmpty()) {
 			return false;
@@ -1145,16 +1172,25 @@ public class DatabaseAdapter {
 		}
 
 		boolean result = true;
-		ArrayList<Article> articles = getAllArticles(true);
 		SQLiteStatement insertSt = db
 				.compileStatement("insert into " + CurationSelection.TABLE_NAME +
 						"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");");
 		db.beginTransaction();
 		try {
-			for (Article article : articles) {
+			// Delete old curation selection
+			db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null);
+
+			// Get all articles
+			String[] columns = {Article.ID, Article.TITLE};
+			Cursor cursor = db.query(Article.TABLE_NAME, columns, null, null, null, null, null);
+
+			// Adapt
+			while (cursor.moveToNext()) {
+				int articleId = cursor.getInt(0);
+				String articleTitle = cursor.getString(1);
 				for (String word : words) {
-					if (article.getTitle().contains(word)) {
-						insertSt.bindString(1, String.valueOf(article.getId()));
+					if (articleTitle.contains(word)) {
+						insertSt.bindString(1, String.valueOf(articleId));
 						insertSt.executeInsert();
 					}
 				}
