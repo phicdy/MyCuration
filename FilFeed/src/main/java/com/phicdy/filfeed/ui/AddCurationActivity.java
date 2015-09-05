@@ -59,6 +59,10 @@ public class AddCurationActivity extends ActionBarActivity {
             }
         };
         editCurationid = getIntent().getIntExtra(EDIT_CURATION_ID, NOT_EDIT_CURATION_ID);
+        // Set title for edit
+        if (editCurationid != NOT_EDIT_CURATION_ID) {
+            setTitle(getString(R.string.title_activity_edit_curation));
+        }
     }
 
     @Override
