@@ -133,7 +133,7 @@ public class RssParser {
 		ArrayList<Article> articles = new ArrayList<Article>();
 
 		// TODO Get hatena bookmark(?) count
-		Article article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null);
+		Article article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null, null);
 
 		// Initialize XmlPullParser
 		XmlPullParser parser = Xml.newPullParser();
@@ -152,7 +152,7 @@ public class RssParser {
 				case XmlPullParser.START_TAG:
 					// when new Item found, initialize currentItem
 					if (tag.equals("item") || tag.equals("entry")) {
-						article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null);
+						article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null, null);
 						itemFlag = true;
 					}
 

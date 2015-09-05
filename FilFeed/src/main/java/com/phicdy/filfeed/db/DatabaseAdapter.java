@@ -11,6 +11,9 @@ import android.util.Log;
 
 import com.phicdy.filfeed.filter.Filter;
 import com.phicdy.filfeed.rss.Article;
+import com.phicdy.filfeed.rss.Curation;
+import com.phicdy.filfeed.rss.CurationCondition;
+import com.phicdy.filfeed.rss.CurationSelection;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.util.FileUtil;
 
@@ -19,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseAdapter {
 	
@@ -28,6 +33,7 @@ public class DatabaseAdapter {
 	private static SQLiteDatabase db;
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
+	public static final int NOT_FOUND_ID = -1;
 
 	private static final String LOG_TAG = "FilFeed."
 			+ DatabaseAdapter.class.getName();
@@ -55,22 +61,36 @@ public class DatabaseAdapter {
 		if(articles.isEmpty()) {
 			return;
 		}
+		Map<Integer, ArrayList<String>> curationWordMap = getAllCurationWords();
+		SQLiteStatement insertArticleSt = db.compileStatement(
+				"insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);");
+		SQLiteStatement insertCurationSelectionSt = db.compileStatement(
+				"insert into " + CurationSelection.TABLE_NAME +
+				"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?,?);");
 		db.beginTransaction();
 		try {
-			// db.delete("articles", "title like '%PR%'", null);
-			SQLiteStatement insertSt = db
-					.compileStatement("insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);");
-			// articles passed isArticle(), so not need to check same article exist
 			for (Article article : articles) {
-				insertSt.bindString(1, article.getTitle());
-				insertSt.bindString(2, article.getUrl());
-				insertSt.bindString(3, article.getStatus());
-				insertSt.bindString(4, article.getPoint());
+				insertArticleSt.bindString(1, article.getTitle());
+				insertArticleSt.bindString(2, article.getUrl());
+				insertArticleSt.bindString(3, article.getStatus());
+				insertArticleSt.bindString(4, article.getPoint());
 				Log.d(LOG_TAG, "insert date:" + article.getPostedDate());
-				insertSt.bindLong(5, article.getPostedDate());
-				insertSt.bindString(6, String.valueOf(feedId));
+				insertArticleSt.bindLong(5, article.getPostedDate());
+				insertArticleSt.bindString(6, String.valueOf(feedId));
 
-				insertSt.executeInsert();
+				long articleId = insertArticleSt.executeInsert();
+				for (Map.Entry<Integer, ArrayList<String>> entry : curationWordMap.entrySet()) {
+					int curationId = entry.getKey();
+					ArrayList<String> words = entry.getValue();
+					for (String word : words) {
+						if (article.getTitle().contains(word)) {
+							insertCurationSelectionSt.bindString(1, String.valueOf(articleId));
+							insertCurationSelectionSt.bindString(2, String.valueOf(curationId));
+							insertCurationSelectionSt.executeInsert();
+							break;
+						}
+					}
+				}
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
@@ -101,43 +121,41 @@ public class DatabaseAdapter {
 		return unreadArticlesCount;
 	}
 	
-	public int calcNumOfArticles(int feedId) {
-		int unreadArticlesCount = 0;
+	public boolean isExistArticle(int feedId) {
+		boolean isExist = false;
 		db.beginTransaction();
 		try {
 			String getArticlesCountsql = "select _id from articles where feedId = "
-					+ feedId;
+					+ feedId + " limit 1";
 			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
-			unreadArticlesCount = countCursor.getCount();
+			isExist = (countCursor.getCount() > 0);
 			countCursor.close();
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			unreadArticlesCount = -1;
 		} finally {
 			db.endTransaction();
 		}
 		
-		return unreadArticlesCount;
+		return isExist;
 	}
 	
-	public int calcNumOfArticles() {
-		int unreadArticlesCount = 0;
+	public boolean isExistArticle() {
+		boolean isExist = false;
 		db.beginTransaction();
 		try {
-			String getArticlesCountsql = "select _id from articles";
+			String getArticlesCountsql = "select _id from articles limit 1";
 			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
-			unreadArticlesCount = countCursor.getCount();
+			isExist = (countCursor.getCount() > 0);
 			countCursor.close();
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			unreadArticlesCount = -1;
 		} finally {
 			db.endTransaction();
 		}
 		
-		return unreadArticlesCount;
+		return isExist;
 	}
 
 	public ArrayList<Feed> getAllFeedsThatHaveUnreadArticles() {
@@ -174,7 +192,7 @@ public class DatabaseAdapter {
 		}
 		return feedList;
 	}
-	
+
 	public ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
 		ArrayList<Feed> feedList = new ArrayList<Feed>();
 		db.beginTransaction();
@@ -541,7 +559,7 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title " +
+			String sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
 					"from articles inner join feeds " +
 					"where articles.status = \"unread\" and articles.feedId = feeds._id " +
 					"order by date ";
@@ -560,8 +578,9 @@ public class DatabaseAdapter {
 				long dateLong = cursor.getLong(4);
 				int feedId = cursor.getInt(5);
 				String feedTitle = cursor.getString(6);
+				String feedIconPath = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle);
+						dateLong, feedId, feedTitle, feedIconPath);
 				articles.add(article);
 			}
 			cursor.close();
@@ -575,20 +594,21 @@ public class DatabaseAdapter {
 		return articles;
 	}
 	
-	public ArrayList<Article> getAllArticles(boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<Article>();
+	public ArrayList<Article> getTop300Articles(boolean isNewestArticleTop) {
+		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title " +
+			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
 					"from articles inner join feeds " +
 					"where articles.feedId = feeds._id " +
-					"order by date ";
+					"order by articles._id ";
 			if(isNewestArticleTop) {
 				sql += "desc";
 			}else {
 				sql += "asc";
 			}
+			sql += " limit 300";
 			Cursor cursor = db.rawQuery(sql, null);
 			while (cursor.moveToNext()) {
 				int id = cursor.getInt(0);
@@ -599,18 +619,18 @@ public class DatabaseAdapter {
 				long dateLong = cursor.getLong(5);
 				int feedId = cursor.getInt(6);
 				String feedTitle = cursor.getString(7);
+				String feedIconPath = cursor.getString(8);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle);
+						dateLong, feedId, feedTitle, feedIconPath);
 				articles.add(article);
 			}
 			cursor.close();
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
-			return articles;
+			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
-		
 		return articles;
 	}
 	
@@ -624,7 +644,7 @@ public class DatabaseAdapter {
 			if(keyword.contains("_")) {
 				keyword.replace("_", "$_");
 			}
-			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,feeds.title " +
+			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,feeds.title,feeds.iconPath " +
 					"from articles inner join feeds " +
 					"where articles.title like '%" + keyword + "%' escape '$' and " +
 					"articles.feedId = feeds._id " +
@@ -643,8 +663,9 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				String feedTitle = cursor.getString(6);
+				String feedIconPath = cursor.getString(7);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, 0, feedTitle);
+						dateLong, 0, feedTitle, feedIconPath);
 				articles.add(article);
 			}
 			cursor.close();
@@ -679,7 +700,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(3);
 				long dateLong = cursor.getLong(4);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null);
+						dateLong, feedId, null, null);
 				articles.add(article);
 			}
 			cursor.close();
@@ -714,7 +735,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null);
+						dateLong, feedId, null, null);
 				articles.add(article);
 			}
 			cursor.close();
@@ -1091,4 +1112,384 @@ public class DatabaseAdapter {
 		}
 	}
 
+	public boolean updateCuration(int curationId, String name, ArrayList<String> words) {
+		boolean result = true;
+		db.beginTransaction();
+		try {
+			// Update curation name
+			ContentValues values = new ContentValues();
+			values.put(Curation.NAME, name);
+			db.update(Curation.TABLE_NAME, values, Curation.ID + " = " + curationId, null);
+
+			// Delete old curation conditions and insert new one
+			db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null);
+			for (String word : words) {
+				ContentValues condtionValue = new ContentValues();
+				condtionValue.put(CurationCondition.CURATION_ID, curationId);
+				condtionValue.put(CurationCondition.WORD, word);
+				db.insert(CurationCondition.TABLE_NAME, null, condtionValue);
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			db.endTransaction();
+		}
+		return result;
+	}
+
+	public boolean saveNewCuration(String name, ArrayList<String> words) {
+		if(words.isEmpty()) {
+			return false;
+		}
+		db.beginTransaction();
+		boolean result = true;
+		try {
+			ContentValues values = new ContentValues();
+			values.put(Curation.NAME, name);
+			long addedCurationId = db.insert(Curation.TABLE_NAME, null, values);
+			for (String word : words) {
+				ContentValues condtionValue = new ContentValues();
+				condtionValue.put(CurationCondition.CURATION_ID, addedCurationId);
+				condtionValue.put(CurationCondition.WORD, word);
+				db.insert(CurationCondition.TABLE_NAME, null, condtionValue);
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			db.endTransaction();
+		}
+		return result;
+	}
+
+	public boolean adaptCurationToArticles(String curationName, ArrayList<String> words) {
+		int curationId = getCurationIdByName(curationName);
+		if (curationId == NOT_FOUND_ID) {
+			return false;
+		}
+
+		boolean result = true;
+		SQLiteStatement insertSt = db
+				.compileStatement("insert into " + CurationSelection.TABLE_NAME +
+						"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");");
+		db.beginTransaction();
+		try {
+			// Delete old curation selection
+			db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null);
+
+			// Get all articles
+			String[] columns = {Article.ID, Article.TITLE};
+			Cursor cursor = db.query(Article.TABLE_NAME, columns, null, null, null, null, null);
+
+			// Adapt
+			while (cursor.moveToNext()) {
+				int articleId = cursor.getInt(0);
+				String articleTitle = cursor.getString(1);
+				for (String word : words) {
+					if (articleTitle.contains(word)) {
+						insertSt.bindString(1, String.valueOf(articleId));
+						insertSt.executeInsert();
+					}
+				}
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			db.endTransaction();
+		}
+		return result;
+	}
+
+	public ArrayList<Curation> getAllCurations() {
+		ArrayList<Curation> curationList = new ArrayList<>();
+		db.beginTransaction();
+		try {
+			String[] columns = {Curation.ID, Curation.NAME};
+			String orderBy = Curation.NAME;
+			Cursor cursor = db.query(Curation.TABLE_NAME, columns, null, null, null, null, orderBy);
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					int id = cursor.getInt(0);
+					String name = cursor.getString(1);
+					curationList.add(new Curation(id, name));
+				}
+				cursor.close();
+			}
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+
+		return curationList;
+	}
+
+	public boolean deleteCuration(int curationId) {
+		int numOfDeleted = 0;
+		db.beginTransaction();
+		try {
+			db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null);
+			db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null);
+			numOfDeleted = db.delete(Curation.TABLE_NAME, Curation.ID + " = " + curationId, null);
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+		if (numOfDeleted == 1) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean deleteAllCuration() {
+		boolean result = true;
+		db.beginTransaction();
+		try {
+			db.delete(CurationCondition.TABLE_NAME, "", null);
+			db.delete(CurationSelection.TABLE_NAME, "", null);
+			db.delete(Curation.TABLE_NAME, "", null);
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			db.endTransaction();
+		}
+		return result;
+	}
+
+	public boolean isExistSameNameCuration(String name) {
+		int num = 0;
+		try {
+			String[] columns = {Curation.ID};
+			String selection = Curation.NAME + " = ?";
+			String[] selectionArgs = {name};
+			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+			num = cursor.getCount();
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(num > 0) {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	public int getCurationIdByName(String name) {
+		int id = NOT_FOUND_ID;
+		try {
+			String[] columns = {Curation.ID};
+			String selection = Curation.NAME + " = '' || ? || ''";
+			String[] selectionArgs = {name};
+			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+			cursor.moveToFirst();
+			id = cursor.getInt(0);
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return id;
+		}
+	}
+
+	public String getCurationNameById(int curationId) {
+		String name = "";
+		try {
+			String[] columns = {Curation.NAME};
+			String selection = Curation.ID + " = ?";
+			String[] selectionArgs = {String.valueOf(curationId)};
+			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+			cursor.moveToFirst();
+			name = cursor.getString(0);
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return name;
+		}
+	}
+
+	public ArrayList<Article> getAllUnreadArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
+		ArrayList<Article> articles = new ArrayList<>();
+		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
+				Article.TABLE_NAME + "." + Article.TITLE + "," +
+				Article.TABLE_NAME + "." + Article.URL + "," +
+				Article.TABLE_NAME + "." + Article.STATUS + "," +
+				Article.TABLE_NAME + "." + Article.POINT + "," +
+				Article.TABLE_NAME + "." + Article.DATE + "," +
+				Article.TABLE_NAME + "." + Article.FEEDID + "," +
+				Feed.TABLE_NAME + "." + Feed.TITLE + "," +
+				Feed.TABLE_NAME + "." + Feed.ICON_PATH +
+				" from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
+				" on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
+				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
+				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
+				" inner join " + Feed.TABLE_NAME +
+				" on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
+				" order by " + Article.DATE;
+		if(isNewestArticleTop) {
+			sql += " desc";
+		}else {
+			sql += " asc";
+		}
+		try {
+			Cursor cursor = db.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				int id = cursor.getInt(0);
+				String title = cursor.getString(1);
+				String url = cursor.getString(2);
+				String status = cursor.getString(3);
+				String point = cursor.getString(4);
+				long dateLong = cursor.getLong(5);
+				int feedId = cursor.getInt(6);
+				String feedTitle = cursor.getString(7);
+				String feedIconPath = cursor.getString(8);
+				Article article = new Article(id, title, url, status, point,
+						dateLong, feedId, feedTitle, feedIconPath);
+				articles.add(article);
+			}
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return articles;
+		}
+	}
+	public int calcNumOfAllUnreadArticlesOfCuration(int curationId) {
+		int num = 0;
+		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
+				Article.TABLE_NAME + "." + Article.TITLE + "," +
+				Article.TABLE_NAME + "." + Article.URL + "," +
+				Article.TABLE_NAME + "." + Article.STATUS + "," +
+				Article.TABLE_NAME + "." + Article.POINT + "," +
+				Article.TABLE_NAME + "." + Article.DATE + "," +
+				Article.TABLE_NAME + "." + Article.FEEDID +
+				" from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
+				" where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
+				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
+				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
+				" order by " + Article.DATE;
+		try {
+			Cursor cursor = db.rawQuery(sql, null);
+			num = cursor.getCount();
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return num;
+		}
+	}
+
+	public ArrayList<String> getCurationWords(int curationId) {
+		ArrayList<String> words = new ArrayList<>();
+		String[] columns = {CurationCondition.WORD};
+		String selection = CurationCondition.CURATION_ID + " = ?";
+		String[] selectionArgs = {String.valueOf(curationId)};
+		try {
+			Cursor cursor = db.query(CurationCondition.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+			while (cursor.moveToNext()) {
+				words.add(cursor.getString(0));
+			}
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return words;
+		}
+	}
+
+	public ArrayList<Article> getAllArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
+		ArrayList<Article> articles = new ArrayList<>();
+		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
+				Article.TABLE_NAME + "." + Article.TITLE + "," +
+				Article.TABLE_NAME + "." + Article.URL + "," +
+				Article.TABLE_NAME + "." + Article.STATUS + "," +
+				Article.TABLE_NAME + "." + Article.POINT + "," +
+				Article.TABLE_NAME + "." + Article.DATE + "," +
+				Article.TABLE_NAME + "." + Article.FEEDID + "," +
+				Feed.TABLE_NAME + "." + Feed.TITLE + "," +
+				Feed.TABLE_NAME + "." + Feed.ICON_PATH +
+				" from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
+				" on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
+				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
+				" inner join " + Feed.TABLE_NAME +
+				" on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
+				" order by " + Article.DATE;
+		if(isNewestArticleTop) {
+			sql += " desc";
+		}else {
+			sql += " asc";
+		}
+		try {
+			Cursor cursor = db.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				int id = cursor.getInt(0);
+				String title = cursor.getString(1);
+				String url = cursor.getString(2);
+				String status = cursor.getString(3);
+				String point = cursor.getString(4);
+				long dateLong = cursor.getLong(5);
+				int feedId = cursor.getInt(6);
+				String feedTitle = cursor.getString(7);
+				String feedIconPath = cursor.getString(8);
+				Article article = new Article(id, title, url, status, point,
+						dateLong, feedId, feedTitle, feedIconPath);
+				articles.add(article);
+			}
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return articles;
+		}
+	}
+
+	public Map<Integer, ArrayList<String>> getAllCurationWords() {
+		Map<Integer, ArrayList<String>> curationWordsMap = new HashMap<>();
+		String sql = "select " + Curation.TABLE_NAME + "." + Curation.ID + "," +
+				CurationCondition.TABLE_NAME + "." + CurationCondition.WORD +
+				" from " + Curation.TABLE_NAME + " inner join " + CurationCondition.TABLE_NAME +
+				" where " + Curation.TABLE_NAME + "." + Curation.ID + " = " + CurationCondition.TABLE_NAME + "." + CurationCondition.CURATION_ID +
+				" order by " + Curation.TABLE_NAME + "." + Curation.ID;
+		try {
+			Cursor cursor = db.rawQuery(sql, null);
+			final int defaultCurationId = -1;
+			int curationId = defaultCurationId;
+			ArrayList<String> words = new ArrayList<>();
+			while (cursor.moveToNext()) {
+				int newCurationId = cursor.getInt(0);
+				if (curationId == defaultCurationId) {
+					curationId = newCurationId;
+				}
+				// Add words of curation to map when curation ID changes
+				if (curationId != newCurationId) {
+					curationWordsMap.put(curationId, words);
+					curationId = newCurationId;
+					words = new ArrayList<>();
+				}
+				String word = cursor.getString(1);
+				words.add(word);
+			}
+			// Add last words of curation
+			if (curationId != defaultCurationId) {
+				curationWordsMap.put(curationId, words);
+			}
+
+			cursor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return curationWordsMap;
+		}
+	}
 }

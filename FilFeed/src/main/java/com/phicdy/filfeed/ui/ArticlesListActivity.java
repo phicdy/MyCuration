@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -30,6 +32,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,6 +47,7 @@ import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.UnreadCountManager;
 import com.phicdy.filfeed.task.NetworkTaskManager;
 import com.phicdy.filfeed.util.PreferenceManager;
+import com.phicdy.filfeed.util.TextUtil;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -55,6 +59,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private ArrayList<Article> allArticles;
     private ArrayList<Article> loadedArticles = new ArrayList<>();
     private int feedId;
+    private int curationId;
     private String feedUrl;
     private DatabaseAdapter dbAdapter;
     private PreferenceManager prefMgr;
@@ -68,6 +73,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     public static final String OPEN_URL_ID = "openUrl";
     private static final int LOAD_COUNT = 100;
+    private static final int DEFAULT_CURATION_ID = -1;
     private static final String LOAD_ARTICLE = "loadArticle";
     private static final String LOG_TAG = "FilFeed.ArticlesList";
 
@@ -91,12 +97,15 @@ public class ArticlesListActivity extends ActionBarActivity {
         // Set feed id and url from main activity
         intent = getIntent();
         feedId = intent.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID);
+        curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID);
         feedUrl = intent.getStringExtra(TopActivity.FEED_URL);
         intent.putExtra(TopActivity.FEED_ID, feedId);
         // intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
         prefMgr = PreferenceManager.getInstance(getApplicationContext());
         swipeDirectionOption = prefMgr.getSwipeDirection();
-        if(feedId == Feed.ALL_FEED_ID) {
+        if (curationId != DEFAULT_CURATION_ID) {
+            setTitle(dbAdapter.getCurationNameById(curationId));
+        }else if(feedId == Feed.ALL_FEED_ID) {
             setTitle(getString(R.string.all));
         }else {
             prefMgr.setSearchFeedId(feedId);
@@ -343,12 +352,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                     if (targetArticle.getStatus().equals(Article.UNREAD)) {
                         targetArticle.setStatus(Article.TOREAD);
                         unreadManager.countDownUnreadCount(targetArticle.getFeedId());
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                dbAdapter.saveStatus(targetArticle.getId(), Article.TOREAD);
-                            }
-                        }.start();
+                        dbAdapter.saveStatus(targetArticle.getId(), Article.TOREAD);
                     }
                 }
                 articlesListAdapter.notifyDataSetChanged();
@@ -366,14 +370,19 @@ public class ArticlesListActivity extends ActionBarActivity {
     private void displayUnreadArticles() {
         PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
         boolean isNewestArticleTop = mgr.getSortNewArticleTop();
-        if(feedId == Feed.ALL_FEED_ID) {
+        if (curationId != DEFAULT_CURATION_ID) {
+            allArticles = dbAdapter.getAllUnreadArticlesOfCuration(curationId, isNewestArticleTop);
+            if (allArticles.size() == 0) {
+                allArticles = dbAdapter.getAllArticlesOfCuration(curationId, isNewestArticleTop);
+            }
+        }else if(feedId == Feed.ALL_FEED_ID) {
             allArticles = dbAdapter.getAllUnreadArticles(isNewestArticleTop);
-            if(allArticles.size() == 0 && dbAdapter.calcNumOfArticles() > 0) {
-                allArticles = dbAdapter.getAllArticles(isNewestArticleTop);
+            if(allArticles.size() == 0 && dbAdapter.isExistArticle()) {
+                allArticles = dbAdapter.getTop300Articles(isNewestArticleTop);
             }
         }else {
             allArticles = dbAdapter.getUnreadArticlesInAFeed(feedId, isNewestArticleTop);
-            if(allArticles.size() == 0 && dbAdapter.calcNumOfArticles(feedId) > 0) {
+            if(allArticles.size() == 0 && dbAdapter.isExistArticle(feedId)) {
                 allArticles = dbAdapter.getAllArticlesInAFeed(feedId, isNewestArticleTop);
             }
         }
@@ -517,6 +526,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 holder.articlePostedTime = (TextView) row.findViewById(R.id.articlePostedTime);
                 holder.articlePoint = (TextView) row.findViewById(R.id.articlePoint);
                 holder.feedTitleView = (TextView) row.findViewById(R.id.feedTitle);
+                holder.feedIconView = (ImageView) row.findViewById(R.id.iv_feed_icon);
                 row.setTag(holder);
             }else {
                 holder = (ViewHolder)row.getTag();
@@ -544,9 +554,18 @@ public class ArticlesListActivity extends ActionBarActivity {
                 String feedTitle = article.getFeedTitle();
                 if(feedTitle == null) {
                     holder.feedTitleView.setVisibility(View.GONE);
+                    holder.feedIconView.setVisibility(View.GONE);
                 }else {
                     holder.feedTitleView.setText(feedTitle);
                     holder.feedTitleView.setTextColor(Color.BLACK);
+
+                    String iconPath = article.getFeedIconPath();
+                    if (!TextUtil.isEmpty(iconPath) && new File(iconPath).exists()) {
+                        Bitmap bmp = BitmapFactory.decodeFile(article.getFeedIconPath());
+                        holder.feedIconView.setImageBitmap(bmp);
+                    }else {
+                        holder.feedIconView.setImageResource(R.drawable.no_icon);
+                    }
                 }
                 holder.articleTitle.setTextColor(Color.BLACK);
                 holder.articlePostedTime.setTextColor(Color.BLACK);
@@ -568,6 +587,7 @@ public class ArticlesListActivity extends ActionBarActivity {
             TextView articlePostedTime;
             TextView articlePoint;
             TextView feedTitleView;
+            ImageView feedIconView;
         }
     }
 }

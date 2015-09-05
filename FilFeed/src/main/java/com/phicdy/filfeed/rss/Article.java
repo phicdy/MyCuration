@@ -10,6 +10,7 @@ public class Article {
 	private long postedDate_;
 	private int feedId_;
 	private String feedTitle;
+	private String feedIconPath;
 
 	public static final String TABLE_NAME = "articles";
 	public static final String ID = "_id";
@@ -25,9 +26,9 @@ public class Article {
 	public static final String READ = "read";
 
 	public static final String DEDAULT_HATENA_POINT = "-1";
-	
-	public Article(int id, String title, String url, String status, 
-			String point, long postDate, int feedId, String feedTitle) {
+
+	public Article(int id, String title, String url, String status,
+			String point, long postDate, int feedId, String feedTitle, String feedIconPath) {
 		id_    = id;
 		title_ = title;
 		status_ = status;
@@ -36,6 +37,7 @@ public class Article {
 		postedDate_ = postDate;
 		feedId_ = feedId;
 		this.feedTitle = feedTitle;
+		this.feedIconPath = feedIconPath;
 	}
 	
 	public String getFeedTitle() {
@@ -100,5 +102,9 @@ public class Article {
 	
 	public long getPostedDate() {
 		return postedDate_;
+	}
+
+	public String getFeedIconPath() {
+		return feedIconPath;
 	}
 }

@@ -3,9 +3,11 @@ package com.phicdy.filfeed.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.phicdy.filfeed.rss.Article;
+import com.phicdy.filfeed.rss.Curation;
+import com.phicdy.filfeed.rss.CurationCondition;
+import com.phicdy.filfeed.rss.CurationSelection;
 import com.phicdy.filfeed.rss.Feed;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
@@ -46,17 +48,30 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 "url text," +
                 "title text,"+
                 "foreign key(feedId) references feeds(_id))";
-        String createPrioritiesTableSQL =
-                "create table priorities(_id integer primary key autoincrement,"+
-                "priorFeedId integer,"+
-                "posteriorFeedId integer,"+
-                "foreign key(priorFeedId) references feeds(_id),"+
-                "foreign key(posteriorFeedId) references feeds(_id))";
-                  
+        String createCurationsTableSQL =
+                "create table " + Curation.TABLE_NAME + "(" +
+                        Curation.ID + " integer primary key autoincrement,"+
+                        Curation.NAME + " text)";
+        String createCurationSelectionsTableSQL =
+                "create table " + CurationSelection.TABLE_NAME + "(" +
+                        CurationSelection.ID + " integer primary key autoincrement,"+
+                        CurationSelection.CURATION_ID + " integer," +
+                        CurationSelection.ARTICLE_ID + " integer," +
+                        "foreign key(" + CurationSelection.CURATION_ID + ") references " + Curation.TABLE_NAME + "(" + Curation.ID + ")," +
+                        "foreign key(" + CurationSelection.ARTICLE_ID + ") references " + Article.TABLE_NAME + "(" + Article.ID + "))";
+        String createCurationConditionTableSQL =
+                "create table " + CurationCondition.TABLE_NAME + "(" +
+                        CurationCondition.ID + " integer primary key autoincrement,"+
+                        CurationCondition.WORD + " text," +
+                        CurationCondition.CURATION_ID + " integer," +
+                        "foreign key(" + CurationSelection.CURATION_ID + ") references " + Curation.TABLE_NAME + "(" + Curation.ID + "))";
+
         db.execSQL(createFeedsTableSQL);
         db.execSQL(createArticlesTableSQL);
         db.execSQL(createFiltersTableSQL);
-        db.execSQL(createPrioritiesTableSQL);
+        db.execSQL(createCurationsTableSQL);
+        db.execSQL(createCurationSelectionsTableSQL);
+        db.execSQL(createCurationConditionTableSQL);
     }
       
     @Override

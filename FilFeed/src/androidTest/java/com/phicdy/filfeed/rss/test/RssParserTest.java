@@ -28,18 +28,18 @@ public class RssParserTest extends AndroidTestCase {
 	}
 	
 	public void testParseFeedInfoRSS1() {
-		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://jp.techcrunch.com/feed/");
+		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://news.yahoo.co.jp/pickup/rss.xml");
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		Feed addedFeed = adapter.getFeedByUrl("http://jp.techcrunch.com/feed/");
+		Feed addedFeed = adapter.getFeedByUrl("http://news.yahoo.co.jp/pickup/rss.xml");
 //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
 		assertNotNull(addedFeed);
-		assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
-		assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
+		assertEquals("http://news.yahoo.co.jp/pickup/rss.xml", addedFeed.getUrl());
+		assertEquals("http://news.yahoo.co.jp", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 
 		//http://feed.japan.cnet.com/rss/index.rdf
@@ -137,17 +137,17 @@ public class RssParserTest extends AndroidTestCase {
 
 	public void testParseFeedInfoTopHtml() {
 		// Test top URL
-		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://jp.techcrunch.com");
+		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://gigazine.net");
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		Feed addedFeed = adapter.getFeedByUrl("http://jp.techcrunch.com/feed/");
+		Feed addedFeed = adapter.getFeedByUrl("http://gigazine.net/news/rss_2.0/");
 		assertNotNull(addedFeed);
-		assertEquals("http://jp.techcrunch.com/feed/", addedFeed.getUrl());
-		assertEquals("http://jp.techcrunch.com", addedFeed.getSiteUrl());
+		assertEquals("http://gigazine.net/news/rss_2.0/", addedFeed.getUrl());
+		assertEquals("http://gigazine.net", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 	}
 

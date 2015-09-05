@@ -30,8 +30,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.phicdy.filfeed.R;
@@ -42,7 +42,7 @@ import com.phicdy.filfeed.task.NetworkTaskManager;
 
 import java.util.ArrayList;
 
-public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener{
+public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -66,6 +66,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private MyProgressDialogFragment progressDialog;
 
     private FeedListFragment listFragment;
+    private CurationListFragment curationFragment;
     private SearchView searchView;
     private ViewGroup track;
     private HorizontalScrollView trackScroller;
@@ -74,12 +75,14 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private int indicatorOffset;
     private int selectedPosition = POSITION_FEED_FRAGMENT;
 
-    private static final int POSITION_FEED_FRAGMENT = 0;
-    private static final int POSITION_FILTER_FRAGMENT = 1;
+    private static final int POSITION_CURATION_FRAGMENT = 0;
+    private static final int POSITION_FEED_FRAGMENT = 1;
+    private static final int POSITION_FILTER_FRAGMENT = 2;
     private static final int DELETE_FEED_MENU_ID = 1000;
     private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
 
     public static final String FEED_ID = "FEED_ID";
+    public static final String CURATION_ID = "CURATION_ID";
     public static final String FEED_URL = "FEED_URL";
     public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
     private static final String LOG_TAG = "FilFeed." + TopActivity.class.getSimpleName();
@@ -90,6 +93,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         setContentView(R.layout.activity_top);
 
         listFragment = new FeedListFragment();
+        curationFragment = new CurationListFragment();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -103,7 +107,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         indicator = (View)findViewById(R.id.indicator);
 
         WindowManager wm = getWindowManager();
-        // Displayのインスタンス取得
         Display disp = wm.getDefaultDisplay();
         Point size = new Point();
         disp.getSize(size);
@@ -111,18 +114,18 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         LayoutInflater inflater = LayoutInflater.from(this);
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
             final int position = i;
-            TextView tv = (TextView)inflater.inflate(R.layout.tab_item, track, false);
-            tv.setText(mSectionsPagerAdapter.getPageTitle(position));
-            tv.setOnClickListener(new View.OnClickListener() {
+            ImageView ivTab = (ImageView)inflater.inflate(R.layout.tab_item, track, false);
+            ivTab.setImageResource(mSectionsPagerAdapter.getImageResource(position));
+            ivTab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mViewPager.setCurrentItem(position);
                 }
             });
-            final LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)tv.getLayoutParams();
+            final LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)ivTab.getLayoutParams();
             layoutParams.width = displayWidth / mSectionsPagerAdapter.getCount();
-            tv.setLayoutParams(layoutParams);
-            track.addView(tv);
+            ivTab.setLayoutParams(layoutParams);
+            track.addView(ivTab);
         }
 
         final float density = getResources().getDisplayMetrics().density;
@@ -186,6 +189,14 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         switch (item.getItemId()) {
             case R.id.add:
                 switch (selectedPosition) {
+                    case POSITION_CURATION_FRAGMENT:
+                        if (dbAdapter.getNumOfFeeds() == 0) {
+                            addFeed();
+                            break;
+                        }
+						Intent intent = new Intent(getApplicationContext(), AddCurationActivity.class);
+						startActivity(intent);
+                        break;
                     case POSITION_FEED_FRAGMENT:
                         addFeed();
                         break;
@@ -415,6 +426,14 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         startActivity(intent);
     }
 
+    @Override
+    public void onCurationListClicked(int position) {
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), ArticlesListActivity.class);
+        intent.putExtra(CURATION_ID, curationFragment.getCurationIdAtPosition(position));
+        startActivity(intent);
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -428,6 +447,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         @Override
         public Fragment getItem(int position) {
             switch (position) {
+                case POSITION_CURATION_FRAGMENT:
+                    return curationFragment;
                 case POSITION_FEED_FRAGMENT:
                     return listFragment;
                 case POSITION_FILTER_FRAGMENT:
@@ -439,18 +460,32 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
+                case POSITION_CURATION_FRAGMENT:
+                    return getString(R.string.curation);
                 case POSITION_FEED_FRAGMENT:
                     return getString(R.string.feed);
                 case POSITION_FILTER_FRAGMENT:
                     return getString(R.string.filter);
             }
             return null;
+        }
+
+        public int getImageResource(int position) {
+            switch (position) {
+                case POSITION_CURATION_FRAGMENT:
+                    return R.drawable.tab_coffee;
+                case POSITION_FEED_FRAGMENT:
+                    return R.drawable.tab_feed;
+                case POSITION_FILTER_FRAGMENT:
+                    return R.drawable.tab_filter;
+            }
+            return -1;
         }
     }
 
@@ -461,12 +496,14 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             updateIndicatorPosition(position, positionOffset);
+            setTitle(mSectionsPagerAdapter.getPageTitle(position));
         }
 
         @Override
         public void onPageSelected(int position) {
             if (scrollState == ViewPager.SCROLL_STATE_IDLE) {
                 updateIndicatorPosition(position, 0);
+                setTitle(mSectionsPagerAdapter.getPageTitle(position));
             }
         }
 
