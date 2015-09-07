@@ -1,7 +1,7 @@
 package com.phicdy.filfeed.ui;
   
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.preference.PreferenceActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -11,9 +11,9 @@ import android.widget.Toast;
 
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
-  
-public class SettingActivity extends ActionBarActivity {
 import com.phicdy.filfeed.util.PreferenceHelper;
+
+public class SettingActivity extends PreferenceActivity {
   
 	private Spinner spUpdateInterval;
 	private CheckBox cbSortNewArticleTop;
@@ -24,10 +24,12 @@ import com.phicdy.filfeed.util.PreferenceHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
-        
-        initView();
-        setLitener();
+//        initView();
+//        setLitener();
+		getFragmentManager().beginTransaction()
+				.replace(android.R.id.content, new SettingFragment())
+				.commit();
+
 	}
     
     private void initView() {
@@ -65,7 +67,7 @@ import com.phicdy.filfeed.util.PreferenceHelper;
 			
 			@Override
 			public void onClick(View v) {
-				PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
+				PreferenceHelper mgr = PreferenceHelper.getInstance(getApplicationContext());
 				
 				// Save update interval
 				int intervalHour = Integer.valueOf((String)spUpdateInterval.getSelectedItem());
@@ -86,17 +88,4 @@ import com.phicdy.filfeed.util.PreferenceHelper;
 		});
     }
 
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-	}
-    
-    
 }
