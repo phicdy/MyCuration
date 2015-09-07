@@ -2,7 +2,7 @@ package com.phicdy.filfeed.alarm;
 
 import java.util.Calendar;
 
-import com.phicdy.filfeed.util.PreferenceManager;
+import com.phicdy.filfeed.util.PreferenceHelper;
 
 
 import android.app.AlarmManager;
@@ -21,7 +21,7 @@ public class AlarmManagerTaskManager {
 	}
 	
 	public static void setNewAlarm(Context context) {
-		PreferenceManager mgr = PreferenceManager.getInstance(context);
+		PreferenceHelper mgr = PreferenceHelper.getInstance(context);
 		int intervalSec = mgr.getAutoUpdateIntervalSecond();
 		if (intervalSec == 0) {
 			cancelAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION);

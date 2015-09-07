@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Article;
-import com.phicdy.filfeed.util.PreferenceManager;
+import com.phicdy.filfeed.util.PreferenceHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 
 	private ArrayList<Article> articles;
 	private DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
-	private PreferenceManager prefMgr;
+	private PreferenceHelper prefMgr;
 	private Intent intent;
 	private ListView resultListView;
 	private ArticlesListAdapter articlesListAdapter;
@@ -46,7 +46,7 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 		// Set feed id and url from main activity
 		intent = getIntent();
 
-		prefMgr = PreferenceManager.getInstance(getApplicationContext());
+		prefMgr = PreferenceHelper.getInstance(getApplicationContext());
 
 		// title
 		setTitle(getString(R.string.search_result));

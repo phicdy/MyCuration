@@ -46,7 +46,7 @@ import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.UnreadCountManager;
 import com.phicdy.filfeed.task.NetworkTaskManager;
-import com.phicdy.filfeed.util.PreferenceManager;
+import com.phicdy.filfeed.util.PreferenceHelper;
 import com.phicdy.filfeed.util.TextUtil;
 
 import java.io.File;
@@ -62,7 +62,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private int curationId;
     private String feedUrl;
     private DatabaseAdapter dbAdapter;
-    private PreferenceManager prefMgr;
+    private PreferenceHelper prefMgr;
     private UnreadCountManager unreadManager;
     private Intent intent;
 
@@ -81,7 +81,7 @@ public class ArticlesListActivity extends ActionBarActivity {
     private SimpleOnGestureListener mOnGestureListener;
     private boolean isSwipeRightToLeft = false;
     private boolean isSwipeLeftToRight = false;
-    private int swipeDirectionOption = PreferenceManager.SWIPE_DEFAULT;
+    private int swipeDirectionOption = PreferenceHelper.SWIPE_DEFAULT;
 
     private SearchView searchView;
     private View footer;
@@ -101,7 +101,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         feedUrl = intent.getStringExtra(TopActivity.FEED_URL);
         intent.putExtra(TopActivity.FEED_ID, feedId);
         // intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
-        prefMgr = PreferenceManager.getInstance(getApplicationContext());
+        prefMgr = PreferenceHelper.getInstance(getApplicationContext());
         swipeDirectionOption = prefMgr.getSwipeDirection();
         if (curationId != DEFAULT_CURATION_ID) {
             setTitle(dbAdapter.getCurationNameById(curationId));
@@ -304,10 +304,10 @@ public class ArticlesListActivity extends ActionBarActivity {
                         // Right to Left
                         isSwipeRightToLeft = true;
                         switch (swipeDirectionOption) {
-                            case PreferenceManager.SWIPE_RIGHT_TO_LEFT:
+                            case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
                                 setReadStatusToTouchedView(touchedPosition, Article.TOREAD, prefMgr.getAllReadBack());
                                 break;
-                            case PreferenceManager.SWIPE_LEFT_TO_RIGHT:
+                            case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
                                 setReadStatusToTouchedView(touchedPosition, Article.UNREAD, prefMgr.getAllReadBack());
                                 break;
                             default:
@@ -318,10 +318,10 @@ public class ArticlesListActivity extends ActionBarActivity {
                         // Left to Right
                         isSwipeLeftToRight = true;
                         switch (swipeDirectionOption) {
-                            case PreferenceManager.SWIPE_RIGHT_TO_LEFT:
+                            case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
                                 setReadStatusToTouchedView(touchedPosition, Article.UNREAD, prefMgr.getAllReadBack());
                                 break;
-                            case PreferenceManager.SWIPE_LEFT_TO_RIGHT:
+                            case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
                                 setReadStatusToTouchedView(touchedPosition, Article.TOREAD, prefMgr.getAllReadBack());
                                 break;
                             default:
@@ -368,7 +368,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         });
     }
     private void displayUnreadArticles() {
-        PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
+        PreferenceHelper mgr = PreferenceHelper.getInstance(getApplicationContext());
         boolean isNewestArticleTop = mgr.getSortNewArticleTop();
         if (curationId != DEFAULT_CURATION_ID) {
             allArticles = dbAdapter.getAllUnreadArticlesOfCuration(curationId, isNewestArticleTop);

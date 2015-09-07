@@ -11,9 +11,9 @@ import android.widget.Toast;
 
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
-import com.phicdy.filfeed.util.PreferenceManager;
   
 public class SettingActivity extends ActionBarActivity {
+import com.phicdy.filfeed.util.PreferenceHelper;
   
 	private Spinner spUpdateInterval;
 	private CheckBox cbSortNewArticleTop;
@@ -32,8 +32,8 @@ public class SettingActivity extends ActionBarActivity {
     
     private void initView() {
         setTitle(getString(R.string.setting));
-    	PreferenceManager mgr = PreferenceManager.getInstance(getApplicationContext());
     	
+    	PreferenceHelper mgr = PreferenceHelper.getInstance(getApplicationContext());
     	spUpdateInterval = (Spinner)findViewById(R.id.sp_update_interval);
     	// Set stored position of value
     	int autoUpdateIntervalSecond = mgr.getAutoUpdateIntervalSecond();

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class PreferenceManager extends Activity {
+public class PreferenceHelper extends Activity {
 
 	private static final String PREF_KEY = "FilterPref";
 	private static final String KEY_AUTO_UPDATE_INTERVAL = "autoUpdateInterval";
@@ -21,17 +21,17 @@ public class PreferenceManager extends Activity {
 	private static final int DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60;
 	
 	public static int DEFAULT_VALUE = 0;
-	private static PreferenceManager preMgr;
+	private static PreferenceHelper preMgr;
 	private SharedPreferences pref = null;
 	private SharedPreferences.Editor editor = null;
 
-	private PreferenceManager(Context context) {
+	private PreferenceHelper(Context context) {
 		pref = context.getSharedPreferences(PREF_KEY, MODE_PRIVATE);
 	}
 
-	public static PreferenceManager getInstance(Context context) {
+	public static PreferenceHelper getInstance(Context context) {
 		if(preMgr == null) {
-			preMgr = new PreferenceManager(context);
+			preMgr = new PreferenceHelper(context);
 		}
 		return preMgr;
 	}
