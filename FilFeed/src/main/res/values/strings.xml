@@ -69,11 +69,11 @@
     <string name="see_setting">閲覧の設定</string>
     <string name="interval">自動更新の頻度</string>
     <string name="hour">時間</string>
-    <string name="article_sort">新しい記事を先頭にする</string>
+    <string name="article_sort">新しい記事を先頭</string>
     <string name="all_read_behavior">全ての記事を既読にした時の動作</string>
     <string name="all_read_back">フィード一覧に戻る</string>
     <string name="all_read_not_back">フィード一覧に戻らない</string>
-    <string name="open_internal">内蔵のブラウザで開く</string>
+    <string name="open_internal">内蔵ブラウザで開く</string>
     <string name="swipe_direction">スワイプ方向</string>
     <string name="right_to_left">右から左で記事を既読</string>
     <string name="left_to_right">左から右で記事を既読</string>
