@@ -14,15 +14,11 @@
 
         <SwitchPreference
             android:title="@string/article_sort"
-            android:key="@string/key_article_sort"
-            android:switchTextOff="NO"
-            android:switchTextOn="YES"/>
+            android:key="@string/key_article_sort"/>
 
         <SwitchPreference
             android:title="@string/open_internal"
-            android:key="@string/key_internal_browser"
-            android:switchTextOff="NO"
-            android:switchTextOn="YES"/>
+            android:key="@string/key_internal_browser"/>
 
         <ListPreference
             android:title="@string/all_read_behavior"
