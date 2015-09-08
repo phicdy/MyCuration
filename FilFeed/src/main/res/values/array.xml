@@ -4,20 +4,20 @@
         <item>左から右で記事を既読</item>
     </string-array>
 
-    <integer-array name="swipe_direction_items_values">
+    <string-array name="swipe_direction_items_values">
         <item>0</item>
         <item>1</item>
-    </integer-array>
+    </string-array>
 
     <array name="all_read_behavior">
         <item>@string/all_read_back</item>
         <item>@string/all_read_not_back</item>
     </array>
 
-    <integer-array name="all_read_behavior_values">
+    <string-array name="all_read_behavior_values">
         <item>1</item>
         <item>0</item>
-    </integer-array>
+    </string-array>
 
     <string-array name="update_interval_items">
         <item>自動更新を行わない</item>
