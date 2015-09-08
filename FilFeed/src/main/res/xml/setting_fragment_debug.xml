@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+
+    <PreferenceCategory android:title="@string/auto_update_setting" >
+        <ListPreference
+            android:title="@string/interval"
+            android:key="@string/key_update_interval"
+            android:entries="@array/update_interval_items"
+            android:entryValues="@array/update_interval_items_values"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/see_setting" >
+
+        <SwitchPreference
+            android:title="@string/article_sort"
+            android:key="@string/key_article_sort"/>
+
+        <SwitchPreference
+            android:title="@string/open_internal"
+            android:key="@string/key_internal_browser"/>
+
+        <ListPreference
+            android:title="@string/all_read_behavior"
+            android:key="@string/key_all_read_behavior"
+            android:entries="@array/all_read_behavior"
+            android:entryValues="@array/all_read_behavior_values"/>
+
+        <ListPreference
+            android:title="@string/swipe_direction"
+            android:key="@string/key_swipe_direction"
+            android:entries="@array/swipe_direction_items"
+            android:entryValues="@array/swipe_direction_items_values"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/debug" >
+        <Preference
+            android:key="@string/key_import_db"
+            android:title="@string/import_db" />
+
+        <Preference
+            android:key="@string/key_export_db"
+            android:title="@string/export_db" />
+    </PreferenceCategory>
+</PreferenceScreen>

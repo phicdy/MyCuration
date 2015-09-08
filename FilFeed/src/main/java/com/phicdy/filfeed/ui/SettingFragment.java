@@ -3,12 +3,17 @@ package com.phicdy.filfeed.ui;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.widget.Toast;
 
+import com.phicdy.filfeed.BuildConfig;
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
+import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.util.PreferenceHelper;
+import com.phicdy.filfeed.util.ToastHelper;
 
 public class SettingFragment extends PreferenceFragment {
 
@@ -28,7 +33,11 @@ public class SettingFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.setting_fragment);
+        if (BuildConfig.DEBUG) {
+            addPreferencesFromResource(R.xml.setting_fragment_debug);
+        } else {
+            addPreferencesFromResource(R.xml.setting_fragment);
+        }
     }
 
     @Override
@@ -123,6 +132,26 @@ public class SettingFragment extends PreferenceFragment {
                 }
             }
         };
+        if (BuildConfig.DEBUG) {
+            Preference prefImport = findPreference(getString(R.string.key_import_db));
+            prefImport.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    DatabaseAdapter.getInstance(getActivity()).importDB();
+                    ToastHelper.showToast(getActivity(), getString(R.string.import_db), Toast.LENGTH_SHORT);
+                    return true;
+                }
+            });
+            Preference prefExport = findPreference(getString(R.string.key_export_db));
+            prefExport.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    DatabaseAdapter.getInstance(getActivity()).exportDb();
+                    ToastHelper.showToast(getActivity(), getString(R.string.export_db), Toast.LENGTH_SHORT);
+                    return true;
+                }
+            });
+        }
     }
 
     public void updateUpdateInterval() {

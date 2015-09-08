@@ -79,11 +79,16 @@
     <string name="left_to_right">左から右で記事を既読</string>
     <string name="save">保存</string>
     <string name="saved">設定が保存されました</string>
+    <string name="debug">デバッグ</string>
+    <string name="import_db">データベースのインポート</string>
+    <string name="export_db">データベースのエクスポート</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_article_sort">keyArticleSort</string>
     <string name="key_internal_browser">keyInternalBrowser</string>
     <string name="key_all_read_behavior">keyAllReadBehavior</string>
     <string name="key_swipe_direction">keySwipeDirection</string>
+    <string name="key_import_db">keyImportDb</string>
+    <string name="key_export_db">keyExportDb</string>
 
     <string name="all_read">全て既読にする</string>
     <string name="no_article">未読の記事がありません</string>
