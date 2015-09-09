@@ -410,8 +410,12 @@ public class DatabaseAdapter {
 
 	public boolean deleteFeed(int feedId) {
 		int numOfDeleted = 0;
+		ArrayList<Article> allArticles = getAllArticlesInAFeed(feedId, true);
 		db.beginTransaction();
 		try {
+			for (Article article : allArticles) {
+				db.delete(CurationSelection.TABLE_NAME, CurationSelection.ARTICLE_ID + " = " + article.getId(), null);
+			}
 			db.delete("articles", "feedId = " + feedId, null);
 			db.delete("filters", "feedId = " + feedId, null);
 			// db.delete("priorities","feedId = "+feedId,null);
