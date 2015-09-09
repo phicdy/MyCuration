@@ -137,6 +137,9 @@ public class UnreadCountManager {
     public void refreshConut(int feedId) {
         synchronized (unreadCountMap) {
             // Decrease original unread count
+            if (!unreadCountMap.containsKey(feedId)) {
+                return;
+            }
             int oldCount = unreadCountMap.get(feedId);
             total -= oldCount;
 
