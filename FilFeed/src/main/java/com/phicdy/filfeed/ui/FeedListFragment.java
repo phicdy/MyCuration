@@ -1,21 +1,28 @@
 package com.phicdy.filfeed.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -47,6 +54,8 @@ public class FeedListFragment extends Fragment {
 
     private int numOfAllFeeds = 0;
 
+    private static final int DELETE_FEED_MENU_ID = 1000;
+    private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
     private static final String LOG_TAG = "FilFeed.FeedList";
 
     public static FeedListFragment newInstance() {
@@ -78,8 +87,81 @@ public class FeedListFragment extends Fragment {
             feedsListView.setRefreshing(true);
             updateProgress();
         }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, DELETE_FEED_MENU_ID, 0, R.string.delete_feed);
+        menu.add(0, EDIT_FEED_TITLE_MENU_ID, 1, R.string.edit_feed_title);
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+                .getMenuInfo();
+
+        switch (item.getItemId()) {
+            case DELETE_FEED_MENU_ID:
+                showDeleteFeedAlertDialog(info.position-1);
+                return true;
+            case EDIT_FEED_TITLE_MENU_ID:
+                showEditTitleDialog(info.position-1);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    private void showEditTitleDialog(final int position) {
+        final View addView = getActivity().getLayoutInflater().inflate(R.layout.edit_feed_title, null);
+        EditText editTitleView = (EditText) addView.findViewById(R.id.editFeedTitle);
+        editTitleView.setText(getFeedTitleAtPosition(position));
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.edit_feed_title)
+                .setView(addView)
+                .setPositiveButton(R.string.save,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText editTitleView = (EditText) addView
+                                        .findViewById(R.id.editFeedTitle);
+                                String newTitle = editTitleView.getText().toString();
+                                if(newTitle == null || newTitle.equals("")) {
+                                    Toast.makeText(getActivity(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show();
+                                }else {
+                                    int updatedFeedId = getFeedIdAtPosition(position);
+                                    int numOfUpdate = dbAdapter.saveNewTitle(updatedFeedId, newTitle);
+                                    if(numOfUpdate == 1) {
+                                        Toast.makeText(getActivity(), getString(R.string.edit_feed_title_success), Toast.LENGTH_SHORT).show();
+                                        updateFeedTitle(updatedFeedId, newTitle);
+                                    }else {
+                                        Toast.makeText(getActivity(), getString(R.string.edit_feed_title_error), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+
+                        }).setNegativeButton(R.string.cancel, null).show();
+    }
+
+    private void showDeleteFeedAlertDialog(final int position) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.delete_feed_alert)
+                .setPositiveButton(R.string.delete,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(dbAdapter.deleteFeed(getFeedIdAtPosition(position))) {
+                                    removeFeedAtPosition(position);
+                                    Toast.makeText(getActivity(), getString(R.string.finish_delete_feed_success), Toast.LENGTH_SHORT).show();
+                                }else {
+                                    Toast.makeText(getActivity(), getString(R.string.finish_delete_feed_fail), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                        }).setNegativeButton(R.string.cancel, null).show();
+    }
 
     @Override
     public void onPause() {
@@ -141,7 +223,7 @@ public class FeedListFragment extends Fragment {
         feedsListView = (PullToRefreshListView) getActivity().findViewById(R.id.feedList);
         TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView);
         feedsListView.setEmptyView(emptyView);
-        getActivity().registerForContextMenu(feedsListView.getRefreshableView());
+        registerForContextMenu(feedsListView.getRefreshableView());
         setAllListener();
 
         refreshList();

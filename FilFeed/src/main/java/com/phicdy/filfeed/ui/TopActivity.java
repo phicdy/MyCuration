@@ -17,7 +17,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,13 +25,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
@@ -78,8 +75,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private static final int POSITION_CURATION_FRAGMENT = 0;
     private static final int POSITION_FEED_FRAGMENT = 1;
     private static final int POSITION_FILTER_FRAGMENT = 2;
-    private static final int DELETE_FEED_MENU_ID = 1000;
-    private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
 
     public static final String FEED_ID = "FEED_ID";
     public static final String CURATION_ID = "CURATION_ID";
@@ -229,35 +224,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        // Menu.add(int groupId, int itemId, int order, CharSequence title)
-        menu.add(0, DELETE_FEED_MENU_ID, 0, R.string.delete_feed);
-        menu.add(0, EDIT_FEED_TITLE_MENU_ID, 1, R.string.edit_feed_title);
-    }
-
-    public boolean onContextItemSelected(MenuItem item) {
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-                .getMenuInfo();
-
-        switch (item.getItemId()) {
-            case DELETE_FEED_MENU_ID:
-                showDeleteFeedAlertDialog(info.position-1);
-                return true;
-            case EDIT_FEED_TITLE_MENU_ID:
-                showEditTitleDialog(info.position-1);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
-    }
-
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
     }
@@ -344,58 +310,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                                 progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_feed));
                                 progressDialog.show(getFragmentManager(), null);
                                 NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(feedUrlStr);
-                            }
-
-                        }).setNegativeButton(R.string.cancel, null).show();
-    }
-
-    private void showEditTitleDialog(final int position) {
-        final View addView = getLayoutInflater().inflate(R.layout.edit_feed_title, null);
-        EditText editTitleView = (EditText) addView.findViewById(R.id.editFeedTitle);
-        editTitleView.setText(listFragment.getFeedTitleAtPosition(position));
-
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.edit_feed_title)
-                .setView(addView)
-                .setPositiveButton(R.string.save,
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                EditText editTitleView = (EditText) addView
-                                        .findViewById(R.id.editFeedTitle);
-                                String newTitle = editTitleView.getText().toString();
-                                if(newTitle == null || newTitle.equals("")) {
-                                    Toast.makeText(getApplicationContext(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show();
-                                }else {
-                                    int updatedFeedId = listFragment.getFeedIdAtPosition(position);
-                                    int numOfUpdate = dbAdapter.saveNewTitle(updatedFeedId, newTitle);
-                                    if(numOfUpdate == 1) {
-                                        Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_success), Toast.LENGTH_SHORT).show();
-                                        listFragment.updateFeedTitle(updatedFeedId, newTitle);
-                                    }else {
-                                        Toast.makeText(getApplicationContext(), getString(R.string.edit_feed_title_error), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-
-                        }).setNegativeButton(R.string.cancel, null).show();
-    }
-
-    private void showDeleteFeedAlertDialog(final int position) {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.delete_feed_alert)
-                .setPositiveButton(R.string.delete,
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if(dbAdapter.deleteFeed(listFragment.getFeedIdAtPosition(position))) {
-                                    listFragment.removeFeedAtPosition(position);
-                                    Toast.makeText(getApplicationContext(), getString(R.string.finish_delete_feed_success), Toast.LENGTH_SHORT).show();
-                                }else {
-                                    Toast.makeText(getApplicationContext(), getString(R.string.finish_delete_feed_fail), Toast.LENGTH_SHORT).show();
-                                }
                             }
 
                         }).setNegativeButton(R.string.cancel, null).show();
