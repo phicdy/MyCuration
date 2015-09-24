@@ -5,11 +5,14 @@ import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -40,6 +43,7 @@ public class FeedListFragment extends Fragment {
     private TextView tvAllUnreadArticleCount;
     private LinearLayout allUnread;
     private PullToRefreshListView feedsListView;
+
     private RssFeedListAdapter rssFeedListAdapter;
     private OnFeedListFragmentListener mListener;
 
@@ -48,6 +52,8 @@ public class FeedListFragment extends Fragment {
     private ArrayList<Feed> hideList = new ArrayList<>();
     private DatabaseAdapter dbAdapter;
     private UnreadCountManager unreadManager;
+    private BroadcastReceiver receiver;
+    private NetworkTaskManager networkTaskManager;
 
     // Manage hide feed status
     private boolean isHided = true;
@@ -56,6 +62,8 @@ public class FeedListFragment extends Fragment {
 
     private static final int DELETE_FEED_MENU_ID = 1000;
     private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
+    public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
+
     private static final String LOG_TAG = "FilFeed.FeedList";
 
     public static FeedListFragment newInstance() {
@@ -75,6 +83,7 @@ public class FeedListFragment extends Fragment {
         // For show/hide
         if (allFeeds.size() != 0) {
             addShowHideLine(allFeeds);
+        networkTaskManager = NetworkTaskManager.getInstance(getActivity());
         }
         generateHidedFeedList();
     }
@@ -87,6 +96,9 @@ public class FeedListFragment extends Fragment {
             feedsListView.setRefreshing(true);
             updateProgress();
         }
+        setBroadCastReceiver();
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -169,6 +181,9 @@ public class FeedListFragment extends Fragment {
         if (NetworkTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
             feedsListView.onRefreshComplete();
         }
+        if (receiver != null) {
+            getActivity().unregisterReceiver(receiver);
+        }
     }
 
     private void setAllListener() {
@@ -198,6 +213,46 @@ public class FeedListFragment extends Fragment {
                 mListener.onAllUnreadClicked();
             }
         });
+    }
+
+    private void setBroadCastReceiver() {
+        // receive num of unread articles from Update Task
+        receiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                    // Set num of unread articles and update UI
+                    String action = intent.getAction();
+                    if (action.equals(FINISH_UPDATE_ACTION)) {
+                    Log.d(LOG_TAG, "onReceive");
+                    if (networkTaskManager.isUpdatingFeed()) {
+                        updateProgress();
+                    }else {
+                        onRefreshComplete();
+                        refreshList();
+                    }
+                }else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
+                    Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
+                    if (newFeed == null) {
+                        Toast.makeText(getActivity(),
+                                R.string.add_feed_error,
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(),
+                                R.string.add_feed_success,
+                                Toast.LENGTH_SHORT).show();
+                        addFeed(newFeed);
+                        refreshList();
+                    }
+                    mListener.onCloseProgressDialog();
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(FINISH_UPDATE_ACTION);
+        filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
+        getActivity().registerReceiver(receiver, filter);
     }
 
     @Override
@@ -441,8 +496,8 @@ public class FeedListFragment extends Fragment {
 
     public interface OnFeedListFragmentListener {
         public void onListClicked(int position);
-        public void onRefreshList();
         public void onAllUnreadClicked();
+        public void onCloseProgressDialog();
     }
 
     /**

@@ -13,7 +13,7 @@ import com.phicdy.filfeed.rss.Article;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.rss.RssParser;
 import com.phicdy.filfeed.rss.UnreadCountManager;
-import com.phicdy.filfeed.ui.TopActivity;
+import com.phicdy.filfeed.ui.FeedListFragment;
 import com.phicdy.filfeed.util.UrlUtil;
 
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class NetworkTaskManager {
 			public void onErrorResponse(VolleyError error) {
 				finishOneRequest();
 				UnreadCountManager.getInstance(context).refreshConut(feed.getId());
-				context.sendBroadcast(new Intent(TopActivity.FINISH_UPDATE_ACTION));
+				context.sendBroadcast(new Intent(FeedListFragment.FINISH_UPDATE_ACTION));
 			}
 		});
 
@@ -184,7 +184,7 @@ public class NetworkTaskManager {
 			}
 			finishOneRequest();
 			UnreadCountManager.getInstance(context).refreshConut(feedId);
-			context.sendBroadcast(new Intent(TopActivity.FINISH_UPDATE_ACTION));
+			context.sendBroadcast(new Intent(FeedListFragment.FINISH_UPDATE_ACTION));
 		}
 	}
 

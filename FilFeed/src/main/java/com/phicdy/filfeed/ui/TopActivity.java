@@ -2,11 +2,9 @@ package com.phicdy.filfeed.ui;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -57,14 +55,13 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     ViewPager mViewPager;
 
     private DatabaseAdapter dbAdapter;
-    private BroadcastReceiver receiver;
     private Intent intent;
     private NetworkTaskManager networkTaskManager;
-    private MyProgressDialogFragment progressDialog;
 
     private FeedListFragment listFragment;
     private CurationListFragment curationFragment;
     private SearchView searchView;
+    private MyProgressDialogFragment progressDialog;
     private ViewGroup track;
     private HorizontalScrollView trackScroller;
     private View indicator;
@@ -79,7 +76,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     public static final String FEED_ID = "FEED_ID";
     public static final String CURATION_ID = "CURATION_ID";
     public static final String FEED_URL = "FEED_URL";
-    public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
     private static final String LOG_TAG = "FilFeed." + TopActivity.class.getSimpleName();
 
     @Override
@@ -136,7 +132,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     @Override
     protected void onResume() {
         super.onResume();
-        setBroadCastReceiver();
 
         new Thread(new Runnable() {
             @Override
@@ -149,14 +144,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
             searchView.onActionViewCollapsed();
             searchView.setQuery("",false);
         }
-    }
-
-    @Override
-    protected void onPause() {
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-        }
-        super.onPause();
     }
 
     @Override
@@ -247,47 +234,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         return false;
     }
 
-    private void setBroadCastReceiver() {
-        // receive num of unread articles from Update Task
-        receiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                // Set num of unread articles and update UI
-                String action = intent.getAction();
-                if (action.equals(FINISH_UPDATE_ACTION)) {
-                    Log.d(LOG_TAG, "onReceive");
-                    if (networkTaskManager.isUpdatingFeed()) {
-                        listFragment.updateProgress();
-                    }else {
-                        listFragment.onRefreshComplete();
-                        listFragment.refreshList();
-                    }
-                }else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
-                    Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
-                    if (newFeed == null) {
-                        Toast.makeText(getApplicationContext(),
-                                R.string.add_feed_error,
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(),
-                                R.string.add_feed_success,
-                                Toast.LENGTH_SHORT).show();
-                        listFragment.addFeed(newFeed);
-                        listFragment.refreshList();
-                    }
-                    progressDialog.getDialog().dismiss();
-                }
-            }
-        };
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(FINISH_UPDATE_ACTION);
-        filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
-        registerReceiver(receiver, filter);
-
-    }
-
     private void addFeed() {
         final View addView = getLayoutInflater().inflate(R.layout.add_feed,
                 null);
@@ -330,14 +276,14 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     }
 
     @Override
-    public void onRefreshList() {
-        updateAllFeeds();
-    }
-
-    @Override
     public void onAllUnreadClicked() {
         intent = new Intent(getApplicationContext(), ArticlesListActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onCloseProgressDialog() {
+        progressDialog.getDialog().dismiss();
     }
 
     @Override
