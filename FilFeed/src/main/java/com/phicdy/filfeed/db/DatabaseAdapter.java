@@ -1196,6 +1196,7 @@ public class DatabaseAdapter {
 					if (articleTitle.contains(word)) {
 						insertSt.bindString(1, String.valueOf(articleId));
 						insertSt.executeInsert();
+						break;
 					}
 				}
 			}
