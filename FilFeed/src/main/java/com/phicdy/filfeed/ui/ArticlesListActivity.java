@@ -98,7 +98,6 @@ public class ArticlesListActivity extends ActionBarActivity {
         intent = getIntent();
         feedId = intent.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID);
         curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID);
-        feedUrl = intent.getStringExtra(TopActivity.FEED_URL);
         intent.putExtra(TopActivity.FEED_ID, feedId);
         // intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
         prefMgr = PreferenceHelper.getInstance(getApplicationContext());
@@ -108,10 +107,10 @@ public class ArticlesListActivity extends ActionBarActivity {
         }else if(feedId == Feed.ALL_FEED_ID) {
             setTitle(getString(R.string.all));
         }else {
+            // Select a feed
             prefMgr.setSearchFeedId(feedId);
-            // Init action bar
-            Feed selectedFeed = dbAdapter.getFeedByUrl(feedUrl);
-            // title
+            Feed selectedFeed = dbAdapter.getFeedById(feedId);
+            feedUrl = selectedFeed.getUrl();
             setTitle(selectedFeed.getTitle());
             // icon
             String iconPath = selectedFeed.getIconPath();
