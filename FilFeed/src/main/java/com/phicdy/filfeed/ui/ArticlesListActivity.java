@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -99,12 +98,17 @@ public class ArticlesListActivity extends ActionBarActivity {
         feedId = intent.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID);
         curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID);
         intent.putExtra(TopActivity.FEED_ID, feedId);
-        // intent.setAction(MainActivity.RECIEVE_UNREAD_CALC);
+
+        // Set swipe direction
         prefMgr = PreferenceHelper.getInstance(getApplicationContext());
         swipeDirectionOption = prefMgr.getSwipeDirection();
+
+        // Set title
         if (curationId != DEFAULT_CURATION_ID) {
+            // Curation
             setTitle(dbAdapter.getCurationNameById(curationId));
         }else if(feedId == Feed.ALL_FEED_ID) {
+            // All article
             setTitle(getString(R.string.all));
         }else {
             // Select a feed
@@ -112,21 +116,13 @@ public class ArticlesListActivity extends ActionBarActivity {
             Feed selectedFeed = dbAdapter.getFeedById(feedId);
             feedUrl = selectedFeed.getUrl();
             setTitle(selectedFeed.getTitle());
-            // icon
-            String iconPath = selectedFeed.getIconPath();
-            if(iconPath != null && !iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
-                File file = new File(iconPath);
-                if (file.exists()) {
-                    Drawable icon = Drawable.createFromPath(iconPath);
-                    getSupportActionBar().setIcon(icon);
-                }
-            }
         }
         setAllListener();
         getListView().setEmptyView(findViewById(R.id.emptyView));
         getListView().addFooterView(getFooter());
         displayUnreadArticles();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
