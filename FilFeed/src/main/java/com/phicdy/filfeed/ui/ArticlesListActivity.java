@@ -84,6 +84,7 @@ public class ArticlesListActivity extends ActionBarActivity {
 
     private SearchView searchView;
     private View footer;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -331,7 +332,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         };
         mGestureDetector = new GestureDetector(this, mOnGestureListener);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -439,6 +440,7 @@ public class ArticlesListActivity extends ActionBarActivity {
         if (loadedArticles.size() == allArticles.size()) {
             // All articles are loaded
             invisibleFooter();
+            fab.setVisibility(View.GONE);
             return;
         }
 
