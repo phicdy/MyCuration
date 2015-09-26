@@ -31,7 +31,6 @@ import android.widget.LinearLayout;
 import com.phicdy.filfeed.R;
 import com.phicdy.filfeed.alarm.AlarmManagerTaskManager;
 import com.phicdy.filfeed.db.DatabaseAdapter;
-import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.task.NetworkTaskManager;
 
 public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
@@ -155,6 +154,11 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                 }
             }
         });
+        SearchView.SearchAutoComplete searchAutoComplete =
+                (SearchView.SearchAutoComplete) searchView
+                .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setTextColor(getResources().getColor(R.color.text_primary));
+        searchAutoComplete.setHintTextColor(getResources().getColor(R.color.text_primary));
         return true;
     }
 
