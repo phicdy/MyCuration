@@ -62,6 +62,9 @@ public class FeedListFragment extends Fragment {
 
     private static final int DELETE_FEED_MENU_ID = 1000;
     private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
+
+    private static final String FEEDS_KEY = "feedsKey";
+    private static final String ALL_FEEDS_KEY = "allFeedsKey";
     public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
 
     private static final String LOG_TAG = "FilFeed.FeedList";
@@ -79,13 +82,28 @@ public class FeedListFragment extends Fragment {
 
         unreadManager = UnreadCountManager.getInstance(getActivity());
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
-        allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
-        // For show/hide
-        if (allFeeds.size() != 0) {
-            addShowHideLine(allFeeds);
         networkTaskManager = NetworkTaskManager.getInstance(getActivity());
+        if (savedInstanceState == null) {
+            allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
+            // For show/hide
+            if (allFeeds.size() != 0) {
+                addShowHideLine(allFeeds);
+            }
+            generateHidedFeedList();
+        }else {
+            feeds = savedInstanceState.getParcelableArrayList(FEEDS_KEY);
+            allFeeds = savedInstanceState.getParcelableArrayList(ALL_FEEDS_KEY);
         }
-        generateHidedFeedList();
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (outState != null) {
+            outState.putParcelableArrayList(FEEDS_KEY, feeds);
+            outState.putParcelableArrayList(ALL_FEEDS_KEY, allFeeds);
+        }
     }
 
     @Override
@@ -194,7 +212,12 @@ public class FeedListFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
-                        mListener.onListClicked(position-1);
+                        int feedId = getFeedIdAtPosition(position-1);
+                        if (feedId == Feed.DEFAULT_FEED_ID) {
+                            changeHideStatus();
+                            return;
+                        }
+                        mListener.onListClicked(feedId);
                     }
 
                 });
@@ -202,7 +225,12 @@ public class FeedListFragment extends Fragment {
 
             @Override
             public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-                mListener.onRefreshList();
+                if (allFeeds == null || allFeeds.isEmpty()) {
+                    onRefreshComplete();
+                    return;
+                }
+
+                NetworkTaskManager.getInstance(getActivity()).updateAllFeeds(allFeeds);
             }
         });
         allUnread = (LinearLayout)getActivity().findViewById(R.id.ll_all_unread);
@@ -416,6 +444,10 @@ public class FeedListFragment extends Fragment {
             return -1;
         }
 
+        if (feeds == null && allFeeds == null) {
+            generateHidedFeedList();
+        }
+
         if (isHided) {
             if (feeds == null || position > feeds.size()-1) {
                 return -1;
@@ -495,7 +527,7 @@ public class FeedListFragment extends Fragment {
     }
 
     public interface OnFeedListFragmentListener {
-        public void onListClicked(int position);
+        public void onListClicked(int feedId);
         public void onAllUnreadClicked();
         public void onCloseProgressDialog();
     }

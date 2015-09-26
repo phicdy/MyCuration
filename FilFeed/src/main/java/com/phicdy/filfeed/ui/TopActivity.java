@@ -14,7 +14,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,8 +34,6 @@ import com.phicdy.filfeed.db.DatabaseAdapter;
 import com.phicdy.filfeed.rss.Feed;
 import com.phicdy.filfeed.task.NetworkTaskManager;
 
-import java.util.ArrayList;
-
 public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
 
     /**
@@ -56,9 +53,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
     private DatabaseAdapter dbAdapter;
     private Intent intent;
-    private NetworkTaskManager networkTaskManager;
 
-    private FeedListFragment listFragment;
     private CurationListFragment curationFragment;
     private SearchView searchView;
     private MyProgressDialogFragment progressDialog;
@@ -75,7 +70,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
     public static final String FEED_ID = "FEED_ID";
     public static final String CURATION_ID = "CURATION_ID";
-    public static final String FEED_URL = "FEED_URL";
     private static final String LOG_TAG = "FilFeed." + TopActivity.class.getSimpleName();
 
     @Override
@@ -83,7 +77,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top);
 
-        listFragment = new FeedListFragment();
         curationFragment = new CurationListFragment();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -125,7 +118,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         setTitle(getString(R.string.home));
 
         dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
-        networkTaskManager = NetworkTaskManager.getInstance(getApplicationContext());
         setAlarmManager();
     }
 
@@ -215,16 +207,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         super.onDestroy();
     }
 
-    private void updateAllFeeds() {
-        ArrayList<Feed> allFeeds = dbAdapter.getAllFeedsWithoutNumOfUnreadArticles();
-        if (allFeeds == null || allFeeds.isEmpty()) {
-            listFragment.onRefreshComplete();
-            return;
-        }
-
-        networkTaskManager.updateAllFeeds(allFeeds);
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode== KeyEvent.KEYCODE_BACK){
@@ -262,16 +244,10 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     }
 
     @Override
-    public void onListClicked(int position) {
-        int feedId = listFragment.getFeedIdAtPosition(position);
-        if (feedId == Feed.DEFAULT_FEED_ID) {
-            listFragment.changeHideStatus();
-            return;
-        }
+    public void onListClicked(int feedId) {
         intent = new Intent(getApplicationContext(),
                 ArticlesListActivity.class);
         intent.putExtra(FEED_ID, feedId);
-        intent.putExtra(FEED_URL, listFragment.getFeedUrlAtPosition(position));
         startActivity(intent);
     }
 
@@ -310,7 +286,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                 case POSITION_CURATION_FRAGMENT:
                     return curationFragment;
                 case POSITION_FEED_FRAGMENT:
-                    return listFragment;
+                    return new FeedListFragment();
                 case POSITION_FILTER_FRAGMENT:
                     return new FilterListFragment();
                 default:

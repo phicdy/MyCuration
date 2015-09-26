@@ -1,8 +1,10 @@
 package com.phicdy.filfeed.rss;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Feed {
+public class Feed implements Parcelable{
 	private int id_;
 	private String title_;
 	private String url_;
@@ -88,6 +90,40 @@ public class Feed {
 	public String getIconPath() {
 		return iconPath;
 	}
-	
-	
+
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(id_);
+		dest.writeString(title_);
+		dest.writeString(url_);
+		dest.writeString(iconPath);
+		dest.writeString(siteUrl);
+		dest.writeInt(unreadAriticlesCount_);
+	}
+
+	public static final Parcelable.Creator<Feed> CREATOR
+			= new Parcelable.Creator<Feed>() {
+		public Feed createFromParcel(Parcel in) {
+			return new Feed(in);
+		}
+
+		public Feed[] newArray(int size) {
+			return new Feed[size];
+		}
+	};
+
+	public Feed(Parcel in) {
+		id_      = in.readInt();
+		title_   = in.readString();
+		url_     = in.readString();
+		iconPath = in.readString();
+		siteUrl  = in.readString();
+		unreadAriticlesCount_ = in.readInt();
+	}
 }
