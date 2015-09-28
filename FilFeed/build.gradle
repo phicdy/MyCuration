@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "com.phicdy.filfeed"
+        applicationId "com.phicdy.mycuration"
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 22
 
-        testApplicationId "com.example.rssfilterreader.test"
+        testApplicationId "com.phicdy.mycuration.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 
@@ -29,7 +29,7 @@ repositories {
 dependencies {
     compile project(':pullToReflresh')
     compile 'com.mcxiaoke.volley:library:1.0.+'
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22.2.0'
     compile "com.android.support:support-v4:22.2.0"
     compile files('libs/jsoup-1.8.2.jar')
     compile 'com.melnykov:floatingactionbutton:1.1.0'
