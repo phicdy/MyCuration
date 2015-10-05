@@ -3,17 +3,6 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
-    <ImageView
-        android:id="@+id/iv_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="12dp"
-        android:contentDescription="@string/icon"
-        android:src="@drawable/coffee" />
-
     <TextView
         android:id="@+id/tv_curation_title"
         android:layout_width="0dp"
@@ -33,7 +22,7 @@
         android:layout_marginBottom="12dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="12dp"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical|right" />
 
