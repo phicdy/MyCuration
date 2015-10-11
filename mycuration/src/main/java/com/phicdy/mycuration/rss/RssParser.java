@@ -115,6 +115,7 @@ public class RssParser {
 						//<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
 						Elements elements = document.getElementsByAttributeValue("type", "application/rss+xml");
 						if (elements.isEmpty()) {
+							sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
 							return;
 						}
 						String feedUrl = elements.get(0).attr("href");
