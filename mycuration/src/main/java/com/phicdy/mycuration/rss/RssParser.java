@@ -19,6 +19,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -42,6 +43,12 @@ public class RssParser {
 			@Override
 			public void run() {
 				try {
+					final URL url = new URL(baseUrl);
+					if (!"http".equalsIgnoreCase(url.getProtocol())
+							&& !"https".equalsIgnoreCase(url.getProtocol())) {
+						sendFailAddFeedUrlBroadcast();
+						return;
+					}
 					Document document = Jsoup.connect(baseUrl).get();
 					if (!document.getElementsByTag("rdf").isEmpty()) {
 						// RSS 1.0
@@ -54,7 +61,6 @@ public class RssParser {
 							}
 						}
 						if (siteUrl == null || siteUrl.equals("")) {
-							URL url = new URL(baseUrl);
 							siteUrl = url.getProtocol() + "://" + url.getHost();
 						}
 						String title = document.title();
@@ -70,7 +76,6 @@ public class RssParser {
 							}
 						}
 						if (siteUrl == null || siteUrl.equals("")) {
-							URL url = new URL(baseUrl);
 							siteUrl = url.getProtocol() + "://" + url.getHost();
 						}
 						String title = document.title();
@@ -95,9 +100,8 @@ public class RssParser {
 						//    </entry>
 						//</feed>
 						Elements links = document.getElementsByTag("link");
-						String siteUrl = null;
+						String siteUrl;
 						if (links.isEmpty()) {
-							URL url = new URL(baseUrl);
 							siteUrl = url.getProtocol() + "://" + url.getHost();
 						}else {
 							siteUrl = links.get(0).attr("href");
@@ -114,7 +118,9 @@ public class RssParser {
 						parseRssXml(feedUrl);
 						return;
 					}
-
+				} catch (MalformedURLException e) {
+					sendFailAddFeedUrlBroadcast();
+					return;
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
@@ -259,4 +265,8 @@ public class RssParser {
 		return result;
 	}
 
+	private void sendFailAddFeedUrlBroadcast() {
+		Intent intent = new Intent(NetworkTaskManager.FINISH_ADD_FEED);
+		context.sendBroadcast(intent);
+	}
 }
