@@ -2,6 +2,7 @@ package com.phicdy.mycuration.task;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.IntDef;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response.ErrorListener;
@@ -18,6 +19,8 @@ import com.phicdy.mycuration.util.UrlUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,7 +36,13 @@ public class NetworkTaskManager {
 
 	public static final String FINISH_ADD_FEED = "FINISH_ADD_FEED";
 	public static final String ADDED_FEED_URL = "ADDED_FEED_URL";
-	private static final String LOG_TAG = "FilFeed.NetworkTaskManager";
+	public static final String ADD_FEED_ERROR_REASON = "ADDED_FEED_ERROR_REASON";
+	@Retention(RetentionPolicy.SOURCE)
+	@IntDef({ERROR_INVALID_URL, ERROR_NON_RSS_HTML_CONTENT, ERROR_UNKNOWN})
+	public @interface AddFeedUrlError {}
+	public static final int ERROR_INVALID_URL = 1;
+	public static final int ERROR_NON_RSS_HTML_CONTENT = 2;
+	public static final int ERROR_UNKNOWN = 3;
 
 	private NetworkTaskManager(Context context) {
 		this.context = context;

@@ -261,9 +261,14 @@ public class FeedListFragment extends Fragment {
                     }
                 }else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
                     Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
-                    if (newFeed == null) {
+                    if (intent.hasExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON) || newFeed == null) {
+                        int errorMessage = R.string.add_feed_error_generic;
+                        if (intent.getIntExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, -1)
+                                == NetworkTaskManager.ERROR_INVALID_URL) {
+                            errorMessage = R.string.add_feed_error_invalid_url;
+                        }
                         Toast.makeText(getActivity(),
-                                R.string.add_feed_error,
+                                errorMessage,
                                 Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getActivity(),
