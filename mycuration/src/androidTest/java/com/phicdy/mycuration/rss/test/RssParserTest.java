@@ -48,6 +48,22 @@ public class RssParserTest extends AndroidTestCase {
 		//http://sierblog.com/index.rdf
 	}
 
+	public void testParseFeedInfoRSS1_rdf() {
+		String testUrl = "http://b.hatena.ne.jp/hotentry/it.rss";
+		NetworkTaskManager.getInstance(getContext()).addNewFeed(testUrl);
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		Feed addedFeed = adapter.getFeedByUrl(testUrl);
+		assertNotNull(addedFeed);
+		assertEquals(testUrl, addedFeed.getUrl());
+		assertEquals("http://b.hatena.ne.jp", addedFeed.getSiteUrl());
+		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
+	}
+
 	public void testParseFeedInfoRSS2() {
 		NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getContext());
 		networkTaskManager.addNewFeed("http://hiroki.jp/feed/");
