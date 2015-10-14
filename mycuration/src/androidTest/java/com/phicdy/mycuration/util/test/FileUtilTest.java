@@ -19,18 +19,18 @@ public class FileUtilTest extends AndroidTestCase {
 	}
 
 	public void testAppPath() {
-		assertEquals("/data/data/com.phicdy.filfeed/",
+		assertEquals("/data/data/com.phicdy.mycuration/",
 				FileUtil.getAppPath(getContext()));
 	}
 
 	public void testGetIconSavePath() {
-		assertEquals("/data/data/com.phicdy.filfeed/icons/",
+		assertEquals("/data/data/com.phicdy.mycuration/icons/",
 				FileUtil.iconSaveFolder(getContext()));
 	}
 
 	public void testGenerateIconFileName() {
 		assertEquals(
-				"/data/data/com.phicdy.filfeed/icons/gigazine.net.png",
+				"/data/data/com.phicdy.mycuration/icons/gigazine.net.png",
 				FileUtil.generateIconFilePath(getContext(), "http://gigazine.net/"));
 	}
 }
