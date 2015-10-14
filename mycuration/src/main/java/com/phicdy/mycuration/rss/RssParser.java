@@ -50,7 +50,7 @@ public class RssParser {
 						return;
 					}
 					Document document = Jsoup.connect(baseUrl).get();
-					if (!document.getElementsByTag("rdf").isEmpty()) {
+					if (!document.getElementsByTag("rdf").isEmpty() || !document.getElementsByTag("rdf:rdf").isEmpty()) {
 						// RSS 1.0
 						Elements links = document.getElementsByTag("link");
 						String siteUrl = null;
