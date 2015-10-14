@@ -19,6 +19,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -42,6 +43,12 @@ public class RssParser {
 			@Override
 			public void run() {
 				try {
+					final URL url = new URL(baseUrl);
+					if (!"http".equalsIgnoreCase(url.getProtocol())
+							&& !"https".equalsIgnoreCase(url.getProtocol())) {
+						sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_INVALID_URL);
+						return;
+					}
 					Document document = Jsoup.connect(baseUrl).get();
 					if (!document.getElementsByTag("rdf").isEmpty()) {
 						// RSS 1.0
@@ -54,11 +61,11 @@ public class RssParser {
 							}
 						}
 						if (siteUrl == null || siteUrl.equals("")) {
-							URL url = new URL(baseUrl);
 							siteUrl = url.getProtocol() + "://" + url.getHost();
 						}
 						String title = document.title();
 						dbAdapter.saveNewFeed(title, baseUrl, Feed.RSS_1, siteUrl);
+						sendAddUrlSuccessBroadcast(baseUrl);
 					}else if (!document.getElementsByTag("rss").isEmpty()) {
 						// RSS 2.0
 						Elements links = document.getElementsByTag("link");
@@ -70,11 +77,11 @@ public class RssParser {
 							}
 						}
 						if (siteUrl == null || siteUrl.equals("")) {
-							URL url = new URL(baseUrl);
 							siteUrl = url.getProtocol() + "://" + url.getHost();
 						}
 						String title = document.title();
 						dbAdapter.saveNewFeed(title, baseUrl, Feed.RSS_2, siteUrl);
+						sendAddUrlSuccessBroadcast(baseUrl);
 					}else if (!document.getElementsByTag("feed").isEmpty()) {
 						// ATOM:
 						//<?xml version="1.0" encoding="utf-8"?>
@@ -95,32 +102,33 @@ public class RssParser {
 						//    </entry>
 						//</feed>
 						Elements links = document.getElementsByTag("link");
-						String siteUrl = null;
+						String siteUrl;
 						if (links.isEmpty()) {
-							URL url = new URL(baseUrl);
 							siteUrl = url.getProtocol() + "://" + url.getHost();
 						}else {
 							siteUrl = links.get(0).attr("href");
 						}
 						String title = document.title();
 						dbAdapter.saveNewFeed(title, baseUrl, Feed.ATOM, siteUrl);
+						sendAddUrlSuccessBroadcast(baseUrl);
 					}else if (!document.getElementsByTag("html").isEmpty()) {
 						//<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
 						Elements elements = document.getElementsByAttributeValue("type", "application/rss+xml");
 						if (elements.isEmpty()) {
+							sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
 							return;
 						}
 						String feedUrl = elements.get(0).attr("href");
 						parseRssXml(feedUrl);
 						return;
+					} else {
+						sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
 					}
-
+				} catch (MalformedURLException e) {
+					sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_INVALID_URL);
 				} catch (IOException e) {
 					e.printStackTrace();
-				} finally {
-					Intent intent = new Intent(NetworkTaskManager.FINISH_ADD_FEED);
-					intent.putExtra(NetworkTaskManager.ADDED_FEED_URL, baseUrl);
-					context.sendBroadcast(intent);
+					sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_UNKNOWN);
 				}
 			}
 		}.start();
@@ -259,4 +267,15 @@ public class RssParser {
 		return result;
 	}
 
+	private void sendFailAddFeedUrlBroadcast(@NetworkTaskManager.AddFeedUrlError int error) {
+		Intent intent = new Intent(NetworkTaskManager.FINISH_ADD_FEED);
+		intent.putExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, error);
+		context.sendBroadcast(intent);
+	}
+
+	private void sendAddUrlSuccessBroadcast(String url) {
+		Intent intent = new Intent(NetworkTaskManager.FINISH_ADD_FEED);
+		intent.putExtra(NetworkTaskManager.ADDED_FEED_URL, url);
+		context.sendBroadcast(intent);
+	}
 }
