@@ -196,7 +196,27 @@ public class RssParserTest extends AndroidTestCase {
 		assertNotNull(surigomaFeed);
 		assertEquals("http://ground-sesame.hatenablog.jp/rss", surigomaFeed.getUrl());
 		assertEquals("http://ground-sesame.hatenablog.jp", surigomaFeed.getSiteUrl());
+
 		assertEquals(surigomaFeed.DEDAULT_ICON_PATH, surigomaFeed.getIconPath());
 	}
 
+	public void testPathOnlyUrl() {
+		addNewFeedAndCheckResult("http://b.hatena.ne.jp/hotentry/game", "http://b.hatena.ne.jp/hotentry/game.rss", "http://b.hatena.ne.jp");
+	}
+
+	private void addNewFeedAndCheckResult(String testUrl, String expectedFeedUrl, String expectedSiteUrl) {
+		NetworkTaskManager.getInstance(getContext()).addNewFeed(testUrl);
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		Feed addedFeed = adapter.getFeedByUrl(expectedFeedUrl);
+		assertNotNull(addedFeed);
+		assertEquals(expectedFeedUrl, addedFeed.getUrl());
+		assertEquals(expectedSiteUrl, addedFeed.getSiteUrl());
+
+		assertEquals(addedFeed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
+	}
 }

@@ -39,6 +39,7 @@ public class RssParser {
 	}
 
 	public void parseRssXml(final String baseUrl) {
+		Log.d(LOG_TAG, "Start to parse RSS XML, url:" + baseUrl);
 		new Thread() {
 			@Override
 			public void run() {
@@ -46,11 +47,13 @@ public class RssParser {
 					final URL url = new URL(baseUrl);
 					if (!"http".equalsIgnoreCase(url.getProtocol())
 							&& !"https".equalsIgnoreCase(url.getProtocol())) {
+						Log.d(LOG_TAG, "URL does not start with http or https");
 						sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_INVALID_URL);
 						return;
 					}
 					Document document = Jsoup.connect(baseUrl).get();
 					if (!document.getElementsByTag("rdf").isEmpty() || !document.getElementsByTag("rdf:rdf").isEmpty()) {
+						Log.d(LOG_TAG, "RSS 1.0");
 						// RSS 1.0
 						Elements links = document.getElementsByTag("link");
 						String siteUrl = null;
@@ -67,6 +70,7 @@ public class RssParser {
 						dbAdapter.saveNewFeed(title, baseUrl, Feed.RSS_1, siteUrl);
 						sendAddUrlSuccessBroadcast(baseUrl);
 					}else if (!document.getElementsByTag("rss").isEmpty()) {
+						Log.d(LOG_TAG, "RSS 2.0");
 						// RSS 2.0
 						Elements links = document.getElementsByTag("link");
 						String siteUrl = null;
@@ -83,6 +87,7 @@ public class RssParser {
 						dbAdapter.saveNewFeed(title, baseUrl, Feed.RSS_2, siteUrl);
 						sendAddUrlSuccessBroadcast(baseUrl);
 					}else if (!document.getElementsByTag("feed").isEmpty()) {
+						Log.d(LOG_TAG, "ATOM");
 						// ATOM:
 						//<?xml version="1.0" encoding="utf-8"?>
 						//<feed xmlns="http://www.w3.org/2005/Atom">
@@ -112,21 +117,36 @@ public class RssParser {
 						dbAdapter.saveNewFeed(title, baseUrl, Feed.ATOM, siteUrl);
 						sendAddUrlSuccessBroadcast(baseUrl);
 					}else if (!document.getElementsByTag("html").isEmpty()) {
+						Log.d(LOG_TAG, "html, try to get RSS URL");
 						//<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
 						Elements elements = document.getElementsByAttributeValue("type", "application/rss+xml");
 						if (elements.isEmpty()) {
+							Log.d(LOG_TAG, "RSS URL was not found");
 							sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
 							return;
 						}
 						String feedUrl = elements.get(0).attr("href");
+						if (!feedUrl.startsWith("http://") && !feedUrl.startsWith("https")) {
+							// Path only, add protocol and host
+							feedUrl = new URL(url.getProtocol(), url.getHost(), feedUrl).toString();
+						}
+						Log.d(LOG_TAG, "RSS URL was found, " + feedUrl);
 						parseRssXml(feedUrl);
 						return;
 					} else {
+						Log.d(LOG_TAG, "Fail, not RSS");
 						sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
 					}
 				} catch (MalformedURLException e) {
+					Log.d(LOG_TAG, "Fail, MalformedURLException");
+					e.printStackTrace();
 					sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_INVALID_URL);
 				} catch (IOException e) {
+					Log.d(LOG_TAG, "Fail, IOException");
+					e.printStackTrace();
+					sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_UNKNOWN);
+				} catch (Exception e) {
+					Log.d(LOG_TAG, "Fail, Exception");
 					e.printStackTrace();
 					sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_UNKNOWN);
 				}
