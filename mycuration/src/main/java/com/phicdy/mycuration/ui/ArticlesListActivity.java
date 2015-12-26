@@ -522,6 +522,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 holder.articleTitle = (TextView)row.findViewById(R.id.articleTitle);
                 holder.articlePostedTime = (TextView) row.findViewById(R.id.articlePostedTime);
                 holder.articlePoint = (TextView) row.findViewById(R.id.articlePoint);
+                holder.articleUrl = (TextView) row.findViewById(R.id.tv_articleUrl);
                 holder.feedTitleView = (TextView) row.findViewById(R.id.feedTitle);
                 holder.feedIconView = (ImageView) row.findViewById(R.id.iv_feed_icon);
                 row.setTag(holder);
@@ -532,6 +533,7 @@ public class ArticlesListActivity extends ActionBarActivity {
             Article article = this.getItem(position);
             if (article != null) {
                 holder.articleTitle.setText(article.getTitle());
+                holder.articleUrl.setText(article.getUrl());
 
                 // Set article posted date
                 SimpleDateFormat format = new SimpleDateFormat(
@@ -583,6 +585,7 @@ public class ArticlesListActivity extends ActionBarActivity {
             TextView articleTitle;
             TextView articlePostedTime;
             TextView articlePoint;
+            TextView articleUrl;
             TextView feedTitleView;
             ImageView feedIconView;
         }
