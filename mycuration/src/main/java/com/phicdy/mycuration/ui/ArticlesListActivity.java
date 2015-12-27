@@ -45,6 +45,7 @@ import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.util.TextUtil;
 
@@ -86,6 +87,9 @@ public class ArticlesListActivity extends ActionBarActivity {
     private View footer;
     private FloatingActionButton fab;
 
+    private GATrackerHelper gaTrackerHelper;
+    private String gaTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,20 +112,25 @@ public class ArticlesListActivity extends ActionBarActivity {
         if (curationId != DEFAULT_CURATION_ID) {
             // Curation
             setTitle(dbAdapter.getCurationNameById(curationId));
+            gaTitle = getString(R.string.curation);
         }else if(feedId == Feed.ALL_FEED_ID) {
             // All article
             setTitle(getString(R.string.all));
+            gaTitle = getString(R.string.all);
         }else {
             // Select a feed
             prefMgr.setSearchFeedId(feedId);
             Feed selectedFeed = dbAdapter.getFeedById(feedId);
             feedUrl = selectedFeed.getUrl();
             setTitle(selectedFeed.getTitle());
+            getString(R.string.ga_not_all_title);
         }
         setAllListener();
         getListView().setEmptyView(findViewById(R.id.emptyView));
         getListView().addFooterView(getFooter());
         displayUnreadArticles();
+
+        gaTrackerHelper = GATrackerHelper.getInstance(this);
     }
 
     @Override
@@ -151,6 +160,7 @@ public class ArticlesListActivity extends ActionBarActivity {
 
         switch (item.getItemId()) {
             case R.id.all_read:
+                gaTrackerHelper.sendEvent(getString(R.string.read_all_articles));
                 if (feedId == Feed.ALL_FEED_ID) {
                     dbAdapter.saveAllStatusToRead();
                     unreadManager.readAll();
@@ -182,6 +192,8 @@ public class ArticlesListActivity extends ActionBarActivity {
         }
         invisibleFooter();
         setBroadCastReceiver();
+
+        gaTrackerHelper.sendScreen(gaTitle);
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -223,9 +235,13 @@ public class ArticlesListActivity extends ActionBarActivity {
                             if(prefMgr.isOpenInternal()) {
                                 intent = new Intent(getApplicationContext(), InternalWebViewActivity.class);
                                 intent.putExtra(OPEN_URL_ID, clickedArticle.getUrl());
+                                // GA
+                                gaTrackerHelper.sendEvent(getString(R.string.tap_article_internal));
                             }else {
                                 Uri uri = Uri.parse(clickedArticle.getUrl());
                                 intent = new Intent(Intent.ACTION_VIEW, uri);
+                                // GA
+                                gaTrackerHelper.sendEvent(getString(R.string.tap_article_external));
                             }
                             startActivity(intent);
                         }
@@ -242,6 +258,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TEXT, loadedArticles.get(position - 1).getUrl());
                 startActivity(intent);
+                gaTrackerHelper.sendEvent(getString(R.string.share_article));
                 return true;
             }
         });
@@ -260,6 +277,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 ArrayList<Feed> feeds = new ArrayList<Feed>();
                 feeds.add(new Feed(feedId, null, feedUrl, "", "", 0));
                 networkTaskManager.updateAllFeeds(feeds);
+                gaTrackerHelper.sendEvent(getString(R.string.update_feed));
             }
         });
 
@@ -282,6 +300,7 @@ public class ArticlesListActivity extends ActionBarActivity {
             @Override
             public boolean onFling(MotionEvent event1, MotionEvent event2,
                                    float velocityX, float velocityY) {
+
                 isSwipeLeftToRight = false;
                 isSwipeRightToLeft = false;
                 try {
@@ -298,6 +317,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                     if (event1.getX() - event2.getX() > SWIPE_MIN_WIDTH
                             && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                         // Right to Left
+                        gaTrackerHelper.sendEvent(getString(R.string.swipe_right_to_left));
                         isSwipeRightToLeft = true;
                         switch (swipeDirectionOption) {
                             case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
@@ -312,6 +332,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                     } else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
                             && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                         // Left to Right
+                        gaTrackerHelper.sendEvent(getString(R.string.swipe_left_to_right));
                         isSwipeLeftToRight = true;
                         switch (swipeDirectionOption) {
                             case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
@@ -339,6 +360,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
                     return;
                 }
+                gaTrackerHelper.sendEvent(getString(R.string.scroll_article_list));
                 ListView listView = getListView();
                 int firstPosition = listView.getFirstVisiblePosition();
                 int lastPosition = listView.getLastVisiblePosition();

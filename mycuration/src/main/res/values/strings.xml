@@ -146,4 +146,12 @@
     <string name="tap_add_feed">フィード追加タップ</string>
     <string name="tap_add_curation">キュレーション追加タップ</string>
     <string name="tap_add_filter">フィルター追加タップ</string>
+    <string name="tap_article_internal">記事を内部ブラウザで開く</string>
+    <string name="tap_article_external">記事を外部ブラウザで開く</string>
+    <string name="share_article">記事共有</string>
+    <string name="read_all_articles">記事全既読</string>
+    <string name="update_feed">フィード更新</string>
+    <string name="scroll_article_list">記事リストをスクロール</string>
+    <string name="swipe_left_to_right">左から右にスワイプ</string>
+    <string name="swipe_right_to_left">右から左にスワイプ</string>
 </resources>
