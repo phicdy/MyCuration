@@ -32,6 +32,7 @@ import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.tracker.GATrackerHelper;
 
 public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
 
@@ -62,6 +63,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     private static final int INDICATOR_OFFSET_DP = 48;
     private int indicatorOffset;
     private int selectedPosition = POSITION_FEED_FRAGMENT;
+
+    private GATrackerHelper gaTrackerHelper;
 
     private static final int POSITION_CURATION_FRAGMENT = 0;
     private static final int POSITION_FEED_FRAGMENT = 1;
@@ -118,6 +121,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
         dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
         setAlarmManager();
+
+        gaTrackerHelper = GATrackerHelper.getInstance(this);
     }
 
     @Override
@@ -135,6 +140,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
             searchView.onActionViewCollapsed();
             searchView.setQuery("",false);
         }
+        gaTrackerHelper.sendScreen(getString(R.string.home));
     }
 
     @Override
@@ -174,6 +180,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                         }
 						Intent intent = new Intent(getApplicationContext(), AddCurationActivity.class);
 						startActivity(intent);
+                        gaTrackerHelper.sendEvent(getString(R.string.tap_add_curation));
                         break;
                     case POSITION_FEED_FRAGMENT:
                         addFeed();
@@ -185,6 +192,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                         }
                         intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
                         startActivity(intent);
+                        gaTrackerHelper.sendEvent(getString(R.string.tap_add_filter));
                         break;
                     default:
                 }
@@ -245,6 +253,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                             }
 
                         }).setNegativeButton(R.string.cancel, null).show();
+        gaTrackerHelper.sendEvent(getString(R.string.tap_add_feed));
     }
 
     @Override
@@ -345,6 +354,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                 updateIndicatorPosition(position, 0);
                 setTitle(mSectionsPagerAdapter.getPageTitle(position));
             }
+            gaTrackerHelper.sendScreen(mSectionsPagerAdapter.getPageTitle(position).toString());
         }
 
         @Override

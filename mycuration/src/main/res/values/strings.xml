@@ -6,8 +6,8 @@
 
     <!-- 記事一覧 -->
     <string name="all">全ての記事</string>
-    <string name="sample_feed_title">hogehogehoge</string>>
-    <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</string>>
+    <string name="sample_feed_title">hogehogehoge</string>
+    <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</string>
 
     <!-- フィード一覧 -->
     <string name="show_all_feeds">全てのフィードを表示</string>
@@ -139,4 +139,11 @@
     <string name="duplicate_curation_name">既に同じ名前のキュレーションが存在します。</string>
     <string name="curation_added_success">キュレーションを追加しました。</string>
     <string name="curation_added_error">キュレーションの追加に失敗しました。</string>
+
+    <!-- Google Analytics -->
+    <string name="ga_not_all_title">フィード</string>
+    <string name="action">アクション</string>
+    <string name="tap_add_feed">フィード追加タップ</string>
+    <string name="tap_add_curation">キュレーション追加タップ</string>
+    <string name="tap_add_filter">フィルター追加タップ</string>
 </resources>
