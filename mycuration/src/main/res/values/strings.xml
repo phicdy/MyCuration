@@ -166,4 +166,8 @@
     <string name="update_curation">キュレーション更新</string>
     <string name="add_feed_from_intent">共有からフィード追加</string>
     <string name="add_feed_from_intent_error">共有からフィード追加エラー</string>
+    <string name="add_new_filter">フィルター追加</string>
+    <string name="add_new_filter_no_title">タイトルなしフィルター追加</string>
+    <string name="add_new_filter_no_keyword_url">キーワードURLなしフィルター追加</string>
+    <string name="add_new_filter_cancel">フィルター追加キャンセル</string>
 </resources>

@@ -1,7 +1,5 @@
 package com.phicdy.mycuration.ui;
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -15,6 +13,9 @@ import android.widget.Toast;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.tracker.GATrackerHelper;
+
+import java.util.ArrayList;
 
 public class RegisterFilterActivity extends ActionBarActivity {
 
@@ -24,6 +25,8 @@ public class RegisterFilterActivity extends ActionBarActivity {
 	private int selectedFeedId; 
 	
 	private Spinner targetFeedSpin;
+
+	private GATrackerHelper gaTrackerHelper;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,9 @@ public class RegisterFilterActivity extends ActionBarActivity {
 		dbAdapter = DatabaseAdapter.getInstance(this);
 		initView();
 		initData();
+
+		gaTrackerHelper = GATrackerHelper.getInstance(this);
+		gaTrackerHelper.sendScreen(getTitle().toString());
 	}
 	
 	private void initView() {
@@ -70,11 +76,14 @@ public class RegisterFilterActivity extends ActionBarActivity {
 				//Check title and keyword or filter URL has the text
 				if(titleText.equals("")) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.title_empty_error, Toast.LENGTH_SHORT).show();
+					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_no_title));
 				}else if((keywordText.equals("")) && (filterUrlText.equals(""))) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.both_keyword_and_url_empty_error, Toast.LENGTH_SHORT).show();
+					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_no_keyword_url));
 				}else if(keywordText.equals("%") || filterUrlText.equals("%")) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.percent_only_error, Toast.LENGTH_SHORT).show();
 				}else {
+					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter));
 					dbAdapter.saveNewFilter(titleText, selectedFeedId, keywordText, filterUrlText);
 					finish();
 				}
@@ -88,6 +97,7 @@ public class RegisterFilterActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View v) {
 				finish();
+				gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_cancel));
 			}
 		});
 	}
