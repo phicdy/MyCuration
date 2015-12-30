@@ -41,4 +41,13 @@ public class GATrackerHelper {
                 .setAction(action)
                 .build());
     }
+
+    public void sendEvent(String action, long value) {
+        if (BuildConfig.DEBUG) return;
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(categoryAction)
+                .setAction(action)
+                .setValue(value)
+                .build());
+    }
 }
