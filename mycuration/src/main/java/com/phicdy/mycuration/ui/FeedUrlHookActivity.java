@@ -13,11 +13,14 @@ import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.tracker.GATrackerHelper;
 
 public class FeedUrlHookActivity extends Activity {
 
 	private ProgressDialog dialog;
 	private BroadcastReceiver receiver;
+
+	private GATrackerHelper gaTrackerHelper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class FeedUrlHookActivity extends Activity {
 								Toast.makeText(getApplicationContext(),
 										errorMessage,
 										Toast.LENGTH_SHORT).show();
+								gaTrackerHelper.sendEvent(getString(R.string.add_feed_from_intent_error));
 							} else {
 								Toast.makeText(getApplicationContext(),
 										R.string.add_feed_success,
@@ -67,6 +71,9 @@ public class FeedUrlHookActivity extends Activity {
 				NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(url);
 			}
 		}
+
+		gaTrackerHelper = GATrackerHelper.getInstance(this);
+		gaTrackerHelper.sendScreen(getString(R.string.add_feed_from_intent));
 	}
 
 	@Override

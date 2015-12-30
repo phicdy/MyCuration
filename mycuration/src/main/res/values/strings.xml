@@ -164,4 +164,6 @@
     <string name="add_same_curation_name">同じキュレーション名で追加</string>
     <string name="add_new_curation">キュレーション追加</string>
     <string name="update_curation">キュレーション更新</string>
+    <string name="add_feed_from_intent">共有からフィード追加</string>
+    <string name="add_feed_from_intent_error">共有からフィード追加エラー</string>
 </resources>
