@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
+import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +35,7 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 	private Intent intent;
 	private ListView resultListView;
 	private ArticlesListAdapter articlesListAdapter;
+	private GATrackerHelper gaTrackerHelper;
 
 	public static final String OPEN_URL_ID = "openUrl";
 	private static final String LOG_TAG = "FilFeed.SearchResult";
@@ -58,6 +60,14 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 		setAllListener();
 
 		handleIntent(getIntent());
+
+		gaTrackerHelper = GATrackerHelper.getInstance(this);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		gaTrackerHelper.sendScreen(getString(R.string.search_result));
 	}
 
 	@Override
