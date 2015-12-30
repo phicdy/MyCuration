@@ -154,4 +154,9 @@
     <string name="scroll_article_list">記事リストをスクロール</string>
     <string name="swipe_left_to_right">左から右にスワイプ</string>
     <string name="swipe_right_to_left">右から左にスワイプ</string>
+    <string name="change_auto_update_interval">自動更新間隔変更</string>
+    <string name="change_all_read_behavior">全部記事読了後の動作変更</string>
+    <string name="change_swipe_direction">スワイプ方向変更</string>
+    <string name="change_aricle_sort">記事並び替え方法変更</string>
+    <string name="change_browser_option">記事を開くブラウザ変更</string>
 </resources>
