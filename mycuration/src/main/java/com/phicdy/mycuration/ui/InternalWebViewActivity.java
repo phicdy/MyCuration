@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,6 +10,8 @@ import android.webkit.WebView;
 import android.widget.ShareActionProvider;
 
 import com.phicdy.mycuration.R;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class InternalWebViewActivity extends Activity {
 	
@@ -47,6 +50,11 @@ public class InternalWebViewActivity extends Activity {
 
 	    // Return true to display menu
 	    return true;
+	}
+
+	@Override
+	protected void attachBaseContext(Context newBase) {
+		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
 	}
 	
 	private void initWebView() {

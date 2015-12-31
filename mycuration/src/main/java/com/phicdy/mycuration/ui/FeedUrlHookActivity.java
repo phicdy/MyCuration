@@ -15,6 +15,8 @@ import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class FeedUrlHookActivity extends Activity {
 
 	private ProgressDialog dialog;
@@ -84,4 +86,8 @@ public class FeedUrlHookActivity extends Activity {
 		}
 	}
 
+	@Override
+	protected void attachBaseContext(Context newBase) {
+		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+	}
 }

@@ -55,6 +55,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class ArticlesListActivity extends ActionBarActivity {
     private ArrayList<Article> allArticles;
     private ArrayList<Article> loadedArticles = new ArrayList<>();
@@ -198,6 +200,11 @@ public class ArticlesListActivity extends ActionBarActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     private BroadcastReceiver loadArticleReceiver;

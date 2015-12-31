@@ -34,6 +34,8 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
 
     /**
@@ -226,6 +228,11 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     private void addFeed() {

@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.ui;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +19,8 @@ import com.phicdy.mycuration.util.TextUtil;
 import com.phicdy.mycuration.util.ToastHelper;
 
 import java.util.ArrayList;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class AddCurationActivity extends ActionBarActivity {
 
@@ -96,6 +99,11 @@ public class AddCurationActivity extends ActionBarActivity {
         super.onResume();
         initDataForEdit();
         gaTrackerHelper.sendScreen(getTitle().toString());
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     private void initView() {

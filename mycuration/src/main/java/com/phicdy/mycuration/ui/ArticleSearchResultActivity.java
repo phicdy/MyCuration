@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.ui;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -26,6 +27,8 @@ import com.phicdy.mycuration.util.PreferenceHelper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ArticleSearchResultActivity extends ActionBarActivity {
 
@@ -87,7 +90,10 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 		}
 	}
 
-	
+	@Override
+	protected void attachBaseContext(Context newBase) {
+		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

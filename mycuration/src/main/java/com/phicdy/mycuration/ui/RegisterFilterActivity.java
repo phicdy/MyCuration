@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -16,6 +17,8 @@ import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 
 import java.util.ArrayList;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class RegisterFilterActivity extends ActionBarActivity {
 
@@ -63,26 +66,26 @@ public class RegisterFilterActivity extends ActionBarActivity {
 		//If register button clicked, insert filter into DB
 		Button registerButton = (Button)findViewById(R.id.registerFilter);
 		registerButton.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				EditText keyword     = (EditText)findViewById(R.id.filterKeyword);
-				EditText filterUrl   = (EditText)findViewById(R.id.filterUrl);
-				EditText title       = (EditText)findViewById(R.id.filterTitle);
-				String keywordText   = keyword.getText().toString();
+				EditText keyword = (EditText) findViewById(R.id.filterKeyword);
+				EditText filterUrl = (EditText) findViewById(R.id.filterUrl);
+				EditText title = (EditText) findViewById(R.id.filterTitle);
+				String keywordText = keyword.getText().toString();
 				String filterUrlText = filterUrl.getText().toString();
-				String titleText     = title.getText().toString();
-				
+				String titleText = title.getText().toString();
+
 				//Check title and keyword or filter URL has the text
-				if(titleText.equals("")) {
+				if (titleText.equals("")) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.title_empty_error, Toast.LENGTH_SHORT).show();
 					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_no_title));
-				}else if((keywordText.equals("")) && (filterUrlText.equals(""))) {
+				} else if ((keywordText.equals("")) && (filterUrlText.equals(""))) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.both_keyword_and_url_empty_error, Toast.LENGTH_SHORT).show();
 					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_no_keyword_url));
-				}else if(keywordText.equals("%") || filterUrlText.equals("%")) {
+				} else if (keywordText.equals("%") || filterUrlText.equals("%")) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.percent_only_error, Toast.LENGTH_SHORT).show();
-				}else {
+				} else {
 					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter));
 					dbAdapter.saveNewFilter(titleText, selectedFeedId, keywordText, filterUrlText);
 					finish();
@@ -93,13 +96,18 @@ public class RegisterFilterActivity extends ActionBarActivity {
 		//If cancel button clicked, back to filters list 
 		Button cancelButton = (Button)findViewById(R.id.cancelRegisterFilter);
 		cancelButton.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				finish();
 				gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_cancel));
 			}
 		});
+	}
+
+	@Override
+	protected void attachBaseContext(Context newBase) {
+		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
 	}
 	
 	private void initData() {

@@ -1,7 +1,10 @@
 package com.phicdy.mycuration.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SettingActivity extends PreferenceActivity {
 
@@ -15,4 +18,8 @@ public class SettingActivity extends PreferenceActivity {
 				.commit();
 	}
 
+	@Override
+	protected void attachBaseContext(Context newBase) {
+		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+	}
 }
