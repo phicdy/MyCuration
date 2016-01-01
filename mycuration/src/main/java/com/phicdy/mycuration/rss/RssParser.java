@@ -126,7 +126,12 @@ public class RssParser {
 							return;
 						}
 						String feedUrl = elements.get(0).attr("href");
-						if (!feedUrl.startsWith("http://") && !feedUrl.startsWith("https")) {
+						if (feedUrl.startsWith("//")) {
+							// In http://smhn.info, feedUrl is "//smhn.info/feed"
+							// "//smhn.info" is not needed, get path from after URL host
+							String path = feedUrl.substring(2 + url.getHost().length());
+							feedUrl = new URL(url.getProtocol(), url.getHost(), path).toString();
+						}else if (!feedUrl.startsWith("http://") && !feedUrl.startsWith("https")) {
 							// Path only, add protocol and host
 							feedUrl = new URL(url.getProtocol(), url.getHost(), feedUrl).toString();
 						}

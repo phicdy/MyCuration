@@ -184,6 +184,23 @@ public class RssParserTest extends AndroidTestCase {
 		assertEquals(mercariFeed.DEDAULT_ICON_PATH, mercariFeed.getIconPath());
 	}
 
+	public void testParseFeedInfoTopHtmlFeedURLStartWithSlash() {
+		// //smhn.info/feed is returned
+		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://smhn.info");
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		Feed smhnFeed = adapter.getFeedByUrl("http://smhn.info/feed");
+
+		assertNotNull(smhnFeed);
+		assertEquals("http://smhn.info/feed", smhnFeed.getUrl());
+		assertEquals("http://smhn.info", smhnFeed.getSiteUrl());
+		assertEquals(smhnFeed.DEDAULT_ICON_PATH, smhnFeed.getIconPath());
+	}
+
 	public void testParseFeedInfoGzip() {
 		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://ground-sesame.hatenablog.jp");
 		try {
