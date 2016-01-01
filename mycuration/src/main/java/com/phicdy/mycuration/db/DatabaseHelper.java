@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Curation;
 import com.phicdy.mycuration.rss.CurationCondition;
@@ -42,12 +43,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 Article.FEEDID + " integer,"+
                 "foreign key(" + Article.FEEDID + ") references " + Feed.TABLE_NAME + "(" + Article.ID + "))";
         String createFiltersTableSQL =
-                "create table filters(_id integer primary key autoincrement,"+
-                "feedId integer,"+
-                "keyword text,"+
-                "url text," +
-                "title text,"+
-                "foreign key(feedId) references feeds(_id))";
+                "create table " + Filter.TABLE_NAME + "(" +
+                Filter.ID + " integer primary key autoincrement,"+
+                Filter.FEED_ID + " integer,"+
+                Filter.KEYWORD + " text,"+
+                Filter.URL + " text," +
+                Filter.TITLE + " text,"+
+                "foreign key(" + Filter.FEED_ID + ") references feeds(" + Filter.ID + "))";
         String createCurationsTableSQL =
                 "create table " + Curation.TABLE_NAME + "(" +
                         Curation.ID + " integer primary key autoincrement,"+

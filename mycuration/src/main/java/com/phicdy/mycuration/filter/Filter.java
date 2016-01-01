@@ -8,7 +8,14 @@ public class Filter {
 	private String url_;
 	private int feedId_;
 	private String feedTitle;
-	
+
+	public static final String TABLE_NAME = "filters";
+	public static final String ID = "_id";
+	public static final String FEED_ID = "feedId";
+	public static final String KEYWORD = "keyword";
+	public static final String URL = "url";
+	public static final String TITLE = "title";
+
 	public Filter(int id,String title,String keyword,String url,int feedId,String feedTitle) {
 		id_      = id;
 		title_   = title;
@@ -17,7 +24,15 @@ public class Filter {
 		feedId_  = feedId;
 		this.feedTitle = feedTitle;
 	}
-	
+
+	public int getFeedId() {
+		return feedId_;
+	}
+
+	public void setFeedId(int feedId_) {
+		this.feedId_ = feedId_;
+	}
+
 	public void setTitle(String title) {
 		title_ = title;
 	}
