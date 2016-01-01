@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 
@@ -25,9 +26,15 @@ public class RegisterFilterActivity extends ActionBarActivity {
 	private DatabaseAdapter dbAdapter;
 	private String[] feedTitles;
 	private ArrayList<Feed> feedsList;
-	private int selectedFeedId; 
-	
+	private int selectedFeedId;
+	private int editFilterId;
+
+	EditText etTitle;
+	EditText etKeyword;
+	EditText etFilterUrl;
 	private Spinner targetFeedSpin;
+
+	private static final int NEW_FILTER_ID = -1;
 
 	private GATrackerHelper gaTrackerHelper;
 	
@@ -37,8 +44,9 @@ public class RegisterFilterActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_register_filter);
 		
 		dbAdapter = DatabaseAdapter.getInstance(this);
+		editFilterId = getIntent().getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID);
 		initView();
-		initData();
+		initData(editFilterId);
 
 		gaTrackerHelper = GATrackerHelper.getInstance(this);
 		gaTrackerHelper.sendScreen(getTitle().toString());
@@ -46,7 +54,11 @@ public class RegisterFilterActivity extends ActionBarActivity {
 	
 	private void initView() {
 		setTitle(R.string.add_filter);
-		
+
+		etKeyword = (EditText) findViewById(R.id.filterKeyword);
+		etFilterUrl = (EditText) findViewById(R.id.filterUrl);
+		etTitle = (EditText) findViewById(R.id.filterTitle);
+
 		//Set spinner
 		targetFeedSpin = (Spinner)findViewById(R.id.targetFeed);
 		targetFeedSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -69,14 +81,11 @@ public class RegisterFilterActivity extends ActionBarActivity {
 
 			@Override
 			public void onClick(View v) {
-				EditText keyword = (EditText) findViewById(R.id.filterKeyword);
-				EditText filterUrl = (EditText) findViewById(R.id.filterUrl);
-				EditText title = (EditText) findViewById(R.id.filterTitle);
-				String keywordText = keyword.getText().toString();
-				String filterUrlText = filterUrl.getText().toString();
-				String titleText = title.getText().toString();
+				String keywordText = etKeyword.getText().toString();
+				String filterUrlText = etFilterUrl.getText().toString();
+				String titleText = etTitle.getText().toString();
 
-				//Check title and keyword or filter URL has the text
+				//Check title and etKeyword or filter URL has the text
 				if (titleText.equals("")) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.title_empty_error, Toast.LENGTH_SHORT).show();
 					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_no_title));
@@ -86,8 +95,21 @@ public class RegisterFilterActivity extends ActionBarActivity {
 				} else if (keywordText.equals("%") || filterUrlText.equals("%")) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.percent_only_error, Toast.LENGTH_SHORT).show();
 				} else {
-					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter));
-					dbAdapter.saveNewFilter(titleText, selectedFeedId, keywordText, filterUrlText);
+					boolean result = false;
+					if (editFilterId == NEW_FILTER_ID) {
+						// Add new filter
+						gaTrackerHelper.sendEvent(getString(R.string.add_new_filter));
+						result = dbAdapter.saveNewFilter(titleText, selectedFeedId, keywordText, filterUrlText);
+					} else {
+						// Edit
+						gaTrackerHelper.sendEvent(getString(R.string.update_filter));
+						result = dbAdapter.updateFilter(editFilterId, titleText, keywordText, filterUrlText, selectedFeedId);
+					}
+					if (result) {
+						Toast.makeText(getApplicationContext(), getString(R.string.filter_saved), Toast.LENGTH_SHORT).show();
+					}else {
+						Toast.makeText(getApplicationContext(), getString(R.string.filter_saved_error), Toast.LENGTH_SHORT).show();
+					}
 					finish();
 				}
 			}
@@ -110,7 +132,7 @@ public class RegisterFilterActivity extends ActionBarActivity {
 		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
 	}
 	
-	private void initData() {
+	private void initData(int editFilterId) {
 		feedsList = dbAdapter.getAllFeedsWithoutNumOfUnreadArticles();
 		if(feedsList.size() == 0) {
 			finish();
@@ -123,10 +145,28 @@ public class RegisterFilterActivity extends ActionBarActivity {
 		}
 		//Set default selected Feed ID
 		selectedFeedId = feedsList.get(0).getId();
-		
+
 		// Set data for spinner
-		ArrayAdapter<String> aa = new ArrayAdapter<String>(RegisterFilterActivity.this,android.R.layout.simple_spinner_item,feedTitles);
+		ArrayAdapter<String> aa = new ArrayAdapter<String>(RegisterFilterActivity.this,android.R.layout.simple_spinner_item, feedTitles);
 		aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		targetFeedSpin.setAdapter(aa);
+
+		// Edit
+		if (editFilterId != NEW_FILTER_ID) {
+			Filter editFilter = dbAdapter.getFilterById(editFilterId);
+			if (editFilter != null) {
+				etTitle.setText(editFilter.getTitle());
+				etFilterUrl.setText(editFilter.getUrl());
+				etKeyword.setText(editFilter.getKeyword());
+				for (int i = 0; i < feedTitles.length; i++) {
+					if (feedsList.get(i).getId() == editFilter.getFeedId()) {
+						targetFeedSpin.setSelection(i);
+						selectedFeedId = i;
+						break;
+					}
+				}
+			}
+		}
+
 	}
 }

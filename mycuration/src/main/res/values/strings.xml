@@ -64,6 +64,7 @@
     <string name="filter_title">フィルター名</string>
     <string name="add_filter">フィルター登録</string>
     <string name="delete_filter">フィルター削除</string>
+    <string name="edit_filter">フィルターの編集</string>
     <string name="not_get_hatena_point">取得中</string>
     <string name="none">なし</string>
     <string name="no_filter">フィルターを登録しましょう！</string>
@@ -167,6 +168,7 @@
     <string name="add_feed_from_intent">共有からフィード追加</string>
     <string name="add_feed_from_intent_error">共有からフィード追加エラー</string>
     <string name="add_new_filter">フィルター追加</string>
+    <string name="update_filter">フィルター更新</string>
     <string name="add_new_filter_no_title">タイトルなしフィルター追加</string>
     <string name="add_new_filter_no_keyword_url">キーワードURLなしフィルター追加</string>
     <string name="add_new_filter_cancel">フィルター追加キャンセル</string>

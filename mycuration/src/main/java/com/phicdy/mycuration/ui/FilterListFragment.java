@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,7 +29,10 @@ public class FilterListFragment extends Fragment {
 	private FiltersListAdapter filtersListAdapter;
 	private ListView filtersListView;
 
-	private static final int DELETE_FILTER_MENU_ID = 2000;
+	private static final int EDIT_FILTER_MENU_ID = 2000;
+	private static final int DELETE_FILTER_MENU_ID = 2001;
+
+	public static final String KEY_EDIT_FILTER_ID = "editFilterId";
 
 	public FilterListFragment(){}
 
@@ -67,7 +71,8 @@ public class FilterListFragment extends Fragment {
 	    super.onCreateContextMenu(menu, v, menuInfo);
 
 		menu.clear();
-	    menu.add(0, DELETE_FILTER_MENU_ID, 0, R.string.delete_filter);
+	    menu.add(0, EDIT_FILTER_MENU_ID, 0, R.string.edit_filter);
+	    menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter);
 	}
 	  
 	public boolean onContextItemSelected(MenuItem item) {
@@ -81,6 +86,11 @@ public class FilterListFragment extends Fragment {
 	        filters.remove(info.position);
 	        filtersListAdapter.notifyDataSetChanged();
 	        return true;
+		case EDIT_FILTER_MENU_ID:
+			Intent intent = new Intent(getActivity(), RegisterFilterActivity.class);
+			intent.putExtra(KEY_EDIT_FILTER_ID, filters.get(info.position).getId());
+			startActivity(intent);
+			return true;
 	    default:
 	        return super.onContextItemSelected(item);
 	    }

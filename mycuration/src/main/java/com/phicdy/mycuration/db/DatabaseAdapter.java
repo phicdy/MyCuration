@@ -781,6 +781,32 @@ public class DatabaseAdapter {
 		return filterList;
 	}
 
+	public Filter getFilterById(int filterId) {
+		Filter filter = null;
+		db.beginTransaction();
+		try {
+			String[] columns = { Filter.ID, Filter.FEED_ID, Filter.KEYWORD, Filter.URL, Filter.TITLE };
+			String condition = Filter.ID + " = " + filterId;
+			Cursor cur = db.query(Filter.TABLE_NAME, columns, condition, null, null,
+					null, null);
+			cur.moveToFirst();
+			int id = cur.getInt(0);
+			int feedId = cur.getInt(1);
+			String keyword = cur.getString(2);
+			String url = cur.getString(3);
+			String title = cur.getString(4);
+			cur.close();
+			db.setTransactionSuccessful();
+			filter = new Filter(id, title, keyword, url, feedId, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+
+		return filter;
+	}
+
 	public boolean applyFiltersOfFeed(ArrayList<Filter> filterList, int feedId) {
 		// If articles are hit in condition, Set articles status to "read"
 		ContentValues value = new ContentValues();
@@ -853,8 +879,9 @@ public class DatabaseAdapter {
 		return num;
 	}
 
-	public void saveNewFilter(String title, int selectedFeedId, String keyword,
+	public boolean saveNewFilter(String title, int selectedFeedId, String keyword,
 			String filterUrl) {
+		boolean result = false;
 		db.beginTransaction();
 		try {
 			// Check same fileter exists in DB
@@ -874,13 +901,36 @@ public class DatabaseAdapter {
 				values.put("feedId", selectedFeedId);
 				db.insert("filters", null, values);
 				db.setTransactionSuccessful();
+				result = true;
 			}
 		} catch (Exception e) {
 			Log.e("insert error", "error occurred");
 		} finally {
 			db.endTransaction();
 		}
-		
+
+		return result;
+	}
+
+	public boolean updateFilter(int filterId, String title, String keyword, String url, int feedId) {
+		boolean result = false;
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put(Filter.ID, filterId);
+			values.put(Filter.FEED_ID, feedId);
+			values.put(Filter.KEYWORD, keyword);
+			values.put(Filter.URL, url);
+			values.put(Filter.TITLE, title);
+			db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + filterId, null);
+			db.setTransactionSuccessful();
+			result = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+		return result;
 	}
 
 	public static String sanitizing(String str) {
