@@ -49,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 Filter.KEYWORD + " text,"+
                 Filter.URL + " text," +
                 Filter.TITLE + " text,"+
+                Filter.ENABLED + " integer,"+
                 "foreign key(" + Filter.FEED_ID + ") references feeds(" + Filter.ID + "))";
         String createCurationsTableSQL =
                 "create table " + Curation.TABLE_NAME + "(" +
