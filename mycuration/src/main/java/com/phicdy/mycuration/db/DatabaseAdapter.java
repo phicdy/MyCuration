@@ -758,9 +758,9 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get all filters which feed ID is "feedId"
-			String[] columns = { "_id", "title", "keyword", "url" };
-			String condition = "feedId = " + feedId;
-			Cursor cur = db.query("filters", columns, condition, null, null,
+			String[] columns = { Filter.ID, Filter.TITLE, Filter.KEYWORD, Filter.URL, Filter.ENABLED };
+			String condition = Filter.FEED_ID + " = " + feedId;
+			Cursor cur = db.query(Filter.TABLE_NAME, columns, condition, null, null,
 					null, null);
 			// Change to ArrayList
 			while (cur.moveToNext()) {
@@ -768,7 +768,8 @@ public class DatabaseAdapter {
 				String title = cur.getString(1);
 				String keyword = cur.getString(2);
 				String url = cur.getString(3);
-				filterList.add(new Filter(id, title, keyword, url, feedId, null));
+				int enabled = cur.getInt(4);
+				filterList.add(new Filter(id, title, keyword, url, feedId, null, enabled));
 			}
 			cur.close();
 			db.setTransactionSuccessful();
@@ -785,7 +786,7 @@ public class DatabaseAdapter {
 		Filter filter = null;
 		db.beginTransaction();
 		try {
-			String[] columns = { Filter.ID, Filter.FEED_ID, Filter.KEYWORD, Filter.URL, Filter.TITLE };
+			String[] columns = { Filter.ID, Filter.FEED_ID, Filter.KEYWORD, Filter.URL, Filter.TITLE, Filter.ENABLED };
 			String condition = Filter.ID + " = " + filterId;
 			Cursor cur = db.query(Filter.TABLE_NAME, columns, condition, null, null,
 					null, null);
@@ -795,9 +796,10 @@ public class DatabaseAdapter {
 			String keyword = cur.getString(2);
 			String url = cur.getString(3);
 			String title = cur.getString(4);
+			int enabled = cur.getInt(5);
 			cur.close();
 			db.setTransactionSuccessful();
-			filter = new Filter(id, title, keyword, url, feedId, null);
+			filter = new Filter(id, title, keyword, url, feedId, null, enabled);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1061,11 +1063,18 @@ public class DatabaseAdapter {
 	
 	public ArrayList<Filter> getAllFilters() {
 		ArrayList<Filter> filters = new ArrayList<Filter>();
-		String[] columns = {"filters._id","filters.title","filters.keyword","filters.url","filters.feedId","feeds.title"};
-		String selection = "filters.feedId = feeds._id";
+		String[] columns = {
+				Filter.TABLE_NAME + "." + Filter.ID,
+				Filter.TABLE_NAME + "." + Filter.TITLE,
+				Filter.TABLE_NAME + "." + Filter.KEYWORD,
+				Filter.TABLE_NAME + "." + Filter.URL,
+				Filter.TABLE_NAME + "." + Filter.FEED_ID,
+				Filter.TABLE_NAME + "." + Filter.ENABLED,
+				Feed.TABLE_NAME + "." + Feed.TITLE};
+		String selection = Filter.TABLE_NAME + "." + Filter.FEED_ID + "=" + Feed.TABLE_NAME + "." + Feed.ID;
 		db.beginTransaction();
 		try {
-			Cursor cursor = db.query("filters inner join feeds", columns, selection, null, null, null, null);
+			Cursor cursor = db.query(Filter.TABLE_NAME + " inner join " + Feed.TABLE_NAME, columns, selection, null, null, null, null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					int id = cursor.getInt(0);
@@ -1073,8 +1082,9 @@ public class DatabaseAdapter {
 					String keyword = cursor.getString(2);
 					String url = cursor.getString(3);
 					int feedId = cursor.getInt(4);
-					String feedTitle = cursor.getString(5);
-					Filter filter = new Filter(id, title, keyword, url, feedId, feedTitle);
+					int enabled = cursor.getInt(5);
+					String feedTitle = cursor.getString(6);
+					Filter filter = new Filter(id, title, keyword, url, feedId, feedTitle, enabled);
 					filters.add(filter);
 				}
 				cursor.close();
