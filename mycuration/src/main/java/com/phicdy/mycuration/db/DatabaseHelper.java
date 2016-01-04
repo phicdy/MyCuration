@@ -14,7 +14,7 @@ import com.phicdy.mycuration.rss.Feed;
 public class DatabaseHelper extends SQLiteOpenHelper{
   
 	public static final String DATABASE_NAME = "rss_manage";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -89,6 +89,10 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     //onUpgrade() is called when database version changes
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (newVersion > oldVersion) {
+            String sql = "ALTER TABLE " + Filter.TABLE_NAME + " ADD COLUMN " + Filter.ENABLED + " integer";
+            db.execSQL(sql);
+        }
     }
   
 }
