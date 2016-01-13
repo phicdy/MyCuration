@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
@@ -11,7 +12,8 @@
         android:layout_marginRight="4dp"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        tools:text="@string/sample_filter_title" />
 
     <TextView
         android:id="@+id/filterTargetFeed"
@@ -21,7 +23,8 @@
         android:layout_marginRight="4dp"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        tools:text="@string/sample_filter_target" />
 
     <TextView
         android:id="@+id/filterKeyword"
@@ -30,7 +33,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
         android:gravity="center_vertical"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        tools:text="@string/sample_filter_keyword" />
 
     <TextView
         android:id="@+id/filterUrl"
@@ -40,6 +44,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
         android:gravity="center_vertical"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        tools:text="@string/sample_filter_url" />
 
 </LinearLayout>

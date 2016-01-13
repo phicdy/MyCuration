@@ -68,6 +68,10 @@
     <string name="not_get_hatena_point">取得中</string>
     <string name="none">なし</string>
     <string name="no_filter">フィルターを登録しましょう！</string>
+    <string name="sample_filter_title">サンプルフィルター</string>
+    <string name="sample_filter_target">サンプル対象フィード</string>
+    <string name="sample_filter_keyword">キーワード: サンプル</string>
+    <string name="sample_filter_url">URL: http://www.google.com</string>
 
     <!-- 設定 -->
     <string name="setting">設定</string>
