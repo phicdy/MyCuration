@@ -1098,6 +1098,19 @@ public class DatabaseAdapter {
 		return filters;
 	}
 
+	public void updateFilterEnabled(int id, boolean isEnabled) {
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put(Filter.ENABLED, isEnabled);
+			db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + id, null);
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+	}
 
 	public void exportDb() {
 		try {

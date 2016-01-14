@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -152,7 +153,7 @@ public class FilterListFragment extends Fragment {
 				holder = (ViewHolder)row.getTag();
 			}
 			
-			Filter filter = this.getItem(position);
+			final Filter filter = this.getItem(position);
 			
 			if(filter != null) {
 				//set filter title
@@ -173,6 +174,12 @@ public class FilterListFragment extends Fragment {
 				holder.filterUrl.setText("URL: " + url);
 
 				holder.filterEnabled.setChecked(filter.isEnabled());
+				holder.filterEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						dbAdapter.updateFilterEnabled(filter.getId(), isChecked);
+					}
+				});
 			}
 			
 			return row;
