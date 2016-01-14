@@ -753,13 +753,13 @@ public class DatabaseAdapter {
 		return articles;
 	}
 
-	public ArrayList<Filter> getFiltersOfFeed(int feedId) {
+	public ArrayList<Filter> getEnabledFiltersOfFeed(int feedId) {
 		ArrayList<Filter> filterList = new ArrayList<Filter>();
 		db.beginTransaction();
 		try {
 			// Get all filters which feed ID is "feedId"
 			String[] columns = { Filter.ID, Filter.TITLE, Filter.KEYWORD, Filter.URL, Filter.ENABLED };
-			String condition = Filter.FEED_ID + " = " + feedId;
+			String condition = Filter.FEED_ID + " = " + feedId + " and " + Filter.ENABLED + " = " + Filter.TRUE;
 			Cursor cur = db.query(Filter.TABLE_NAME, columns, condition, null, null,
 					null, null);
 			// Change to ArrayList

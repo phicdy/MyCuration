@@ -26,7 +26,7 @@ public class FilterTask {
       
     public boolean applyFiltering(int feedId) {
         //Get Filters of Feed ID
-        ArrayList<Filter> filterList = dbAdapter.getFiltersOfFeed(feedId);
+        ArrayList<Filter> filterList = dbAdapter.getEnabledFiltersOfFeed(feedId);
           
         return dbAdapter.applyFiltersOfFeed(filterList, feedId);
     }
