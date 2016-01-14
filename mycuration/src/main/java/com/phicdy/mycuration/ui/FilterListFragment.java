@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.phicdy.mycuration.R;
@@ -145,6 +146,7 @@ public class FilterListFragment extends Fragment {
 				holder.feedTitle = (TextView) row.findViewById(R.id.filterTargetFeed);
 				holder.filterKeyword = (TextView) row.findViewById(R.id.filterKeyword);
 				holder.filterUrl = (TextView) row.findViewById(R.id.filterUrl);
+				holder.filterEnabled = (Switch) row.findViewById(R.id.sw_filter_enable);
 				row.setTag(holder);
 			}else {
 				holder = (ViewHolder)row.getTag();
@@ -169,6 +171,8 @@ public class FilterListFragment extends Fragment {
 					url = getString(R.string.none);
 				}
 				holder.filterUrl.setText("URL: " + url);
+
+				holder.filterEnabled.setChecked(filter.isEnabled());
 			}
 			
 			return row;
@@ -179,6 +183,7 @@ public class FilterListFragment extends Fragment {
 			TextView feedTitle;
 			TextView filterKeyword;
 			TextView filterUrl;
+			Switch filterEnabled;
 		}
 	}
 }

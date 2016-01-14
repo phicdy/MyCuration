@@ -2,49 +2,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
 
-    <TextView
-        android:id="@+id/filterTitle"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_vertical"
-        android:textSize="20sp"
-        tools:text="@string/sample_filter_title" />
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/filterTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:textSize="20sp"
+            tools:text="@string/sample_filter_title" />
 
-    <TextView
-        android:id="@+id/filterTargetFeed"
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/filterTargetFeed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:textSize="12sp"
+            tools:text="@string/sample_filter_target" />
+
+        <TextView
+            android:id="@+id/filterKeyword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:textSize="12sp"
+            tools:text="@string/sample_filter_keyword" />
+
+        <TextView
+            android:id="@+id/filterUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:textSize="12sp"
+            tools:text="@string/sample_filter_url" />
+    </LinearLayout>
+
+    <Switch
+        android:id="@+id/sw_filter_enable"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_vertical"
-        android:textSize="12sp"
-        tools:text="@string/sample_filter_target" />
-
-    <TextView
-        android:id="@+id/filterKeyword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="4dp"
-        android:gravity="center_vertical"
-        android:textSize="12sp"
-        tools:text="@string/sample_filter_keyword" />
-
-    <TextView
-        android:id="@+id/filterUrl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="4dp"
-        android:gravity="center_vertical"
-        android:textSize="12sp"
-        tools:text="@string/sample_filter_url" />
-
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="8dp"/>
 </LinearLayout>
