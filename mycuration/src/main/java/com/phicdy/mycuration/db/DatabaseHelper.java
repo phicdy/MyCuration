@@ -15,7 +15,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
   
 	public static final String DATABASE_NAME = "rss_manage";
 	private static final int DATABASE_VERSION = 2;
-	
+	private static final int DATABASE_VERSION_ADD_ENABLED_TO_FILTER = 2;
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -89,9 +90,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     //onUpgrade() is called when database version changes
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion > oldVersion) {
+        if ((oldVersion < DATABASE_VERSION_ADD_ENABLED_TO_FILTER) && (newVersion > oldVersion)) {
             String sql = "ALTER TABLE " + Filter.TABLE_NAME + " ADD COLUMN " + Filter.ENABLED + " integer";
             db.execSQL(sql);
+            String enableAll = "UPDATE " + Filter.TABLE_NAME + " SET " + Filter.ENABLED + " = " + Filter.TRUE;
+            db.execSQL(enableAll);
         }
     }
   

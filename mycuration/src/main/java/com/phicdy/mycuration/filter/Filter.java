@@ -18,8 +18,8 @@ public class Filter {
 	public static final String TITLE = "title";
 	public static final String ENABLED = "enabled";
 
-	private static final int TRUE = 1;
-	private static final int FALSE = 0;
+	public static final int TRUE = 1;
+	public static final int FALSE = 0;
 
 	public Filter(int id,String title,String keyword,String url,int feedId,String feedTitle, int enabled) {
 		id_      = id;
