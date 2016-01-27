@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class RssParser {
 
@@ -174,12 +175,15 @@ public class RssParser {
 		// Flag for not getting "Site's" title and url
 		boolean itemFlag = false;
 
+		long latestDate = dbAdapter.getLatestArticleDate(feedId);
+		Log.d(LOG_TAG, "Latest date:" + new Date(latestDate).toString());
 		try {
 			parser.setInput(is, "UTF-8");
 
 			// Start parse to the END_DOCUMENT
 			int eventType = parser.getEventType();
 			String tag = parser.getName();
+			long itemTime = 0;
 			while (eventType != XmlPullParser.END_DOCUMENT) {
 				switch (eventType) {
 				case XmlPullParser.START_TAG:
@@ -187,6 +191,7 @@ public class RssParser {
 					if (tag.equals("item") || tag.equals("entry")) {
 						article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null, null);
 						itemFlag = true;
+						itemTime = System.currentTimeMillis();
 					}
 
 					// add Title and Link to currentItem
@@ -255,12 +260,16 @@ public class RssParser {
 				case XmlPullParser.END_TAG:
 					tag = parser.getName();
 					if (tag.equals("item") || tag.equals("entry")) {
-						if (dbAdapter.isArticle(article)) {
+						// RSS starts from latest article.
+						// So, if latest article date in DB is after parsing article date,
+						// it is already saved in DB
+						if (latestDate >= article.getPostedDate()) {
 							isArticleFlag = true;
 						} else {
 							articles.add(article);
 						}
 						itemFlag = false;
+						Log.d(LOG_TAG, "One item finished:" + (System.currentTimeMillis() - itemTime));
 					}
 					break;
 				}
@@ -269,7 +278,7 @@ public class RssParser {
 				}
 				// If article is already saved, stop parse
 				if (isArticleFlag) {
-					// break;
+					 break;
 				}
 				eventType = parser.next();
 				tag = parser.getName();
@@ -280,7 +289,9 @@ public class RssParser {
 				}
 			}
 			// Save new articles
+			long now = System.currentTimeMillis();
 			dbAdapter.saveNewArticles(articles, feedId);
+			Log.d(LOG_TAG, "Finish save, time:" + (System.currentTimeMillis() - now));
 			for (Article addedArticle : articles) {
 				NetworkTaskManager.getInstance(context).getHatenaPoint(addedArticle);
 			}
