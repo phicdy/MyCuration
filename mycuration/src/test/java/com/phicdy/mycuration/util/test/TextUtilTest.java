@@ -1,23 +1,21 @@
 package com.phicdy.mycuration.util.test;
 
-import android.test.AndroidTestCase;
-
 import com.phicdy.mycuration.util.TextUtil;
 
-public class TextUtilTest extends AndroidTestCase {
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+import static org.junit.Assert.*;
+
+@RunWith(JUnit4.class)
+public class TextUtilTest  {
 
 	public TextUtilTest() {
 		super();
 	}
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
+	@Test
 	public void testRemoveLineFeed() {
 		assertEquals("aaa", TextUtil.removeLineFeed("aaa\r"));
 		assertEquals("aaa", TextUtil.removeLineFeed("aaa\n"));

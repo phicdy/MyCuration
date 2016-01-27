@@ -5,8 +5,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
- 
 public class IconParser {
      
     private static final String LOG_TAG = "FilFeed.IconParser";
@@ -35,11 +33,10 @@ public class IconParser {
 					return href;
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        
-        
+
         return null;
     }
         
