@@ -5,6 +5,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.URL;
+
 public class IconParser {
      
     private static final String LOG_TAG = "FilFeed.IconParser";
@@ -24,11 +26,12 @@ public class IconParser {
 				if(link.attr("rel").equals("shortcut icon") || link.attr("rel").equals("apple-touch-icon")) {
 					String href = link.attr("href");
 					if(!href.startsWith("http:") && !href.startsWith("https:")) {
-						if(urlString.startsWith("http:") ) {
-							return "http:" + href; 
-						}else if(urlString.startsWith("https:") ) {
-							return "https:" + href; 
+						URL url = new URL(urlString);
+						// The link is //<Host>/<path>
+						if (href.startsWith("//")) {
+							return url.getProtocol() + ":" + href;
 						}
+						return url.getProtocol() + "://" + url.getHost() + href;
 					}
 					return href;
 				}
