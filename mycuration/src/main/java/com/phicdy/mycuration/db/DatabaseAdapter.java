@@ -1121,7 +1121,7 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put(Filter.ENABLED, isEnabled);
+			values.put(Filter.ENABLED, isEnabled ? Filter.TRUE : Filter.FALSE);
 			db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + id, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {

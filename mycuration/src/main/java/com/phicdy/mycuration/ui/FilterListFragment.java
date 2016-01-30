@@ -173,13 +173,17 @@ public class FilterListFragment extends Fragment {
 				}
 				holder.filterUrl.setText("URL: " + url);
 
-				holder.filterEnabled.setChecked(filter.isEnabled());
+				final int p = position;
 				holder.filterEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						dbAdapter.updateFilterEnabled(filter.getId(), isChecked);
+						Filter clickedFilter = getItem(p);
+						clickedFilter.setEnabled(isChecked);
+						dbAdapter.updateFilterEnabled(clickedFilter.getId(), isChecked);
 					}
 				});
+				holder.filterEnabled.setChecked(filter.isEnabled());
+
 			}
 			
 			return row;
