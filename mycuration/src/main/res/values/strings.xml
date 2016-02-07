@@ -4,94 +4,90 @@
     <string name="app_name">MyCuration</string>
     <string name="action_settings">Settings</string>
 
-    <!-- 記事一覧 -->
-    <string name="all">全ての記事</string>
+    <!-- Article list -->
+    <string name="all">All articles</string>
     <string name="sample_feed_title">hogehogehoge</string>
     <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</string>
 
-    <!-- フィード一覧 -->
-    <string name="show_all_feeds">全てのフィードを表示</string>
-    <string name="hide_feeds">既読のフィードを隠す</string>
-    <string name="loading">読み込み中…</string>
+    <!-- feed list -->
+    <string name="show_all_feeds">Show all of feeds</string>
+    <string name="hide_feeds">Hide feeds</string>
+    <string name="loading">Updating…</string>
 
     <string name="add_filter_button">+</string>
-    <string name="keyword">キーワード</string>
-    <string name="include">を含む</string>
-    <string name="article_url">記事URL</string>
-    <string name="register">登録</string>
-    <string name="cancel">キャンセル</string>
-    <string name="title_empty_error">タイトルを入力してください。</string>
-    <string name="both_keyword_and_url_empty_error">キーワードと記事URLどちらかを入力してください。</string>
-    <string name="same_filter_exists_error">既に同じフィルターが登録されています。</string>
-    <string name="article_updated">記事を更新しました。</string>
-    <string name="article_update_error">記事の更新に失敗しました。</string>
-    <string name="network_error">ネットワークエラー</string>
-    <string name="task_exists_error">更新が実行中です。しばらくお待ち下さい。</string>
+    <string name="keyword">Keyword</string>
+    <string name="include">include</string>
+    <string name="article_url">Article URL</string>
+    <string name="register">Register</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_empty_error">Please input the title</string>
+    <string name="both_keyword_and_url_empty_error">Please input the keyword or URL</string>
+    <string name="same_filter_exists_error">Same filter exists</string>
+    <string name="task_exists_error">Updating....Please wait.</string>
     <string name="ok">OK</string>
     <string name="app_icon_description">icon</string>
-    <string name="no_feed_message">"まずはフィードを登録しましょう！"</string>
+    <string name="no_feed_message">Let\'sadd first feed!</string>
 
-    <string name="feed">フィード</string>
-    <string name="add_feed">フィード登録</string>
-    <string name="add_feed_success">"フィード登録に成功しました。"</string>
-    <string name="add_feed_error_generic">フィード登録に失敗しました。</string>
-    <string name="add_feed_error_invalid_url">URLが正しくありません</string>
-    <string name="adding_feed">フィードを追加しています。</string>
+    <string name="feed">Feed</string>
+    <string name="add_feed">Feed registration</string>
+    <string name="add_feed_success">Succeeded to add feed</string>
+    <string name="add_feed_error_generic">Failed to add feed</string>
+    <string name="add_feed_error_invalid_url">Invalid URL</string>
+    <string name="adding_feed">Adding new feed...</string>
     
-    <string name="delete_feed">フィード削除</string>
-    <string name="delete_feed_alert">フィードを削除してもよろしいですか？</string>
-    <string name="delete">削除</string>
-    <string name="finish_delete_feed_success">フィードを削除しました</string>
-    <string name="finish_delete_feed_fail">フィードの削除に失敗しました</string>
+    <string name="delete_feed">Delete the feed</string>
+    <string name="delete_feed_alert">Do you delete the feed ?</string>
+    <string name="delete">Delete</string>
+    <string name="finish_delete_feed_success">Succeeded to delete the feed</string>
+    <string name="finish_delete_feed_fail">Failed to delete the feed</string>
     
-    <string name="edit_feed_title">フィードのタイトルを編集</string>
-    <string name="new_title">新しいタイトル</string>
-    <string name="empty_title">新しいタイトルが空になっています。</string>
-    <string name="edit_feed_title_success">タイトルを編集しました。</string>
-    <string name="edit_feed_title_error">タイトルを編集に失敗しました。</string>
+    <string name="edit_feed_title">Edit feed title</string>
+    <string name="new_title">New title</string>
+    <string name="empty_title">New title is empty</string>
+    <string name="edit_feed_title_success">Succeede to edit the title</string>
+    <string name="edit_feed_title_error">Failed to edit the title</string>
     
-    <string name="target_feed">対象フィード</string>
-    <string name="feed_url">フィードまたは\nページのURL :</string>
-    <string name="feed_not_exist">フィードが登録されていないため、\nフィルターを登録できません。</string>
+    <string name="target_feed">Target feed</string>
+    <string name="feed_url">Feed ULR or\nPage URL :</string>
 
-    <string name="home">ホーム</string>
+    <string name="home">Home</string>
 
-    <!-- フィルター -->
-    <string name="filter">フィルター</string>
-    <string name="filter_saved">フィルターを登録しました。</string>
-    <string name="filter_saved_error">フィルターの登録に失敗しました。</string>
-    <string name="percent_only_error">この単語では登録できません。</string>
-    <string name="filter_title">フィルター名</string>
-    <string name="add_filter">フィルター登録</string>
-    <string name="delete_filter">フィルター削除</string>
-    <string name="edit_filter">フィルターの編集</string>
-    <string name="not_get_hatena_point">取得中</string>
-    <string name="none">なし</string>
-    <string name="no_filter">フィルターを登録しましょう！</string>
-    <string name="sample_filter_title">サンプルフィルター</string>
-    <string name="sample_filter_target">サンプル対象フィード</string>
-    <string name="sample_filter_keyword">キーワード: サンプル</string>
+    <!-- Filter -->
+    <string name="filter">Filter</string>
+    <string name="filter_saved">Succeeded to register new filter</string>
+    <string name="filter_saved_error">Failed to register new filter</string>
+    <string name="percent_only_error">You can not add this word</string>
+    <string name="filter_title">Filter title</string>
+    <string name="add_filter">Register</string>
+    <string name="delete_filter">Delete filter</string>
+    <string name="edit_filter">Edit filter</string>
+    <string name="not_get_hatena_point">Updating...</string>
+    <string name="none">None</string>
+    <string name="no_filter">Let\'sadd first filter!</string>
+    <string name="sample_filter_title">Sample filter title</string>
+    <string name="sample_filter_target">Sample target filter</string>
+    <string name="sample_filter_keyword">Keyword: Sample</string>
     <string name="sample_filter_url">URL: http://www.google.com</string>
 
-    <!-- 設定 -->
-    <string name="setting">設定</string>
-    <string name="auto_update_setting">自動記事更新の設定</string>
-    <string name="see_setting">閲覧の設定</string>
-    <string name="interval">自動更新の頻度</string>
-    <string name="hour">時間</string>
-    <string name="article_sort">新しい記事を先頭</string>
-    <string name="all_read_behavior">全ての記事を既読にした時の動作</string>
-    <string name="all_read_back">フィード一覧に戻る</string>
-    <string name="all_read_not_back">フィード一覧に戻らない</string>
-    <string name="open_internal">内蔵ブラウザで開く</string>
-    <string name="swipe_direction">スワイプ方向</string>
-    <string name="right_to_left">右から左で記事を既読</string>
-    <string name="left_to_right">左から右で記事を既読</string>
-    <string name="save">保存</string>
-    <string name="saved">設定が保存されました</string>
-    <string name="debug">デバッグ</string>
-    <string name="import_db">データベースのインポート</string>
-    <string name="export_db">データベースのエクスポート</string>
+    <!-- Settings -->
+    <string name="setting">Settings</string>
+    <string name="auto_update_setting">Auto Update</string>
+    <string name="see_setting">Browsing</string>
+    <string name="interval">Interval</string>
+    <string name="hour">hour</string>
+    <string name="article_sort">Sort from latest</string>
+    <string name="all_read_behavior">Behavior you read all of the articles</string>
+    <string name="all_read_back">Go back to feed list</string>
+    <string name="all_read_not_back">Not go back to feed list</string>
+    <string name="open_internal">Internal browser</string>
+    <string name="swipe_direction">Swipe direction</string>
+    <string name="right_to_left">Read article by swipe from right to left</string>
+    <string name="left_to_right">Read article by swipe from left to right</string>
+    <string name="save">Save</string>
+    <string name="saved">Settings are saved</string>
+    <string name="debug">Debug</string>
+    <string name="import_db">Import DB</string>
+    <string name="export_db">Export DB</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_article_sort">keyArticleSort</string>
     <string name="key_internal_browser">keyInternalBrowser</string>
@@ -100,50 +96,47 @@
     <string name="key_import_db">keyImportDb</string>
     <string name="key_export_db">keyExportDb</string>
 
-    <string name="all_read">全て既読にする</string>
-    <string name="no_article">未読の記事がありません</string>
+    <string name="all_read">Read all</string>
+    <string name="no_article">No unread articles</string>
     
-    <string name="icon">アイコン</string>
-    <string name="license">ライセンス</string>
+    <string name="icon">Icon</string>
+    <string name="license">License</string>
 
 
-    <!-- 記事検索 -->
-    <string name="search_article">記事を検索</string>
-    <string name="no_search_result">該当する記事はありません</string>
-    <string name="search_result">検索結果</string>
+    <!-- Article search -->
+    <string name="search_article">Search articles</string>
+    <string name="no_search_result">No result</string>
+    <string name="search_result">Search result</string>
     
-    <string name="open_all_articles">全ての記事を開く</string>
-    <string name="next_page">次のページ</string>
+    <string name="hatena">Hatena</string>
     
-    <string name="hatena">はてな</string>
+    <string name="share">Share</string>
     
-    <string name="share">共有</string>
-    
-    <!-- エラー -->
-    <string name="error_xml_parse">サイトの解析に失敗しました</string>
-    <string name="error_io">接続に失敗しました</string>
-    <string name="error_rss_is_not_found">フィードが見つかりませんでした</string>
-    <string name="error_invalid_rss_url">不正なフィードのURLです</string>
-    <string name="error_invalid_html">サイトのHTMLが不正です</string>
+    <!-- Error -->
+    <string name="error_xml_parse">Failed to parse the site</string>
+    <string name="error_io">Connection Error</string>
+    <string name="error_rss_is_not_found">No feed found</string>
+    <string name="error_invalid_rss_url">Invalid feed URL</string>
+    <string name="error_invalid_html">Invalid HTML</string>
 
-    <!-- キュレーション -->
-    <string name="curation">キュレーション</string>
-    <string name="curation_name">キュレーション名</string>
-    <string name="no_curation_message">キュレーションを登録しましょう！</string>
-    <string name="add_word">追加</string>
-    <string name="adding_curation">キュレーションを追加しています</string>
-    <string name="word_setting">単語の設定</string>
-    <string name="delete_curation">キュレーションの削除</string>
-    <string name="edit_curation">キュレーションの編集</string>
-    <string name="title_activity_add_curation">キュレーションを追加</string>
-    <string name="title_activity_edit_curation">キュレーションを編集</string>
-    <string name="empty_curation_name">キュレーション名が空です。</string>
-    <string name="empty_word">空の単語は追加できません。</string>
-    <string name="empty_word_list">単語が1つもありません。</string>
-    <string name="duplicate_word">既に同じ単語が入っています。</string>
-    <string name="duplicate_curation_name">既に同じ名前のキュレーションが存在します。</string>
-    <string name="curation_added_success">キュレーションを追加しました。</string>
-    <string name="curation_added_error">キュレーションの追加に失敗しました。</string>
+    <!-- Curation -->
+    <string name="curation">Curation</string>
+    <string name="curation_name">Curation Name</string>
+    <string name="no_curation_message">Let\'s register first curation</string>
+    <string name="add_word">Add</string>
+    <string name="adding_curation">Adding curation...</string>
+    <string name="word_setting">Word setting</string>
+    <string name="delete_curation">Delete curation</string>
+    <string name="edit_curation">Edit curation</string>
+    <string name="title_activity_add_curation">Add curation</string>
+    <string name="title_activity_edit_curation">Edit curation</string>
+    <string name="empty_curation_name">Title is empty</string>
+    <string name="empty_word">You can not add empty word</string>
+    <string name="empty_word_list">No word</string>
+    <string name="duplicate_word">Same word exists</string>
+    <string name="duplicate_curation_name">Same title curation exists</string>
+    <string name="curation_added_success">Succeeded to add curation </string>
+    <string name="curation_added_error">Failed to add curation</string>
 
     <!-- Google Analytics -->
     <string name="ga_not_all_title">フィード</string>

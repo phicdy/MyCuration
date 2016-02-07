@@ -1,7 +1,7 @@
 <resources>
     <string-array name="swipe_direction_items">
-        <item>Read by right to left</item>
-        <item>Read by left to right</item>
+        <item>右から左で記事を既読</item>
+        <item>左から右で記事を既読</item>
     </string-array>
 
     <string-array name="swipe_direction_items_values">
@@ -20,20 +20,20 @@
     </string-array>
 
     <string-array name="update_interval_items">
-        <item>Not update</item>
-        <item>1 hour</item>
-        <item>2 hours</item>
-        <item>3 hours</item>
-        <item>4 hours</item>
-        <item>5 hours</item>
-        <item>6 hours</item>
-        <item>7 hours</item>
-        <item>8 hours</item>
-        <item>9 hours</item>
-        <item>10 hours</item>
-        <item>11 hours</item>
-        <item>12 hours</item>
-        <item>24 hours</item>
+        <item>自動更新を行わない</item>
+        <item>1時間</item>
+        <item>2時間</item>
+        <item>3時間</item>
+        <item>4時間</item>
+        <item>5時間</item>
+        <item>6時間</item>
+        <item>7時間</item>
+        <item>8時間</item>
+        <item>9時間</item>
+        <item>10時間</item>
+        <item>11時間</item>
+        <item>12時間</item>
+        <item>24時間</item>
     </string-array>
 
     <string-array name="update_interval_items_values">
