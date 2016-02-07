@@ -26,7 +26,7 @@
     <string name="task_exists_error">Updating....Please wait.</string>
     <string name="ok">OK</string>
     <string name="app_icon_description">icon</string>
-    <string name="no_feed_message">Let\'sadd first feed!</string>
+    <string name="no_feed_message">Let\'s add first feed!</string>
 
     <string name="feed">Feed</string>
     <string name="add_feed">Feed registration</string>
@@ -48,7 +48,7 @@
     <string name="edit_feed_title_error">Failed to edit the title</string>
     
     <string name="target_feed">Target feed</string>
-    <string name="feed_url">Feed ULR or\nPage URL :</string>
+    <string name="feed_url">Feed or\nPage URL :</string>
 
     <string name="home">Home</string>
 
@@ -63,7 +63,7 @@
     <string name="edit_filter">Edit filter</string>
     <string name="not_get_hatena_point">Updating...</string>
     <string name="none">None</string>
-    <string name="no_filter">Let\'sadd first filter!</string>
+    <string name="no_filter">Let\'s add first filter!</string>
     <string name="sample_filter_title">Sample filter title</string>
     <string name="sample_filter_target">Sample target filter</string>
     <string name="sample_filter_keyword">Keyword: Sample</string>
