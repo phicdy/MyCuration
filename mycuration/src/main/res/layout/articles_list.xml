@@ -55,6 +55,8 @@
             android:layout_marginLeft="8dp"
             android:layout_gravity="center_vertical"
             android:textSize="12sp"
+            android:maxLines="2"
+            android:ellipsize="end"
             tools:text="@string/sample_article_url" />
 
         <LinearLayout

@@ -7,7 +7,7 @@
     <!-- Article list -->
     <string name="all">All articles</string>
     <string name="sample_feed_title">hogehogehoge</string>
-    <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</string>
+    <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</string>
 
     <!-- feed list -->
     <string name="show_all_feeds">Show all of feeds</string>

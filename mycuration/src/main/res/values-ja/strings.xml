@@ -7,7 +7,7 @@
     <!-- 記事一覧 -->
     <string name="all">全ての記事</string>
     <string name="sample_feed_title">hogehogehoge</string>
-    <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</string>
+    <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</string>
 
     <!-- フィード一覧 -->
     <string name="show_all_feeds">全てのフィードを表示</string>
