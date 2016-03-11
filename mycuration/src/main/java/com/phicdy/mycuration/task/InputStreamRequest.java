@@ -8,8 +8,6 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 
-import org.apache.http.protocol.HTTP;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -52,7 +50,7 @@ public class InputStreamRequest extends Request<InputStream> {
 	@Override
 	protected Response<InputStream> parseNetworkResponse(
 			NetworkResponse response) {
-		String contentType = response.headers.get(HTTP.CONTENT_TYPE);
+		String contentType = response.headers.get("Content-Type");
 		String GZIP_CONTENT_TYPE = "application/gzip;charset=UTF-8";
 		InputStream is;
 		if (contentType.equalsIgnoreCase(GZIP_CONTENT_TYPE)) {
