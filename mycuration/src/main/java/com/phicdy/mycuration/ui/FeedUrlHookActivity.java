@@ -28,6 +28,7 @@ public class FeedUrlHookActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_feed_url_hook);
+		gaTrackerHelper = GATrackerHelper.getInstance(this);
 
 		Intent intent = getIntent();
 		if (intent != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
