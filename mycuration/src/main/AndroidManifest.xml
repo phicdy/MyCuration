@@ -72,6 +72,11 @@
                 <data android:pathPattern=".*\\.rdf" />
                 <data android:pathPattern=".*\\.rss" />
             </intent-filter>
+            <intent-filter android:label="@string/add_feed">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
             <!--
                       <data android:pathPattern=".*\\.rdf" />
                 <data android:pathPattern=".*\\.rss|" />

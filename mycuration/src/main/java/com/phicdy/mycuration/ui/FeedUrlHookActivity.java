@@ -14,6 +14,7 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.util.UrlUtil;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -31,9 +32,18 @@ public class FeedUrlHookActivity extends Activity {
 		gaTrackerHelper = GATrackerHelper.getInstance(this);
 
 		Intent intent = getIntent();
-		if (intent != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
-			String url = intent.getDataString();
-			if (url != null) {
+		final String action = intent.getAction();
+		if (intent != null && (action.equals(Intent.ACTION_VIEW) ||
+				action.equals(Intent.ACTION_SEND))) {
+			String url = null;
+			if (action.equals(Intent.ACTION_VIEW)) {
+				url = intent.getDataString();
+			}else if (action.equals(Intent.ACTION_SEND)) {
+				// For Chrome
+				Bundle extras = getIntent().getExtras();
+				url = extras.getCharSequence(Intent.EXTRA_TEXT).toString();
+			}
+			if (url != null && UrlUtil.isCorrectUrl(url)) {
 				dialog = new ProgressDialog(this);
 				dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 				dialog.setMessage(getString(R.string.adding_feed));
@@ -72,10 +82,16 @@ public class FeedUrlHookActivity extends Activity {
 
 				dialog.show();
 				NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(url);
+			}else {
+				Toast.makeText(getApplicationContext(),
+						R.string.add_feed_error_invalid_url,
+						Toast.LENGTH_SHORT).show();
+				gaTrackerHelper.sendEvent(getString(R.string.add_feed_from_intent_error));
 			}
+		}else {
+			finish();
 		}
 
-		gaTrackerHelper = GATrackerHelper.getInstance(this);
 		gaTrackerHelper.sendScreen(getString(R.string.add_feed_from_intent));
 	}
 
