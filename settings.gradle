@@ -1,2 +1,2 @@
-include ':pullToReflresh'
+include ':PullToReflresh'
 include ':mycuration'
