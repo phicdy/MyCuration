@@ -138,6 +138,9 @@
     <string name="curation_added_success">キュレーションを追加しました。</string>
     <string name="curation_added_error">キュレーションの追加に失敗しました。</string>
 
+    <!-- フィード検索 -->
+    <string name="search_feed">フィードを検索</string>
+
     <!-- Google Analytics -->
     <string name="ga_not_all_title">フィード</string>
     <string name="action">アクション</string>

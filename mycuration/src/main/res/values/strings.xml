@@ -34,19 +34,19 @@
     <string name="add_feed_error_generic">Failed to add feed</string>
     <string name="add_feed_error_invalid_url">Invalid URL</string>
     <string name="adding_feed">Adding new feed...</string>
-    
+
     <string name="delete_feed">Delete the feed</string>
     <string name="delete_feed_alert">Do you delete the feed ?</string>
     <string name="delete">Delete</string>
     <string name="finish_delete_feed_success">Succeeded to delete the feed</string>
     <string name="finish_delete_feed_fail">Failed to delete the feed</string>
-    
+
     <string name="edit_feed_title">Edit feed title</string>
     <string name="new_title">New title</string>
     <string name="empty_title">New title is empty</string>
     <string name="edit_feed_title_success">Succeede to edit the title</string>
     <string name="edit_feed_title_error">Failed to edit the title</string>
-    
+
     <string name="target_feed">Target feed</string>
     <string name="feed_url">Feed or\nPage URL :</string>
 
@@ -98,7 +98,7 @@
 
     <string name="all_read">Read all</string>
     <string name="no_article">No unread articles</string>
-    
+
     <string name="icon">Icon</string>
     <string name="license">License</string>
 
@@ -107,11 +107,11 @@
     <string name="search_article">Search articles</string>
     <string name="no_search_result">No result</string>
     <string name="search_result">Search result</string>
-    
+
     <string name="hatena">Hatena</string>
-    
+
     <string name="share">Share</string>
-    
+
     <!-- Error -->
     <string name="error_xml_parse">Failed to parse the site</string>
     <string name="error_io">Connection Error</string>
@@ -137,6 +137,9 @@
     <string name="duplicate_curation_name">Same title curation exists</string>
     <string name="curation_added_success">Succeeded to add curation </string>
     <string name="curation_added_error">Failed to add curation</string>
+
+    <!-- Search feed -->
+    <string name="search_feed">Search feed</string>
 
     <!-- Google Analytics -->
     <string name="ga_not_all_title">フィード</string>
