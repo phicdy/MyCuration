@@ -1,9 +1,7 @@
 package com.phicdy.mycuration.ui;
 
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -22,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -31,7 +28,6 @@ import android.widget.LinearLayout;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -177,7 +173,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                 switch (selectedPosition) {
                     case POSITION_CURATION_FRAGMENT:
                         if (dbAdapter.getNumOfFeeds() == 0) {
-                            addFeed();
+                            goToFeedSearch();
                             break;
                         }
 						Intent intent = new Intent(getApplicationContext(), AddCurationActivity.class);
@@ -185,11 +181,11 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                         gaTrackerHelper.sendEvent(getString(R.string.tap_add_curation));
                         break;
                     case POSITION_FEED_FRAGMENT:
-                        addFeed();
+                        goToFeedSearch();
                         break;
                     case POSITION_FILTER_FRAGMENT:
                         if (dbAdapter.getNumOfFeeds() == 0) {
-                            addFeed();
+                            goToFeedSearch();
                             break;
                         }
                         intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
@@ -235,32 +231,9 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    private void addFeed() {
-        final View addView = getLayoutInflater().inflate(R.layout.add_feed,
-                null);
-
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.add_feed)
-                .setView(addView)
-                .setPositiveButton(R.string.register,
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                // Set feed URL and judge whether feed URL is
-                                // RSS format
-                                EditText feedUrl = (EditText) addView
-                                        .findViewById(R.id.addFeedUrl);
-                                String feedUrlStr = feedUrl.getText()
-                                        .toString();
-                                progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_feed));
-                                progressDialog.show(getFragmentManager(), null);
-                                NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(feedUrlStr);
-                            }
-
-                        }).setNegativeButton(R.string.cancel, null).show();
+    private void goToFeedSearch() {
         gaTrackerHelper.sendEvent(getString(R.string.tap_add_feed));
+        startActivity(new Intent(TopActivity.this, FeedSearchActivity.class));
     }
 
     @Override
