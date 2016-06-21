@@ -27,7 +27,6 @@ import java.util.Date;
 public class RssParser {
 
 	private DatabaseAdapter dbAdapter;
-	private UnreadCountManager unreadCountManager;
 	private boolean isArticleFlag = false;
 	private Context context;
 
@@ -35,7 +34,6 @@ public class RssParser {
 
 	public RssParser(Context context) {
 		dbAdapter = DatabaseAdapter.getInstance(context);
-		unreadCountManager = UnreadCountManager.getInstance(context);
 		this.context = context;
 	}
 
