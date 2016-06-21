@@ -3,7 +3,9 @@ package com.phicdy.mycuration.ui;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -11,12 +13,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.phicdy.mycuration.R;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class FeedSearchActivity extends AppCompatActivity {
 
     private SearchView searchView;
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +37,22 @@ public class FeedSearchActivity extends AppCompatActivity {
         // Show back arrow icon
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        webView = (WebView)findViewById(R.id.webview);
+        webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setJavaScriptEnabled(true);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = webView.getUrl();
+                Intent intent = new Intent(FeedSearchActivity.this, FeedUrlHookActivity.class);
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+            }
+        });
 
         handleIntent(getIntent());
     }
@@ -62,9 +87,6 @@ public class FeedSearchActivity extends AppCompatActivity {
 
         // Open searchview
         searchView.setIconified(false);
-
-        // Close software keyboard
-        searchView.clearFocus();
         return true;
     }
 
@@ -81,7 +103,14 @@ public class FeedSearchActivity extends AppCompatActivity {
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            final String query = intent.getStringExtra(SearchManager.QUERY);
+            try {
+                String encodedQuery = URLEncoder.encode(query, "utf-8");
+                String url = "https://www.google.co.jp/search?q=" + encodedQuery;
+                webView.loadUrl(url);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
     }
 
