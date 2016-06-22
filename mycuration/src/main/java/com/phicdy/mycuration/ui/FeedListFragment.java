@@ -83,17 +83,6 @@ public class FeedListFragment extends Fragment {
         unreadManager = UnreadCountManager.getInstance(getActivity());
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
         networkTaskManager = NetworkTaskManager.getInstance(getActivity());
-        if (savedInstanceState == null) {
-            allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
-            // For show/hide
-            if (allFeeds.size() != 0) {
-                addShowHideLine(allFeeds);
-            }
-            generateHidedFeedList();
-        }else {
-            feeds = savedInstanceState.getParcelableArrayList(FEEDS_KEY);
-            allFeeds = savedInstanceState.getParcelableArrayList(ALL_FEEDS_KEY);
-        }
         setRetainInstance(true);
     }
 
@@ -109,6 +98,12 @@ public class FeedListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
+        // For show/hide
+        if (allFeeds.size() != 0) {
+            addShowHideLine(allFeeds);
+        }
+        generateHidedFeedList();
         refreshList();
         if (NetworkTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
             feedsListView.setRefreshing(true);
