@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.UrlUtil;
@@ -67,6 +68,8 @@ public class FeedUrlHookActivity extends Activity {
 										Toast.LENGTH_SHORT).show();
 								gaTrackerHelper.sendEvent(getString(R.string.add_feed_from_intent_error));
 							} else {
+								UnreadCountManager.getInstance(context).addFeed(newFeed);
+                                NetworkTaskManager.getInstance(context).updateFeed(newFeed);
 								Toast.makeText(getApplicationContext(),
 										R.string.add_feed_success,
 										Toast.LENGTH_SHORT).show();

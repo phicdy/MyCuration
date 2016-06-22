@@ -275,6 +275,8 @@ public class FeedListFragment extends Fragment {
                                 R.string.add_feed_success,
                                 Toast.LENGTH_SHORT).show();
                         addFeed(newFeed);
+                        unreadManager.addFeed(newFeed);
+                        networkTaskManager.updateFeed(newFeed);
                         refreshList();
                     }
                     mListener.onCloseProgressDialog();
