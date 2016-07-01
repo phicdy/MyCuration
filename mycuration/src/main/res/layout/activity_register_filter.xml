@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
-        android:text="@string/target_feed"
+        android:text="@string/target_rss"
         android:layout_marginTop="20dp"
         android:textSize="20sp"/>
     <Spinner 

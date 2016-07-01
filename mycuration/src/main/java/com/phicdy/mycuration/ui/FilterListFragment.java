@@ -62,7 +62,7 @@ public class FilterListFragment extends Fragment {
 		filtersListView = (ListView)getActivity().findViewById(R.id.lv_filter);
 		TextView emptyView = (TextView)getActivity().findViewById(R.id.filter_emptyView);
 		if (dbAdapter.getNumOfFeeds() == 0) {
-			emptyView.setText(R.string.no_feed_message);
+			emptyView.setText(R.string.no_rss_message);
 		}
 		filtersListView.setEmptyView(emptyView);
 	}

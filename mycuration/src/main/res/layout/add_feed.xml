@@ -7,7 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="64dp"
         android:layout_marginLeft="4dp"
-        android:text="@string/feed_url" />
+        android:text="@string/rss_url" />
     <EditText android:id="@+id/addFeedUrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

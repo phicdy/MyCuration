@@ -232,7 +232,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     }
 
     private void goToFeedSearch() {
-        gaTrackerHelper.sendEvent(getString(R.string.tap_add_feed));
+        gaTrackerHelper.sendEvent(getString(R.string.tap_add_rss));
         startActivity(new Intent(TopActivity.this, FeedSearchActivity.class));
     }
 
@@ -298,7 +298,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                 case POSITION_CURATION_FRAGMENT:
                     return getString(R.string.curation);
                 case POSITION_FEED_FRAGMENT:
-                    return getString(R.string.feed);
+                    return getString(R.string.rss);
                 case POSITION_FILTER_FRAGMENT:
                     return getString(R.string.filter);
             }

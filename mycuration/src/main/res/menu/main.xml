@@ -5,7 +5,7 @@
         android:id="@+id/add"
         android:icon="@drawable/ic_action_new"
         app:showAsAction="collapseActionView|ifRoom"
-        android:title="@string/add_feed"/>
+        android:title="@string/add_rss"/>
 
     <item
         android:id="@+id/search"

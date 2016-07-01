@@ -6,12 +6,12 @@
 
     <!-- 記事一覧 -->
     <string name="all">全ての記事</string>
-    <string name="sample_feed_title">hogehogehoge</string>
+    <string name="sample_rss_title">hogehogehoge</string>
     <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</string>
 
-    <!-- フィード一覧 -->
-    <string name="show_all_feeds">全てのフィードを表示</string>
-    <string name="hide_feeds">既読のフィードを隠す</string>
+    <!-- RSS一覧 -->
+    <string name="show_all_rsses">全てのRSSを表示</string>
+    <string name="hide_rsses">既読のRSSを隠す</string>
     <string name="loading">読み込み中…</string>
 
     <string name="add_filter_button">+</string>
@@ -26,29 +26,29 @@
     <string name="task_exists_error">更新が実行中です。しばらくお待ち下さい。</string>
     <string name="ok">OK</string>
     <string name="app_icon_description">icon</string>
-    <string name="no_feed_message">"まずはフィードを登録しましょう！"</string>
+    <string name="no_rss_message">"まずはRSSを登録しましょう！"</string>
 
-    <string name="feed">フィード</string>
-    <string name="add_feed">フィード登録</string>
-    <string name="add_feed_success">"フィード登録に成功しました。"</string>
-    <string name="add_feed_error_generic">フィード登録に失敗しました。</string>
-    <string name="add_feed_error_invalid_url">URLが正しくありません</string>
-    <string name="adding_feed">フィードを追加しています。</string>
+    <string name="rss">RSS</string>
+    <string name="add_rss">RSS登録</string>
+    <string name="add_rss_success">"RSS登録に成功しました。"</string>
+    <string name="add_rss_error_generic">RSS登録に失敗しました。</string>
+    <string name="add_rss_error_invalid_url">URLが正しくありません</string>
+    <string name="adding_rss">RSSを追加しています。</string>
     
-    <string name="delete_feed">フィード削除</string>
-    <string name="delete_feed_alert">フィードを削除してもよろしいですか？</string>
+    <string name="delete_rss">RSS削除</string>
+    <string name="delete_rss_alert">RSSを削除してもよろしいですか？</string>
     <string name="delete">削除</string>
-    <string name="finish_delete_feed_success">フィードを削除しました</string>
-    <string name="finish_delete_feed_fail">フィードの削除に失敗しました</string>
+    <string name="finish_delete_rss_success">RSSを削除しました</string>
+    <string name="finish_delete_rss_fail">RSSの削除に失敗しました</string>
     
-    <string name="edit_feed_title">フィードのタイトルを編集</string>
+    <string name="edit_rss_title">RSSのタイトルを編集</string>
     <string name="new_title">新しいタイトル</string>
     <string name="empty_title">新しいタイトルが空になっています。</string>
-    <string name="edit_feed_title_success">タイトルを編集しました。</string>
-    <string name="edit_feed_title_error">タイトルを編集に失敗しました。</string>
+    <string name="edit_rss_title_success">タイトルを編集しました。</string>
+    <string name="edit_rss_title_error">タイトルを編集に失敗しました。</string>
     
-    <string name="target_feed">対象フィード</string>
-    <string name="feed_url">フィードまたは\nページのURL :</string>
+    <string name="target_rss">対象RSS</string>
+    <string name="rss_url">RSSまたは\nページのURL :</string>
 
     <string name="home">ホーム</string>
 
@@ -65,7 +65,7 @@
     <string name="none">なし</string>
     <string name="no_filter">フィルターを登録しましょう！</string>
     <string name="sample_filter_title">サンプルフィルター</string>
-    <string name="sample_filter_target">サンプル対象フィード</string>
+    <string name="sample_filter_target">サンプル対象RSS</string>
     <string name="sample_filter_keyword">キーワード: サンプル</string>
     <string name="sample_filter_url">URL: http://www.google.com</string>
 
@@ -77,8 +77,8 @@
     <string name="hour">時間</string>
     <string name="article_sort">新しい記事を先頭</string>
     <string name="all_read_behavior">全ての記事を既読にした時の動作</string>
-    <string name="all_read_back">フィード一覧に戻る</string>
-    <string name="all_read_not_back">フィード一覧に戻らない</string>
+    <string name="all_read_back">RSS一覧に戻る</string>
+    <string name="all_read_not_back">RSS一覧に戻らない</string>
     <string name="open_internal">内蔵ブラウザで開く</string>
     <string name="swipe_direction">スワイプ方向</string>
     <string name="right_to_left">右から左で記事を既読</string>
@@ -115,8 +115,8 @@
     <!-- エラー -->
     <string name="error_xml_parse">サイトの解析に失敗しました</string>
     <string name="error_io">接続に失敗しました</string>
-    <string name="error_rss_is_not_found">フィードが見つかりませんでした</string>
-    <string name="error_invalid_rss_url">不正なフィードのURLです</string>
+    <string name="error_rss_is_not_found">RSSが見つかりませんでした</string>
+    <string name="error_invalid_rss_url">不正なRSSのURLです</string>
     <string name="error_invalid_html">サイトのHTMLが不正です</string>
 
     <!-- キュレーション -->
@@ -138,20 +138,20 @@
     <string name="curation_added_success">キュレーションを追加しました。</string>
     <string name="curation_added_error">キュレーションの追加に失敗しました。</string>
 
-    <!-- フィード検索 -->
-    <string name="search_feed">フィードを検索</string>
+    <!-- RSS検索 -->
+    <string name="search_rss">RSSを検索</string>
 
     <!-- Google Analytics -->
-    <string name="ga_not_all_title">フィード</string>
+    <string name="ga_not_all_title">RSS</string>
     <string name="action">アクション</string>
-    <string name="tap_add_feed">フィード追加タップ</string>
+    <string name="tap_add_rss">RSS追加タップ</string>
     <string name="tap_add_curation">キュレーション追加タップ</string>
     <string name="tap_add_filter">フィルター追加タップ</string>
     <string name="tap_article_internal">記事を内部ブラウザで開く</string>
     <string name="tap_article_external">記事を外部ブラウザで開く</string>
     <string name="share_article">記事共有</string>
     <string name="read_all_articles">記事全既読</string>
-    <string name="update_feed">フィード更新</string>
+    <string name="update_rss">RSS更新</string>
     <string name="scroll_article_list">記事リストをスクロール</string>
     <string name="swipe_left_to_right">左から右にスワイプ</string>
     <string name="swipe_right_to_left">右から左にスワイプ</string>
@@ -165,8 +165,8 @@
     <string name="add_same_curation_name">同じキュレーション名で追加</string>
     <string name="add_new_curation">キュレーション追加</string>
     <string name="update_curation">キュレーション更新</string>
-    <string name="add_feed_from_intent">共有からフィード追加</string>
-    <string name="add_feed_from_intent_error">共有からフィード追加エラー</string>
+    <string name="add_rss_from_intent">共有からRSS追加</string>
+    <string name="add_rss_from_intent_error">共有からRSS追加エラー</string>
     <string name="add_new_filter">フィルター追加</string>
     <string name="update_filter">フィルター更新</string>
     <string name="add_new_filter_no_title">タイトルなしフィルター追加</string>

@@ -284,7 +284,7 @@ public class ArticlesListActivity extends ActionBarActivity {
                 ArrayList<Feed> feeds = new ArrayList<Feed>();
                 feeds.add(new Feed(feedId, null, feedUrl, "", "", 0));
                 networkTaskManager.updateAllFeeds(feeds);
-                gaTrackerHelper.sendEvent(getString(R.string.update_feed));
+                gaTrackerHelper.sendEvent(getString(R.string.update_rss));
             }
         });
 

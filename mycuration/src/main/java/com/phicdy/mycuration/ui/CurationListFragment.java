@@ -128,7 +128,7 @@ public class CurationListFragment extends Fragment {
         curationListView = (ListView) getActivity().findViewById(R.id.lv_curation);
         TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView_curation);
         if (dbAdapter.getNumOfFeeds() == 0) {
-            emptyView.setText(R.string.no_feed_message);
+            emptyView.setText(R.string.no_rss_message);
         }
         curationListView.setEmptyView(emptyView);
         getActivity().registerForContextMenu(curationListView);

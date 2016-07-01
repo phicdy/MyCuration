@@ -47,7 +47,7 @@ public class FeedUrlHookActivity extends Activity {
 			if (url != null && UrlUtil.isCorrectUrl(url)) {
 				dialog = new ProgressDialog(this);
 				dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-				dialog.setMessage(getString(R.string.adding_feed));
+				dialog.setMessage(getString(R.string.adding_rss));
 
 				receiver = new BroadcastReceiver() {
 
@@ -58,20 +58,20 @@ public class FeedUrlHookActivity extends Activity {
 							DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
 							Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
 							if (intent.hasExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON) || newFeed == null) {
-								int errorMessage = R.string.add_feed_error_generic;
+								int errorMessage = R.string.add_rss_error_generic;
 								if (intent.getIntExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, -1)
 										== NetworkTaskManager.ERROR_INVALID_URL) {
-									errorMessage = R.string.add_feed_error_invalid_url;
+									errorMessage = R.string.add_rss_error_invalid_url;
 								}
 								Toast.makeText(getApplicationContext(),
 										errorMessage,
 										Toast.LENGTH_SHORT).show();
-								gaTrackerHelper.sendEvent(getString(R.string.add_feed_from_intent_error));
+								gaTrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error));
 							} else {
 								UnreadCountManager.getInstance(context).addFeed(newFeed);
                                 NetworkTaskManager.getInstance(context).updateFeed(newFeed);
 								Toast.makeText(getApplicationContext(),
-										R.string.add_feed_success,
+										R.string.add_rss_success,
 										Toast.LENGTH_SHORT).show();
 							}
 							dialog.dismiss();
@@ -87,15 +87,15 @@ public class FeedUrlHookActivity extends Activity {
 				NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(url);
 			}else {
 				Toast.makeText(getApplicationContext(),
-						R.string.add_feed_error_invalid_url,
+						R.string.add_rss_error_invalid_url,
 						Toast.LENGTH_SHORT).show();
-				gaTrackerHelper.sendEvent(getString(R.string.add_feed_from_intent_error));
+				gaTrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error));
 			}
 		}else {
 			finish();
 		}
 
-		gaTrackerHelper.sendScreen(getString(R.string.add_feed_from_intent));
+		gaTrackerHelper.sendScreen(getString(R.string.add_rss_from_intent));
 	}
 
 	@Override
