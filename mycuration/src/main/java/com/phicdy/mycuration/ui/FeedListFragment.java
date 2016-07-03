@@ -426,7 +426,7 @@ public class FeedListFragment extends Fragment {
                 }
             }
         }
-        rssFeedListAdapter.notifyDataSetChanged();
+        refreshList();
     }
 
     public void updateProgress() {
