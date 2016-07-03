@@ -139,7 +139,7 @@
     <string name="curation_added_error">キュレーションの追加に失敗しました。</string>
 
     <!-- RSS検索 -->
-    <string name="search_rss">RSSを検索</string>
+    <string name="search_rss">サイトまたはURLを入力</string>
 
     <!-- Google Analytics -->
     <string name="ga_not_all_title">RSS</string>
@@ -165,6 +165,8 @@
     <string name="add_same_curation_name">同じキュレーション名で追加</string>
     <string name="add_new_curation">キュレーション追加</string>
     <string name="update_curation">キュレーション更新</string>
+    <string name="add_rss_input_url">URL入力からRSS追加</string>
+    <string name="add_rss_input_url_error">URL入力からRSS追加エラー</string>
     <string name="add_rss_from_intent">共有からRSS追加</string>
     <string name="add_rss_from_intent_error">共有からRSS追加エラー</string>
     <string name="add_new_filter">フィルター追加</string>

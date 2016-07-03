@@ -1,8 +1,11 @@
 package com.phicdy.mycuration.ui;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,8 +20,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
+import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.rss.UnreadCountManager;
+import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.util.UrlUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -27,6 +37,9 @@ public class FeedSearchActivity extends AppCompatActivity {
 
     private SearchView searchView;
     private WebView webView;
+
+    private BroadcastReceiver receiver;
+    private GATrackerHelper gaTrackerHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +69,7 @@ public class FeedSearchActivity extends AppCompatActivity {
             }
         });
 
+        gaTrackerHelper = GATrackerHelper.getInstance(this);
         handleIntent(getIntent());
     }
 
@@ -106,6 +120,49 @@ public class FeedSearchActivity extends AppCompatActivity {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(SearchManager.QUERY);
+            if (UrlUtil.isCorrectUrl(query)) {
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage(getString(R.string.adding_rss));
+                receiver = new BroadcastReceiver() {
+
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        String action = intent.getAction();
+                        if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
+                            DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
+                            Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
+                            if (intent.hasExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON) || newFeed == null) {
+                                int errorMessage = R.string.add_rss_error_generic;
+                                if (intent.getIntExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, -1)
+                                        == NetworkTaskManager.ERROR_INVALID_URL) {
+                                    errorMessage = R.string.add_rss_error_invalid_url;
+                                }
+                                Toast.makeText(getApplicationContext(),
+                                        errorMessage,
+                                        Toast.LENGTH_SHORT).show();
+                                gaTrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error));
+                            } else {
+                                UnreadCountManager.getInstance(context).addFeed(newFeed);
+                                NetworkTaskManager.getInstance(context).updateFeed(newFeed);
+                                Toast.makeText(getApplicationContext(),
+                                        R.string.add_rss_success,
+                                        Toast.LENGTH_SHORT).show();
+                                gaTrackerHelper.sendEvent(getString(R.string.add_rss_input_url));
+                            }
+                            dialog.dismiss();
+                            unregisterReceiver(this);
+                            finish();
+                        }
+                    }
+                };
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
+                registerReceiver(receiver, filter);
+                dialog.show();
+                NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(query);
+                return;
+            }
             try {
                 String encodedQuery = URLEncoder.encode(query, "utf-8");
                 String url = "https://www.google.co.jp/search?q=" + encodedQuery;
@@ -113,6 +170,14 @@ public class FeedSearchActivity extends AppCompatActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (receiver != null) {
+            unregisterReceiver(receiver);
         }
     }
 
