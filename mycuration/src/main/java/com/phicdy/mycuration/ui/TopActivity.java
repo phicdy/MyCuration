@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -31,6 +32,8 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import uk.co.deanwild.materialshowcaseview.IShowcaseListener;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
 public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
 
@@ -71,6 +74,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     public static final String FEED_ID = "FEED_ID";
     public static final String CURATION_ID = "CURATION_ID";
     private static final String LOG_TAG = "FilFeed." + TopActivity.class.getSimpleName();
+
+    private static final String SHOWCASE_ID = "tutorialAddRss";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +168,31 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                 .findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setTextColor(getResources().getColor(R.color.text_primary));
         searchAutoComplete.setHintTextColor(getResources().getColor(R.color.text_primary));
+
+        // Start tutorial at first time
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                View view = findViewById(R.id.add);
+                new MaterialShowcaseView.Builder(TopActivity.this)
+                        .setTarget(view)
+                        .setContentText(R.string.tutorial_go_to_search_rss_description)
+                        .setDismissText(R.string.tutorial_next)
+                        .singleUse(SHOWCASE_ID)
+                        .setListener(new IShowcaseListener() {
+                            @Override
+                            public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
+
+                            }
+
+                            @Override
+                            public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
+                                goToFeedSearch();
+                            }
+                        })
+                        .show();
+            }
+        });
         return true;
     }
 

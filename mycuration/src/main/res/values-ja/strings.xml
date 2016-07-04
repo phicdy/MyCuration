@@ -141,6 +141,13 @@
     <!-- RSS検索 -->
     <string name="search_rss">サイトまたはURLを入力</string>
 
+    <!-- チュートリアル -->
+    <string name="tutorial_go_to_search_rss_description">インストールありがとうございます。まずは購読するサイトのRSSを登録しましょう。</string>
+    <string name="tutorial_search_rss_description">購読したいサイトを検索して開きます。RSSのURLを直接入力して購読することもできます。</string>
+    <string name="tutorial_add_rss_description">購読したいサイトを開いたらボタンを押して購読します。</string>
+    <string name="tutorial_next">次へ</string>
+    <string name="tutorial_close">閉じる</string>
+
     <!-- Google Analytics -->
     <string name="ga_not_all_title">RSS</string>
     <string name="action">アクション</string>

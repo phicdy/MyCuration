@@ -141,6 +141,13 @@
     <!-- Search rss -->
     <string name="search_rss">Search site or input URL</string>
 
+    <!-- Tutorial -->
+    <string name="tutorial_go_to_search_rss_description">Thank you for installing. Let\'s subscribe RSS.</string>
+    <string name="tutorial_search_rss_description">You can search the site or input RSS URL directly.</string>
+    <string name="tutorial_add_rss_description">When you open the site, press the button and start subscription.</string>
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_close">Close</string>
+
     <!-- Google Analytics -->
     <string name="ga_not_all_title">フィード</string>
     <string name="action">アクション</string>

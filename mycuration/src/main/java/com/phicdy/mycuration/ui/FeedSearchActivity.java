@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,13 +34,20 @@ import com.phicdy.mycuration.util.UrlUtil;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 public class FeedSearchActivity extends AppCompatActivity {
 
     private SearchView searchView;
     private WebView webView;
+    private FloatingActionButton fab;
 
     private BroadcastReceiver receiver;
     private GATrackerHelper gaTrackerHelper;
+
+    private static final String SHOWCASE_ID = "searchRssTutorial";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +60,15 @@ public class FeedSearchActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        // Set title
+        getSupportActionBar().setTitle(R.string.add_rss);
+
+        // Enable JavaScript for Google Search
         webView = (WebView)findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,7 +93,7 @@ public class FeedSearchActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_feed_search, menu);
-        final MenuItem searchMenuItem = menu.findItem(R.id.search_feed);
+        final MenuItem searchMenuItem = menu.findItem(R.id.search_rss);
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -101,8 +113,44 @@ public class FeedSearchActivity extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getComponentName()));
 
-        // Open searchview
-        searchView.setIconified(false);
+        // Start tutorial at first time
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                View view = findViewById(R.id.search_rss);
+                ShowcaseConfig config = new ShowcaseConfig();
+                config.setDelay(500); // half second between each showcase view
+
+                MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(FeedSearchActivity.this, SHOWCASE_ID);
+                sequence.setConfig(config);
+
+                // Search tutorial
+                sequence.addSequenceItem(
+                        new MaterialShowcaseView.Builder(FeedSearchActivity.this)
+                                .setTarget(view)
+                                .setContentText(R.string.tutorial_search_rss_description)
+                                .setDismissText(R.string.tutorial_next)
+                                .build()
+                );
+
+                // Add button tutorial
+                sequence.addSequenceItem(
+                        new MaterialShowcaseView.Builder(FeedSearchActivity.this)
+                                .setTarget(fab)
+                                .setContentText(R.string.tutorial_add_rss_description)
+                                .setDismissText(R.string.tutorial_close)
+                                .setDismissOnTouch(true)
+                                .build()
+                );
+
+                // Open software keyboard if tutorial already finished
+                if (sequence.hasFired()) {
+                    searchView.setIconified(false);
+                }
+
+                sequence.start();
+            }
+        });
         return true;
     }
 
