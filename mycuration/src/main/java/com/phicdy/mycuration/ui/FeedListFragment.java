@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -49,7 +49,6 @@ public class FeedListFragment extends Fragment {
 
     private ArrayList<Feed> feeds = new ArrayList<>();
     private ArrayList<Feed> allFeeds = new ArrayList<>();
-    private ArrayList<Feed> hideList = new ArrayList<>();
     private DatabaseAdapter dbAdapter;
     private UnreadCountManager unreadManager;
     private BroadcastReceiver receiver;
@@ -68,10 +67,6 @@ public class FeedListFragment extends Fragment {
     public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
 
     private static final String LOG_TAG = "FilFeed.FeedList";
-
-    public static FeedListFragment newInstance() {
-        return new FeedListFragment();
-    }
 
     public FeedListFragment() {
     }
@@ -137,7 +132,7 @@ public class FeedListFragment extends Fragment {
     }
 
     private void showEditTitleDialog(final int position) {
-        final View addView = getActivity().getLayoutInflater().inflate(R.layout.edit_feed_title, null);
+        final View addView = View.inflate(getActivity(), R.layout.edit_feed_title, null);
         EditText editTitleView = (EditText) addView.findViewById(R.id.editFeedTitle);
         editTitleView.setText(getFeedTitleAtPosition(position));
 
@@ -152,7 +147,7 @@ public class FeedListFragment extends Fragment {
                                 EditText editTitleView = (EditText) addView
                                         .findViewById(R.id.editFeedTitle);
                                 String newTitle = editTitleView.getText().toString();
-                                if(newTitle == null || newTitle.equals("")) {
+                                if(newTitle.equals("")) {
                                     Toast.makeText(getActivity(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show();
                                 }else {
                                     int updatedFeedId = getFeedIdAtPosition(position);
@@ -274,7 +269,6 @@ public class FeedListFragment extends Fragment {
                         networkTaskManager.updateFeed(newFeed);
                         refreshList();
                     }
-                    mListener.onCloseProgressDialog();
                 }
             }
         };
@@ -292,12 +286,12 @@ public class FeedListFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnFeedListFragmentListener) activity;
+            mListener = (OnFeedListFragmentListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -348,13 +342,11 @@ public class FeedListFragment extends Fragment {
         if (dbAdapter == null) {
             dbAdapter = DatabaseAdapter.getInstance(getActivity());
         }
-        long start = System.currentTimeMillis();
-
         if (allFeeds.isEmpty()) {
             return;
         }
         feeds = (ArrayList<Feed>)allFeeds.clone();
-        hideList = new ArrayList<>();
+        ArrayList<Feed> hideList = new ArrayList<>();
         for (Feed feed : allFeeds) {
             int numOfUnreadArticles = unreadManager.getUnreadCount(feed.getId());
             if (numOfUnreadArticles == 0) {
@@ -473,25 +465,6 @@ public class FeedListFragment extends Fragment {
         return allFeeds.get(position).getTitle();
     }
 
-
-    public String getFeedUrlAtPosition (int position) {
-        if (position < 0) {
-            return null;
-        }
-        if (isHided) {
-            if (feeds == null || position > feeds.size()-1) {
-                return null;
-            }
-            return feeds.get(position).getUrl();
-        }else {
-            if (allFeeds == null || position > allFeeds.size()-1) {
-                return null;
-            }
-            return allFeeds.get(position).getUrl();
-        }
-
-    }
-
     public boolean changeHideStatus() {
         if (isHided) {
             isHided = false;
@@ -529,9 +502,8 @@ public class FeedListFragment extends Fragment {
     }
 
     public interface OnFeedListFragmentListener {
-        public void onListClicked(int feedId);
-        public void onAllUnreadClicked();
-        public void onCloseProgressDialog();
+        void onListClicked(int feedId);
+        void onAllUnreadClicked();
     }
 
     /**
@@ -539,12 +511,13 @@ public class FeedListFragment extends Fragment {
      * @author phicdy Display RSS Feeds List
      */
     class RssFeedListAdapter extends ArrayAdapter<Feed> {
-        public RssFeedListAdapter(ArrayList<Feed> feeds, Context context) {
+        RssFeedListAdapter(ArrayList<Feed> feeds, Context context) {
             super(context, R.layout.feeds_list, feeds);
         }
 
+        @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
 
             // Use contentView and setup ViewHolder
@@ -562,8 +535,10 @@ public class FeedListFragment extends Fragment {
             }
 
             Feed feed = this.getItem(position);
-
-            String iconPath = feed.getIconPath();
+            String iconPath = null;
+            if (feed != null) {
+                iconPath = feed.getIconPath();
+            }
             holder.feedIcon.setVisibility(View.VISIBLE);
             holder.feedCount.setVisibility(View.VISIBLE);
             if (isHided && ((position+1) == feeds.size())) {
@@ -576,7 +551,9 @@ public class FeedListFragment extends Fragment {
                 holder.feedTitle.setText(R.string.hide_rsses);
             }else if(iconPath == null || iconPath.equals(Feed.DEDAULT_ICON_PATH)) {
                 holder.feedIcon.setImageResource(R.drawable.no_icon);
-                holder.feedTitle.setText(feed.getTitle());
+                if (feed != null) {
+                    holder.feedTitle.setText(feed.getTitle());
+                }
             }else {
                 File file = new File(iconPath);
                 if (file.exists()) {
@@ -589,7 +566,9 @@ public class FeedListFragment extends Fragment {
             }
 
             // set RSS Feed unread article count
-            holder.feedCount.setText(String.valueOf(unreadManager.getUnreadCount(feed.getId())));
+            if (feed != null) {
+                holder.feedCount.setText(String.valueOf(unreadManager.getUnreadCount(feed.getId())));
+            }
 
             return (row);
         }

@@ -9,9 +9,10 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -35,7 +36,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
-public class TopActivity extends ActionBarActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
+public class TopActivity extends AppCompatActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -57,7 +58,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
     private CurationListFragment curationFragment;
     private SearchView searchView;
-    private MyProgressDialogFragment progressDialog;
     private ViewGroup track;
     private HorizontalScrollView trackScroller;
     private View indicator;
@@ -73,7 +73,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
     public static final String FEED_ID = "FEED_ID";
     public static final String CURATION_ID = "CURATION_ID";
-    private static final String LOG_TAG = "FilFeed." + TopActivity.class.getSimpleName();
 
     private static final String SHOWCASE_ID = "tutorialAddRss";
 
@@ -89,11 +88,13 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        if (mViewPager != null) {
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+        }
         mViewPager.addOnPageChangeListener(new PageChangeListener());
         track = (ViewGroup)findViewById(R.id.track);
         trackScroller = (HorizontalScrollView)findViewById(R.id.track_scroller);
-        indicator = (View)findViewById(R.id.indicator);
+        indicator = findViewById(R.id.indicator);
 
         WindowManager wm = getWindowManager();
         Display disp = wm.getDefaultDisplay();
@@ -166,8 +167,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
         SearchView.SearchAutoComplete searchAutoComplete =
                 (SearchView.SearchAutoComplete) searchView
                 .findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setTextColor(getResources().getColor(R.color.text_primary));
-        searchAutoComplete.setHintTextColor(getResources().getColor(R.color.text_primary));
+        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary));
 
         // Start tutorial at first time
         new Handler().post(new Runnable() {
@@ -176,7 +177,8 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
                 View view = findViewById(R.id.add);
                 new MaterialShowcaseView.Builder(TopActivity.this)
                         .setTarget(view)
-                        .setContentText(R.string.tutorial_go_to_search_rss_description)
+                        .setContentText(
+                                R.string.tutorial_go_to_search_rss_description)
                         .setDismissText(R.string.tutorial_next)
                         .singleUse(SHOWCASE_ID)
                         .setListener(new IShowcaseListener() {
@@ -281,11 +283,6 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
     }
 
     @Override
-    public void onCloseProgressDialog() {
-        progressDialog.getDialog().dismiss();
-    }
-
-    @Override
     public void onCurationListClicked(int position) {
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(), ArticlesListActivity.class);
@@ -299,7 +296,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -335,7 +332,7 @@ public class TopActivity extends ActionBarActivity implements FeedListFragment.O
             return null;
         }
 
-        public int getImageResource(int position) {
+        int getImageResource(int position) {
             switch (position) {
                 case POSITION_CURATION_FRAGMENT:
                     return R.drawable.tab_coffee;
