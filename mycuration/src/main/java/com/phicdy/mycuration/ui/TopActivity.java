@@ -278,7 +278,7 @@ public class TopActivity extends AppCompatActivity implements FeedListFragment.O
         int getImageResource(int position) {
             switch (position) {
                 case POSITION_CURATION_FRAGMENT:
-                    return R.drawable.tab_coffee;
+                    return R.drawable.tab_curation;
                 case POSITION_FEED_FRAGMENT:
                     return R.drawable.tab_feed;
                 case POSITION_FILTER_FRAGMENT:
