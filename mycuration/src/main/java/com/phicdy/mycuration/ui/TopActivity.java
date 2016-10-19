@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.ui;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -22,14 +23,20 @@ import android.view.View;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.presenter.TopActivityPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.view.TopActivityView;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
-public class TopActivity extends AppCompatActivity implements FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener{
+public class TopActivity extends AppCompatActivity implements
+        FeedListFragment.OnFeedListFragmentListener,
+        CurationListFragment.OnCurationListFragmentListener,
+        TopActivityView {
 
+    private TopActivityPresenter presenter;
     private ViewPager mViewPager;
 
     private DatabaseAdapter dbAdapter;
@@ -54,12 +61,17 @@ public class TopActivity extends AppCompatActivity implements FeedListFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top);
 
+        presenter = new TopActivityPresenter();
+        presenter.setView(this);
+        dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
+        presenter.setDataAdapter(dbAdapter);
+
         curationFragment = new CurationListFragment();
         setTitle(getString(R.string.home));
         initViewPager();
-        dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
         setAlarmManager();
         gaTrackerHelper = GATrackerHelper.getInstance(this);
+        presenter.create();
     }
 
     private void initViewPager() {
@@ -79,19 +91,7 @@ public class TopActivity extends AppCompatActivity implements FeedListFragment.O
     @Override
     protected void onResume() {
         super.onResume();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dbAdapter.saveAllStatusToReadFromToRead();
-            }
-        }).start();
-
-        if (searchView != null) {
-            searchView.onActionViewCollapsed();
-            searchView.setQuery("",false);
-        }
-        gaTrackerHelper.sendScreen(getString(R.string.home));
+        presenter.resume();
     }
 
     @Override
@@ -235,6 +235,24 @@ public class TopActivity extends AppCompatActivity implements FeedListFragment.O
         intent.setClass(getApplicationContext(), ArticlesListActivity.class);
         intent.putExtra(CURATION_ID, curationFragment.getCurationIdAtPosition(position));
         startActivity(intent);
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void closeSearchView() {
+        if (searchView != null) {
+            searchView.onActionViewCollapsed();
+            searchView.setQuery("",false);
+        }
+    }
+
+    @Override
+    public String screenName() {
+        return getString(R.string.home);
     }
 
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
