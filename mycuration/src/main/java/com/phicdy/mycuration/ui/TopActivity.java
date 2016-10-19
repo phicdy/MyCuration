@@ -147,42 +147,7 @@ public class TopActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add:
-                switch (mViewPager.getCurrentItem()) {
-                    case POSITION_CURATION_FRAGMENT:
-                        if (dbAdapter.getNumOfFeeds() == 0) {
-                            goToFeedSearch();
-                            break;
-                        }
-						Intent intent = new Intent(getApplicationContext(), AddCurationActivity.class);
-						startActivity(intent);
-                        gaTrackerHelper.sendEvent(getString(R.string.tap_add_curation));
-                        break;
-                    case POSITION_FEED_FRAGMENT:
-                        goToFeedSearch();
-                        break;
-                    case POSITION_FILTER_FRAGMENT:
-                        if (dbAdapter.getNumOfFeeds() == 0) {
-                            goToFeedSearch();
-                            break;
-                        }
-                        intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
-                        startActivity(intent);
-                        gaTrackerHelper.sendEvent(getString(R.string.tap_add_filter));
-                        break;
-                    default:
-                }
-                break;
-            case R.id.setting:
-                startActivity(new Intent(getApplicationContext(), SettingActivity.class));
-                break;
-            case R.id.license:
-                startActivity(new Intent(getApplicationContext(), LicenseActivity.class));
-                break;
-            default:
-                break;
-        }
+        presenter.optionItemClicked(item);
         return super.onOptionsItemSelected(item);
     }
 
@@ -210,9 +175,39 @@ public class TopActivity extends AppCompatActivity implements
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    private void goToFeedSearch() {
+    @Override
+    public void goToFeedSearch() {
         gaTrackerHelper.sendEvent(getString(R.string.tap_add_rss));
         startActivity(new Intent(TopActivity.this, FeedSearchActivity.class));
+    }
+
+    @Override
+    public void goToAddCuration() {
+        Intent intent = new Intent(getApplicationContext(), AddCurationActivity.class);
+        startActivity(intent);
+        gaTrackerHelper.sendEvent(getString(R.string.tap_add_curation));
+    }
+
+    @Override
+    public void goToAddFilter() {
+        intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
+        startActivity(intent);
+        gaTrackerHelper.sendEvent(getString(R.string.tap_add_filter));
+    }
+
+    @Override
+    public void goToSetting() {
+        startActivity(new Intent(getApplicationContext(), SettingActivity.class));
+    }
+
+    @Override
+    public void goToLicense() {
+        startActivity(new Intent(getApplicationContext(), LicenseActivity.class));
+    }
+
+    @Override
+    public int currentTabPosition() {
+        return mViewPager.getCurrentItem();
     }
 
     @Override
