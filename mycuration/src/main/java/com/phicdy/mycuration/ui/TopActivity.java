@@ -39,9 +39,6 @@ public class TopActivity extends AppCompatActivity implements
     private TopActivityPresenter presenter;
     private ViewPager mViewPager;
 
-    private DatabaseAdapter dbAdapter;
-    private Intent intent;
-
     private CurationListFragment curationFragment;
     private SearchView searchView;
 
@@ -63,7 +60,7 @@ public class TopActivity extends AppCompatActivity implements
 
         presenter = new TopActivityPresenter();
         presenter.setView(this);
-        dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
         presenter.setDataAdapter(dbAdapter);
 
         curationFragment = new CurationListFragment();
@@ -83,7 +80,10 @@ public class TopActivity extends AppCompatActivity implements
 
         // Set icon
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            tabLayout.getTabAt(i).setIcon(mSectionsPagerAdapter.getImageResource(i));
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null) {
+                tab.setIcon(mSectionsPagerAdapter.getImageResource(i));
+            }
         }
 
     }
@@ -190,7 +190,7 @@ public class TopActivity extends AppCompatActivity implements
 
     @Override
     public void goToAddFilter() {
-        intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
+        Intent intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
         startActivity(intent);
         gaTrackerHelper.sendEvent(getString(R.string.tap_add_filter));
     }
@@ -212,7 +212,7 @@ public class TopActivity extends AppCompatActivity implements
 
     @Override
     public void onListClicked(int feedId) {
-        intent = new Intent(getApplicationContext(),
+        Intent intent = new Intent(getApplicationContext(),
                 ArticlesListActivity.class);
         intent.putExtra(FEED_ID, feedId);
         startActivity(intent);
@@ -220,7 +220,7 @@ public class TopActivity extends AppCompatActivity implements
 
     @Override
     public void onAllUnreadClicked() {
-        intent = new Intent(getApplicationContext(), ArticlesListActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ArticlesListActivity.class);
         startActivity(intent);
     }
 
