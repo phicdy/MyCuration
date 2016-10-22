@@ -233,21 +233,11 @@ public class TopActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Activity getActivity() {
-        return this;
-    }
-
-    @Override
     public void closeSearchView() {
         if (searchView != null) {
             searchView.onActionViewCollapsed();
             searchView.setQuery("",false);
         }
-    }
-
-    @Override
-    public String screenName() {
-        return getString(R.string.home);
     }
 
     private class SectionsPagerAdapter extends FragmentPagerAdapter {

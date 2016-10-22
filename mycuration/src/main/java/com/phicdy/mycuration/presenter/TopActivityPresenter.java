@@ -5,13 +5,11 @@ import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.view.TopActivityView;
 
 public class TopActivityPresenter implements Presenter {
 
     private TopActivityView view;
-    private GATrackerHelper gaTrackerHelper;
     private DatabaseAdapter dbAdapter;
 
     private static final int POSITION_CURATION_FRAGMENT = 0;
@@ -28,7 +26,6 @@ public class TopActivityPresenter implements Presenter {
 
     @Override
     public void create() {
-        gaTrackerHelper = GATrackerHelper.getInstance(view.getActivity());
     }
 
     @Override
@@ -41,7 +38,6 @@ public class TopActivityPresenter implements Presenter {
         }).start();
 
         view.closeSearchView();
-        gaTrackerHelper.sendScreen(view.screenName());
     }
 
     @Override
