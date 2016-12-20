@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.phicdy.mycuration.tracker.GATrackerHelper;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
@@ -13,6 +14,8 @@ public class MyApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+        GATrackerHelper.setTracker(getDefaultTracker());
+        GATrackerHelper.setCategoryAction(getString(R.string.action));
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                         .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
                         .setFontAttrId(R.attr.fontPath)

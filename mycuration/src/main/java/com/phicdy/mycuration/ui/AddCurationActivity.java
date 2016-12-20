@@ -38,8 +38,6 @@ public class AddCurationActivity extends ActionBarActivity {
     public static final int NOT_EDIT_CURATION_ID = -1;
     private static final String INSERT_ERROR_MESSAGE = "insertErrorMessage";
 
-    private GATrackerHelper gaTrackerHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +67,6 @@ public class AddCurationActivity extends ActionBarActivity {
         if (editCurationid != NOT_EDIT_CURATION_ID) {
             setTitle(getString(R.string.title_activity_edit_curation));
         }
-
-        gaTrackerHelper = GATrackerHelper.getInstance(this);
     }
 
     @Override
@@ -98,7 +94,7 @@ public class AddCurationActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         initDataForEdit();
-        gaTrackerHelper.sendScreen(getTitle().toString());
+        GATrackerHelper.sendScreen(getTitle().toString());
     }
 
     @Override
@@ -149,7 +145,7 @@ public class AddCurationActivity extends ActionBarActivity {
                     bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.empty_curation_name));
                     msg.setData(bundle);
                     handler.sendMessage(msg);
-                    gaTrackerHelper.sendEvent(getString(R.string.add_empty_curation_title));
+                    GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_title));
                     return;
                 }
                 ArrayList<String> wordList = wordListFragment.getWordList();
@@ -158,7 +154,7 @@ public class AddCurationActivity extends ActionBarActivity {
                     bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.empty_word_list));
                     msg.setData(bundle);
                     handler.sendMessage(msg);
-                    gaTrackerHelper.sendEvent(getString(R.string.add_empty_curation_word));
+                    GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_word));
                     return;
                 }
 
@@ -168,16 +164,16 @@ public class AddCurationActivity extends ActionBarActivity {
                     bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name));
                     msg.setData(bundle);
                     handler.sendMessage(msg);
-                    gaTrackerHelper.sendEvent(getString(R.string.add_same_curation_name));
+                    GATrackerHelper.sendEvent(getString(R.string.add_same_curation_name));
                     return;
                 }
                 boolean result;
                 if (isNew) {
                     result = adapter.saveNewCuration(curationName, wordList);
-                    gaTrackerHelper.sendEvent(getString(R.string.add_new_curation));
+                    GATrackerHelper.sendEvent(getString(R.string.add_new_curation));
                 }else {
                     result = adapter.updateCuration(editCurationid, curationName, wordList);
-                    gaTrackerHelper.sendEvent(getString(R.string.update_curation));
+                    GATrackerHelper.sendEvent(getString(R.string.update_curation));
                 }
                 if (result) {
                     adapter.adaptCurationToArticles(curationName, wordList);

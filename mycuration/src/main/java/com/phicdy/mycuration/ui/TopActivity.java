@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.ui;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -42,8 +41,6 @@ public class TopActivity extends AppCompatActivity implements
     private CurationListFragment curationFragment;
     private SearchView searchView;
 
-    private GATrackerHelper gaTrackerHelper;
-
     private static final int POSITION_CURATION_FRAGMENT = 0;
     private static final int POSITION_FEED_FRAGMENT = 1;
     private static final int POSITION_FILTER_FRAGMENT = 2;
@@ -67,7 +64,6 @@ public class TopActivity extends AppCompatActivity implements
         setTitle(getString(R.string.home));
         initViewPager();
         setAlarmManager();
-        gaTrackerHelper = GATrackerHelper.getInstance(this);
         presenter.create();
     }
 
@@ -177,7 +173,7 @@ public class TopActivity extends AppCompatActivity implements
 
     @Override
     public void goToFeedSearch() {
-        gaTrackerHelper.sendEvent(getString(R.string.tap_add_rss));
+        GATrackerHelper.sendEvent(getString(R.string.tap_add_rss));
         startActivity(new Intent(TopActivity.this, FeedSearchActivity.class));
     }
 
@@ -185,14 +181,14 @@ public class TopActivity extends AppCompatActivity implements
     public void goToAddCuration() {
         Intent intent = new Intent(getApplicationContext(), AddCurationActivity.class);
         startActivity(intent);
-        gaTrackerHelper.sendEvent(getString(R.string.tap_add_curation));
+        GATrackerHelper.sendEvent(getString(R.string.tap_add_curation));
     }
 
     @Override
     public void goToAddFilter() {
         Intent intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
         startActivity(intent);
-        gaTrackerHelper.sendEvent(getString(R.string.tap_add_filter));
+        GATrackerHelper.sendEvent(getString(R.string.tap_add_filter));
     }
 
     @Override

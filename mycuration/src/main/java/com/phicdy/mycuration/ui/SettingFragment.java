@@ -27,8 +27,6 @@ public class SettingFragment extends PreferenceFragment {
     private PreferenceHelper helper;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
-    private GATrackerHelper gaTrackerHelper;
-
     public SettingFragment() {
         // Required empty public constructor
     }
@@ -46,7 +44,6 @@ public class SettingFragment extends PreferenceFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        gaTrackerHelper = GATrackerHelper.getInstance(getActivity());
         helper = PreferenceHelper.getInstance(getActivity());
         initView();
         initListener();
@@ -178,7 +175,7 @@ public class SettingFragment extends PreferenceFragment {
         AlarmManagerTaskManager.setNewAlarm(getActivity());
 
         // GA
-        gaTrackerHelper.sendEvent(getString(R.string.change_auto_update_interval), intervalHour);
+        GATrackerHelper.sendEvent(getString(R.string.change_auto_update_interval), intervalHour);
     }
 
     public void updateAllReadBehavior() {
@@ -198,7 +195,7 @@ public class SettingFragment extends PreferenceFragment {
         }
 
         // GA
-        gaTrackerHelper.sendEvent(getString(R.string.change_all_read_behavior), isAllReadBack ? 1 : 0);
+        GATrackerHelper.sendEvent(getString(R.string.change_all_read_behavior), isAllReadBack ? 1 : 0);
     }
 
     public void updateSwipeDirection() {
@@ -216,20 +213,20 @@ public class SettingFragment extends PreferenceFragment {
             }
         }
         // GA
-        gaTrackerHelper.sendEvent(getString(R.string.change_swipe_direction), swipeDirection);
+        GATrackerHelper.sendEvent(getString(R.string.change_swipe_direction), swipeDirection);
     }
 
     public void updateArticleSort() {
         helper.setSortNewArticleTop(prefArticleSort.isChecked());
         // GA
-        gaTrackerHelper.sendEvent(getString(R.string.change_aricle_sort), prefArticleSort.isChecked() ? 1 : 0);
+        GATrackerHelper.sendEvent(getString(R.string.change_aricle_sort), prefArticleSort.isChecked() ? 1 : 0);
 
     }
 
     public void updateInternalBrowser() {
         helper.setOpenInternal(prefInternalBrowser.isChecked());
         // GA
-        gaTrackerHelper.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
+        GATrackerHelper.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
     }
 
 }

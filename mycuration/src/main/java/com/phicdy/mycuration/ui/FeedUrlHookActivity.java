@@ -24,13 +24,10 @@ public class FeedUrlHookActivity extends Activity {
 	private ProgressDialog dialog;
 	private BroadcastReceiver receiver;
 
-	private GATrackerHelper gaTrackerHelper;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_feed_url_hook);
-		gaTrackerHelper = GATrackerHelper.getInstance(this);
 
 		Intent intent = getIntent();
 		final String action = intent.getAction();
@@ -66,7 +63,7 @@ public class FeedUrlHookActivity extends Activity {
 								Toast.makeText(getApplicationContext(),
 										errorMessage,
 										Toast.LENGTH_SHORT).show();
-								gaTrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error));
+								GATrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error));
 							} else {
 								UnreadCountManager.getInstance(context).addFeed(newFeed);
                                 NetworkTaskManager.getInstance(context).updateFeed(newFeed);
@@ -89,13 +86,13 @@ public class FeedUrlHookActivity extends Activity {
 				Toast.makeText(getApplicationContext(),
 						R.string.add_rss_error_invalid_url,
 						Toast.LENGTH_SHORT).show();
-				gaTrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error));
+				GATrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error));
 			}
 		}else {
 			finish();
 		}
 
-		gaTrackerHelper.sendScreen(getString(R.string.add_rss_from_intent));
+		GATrackerHelper.sendScreen(getString(R.string.add_rss_from_intent));
 	}
 
 	@Override

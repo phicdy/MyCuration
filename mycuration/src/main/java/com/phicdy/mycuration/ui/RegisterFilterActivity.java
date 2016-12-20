@@ -36,8 +36,6 @@ public class RegisterFilterActivity extends ActionBarActivity {
 
 	private static final int NEW_FILTER_ID = -1;
 
-	private GATrackerHelper gaTrackerHelper;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,8 +46,7 @@ public class RegisterFilterActivity extends ActionBarActivity {
 		initView();
 		initData(editFilterId);
 
-		gaTrackerHelper = GATrackerHelper.getInstance(this);
-		gaTrackerHelper.sendScreen(getTitle().toString());
+		GATrackerHelper.sendScreen(getTitle().toString());
 	}
 	
 	private void initView() {
@@ -88,21 +85,17 @@ public class RegisterFilterActivity extends ActionBarActivity {
 				//Check title and etKeyword or filter URL has the text
 				if (titleText.equals("")) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.title_empty_error, Toast.LENGTH_SHORT).show();
-					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_no_title));
 				} else if ((keywordText.equals("")) && (filterUrlText.equals(""))) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.both_keyword_and_url_empty_error, Toast.LENGTH_SHORT).show();
-					gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_no_keyword_url));
 				} else if (keywordText.equals("%") || filterUrlText.equals("%")) {
 					Toast.makeText(RegisterFilterActivity.this, R.string.percent_only_error, Toast.LENGTH_SHORT).show();
 				} else {
 					boolean result = false;
 					if (editFilterId == NEW_FILTER_ID) {
 						// Add new filter
-						gaTrackerHelper.sendEvent(getString(R.string.add_new_filter));
 						result = dbAdapter.saveNewFilter(titleText, selectedFeedId, keywordText, filterUrlText);
 					} else {
 						// Edit
-						gaTrackerHelper.sendEvent(getString(R.string.update_filter));
 						result = dbAdapter.updateFilter(editFilterId, titleText, keywordText, filterUrlText, selectedFeedId);
 					}
 					if (result) {
@@ -122,7 +115,6 @@ public class RegisterFilterActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View v) {
 				finish();
-				gaTrackerHelper.sendEvent(getString(R.string.add_new_filter_cancel));
 			}
 		});
 	}

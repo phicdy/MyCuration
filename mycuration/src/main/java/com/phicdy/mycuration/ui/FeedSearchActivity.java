@@ -45,7 +45,6 @@ public class FeedSearchActivity extends AppCompatActivity {
     private FloatingActionButton fab;
 
     private BroadcastReceiver receiver;
-    private GATrackerHelper gaTrackerHelper;
 
     private static final String SHOWCASE_ID = "searchRssTutorial";
 
@@ -81,7 +80,6 @@ public class FeedSearchActivity extends AppCompatActivity {
             }
         });
 
-        gaTrackerHelper = GATrackerHelper.getInstance(this);
         handleIntent(getIntent());
     }
 
@@ -189,14 +187,14 @@ public class FeedSearchActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),
                                         errorMessage,
                                         Toast.LENGTH_SHORT).show();
-                                gaTrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error));
+                                GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error));
                             } else {
                                 UnreadCountManager.getInstance(context).addFeed(newFeed);
                                 NetworkTaskManager.getInstance(context).updateFeed(newFeed);
                                 Toast.makeText(getApplicationContext(),
                                         R.string.add_rss_success,
                                         Toast.LENGTH_SHORT).show();
-                                gaTrackerHelper.sendEvent(getString(R.string.add_rss_input_url));
+                                GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url));
                             }
                             dialog.dismiss();
                             unregisterReceiver(this);

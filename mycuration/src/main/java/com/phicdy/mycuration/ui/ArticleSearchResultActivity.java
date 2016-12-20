@@ -38,7 +38,6 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 	private Intent intent;
 	private ListView resultListView;
 	private ArticlesListAdapter articlesListAdapter;
-	private GATrackerHelper gaTrackerHelper;
 
 	public static final String OPEN_URL_ID = "openUrl";
 	private static final String LOG_TAG = "FilFeed.SearchResult";
@@ -63,14 +62,12 @@ public class ArticleSearchResultActivity extends ActionBarActivity {
 		setAllListener();
 
 		handleIntent(getIntent());
-
-		gaTrackerHelper = GATrackerHelper.getInstance(this);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		gaTrackerHelper.sendScreen(getString(R.string.search_result));
+		GATrackerHelper.sendScreen(getString(R.string.search_result));
 	}
 
 	@Override
