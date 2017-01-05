@@ -181,4 +181,5 @@
     <string name="add_new_filter_no_title">タイトルなしフィルター追加</string>
     <string name="add_new_filter_no_keyword_url">キーワードURLなしフィルター追加</string>
     <string name="add_new_filter_cancel">フィルター追加キャンセル</string>
+    <string name="title_activity_select_filter_target_rss">SelectFilterTargetRssActivity</string>
 </resources>

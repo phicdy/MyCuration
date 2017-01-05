@@ -15,9 +15,9 @@
     <string name="loading">読み込み中…</string>
 
     <string name="add_filter_button">+</string>
-    <string name="keyword">キーワード</string>
+    <string name="keyword">既読にするキーワード</string>
     <string name="include">を含む</string>
-    <string name="article_url">記事URL</string>
+    <string name="article_url">既読にする記事URL</string>
     <string name="register">登録</string>
     <string name="cancel">キャンセル</string>
     <string name="title_empty_error">タイトルを入力してください。</string>
