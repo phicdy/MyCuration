@@ -69,14 +69,12 @@ public class FilterListFragment extends Fragment {
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-	   
 	    super.onCreateContextMenu(menu, v, menuInfo);
-
-		menu.clear();
 	    menu.add(0, EDIT_FILTER_MENU_ID, 0, R.string.edit_filter);
 	    menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter);
 	}
-	  
+
+	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 	   
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
