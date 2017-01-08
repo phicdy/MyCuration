@@ -18,6 +18,7 @@ public class SelectFilterTargetRssActivity extends AppCompatActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_filter_target_rss);
+        setTitle(getString(R.string.title_select_filter_rss));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

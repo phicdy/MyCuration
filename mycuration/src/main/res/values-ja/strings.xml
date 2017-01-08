@@ -68,6 +68,8 @@
     <string name="sample_filter_target">サンプル対象RSS</string>
     <string name="sample_filter_keyword">キーワード: サンプル</string>
     <string name="sample_filter_url">URL: http://www.google.com</string>
+    <string name="done">done</string>
+    <string name="title_select_filter_rss">RSSを選択</string>
 
     <!-- 設定 -->
     <string name="setting">設定</string>

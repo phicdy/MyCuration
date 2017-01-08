@@ -68,6 +68,8 @@
     <string name="sample_filter_target">Sample target filter</string>
     <string name="sample_filter_keyword">Keyword: Sample</string>
     <string name="sample_filter_url">URL: http://www.google.com</string>
+    <string name="done">done</string>
+    <string name="title_select_filter_rss">Select RSS</string>
 
     <!-- Settings -->
     <string name="setting">Settings</string>
