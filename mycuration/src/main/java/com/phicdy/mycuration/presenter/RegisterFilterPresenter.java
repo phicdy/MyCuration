@@ -58,9 +58,9 @@ public class RegisterFilterPresenter implements Presenter {
         } else if (keywordText.equals("%") || filterUrlText.equals("%")) {
             view.handlePercentOnly();
         } else {
-            boolean finalResult = false;
+            boolean finalResult = true;
             for (Feed feed : selectedFeedList) {
-                boolean result = false;
+                boolean result;
                 if (editFilterId == NEW_FILTER_ID) {
                     // Add new filter
                     result = dbAdapter.saveNewFilter(titleText, feed.getId(), keywordText, filterUrlText);
