@@ -1,7 +1,9 @@
 package com.phicdy.mycuration.presenter;
 
 import android.support.annotation.NonNull;
+import android.view.MenuItem;
 
+import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.view.SelectTargetRssView;
 
 public class SelectFilterTargetRssPresenter implements Presenter {
@@ -28,4 +30,10 @@ public class SelectFilterTargetRssPresenter implements Presenter {
 
     }
 
+    public void optionItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.done_select_target_rss:
+                view.finishSelect();
+        }
+    }
 }

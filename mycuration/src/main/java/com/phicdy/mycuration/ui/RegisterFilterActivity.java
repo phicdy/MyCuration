@@ -148,6 +148,11 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
     }
 
     @Override
+    public void setFilterTargetRss(String rss) {
+        tvTargetRss.setText(rss);
+    }
+
+    @Override
     public void handleEmptyTitle() {
         Toast.makeText(RegisterFilterActivity.this, R.string.title_empty_error, Toast.LENGTH_SHORT).show();
         GATrackerHelper.sendEvent(getString(R.string.add_new_filter_no_title));

@@ -30,6 +30,13 @@ public class RegisterFilterPresenter implements Presenter {
 
     public void setSelectedFeedList(ArrayList<Feed> list) {
         this.selectedFeedList = list;
+        StringBuilder buf = new StringBuilder();
+        for (Feed feed : list) {
+            buf.append(feed.getTitle());
+            buf.append(",");
+        }
+        buf.deleteCharAt(buf.length() - 1);
+        view.setFilterTargetRss(buf.toString());
     }
 
     @Override

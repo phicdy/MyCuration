@@ -14,6 +14,8 @@ import com.phicdy.mycuration.view.SelectTargetRssView;
 
 public class SelectFilterTargetRssActivity extends AppCompatActivity implements SelectTargetRssView {
 
+    private SelectFilterTargetRssPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,18 +24,20 @@ public class SelectFilterTargetRssActivity extends AppCompatActivity implements 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        SelectFilterTargetRssPresenter presenter = new SelectFilterTargetRssPresenter();
+        presenter = new SelectFilterTargetRssPresenter();
         presenter.setView(this);
         presenter.create();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_select_filter_rss, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        presenter.optionItemSelected(item);
         return super.onOptionsItemSelected(item);
     }
 
@@ -47,5 +51,6 @@ public class SelectFilterTargetRssActivity extends AppCompatActivity implements 
         bundle.putParcelableArrayList(RegisterFilterActivity.KEY_SELECTED_FEED, fragment.list());
         data.putExtras(bundle);
         setResult(RESULT_OK, data);
+        finish();
     }
 }
