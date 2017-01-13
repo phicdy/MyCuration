@@ -2,6 +2,7 @@ package com.phicdy.mycuration;
 
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
@@ -21,6 +22,14 @@ public class MyApplication extends Application{
                         .setFontAttrId(R.attr.fontPath)
                         .build()
         );
+        if (BuildConfig.DEBUG) {
+            Stetho.initialize(
+                    Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                        .build()
+            );
+        }
     }
 
     /**

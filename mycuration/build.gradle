@@ -54,4 +54,5 @@ dependencies {
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.android.support:design:24.2.1'
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
+    compile 'com.facebook.stetho:stetho:1.4.2'
 }
