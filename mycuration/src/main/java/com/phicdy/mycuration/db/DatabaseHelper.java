@@ -1,10 +1,14 @@
 package com.phicdy.mycuration.db;
-  
+
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.filter.FilterFeedRegistration;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Curation;
 import com.phicdy.mycuration.rss.CurationCondition;
@@ -14,9 +18,18 @@ import com.phicdy.mycuration.rss.Feed;
 public class DatabaseHelper extends SQLiteOpenHelper{
   
 	public static final String DATABASE_NAME = "rss_manage";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	private static final int DATABASE_VERSION_ADD_ENABLED_TO_FILTER = 2;
+    private static final int DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION = 3;
 
+    private String createFilterFeedRegistrationTableSQL =
+            "create table " + FilterFeedRegistration.TABLE_NAME + "(" +
+                    FilterFeedRegistration.ID + " integer primary key autoincrement," +
+                    FilterFeedRegistration.FILTER_ID + " integer," +
+                    FilterFeedRegistration.FEED_ID + " integer," +
+                    "foreign key(" + FilterFeedRegistration.FILTER_ID + ") references " + Filter.TABLE_NAME + "(" + Filter.ID + ")," +
+                    "foreign key(" + FilterFeedRegistration.FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + ")" +
+                    ")";
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -73,6 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db.execSQL(createFeedsTableSQL);
         db.execSQL(createArticlesTableSQL);
         db.execSQL(createFiltersTableSQL);
+        db.execSQL(createFilterFeedRegistrationTableSQL);
         db.execSQL(createCurationsTableSQL);
         db.execSQL(createCurationSelectionsTableSQL);
         db.execSQL(createCurationConditionTableSQL);
@@ -90,12 +104,41 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     //onUpgrade() is called when database version changes
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if ((oldVersion < DATABASE_VERSION_ADD_ENABLED_TO_FILTER) && (newVersion > oldVersion)) {
+        if (newVersion < oldVersion) return;
+        if ((oldVersion < DATABASE_VERSION_ADD_ENABLED_TO_FILTER)) {
             String sql = "ALTER TABLE " + Filter.TABLE_NAME + " ADD COLUMN " + Filter.ENABLED + " integer";
             db.execSQL(sql);
             String enableAll = "UPDATE " + Filter.TABLE_NAME + " SET " + Filter.ENABLED + " = " + Filter.TRUE;
             db.execSQL(enableAll);
         }
+        if ((oldVersion < DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION)) {
+            db.execSQL(createFilterFeedRegistrationTableSQL);
+
+            // Migration feed and filter relation
+            String[] columns = {
+                    Filter.ID,
+                    Filter.FEED_ID
+            };
+            db.beginTransaction();
+            try {
+                Cursor cursor = db.query(Filter.TABLE_NAME, columns, null, null, null, null, null);
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        int filterId = cursor.getInt(0);
+                        int feedId = cursor.getInt(1);
+                        ContentValues condtionValue = new ContentValues();
+                        condtionValue.put(FilterFeedRegistration.FILTER_ID, filterId);
+                        condtionValue.put(FilterFeedRegistration.FEED_ID, feedId);
+                        db.insert(FilterFeedRegistration.TABLE_NAME, null, condtionValue);
+                    }
+                    cursor.close();
+                }
+                db.setTransactionSuccessful();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                db.endTransaction();
+            }
+        }
     }
-  
 }
