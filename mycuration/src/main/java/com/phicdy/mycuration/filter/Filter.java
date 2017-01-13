@@ -1,12 +1,16 @@
 package com.phicdy.mycuration.filter;
 
 
+import com.phicdy.mycuration.rss.Feed;
+
+import java.util.ArrayList;
+
 public class Filter {
 	private int id_;
 	private String title_;
 	private String keyword_;
 	private String url_;
-	private int feedId_;
+	private ArrayList<Feed> feeds;
 	private String feedTitle;
 	private int enabled;
 
@@ -21,18 +25,27 @@ public class Filter {
 	public static final int TRUE = 1;
 	public static final int FALSE = 0;
 
-	public Filter(int id,String title,String keyword,String url,int feedId,String feedTitle, int enabled) {
+	public Filter(int id, String title, String keyword, String url,
+				  ArrayList<Feed> feeds, int enabled) {
 		id_      = id;
 		title_   = title;
 		keyword_ = keyword;
 		url_     = url;
-		feedId_  = feedId;
-		this.feedTitle = feedTitle;
+		this.feeds = feeds;
 		this.enabled = enabled;
 	}
 
-	public boolean isEnabled() {
-		return enabled == TRUE ? true : false;
+    public Filter(int id, String title, String keyword, String url,
+                  int feedId, int enabled) {
+        id_      = id;
+        title_   = title;
+        keyword_ = keyword;
+        url_     = url;
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+		return enabled == TRUE;
 	}
 
 	public void setEnabled(boolean enabled) {
@@ -43,12 +56,8 @@ public class Filter {
 		}
 	}
 
-	public int getFeedId() {
-		return feedId_;
-	}
-
-	public void setFeedId(int feedId_) {
-		this.feedId_ = feedId_;
+	public ArrayList<Feed> feeds() {
+		return feeds;
 	}
 
 	public void setTitle(String title) {
@@ -77,9 +86,5 @@ public class Filter {
 
 	public String getFeedTitle() {
 		return feedTitle;
-	}
-
-	public void setFeedTitle(String feedTitle) {
-		this.feedTitle = feedTitle;
 	}
 }

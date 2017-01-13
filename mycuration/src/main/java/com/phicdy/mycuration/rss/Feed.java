@@ -46,7 +46,12 @@ public class Feed implements Parcelable{
 		this.siteUrl = siteUrl;
 		unreadAriticlesCount_ = unreadAriticlesCount;
 	}
-	
+
+	public Feed(int feedId, String feedTitle) {
+		id_    = feedId;
+		title_ = feedTitle;
+	}
+
 	public String getSiteUrl() {
 		return siteUrl;
 	}

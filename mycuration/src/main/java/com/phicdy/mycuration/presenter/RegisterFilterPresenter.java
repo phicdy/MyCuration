@@ -5,6 +5,7 @@ import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.view.RegisterFilterView;
 
@@ -17,11 +18,22 @@ public class RegisterFilterPresenter implements Presenter {
     private ArrayList<Feed> selectedFeedList = new ArrayList<>();
 
     private int editFilterId = NEW_FILTER_ID;
+    private boolean isEdit = false;
     private static final int NEW_FILTER_ID = -1;
 
     public RegisterFilterPresenter(DatabaseAdapter adapter, int editFilterId) {
         this.dbAdapter = adapter;
         this.editFilterId = editFilterId;
+        isEdit = editFilterId != NEW_FILTER_ID;
+        if (isEdit) {
+            Filter editFilter = dbAdapter.getFilterById(editFilterId);
+            if (editFilter != null) {
+                view.setFilterTitle(editFilter.getTitle());
+                view.setFilterUrl(editFilter.getUrl());
+                view.setFilterKeyword(editFilter.getKeyword());
+                setTargetRssTitle(editFilter.feeds());
+            }
+        }
     }
 
     public void setView(@NonNull RegisterFilterView view) {
@@ -30,8 +42,12 @@ public class RegisterFilterPresenter implements Presenter {
 
     public void setSelectedFeedList(ArrayList<Feed> list) {
         this.selectedFeedList = list;
+        setTargetRssTitle(selectedFeedList);
+    }
+
+    private void setTargetRssTitle(ArrayList<Feed> feeds) {
         StringBuilder buf = new StringBuilder();
-        for (Feed feed : list) {
+        for (Feed feed : feeds) {
             buf.append(feed.getTitle());
             buf.append(",");
         }
@@ -68,14 +84,14 @@ public class RegisterFilterPresenter implements Presenter {
             boolean finalResult = true;
             for (Feed feed : selectedFeedList) {
                 boolean result;
-                if (editFilterId == NEW_FILTER_ID) {
-                    // Add new filter
-                    result = dbAdapter.saveNewFilter(titleText, feed.getId(), keywordText, filterUrlText);
-                    view.trackRegister();
-                } else {
+                if (isEdit) {
                     // Edit
                     result = dbAdapter.updateFilter(editFilterId, titleText, keywordText, filterUrlText, feed.getId());
                     view.trackEdit();
+                } else {
+                    // Add new filter
+                    result = dbAdapter.saveNewFilter(titleText, selectedFeedList, keywordText, filterUrlText);
+                    view.trackRegister();
                 }
                 finalResult = finalResult && result;
             }

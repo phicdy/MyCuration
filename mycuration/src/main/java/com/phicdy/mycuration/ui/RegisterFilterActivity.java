@@ -3,6 +3,7 @@ package com.phicdy.mycuration.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +14,6 @@ import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.presenter.RegisterFilterPresenter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
@@ -25,13 +25,7 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
 
     private RegisterFilterPresenter presenter;
 
-	private DatabaseAdapter dbAdapter;
-	private String[] feedTitles;
-	private ArrayList<Feed> feedsList;
-	private int selectedFeedId;
-	private int editFilterId;
-
-	EditText etTitle;
+    EditText etTitle;
 	EditText etKeyword;
 	EditText etFilterUrl;
 	private TextView tvTargetRss;
@@ -45,13 +39,11 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register_filter);
 
-        dbAdapter = DatabaseAdapter.getInstance(this);
-        editFilterId = getIntent().getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID);
+        initView();
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
+        int editFilterId = getIntent().getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID);
         presenter = new RegisterFilterPresenter(dbAdapter, editFilterId);
         presenter.setView(this);
-
-		initView();
-		initData(editFilterId);
 
 		GATrackerHelper.sendScreen(getTitle().toString());
 	}
@@ -84,43 +76,6 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
         }
     }
 
-    private void initData(int editFilterId) {
-		feedsList = dbAdapter.getAllFeedsWithoutNumOfUnreadArticles();
-		if(feedsList.size() == 0) {
-			finish();
-		}else {
-			// Init feed title list for spinner
-			feedTitles = new String[feedsList.size()];
-			for (int i = 0; i < feedsList.size(); i++) {
-				feedTitles[i] = feedsList.get(i).getTitle();
-			}
-		}
-		//Set default selected Feed ID
-		selectedFeedId = feedsList.get(0).getId();
-
-		// TODO Set data for spinner
-		tvTargetRss.setText("");
-
-		// Edit
-		if (editFilterId != NEW_FILTER_ID) {
-			Filter editFilter = dbAdapter.getFilterById(editFilterId);
-			if (editFilter != null) {
-				etTitle.setText(editFilter.getTitle());
-				etFilterUrl.setText(editFilter.getUrl());
-				etKeyword.setText(editFilter.getKeyword());
-				for (int i = 0; i < feedTitles.length; i++) {
-					if (feedsList.get(i).getId() == editFilter.getFeedId()) {
-						tvTargetRss.setText("");
-						selectedFeedId = i;
-						break;
-					}
-				}
-			}
-		}
-
-	}
-
-
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_register_filter, menu);
         return true;
@@ -148,8 +103,23 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
     }
 
     @Override
-    public void setFilterTargetRss(String rss) {
+    public void setFilterTitle(@NonNull String title) {
+        etTitle.setText(title);
+    }
+
+    @Override
+    public void setFilterTargetRss(@NonNull String rss) {
         tvTargetRss.setText(rss);
+    }
+
+    @Override
+    public void setFilterUrl(@NonNull String url) {
+        etFilterUrl.setText(url);
+    }
+
+    @Override
+    public void setFilterKeyword(@NonNull String keyword) {
+        etKeyword.setText(keyword);
     }
 
     @Override

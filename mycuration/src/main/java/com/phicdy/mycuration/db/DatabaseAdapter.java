@@ -7,9 +7,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.filter.FilterFeedRegistration;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Curation;
 import com.phicdy.mycuration.rss.CurationCondition;
@@ -34,6 +36,8 @@ public class DatabaseAdapter {
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
 	public static final int NOT_FOUND_ID = -1;
+    private static final int INSERT_ERROR_ID = -1;
+    private static final int MIN_TABLE_ID = 1;
 
 	private static final String LOG_TAG = "FilFeed."
 			+ DatabaseAdapter.class.getName();
@@ -788,7 +792,7 @@ public class DatabaseAdapter {
 				String keyword = cur.getString(2);
 				String url = cur.getString(3);
 				int enabled = cur.getInt(4);
-				filterList.add(new Filter(id, title, keyword, url, feedId, null, enabled));
+				filterList.add(new Filter(id, title, keyword, url, feedId, enabled));
 			}
 			cur.close();
 			db.setTransactionSuccessful();
@@ -805,20 +809,36 @@ public class DatabaseAdapter {
 		Filter filter = null;
 		db.beginTransaction();
 		try {
-			String[] columns = { Filter.ID, Filter.FEED_ID, Filter.KEYWORD, Filter.URL, Filter.TITLE, Filter.ENABLED };
-			String condition = Filter.ID + " = " + filterId;
-			Cursor cur = db.query(Filter.TABLE_NAME, columns, condition, null, null,
-					null, null);
-			cur.moveToFirst();
-			int id = cur.getInt(0);
-			int feedId = cur.getInt(1);
-			String keyword = cur.getString(2);
-			String url = cur.getString(3);
-			String title = cur.getString(4);
-			int enabled = cur.getInt(5);
+			String[] columns = {
+					Filter.TABLE_NAME + "." + Filter.ID,
+                    Filter.TABLE_NAME + "." + Filter.KEYWORD,
+                    Filter.TABLE_NAME + "." + Filter.URL,
+                    Filter.TABLE_NAME + "." + Filter.TITLE,
+                    Filter.TABLE_NAME + "." + Filter.ENABLED,
+                    Feed.TABLE_NAME   + "." + Feed.ID,
+                    Feed.TABLE_NAME   + "." + Feed.TITLE,
+            };
+			String condition = Filter.TABLE_NAME + "." + Filter.ID + " = " + filterId + " and " +
+                    FilterFeedRegistration.TABLE_NAME + "." + Filter.ID + " = " + filterId;
+            String table = Filter.TABLE_NAME + " inner join " +
+                    FilterFeedRegistration.TABLE_NAME + " innner join " +
+                    Feed.TABLE_NAME;
+			Cursor cur = db.query(table, columns, condition, null, null, null, null);
+            ArrayList<Feed> feeds = new ArrayList<>();
+            while (cur.moveToNext()) {
+                int feedId = cur.getInt(5);
+                String feedTitle = cur.getString(6);
+                Feed feed = new Feed(feedId, feedTitle);
+                feeds.add(feed);
+            }
+            int id = cur.getInt(0);
+            String keyword = cur.getString(1);
+            String url = cur.getString(2);
+            String title = cur.getString(3);
+            int enabled = cur.getInt(4);
 			cur.close();
 			db.setTransactionSuccessful();
-			filter = new Filter(id, title, keyword, url, feedId, null, enabled);
+			filter = new Filter(id, title, keyword, url, feeds, enabled);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -900,38 +920,95 @@ public class DatabaseAdapter {
 		return num;
 	}
 
-	public boolean saveNewFilter(String title, int selectedFeedId, String keyword,
-			String filterUrl) {
-		boolean result = false;
+    /**
+     *
+     * Save method for new filter.
+     *
+     * @param title Filter title
+     * @param selectedFeeds Feed set to register the filter
+     * @param keyword Filter keyword
+     * @param filterUrl Filter URL
+     * @return result of all of the database insert
+     */
+	public boolean saveNewFilter(@NonNull String title, @NonNull ArrayList<Feed> selectedFeeds,
+                                 String keyword, String filterUrl) {
+		boolean result = true;
 		db.beginTransaction();
+        Cursor cur = null;
+        long newFilterId = INSERT_ERROR_ID;
 		try {
-			// Check same fileter exists in DB
-			String getSameFilterSql = "select _id from filters "
-					+ "where title='" + title + "' and " + "feedId = "
-					+ selectedFeedId + " and " + "keyword = '" + keyword
-					+ "' and " + "url = '" + filterUrl + "'";
-			Cursor cur = db.rawQuery(getSameFilterSql, null);
+			// Check same filter exists in DB
+            String[] columns = {
+                    Filter.ID,
+            };
+            String condition = Filter.TITLE + " = '" + title + "' and " +
+                    Filter.KEYWORD + " = '" + keyword + "' and " +
+                    Filter.URL + " = '" + filterUrl + "'";
+            String table = Filter.TABLE_NAME;
+            cur = db.query(table, columns, condition, null, null, null, null);
 			if (cur.getCount() != 0) {
 				Log.i("Register Filter", "Same Filter Exist");
 			} else {
 				// Register filter
-				ContentValues values = new ContentValues();
-				values.put("title", title);
-				values.put("url", filterUrl);
-				values.put("keyword", keyword);
-				values.put("feedId", selectedFeedId);
-				db.insert("filters", null, values);
-				db.setTransactionSuccessful();
-				result = true;
+				ContentValues filterVal = new ContentValues();
+				filterVal.put(Filter.TITLE, title);
+				filterVal.put(Filter.URL, filterUrl);
+				filterVal.put(Filter.KEYWORD, keyword);
+                filterVal.put(Filter.FEED_ID, selectedFeeds.get(0).getId());
+                filterVal.put(Filter.ENABLED, true);
+				newFilterId = db.insert(Filter.TABLE_NAME, null, filterVal);
+                if (newFilterId == INSERT_ERROR_ID) {
+                    result = false;
+                } else {
+                    db.setTransactionSuccessful();
+                }
 			}
 		} catch (Exception e) {
 			Log.e("insert error", "error occurred");
+            e.printStackTrace();
+            result = false;
 		} finally {
+            if (cur != null) cur.close();
 			db.endTransaction();
 		}
+        if (result) {
+            result = saveFilterFeedRegistration(newFilterId, selectedFeeds);
+        }
 
 		return result;
 	}
+
+    /**
+     *
+     * Save method for relation between filter and feed set into database.
+     *
+     * @param filterId Filter ID
+     * @param feeds Feed set to register the filter
+     * @return result of all of the database insert
+     */
+    private boolean saveFilterFeedRegistration(long filterId, @NonNull ArrayList<Feed> feeds) {
+        if (filterId < MIN_TABLE_ID) return false;
+        boolean result = true;
+        db.beginTransaction();
+        for (Feed selectedFeed : feeds) {
+            int feedId = selectedFeed.getId();
+            if (feedId < MIN_TABLE_ID) {
+                result = false;
+                break;
+            }
+            ContentValues val = new ContentValues();
+            val.put(FilterFeedRegistration.FEED_ID, feedId);
+            val.put(FilterFeedRegistration.FILTER_ID, filterId);
+            long id = db.insert(FilterFeedRegistration.TABLE_NAME, null, val);
+            if (id == INSERT_ERROR_ID) {
+                result = false;
+                break;
+            }
+        }
+        if (result) db.setTransactionSuccessful();
+        db.endTransaction();
+        return result;
+    }
 
 	public boolean updateFilter(int filterId, String title, String keyword, String url, int feedId) {
 		boolean result = false;
@@ -1021,7 +1098,7 @@ public class DatabaseAdapter {
 		//RDF
 //		feeds.add(new Feed(0, "二十歳街道まっしぐら",
 //				"http://20kaido.com/index.rdf"));
-		
+
 		db.beginTransaction();
 		try {
 
@@ -1051,13 +1128,13 @@ public class DatabaseAdapter {
 			num = -1;
 		} finally {
 		}
-		
+
 		if(num > 0) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public void deleteAllArticles() {
 		db.beginTransaction();
 		try {
@@ -1079,7 +1156,7 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 	}
-	
+
 	public ArrayList<Filter> getAllFilters() {
 		ArrayList<Filter> filters = new ArrayList<Filter>();
 		String[] columns = {
@@ -1103,7 +1180,7 @@ public class DatabaseAdapter {
 					int feedId = cursor.getInt(4);
 					int enabled = cursor.getInt(5);
 					String feedTitle = cursor.getString(6);
-					Filter filter = new Filter(id, title, keyword, url, feedId, feedTitle, enabled);
+					Filter filter = new Filter(id, title, keyword, url, feedId, enabled);
 					filters.add(filter);
 				}
 				cursor.close();
