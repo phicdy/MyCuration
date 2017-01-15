@@ -31,6 +31,14 @@ public class Filter {
 		title_   = title;
 		keyword_ = keyword;
 		url_     = url;
+		StringBuilder buf = new StringBuilder();
+		for (Feed feed : feeds) {
+			buf.append(feed.getTitle());
+            buf.append(", ");
+		}
+        // delete last ", "
+        buf.deleteCharAt(buf.length() - 2);
+        this.feedTitle = buf.toString();
 		this.feeds = feeds;
 		this.enabled = enabled;
 	}
