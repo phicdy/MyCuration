@@ -2,6 +2,7 @@ package com.phicdy.mycuration.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,11 +11,15 @@ import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.presenter.SelectFilterTargetRssPresenter;
+import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.view.SelectTargetRssView;
+
+import java.util.ArrayList;
 
 public class SelectFilterTargetRssActivity extends AppCompatActivity implements SelectTargetRssView {
 
     private SelectFilterTargetRssPresenter presenter;
+    public static final String TARGET_RSS = "targetRss";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +32,14 @@ public class SelectFilterTargetRssActivity extends AppCompatActivity implements 
         presenter = new SelectFilterTargetRssPresenter();
         presenter.setView(this);
         presenter.create();
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        SelectFilterTargetRssFragment rssFragment = (SelectFilterTargetRssFragment) fragment;
+        ArrayList<Feed> selectedList = getIntent().getParcelableArrayListExtra(TARGET_RSS);
+        rssFragment.updateSelected(selectedList);
     }
 
     @Override

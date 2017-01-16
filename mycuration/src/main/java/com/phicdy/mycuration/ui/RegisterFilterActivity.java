@@ -61,6 +61,9 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RegisterFilterActivity.this, SelectFilterTargetRssActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(SelectFilterTargetRssActivity.TARGET_RSS, presenter.selectedFeedList());
+                intent.putExtras(bundle);
                 startActivityForResult(intent, TARGET_FEED_SELECT_REQUEST);
             }
         });

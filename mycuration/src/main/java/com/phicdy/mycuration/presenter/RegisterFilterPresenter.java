@@ -25,24 +25,28 @@ public class RegisterFilterPresenter implements Presenter {
         this.dbAdapter = adapter;
         this.editFilterId = editFilterId;
         isEdit = editFilterId != NEW_FILTER_ID;
+    }
+
+    public void setView(@NonNull RegisterFilterView view) {
+        this.view = view;
         if (isEdit) {
             Filter editFilter = dbAdapter.getFilterById(editFilterId);
             if (editFilter != null) {
                 view.setFilterTitle(editFilter.getTitle());
                 view.setFilterUrl(editFilter.getUrl());
                 view.setFilterKeyword(editFilter.getKeyword());
-                setTargetRssTitle(editFilter.feeds());
+                setSelectedFeedList(editFilter.feeds());
             }
         }
-    }
-
-    public void setView(@NonNull RegisterFilterView view) {
-        this.view = view;
     }
 
     public void setSelectedFeedList(ArrayList<Feed> list) {
         this.selectedFeedList = list;
         setTargetRssTitle(selectedFeedList);
+    }
+
+    public ArrayList<Feed> selectedFeedList() {
+        return selectedFeedList;
     }
 
     private void setTargetRssTitle(ArrayList<Feed> feeds) {
@@ -81,21 +85,16 @@ public class RegisterFilterPresenter implements Presenter {
         } else if (keywordText.equals("%") || filterUrlText.equals("%")) {
             view.handlePercentOnly();
         } else {
-            boolean finalResult = true;
-            for (Feed feed : selectedFeedList) {
-                boolean result;
-                if (isEdit) {
-                    // Edit
-                    result = dbAdapter.updateFilter(editFilterId, titleText, keywordText, filterUrlText, feed.getId());
-                    view.trackEdit();
-                } else {
-                    // Add new filter
-                    result = dbAdapter.saveNewFilter(titleText, selectedFeedList, keywordText, filterUrlText);
-                    view.trackRegister();
-                }
-                finalResult = finalResult && result;
+            boolean result;
+            if (isEdit) {
+                result = dbAdapter.updateFilter(editFilterId, titleText, keywordText, filterUrlText, selectedFeedList);
+                view.trackEdit();
+            } else {
+                // Add new filter
+                result = dbAdapter.saveNewFilter(titleText, selectedFeedList, keywordText, filterUrlText);
+                view.trackRegister();
             }
-            if (finalResult) {
+            if (result) {
                 view.showSaveSuccessToast();
             }else {
                 view.showSaveErrorToast();

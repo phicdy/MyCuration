@@ -22,10 +22,12 @@ import com.phicdy.mycuration.rss.Feed;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class SelectFilterTargetRssFragment extends ListFragment {
 
     private ArrayList<Feed> selectedList = new ArrayList<>();
+    private TargetRssListAdapter adapter;
 
     public SelectFilterTargetRssFragment() {
     }
@@ -41,12 +43,16 @@ public class SelectFilterTargetRssFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
         Context context = getActivity();
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
-        TargetRssListAdapter adapter = new TargetRssListAdapter(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles(), context);
+        adapter = new TargetRssListAdapter(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles(), context);
         getListView().setAdapter(adapter);
     }
 
     public ArrayList<Feed> list() {
         return selectedList;
+    }
+
+    public void updateSelected(ArrayList<Feed> selectedList) {
+        this.selectedList = selectedList;
     }
 
     private class TargetRssListAdapter extends ArrayAdapter<Feed> {
@@ -69,11 +75,25 @@ public class SelectFilterTargetRssFragment extends ListFragment {
                 holder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        Feed feed = getItem(position);
-                        if (isChecked) {
-                            selectedList.add(feed);
-                        }else {
-                            selectedList.remove(feed);
+                        Feed selected = getItem(position);
+                        if (selected == null) return;
+                        Iterator<Feed> iterator = selectedList.iterator();
+                        // onCheckedChanged() is called first time, need to check existence
+                        boolean isExist = false;
+                        while (iterator.hasNext()) {
+                            Feed feed = iterator.next();
+                            if (selected.getId() == feed.getId()) {
+                                if (isChecked) {
+                                    isExist = true;
+                                    break;
+                                } else {
+                                    iterator.remove();
+                                }
+                                break;
+                            }
+                        }
+                        if (isChecked && !isExist) {
+                            selectedList.add(selected);
                         }
                     }
                 });
@@ -95,6 +115,16 @@ public class SelectFilterTargetRssFragment extends ListFragment {
                 if (file.exists()) {
                     Bitmap bmp = BitmapFactory.decodeFile(file.getPath());
                     holder.ivIcon.setImageBitmap(bmp);
+                }
+            }
+
+            holder.cbSelect.setChecked(false);
+            if (selectedList != null && selectedList.size() > 0) {
+                for (Feed selectedFeed : selectedList) {
+                    if (feed.getId() == selectedFeed.getId()) {
+                        holder.cbSelect.setChecked(true);
+                        break;
+                    }
                 }
             }
             return row;
