@@ -897,10 +897,18 @@ public class DatabaseAdapter {
 		return true;
 	}
 
+    /**
+     * Delete method for specified filter
+     *
+     * @param filterId Filter ID to delete
+     */
 	public void deleteFilter(int filterId) {
 		db.beginTransaction();
 		try {
-			db.delete("filters", "_id = " + filterId, null);
+            String relationWhere = FilterFeedRegistration.FILTER_ID + " = " + filterId;
+            db.delete(FilterFeedRegistration.TABLE_NAME, relationWhere, null);
+            String filterWhere = Filter.ID + " = " + filterId;
+			db.delete(Filter.TABLE_NAME, filterWhere, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
