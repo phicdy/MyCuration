@@ -11,7 +11,7 @@ android {
         targetSdkVersion 22
 
         testApplicationId "com.phicdy.mycuration.test"
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
