@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 Article.POINT + " text,"+
                 Article.DATE + " text,"+
                 Article.FEEDID + " integer,"+
-                "foreign key(" + Article.FEEDID + ") references " + Feed.TABLE_NAME + "(" + Article.ID + "))";
+                "foreign key(" + Article.FEEDID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))";
         String createFiltersTableSQL =
                 "create table " + Filter.TABLE_NAME + "(" +
                 Filter.ID + " integer primary key autoincrement,"+
@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 Filter.URL + " text," +
                 Filter.TITLE + " text,"+
                 Filter.ENABLED + " integer,"+
-                "foreign key(" + Filter.FEED_ID + ") references feeds(" + Filter.ID + "))";
+                "foreign key(" + Filter.FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))";
         String createCurationsTableSQL =
                 "create table " + Curation.TABLE_NAME + "(" +
                         Curation.ID + " integer primary key autoincrement,"+
