@@ -1207,7 +1207,7 @@ public class DatabaseAdapter {
 			String table = Filter.TABLE_NAME + " inner join " +
                     FilterFeedRegistration.TABLE_NAME + " inner join " + Feed.TABLE_NAME;
             Cursor cursor = db.query(table, columns, selection, null, null, null, null);
-			if (cursor != null) {
+			if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 Filter filter;
                 ArrayList<Feed> feeds = new ArrayList<>();
