@@ -11,11 +11,13 @@ public class Filter {
 	private String keyword_;
 	private String url_;
 	private ArrayList<Feed> feeds;
+    private int feedId;
 	private String feedTitle;
 	private int enabled;
 
 	public static final String TABLE_NAME = "filters";
 	public static final String ID = "_id";
+	@Deprecated
 	public static final String FEED_ID = "feedId";
 	public static final String KEYWORD = "keyword";
 	public static final String URL = "url";
@@ -43,12 +45,20 @@ public class Filter {
 		this.enabled = enabled;
 	}
 
-    public Filter(int id, String title, String keyword, String url,
-                  int feedId, int enabled) {
+    public Filter(int id, String title, String keyword, String url, int enabled) {
         id_      = id;
         title_   = title;
         keyword_ = keyword;
         url_     = url;
+        this.enabled = enabled;
+    }
+
+    public Filter(int filterId, String title, String keyword, String url, int feedId, int enabled) {
+        id_      = filterId;
+        title_   = title;
+        keyword_ = keyword;
+        url_     = url;
+        this.feedId = feedId;
         this.enabled = enabled;
     }
 
@@ -95,4 +105,8 @@ public class Filter {
 	public String getFeedTitle() {
 		return feedTitle;
 	}
+
+    public int getFeedId() {
+        return feedId;
+    }
 }
