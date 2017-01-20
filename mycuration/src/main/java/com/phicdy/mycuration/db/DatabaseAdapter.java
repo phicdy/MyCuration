@@ -399,26 +399,43 @@ public class DatabaseAdapter {
     public boolean deleteFeed(int feedId) {
 		int numOfDeleted = 0;
 		ArrayList<Article> allArticles = getAllArticlesInAFeed(feedId, true);
-		db.beginTransaction();
 		try {
+            db.beginTransaction();
 			for (Article article : allArticles) {
 				db.delete(CurationSelection.TABLE_NAME, CurationSelection.ARTICLE_ID + " = " + article.getId(), null);
 			}
-			db.delete("articles", "feedId = " + feedId, null);
-			db.delete("filters", "feedId = " + feedId, null);
-			// db.delete("priorities","feedId = "+feedId,null);
-			numOfDeleted = db.delete("feeds", "_id = " + feedId, null);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            // Delete related filter
+            ArrayList<Filter> filters = getAllFilters();
+            db.beginTransaction();
+            db.delete(FilterFeedRegistration.TABLE_NAME, FilterFeedRegistration.FEED_ID + " = " + feedId, null);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.beginTransaction();
+            for (Filter filter : filters) {
+                ArrayList<Feed> feeds = filter.feeds();
+                if (feeds != null && feeds.size() == 1 && feeds.get(0).getId() == feedId) {
+                    // This filter had relation with this feed only
+                    db.delete(Filter.TABLE_NAME, Filter.ID + " = " + filter.getId(), null);
+                }
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.beginTransaction();
+			db.delete(Article.TABLE_NAME, Article.FEEDID + " = " + feedId, null);
+			numOfDeleted = db.delete(Feed.TABLE_NAME, Feed.ID + " = " + feedId, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
-		if (numOfDeleted == 1) {
-			return true;
-		}
-		return false;
-	}
+        return numOfDeleted == 1;
+    }
 
 	public Feed getFeedByUrl(String feedUrl) {
 		Feed feed = null;
@@ -757,9 +774,18 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get all filters which feed ID is "feedId"
-			String[] columns = { Filter.ID, Filter.TITLE, Filter.KEYWORD, Filter.URL, Filter.ENABLED };
-			String condition = Filter.FEED_ID + " = " + feedId + " and " + Filter.ENABLED + " = " + Filter.TRUE;
-			Cursor cur = db.query(Filter.TABLE_NAME, columns, condition, null, null,
+			String[] columns = {
+                    Filter.TABLE_NAME + "." + Filter.ID,
+                    Filter.TABLE_NAME + "." + Filter.TITLE,
+                    Filter.TABLE_NAME + "." + Filter.KEYWORD,
+                    Filter.TABLE_NAME + "." + Filter.URL,
+                    Filter.TABLE_NAME + "." + Filter.ENABLED
+            };
+			String condition =
+                    FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FEED_ID + " = " + feedId + " and " +
+                    FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FILTER_ID + " = " + Filter.TABLE_NAME + "." + Filter.ID + " and " +
+                    Filter.TABLE_NAME + "." + Filter.ENABLED + " = " + Filter.TRUE;
+			Cursor cur = db.query(Filter.TABLE_NAME + " inner join " + FilterFeedRegistration.TABLE_NAME, columns, condition, null, null,
 					null, null);
 			// Change to ArrayList
 			while (cur.moveToNext()) {
@@ -768,7 +794,7 @@ public class DatabaseAdapter {
 				String keyword = cur.getString(2);
 				String url = cur.getString(3);
 				int enabled = cur.getInt(4);
-				filterList.add(new Filter(id, title, keyword, url, feedId, enabled));
+				filterList.add(new Filter(id, title, keyword, url, enabled));
 			}
 			cur.close();
 			db.setTransactionSuccessful();
@@ -946,7 +972,6 @@ public class DatabaseAdapter {
 				filterVal.put(Filter.TITLE, title);
 				filterVal.put(Filter.URL, filterUrl);
 				filterVal.put(Filter.KEYWORD, keyword);
-                filterVal.put(Filter.FEED_ID, selectedFeeds.get(0).getId());
                 filterVal.put(Filter.ENABLED, true);
 				newFilterId = db.insert(Filter.TABLE_NAME, null, filterVal);
                 if (newFilterId == INSERT_ERROR_ID) {

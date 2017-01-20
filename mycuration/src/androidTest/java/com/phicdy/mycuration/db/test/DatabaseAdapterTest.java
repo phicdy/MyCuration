@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.SparseArray;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.ui.TopActivity;
@@ -21,6 +22,7 @@ import java.util.Date;
 import static android.support.test.InstrumentationRegistry.getContext;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -249,6 +251,40 @@ public class DatabaseAdapterTest {
 		SparseArray<ArrayList<String>> map = adapter.getAllCurationWords();
 		assertEquals(0, map.size());
 	}
+
+	@Test
+    public void deleteFeed() {
+        // Set test filter
+        Feed feed = adapter.getFeedByUrl(TEST_FEED_URL);
+        ArrayList<Feed> feeds = new ArrayList<>();
+        feeds.add(feed);
+        adapter.saveNewFilter("hoge", feeds, "keyword", "");
+        Feed feed2 = adapter.saveNewFeed("testfeed2", "http://www.hoge.com", "RSS", "http://www.hoge.com");
+        feeds.add(feed2);
+        adapter.saveNewFilter("hoge2", feeds, "keyword2", "");
+
+        // Delete feed
+        int feedId = feed.getId();
+        assertTrue(adapter.deleteFeed(feedId));
+
+        // Check the feed and related data was deleted
+        feed = adapter.getFeedById(feedId);
+        assertNull(feed);
+        ArrayList<Article> articles = adapter.getAllArticlesInAFeed(feedId, true);
+        assertNotNull(articles);
+        assertThat(articles.size(), is(0));
+        ArrayList<Filter> filters = adapter.getEnabledFiltersOfFeed(feedId);
+        assertNotNull(filters);
+        assertThat(filters.size(), is(0));
+
+        // Check filter that contains other feed was not deleted
+        filters = adapter.getEnabledFiltersOfFeed(feed2.getId());
+        assertNotNull(filters);
+        assertThat(filters.size(), is(1));
+        Filter filter = filters.get(0);
+        assertThat(filter.getTitle(), is("hoge2"));
+        assertThat(filter.getKeyword(), is("keyword2"));
+    }
 
     @Test
 	public void testGetAllArticlesOfCuration() {
