@@ -36,7 +36,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 			AlarmManagerTaskManager.setNewAlarm(context);
 		}else if(intent.getAction().equals(AUTO_UPDATE_HATENA_ACTION)) {
 			// Update Hatena point
-			ArrayList<Feed> feeds = dbAdapter.getAllFeedsThatHaveUnreadArticles();
+			ArrayList<Feed> feeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
 			if (feeds == null || feeds.isEmpty()) {
 				return;
 			}

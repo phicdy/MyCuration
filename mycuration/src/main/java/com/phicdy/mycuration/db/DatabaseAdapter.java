@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.filter.FilterFeedRegistration;
@@ -24,14 +25,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DatabaseAdapter {
 	
 	private Context context;
-	private static DatabaseHelper dbHelper;
-	private static DatabaseAdapter sharedDbAdapter;
+    private static DatabaseAdapter sharedDbAdapter;
 	private static SQLiteDatabase db;
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
@@ -44,7 +42,7 @@ public class DatabaseAdapter {
 
 	private DatabaseAdapter(Context context) {
 		this.context = context;
-		dbHelper = new DatabaseHelper(this.context);
+        DatabaseHelper dbHelper = new DatabaseHelper(this.context);
 		if (db == null) {
 			db = dbHelper.getWritableDatabase();
 		}
@@ -61,11 +59,17 @@ public class DatabaseAdapter {
 		return sharedDbAdapter;
 	}
 
+    /**
+     * Save method for new articles
+     *
+     * @param articles Article array to save
+     * @param feedId Feed ID of the articles
+     */
 	public void saveNewArticles(ArrayList<Article> articles, int feedId) {
 		if(articles.isEmpty()) {
 			return;
 		}
-		Map<Integer, ArrayList<String>> curationWordMap = getAllCurationWords();
+		SparseArray<ArrayList<String>> curationWordMap = getAllCurationWords();
 		SQLiteStatement insertArticleSt = db.compileStatement(
 				"insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);");
 		SQLiteStatement insertCurationSelectionSt = db.compileStatement(
@@ -83,9 +87,9 @@ public class DatabaseAdapter {
 				insertArticleSt.bindString(6, String.valueOf(feedId));
 
 				long articleId = insertArticleSt.executeInsert();
-				for (Map.Entry<Integer, ArrayList<String>> entry : curationWordMap.entrySet()) {
-					int curationId = entry.getKey();
-					ArrayList<String> words = entry.getValue();
+                for (int i = 0; i < curationWordMap.size(); i++) {
+                    int curationId = curationWordMap.keyAt(i);
+                    ArrayList<String> words = curationWordMap.valueAt(i);
 					for (String word : words) {
 						if (article.getTitle().contains(word)) {
 							insertCurationSelectionSt.bindString(1, String.valueOf(articleId));
@@ -102,30 +106,15 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
 	}
 
-	public int calcNumOfUnreadArticles(int feedId) {
-		int unreadArticlesCount = 0;
-		db.beginTransaction();
-		try {
-			String getArticlesCountsql = "select _id from articles where status = \"unread\" and feedId = "
-					+ feedId;
-			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
-			unreadArticlesCount = countCursor.getCount();
-			countCursor.close();
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			unreadArticlesCount = -1;
-		} finally {
-			db.endTransaction();
-		}
-		
-		return unreadArticlesCount;
-	}
-	
-	public boolean isExistArticle(int feedId) {
+    /**
+     * Check method of article existence of specified ID.
+     *
+     * @param feedId Feed ID to check
+     * @return {@code true} if exists.
+     */
+    public boolean isExistArticle(int feedId) {
 		boolean isExist = false;
 		db.beginTransaction();
 		try {
@@ -140,10 +129,14 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
 		return isExist;
 	}
-	
+
+    /**
+     * Check method of article existence.
+     *
+     * @return {@code true} if there is an article or more.
+     */
 	public boolean isExistArticle() {
 		boolean isExist = false;
 		db.beginTransaction();
@@ -158,20 +151,22 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
 		return isExist;
 	}
 
-	public ArrayList<Feed> getAllFeedsThatHaveUnreadArticles() {
-		ArrayList<Feed> feedList = new ArrayList<Feed>();
+    /**
+     * Get method to feed array with unread count of articles.
+     *
+     * @return Feed array with unread count of articles
+     */
+	public ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
+		ArrayList<Feed> feedList = new ArrayList<>();
 		db.beginTransaction();
+        Cursor cursor = null;
 		try {
-			String sql = "select feeds._id,feeds.title,feeds.url,feeds.iconPath,feeds.siteUrl,count(articles._id) " +
-					"from feeds inner join articles " +
-					"where feeds._id = articles.feedId and articles.status = \"unread\"" +
-					"group by feeds.title " + 
-					"order by feeds.title";
-			Cursor cursor = db.rawQuery(sql, null);
+			String[] columns = {Feed.ID,Feed.TITLE,Feed.URL,Feed.ICON_PATH,Feed.SITE_URL,Feed.UNREAD_ARTICLE};
+			String orderBy = Feed.TITLE;
+			cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					int id = cursor.getInt(0);
@@ -182,12 +177,14 @@ public class DatabaseAdapter {
 					int unreadAriticlesCount = cursor.getInt(5);
 					feedList.add(new Feed(id, title, url, iconPath, siteUrl, unreadAriticlesCount));
 				}
-				cursor.close();
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+            if (cursor != null) {
+                cursor.close();
+            }
 			db.endTransaction();
 		}
 		
@@ -197,45 +194,19 @@ public class DatabaseAdapter {
 		return feedList;
 	}
 
-	public ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
-		ArrayList<Feed> feedList = new ArrayList<Feed>();
-		db.beginTransaction();
-		try {
-			String[] columns = {Feed.ID,Feed.TITLE,Feed.URL,Feed.ICON_PATH,Feed.SITE_URL,Feed.UNREAD_ARTICLE};
-			String orderBy = Feed.TITLE;
-			Cursor cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy);
-			if (cursor != null) {
-				while (cursor.moveToNext()) {
-					int id = cursor.getInt(0);
-					String title = cursor.getString(1);
-					String url = cursor.getString(2);
-					String iconPath = cursor.getString(3);
-					String siteUrl = cursor.getString(4);
-					int unreadAriticlesCount = cursor.getInt(5);
-					feedList.add(new Feed(id, title, url, iconPath, siteUrl, unreadAriticlesCount));
-				}
-				cursor.close();
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		
-		if (feedList.size() == 0) {
-			feedList = getAllFeedsWithoutNumOfUnreadArticles();
-		}
-		return feedList;
-	}
-	
+    /**
+     * Get method to feed array without unread count of articles.
+     *
+     * @return Feed array without unread count of articles
+     */
 	public ArrayList<Feed> getAllFeedsWithoutNumOfUnreadArticles() {
-		ArrayList<Feed> feedList = new ArrayList<Feed>();
-		String[] columns = {"_id","title","url","iconPath","siteUrl"};
-		String orderBy = "title";
+		ArrayList<Feed> feedList = new ArrayList<>();
+		String[] columns = {Feed.ID,Feed.TITLE,Feed.URL,Feed.ICON_PATH,Feed.SITE_URL};
+		String orderBy = Feed.TITLE;
 		db.beginTransaction();
+        Cursor cursor = null;
 		try {
-			Cursor cursor = db.query("feeds", columns, null, null, null, null, orderBy);
+			cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					int id = cursor.getInt(0);
@@ -245,54 +216,32 @@ public class DatabaseAdapter {
 					String siteUrl = cursor.getString(4);
 					feedList.add(new Feed(id, title, url, iconPath, siteUrl, 0));
 				}
-				cursor.close();
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+            if (cursor != null) {
+                cursor.close();
+            }
 			db.endTransaction();
 		}
 		
 		return feedList;
 	}
 
-	public void saveStatusBeforeUpdate(int articleId) {
+    /**
+     * Update method for all of the articles of feed ID to read status.
+     *
+     * @param feedId Feed ID for articles to change status to read
+     */
+    public void saveStatusToRead(int feedId) {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put("status", "toRead");
-			db.update("articles", values, "_id = " + articleId, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-	
-	public void saveStatusToRead(int feedId) {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put("status", Article.READ);
-			String whereClause = "feedId = " + feedId;
-			db.update("articles", values, whereClause, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		
-	}
-	
-	public void saveAllStatusToRead() {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put("status", Article.READ);
-			db.update("articles", values, null, null);
+			values.put(Article.STATUS, Article.READ);
+			String whereClause = Article.FEEDID + " = " + feedId;
+			db.update(Article.TABLE_NAME, values, whereClause, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -302,67 +251,108 @@ public class DatabaseAdapter {
 		
 	}
 
+    /**
+     * Update method for all of the articles to read status.
+     */
+	public void saveAllStatusToRead() {
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put(Article.STATUS, Article.READ);
+			db.update(Article.TABLE_NAME, values, null, null);
+			db.setTransactionSuccessful();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+		
+	}
+
+    /**
+     * Update method from "to read" to "read" for all of the articles.
+     */
     public void saveAllStatusToReadFromToRead() {
         db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            values.put("status", Article.READ);
-            String condition = "status = '" + Article.TOREAD + "'";
-            db.update("articles", values, condition, null);
+            values.put(Article.STATUS, Article.READ);
+            String condition = Article.STATUS + " = '" + Article.TOREAD + "'";
+            db.update(Article.TABLE_NAME, values, condition, null);
             db.setTransactionSuccessful();
         } catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
             db.endTransaction();
         }
-
     }
-	
+
+    /**
+     * Update method for article read/unread status.
+     *
+     * @param articleId Artilce ID to change status
+     * @param status New status
+     */
 	public void saveStatus(int articleId, String status) {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put("status", status);
-			db.update("articles", values, "_id = " + articleId, null);
+			values.put(Article.STATUS, status);
+			db.update(Article.TABLE_NAME, values, Article.ID + " = " + articleId, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
-		
 	}
 
+    /**
+     * Update method for unread article count of the feed.
+     *
+     * @param feedId Feed ID to change
+     * @param unreadCount New article unread count
+     */
 	public void updateUnreadArticleCount(int feedId, int unreadCount) {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put("unreadArticle", unreadCount);
-			db.update("feeds", values, "_id = " + feedId, null);
+			values.put(Feed.UNREAD_ARTICLE, unreadCount);
+			db.update(Feed.TABLE_NAME, values, "_id = " + feedId, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
-
 	}
-	
+
+    /**
+     * Update method for feed icon path.
+     *
+     * @param siteUrl Site URL of the feed to change
+     * @param iconPath New icon path
+     */
 	public void saveIconPath(String siteUrl, String iconPath) {
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put("iconPath", iconPath);
-			db.update("feeds", values, "siteUrl = '" + siteUrl + "'", null);
+			values.put(Feed.ICON_PATH, iconPath);
+			db.update(Feed.TABLE_NAME, values, Feed.SITE_URL + " = '" + siteUrl + "'", null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
-		
 	}
-	
+
+    /**
+     * Update method for hatena point of the article.
+     *
+     * @param url Article URL to update
+     * @param point New hatena point
+     */
 	public void saveHatenaPoint(String url, String point) {
 		db.beginTransaction();
 		try {
@@ -376,14 +366,21 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 	}
-	
+
+    /**
+     * Update method for feed title.
+     *
+     * @param feedId Feed ID to update
+     * @param newTitle New feed title
+     * @return Num of updated feeds
+     */
 	public int saveNewTitle(int feedId, String newTitle) {
 		int numOfUpdated = 0;
 		db.beginTransaction();
 		try {
 			ContentValues values = new ContentValues();
-			values.put("title", newTitle);
-			numOfUpdated = db.update("feeds", values, "_id = " + feedId, null);
+			values.put(Feed.TITLE, newTitle);
+			numOfUpdated = db.update(Feed.TABLE_NAME, values, Feed.ID + " = " + feedId, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -393,26 +390,13 @@ public class DatabaseAdapter {
 		return numOfUpdated;
 	}
 
-	public String getStatus(int articleId) {
-		String status = null;
-		db.beginTransaction();
-		try {
-			String sql = "select status from articles where _id = " + articleId;
-			Cursor cur = db.rawQuery(sql, null);
-			cur.moveToNext();
-			status = cur.getString(0);
-			cur.close();
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		
-		return status;
-	}
-
-	public boolean deleteFeed(int feedId) {
+    /**
+     * Delete method for feed and related data.
+     *
+     * @param feedId Feed ID to delete
+     * @return result of delete
+     */
+    public boolean deleteFeed(int feedId) {
 		int numOfDeleted = 0;
 		ArrayList<Article> allArticles = getAllArticlesInAFeed(feedId, true);
 		db.beginTransaction();
@@ -439,11 +423,12 @@ public class DatabaseAdapter {
 	public Feed getFeedByUrl(String feedUrl) {
 		Feed feed = null;
 		db.beginTransaction();
+        Cursor cur = null;
 		try {
 			// Get feed
 			String getFeedSql = "select _id,title,iconPath,siteUrl from feeds where url = \""
 					+ feedUrl + "\"";
-			Cursor cur = db.rawQuery(getFeedSql, null);
+			cur = db.rawQuery(getFeedSql, null);
 			if (cur.getCount() != 0) {
 				cur.moveToNext();
 				int feedId = cur.getInt(0);
@@ -458,6 +443,9 @@ public class DatabaseAdapter {
 			e.printStackTrace();
 		} finally {
 			db.endTransaction();
+            if (cur != null) {
+                cur.close();
+            }
 		}
 		return feed;
 	}
@@ -465,11 +453,12 @@ public class DatabaseAdapter {
 	public Feed getFeedById(int feedId) {
 		Feed feed = null;
 		db.beginTransaction();
+        Cursor cur = null;
 		try {
 			// Get feed
 			String[] culumn = {Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL};
 			String selection = Feed.ID + " = " + feedId;
-			Cursor cur = db.query(Feed.TABLE_NAME, culumn, selection, null, null, null, null);
+			cur = db.query(Feed.TABLE_NAME, culumn, selection, null, null, null, null);
 			if (cur.getCount() != 0) {
 				cur.moveToNext();
 				String feedTitle = cur.getString(0);
@@ -483,6 +472,9 @@ public class DatabaseAdapter {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+            if (cur != null) {
+                cur.close();
+            }
 			db.endTransaction();
 		}
 		return feed;
@@ -504,9 +496,9 @@ public class DatabaseAdapter {
 				values.put("title", feedTitle);
 				values.put("url", feedUrl);
 				values.put("format", format);
-				values.put("iconPath", Feed.DEDAULT_ICON_PATH);
+				values.put(Feed.ICON_PATH, Feed.DEDAULT_ICON_PATH);
 				values.put("siteUrl", siteUrl);
-				if (db.insert("feeds", null, values) == -1) {
+				if (db.insert(Feed.TABLE_NAME, null, values) == -1) {
 					Log.v("insert error", "error occurred");
 				}
 			} else {
@@ -527,22 +519,7 @@ public class DatabaseAdapter {
 		return getFeedByUrl(feedUrl);
 	}
 
-	public void changeArticlesStatusToRead() {
-		db.beginTransaction();
-		try {
-			// Update articles read status in the "readstatus" to DB
-			ContentValues value = new ContentValues();
-			value.put("status", Article.READ);
-			db.update("articles", value, "status = \"" + Article.TOREAD + "\"", null);
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-	public int getNumOfUnreadArtilces(int feedId) {
+    public int getNumOfUnreadArtilces(int feedId) {
 		int num = 0;
 		db.beginTransaction();
 		try {
@@ -563,7 +540,7 @@ public class DatabaseAdapter {
 	}
 
 	public ArrayList<Article> getAllUnreadArticles(boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<Article>();
+		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
 			// Get unread articles
@@ -643,14 +620,14 @@ public class DatabaseAdapter {
 	}
 	
 	public ArrayList<Article> searchArticles(String keyword, boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<Article>();
+		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
 			if(keyword.contains("%")) {
-				keyword.replace("%", "$%");
+				keyword = keyword.replace("%", "$%");
 			}
 			if(keyword.contains("_")) {
-				keyword.replace("_", "$_");
+				keyword = keyword.replace("_", "$_");
 			}
 			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,feeds.title,feeds.iconPath " +
 					"from articles inner join feeds " +
@@ -688,7 +665,7 @@ public class DatabaseAdapter {
 	}
 	
 	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<Article>();
+		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
 			// Get unread articles
@@ -723,7 +700,7 @@ public class DatabaseAdapter {
 	}
 	
 	public ArrayList<Article> getAllArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<Article>();
+		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
 			// Get unread articles
@@ -771,9 +748,8 @@ public class DatabaseAdapter {
 			cur.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
 		}
-		return latestDate;
+        return latestDate;
 	}
 
 	public ArrayList<Filter> getEnabledFiltersOfFeed(int feedId) {
@@ -859,7 +835,7 @@ public class DatabaseAdapter {
 	public boolean applyFiltersOfFeed(ArrayList<Filter> filterList, int feedId) {
 		// If articles are hit in condition, Set articles status to "read"
 		ContentValues value = new ContentValues();
-		value.put("status", "read");
+		value.put(Article.STATUS, "read");
 		for (Filter filter : filterList) {
 			db.beginTransaction();
 			try {
@@ -882,7 +858,7 @@ public class DatabaseAdapter {
 				if (!url.equals("")) {
 					condition = condition + " and url like '%" + url + "%'";
 				}
-				db.update("articles", value, condition, null);
+				db.update(Article.TABLE_NAME, value, condition, null);
 				db.setTransactionSuccessful();
 			} catch (Exception e) {
 				Log.e("Apply Filtering", "Article can't be updated.Feed ID = "
@@ -1027,6 +1003,16 @@ public class DatabaseAdapter {
         return result;
     }
 
+    /**
+     * Update method for filter.
+     *
+     * @param filterId Filter ID to update
+     * @param title New title
+     * @param keyword New keyword
+     * @param url New URL
+     * @param feeds New feeds to filter
+     * @return update result
+     */
 	public boolean updateFilter(int filterId, String title, String keyword, String url, ArrayList<Feed> feeds) {
 		boolean result = false;
 		db.beginTransaction();
@@ -1062,18 +1048,8 @@ public class DatabaseAdapter {
 		return result;
 	}
 
-	public static String sanitizing(String str) {
-
-		if (str == null || "".equals(str)) {
-			return str;
-		}
-		str = str.replaceAll("'", "''");
-		str = str.replaceAll("%", "\\%");
-		return str;
-	}
-
-	public void addManyFeeds() {
-		ArrayList<Feed> feeds = new ArrayList<Feed>();
+    public void addManyFeeds() {
+		ArrayList<Feed> feeds = new ArrayList<>();
 		//RSS 2.0
 //		feeds.add(new Feed(0, "スポーツナビ - ピックアップ　ゲーム",
 //				"http://sports.yahoo.co.jp/rss/pickup_game/pc"));
@@ -1146,48 +1122,86 @@ public class DatabaseAdapter {
 	}
 
 	public boolean isArticle(Article article) {
-		int num = 0;
+		int num;
 		try {
 			// Get same article
 			String[] columns = {"_id"};
 			String selection = "url = ?";
 			String[] selectionArgs = {article.getUrl()};
-			Cursor cursor = db.query("articles", columns, selection, selectionArgs, null, null, null);
+			Cursor cursor = db.query(Article.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 			num = cursor.getCount();
 			cursor.close();
 		} catch (Exception e) {
 			num = -1;
-		} finally {
 		}
 
-		if(num > 0) {
-			return true;
-		}
-		return false;
-	}
+        return num > 0;
+    }
 
 	public void deleteAllArticles() {
 		db.beginTransaction();
 		try {
-			db.delete("articles", "", null);
+			db.delete(Article.TABLE_NAME, "", null);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
 	}
 
-	public void deleteAllFeeds() {
-		db.beginTransaction();
+    /**
+     * Helper method to delete all of the feeds.
+     * This method also deletes relation between filter and feed.
+     *
+     * @return result of delete
+     */
+	public boolean deleteAll() {
 		try {
-			db.delete("feeds", "", null);
+            db.beginTransaction();
+            db.delete(CurationCondition.TABLE_NAME, null, null);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.beginTransaction();
+            db.delete(CurationSelection.TABLE_NAME, null, null);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.beginTransaction();
+            db.delete(Article.TABLE_NAME, null, null);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.beginTransaction();
+            db.delete(FilterFeedRegistration.TABLE_NAME, null, null);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.beginTransaction();
+			db.delete(Filter.TABLE_NAME, null, null);
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+            db.beginTransaction();
+            db.delete(Curation.TABLE_NAME, null, null);
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            db.beginTransaction();
+			db.delete(Feed.TABLE_NAME, null, null);
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			db.endTransaction();
 		}
+        return true;
 	}
 
+    /**
+     * Helper method to retrieve all of the filters.
+     *
+     * @return all of the filters in the database
+     */
 	public ArrayList<Filter> getAllFilters() {
 		ArrayList<Filter> filters = new ArrayList<>();
 		String[] columns = {
@@ -1278,17 +1292,18 @@ public class DatabaseAdapter {
 
 				String backupDBFolderPath = BACKUP_FOLDER + "/";
 				File backupDBFolder = new File(backupStrage, backupDBFolderPath);
-				backupDBFolder.delete();
-				if (backupDBFolder.mkdir()) {
-					Log.d(LOG_TAG, "Succeeded to make directory");
-
-				}else {
-					Log.d(LOG_TAG, "Failed to make directory");
-				}
+				if (backupDBFolder.delete()) {
+                    if (backupDBFolder.mkdir()) {
+                        Log.d(LOG_TAG, "Succeeded to make directory");
+                    } else {
+                        Log.d(LOG_TAG, "Failed to make directory");
+                    }
+                }
 				File backupDB = new File(backupStrage, backupDBFolderPath + DatabaseHelper.DATABASE_NAME);
 
-				String  currentDBPath= "/data/data/" + context.getPackageName()
-						+ "/databases/" + DatabaseHelper.DATABASE_NAME;
+                String currentDBPath = context.getFilesDir().getPath() +
+                        "/databases/" + DatabaseHelper.DATABASE_NAME;
+
 				File currentDB = new File(currentDBPath);
 
 				// Copy database
@@ -1324,8 +1339,8 @@ public class DatabaseAdapter {
 					return;
 				}
 
-				String  currentDBPath= "/data/data/" + context.getPackageName()
-						+ "/databases/" + DatabaseHelper.DATABASE_NAME;
+				String currentDBPath = context.getFilesDir().getPath() +
+						"/databases/" + DatabaseHelper.DATABASE_NAME;
 				File currentDB = new File(currentDBPath);
 
 				FileChannel src = new FileInputStream(newDB).getChannel();
@@ -1403,13 +1418,14 @@ public class DatabaseAdapter {
 				.compileStatement("insert into " + CurationSelection.TABLE_NAME +
 						"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");");
 		db.beginTransaction();
+        Cursor cursor = null;
 		try {
 			// Delete old curation selection
 			db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null);
 
 			// Get all articles
 			String[] columns = {Article.ID, Article.TITLE};
-			Cursor cursor = db.query(Article.TABLE_NAME, columns, null, null, null, null, null);
+			cursor = db.query(Article.TABLE_NAME, columns, null, null, null, null, null);
 
 			// Adapt
 			while (cursor.moveToNext()) {
@@ -1428,6 +1444,9 @@ public class DatabaseAdapter {
 			e.printStackTrace();
 			result = false;
 		} finally {
+            if (cursor != null) {
+                cursor.close();
+            }
 			db.endTransaction();
 		}
 		return result;
@@ -1471,11 +1490,8 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		if (numOfDeleted == 1) {
-			return true;
-		}
-		return false;
-	}
+        return numOfDeleted == 1;
+    }
 
 	public boolean deleteAllCuration() {
 		boolean result = true;
@@ -1505,12 +1521,8 @@ public class DatabaseAdapter {
 			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if(num > 0) {
-				return true;
-			}
-			return false;
 		}
+        return num > 0;
 	}
 
 	public int getCurationIdByName(String name) {
@@ -1525,9 +1537,8 @@ public class DatabaseAdapter {
 			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			return id;
 		}
+        return id;
 	}
 
 	public String getCurationNameById(int curationId) {
@@ -1542,9 +1553,8 @@ public class DatabaseAdapter {
 			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			return name;
 		}
+        return name;
 	}
 
 	public ArrayList<Article> getAllUnreadArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
@@ -1589,9 +1599,8 @@ public class DatabaseAdapter {
 			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			return articles;
 		}
+        return articles;
 	}
 	public int calcNumOfAllUnreadArticlesOfCuration(int curationId) {
 		int num = 0;
@@ -1613,9 +1622,8 @@ public class DatabaseAdapter {
 			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			return num;
 		}
+        return num;
 	}
 
 	public ArrayList<String> getCurationWords(int curationId) {
@@ -1631,9 +1639,8 @@ public class DatabaseAdapter {
 			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			return words;
 		}
+        return words;
 	}
 
 	public ArrayList<Article> getAllArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
@@ -1677,20 +1684,22 @@ public class DatabaseAdapter {
 			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			return articles;
 		}
+        return articles;
 	}
 
-	public Map<Integer, ArrayList<String>> getAllCurationWords() {
-		Map<Integer, ArrayList<String>> curationWordsMap = new HashMap<>();
+    public SparseArray<ArrayList<String>> getAllCurationWords() {
+//	public Map<Integer, ArrayList<String>> getAllCurationWords() {
+//		Map<Integer, ArrayList<String>> curationWordsMap = new HashMap<>();
+        SparseArray<ArrayList<String>> curationWordsMap = new SparseArray<>();
 		String sql = "select " + Curation.TABLE_NAME + "." + Curation.ID + "," +
 				CurationCondition.TABLE_NAME + "." + CurationCondition.WORD +
 				" from " + Curation.TABLE_NAME + " inner join " + CurationCondition.TABLE_NAME +
 				" where " + Curation.TABLE_NAME + "." + Curation.ID + " = " + CurationCondition.TABLE_NAME + "." + CurationCondition.CURATION_ID +
 				" order by " + Curation.TABLE_NAME + "." + Curation.ID;
+		Cursor cursor = null;
 		try {
-			Cursor cursor = db.rawQuery(sql, null);
+			cursor = db.rawQuery(sql, null);
 			final int defaultCurationId = -1;
 			int curationId = defaultCurationId;
 			ArrayList<String> words = new ArrayList<>();
@@ -1712,12 +1721,13 @@ public class DatabaseAdapter {
 			if (curationId != defaultCurationId) {
 				curationWordsMap.put(curationId, words);
 			}
-
-			cursor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			return curationWordsMap;
+			if (cursor != null) {
+				cursor.close();
+			}
 		}
+		return curationWordsMap;
 	}
 }

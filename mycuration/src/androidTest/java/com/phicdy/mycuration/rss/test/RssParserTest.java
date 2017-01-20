@@ -18,13 +18,13 @@ public class RssParserTest extends AndroidTestCase {
 		super.setUp();
 		adapter = DatabaseAdapter.getInstance(getContext());
 		adapter.deleteAllArticles();
-		adapter.deleteAllFeeds();
+		adapter.deleteAll();
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		adapter.deleteAllArticles();
-		adapter.deleteAllFeeds();
+		adapter.deleteAll();
 	}
 	
 	public void testParseFeedInfoRSS1() {

@@ -1,16 +1,32 @@
 package com.phicdy.mycuration.db.test;
 
-import android.test.AndroidTestCase;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import android.util.SparseArray;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.ui.TopActivity;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
-public class DatabaseAdapterTest extends AndroidTestCase {
+import static android.support.test.InstrumentationRegistry.getContext;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+@RunWith(AndroidJUnit4.class)
+public class DatabaseAdapterTest {
 
 	private DatabaseAdapter adapter;
 	private ArrayList<Article> testUnreadArticles = new ArrayList<>();
@@ -19,6 +35,8 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 	private static final String TEST_FEED_TITLE = "testfeed";
 	private static final String TEST_FEED_URL = "http://www.yahoo.co.jp";
 	private static final String TEST_ARTICLE1_TITLE = "title1";
+	private static final String TEST_ARTICLE2_TITLE = "title'";
+	private static final String TEST_ARTICLE3_TITLE = "title" + '"';
 	private final String TEST_CURATION_NAME = "test";
 	private final String TEST_WORD1 = "word1";
 	private final String TEST_WORD2 = "word2";
@@ -29,14 +47,22 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		super();
 	}
 
-	@Override
-	protected void setUp() {
+    @Rule
+    public ActivityTestRule<TopActivity> mActivityRule = new ActivityTestRule<>(
+            TopActivity.class);
+
+    @Before
+	public void setUp() {
 		adapter  = DatabaseAdapter.getInstance(getContext());
-		adapter.deleteAllArticles();
-		adapter.deleteAllFeeds();
 		insertTestData();
 	}
 
+    @After
+    public void tearDown() {
+        adapter.deleteAll();
+    }
+
+    @Test
 	public void testIsArticle() {
 		for (Article testArticle : testUnreadArticles) {
 			assertEquals(true, adapter.isArticle(testArticle));
@@ -44,11 +70,10 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 
 	}
 
+    @Test
 	public void testSaveNewArticles() {
 		// Reset data and insert curation at first
-		adapter.deleteAllCuration();
-		adapter.deleteAllArticles();
-		adapter.deleteAllFeeds();
+		adapter.deleteAll();
 		insertTestCurationForArticle1();
 		insertTestData();
 
@@ -59,11 +84,11 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 			assertEquals(Article.UNREAD, savedArticle1.getStatus());
 
 			Article savedArticle2 = savedArticles.get(1);
-			assertEquals("readArticle", savedArticle2.getTitle());
-			assertEquals(Article.READ, savedArticle2.getStatus());
+			assertEquals(TEST_ARTICLE2_TITLE, savedArticle2.getTitle());
+			assertEquals(Article.UNREAD, savedArticle2.getStatus());
 
 			Article savedArticle3 = savedArticles.get(2);
-			assertEquals("title'", savedArticle3.getTitle());
+			assertEquals(TEST_ARTICLE3_TITLE, savedArticle3.getTitle());
 			assertEquals(Article.UNREAD, savedArticle3.getStatus());
 		}
 
@@ -73,15 +98,12 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(1, articles.size());
 		assertEquals(TEST_ARTICLE1_TITLE, articles.get(0).getTitle());
 	}
-	
+
+    @Test
 	public void testSearchArticles() {
 		ArrayList<Article> list = adapter.searchArticles("記事1abdｄｆｇ", true);
 		assertEquals(1, list.size());
 		assertEquals("記事1abdｄｆｇ", list.get(0).getTitle());
-	}
-	
-	public void testsaveStatusToRead() {
-		
 	}
 	
 	private void insertTestData() {
@@ -93,9 +115,9 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		long now = new Date().getTime();
 		Article article = new Article(1, TEST_ARTICLE1_TITLE, "http://www.google.com",
 				Article.UNREAD, "", now, testFeed.getId(), "", null);
-		Article quotationTitle = new Article(1, "title'",
+		Article quotationTitle = new Article(1, TEST_ARTICLE2_TITLE,
 				"http://www.google.com", Article.UNREAD, "", now + 1, testFeed.getId(), "", null);
-		Article doubleQuotationTitle = new Article(1, "title" + '"',
+		Article doubleQuotationTitle = new Article(1, TEST_ARTICLE3_TITLE,
 				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "", null);
 		Article japaneseTitle = new Article(1, "記事1abdｄｆｇ",
 				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "", null);
@@ -115,6 +137,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		adapter.saveNewArticles(testReadArticles, testFeed.getId());
 	}
 
+    @Test
     public void testSaveAllStatusToReadFromToRead() {
         Feed testFeed = adapter.getFeedByUrl(TEST_FEED_URL);
 
@@ -139,6 +162,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
         assertEquals(false, existToReadArticle);
     }
 
+    @Test
 	public void testGetAllFeedsWithNumOfUnreadArticles() {
 		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
 		assertNotNull(feeds);
@@ -149,12 +173,14 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(testUnreadArticles.size(), testFeed.getUnreadAriticlesCount());
 	}
 
+    @Test
 	public void testSaveNewCuration() {
 		insertTestCuration();
 
 		int curationId = adapter.getCurationIdByName(TEST_CURATION_NAME);
-		Map<Integer, ArrayList<String>> map = adapter.getAllCurationWords();
-		assertTrue(map.containsKey(curationId));
+		SparseArray<ArrayList<String>> map = adapter.getAllCurationWords();
+		assertThat(map.indexOfKey(curationId), is(0));
+        assertThat(map.size(), is(1));
 		ArrayList<String> addedWords = map.get(curationId);
 		assertEquals(TEST_WORDS_SIZE, addedWords.size());
 		assertEquals(TEST_WORD1, addedWords.get(0));
@@ -162,9 +188,10 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(TEST_WORD3, addedWords.get(2));
 	}
 
+    @Test
 	public void testGetAllCurationWords() {
 		// No data
-		Map<Integer, ArrayList<String>> map = adapter.getAllCurationWords();
+		SparseArray<ArrayList<String>> map = adapter.getAllCurationWords();
 		assertEquals(0, map.size());
 
 		// 1 curation
@@ -173,7 +200,7 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 
 		map = adapter.getAllCurationWords();
 		assertEquals(1, map.size());
-		assertTrue(map.containsKey(curationId1));
+		assertThat(map.indexOfKey(curationId1), is(0));
 		ArrayList<String> addedWords1 = map.get(curationId1);
 		assertEquals(TEST_WORD1, addedWords1.get(0));
 		assertEquals(TEST_WORD2, addedWords1.get(1));
@@ -194,19 +221,20 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		map = adapter.getAllCurationWords();
 		assertEquals(2, map.size());
 
-		assertTrue(map.containsKey(curationId1));
+		assertThat(map.indexOfKey(curationId1), is(0));
 		addedWords1 = map.get(curationId1);
 		assertEquals(TEST_WORD1, addedWords1.get(0));
 		assertEquals(TEST_WORD2, addedWords1.get(1));
 		assertEquals(TEST_WORD3, addedWords1.get(2));
 
-		assertTrue(map.containsKey(curationId2));
+		assertThat(map.indexOfKey(curationId2), is(1));
 		ArrayList<String> addedWords2 = map.get(curationId2);
 		assertEquals(testWord4, addedWords2.get(0));
 		assertEquals(testWord5, addedWords2.get(1));
 		assertEquals(testWord6, addedWords2.get(2));
 	}
 
+    @Test
 	public void testDeleteCuration() {
 		insertTestCuration();
 		int curationId = adapter.getCurationIdByName(TEST_CURATION_NAME);
@@ -214,13 +242,15 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		assertEquals(DatabaseAdapter.NOT_FOUND_ID, adapter.getCurationIdByName(TEST_CURATION_NAME));
 	}
 
+    @Test
 	public void testDeleteAllCuration() {
 		insertTestCuration();
 		assertTrue(adapter.deleteAllCuration());
-		Map<Integer, ArrayList<String>> map = adapter.getAllCurationWords();
+		SparseArray<ArrayList<String>> map = adapter.getAllCurationWords();
 		assertEquals(0, map.size());
 	}
 
+    @Test
 	public void testGetAllArticlesOfCuration() {
 		insertTestCurationForArticle1();
 		int curationId = adapter.getCurationIdByName(TEST_CURATION_NAME);
@@ -256,10 +286,4 @@ public class DatabaseAdapterTest extends AndroidTestCase {
 		return words;
 	}
 
-	@Override
-	protected void tearDown() {
-		adapter.deleteAllCuration();
-		adapter.deleteAllArticles();
-		adapter.deleteAllFeeds();
-	}
 }
