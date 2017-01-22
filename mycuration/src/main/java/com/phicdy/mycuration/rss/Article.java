@@ -27,6 +27,17 @@ public class Article {
 
 	public static final String DEDAULT_HATENA_POINT = "-1";
 
+	public static final String CREATE_TABLE_SQL =
+			"create table " + TABLE_NAME + "(" +
+					ID + " integer primary key autoincrement,"+
+					TITLE + " text,"+
+					URL + " text,"+
+					STATUS + " text default "+ UNREAD+","+
+					POINT + " text,"+
+					DATE + " text,"+
+					FEEDID + " integer,"+
+					"foreign key(" + FEEDID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))";
+
 	public Article(int id, String title, String url, String status,
 			String point, long postDate, int feedId, String feedTitle, String feedIconPath) {
 		id_    = id;

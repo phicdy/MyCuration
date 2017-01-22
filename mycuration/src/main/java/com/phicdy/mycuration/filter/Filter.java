@@ -27,6 +27,25 @@ public class Filter {
 	public static final int TRUE = 1;
 	public static final int FALSE = 0;
 
+	public static final String CREATE_TABLE_SQL =
+			"create table " + TABLE_NAME + "(" +
+					ID + " integer primary key autoincrement,"+
+					KEYWORD + " text,"+
+					URL + " text," +
+					TITLE + " text,"+
+					ENABLED + " integer)";
+
+    @Deprecated
+    public static final String CREATE_TABLE_SQL_OLD =
+            "create table " + TABLE_NAME + "(" +
+                    ID + " integer primary key autoincrement,"+
+                    FEED_ID + " integer,"+
+                    KEYWORD + " text,"+
+                    URL + " text," +
+                    TITLE + " text,"+
+                    ENABLED + " integer, " +
+                    "foreign key(" + FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))";
+
 	public Filter(int id, String title, String keyword, String url,
 				  ArrayList<Feed> feeds, int enabled) {
 		id_      = id;

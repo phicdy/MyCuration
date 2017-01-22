@@ -12,6 +12,11 @@ public class Curation {
 
 	public static final int DEFAULT_CURATION_ID = -100;
 
+	public static final String CREATE_TABLE_SQL =
+			"create table " + TABLE_NAME + "(" +
+					ID + " integer primary key autoincrement,"+
+					NAME + " text)";
+
 	public Curation() {
 		id = DEFAULT_CURATION_ID;
 		name = null;

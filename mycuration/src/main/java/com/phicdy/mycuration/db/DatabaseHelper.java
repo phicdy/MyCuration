@@ -26,21 +26,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	private static final int DATABASE_VERSION_ADD_ENABLED_TO_FILTER = 2;
     private static final int DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION = 3;
 
-    private String createFiltersTableSQL =
-            "create table " + Filter.TABLE_NAME + "(" +
-                    Filter.ID + " integer primary key autoincrement,"+
-                    Filter.KEYWORD + " text,"+
-                    Filter.URL + " text," +
-                    Filter.TITLE + " text,"+
-                    Filter.ENABLED + " integer)";
-    private String createFilterFeedRegistrationTableSQL =
-            "create table " + FilterFeedRegistration.TABLE_NAME + "(" +
-                    FilterFeedRegistration.ID + " integer primary key autoincrement," +
-                    FilterFeedRegistration.FILTER_ID + " integer," +
-                    FilterFeedRegistration.FEED_ID + " integer," +
-                    "foreign key(" + FilterFeedRegistration.FILTER_ID + ") references " + Filter.TABLE_NAME + "(" + Filter.ID + ")," +
-                    "foreign key(" + FilterFeedRegistration.FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + ")" +
-                    ")";
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -48,50 +33,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     //onCreate() is called when database is created
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createFeedsTableSQL =
-                "create table " + Feed.TABLE_NAME + "(" +
-                Feed.ID + " integer primary key autoincrement,"+
-                Feed.TITLE + " text,"+
-                Feed.URL + " text,"+
-                Feed.FORMAT + " text," +
-                Feed.SITE_URL + " text," +
-                Feed.ICON_PATH + " text," +
-                Feed.UNREAD_ARTICLE + " integer)";
-        String createArticlesTableSQL =
-                "create table " + Article.TABLE_NAME + "(" +
-                Article.ID + " integer primary key autoincrement,"+
-                Article.TITLE + " text,"+
-                Article.URL + " text,"+
-                Article.STATUS + " text default "+ Article.UNREAD+","+
-                Article.POINT + " text,"+
-                Article.DATE + " text,"+
-                Article.FEEDID + " integer,"+
-                "foreign key(" + Article.FEEDID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))";
-        String createCurationsTableSQL =
-                "create table " + Curation.TABLE_NAME + "(" +
-                        Curation.ID + " integer primary key autoincrement,"+
-                        Curation.NAME + " text)";
-        String createCurationSelectionsTableSQL =
-                "create table " + CurationSelection.TABLE_NAME + "(" +
-                        CurationSelection.ID + " integer primary key autoincrement,"+
-                        CurationSelection.CURATION_ID + " integer," +
-                        CurationSelection.ARTICLE_ID + " integer," +
-                        "foreign key(" + CurationSelection.CURATION_ID + ") references " + Curation.TABLE_NAME + "(" + Curation.ID + ")," +
-                        "foreign key(" + CurationSelection.ARTICLE_ID + ") references " + Article.TABLE_NAME + "(" + Article.ID + "))";
-        String createCurationConditionTableSQL =
-                "create table " + CurationCondition.TABLE_NAME + "(" +
-                        CurationCondition.ID + " integer primary key autoincrement,"+
-                        CurationCondition.WORD + " text," +
-                        CurationCondition.CURATION_ID + " integer," +
-                        "foreign key(" + CurationSelection.CURATION_ID + ") references " + Curation.TABLE_NAME + "(" + Curation.ID + "))";
-
-        db.execSQL(createFeedsTableSQL);
-        db.execSQL(createArticlesTableSQL);
-        db.execSQL(createFiltersTableSQL);
-        db.execSQL(createFilterFeedRegistrationTableSQL);
-        db.execSQL(createCurationsTableSQL);
-        db.execSQL(createCurationSelectionsTableSQL);
-        db.execSQL(createCurationConditionTableSQL);
+        db.execSQL(Feed.CREATE_TABLE_SQL);
+        db.execSQL(Article.CREATE_TABLE_SQL);
+        db.execSQL(Filter.CREATE_TABLE_SQL);
+        db.execSQL(FilterFeedRegistration.CREATE_TABLE_SQL);
+        db.execSQL(Curation.CREATE_TABLE_SQL);
+        db.execSQL(CurationSelection.CREATE_TABLE_SQL);
+        db.execSQL(CurationCondition.CREATE_TABLE_SQL);
     }
       
     @Override
@@ -119,13 +67,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             ArrayList<Filter> filters = getAllFilters(db);
             String sql = "DROP TABLE " + Filter.TABLE_NAME;
             db.execSQL(sql);
-            db.execSQL(createFiltersTableSQL);
+            db.execSQL(Filter.CREATE_TABLE_SQL);
 
             // Insert all of the filters
             insertFilters(db, filters);
 
             // Migration feed and filter relation
-            db.execSQL(createFilterFeedRegistrationTableSQL);
+            db.execSQL(FilterFeedRegistration.CREATE_TABLE_SQL);
             insertFilterFeedRegistration(db, filters);
         }
     }

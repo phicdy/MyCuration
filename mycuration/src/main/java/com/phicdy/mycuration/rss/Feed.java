@@ -29,6 +29,16 @@ public class Feed implements Parcelable{
 	public static final String RSS_2 = "RSS2.0";
 	public static final String ATOM = "ATOM";
 
+	public static final String CREATE_TABLE_SQL =
+			"create table " + TABLE_NAME + "(" +
+					ID + " integer primary key autoincrement,"+
+					TITLE + " text,"+
+					URL + " text,"+
+					FORMAT + " text," +
+					SITE_URL + " text," +
+					ICON_PATH + " text," +
+					UNREAD_ARTICLE + " integer)";
+
 	public Feed() {
 		id_      = DEFAULT_FEED_ID;
 		title_   = null;
