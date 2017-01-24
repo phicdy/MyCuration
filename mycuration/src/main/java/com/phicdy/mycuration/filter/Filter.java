@@ -36,7 +36,7 @@ public class Filter {
 					ENABLED + " integer)";
 
     @Deprecated
-    public static final String CREATE_TABLE_SQL_OLD =
+    public static final String CREATE_TABLE_SQL_VER2 =
             "create table " + TABLE_NAME + "(" +
                     ID + " integer primary key autoincrement,"+
                     FEED_ID + " integer,"+
@@ -45,6 +45,18 @@ public class Filter {
                     TITLE + " text,"+
                     ENABLED + " integer, " +
                     "foreign key(" + FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))";
+
+    @Deprecated
+    public static final String CREATE_TABLE_SQL_VER1 =
+            "create table " + TABLE_NAME + "(" +
+                    ID + " integer primary key autoincrement,"+
+                    FEED_ID + " integer,"+
+                    KEYWORD + " text,"+
+                    URL + " text," +
+                    TITLE + " text,"+
+                    "foreign key(" + FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))";
+
+    public static final String DROP_TABLE_SQL = "DROP TABLE " + TABLE_NAME;
 
 	public Filter(int id, String title, String keyword, String url,
 				  ArrayList<Feed> feeds, int enabled) {

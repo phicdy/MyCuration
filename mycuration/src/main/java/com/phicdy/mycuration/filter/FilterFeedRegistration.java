@@ -17,4 +17,6 @@ public class FilterFeedRegistration {
 					"foreign key(" + FILTER_ID + ") references " + Filter.TABLE_NAME + "(" + Filter.ID + ")," +
 					"foreign key(" + FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + ")" +
 					")";
+
+    public static final String DROP_TABLE_SQL = "DROP TABLE " + TABLE_NAME;
 }
