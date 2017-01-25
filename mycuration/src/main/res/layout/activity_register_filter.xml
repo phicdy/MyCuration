@@ -5,6 +5,7 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
 		android:orientation="horizontal">
 
 		<ImageView
@@ -19,19 +20,22 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:inputType="text"
+			android:textSize="@dimen/text_size_register_filter"
 			android:hint="@string/filter"/>
 	</LinearLayout>
     <TextView
 		android:id="@+id/tv_target_rss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginLeft="4dp"
         android:layout_gravity="center_vertical"
         android:drawableLeft="@drawable/ic_rss_feed_black"
         android:hint="@string/target_rss"
-        android:textSize="20sp"/>
+        android:textSize="@dimen/text_size_register_filter"/>
     <LinearLayout
         android:orientation="horizontal"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
@@ -46,12 +50,14 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:inputType="text"
+            android:textSize="@dimen/text_size_register_filter"
 	        android:layout_weight="90"
             android:hint="@string/keyword"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:orientation="horizontal">
         <ImageView
             android:layout_width="wrap_content"
@@ -66,6 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textUri"
+            android:textSize="@dimen/text_size_register_filter"
             android:hint="@string/article_url"/>
     </LinearLayout>
 </LinearLayout>
