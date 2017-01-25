@@ -10,9 +10,9 @@ class DatabaseMigration {
     private List<DatabaseMigrationTask> tasks = new ArrayList<>();
     private int oldVersion;
 
-    protected static final int FIRST_VERSION = 1;
-    protected static final int DATABASE_VERSION_ADD_ENABLED_TO_FILTER = 2;
-    protected static final int DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION = 3;
+    static final int FIRST_VERSION = 1;
+    static final int DATABASE_VERSION_ADD_ENABLED_TO_FILTER = 2;
+    static final int DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION = 3;
 
     DatabaseMigration(int oldVersion, int newVersion) {
         this.oldVersion = oldVersion;
