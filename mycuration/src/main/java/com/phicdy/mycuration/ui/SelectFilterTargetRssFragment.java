@@ -63,7 +63,7 @@ public class SelectFilterTargetRssFragment extends ListFragment {
         @NonNull
         @Override
         public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
-            ViewHolder holder;
+            final ViewHolder holder;
 
             // Use contentView and setup ViewHolder
             View row = convertView;
@@ -71,30 +71,19 @@ public class SelectFilterTargetRssFragment extends ListFragment {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 row = inflater.inflate(R.layout.filter_target_rss_list, parent, false);
                 holder = new ViewHolder();
+                row.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        boolean newChecked = !holder.cbSelect.isChecked();
+                        holder.cbSelect.setChecked(newChecked);
+                        updateCheck(newChecked, position);
+                    }
+                });
                 holder.cbSelect = (CheckBox) row.findViewById(R.id.cb_target);
                 holder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        Feed selected = getItem(position);
-                        if (selected == null) return;
-                        Iterator<Feed> iterator = selectedList.iterator();
-                        // onCheckedChanged() is called first time, need to check existence
-                        boolean isExist = false;
-                        while (iterator.hasNext()) {
-                            Feed feed = iterator.next();
-                            if (selected.getId() == feed.getId()) {
-                                if (isChecked) {
-                                    isExist = true;
-                                    break;
-                                } else {
-                                    iterator.remove();
-                                }
-                                break;
-                            }
-                        }
-                        if (isChecked && !isExist) {
-                            selectedList.add(selected);
-                        }
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        updateCheck(isChecked, position);
                     }
                 });
                 holder.ivIcon = (ImageView) row.findViewById(R.id.iv_rss_icon);
@@ -128,6 +117,30 @@ public class SelectFilterTargetRssFragment extends ListFragment {
                 }
             }
             return row;
+        }
+
+        private void updateCheck(boolean isChecked, int position) {
+            Feed selected = getItem(position);
+            if (selected == null) return;
+            Iterator<Feed> iterator = selectedList.iterator();
+            // onCheckedChanged() is called first time, need to check existence
+            boolean isExist = false;
+            while (iterator.hasNext()) {
+                Feed feed = iterator.next();
+                if (selected.getId() == feed.getId()) {
+                    if (isChecked) {
+                        isExist = true;
+                        break;
+                    } else {
+                        iterator.remove();
+                    }
+                    break;
+                }
+            }
+            if (isChecked && !isExist) {
+                selectedList.add(selected);
+            }
+
         }
 
         private class ViewHolder {
