@@ -16,8 +16,10 @@
 
     <string name="add_filter_button">+</string>
     <string name="keyword">Keyword</string>
+    <string name="keyword_description">When the keyword is included in article title, it becomes read status</string>
     <string name="include">include</string>
     <string name="article_url">Article URL</string>
+    <string name="article_url_description">When the URL is included in article URL, it becomes read status</string>
     <string name="register">Register</string>
     <string name="cancel">Cancel</string>
     <string name="title_empty_error">Please input the title</string>

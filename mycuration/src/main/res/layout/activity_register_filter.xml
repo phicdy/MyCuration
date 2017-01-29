@@ -54,6 +54,13 @@
 	        android:layout_weight="90"
             android:hint="@string/keyword"/>
     </LinearLayout>
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+		android:text="@string/keyword_description"
+        android:textSize="14sp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,4 +82,11 @@
             android:textSize="@dimen/text_size_register_filter"
             android:hint="@string/article_url"/>
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:text="@string/article_url_description"
+        android:textSize="14sp"/>
 </LinearLayout>
