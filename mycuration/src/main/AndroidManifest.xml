@@ -129,11 +129,9 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable_feed" />
         </activity>
-        <activity android:name=".ui.SelectFilterTagetRssActivity" />
         <activity
             android:name=".ui.SelectFilterTargetRssActivity"
-            android:label="@string/title_activity_select_filter_target_rss"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
