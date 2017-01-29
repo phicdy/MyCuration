@@ -1325,11 +1325,7 @@ public class DatabaseAdapter {
                     }
                 }
 				File backupDB = new File(backupStrage, backupDBFolderPath + DatabaseHelper.DATABASE_NAME);
-
-                String currentDBPath = context.getFilesDir().getPath() +
-                        "/databases/" + DatabaseHelper.DATABASE_NAME;
-
-				File currentDB = new File(currentDBPath);
+				File currentDB = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);
 
 				// Copy database
 				FileChannel src = new FileInputStream(currentDB).getChannel();
@@ -1364,9 +1360,7 @@ public class DatabaseAdapter {
 					return;
 				}
 
-				String currentDBPath = context.getFilesDir().getPath() +
-						"/databases/" + DatabaseHelper.DATABASE_NAME;
-				File currentDB = new File(currentDBPath);
+				File currentDB = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);
 
 				FileChannel src = new FileInputStream(newDB).getChannel();
 				FileChannel dst = new FileOutputStream(currentDB).getChannel();
