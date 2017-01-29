@@ -21,7 +21,7 @@
 			android:layout_height="wrap_content"
 			android:inputType="text"
 			android:textSize="@dimen/text_size_register_filter"
-			android:hint="@string/filter"/>
+			android:hint="@string/filter_name"/>
 	</LinearLayout>
     <TextView
 		android:id="@+id/tv_target_rss"
