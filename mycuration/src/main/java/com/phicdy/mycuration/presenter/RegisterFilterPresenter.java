@@ -55,7 +55,9 @@ public class RegisterFilterPresenter implements Presenter {
             buf.append(feed.getTitle());
             buf.append(",");
         }
-        buf.deleteCharAt(buf.length() - 1);
+        if (buf.length() > 0) {
+            buf.deleteCharAt(buf.length() - 1);
+        }
         view.setFilterTargetRss(buf.toString());
     }
 
