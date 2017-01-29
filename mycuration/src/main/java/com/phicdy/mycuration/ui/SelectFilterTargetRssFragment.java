@@ -71,21 +71,7 @@ public class SelectFilterTargetRssFragment extends ListFragment {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 row = inflater.inflate(R.layout.filter_target_rss_list, parent, false);
                 holder = new ViewHolder();
-                row.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        boolean newChecked = !holder.cbSelect.isChecked();
-                        holder.cbSelect.setChecked(newChecked);
-                        updateCheck(newChecked, position);
-                    }
-                });
                 holder.cbSelect = (CheckBox) row.findViewById(R.id.cb_target);
-                holder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        updateCheck(isChecked, position);
-                    }
-                });
                 holder.ivIcon = (ImageView) row.findViewById(R.id.iv_rss_icon);
                 holder.tvRssTitle = (TextView) row.findViewById(R.id.tv_rss_title);
                 row.setTag(holder);
@@ -107,40 +93,71 @@ public class SelectFilterTargetRssFragment extends ListFragment {
                 }
             }
 
-            holder.cbSelect.setChecked(false);
+            boolean isChecked = false;
             if (selectedList != null && selectedList.size() > 0) {
                 for (Feed selectedFeed : selectedList) {
                     if (feed.getId() == selectedFeed.getId()) {
-                        holder.cbSelect.setChecked(true);
+                        isChecked = true;
                         break;
                     }
                 }
             }
+            holder.cbSelect.setChecked(isChecked);
+            holder.cbSelect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckBox checkBox = (CheckBox)v;
+                    if (checkBox.isChecked()) {
+                        checkFeed(position);
+                    }else {
+                        uncheckFeed(position);
+                    }
+                }
+            });
+
+            row.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    boolean newChecked = !holder.cbSelect.isChecked();
+                    holder.cbSelect.setChecked(newChecked);
+                    if (newChecked) {
+                        checkFeed(position);
+                    }else {
+                        uncheckFeed(position);
+                    }
+                }
+            });
             return row;
         }
 
-        private void updateCheck(boolean isChecked, int position) {
+        private void uncheckFeed(int position) {
             Feed selected = getItem(position);
             if (selected == null) return;
             Iterator<Feed> iterator = selectedList.iterator();
-            // onCheckedChanged() is called first time, need to check existence
+            while (iterator.hasNext()) {
+                Feed feed = iterator.next();
+                if (selected.getId() == feed.getId()) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+
+        private void checkFeed(int position) {
+            Feed selected = getItem(position);
+            if (selected == null) return;
+            Iterator<Feed> iterator = selectedList.iterator();
             boolean isExist = false;
             while (iterator.hasNext()) {
                 Feed feed = iterator.next();
                 if (selected.getId() == feed.getId()) {
-                    if (isChecked) {
-                        isExist = true;
-                        break;
-                    } else {
-                        iterator.remove();
-                    }
+                    isExist = true;
                     break;
                 }
             }
-            if (isChecked && !isExist) {
+            if (!isExist) {
                 selectedList.add(selected);
             }
-
         }
 
         private class ViewHolder {
