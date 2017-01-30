@@ -17,7 +17,7 @@ public class Feed implements Parcelable{
 	public static final String ID = "_id";
 	public static final String URL = "url";
 	public static final String FORMAT = "format";
-	public static final String SITE_URL = "siteUrl text";
+	public static final String SITE_URL = "siteUrl";
 	public static final String ICON_PATH = "iconPath";
 	public static final String UNREAD_ARTICLE = "unreadArticle";
 
