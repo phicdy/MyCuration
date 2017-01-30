@@ -1,44 +1,42 @@
 package com.phicdy.mycuration.task.test;
 
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.phicdy.mycuration.task.GetFeedIconTask;
+import com.phicdy.mycuration.util.FileUtil;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 
-public class GetFeedIconTaskTest extends AndroidTestCase {
+import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
-	public GetFeedIconTaskTest() {
-		super();
-	}
+@RunWith(AndroidJUnit4.class)
+public class GetFeedIconTaskTest {
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
+    @Test
 	public void testGetFeedIcon() {
-		GetFeedIconTask task = new GetFeedIconTask(getContext());
+		GetFeedIconTask task = new GetFeedIconTask(getTargetContext());
 		task.execute("http://kindou.info");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		File file = new File("/data/data/com.phicdy.filfeed/icons/kindou.info.png");
-		assertEquals(true, file.exists());
+		File file = new File(FileUtil.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
+		assertTrue(file.exists());
 			
-		GetFeedIconTask greeBlogIconTask = new GetFeedIconTask(getContext());
+		GetFeedIconTask greeBlogIconTask = new GetFeedIconTask(getTargetContext());
 		greeBlogIconTask.execute("http://labs.gree.jp/blog");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		File greeBlogIcon = new File("/data/data/com.phicdy.filfeed/icons/labs.gree.jp.png");
+		File greeBlogIcon = new File(FileUtil.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
 		assertEquals(false, greeBlogIcon.exists());
 	}
 }
