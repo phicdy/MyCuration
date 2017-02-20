@@ -71,6 +71,22 @@ public class TopActivity extends AppCompatActivity implements
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                setActivityTitle(position);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                setActivityTitle(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mViewPager);
 
@@ -81,7 +97,20 @@ public class TopActivity extends AppCompatActivity implements
                 tab.setIcon(mSectionsPagerAdapter.getImageResource(i));
             }
         }
+    }
 
+    private void setActivityTitle(int position) {
+        switch (position) {
+            case POSITION_CURATION_FRAGMENT:
+                setTitle(getString(R.string.curation));
+                break;
+            case POSITION_FEED_FRAGMENT:
+                setTitle(getString(R.string.rss));
+                break;
+            case POSITION_FILTER_FRAGMENT:
+                setTitle(getString(R.string.filter));
+                break;
+        }
     }
 
     @Override
@@ -259,19 +288,6 @@ public class TopActivity extends AppCompatActivity implements
         @Override
         public int getCount() {
             return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case POSITION_CURATION_FRAGMENT:
-                    return getString(R.string.curation);
-                case POSITION_FEED_FRAGMENT:
-                    return getString(R.string.rss);
-                case POSITION_FILTER_FRAGMENT:
-                    return getString(R.string.filter);
-            }
-            return null;
         }
 
         int getImageResource(int position) {
