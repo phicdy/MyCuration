@@ -40,6 +40,7 @@ public class Curation {
 	}
 	
 	public String getName() {
+		if (name == null) return "";
 		return name;
 	}
 }

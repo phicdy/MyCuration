@@ -1,9 +1,9 @@
 package com.phicdy.mycuration.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -23,6 +23,8 @@ import com.phicdy.mycuration.rss.UnreadCountManager;
 
 import java.util.ArrayList;
 
+import static com.phicdy.mycuration.ui.CurationWordListFragment.EDIT_CURATION_ID;
+
 public class CurationListFragment extends Fragment {
 
     private CurationListAdapter curationListAdapter;
@@ -37,10 +39,6 @@ public class CurationListFragment extends Fragment {
     private static final int DELETE_CURATION_MENU_ID = 2;
 
     private static final String LOG_TAG = "FilFeed.CurationList";
-
-    public static CurationListFragment newInstance() {
-        return new CurationListFragment();
-    }
 
     public CurationListFragment() {
     }
@@ -73,7 +71,7 @@ public class CurationListFragment extends Fragment {
             case EDIT_CURATION_MENU_ID:
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), AddCurationActivity.class);
-                intent.putExtra(AddCurationActivity.EDIT_CURATION_ID, allCurations.get(info.position).getId());
+                intent.putExtra(EDIT_CURATION_ID, allCurations.get(info.position).getId());
                 startActivity(intent);
                 return true;
             case DELETE_CURATION_MENU_ID:
@@ -112,12 +110,12 @@ public class CurationListFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnCurationListFragmentListener) activity;
+            mListener = (OnCurationListFragmentListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnCurationListFragmentListener");
         }
     }
@@ -155,13 +153,6 @@ public class CurationListFragment extends Fragment {
         curationListAdapter.notifyDataSetChanged();
     }
 
-    public void removeCurationAtPosition(int position) {
-        Curation deletedCuration = allCurations.get(position);
-        dbAdapter.deleteCuration(deletedCuration.getId());
-        allCurations.remove(position);
-        curationListAdapter.notifyDataSetChanged();
-    }
-
     public int getCurationIdAtPosition (int position) {
         if (position < 0) {
             return -1;
@@ -174,19 +165,20 @@ public class CurationListFragment extends Fragment {
     }
 
     public interface OnCurationListFragmentListener {
-        public void onCurationListClicked(int position);
+        void onCurationListClicked(int position);
     }
 
     /**
      *
      */
     class CurationListAdapter extends ArrayAdapter<Curation> {
-        public CurationListAdapter(ArrayList<Curation> curations, Context context) {
+        CurationListAdapter(ArrayList<Curation> curations, Context context) {
             super(context, R.layout.curation_list, curations);
         }
 
+        @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
 
             // Use contentView and setup ViewHolder
@@ -203,10 +195,10 @@ public class CurationListFragment extends Fragment {
             }
 
             Curation curation = this.getItem(position);
-
-            holder.curationName.setText(curation.getName());
-            holder.curationCount.setText(String.valueOf(unreadManager.getCurationCount(curation.getId())));
-
+            if (curation != null) {
+                holder.curationName.setText(curation.getName());
+                holder.curationCount.setText(String.valueOf(unreadManager.getCurationCount(curation.getId())));
+            }
             return row;
         }
 
