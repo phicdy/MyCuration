@@ -16,6 +16,7 @@
         android:id="@+id/et_curation_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:labelFor="@+id/et_curation_name"
         android:inputType="text" />
 
     <TextView

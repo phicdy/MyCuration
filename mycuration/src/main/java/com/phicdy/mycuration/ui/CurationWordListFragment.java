@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,13 +19,14 @@ import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.presenter.CurationWordListPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
-import com.phicdy.mycuration.util.TextUtil;
 import com.phicdy.mycuration.util.ToastHelper;
+import com.phicdy.mycuration.view.CurationWordListView;
 
 import java.util.ArrayList;
 
-public class CurationWordListFragment extends Fragment {
+public class CurationWordListFragment extends Fragment implements CurationWordListView {
 
     private ListView curationWordListView;
     private Button btnAdd;
@@ -38,16 +40,10 @@ public class CurationWordListFragment extends Fragment {
 
     private ArrayList<String> addedWords = new ArrayList<>();
 
-    private int editCurationid = NOT_EDIT_CURATION_ID;
 
+    private CurationWordListPresenter presenter;
     public static final String EDIT_CURATION_ID = "editCurationId";
-    public static final int NOT_EDIT_CURATION_ID = -1;
-    private static final String INSERT_ERROR_MESSAGE = "insertErrorMessage";
     private static final String LOG_TAG = "FilFeed.CurationWordList";
-
-    public static CurationWordListFragment newInstance() {
-        return new CurationWordListFragment();
-    }
 
     public CurationWordListFragment() {
     }
@@ -55,25 +51,16 @@ public class CurationWordListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        editCurationid = getActivity().getIntent().getIntExtra(EDIT_CURATION_ID, NOT_EDIT_CURATION_ID);
-        if (editCurationid != NOT_EDIT_CURATION_ID) {
-            getActivity().setTitle(getString(R.string.title_activity_edit_curation));
-        }
+        adapter = DatabaseAdapter.getInstance(getActivity());
+        presenter = new CurationWordListPresenter(adapter);
+        presenter.setView(this);
+        presenter.create();
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 boolean result = (boolean)msg.obj;
-                if (result) {
-                    ToastHelper.showToast(getActivity(), getString(R.string.curation_added_success), Toast.LENGTH_SHORT);
-                    progressDialog.dismiss();
-                    getActivity().finish();
-                }else {
-                    String errorMessage = msg.getData().getString(INSERT_ERROR_MESSAGE);
-                    ToastHelper.showToast(getActivity(), errorMessage, Toast.LENGTH_SHORT);
-                    ToastHelper.showToast(getActivity(), getString(R.string.curation_added_error), Toast.LENGTH_SHORT);
-                    progressDialog.dismiss();
-                }
-
+                String errorMessage = msg.getData().getString(CurationWordListPresenter.INSERT_ERROR_MESSAGE);
+                presenter.handleInsertResultMessage(result, errorMessage);
             }
         };
     }
@@ -81,14 +68,7 @@ public class CurationWordListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        initDataForEdit();
-        refreshList();
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
+        presenter.resume();
     }
 
     @Override
@@ -104,39 +84,25 @@ public class CurationWordListFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String word = etInput.getText().toString();
-                if (word == null || word.equals("")) {
-                    ToastHelper.showToast(getActivity(), getString(R.string.empty_word), Toast.LENGTH_SHORT);
-                    return;
-                }
-                add(word);
-                etInput.setText("");
+                presenter.onAddWordButtonClicked();
             }
         });
         etInput = (EditText) getActivity().findViewById(R.id.et_curation_word);
         etName = (EditText) getActivity().findViewById(R.id.et_curation_name);
         curationWordListView = (ListView) getActivity().findViewById(R.id.lv_curation_word);
-        adapter = DatabaseAdapter.getInstance(getActivity());
 
         refreshList();
-
-        // Set ListView
-        curationWordListAdapter = new CurationWordListAdapter(addedWords, getActivity());
-        curationWordListView.setAdapter(curationWordListAdapter);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     public void refreshList() {
         curationWordListAdapter = new CurationWordListAdapter(addedWords, getActivity());
         curationWordListView.setAdapter(curationWordListAdapter);
         curationWordListAdapter.notifyDataSetChanged();
     }
 
-    public void add(String word) {
+    @Override
+    public void addWord(String word) {
         if (addedWords.contains(word)) {
             Toast.makeText(getActivity(), getString(R.string.duplicate_word), Toast.LENGTH_SHORT).show();
             return;
@@ -145,7 +111,8 @@ public class CurationWordListFragment extends Fragment {
         curationWordListAdapter.notifyDataSetChanged();
     }
 
-    public ArrayList<String> getWordList() {
+    @Override
+    public ArrayList<String> wordList() {
         return addedWords;
     }
 
@@ -154,18 +121,135 @@ public class CurationWordListFragment extends Fragment {
         curationWordListAdapter.notifyDataSetChanged();
     }
 
+    @Override
     public void setWords(ArrayList<String> words) {
         addedWords = words;
         curationWordListAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public int editCurationId() {
+        return getActivity().getIntent().getIntExtra(EDIT_CURATION_ID, CurationWordListPresenter.NOT_EDIT_CURATION_ID);
+    }
+
+    @Override
+    public String inputWord() {
+        return etInput.getText().toString();
+    }
+
+    @Override
+    public String curationName() {
+        return etName.getText().toString();
+    }
+
+    @Override
+    public void setCurationName(String name) {
+        etName.setText(name);
+    }
+
+    @Override
+    public void resetInputWord() {
+        etInput.setText("");
+    }
+
+    @Override
+    public void setTitleForEdit() {
+        getActivity().setTitle(getString(R.string.title_activity_edit_curation));
+    }
+
+    @Override
+    public void handleEmptyCurationNameError() {
+        Message msg = Message.obtain();
+        Bundle bundle = new Bundle();
+        msg.obj = false;
+        bundle.putString(CurationWordListPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_curation_name));
+        msg.setData(bundle);
+        handler.sendMessage(msg);
+        GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_title));
+    }
+
+    @Override
+    public void handleEmptyWordError() {
+        Message msg = Message.obtain();
+        Bundle bundle = new Bundle();
+        msg.obj = false;
+        bundle.putString(CurationWordListPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_word_list));
+        msg.setData(bundle);
+        handler.sendMessage(msg);
+        GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_word));
+    }
+
+    @Override
+    public void handleSameNameCurationError() {
+        Message msg = Message.obtain();
+        Bundle bundle = new Bundle();
+        msg.obj = false;
+        bundle.putString(CurationWordListPresenter.INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name));
+        msg.setData(bundle);
+        handler.sendMessage(msg);
+        GATrackerHelper.sendEvent(getString(R.string.add_same_curation_name));
+    }
+
+    @Override
+    public void handleAddSuccess() {
+        Message msg = Message.obtain();
+        msg.obj = true;
+        handler.sendMessage(msg);
+        GATrackerHelper.sendEvent(getString(R.string.add_new_curation));
+    }
+
+    @Override
+    public void handleEditSuccess() {
+        Message msg = Message.obtain();
+        msg.obj = true;
+        handler.sendMessage(msg);
+        GATrackerHelper.sendEvent(getString(R.string.update_curation));
+    }
+
+    @Override
+    public void showSuccessToast() {
+        ToastHelper.showToast(getActivity(), getString(R.string.curation_added_success), Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void showErrorToast() {
+        ToastHelper.showToast(getActivity(), getString(R.string.curation_added_error), Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void showWordEmptyErrorToast() {
+        ToastHelper.showToast(getActivity(), getString(R.string.empty_word), Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void showToast(String text) {
+        ToastHelper.showToast(getActivity(), text, Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void showProgressDialog() {
+        progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_curation));
+        progressDialog.show(getActivity().getFragmentManager(), null);
+    }
+
+    @Override
+    public void dismissProgressDialog() {
+        progressDialog.dismiss();
+    }
+
+    @Override
+    public void finish() {
+        getActivity().finish();
+    }
+
     class CurationWordListAdapter extends ArrayAdapter<String> {
-        public CurationWordListAdapter(ArrayList<String> words, Context context) {
+        CurationWordListAdapter(ArrayList<String> words, Context context) {
             super(context, R.layout.curation_word_list, words);
         }
 
+        @NonNull
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
 
             // Use contentView and setup ViewHolder
@@ -199,64 +283,13 @@ public class CurationWordListFragment extends Fragment {
         }
     }
 
-    // Don't call this method in onCreate()
-    private void initDataForEdit() {
-        if (editCurationid != NOT_EDIT_CURATION_ID) {
-            etName.setText(adapter.getCurationNameById(editCurationid));
-            setWords(adapter.getCurationWords(editCurationid));
-        }
-    }
-
-    public void insertCurationIntoDb() {
+    public void onAddMenuClicked() {
+        showProgressDialog();
         new Thread() {
             @Override
             public void run() {
-                Message msg = Message.obtain();
-                Bundle bundle = new Bundle();
-                String curationName = etName.getText().toString();
-                if (TextUtil.isEmpty(curationName)) {
-                    msg.obj = false;
-                    bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.empty_curation_name));
-                    msg.setData(bundle);
-                    handler.sendMessage(msg);
-                    GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_title));
-                    return;
-                }
-                ArrayList<String> wordList = getWordList();
-                if (wordList == null || wordList.size() == 0) {
-                    msg.obj = false;
-                    bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.empty_word_list));
-                    msg.setData(bundle);
-                    handler.sendMessage(msg);
-                    GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_word));
-                    return;
-                }
-
-                boolean isNew = (editCurationid == NOT_EDIT_CURATION_ID);
-                if (isNew && adapter.isExistSameNameCuration(curationName)) {
-                    msg.obj = false;
-                    bundle.putString(INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name));
-                    msg.setData(bundle);
-                    handler.sendMessage(msg);
-                    GATrackerHelper.sendEvent(getString(R.string.add_same_curation_name));
-                    return;
-                }
-                boolean result;
-                if (isNew) {
-                    result = adapter.saveNewCuration(curationName, wordList);
-                    GATrackerHelper.sendEvent(getString(R.string.add_new_curation));
-                }else {
-                    result = adapter.updateCuration(editCurationid, curationName, wordList);
-                    GATrackerHelper.sendEvent(getString(R.string.update_curation));
-                }
-                if (result) {
-                    adapter.adaptCurationToArticles(curationName, wordList);
-                }
-                msg.obj = true;
-                handler.sendMessage(msg);
+                presenter.onAddMenuClicked();
             }
         }.start();
-        progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_curation));
-        progressDialog.show(getActivity().getFragmentManager(), null);
     }
 }

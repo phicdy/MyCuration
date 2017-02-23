@@ -34,7 +34,7 @@ public class AddCurationActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.add_curation:
-                wordListFragment.insertCurationIntoDb();
+                wordListFragment.onAddMenuClicked();
                 break;
             default:
                 break;
