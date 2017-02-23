@@ -223,7 +223,12 @@ public class FeedSearchActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (receiver != null) {
-            unregisterReceiver(receiver);
+            try {
+                unregisterReceiver(receiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            receiver = null;
         }
     }
 
