@@ -48,6 +48,7 @@ import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.util.TextUtil;
+import com.phicdy.mycuration.view.activity.TopActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

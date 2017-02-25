@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.view.fragment.ArticleSearchResultFragment;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 

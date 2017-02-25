@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.RegisterFilterPresenter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.ui.FilterListFragment;
 import com.phicdy.mycuration.view.RegisterFilterView;
 
 import java.util.ArrayList;

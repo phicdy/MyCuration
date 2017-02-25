@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,6 +21,7 @@ import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.CurationWordListPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.ui.MyProgressDialogFragment;
 import com.phicdy.mycuration.util.ToastHelper;
 import com.phicdy.mycuration.view.AddCurationView;
 

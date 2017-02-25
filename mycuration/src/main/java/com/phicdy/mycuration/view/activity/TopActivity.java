@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -24,6 +24,13 @@ import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.TopActivityPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.ui.ArticlesListActivity;
+import com.phicdy.mycuration.ui.CurationListFragment;
+import com.phicdy.mycuration.ui.FeedListFragment;
+import com.phicdy.mycuration.ui.FeedSearchActivity;
+import com.phicdy.mycuration.ui.FilterListFragment;
+import com.phicdy.mycuration.ui.LicenseActivity;
+import com.phicdy.mycuration.ui.SettingActivity;
 import com.phicdy.mycuration.view.TopActivityView;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;

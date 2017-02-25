@@ -20,10 +20,11 @@ import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Curation;
 import com.phicdy.mycuration.rss.UnreadCountManager;
+import com.phicdy.mycuration.view.activity.AddCurationActivity;
 
 import java.util.ArrayList;
 
-import static com.phicdy.mycuration.ui.AddCurationFragment.EDIT_CURATION_ID;
+import static com.phicdy.mycuration.view.fragment.AddCurationFragment.EDIT_CURATION_ID;
 
 public class CurationListFragment extends Fragment {
 

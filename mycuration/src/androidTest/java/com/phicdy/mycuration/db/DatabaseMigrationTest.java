@@ -6,16 +6,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.SparseArray;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.db.DatabaseHelper;
-import com.phicdy.mycuration.db.DatabaseMigrationTask;
 import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.filter.FilterFeedRegistration;
-import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.ui.TopActivity;
+import com.phicdy.mycuration.view.activity.TopActivity;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,9 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
-import java.util.Date;
 
-import static android.support.test.InstrumentationRegistry.getContext;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;

@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.presenter.SelectFilterTargetRssPresenter;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.view.fragment.SelectFilterTargetRssFragment;
 import com.phicdy.mycuration.view.SelectTargetRssView;
 
 import java.util.ArrayList;

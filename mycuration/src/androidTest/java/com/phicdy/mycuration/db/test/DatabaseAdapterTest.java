@@ -8,7 +8,7 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.ui.TopActivity;
+import com.phicdy.mycuration.view.activity.TopActivity;
 
 import org.junit.After;
 import org.junit.Before;

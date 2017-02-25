@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;

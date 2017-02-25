@@ -24,7 +24,7 @@
                 android:value="com.phicdy.mycuration.ui.ArticleSearchResultActivity" />
         </activity>
         <activity
-            android:name=".ui.ArticleSearchResultActivity"
+            android:name=".view.activity.ArticleSearchResultActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name">
             <meta-data
@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.RegisterFilterActivity"
+            android:name=".view.activity.RegisterFilterActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" />
         <activity
@@ -88,7 +88,7 @@
             android:name=".ui.LicenseActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".ui.TopActivity"
+            android:name=".view.activity.TopActivity"
             android:label="@string/app_name">
             <meta-data
                 android:name="android.app.default_searchable"
@@ -101,7 +101,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.AddCurationActivity"
+            android:name=".view.activity.AddCurationActivity"
             android:label="@string/title_activity_add_curation" />
 
         <receiver
@@ -128,7 +128,7 @@
                 android:resource="@xml/searchable_feed" />
         </activity>
         <activity
-            android:name=".ui.SelectFilterTargetRssActivity"
+            android:name=".view.activity.SelectFilterTargetRssActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

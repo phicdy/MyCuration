@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.view.activity.RegisterFilterActivity;
 
 import java.util.ArrayList;
 
