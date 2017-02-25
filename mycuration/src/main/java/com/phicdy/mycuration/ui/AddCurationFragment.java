@@ -22,11 +22,11 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.CurationWordListPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.ToastHelper;
-import com.phicdy.mycuration.view.CurationWordListView;
+import com.phicdy.mycuration.view.AddCurationView;
 
 import java.util.ArrayList;
 
-public class CurationWordListFragment extends Fragment implements CurationWordListView {
+public class AddCurationFragment extends Fragment implements AddCurationView {
 
     private ListView curationWordListView;
     private Button btnAdd;
@@ -45,7 +45,7 @@ public class CurationWordListFragment extends Fragment implements CurationWordLi
     public static final String EDIT_CURATION_ID = "editCurationId";
     private static final String LOG_TAG = "FilFeed.CurationWordList";
 
-    public CurationWordListFragment() {
+    public AddCurationFragment() {
     }
 
     @Override

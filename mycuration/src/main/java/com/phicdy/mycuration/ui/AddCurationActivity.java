@@ -13,7 +13,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class AddCurationActivity extends AppCompatActivity {
 
-    private CurationWordListFragment wordListFragment;
+    private AddCurationFragment wordListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class AddCurationActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        wordListFragment = (CurationWordListFragment)getSupportFragmentManager().findFragmentById(R.id.fr_curation_condition);
+        wordListFragment = (AddCurationFragment)getSupportFragmentManager().findFragmentById(R.id.fr_curation_condition);
     }
 
 }

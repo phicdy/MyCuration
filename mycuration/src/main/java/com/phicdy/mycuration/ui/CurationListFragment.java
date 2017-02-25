@@ -23,7 +23,7 @@ import com.phicdy.mycuration.rss.UnreadCountManager;
 
 import java.util.ArrayList;
 
-import static com.phicdy.mycuration.ui.CurationWordListFragment.EDIT_CURATION_ID;
+import static com.phicdy.mycuration.ui.AddCurationFragment.EDIT_CURATION_ID;
 
 public class CurationListFragment extends Fragment {
 

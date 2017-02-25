@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.presenter;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.view.CurationWordListView;
+import com.phicdy.mycuration.view.AddCurationView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-public class CurationWordListPresenterTest {
+public class AddCurationPresenterTest {
 
     private CurationWordListPresenter presenter;
     private DatabaseAdapter adapter;
@@ -32,7 +32,7 @@ public class CurationWordListPresenterTest {
     @Test
     public void DefaultTitleIsTitleForAdd() {
         // Go to onCreate() in add status
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         assertEquals(view.title, TITLE_FOR_ADD);
@@ -41,7 +41,7 @@ public class CurationWordListPresenterTest {
     @Test
     public void WhenEditTitleBecomesEdit() {
         // Go to onCreate() in edit status
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         view.setEditCurationId(TEST_EDIT_CURATION_ID);
         presenter.setView(view);
         presenter.create();
@@ -51,7 +51,7 @@ public class CurationWordListPresenterTest {
     @Test
     public void DefaultCurationNameIsEmpty() {
         // Go to onResume() in add status
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -61,7 +61,7 @@ public class CurationWordListPresenterTest {
     @Test
     public void WhenEditCurationNameBecomesStoredOne() {
         // Mock to return test curation
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         view.editCurationId = TEST_EDIT_CURATION_ID;
         Mockito.when(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME);
 
@@ -74,7 +74,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenInsertSucceedsToastShows() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -84,7 +84,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenInsertSucceedsProgressDialogDismisses() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -94,7 +94,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenInsertSucceedsViewFinishes() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -104,17 +104,17 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenInsertFailsErrorToastShows() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
         presenter.handleInsertResultMessage(false, "Insert Error");
-        assertEquals(view.errorToastMessage, MockView.ERROR_ADD);
+        assertEquals(view.errorToastMessage, MockViewAdd.ERROR_ADD);
     }
 
     @Test
     public void WhenInsertFailsProgressDialogDismisses() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -124,7 +124,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenInsertFailsViewStillShows() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -134,7 +134,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddWordButtonClickedWithEmptyErrorToastShows() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -144,7 +144,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddWordButtonClickedWordIsAdded() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -155,7 +155,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddWordButtonClickedTwiceWordAreAdded() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -168,7 +168,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddWordButtonClickedInputFieldBecomesEmpty() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -179,7 +179,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddButtonClickedWithEmptyNameErrorToastShows() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -189,7 +189,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddButtonClickedWithCurationNameAndNoWordsErrorToastShows() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -203,7 +203,7 @@ public class CurationWordListPresenterTest {
         // Mock test curation exists
         Mockito.when(adapter.isExistSameNameCuration(TEST_EDIT_CURATION_NAME)).thenReturn(true);
 
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -215,7 +215,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddButtonClickedAndSucceedsSuccessToastShows() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -229,7 +229,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddButtonClickedAndSucceedsProgressDialogDissmisses() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -243,7 +243,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenAddButtonClickedAndSucceedsViewFinishes() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
@@ -257,7 +257,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenEditSucceedsSuccessToastShows() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         view.editCurationId = TEST_EDIT_CURATION_ID;
         presenter.setView(view);
         presenter.create();
@@ -273,7 +273,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenEditSucceedsProgressDialogDissmisses() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         view.editCurationId = TEST_EDIT_CURATION_ID;
         presenter.setView(view);
         presenter.create();
@@ -289,7 +289,7 @@ public class CurationWordListPresenterTest {
 
     @Test
     public void WhenEditSucceedsViewFinishes() {
-        MockView view = new MockView();
+        MockViewAdd view = new MockViewAdd();
         view.editCurationId = TEST_EDIT_CURATION_ID;
         presenter.setView(view);
         presenter.create();
@@ -303,7 +303,7 @@ public class CurationWordListPresenterTest {
         assertTrue(view.isFinished);
     }
 
-    private class MockView implements CurationWordListView {
+    private class MockViewAdd implements AddCurationView {
 
         private String title = TITLE_FOR_ADD;
         private String curationName = "";

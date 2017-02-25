@@ -2,7 +2,7 @@ package com.phicdy.mycuration.view;
 
 import java.util.ArrayList;
 
-public interface CurationWordListView {
+public interface AddCurationView {
     int editCurationId();
     String inputWord();
     String curationName();

@@ -9,7 +9,7 @@
                 tools:context="com.phicdy.mycuration.ui.AddCurationActivity">
     <fragment
         android:id="@+id/fr_curation_condition"
-        android:name="com.phicdy.mycuration.ui.CurationWordListFragment"
+        android:name="com.phicdy.mycuration.ui.AddCurationFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="12dp" />

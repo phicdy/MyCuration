@@ -5,13 +5,13 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.util.TextUtil;
-import com.phicdy.mycuration.view.CurationWordListView;
+import com.phicdy.mycuration.view.AddCurationView;
 
 import java.util.ArrayList;
 
 public class CurationWordListPresenter implements Presenter {
 
-    private CurationWordListView view;
+    private AddCurationView view;
     private DatabaseAdapter adapter;
 
     private int editCurationid = NOT_EDIT_CURATION_ID;
@@ -43,7 +43,7 @@ public class CurationWordListPresenter implements Presenter {
     public void pause() {
     }
 
-    public void setView(CurationWordListView view) {
+    public void setView(AddCurationView view) {
         this.view = view;
     }
 
