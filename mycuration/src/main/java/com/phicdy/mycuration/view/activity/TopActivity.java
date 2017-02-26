@@ -29,7 +29,6 @@ import com.phicdy.mycuration.ui.CurationListFragment;
 import com.phicdy.mycuration.ui.FeedListFragment;
 import com.phicdy.mycuration.ui.FeedSearchActivity;
 import com.phicdy.mycuration.ui.FilterListFragment;
-import com.phicdy.mycuration.ui.LicenseActivity;
 import com.phicdy.mycuration.ui.SettingActivity;
 import com.phicdy.mycuration.view.TopActivityView;
 
@@ -230,11 +229,6 @@ public class TopActivity extends AppCompatActivity implements
     @Override
     public void goToSetting() {
         startActivity(new Intent(getApplicationContext(), SettingActivity.class));
-    }
-
-    @Override
-    public void goToLicense() {
-        startActivity(new Intent(getApplicationContext(), LicenseActivity.class));
     }
 
     @Override

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-
     <PreferenceCategory android:title="@string/auto_update_setting" >
         <ListPreference
             android:title="@string/interval"
@@ -31,6 +30,11 @@
             android:key="@string/key_swipe_direction"
             android:entries="@array/swipe_direction_items"
             android:entryValues="@array/swipe_direction_items_values"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/license" >
+        <Preference
+            android:title="@string/license_info"
+            android:key="@string/key_license" />
     </PreferenceCategory>
 
 </PreferenceScreen>

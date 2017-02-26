@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.ui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -114,6 +115,14 @@ public class SettingFragment extends PreferenceFragment {
                 break;
             }
         }
+        Preference prefLicense = findPreference(getString(R.string.key_license));
+        prefLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(getActivity(), LicenseActivity.class));
+                return true;
+            }
+        });
     }
 
     private void initListener() {

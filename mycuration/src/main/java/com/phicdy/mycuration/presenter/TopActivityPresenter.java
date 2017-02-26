@@ -76,10 +76,6 @@ public class TopActivityPresenter implements Presenter {
         view.goToSetting();
     }
 
-    private void licenseMenuClicked() {
-        view.goToLicense();
-    }
-
     public void optionItemClicked(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add:
@@ -87,9 +83,6 @@ public class TopActivityPresenter implements Presenter {
                 break;
             case R.id.setting:
                 settingMenuClicked();
-                break;
-            case R.id.license:
-                licenseMenuClicked();
                 break;
             default:
         }

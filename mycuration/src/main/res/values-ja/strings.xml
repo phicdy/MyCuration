@@ -98,6 +98,7 @@
     <string name="key_internal_browser">keyInternalBrowser</string>
     <string name="key_all_read_behavior">keyAllReadBehavior</string>
     <string name="key_swipe_direction">keySwipeDirection</string>
+    <string name="key_license">keyLicense</string>
     <string name="key_import_db">keyImportDb</string>
     <string name="key_export_db">keyExportDb</string>
 
@@ -106,6 +107,7 @@
     
     <string name="icon">アイコン</string>
     <string name="license">ライセンス</string>
+    <string name="license_info">ライセンス情報</string>
 
 
     <!-- 記事検索 -->

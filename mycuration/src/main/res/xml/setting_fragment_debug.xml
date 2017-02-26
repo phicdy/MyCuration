@@ -32,6 +32,11 @@
             android:entries="@array/swipe_direction_items"
             android:entryValues="@array/swipe_direction_items_values"/>
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/license" >
+        <Preference
+            android:title="@string/license_info"
+            android:key="@string/key_license" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/debug" >
         <Preference
