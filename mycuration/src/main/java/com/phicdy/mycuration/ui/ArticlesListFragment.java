@@ -80,7 +80,6 @@ public class ArticlesListFragment extends Fragment {
     private View footer;
     private FloatingActionButton fab;
 
-    private String gaTitle;
     private OnArticlesListFragmentListener listener;
     public interface OnArticlesListFragmentListener {
         boolean onListViewTouchEvent(MotionEvent event);
@@ -104,14 +103,7 @@ public class ArticlesListFragment extends Fragment {
         prefMgr = PreferenceHelper.getInstance(getActivity());
         swipeDirectionOption = prefMgr.getSwipeDirection();
 
-        // Set title
-        if (curationId != DEFAULT_CURATION_ID) {
-            // Curation
-            gaTitle = getString(R.string.curation);
-        }else if(feedId == Feed.ALL_FEED_ID) {
-            // All article
-            gaTitle = getString(R.string.all);
-        }else {
+        if (curationId == DEFAULT_CURATION_ID && feedId != Feed.ALL_FEED_ID) {
             // Select a feed
             prefMgr.setSearchFeedId(feedId);
             Feed selectedFeed = dbAdapter.getFeedById(feedId);
@@ -151,8 +143,6 @@ public class ArticlesListFragment extends Fragment {
         super.onResume();
         invisibleFooter();
         setBroadCastReceiver();
-
-        GATrackerHelper.sendScreen(gaTitle);
     }
 
     private BroadcastReceiver loadArticleReceiver;
