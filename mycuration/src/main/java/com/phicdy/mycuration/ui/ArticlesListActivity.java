@@ -168,6 +168,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
         super.onPause();
         if (loadArticleReceiver != null) {
             unregisterReceiver(loadArticleReceiver);
+            loadArticleReceiver = null;
         }
     }
 
