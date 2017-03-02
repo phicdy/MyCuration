@@ -1,10 +1,8 @@
 package com.phicdy.mycuration.ui;
 
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +28,6 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
 
     public static final String OPEN_URL_ID = "openUrl";
     private static final int DEFAULT_CURATION_ID = -1;
-    private static final String LOAD_ARTICLE = "loadArticle";
     private static final String LOG_TAG = "MyCuration.ArticlesList";
 
     private GestureDetector mGestureDetector;
@@ -117,8 +114,6 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             searchView.onActionViewCollapsed();
             searchView.setQuery("",false);
         }
-        setBroadCastReceiver();
-
         GATrackerHelper.sendScreen(gaTitle);
     }
     @Override
@@ -131,26 +126,6 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    private BroadcastReceiver loadArticleReceiver;
-
-    private void setBroadCastReceiver() {
-        // receive num of unread articles from Update Task
-        loadArticleReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(LOAD_ARTICLE)) {
-                    fragment.addArticlesToList();
-                    fragment.invalidateView();
-                }
-            }
-        };
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(LOAD_ARTICLE);
-        registerReceiver(loadArticleReceiver, filter);
-    }
-
     private void setAllListener() {
         // Handle swipe event
         SimpleOnGestureListener mOnGestureListener = new SimpleOnGestureListener() {
@@ -161,15 +136,6 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             }
         };
         mGestureDetector = new GestureDetector(this, mOnGestureListener);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (loadArticleReceiver != null) {
-            unregisterReceiver(loadArticleReceiver);
-            loadArticleReceiver = null;
-        }
     }
 
     @Override
