@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.widget.ShareActionProvider;
 
 import com.phicdy.mycuration.R;
+import com.phicdy.mycuration.view.activity.ArticlesListActivity;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 

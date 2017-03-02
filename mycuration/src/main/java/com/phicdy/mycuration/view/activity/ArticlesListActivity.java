@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -19,8 +19,8 @@ import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.view.fragment.ArticlesListFragment;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.view.activity.TopActivity;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 

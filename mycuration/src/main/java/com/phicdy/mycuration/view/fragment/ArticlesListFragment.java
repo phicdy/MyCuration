@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +36,7 @@ import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.ui.InternalWebViewActivity;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.util.TextUtil;
 import com.phicdy.mycuration.view.ArticleListView;
