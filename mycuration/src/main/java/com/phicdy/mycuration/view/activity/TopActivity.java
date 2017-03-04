@@ -24,7 +24,7 @@ import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.TopActivityPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
-import com.phicdy.mycuration.ui.CurationListFragment;
+import com.phicdy.mycuration.view.fragment.CurationListFragment;
 import com.phicdy.mycuration.ui.FeedListFragment;
 import com.phicdy.mycuration.ui.FeedSearchActivity;
 import com.phicdy.mycuration.ui.FilterListFragment;
