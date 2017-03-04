@@ -18,22 +18,24 @@ import android.widget.TextView;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.presenter.CurationListPresenter;
 import com.phicdy.mycuration.rss.Curation;
 import com.phicdy.mycuration.rss.UnreadCountManager;
+import com.phicdy.mycuration.view.CurationListView;
 import com.phicdy.mycuration.view.activity.AddCurationActivity;
 
 import java.util.ArrayList;
 
 import static com.phicdy.mycuration.view.fragment.AddCurationFragment.EDIT_CURATION_ID;
 
-public class CurationListFragment extends Fragment {
+public class CurationListFragment extends Fragment implements CurationListView {
 
+    private CurationListPresenter presenter;
     private CurationListAdapter curationListAdapter;
     private OnCurationListFragmentListener mListener;
     private ListView curationListView;
+    private TextView emptyView;
 
-    private ArrayList<Curation> allCurations = new ArrayList<>();
-    private DatabaseAdapter dbAdapter;
     private UnreadCountManager unreadManager;
 
     private static final int EDIT_CURATION_MENU_ID = 1;
@@ -47,14 +49,16 @@ public class CurationListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        presenter = new CurationListPresenter(dbAdapter);
+        presenter.setView(this);
         unreadManager = UnreadCountManager.getInstance(getActivity());
-        dbAdapter = DatabaseAdapter.getInstance(getActivity());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        refreshList();
+        presenter.resume();
     }
 
     @Override
@@ -70,38 +74,28 @@ public class CurationListFragment extends Fragment {
 
         switch (item.getItemId()) {
             case EDIT_CURATION_MENU_ID:
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), AddCurationActivity.class);
-                intent.putExtra(EDIT_CURATION_ID, allCurations.get(info.position).getId());
-                startActivity(intent);
+                Curation editCuration = curationListAdapter.getItem(info.position);
+                if (editCuration != null) {
+                    presenter.onCurationEditClicked(editCuration.getId());
+                }
                 return true;
             case DELETE_CURATION_MENU_ID:
-                dbAdapter.deleteCuration(allCurations.get(info.position).getId());
-                allCurations.remove(info.position);
-                curationListAdapter.notifyDataSetChanged();
+                Curation curation = curationListAdapter.getItem(info.position);
+                presenter.onCurationDeleteClicked(curation);
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
     private void setAllListener() {
-        // When an curation selected, display unread articles in the curation
-        curationListView
-                .setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        mListener.onCurationListClicked(position);
-                    }
-
-                });
+        curationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                mListener.onCurationListClicked(position);
+            }
+        });
     }
 
     @Override
@@ -125,19 +119,9 @@ public class CurationListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         curationListView = (ListView) getActivity().findViewById(R.id.lv_curation);
-        TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView_curation);
-        if (dbAdapter.getNumOfFeeds() == 0) {
-            emptyView.setText(R.string.no_rss_message);
-        }
-        curationListView.setEmptyView(emptyView);
-        getActivity().registerForContextMenu(curationListView);
+        emptyView = (TextView)getActivity().findViewById(R.id.emptyView_curation);
         setAllListener();
-
-        refreshList();
-
-        // Set ListView
-        curationListAdapter = new CurationListAdapter(allCurations, getActivity());
-        curationListView.setAdapter(curationListAdapter);
+        presenter.activityCreated();
     }
 
     @Override
@@ -146,32 +130,63 @@ public class CurationListFragment extends Fragment {
         mListener = null;
     }
 
-    public void refreshList() {
-        allCurations = dbAdapter.getAllCurations();
-        curationListAdapter = new CurationListAdapter(allCurations, getActivity());
-        curationListView.setAdapter(curationListAdapter);
+    public int getCurationIdAtPosition (int position) {
+        return presenter.getCurationIdAt(position);
+    }
+
+    @Override
+    public void startEditCurationActivity(int editCurationId) {
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), AddCurationActivity.class);
+        intent.putExtra(EDIT_CURATION_ID, editCurationId);
+        startActivity(intent);
+    }
+
+    @Override
+    public void setNoRssTextToEmptyView() {
+        emptyView.setText(R.string.no_rss_message);
+    }
+
+    @Override
+    public void setEmptyViewToList() {
+        curationListView.setEmptyView(emptyView);
+    }
+
+    @Override
+    public void registerContextMenu() {
         registerForContextMenu(curationListView);
+    }
+
+    @Override
+    public void initListBy(ArrayList<Curation> curations) {
+        curationListAdapter = new CurationListAdapter(curations, getActivity());
+        curationListView.setAdapter(curationListAdapter);
         curationListAdapter.notifyDataSetChanged();
     }
 
-    public int getCurationIdAtPosition (int position) {
-        if (position < 0) {
-            return -1;
-        }
+    @Override
+    public void delete(Curation curation) {
+        curationListAdapter.remove(curation);
+        curationListAdapter.notifyDataSetChanged();
+    }
 
-        if (allCurations == null || position > allCurations.size()-1) {
-            return -1;
-        }
-        return allCurations.get(position).getId();
+    @Override
+    public int size() {
+        if (curationListAdapter == null) return 0;
+        return curationListAdapter.getCount();
+    }
+
+    @Override
+    public Curation curationAt(int position) {
+        if (curationListAdapter == null || position > curationListAdapter.getCount())
+            return null;
+        return curationListAdapter.getItem(position);
     }
 
     public interface OnCurationListFragmentListener {
         void onCurationListClicked(int position);
     }
 
-    /**
-     *
-     */
     class CurationListAdapter extends ArrayAdapter<Curation> {
         CurationListAdapter(ArrayList<Curation> curations, Context context) {
             super(context, R.layout.curation_list, curations);
@@ -208,5 +223,4 @@ public class CurationListFragment extends Fragment {
             TextView curationCount;
         }
     }
-
 }
