@@ -15,7 +15,7 @@ import static junit.framework.Assert.assertTrue;
 
 public class AddCurationPresenterTest {
 
-    private CurationWordListPresenter presenter;
+    private AddCurationPresenter presenter;
     private DatabaseAdapter adapter;
 
     private static final String TITLE_FOR_ADD = "titleForAdd";
@@ -26,7 +26,7 @@ public class AddCurationPresenterTest {
     @Before
     public void setup() {
         adapter = Mockito.mock(DatabaseAdapter.class);
-        presenter = new CurationWordListPresenter(adapter);
+        presenter = new AddCurationPresenter(adapter);
     }
 
     @Test
@@ -316,7 +316,7 @@ public class AddCurationPresenterTest {
         private String word = "";
         private String errorToastMessage = "";
         private ArrayList<String> words = new ArrayList<>();
-        private int editCurationId = CurationWordListPresenter.NOT_EDIT_CURATION_ID;
+        private int editCurationId = AddCurationPresenter.NOT_EDIT_CURATION_ID;
         private boolean isSuccessToastShowed = false;
         private boolean isEmptyWordErrorToastShowed = false;
         private boolean isNoWordsAddedErrorToastShowed = false;

@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.presenter.CurationWordListPresenter;
+import com.phicdy.mycuration.presenter.AddCurationPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.ui.MyProgressDialogFragment;
 import com.phicdy.mycuration.util.ToastHelper;
@@ -42,7 +42,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
     private ArrayList<String> addedWords = new ArrayList<>();
 
 
-    private CurationWordListPresenter presenter;
+    private AddCurationPresenter presenter;
     public static final String EDIT_CURATION_ID = "editCurationId";
     private static final String LOG_TAG = "FilFeed.CurationWordList";
 
@@ -53,14 +53,14 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adapter = DatabaseAdapter.getInstance(getActivity());
-        presenter = new CurationWordListPresenter(adapter);
+        presenter = new AddCurationPresenter(adapter);
         presenter.setView(this);
         presenter.create();
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 boolean result = (boolean)msg.obj;
-                String errorMessage = msg.getData().getString(CurationWordListPresenter.INSERT_ERROR_MESSAGE);
+                String errorMessage = msg.getData().getString(AddCurationPresenter.INSERT_ERROR_MESSAGE);
                 presenter.handleInsertResultMessage(result, errorMessage);
             }
         };
@@ -130,7 +130,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
 
     @Override
     public int editCurationId() {
-        return getActivity().getIntent().getIntExtra(EDIT_CURATION_ID, CurationWordListPresenter.NOT_EDIT_CURATION_ID);
+        return getActivity().getIntent().getIntExtra(EDIT_CURATION_ID, AddCurationPresenter.NOT_EDIT_CURATION_ID);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         Message msg = Message.obtain();
         Bundle bundle = new Bundle();
         msg.obj = false;
-        bundle.putString(CurationWordListPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_curation_name));
+        bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_curation_name));
         msg.setData(bundle);
         handler.sendMessage(msg);
         GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_title));
@@ -174,7 +174,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         Message msg = Message.obtain();
         Bundle bundle = new Bundle();
         msg.obj = false;
-        bundle.putString(CurationWordListPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_word_list));
+        bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_word_list));
         msg.setData(bundle);
         handler.sendMessage(msg);
         GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_word));
@@ -185,7 +185,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         Message msg = Message.obtain();
         Bundle bundle = new Bundle();
         msg.obj = false;
-        bundle.putString(CurationWordListPresenter.INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name));
+        bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name));
         msg.setData(bundle);
         handler.sendMessage(msg);
         GATrackerHelper.sendEvent(getString(R.string.add_same_curation_name));

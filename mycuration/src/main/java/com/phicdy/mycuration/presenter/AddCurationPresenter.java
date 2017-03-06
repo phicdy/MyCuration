@@ -9,7 +9,7 @@ import com.phicdy.mycuration.view.AddCurationView;
 
 import java.util.ArrayList;
 
-public class CurationWordListPresenter implements Presenter {
+public class AddCurationPresenter implements Presenter {
 
     private AddCurationView view;
     private DatabaseAdapter adapter;
@@ -18,7 +18,7 @@ public class CurationWordListPresenter implements Presenter {
     public static final int NOT_EDIT_CURATION_ID = -1;
     public static final String INSERT_ERROR_MESSAGE = "insertErrorMessage";
 
-    public CurationWordListPresenter(@NonNull DatabaseAdapter adapter) {
+    public AddCurationPresenter(@NonNull DatabaseAdapter adapter) {
         this.adapter = adapter;
     }
 
@@ -81,7 +81,7 @@ public class CurationWordListPresenter implements Presenter {
             return;
         }
 
-        boolean isNew = (editCurationid == CurationWordListPresenter.NOT_EDIT_CURATION_ID);
+        boolean isNew = (editCurationid == AddCurationPresenter.NOT_EDIT_CURATION_ID);
         if (isNew && adapter.isExistSameNameCuration(curationName)) {
             view.handleSameNameCurationError();
             return;
