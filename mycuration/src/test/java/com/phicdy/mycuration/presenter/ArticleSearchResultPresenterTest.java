@@ -85,6 +85,30 @@ public class ArticleSearchResultPresenterTest {
         assertTrue(view.wasShareUiShowed);
     }
 
+    @Test
+    public void onCreateTest() {
+        // For coverage
+        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
+        ArticleSearchResultPresenter presenter = new ArticleSearchResultPresenter(true, false, adapter);
+        presenter.create();
+    }
+
+    @Test
+    public void onResumeTest() {
+        // For coverage
+        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
+        ArticleSearchResultPresenter presenter = new ArticleSearchResultPresenter(true, false, adapter);
+        presenter.resume();
+    }
+
+    @Test
+    public void onPauseTest() {
+        // For coverage
+        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
+        ArticleSearchResultPresenter presenter = new ArticleSearchResultPresenter(true, false, adapter);
+        presenter.pause();
+    }
+
     private class MockView implements ArticleSearchResultView {
 
         private ArrayList<Article> articles = new ArrayList<>();
