@@ -272,6 +272,12 @@ public class AddCurationPresenterTest {
     }
 
     @Test
+    public void testOnPause() {
+        // For coverage
+        presenter.pause();
+    }
+
+    @Test
     public void WhenEditSucceedsProgressDialogDissmisses() {
         MockViewAdd view = new MockViewAdd();
         view.editCurationId = TEST_EDIT_CURATION_ID;
