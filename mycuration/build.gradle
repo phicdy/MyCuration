@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.phicdy.mycuration"
         minSdkVersion 14
-        targetSdkVersion 22
+        targetSdkVersion 25
         versionName "1.3.3"
         versionCode 19
 
