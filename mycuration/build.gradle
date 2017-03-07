@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion '25.0.2'
 
     defaultConfig {
@@ -41,20 +41,20 @@ dependencies {
     compile project(':PullToReflresh')
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
-    uiTestCompile 'com.android.support:support-annotations:24.2.1'
+    uiTestCompile 'com.android.support:support-annotations:25.1.0'
     uiTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     uiTestCompile 'com.android.support.test:runner:0.5'
     uiTestCompile 'com.android.support.test:rules:0.5'
     uiTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     compile 'com.mcxiaoke.volley:library:1.0.19'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:support-v4:25.1.0'
     compile 'org.jsoup:jsoup:1.8.2'
     compile 'com.melnykov:floatingactionbutton:1.1.0'
     compile 'com.github.johnkil.android-progressfragment:progressfragment:1.4.0'
     compile 'com.google.android.gms:play-services-analytics:10.0.1'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
-    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:design:25.1.0'
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
     compile 'com.facebook.stetho:stetho:1.4.2'
 }
