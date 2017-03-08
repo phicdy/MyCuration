@@ -20,7 +20,6 @@ public class ArticleListPresenter implements Presenter {
     private ArticleListView view;
     private int feedId;
     private int curationId;
-    private String feedUrl;
     private DatabaseAdapter adapter;
     private UnreadCountManager unreadCountManager;
     private boolean isOpenInternal;
@@ -58,11 +57,6 @@ public class ArticleListPresenter implements Presenter {
 
     @Override
     public void create() {
-        if (curationId == DEFAULT_CURATION_ID && feedId != Feed.ALL_FEED_ID) {
-            // Select a feed
-            Feed selectedFeed = adapter.getFeedById(feedId);
-            feedUrl = selectedFeed.getUrl();
-        }
     }
 
     public void createView() {
@@ -109,7 +103,6 @@ public class ArticleListPresenter implements Presenter {
 
     @Override
     public void pause() {
-
     }
 
     public void onListItemClicked(Article article) {
@@ -247,6 +240,8 @@ public class ArticleListPresenter implements Presenter {
     public void onListPulled(@NonNull NetworkTaskManager networkTaskManager) {
         // Update Feeds
         ArrayList<Feed> feeds = new ArrayList<>();
+        Feed selectedFeed = adapter.getFeedById(feedId);
+        String feedUrl = selectedFeed.getUrl();
         feeds.add(new Feed(feedId, null, feedUrl, "", "", 0));
         networkTaskManager.updateAllFeeds(feeds);
     }
