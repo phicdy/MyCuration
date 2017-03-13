@@ -191,6 +191,7 @@ public class FeedListFragment extends Fragment {
         }
         if (receiver != null) {
             getActivity().unregisterReceiver(receiver);
+            receiver = null;
         }
     }
 
