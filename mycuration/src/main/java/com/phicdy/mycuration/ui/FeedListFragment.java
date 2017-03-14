@@ -31,15 +31,18 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.presenter.FeedListPresenter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.view.FeedListView;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public class FeedListFragment extends Fragment {
+public class FeedListFragment extends Fragment implements FeedListView {
 
+    private FeedListPresenter presenter;
     private TextView tvAllUnreadArticleCount;
     private LinearLayout allUnread;
     private PullToRefreshListView feedsListView;
@@ -47,17 +50,9 @@ public class FeedListFragment extends Fragment {
     private RssFeedListAdapter rssFeedListAdapter;
     private OnFeedListFragmentListener mListener;
 
-    private ArrayList<Feed> feeds = new ArrayList<>();
-    private ArrayList<Feed> allFeeds = new ArrayList<>();
     private DatabaseAdapter dbAdapter;
     private UnreadCountManager unreadManager;
     private BroadcastReceiver receiver;
-    private NetworkTaskManager networkTaskManager;
-
-    // Manage hide feed status
-    private boolean isHided = true;
-
-    private int numOfAllFeeds = 0;
 
     private static final int DELETE_FEED_MENU_ID = 1000;
     private static final int EDIT_FEED_TITLE_MENU_ID = 1001;
@@ -77,34 +72,26 @@ public class FeedListFragment extends Fragment {
 
         unreadManager = UnreadCountManager.getInstance(getActivity());
         dbAdapter = DatabaseAdapter.getInstance(getActivity());
-        networkTaskManager = NetworkTaskManager.getInstance(getActivity());
+        NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getActivity());
         setRetainInstance(true);
+        presenter = new FeedListPresenter(dbAdapter, networkTaskManager, unreadManager);
+        presenter.setView(this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (outState != null) {
-            outState.putParcelableArrayList(FEEDS_KEY, feeds);
-            outState.putParcelableArrayList(ALL_FEEDS_KEY, allFeeds);
+            outState.putParcelableArrayList(FEEDS_KEY, presenter.getFeeds());
+            outState.putParcelableArrayList(ALL_FEEDS_KEY, presenter.getAllFeeds());
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        allFeeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
-        // For show/hide
-        if (allFeeds.size() != 0) {
-            addShowHideLine(allFeeds);
-        }
-        generateHidedFeedList();
-        refreshList();
-        if (NetworkTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
-            feedsListView.setRefreshing(true);
-            updateProgress();
-        }
         setBroadCastReceiver();
+        presenter.resume();
     }
 
     @Override
@@ -121,74 +108,137 @@ public class FeedListFragment extends Fragment {
 
         switch (item.getItemId()) {
             case DELETE_FEED_MENU_ID:
-                showDeleteFeedAlertDialog(info.position-1);
+                presenter.onDeleteFeedMenuClicked(info.position-1);
                 return true;
             case EDIT_FEED_TITLE_MENU_ID:
-                showEditTitleDialog(info.position-1);
+                presenter.onEditFeedMenuClicked(info.position-1);
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
     }
 
-    private void showEditTitleDialog(final int position) {
+    @Override
+    public void showEditTitleDialog(final int position, @NonNull String feedTitle) {
         final View addView = View.inflate(getActivity(), R.layout.edit_feed_title, null);
         EditText editTitleView = (EditText) addView.findViewById(R.id.editFeedTitle);
-        editTitleView.setText(getFeedTitleAtPosition(position));
+        editTitleView.setText(feedTitle);
 
         new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.edit_rss_title)
-                .setView(addView)
-                .setPositiveButton(R.string.save,
-                        new DialogInterface.OnClickListener() {
+            .setTitle(R.string.edit_rss_title)
+            .setView(addView)
+            .setPositiveButton(R.string.save,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText editTitleView = (EditText) addView
+                                .findViewById(R.id.editFeedTitle);
+                        String newTitle = editTitleView.getText().toString();
+                        presenter.onEditFeedOkButtonClicked(newTitle, position);
+                    }
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                EditText editTitleView = (EditText) addView
-                                        .findViewById(R.id.editFeedTitle);
-                                String newTitle = editTitleView.getText().toString();
-                                if(newTitle.equals("")) {
-                                    Toast.makeText(getActivity(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show();
-                                }else {
-                                    int updatedFeedId = getFeedIdAtPosition(position);
-                                    int numOfUpdate = dbAdapter.saveNewTitle(updatedFeedId, newTitle);
-                                    if(numOfUpdate == 1) {
-                                        Toast.makeText(getActivity(), getString(R.string.edit_rss_title_success), Toast.LENGTH_SHORT).show();
-                                        updateFeedTitle(updatedFeedId, newTitle);
-                                    }else {
-                                        Toast.makeText(getActivity(), getString(R.string.edit_rss_title_error), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-
-                        }).setNegativeButton(R.string.cancel, null).show();
+                }).setNegativeButton(R.string.cancel, null).show();
     }
 
-    private void showDeleteFeedAlertDialog(final int position) {
+    @Override
+    public void setRefreshing(boolean doScroll) {
+        feedsListView.setRefreshing(true);
+    }
+
+    @Override
+    public void init(ArrayList<Feed> feeds) {
+        rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
+        feedsListView.setAdapter(rssFeedListAdapter);
+        rssFeedListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setTotalUnreadCount(int count) {
+        if (tvAllUnreadArticleCount != null) {
+            tvAllUnreadArticleCount.setText(String.valueOf(count));
+        }
+    }
+
+    @Override
+    public void setProgress(int completedCount, int total) {
+        if (feedsListView != null ){
+            feedsListView.getLoadingLayoutProxy()
+                    .setRefreshingLabel(getString(R.string.loading) + "(" + completedCount + "/" + total + ")");
+        }
+    }
+
+    @Override
+    public void onRefreshCompleted() {
+        feedsListView.onRefreshComplete();
+    }
+
+    @Override
+    public void showEditFeedTitleEmptyErrorToast() {
+        Toast.makeText(getActivity(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showEditFeedFailToast() {
+        Toast.makeText(getActivity(), getString(R.string.edit_rss_title_error), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showEditFeedSuccessToast() {
+        Toast.makeText(getActivity(), getString(R.string.edit_rss_title_success), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showDeleteSuccessToast() {
+        Toast.makeText(getActivity(), getString(R.string.finish_delete_rss_success), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showDeleteFailToast() {
+        Toast.makeText(getActivity(), getString(R.string.finish_delete_rss_fail), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showAddFeedSuccessToast() {
+        Toast.makeText(getActivity(), R.string.add_rss_success, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showGenericAddFeedErrorToast() {
+        Toast.makeText(getActivity(), R.string.add_rss_error_generic, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showInvalidUrlAddFeedErrorToast() {
+        Toast.makeText(getActivity(), R.string.add_rss_error_invalid_url, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        rssFeedListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void hideAllUnreadView() {
+        allUnread.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showDeleteFeedAlertDialog(final int position) {
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.delete_rss_alert)
                 .setPositiveButton(R.string.delete,
                         new DialogInterface.OnClickListener() {
-
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if(dbAdapter.deleteFeed(getFeedIdAtPosition(position))) {
-                                    removeFeedAtPosition(position);
-                                    Toast.makeText(getActivity(), getString(R.string.finish_delete_rss_success), Toast.LENGTH_SHORT).show();
-                                }else {
-                                    Toast.makeText(getActivity(), getString(R.string.finish_delete_rss_fail), Toast.LENGTH_SHORT).show();
-                                }
+                                presenter.onDeleteOkButtonClicked(position);
                             }
-
                         }).setNegativeButton(R.string.cancel, null).show();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (NetworkTaskManager.getInstance(getActivity()).isUpdatingFeed()) {
-            feedsListView.onRefreshComplete();
-        }
+        presenter.pause();
         if (receiver != null) {
             getActivity().unregisterReceiver(receiver);
             receiver = null;
@@ -197,31 +247,19 @@ public class FeedListFragment extends Fragment {
 
     private void setAllListener() {
         // When an feed selected, display unread articles in the feed
-        feedsListView
-                .setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        feedsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                presenter.onFeedListClicked(position-1, mListener);
+            }
 
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        int feedId = getFeedIdAtPosition(position-1);
-                        if (feedId == Feed.DEFAULT_FEED_ID) {
-                            changeHideStatus();
-                            return;
-                        }
-                        mListener.onListClicked(feedId);
-                    }
-
-                });
+        });
         feedsListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
 
             @Override
             public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-                if (allFeeds == null || allFeeds.isEmpty()) {
-                    onRefreshComplete();
-                    return;
-                }
-
-                NetworkTaskManager.getInstance(getActivity()).updateAllFeeds(allFeeds);
+                presenter.onRefresh();
             }
         });
         allUnread = (LinearLayout)getActivity().findViewById(R.id.ll_all_unread);
@@ -240,36 +278,15 @@ public class FeedListFragment extends Fragment {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                    // Set num of unread articles and update UI
-                    String action = intent.getAction();
-                    if (action.equals(FINISH_UPDATE_ACTION)) {
+                // Set num of unread articles and update UI
+                String action = intent.getAction();
+                if (action.equals(FINISH_UPDATE_ACTION)) {
                     Log.d(LOG_TAG, "onReceive");
-                    if (networkTaskManager.isUpdatingFeed()) {
-                        updateProgress();
-                    }else {
-                        onRefreshComplete();
-                        refreshList();
-                    }
+                    presenter.onFinishUpdate();
                 }else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
-                    Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
-                    if (intent.hasExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON) || newFeed == null) {
-                        int errorMessage = R.string.add_rss_error_generic;
-                        if (intent.getIntExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, -1)
-                                == NetworkTaskManager.ERROR_INVALID_URL) {
-                            errorMessage = R.string.add_rss_error_invalid_url;
-                        }
-                        Toast.makeText(getActivity(),
-                                errorMessage,
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(),
-                                R.string.add_rss_success,
-                                Toast.LENGTH_SHORT).show();
-                        addFeed(newFeed);
-                        unreadManager.addFeed(newFeed);
-                        networkTaskManager.updateFeed(newFeed);
-                        refreshList();
-                    }
+                    String feedUrl = intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL);
+                    int errorReason = intent.getIntExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, -1);
+                    presenter.onFinishAddFeed(feedUrl, errorReason);
                 }
             }
         };
@@ -303,203 +320,16 @@ public class FeedListFragment extends Fragment {
         feedsListView = (PullToRefreshListView) getActivity().findViewById(R.id.feedList);
         TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView);
         feedsListView.setEmptyView(emptyView);
+        tvAllUnreadArticleCount = (TextView)getActivity().findViewById(R.id.allUnreadCount);
         registerForContextMenu(feedsListView.getRefreshableView());
         setAllListener();
-
-        refreshList();
-        numOfAllFeeds = dbAdapter.getNumOfFeeds();
-
-        tvAllUnreadArticleCount = (TextView)getActivity().findViewById(R.id.allUnreadCount);
-        if (numOfAllFeeds == 0) {
-            allUnread.setVisibility(View.GONE);
-        }else {
-            updateAllUnreadArticlesCount();
-        }
-
-        // Set ListView
-        rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
-        feedsListView.setAdapter(rssFeedListAdapter);
+        presenter.activityCreated();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void refreshList() {
-        generateHidedFeedList();
-        if (isHided) {
-            rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
-        }else {
-            rssFeedListAdapter = new RssFeedListAdapter(allFeeds, getActivity());
-        }
-        feedsListView.setAdapter(rssFeedListAdapter);
-        rssFeedListAdapter.notifyDataSetChanged();
-        updateAllUnreadArticlesCount();
-    }
-
-    private void generateHidedFeedList() {
-        if (dbAdapter == null) {
-            dbAdapter = DatabaseAdapter.getInstance(getActivity());
-        }
-        if (allFeeds.isEmpty()) {
-            return;
-        }
-        feeds = (ArrayList<Feed>)allFeeds.clone();
-        ArrayList<Feed> hideList = new ArrayList<>();
-        for (Feed feed : allFeeds) {
-            int numOfUnreadArticles = unreadManager.getUnreadCount(feed.getId());
-            if (numOfUnreadArticles == 0) {
-                hideList.add(feed);
-            }
-        }
-        if((allFeeds.size()-1) != hideList.size() && hideList.size() != 0) {
-            for(Feed feed : hideList) {
-                feeds.remove(feed);
-            }
-        }
-    }
-
-    public void onRefreshComplete() {
-        feedsListView.onRefreshComplete();
-        updateProgress();
-    }
-
-    public void addFeed(Feed newFeed) {
-        deleteShowHideLineIfNeeded();
-        if (newFeed.getUnreadAriticlesCount() > 0) {
-            feeds.add(newFeed);
-            addShowHideLine(feeds);
-        }
-        allFeeds.add(newFeed);
-        addShowHideLine(allFeeds);
-        unreadManager.addFeed(newFeed);
-        rssFeedListAdapter.notifyDataSetChanged();
-    }
-
-    private void deleteShowHideLineIfNeeded() {
-        if (feeds != null && feeds.size() > 0) {
-            int lastIndex = feeds.size() - 1;
-            if (feeds.get(lastIndex).getId() == Feed.DEFAULT_FEED_ID) {
-                feeds.remove(lastIndex);
-            }
-        }
-        if (allFeeds != null && allFeeds.size() > 0) {
-            int lastIndex = allFeeds.size() - 1;
-            if (allFeeds.get(lastIndex).getId() == Feed.DEFAULT_FEED_ID) {
-                allFeeds.remove(lastIndex);
-            }
-        }
-    }
-
-    private void addShowHideLine(ArrayList<Feed> feeds) {
-        feeds.add(new Feed());
-    }
-
-    public void removeFeedAtPosition(int position) {
-        if (isHided) {
-            Feed deletedFeed = feeds.get(position);
-            dbAdapter.deleteFeed(deletedFeed.getId());
-            unreadManager.deleteFeed(deletedFeed.getId());
-            feeds.remove(position);
-            for (int i = 0;i < allFeeds.size();i++) {
-                if (allFeeds.get(i).getId() == deletedFeed.getId()) {
-                    allFeeds.remove(i);
-                }
-            }
-        }else {
-            Feed deletedFeed = allFeeds.get(position);
-            dbAdapter.deleteFeed(deletedFeed.getId());
-            unreadManager.deleteFeed(deletedFeed.getId());
-            allFeeds.remove(position);
-            for (int i = 0;i < feeds.size();i++) {
-                if (feeds.get(i).getId() == deletedFeed.getId()) {
-                    feeds.remove(i);
-                }
-            }
-        }
-        refreshList();
-    }
-
-    public void updateProgress() {
-        NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getActivity());
-        int updatedFeed = numOfAllFeeds - networkTaskManager.getFeedRequestCountInQueue();
-        if ((updatedFeed == numOfAllFeeds) && !networkTaskManager.isUpdatingFeed()) {
-            updatedFeed = 0;
-        }
-        if (feedsListView != null ){
-            feedsListView.getLoadingLayoutProxy()
-                    .setRefreshingLabel(getString(R.string.loading) + "(" + updatedFeed + "/" + numOfAllFeeds + ")");
-        }
-    }
-
-    public int getFeedIdAtPosition (int position) {
-        if (position < 0) {
-            return -1;
-        }
-
-        if (feeds == null && allFeeds == null) {
-            generateHidedFeedList();
-        }
-
-        if (isHided) {
-            if (feeds == null || position > feeds.size()-1) {
-                return -1;
-            }
-            return feeds.get(position).getId();
-        }else {
-            if (allFeeds == null || position > allFeeds.size()-1) {
-                return -1;
-            }
-        }
-        return allFeeds.get(position).getId();
-    }
-
-    public String getFeedTitleAtPosition (int position) {
-        if (position < 0 || feeds == null || position > feeds.size()-1) {
-            return null;
-        }
-        if (isHided) {
-            feeds.get(position).getTitle();
-        }
-        return allFeeds.get(position).getTitle();
-    }
-
-    public boolean changeHideStatus() {
-        if (isHided) {
-            isHided = false;
-            rssFeedListAdapter = new RssFeedListAdapter(allFeeds, getActivity());
-        }else {
-            isHided = true;
-            rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
-        }
-
-        // Set ListView
-        feedsListView.setAdapter(rssFeedListAdapter);
-        return isHided;
-    }
-
-    public void updateAllUnreadArticlesCount() {
-        if (tvAllUnreadArticleCount != null) {
-            tvAllUnreadArticleCount.setText(String.valueOf(unreadManager.getTotal()));
-        }
-    }
-
-    public void updateFeedTitle(int feedId, String newTitle) {
-        for (Feed feed : allFeeds) {
-            if (feed.getId() == feedId) {
-                feed.setTitle(newTitle);
-                break;
-            }
-        }
-        for (Feed feed : feeds) {
-            if (feed.getId() == feedId) {
-                feed.setTitle(newTitle);
-                break;
-            }
-        }
-        rssFeedListAdapter.notifyDataSetChanged();
     }
 
     public interface OnFeedListFragmentListener {
@@ -511,7 +341,7 @@ public class FeedListFragment extends Fragment {
      *
      * @author phicdy Display RSS Feeds List
      */
-    class RssFeedListAdapter extends ArrayAdapter<Feed> {
+    private class RssFeedListAdapter extends ArrayAdapter<Feed> {
         RssFeedListAdapter(ArrayList<Feed> feeds, Context context) {
             super(context, R.layout.feeds_list, feeds);
         }
@@ -542,11 +372,11 @@ public class FeedListFragment extends Fragment {
             }
             holder.feedIcon.setVisibility(View.VISIBLE);
             holder.feedCount.setVisibility(View.VISIBLE);
-            if (isHided && ((position+1) == feeds.size())) {
+            if (presenter.isAllRssShowView(position+1)) {
                 holder.feedIcon.setVisibility(View.INVISIBLE);
                 holder.feedCount.setVisibility(View.GONE);
                 holder.feedTitle.setText(R.string.show_all_rsses);
-            } else if (!isHided && ((position+1) == allFeeds.size())) {
+            } else if (presenter.isHideReadRssView(position+1)) {
                 holder.feedIcon.setVisibility(View.INVISIBLE);
                 holder.feedCount.setVisibility(View.GONE);
                 holder.feedTitle.setText(R.string.hide_rsses);
@@ -571,7 +401,7 @@ public class FeedListFragment extends Fragment {
                 holder.feedCount.setText(String.valueOf(unreadManager.getUnreadCount(feed.getId())));
             }
 
-            return (row);
+            return row;
         }
 
         private class ViewHolder {
