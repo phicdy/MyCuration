@@ -14,7 +14,7 @@ import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
-import com.phicdy.mycuration.ui.FeedListFragment;
+import com.phicdy.mycuration.view.fragment.FeedListFragment;
 import com.phicdy.mycuration.util.UrlUtil;
 
 import java.io.IOException;

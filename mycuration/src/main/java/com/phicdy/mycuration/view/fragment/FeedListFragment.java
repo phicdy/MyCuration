@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.fragment;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
