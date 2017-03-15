@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.ui;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -9,8 +10,10 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -25,11 +28,13 @@ import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.presenter.FeedSearchPresenter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.UrlUtil;
+import com.phicdy.mycuration.view.FeedSearchView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -38,16 +43,19 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
-public class FeedSearchActivity extends AppCompatActivity {
+public class FeedSearchActivity extends AppCompatActivity implements FeedSearchView {
 
+    private FeedSearchPresenter presenter;
     private SearchView searchView;
     private WebView webView;
     private FloatingActionButton fab;
+    private ProgressDialog dialog;
 
     private BroadcastReceiver receiver;
 
     private static final String SHOWCASE_ID = "searchRssTutorial";
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,28 +63,32 @@ public class FeedSearchActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Show back arrow icon
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        // Set title
-        getSupportActionBar().setTitle(R.string.add_rss);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            // Show back arrow icon
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setTitle(R.string.add_rss);
+        }
 
         // Enable JavaScript for Google Search
         webView = (WebView)findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
 
+        NetworkTaskManager manager = NetworkTaskManager.getInstance(this);
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
+        UnreadCountManager unreadCountManager = UnreadCountManager.getInstance(this);
+        presenter = new FeedSearchPresenter(manager, dbAdapter, unreadCountManager);
+        presenter.setView(this);
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String url = webView.getUrl();
-                if (TextUtils.isEmpty(url)) return;
-                Intent intent = new Intent(FeedSearchActivity.this, FeedUrlHookActivity.class);
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                startActivity(intent);
+                if (url == null) return;
+                presenter.onFabClicked(url);
             }
         });
 
@@ -158,78 +170,21 @@ public class FeedSearchActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     private void handleIntent(Intent intent) {
-
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(SearchManager.QUERY);
-            if (UrlUtil.isCorrectUrl(query)) {
-                final ProgressDialog dialog = new ProgressDialog(this);
-                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                dialog.setMessage(getString(R.string.adding_rss));
-                receiver = new BroadcastReceiver() {
-
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        String action = intent.getAction();
-                        if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
-                            DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
-                            Feed newFeed = dbAdapter.getFeedByUrl(intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL));
-                            if (intent.hasExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON) || newFeed == null) {
-                                int errorMessage = R.string.add_rss_error_generic;
-                                if (intent.getIntExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, -1)
-                                        == NetworkTaskManager.ERROR_INVALID_URL) {
-                                    errorMessage = R.string.add_rss_error_invalid_url;
-                                }
-                                Toast.makeText(getApplicationContext(),
-                                        errorMessage,
-                                        Toast.LENGTH_SHORT).show();
-                                GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error));
-                            } else {
-                                UnreadCountManager.getInstance(context).addFeed(newFeed);
-                                NetworkTaskManager.getInstance(context).updateFeed(newFeed);
-                                Toast.makeText(getApplicationContext(),
-                                        R.string.add_rss_success,
-                                        Toast.LENGTH_SHORT).show();
-                                GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url));
-                            }
-                            dialog.dismiss();
-                            unregisterReceiver(this);
-                            finish();
-                        }
-                    }
-                };
-                IntentFilter filter = new IntentFilter();
-                filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
-                registerReceiver(receiver, filter);
-                dialog.show();
-                NetworkTaskManager.getInstance(getApplicationContext()).addNewFeed(query);
-                return;
-            }
-            try {
-                String encodedQuery = URLEncoder.encode(query, "utf-8");
-                String url = "https://www.google.co.jp/search?q=" + encodedQuery;
-                webView.loadUrl(url);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            if (query == null) return;
+            presenter.handle(query);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (receiver != null) {
-            try {
-                unregisterReceiver(receiver);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-            receiver = null;
-        }
+        presenter.pause();
     }
 
     @Override
@@ -243,5 +198,93 @@ public class FeedSearchActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void startFeedUrlHookActivity(@NonNull String url) {
+        Intent intent = new Intent(FeedSearchActivity.this, FeedUrlHookActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
+    }
+
+    @Override
+    public void showProgressDialog() {
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage(getString(R.string.adding_rss));
+        dialog.show();
+    }
+
+    @Override
+    public void dismissProgressDialog() {
+        if (dialog != null) dialog.dismiss();
+    }
+
+    @Override
+    public void registerFinishReceiver() {
+        receiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
+                    String url = intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL);
+                    int reason = intent.getIntExtra(
+                            NetworkTaskManager.ADD_FEED_ERROR_REASON,
+                            NetworkTaskManager.REASON_NOT_FOUND);
+                    presenter.onFinishAddFeed(url, reason);
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
+        registerReceiver(receiver, filter);
+    }
+
+    @Override
+    public void unregisterFinishReceiver() {
+        if (receiver != null) {
+            try {
+                unregisterReceiver(receiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            receiver = null;
+        }
+    }
+
+    @Override
+    public void load(@NonNull String url) {
+        webView.loadUrl(url);
+    }
+
+    @Override
+    public void showInvalidUrlErrorToast() {
+        Toast.makeText(getApplicationContext(),
+                R.string.add_rss_error_invalid_url,
+                Toast.LENGTH_SHORT).show();
+        GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error));
+    }
+
+    @Override
+    public void showGenericErrorToast() {
+        Toast.makeText(getApplicationContext(),
+                R.string.add_rss_error_generic,
+                Toast.LENGTH_SHORT).show();
+        GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error));
+    }
+
+    @Override
+    public void showAddFeedSuccessToast() {
+        Toast.makeText(getApplicationContext(),
+                R.string.add_rss_success,
+                Toast.LENGTH_SHORT).show();
+        GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url));
+    }
+
+    @Override
+    public void finishView() {
+        finish();
     }
 }

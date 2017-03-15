@@ -43,6 +43,7 @@ public class NetworkTaskManager {
 	public static final int ERROR_INVALID_URL = 1;
 	public static final int ERROR_NON_RSS_HTML_CONTENT = 2;
 	public static final int ERROR_UNKNOWN = 3;
+	public static final int REASON_NOT_FOUND = -1;
 
 	private NetworkTaskManager(Context context) {
 		this.context = context;

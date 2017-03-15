@@ -12,12 +12,14 @@ import android.support.test.uiautomator.Until;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -29,6 +31,13 @@ public class AddFeedTest {
 
     @Before
     public void setup() {
+        Context context = InstrumentationRegistry.getTargetContext();
+        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
+        adapter.deleteAll();
+    }
+
+    @After
+    public void tearDown() {
         Context context = InstrumentationRegistry.getTargetContext();
         DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
         adapter.deleteAll();
@@ -78,5 +87,70 @@ public class AddFeedTest {
         // Feed count list does not include show/hide option row, the size is 1
         if (feedUnreadCountList.size() != 1) fail("Feed count was not added");
         assertThat(Integer.valueOf(feedUnreadCountList.get(0).getText()), greaterThan(0));
+    }
+
+    @Test
+    public void tryInvalidUrl() {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        // Launch MainActivity
+        Context context = InstrumentationRegistry.getContext();
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+
+        // Go to feed tab
+        List<UiObject2> tabs = device.wait(Until.findObjects(
+                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 5000);
+        if (tabs == null) fail("Tab was not found");
+        if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
+        tabs.get(1).click();
+
+        // Click plus button
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        if (plusButton == null) fail("Plus button was not found");
+        plusButton.click();
+
+        // Open invalid RSS URL
+        UiObject2 urlEditText = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000);
+        if (urlEditText == null) fail("URL edit text was not found");
+        urlEditText.setText("http://ghaorgja.co.jp/rss.xml");
+        device.pressEnter();
+
+        UiObject2 emptyView = device.findObject(By.res(BuildConfig.APPLICATION_ID, "emptyView"));
+        assertThat(emptyView.getText(), is("まずはRSSを登録しましょう！"));
+    }
+
+    @Test
+    public void clickFabWithoutUrlOpen() {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        // Launch MainActivity
+        Context context = InstrumentationRegistry.getContext();
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+
+        // Go to feed tab
+        List<UiObject2> tabs = device.wait(Until.findObjects(
+                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 5000);
+        if (tabs == null) fail("Tab was not found");
+        if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
+        tabs.get(1).click();
+
+        // Click plus button
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        if (plusButton == null) fail("Plus button was not found");
+        plusButton.click();
+
+        // Open invalid RSS URL
+        UiObject2 fab = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "fab")), 5000);
+        if (fab == null) fail("Fab was not found");
+        fab.click();
+
+        // Fab still exists
+        fab = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "fab")), 5000);
+        assertNotNull(fab);
     }
 }
