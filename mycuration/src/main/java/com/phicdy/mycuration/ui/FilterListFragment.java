@@ -1,8 +1,9 @@
 package com.phicdy.mycuration.ui;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -53,8 +54,8 @@ public class FilterListFragment extends Fragment {
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 	}
 
 	@Override
@@ -122,8 +123,8 @@ public class FilterListFragment extends Fragment {
 	 * @author phicdy
 	 * Display filters list
 	 */
-	class FiltersListAdapter extends ArrayAdapter<Filter> {
-		public FiltersListAdapter(ArrayList<Filter> filters) {
+    private class FiltersListAdapter extends ArrayAdapter<Filter> {
+		FiltersListAdapter(ArrayList<Filter> filters) {
 			/*
 			 * @param cotext
 			 * @param int : Resource ID
@@ -132,9 +133,10 @@ public class FilterListFragment extends Fragment {
 			super(getActivity(),R.layout.filters_list,filters);
 		}
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder = null;
+		@NonNull
+        @Override
+		public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+			ViewHolder holder;
 			
 			//Use contentView
 			View row = convertView;
@@ -170,15 +172,17 @@ public class FilterListFragment extends Fragment {
 				if (url == null || url.equals("")) {
 					url = getString(R.string.none);
 				}
-				holder.filterUrl.setText("URL: " + url);
+				holder.filterUrl.setText(getString(R.string.url, url));
 
 				final int p = position;
 				holder.filterEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						Filter clickedFilter = getItem(p);
-						clickedFilter.setEnabled(isChecked);
-						dbAdapter.updateFilterEnabled(clickedFilter.getId(), isChecked);
+                        if (clickedFilter != null) {
+                            clickedFilter.setEnabled(isChecked);
+                            dbAdapter.updateFilterEnabled(clickedFilter.getId(), isChecked);
+                        }
 					}
 				});
 				holder.filterEnabled.setChecked(filter.isEnabled());

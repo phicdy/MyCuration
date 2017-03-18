@@ -73,6 +73,7 @@
     <string name="done">done</string>
     <string name="title_select_filter_rss">Select RSS</string>
     <string name="filter_name">Filter title</string>
+    <string name="url">URL: %1$s</string>
 
     <!-- Settings -->
     <string name="setting">Settings</string>
