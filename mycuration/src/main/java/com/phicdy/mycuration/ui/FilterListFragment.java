@@ -22,13 +22,15 @@ import android.widget.TextView;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.presenter.FilterListPresenter;
+import com.phicdy.mycuration.view.FilterListView;
 import com.phicdy.mycuration.view.activity.RegisterFilterActivity;
 
 import java.util.ArrayList;
 
-public class FilterListFragment extends Fragment {
+public class FilterListFragment extends Fragment implements FilterListView {
 
-	private ArrayList<Filter> filters;
+	private FilterListPresenter presenter;
 	private DatabaseAdapter dbAdapter;
 	private FiltersListAdapter filtersListAdapter;
 	private ListView filtersListView;
@@ -43,8 +45,9 @@ public class FilterListFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        presenter = new FilterListPresenter(dbAdapter);
+        presenter.setView(this);
 	}
 
 	@Override
@@ -78,20 +81,17 @@ public class FilterListFragment extends Fragment {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-	   
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-	   
+        if (info.position > filtersListAdapter.getCount()-1) return false;
+        Filter selectedFilter = filtersListAdapter.getItem(info.position);
+        if (selectedFilter == null) return false;
 	    switch (item.getItemId()) {
 	    case DELETE_FILTER_MENU_ID:
 	    	//Delte selected filter from DB and ListView
-	        dbAdapter.deleteFilter(filters.get(info.position).getId());
-	        filters.remove(info.position);
-	        filtersListAdapter.notifyDataSetChanged();
+            presenter.onDeleteMenuClicked(info.position, selectedFilter);
 	        return true;
 		case EDIT_FILTER_MENU_ID:
-			Intent intent = new Intent(getActivity(), RegisterFilterActivity.class);
-			intent.putExtra(KEY_EDIT_FILTER_ID, filters.get(info.position).getId());
-			startActivity(intent);
+		    presenter.onEditMenuClicked(selectedFilter);
 			return true;
 	    default:
 	        return super.onContextItemSelected(item);
@@ -101,16 +101,15 @@ public class FilterListFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		filters = dbAdapter.getAllFilters();
-
-		initListView();
-		registerForContextMenu(filtersListView);
+        presenter.resume();
 	}
 
-	private void initListView() {
+	@Override
+	public void initList(@NonNull ArrayList<Filter> filters) {
 		//Set ListView
 		filtersListAdapter = new FiltersListAdapter(filters);
 		filtersListView.setAdapter(filtersListAdapter);
+        registerForContextMenu(filtersListView);
 	}
 	
 	@Override
@@ -118,7 +117,24 @@ public class FilterListFragment extends Fragment {
 		super.onPause();
 	}
 
-	/**
+    @Override
+    public void remove(int position) {
+        filtersListAdapter.remove(filtersListAdapter.getItem(position));
+    }
+
+    @Override
+    public void notifyListChanged() {
+        filtersListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void startEditActivity(int filterId) {
+        Intent intent = new Intent(getActivity(), RegisterFilterActivity.class);
+        intent.putExtra(KEY_EDIT_FILTER_ID, filterId);
+        startActivity(intent);
+    }
+
+    /**
 	 * 
 	 * @author phicdy
 	 * Display filters list
@@ -180,15 +196,12 @@ public class FilterListFragment extends Fragment {
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						Filter clickedFilter = getItem(p);
                         if (clickedFilter != null) {
-                            clickedFilter.setEnabled(isChecked);
-                            dbAdapter.updateFilterEnabled(clickedFilter.getId(), isChecked);
+                            presenter.onFilterCheckClicked(clickedFilter, isChecked);
                         }
-					}
+                    }
 				});
 				holder.filterEnabled.setChecked(filter.isEnabled());
-
 			}
-			
 			return row;
 		}
 		
