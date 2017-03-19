@@ -1,4 +1,4 @@
-package com.phicdy.mycuration;
+package com.phicdy.mycuration.uitest;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import org.junit.After;

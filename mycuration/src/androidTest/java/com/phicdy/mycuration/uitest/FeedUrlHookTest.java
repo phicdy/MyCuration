@@ -1,4 +1,4 @@
-package com.phicdy.mycuration;
+package com.phicdy.mycuration.uitest;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.support.test.uiautomator.Until;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import org.junit.After;

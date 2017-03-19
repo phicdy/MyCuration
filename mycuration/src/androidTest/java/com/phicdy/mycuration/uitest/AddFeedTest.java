@@ -1,4 +1,4 @@
-package com.phicdy.mycuration;
+package com.phicdy.mycuration.uitest;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
 
+import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import org.junit.After;
