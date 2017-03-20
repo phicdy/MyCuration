@@ -1,28 +1,24 @@
 package com.phicdy.mycuration.alarm;
 
-import java.util.Calendar;
-
-import com.phicdy.mycuration.util.PreferenceHelper;
-
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.Calendar;
+
 public class AlarmManagerTaskManager {
 
 	private static final int HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE_SECOND = 10;
 	private static final int HATENA_UPDATE_INTERVAL_SECOND = 60 * 60 * 3;
-	
-	private AlarmManagerTaskManager() {
-		
+    private final Context context;
+
+    public AlarmManagerTaskManager(Context context) {
+        this.context = context;
 	}
 	
-	public static void setNewAlarm(Context context) {
-		PreferenceHelper mgr = PreferenceHelper.getInstance(context);
-		int intervalSec = mgr.getAutoUpdateIntervalSecond();
+	public void setNewAlarm(int intervalSec) {
 		if (intervalSec == 0) {
 			cancelAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION);
 			return;
@@ -30,11 +26,11 @@ public class AlarmManagerTaskManager {
 		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_ACTION, intervalSec);
 	}
 	
-	public static void setNewHatenaUpdateAlarmAfterFeedUpdate(Context context) {
+	void setNewHatenaUpdateAlarmAfterFeedUpdate(Context context) {
 		setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_HATENA_ACTION, HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE_SECOND);
 	}
 
-	private static void setAlarm(Context context, String action, int intervalSec) {
+	private void setAlarm(Context context, String action, int intervalSec) {
 		Intent i = new Intent(context, AutoUpdateBroadcastReciever.class);
 		i.setAction(action);
 		
@@ -49,7 +45,7 @@ public class AlarmManagerTaskManager {
 		alm.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
 	}
 
-	private static void cancelAlarm(Context context, String action) {
+	private void cancelAlarm(Context context, String action) {
 		Intent i = new Intent(context, AutoUpdateBroadcastReciever.class);
 		i.setAction(action);
 

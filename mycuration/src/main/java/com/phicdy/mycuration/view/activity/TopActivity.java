@@ -24,6 +24,7 @@ import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.TopActivityPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
+import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.fragment.CurationListFragment;
 import com.phicdy.mycuration.view.fragment.FeedListFragment;
 import com.phicdy.mycuration.ui.FeedSearchActivity;
@@ -183,7 +184,10 @@ public class TopActivity extends AppCompatActivity implements
 
     private void setAlarmManager() {
         // Start auto update alarmmanager
-        AlarmManagerTaskManager.setNewAlarm(this);
+        AlarmManagerTaskManager manager = new AlarmManagerTaskManager(this);
+        PreferenceHelper helper = PreferenceHelper.getInstance(this);
+        int intervalSec = helper.getAutoUpdateIntervalSecond();
+        manager.setNewAlarm(intervalSec);
     }
 
     @Override

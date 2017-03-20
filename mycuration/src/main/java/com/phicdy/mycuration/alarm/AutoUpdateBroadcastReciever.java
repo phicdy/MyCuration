@@ -10,6 +10,7 @@ import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.task.GetHatenaBookmarkPointTask;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.NetworkUtil;
+import com.phicdy.mycuration.util.PreferenceHelper;
 
 import java.util.ArrayList;
 
@@ -30,10 +31,13 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 			NetworkTaskManager updateTask = NetworkTaskManager.getInstance(context);
 	
 			updateTask.updateAllFeeds(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles());
-			AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
-			
+			AlarmManagerTaskManager manager = new AlarmManagerTaskManager(context);
+			manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
+
 			// Save new time
-			AlarmManagerTaskManager.setNewAlarm(context);
+			PreferenceHelper helper = PreferenceHelper.getInstance(context);
+			int intervalSec = helper.getAutoUpdateIntervalSecond();
+			manager.setNewAlarm(intervalSec);
 		}else if(intent.getAction().equals(AUTO_UPDATE_HATENA_ACTION)) {
 			// Update Hatena point
 			ArrayList<Feed> feeds = dbAdapter.getAllFeedsWithNumOfUnreadArticles();
@@ -42,7 +46,8 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 			}
 			// Update has higher priority
 			if (NetworkTaskManager.getInstance(context).isUpdatingFeed()) {
-				AlarmManagerTaskManager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
+				AlarmManagerTaskManager manager = new AlarmManagerTaskManager(context);
+				manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 				return;
 			}
 			boolean isWifiConnected = NetworkUtil.isWifiConnected(context);
