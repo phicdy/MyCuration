@@ -7,25 +7,29 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.presenter.SettingPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.util.ToastHelper;
+import com.phicdy.mycuration.view.SettingView;
 
-public class SettingFragment extends PreferenceFragment {
+public class SettingFragment extends PreferenceFragment implements SettingView {
+    private SettingPresenter presenter;
 
     private ListPreference prefUpdateInterval;
     private ListPreference prefAllReadBehavior;
     private ListPreference prefSwipeDirection;
     private SwitchPreference prefArticleSort;
     private SwitchPreference prefInternalBrowser;
+    private Preference prefLicense;
 
-    private PreferenceHelper helper;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     public SettingFragment() {
@@ -40,14 +44,25 @@ public class SettingFragment extends PreferenceFragment {
         } else {
             addPreferencesFromResource(R.xml.setting_fragment);
         }
+        PreferenceHelper helper = PreferenceHelper.getInstance(getActivity());
+        String updateIntervalHourItems[] = getResources().getStringArray(R.array.update_interval_items_values);
+        String updateIntervalStringItems[] = getResources().getStringArray(R.array.update_interval_items);
+        String allReadBehaviorItems[] = getResources().getStringArray(R.array.all_read_behavior_values);
+        String allReadBehaviorStringItems[] = getResources().getStringArray(R.array.all_read_behavior);
+        String swipeDirectionItems[] = getResources().getStringArray(R.array.swipe_direction_items_values);
+        String swipeDirectionStringItems[] = getResources().getStringArray(R.array.swipe_direction_items);
+        presenter = new SettingPresenter(helper, updateIntervalHourItems,
+                updateIntervalStringItems, allReadBehaviorItems, allReadBehaviorStringItems,
+                swipeDirectionItems, swipeDirectionStringItems);
+        presenter.setView(this);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        helper = PreferenceHelper.getInstance(getActivity());
         initView();
         initListener();
+        presenter.activityCreate();
     }
 
     @Override
@@ -63,66 +78,12 @@ public class SettingFragment extends PreferenceFragment {
     }
 
     private void initView() {
-        // Set defalut value of update interval
-        prefUpdateInterval = (ListPreference)findPreference(getString(R.string.key_update_interval));
-        // Calc interval hour from saved interval second
-        int autoUpdateIntervalSecond = helper.getAutoUpdateIntervalSecond();
-        int autoUpdateIntervalHour = autoUpdateIntervalSecond / (60 * 60);
-        String updateIntervalHourItems[] = getResources().getStringArray(R.array.update_interval_items_values);
-        // Set index of saved interval
-        for (int i = 0; i < updateIntervalHourItems.length; i++) {
-            if (Integer.valueOf(updateIntervalHourItems[i]) == autoUpdateIntervalHour) {
-                prefUpdateInterval.setValueIndex(i);
-                // Set summary of saved interval
-                String updateIntervalStringItems[] = getResources().getStringArray(R.array.update_interval_items);
-                prefUpdateInterval.setSummary(updateIntervalStringItems[i]);
-                break;
-            }
-        }
-
-        // Set default value of article sort option
+        prefUpdateInterval = (ListPreference) findPreference(getString(R.string.key_update_interval));
         prefArticleSort = (SwitchPreference)findPreference(getString(R.string.key_article_sort));
-        prefArticleSort.setChecked(helper.getSortNewArticleTop());
-
-        // Set default value of internal browser option
         prefInternalBrowser = (SwitchPreference)findPreference(getString(R.string.key_internal_browser));
-        prefInternalBrowser.setChecked(helper.isOpenInternal());
-
         prefAllReadBehavior = (ListPreference)findPreference(getString(R.string.key_all_read_behavior));
-        String allReadBehaviorItems[] = getResources().getStringArray(R.array.all_read_behavior_values);
-        // Set index of behavior of all read
-        for (int i = 0; i < allReadBehaviorItems.length; i++) {
-            boolean allBehaviorItemBool = (Integer.valueOf(allReadBehaviorItems[i]) == 1);
-            boolean savedValue = helper.getAllReadBack();
-            if (allBehaviorItemBool == savedValue) {
-                prefAllReadBehavior.setValueIndex(i);
-                // Set summary of behavior of all read
-                String allReadBehaviorStringItems[] = getResources().getStringArray(R.array.all_read_behavior);
-                prefAllReadBehavior.setSummary(allReadBehaviorStringItems[i]);
-                break;
-            }
-        }
-
         prefSwipeDirection = (ListPreference)findPreference(getString(R.string.key_swipe_direction));
-        String swipeDirectionItems[] = getResources().getStringArray(R.array.swipe_direction_items_values);
-        // Set index of swipe direction
-        for (int i = 0; i < swipeDirectionItems.length; i++) {
-            if (Integer.valueOf(swipeDirectionItems[i]) == helper.getSwipeDirection()) {
-                prefSwipeDirection.setValueIndex(i);
-                // Set summary of swipe direction
-                String swipeDirectionStringItems[] = getResources().getStringArray(R.array.swipe_direction_items);
-                prefSwipeDirection.setSummary(swipeDirectionStringItems[i]);
-                break;
-            }
-        }
-        Preference prefLicense = findPreference(getString(R.string.key_license));
-        prefLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), LicenseActivity.class));
-                return true;
-            }
-        });
+        prefLicense = findPreference(getString(R.string.key_license));
     }
 
     private void initListener() {
@@ -130,18 +91,35 @@ public class SettingFragment extends PreferenceFragment {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (key.equals(getString(R.string.key_update_interval))) {
-                    updateUpdateInterval();
+                    int intervalHour = Integer.valueOf(prefUpdateInterval.getValue());
+                    AlarmManagerTaskManager manager = new AlarmManagerTaskManager(getActivity());
+                    presenter.updateUpdateInterval(intervalHour, manager);
+                    // GA
+                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_interval), intervalHour);
                 } else if (key.equals(getString(R.string.key_all_read_behavior))) {
-                    updateAllReadBehavior();
+                    boolean isAllReadBack = (Integer.valueOf(prefAllReadBehavior.getValue()) == 1);
+                    presenter.updateAllReadBehavior(isAllReadBack);
+                    // GA
+                    GATrackerHelper.sendEvent(getString(R.string.change_all_read_behavior), isAllReadBack ? 1 : 0);
                 } else if (key.equals(getString(R.string.key_swipe_direction))) {
-                    updateSwipeDirection();
+                    int swipeDirection = Integer.valueOf(prefSwipeDirection.getValue());
+                    presenter.updateSwipeDirection(swipeDirection);
+                    // GA
+                    GATrackerHelper.sendEvent(getString(R.string.change_swipe_direction), swipeDirection);
                 } else if (key.equals(getString(R.string.key_article_sort))) {
-                    updateArticleSort();
+                    boolean isNewArticleTop = prefArticleSort.isChecked();
+                    presenter.updateArticleSort(isNewArticleTop);
+                    // GA
+                    GATrackerHelper.sendEvent(getString(R.string.change_aricle_sort), prefArticleSort.isChecked() ? 1 : 0);
                 } else if (key.equals(getString(R.string.key_internal_browser))) {
-                    updateInternalBrowser();
+                    boolean isInternal = prefInternalBrowser.isChecked();
+                    presenter.updateInternalBrowser(isInternal);
+                    // GA
+                    GATrackerHelper.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
                 }
             }
         };
+
         if (BuildConfig.DEBUG) {
             Preference prefImport = findPreference(getString(R.string.key_import_db));
             prefImport.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -162,80 +140,46 @@ public class SettingFragment extends PreferenceFragment {
                 }
             });
         }
-    }
 
-    public void updateUpdateInterval() {
-        // Save new interval second
-        int intervalHour = Integer.valueOf(prefUpdateInterval.getValue());
-        int intervalSecond = intervalHour * 60 * 60;
-        helper.setAutoUpdateIntervalSecond(intervalSecond);
-        String updateIntervalHourItems[] = getResources().getStringArray(R.array.update_interval_items_values);
-
-        // Refresh summary
-        for (int i = 0; i < updateIntervalHourItems.length; i++) {
-            if (Integer.valueOf(updateIntervalHourItems[i]) == intervalHour) {
-                String updateIntervalStringItems[] = getResources().getStringArray(R.array.update_interval_items);
-                prefUpdateInterval.setSummary(updateIntervalStringItems[i]);
-                break;
+        prefLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                presenter.onLicenseClicked();
+                return true;
             }
-        }
-
-        // Set new alarm
-        AlarmManagerTaskManager.setNewAlarm(getActivity());
-
-        // GA
-        GATrackerHelper.sendEvent(getString(R.string.change_auto_update_interval), intervalHour);
+        });
     }
 
-    public void updateAllReadBehavior() {
-        // Save new behavior of all read
-        boolean isAllReadBack = (Integer.valueOf(prefAllReadBehavior.getValue()) == 1);
-        helper.setAllReadBack(isAllReadBack);
-        String allReadBehaviorItems[] = getResources().getStringArray(R.array.all_read_behavior_values);
-
-        // Refresh summary
-        for (int i = 0; i < allReadBehaviorItems.length; i++) {
-            boolean allBehaviorItemBool = (Integer.valueOf(allReadBehaviorItems[i]) == 1);
-            if (allBehaviorItemBool == isAllReadBack) {
-                String allReadBehaviorStringItems[] = getResources().getStringArray(R.array.all_read_behavior);
-                prefAllReadBehavior.setSummary(allReadBehaviorStringItems[i]);
-                break;
-            }
-        }
-
-        // GA
-        GATrackerHelper.sendEvent(getString(R.string.change_all_read_behavior), isAllReadBack ? 1 : 0);
+    @Override
+    public void setUpdateInterval(int index, @NonNull String summary) {
+        prefUpdateInterval.setValueIndex(index);
+        prefUpdateInterval.setSummary(summary);
     }
 
-    public void updateSwipeDirection() {
-        // Save new swipe direction
-        int swipeDirection = Integer.valueOf(prefSwipeDirection.getValue());
-        helper.setSwipeDirection(swipeDirection);
-        String swipeDirectionItems[] = getResources().getStringArray(R.array.swipe_direction_items_values);
-
-        // Refresh summary
-        for (int i = 0; i < swipeDirectionItems.length; i++) {
-            if (Integer.valueOf(swipeDirectionItems[i]) == swipeDirection) {
-                String swipeDirectionStringItems[] = getResources().getStringArray(R.array.swipe_direction_items);
-                prefSwipeDirection.setSummary(swipeDirectionStringItems[i]);
-                break;
-            }
-        }
-        // GA
-        GATrackerHelper.sendEvent(getString(R.string.change_swipe_direction), swipeDirection);
+    @Override
+    public void setArticleSort(boolean isNewArticleTop) {
+        prefArticleSort.setChecked(isNewArticleTop);
     }
 
-    public void updateArticleSort() {
-        helper.setSortNewArticleTop(prefArticleSort.isChecked());
-        // GA
-        GATrackerHelper.sendEvent(getString(R.string.change_aricle_sort), prefArticleSort.isChecked() ? 1 : 0);
-
+    @Override
+    public void setInternalBrowser(boolean isEnabled) {
+        prefInternalBrowser.setChecked(isEnabled);
     }
 
-    public void updateInternalBrowser() {
-        helper.setOpenInternal(prefInternalBrowser.isChecked());
-        // GA
-        GATrackerHelper.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
+    @Override
+    public void setAllReadBehavior(int index, @NonNull String summary) {
+        prefAllReadBehavior.setValueIndex(index);
+        prefAllReadBehavior.setSummary(summary);
     }
 
+    @Override
+    public void setSwipeDirection(int index, @NonNull String summary) {
+        prefSwipeDirection.setValueIndex(index);
+        prefSwipeDirection.setSummary(summary);
+    }
+
+    @Override
+    public void startLicenseActivity() {
+        startActivity(new Intent(getActivity(), LicenseActivity.class));
+    }
 }
