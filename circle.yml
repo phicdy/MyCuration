@@ -9,10 +9,14 @@ dependencies:
     - echo y | android update sdk --no-ui --all --filter "tools"
     - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.2"
     - echo y | android update sdk --no-ui --all --filter "android-25,android-23,android-16"
+    - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
 test:
   override:
-    - echo $GOOGLE_SERVICE | base64 --decode > ~/$CIRCLE_PROJECT_REPONAME/mycuration/google-services.json
     - ./gradlew assembleDebug
+    - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/outputs/apk/* $CIRCLE_ARTIFACTS
+      # unit test
+    - ./gradlew testUiTestDebugUnitTest 
+    - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/test-results/testUiTestDebugUnitTest/* $CIRCLE_TEST_REPORTS
       # start the emulator
     - emulator -avd circleci-android24 -no-window:
         background: true
@@ -20,10 +24,9 @@ test:
       # wait for it to have booted
     - circle-android wait-for-boot
       # run tests  against the emulator.
-    - ./gradlew connectedAndroidTest
+    - ./gradlew connectedUiTestDebugAndroidTest 
 deployment:
   master:
     branch: master
     commands:
-      - echo $GOOGLE_SERVICE | base64 --decode > ~/$CIRCLE_PROJECT_REPONAME/mycuration/google-services.json
       - ./gradlew assembleRelease
