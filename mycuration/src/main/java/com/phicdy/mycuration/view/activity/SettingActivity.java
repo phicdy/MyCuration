@@ -1,8 +1,10 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.activity;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import com.phicdy.mycuration.view.fragment.SettingFragment;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 

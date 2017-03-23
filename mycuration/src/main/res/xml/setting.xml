@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header
-        android:fragment="com.phicdy.mycuration.ui.SettingFragment"
+        android:fragment="com.phicdy.mycuration.view.fragment.SettingFragment"
         android:title="Pref Title Test"
         android:summary="Summary test"/>
 </preference-headers>

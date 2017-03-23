@@ -27,9 +27,7 @@ import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.fragment.CurationListFragment;
 import com.phicdy.mycuration.view.fragment.FeedListFragment;
-import com.phicdy.mycuration.ui.FeedSearchActivity;
-import com.phicdy.mycuration.ui.FilterListFragment;
-import com.phicdy.mycuration.ui.SettingActivity;
+import com.phicdy.mycuration.view.fragment.FilterListFragment;
 import com.phicdy.mycuration.view.TopActivityView;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;

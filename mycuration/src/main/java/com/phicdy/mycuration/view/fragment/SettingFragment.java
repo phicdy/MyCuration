@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.fragment;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +19,7 @@ import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.util.ToastHelper;
 import com.phicdy.mycuration.view.SettingView;
+import com.phicdy.mycuration.view.activity.LicenseActivity;
 
 public class SettingFragment extends PreferenceFragment implements SettingView {
     private SettingPresenter presenter;

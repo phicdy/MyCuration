@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.ui;
+package com.phicdy.mycuration.view.activity;
 
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
