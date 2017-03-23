@@ -5,11 +5,13 @@ machine:
     ANDROID_HOME: /usr/local/android-sdk-linux
 dependencies:
   override:
+    - echo $GOOGLE_SERVICE | base64 --decode > ~/$CIRCLE_PROJECT_REPONAME/mycuration/google-services.json
     - echo y | android update sdk --no-ui --all --filter "tools"
     - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.2"
     - echo y | android update sdk --no-ui --all --filter "android-25,android-23,android-16"
 test:
   override:
+    - echo $GOOGLE_SERVICE | base64 --decode > ~/$CIRCLE_PROJECT_REPONAME/mycuration/google-services.json
     - ./gradlew assembleDebug
       # start the emulator
     - emulator -avd circleci-android24 -no-window:
@@ -23,4 +25,5 @@ deployment:
   master:
     branch: master
     commands:
+      - echo $GOOGLE_SERVICE | base64 --decode > ~/$CIRCLE_PROJECT_REPONAME/mycuration/google-services.json
       - ./gradlew assembleRelease
