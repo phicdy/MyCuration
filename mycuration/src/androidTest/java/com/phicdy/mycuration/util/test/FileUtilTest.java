@@ -1,36 +1,39 @@
 package com.phicdy.mycuration.util.test;
 
-import android.test.AndroidTestCase;
+import android.content.Context;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.phicdy.mycuration.util.FileUtil;
 
-public class FileUtilTest extends AndroidTestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-	public FileUtilTest() {
-		super();
+import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static junit.framework.Assert.assertEquals;
+
+@RunWith(AndroidJUnit4.class)
+public class FileUtilTest {
+
+    @Before
+	public void setUp() {
 	}
 
-	protected void setUp() throws Exception {
-		super.setUp();
+	@After
+	public void tearDown() {
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-	public void testAppPath() {
-		assertEquals("/data/data/com.phicdy.mycuration/",
-				FileUtil.getAppPath(getContext()));
-	}
-
+	@Test
 	public void testGetIconSavePath() {
-		assertEquals("/data/data/com.phicdy.mycuration/icons/",
-				FileUtil.iconSaveFolder(getContext()));
+		assertEquals(FileUtil.getAppPath(getTargetContext()) + "icons/",
+				FileUtil.iconSaveFolder(getTargetContext()));
 	}
 
+	@Test
 	public void testGenerateIconFileName() {
 		assertEquals(
-				"/data/data/com.phicdy.mycuration/icons/gigazine.net.png",
-				FileUtil.generateIconFilePath(getContext(), "http://gigazine.net/"));
+				FileUtil.getAppPath(getTargetContext()) + "icons/gigazine.net.png",
+				FileUtil.generateIconFilePath(getTargetContext(), "http://gigazine.net/"));
 	}
 }

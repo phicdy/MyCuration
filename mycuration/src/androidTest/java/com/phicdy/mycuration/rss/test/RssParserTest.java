@@ -1,32 +1,44 @@
 package com.phicdy.mycuration.rss.test;
 
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 
-public class RssParserTest extends AndroidTestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-	DatabaseAdapter adapter;
+import static android.support.test.InstrumentationRegistry.getContext;
+import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
+@RunWith(AndroidJUnit4.class)
+public class RssParserTest {
+
+	private DatabaseAdapter adapter;
 
 	public RssParserTest() {
 		super();
 	}
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		adapter = DatabaseAdapter.getInstance(getContext());
+	@Before
+	public void setUp() throws Exception {
+		adapter = DatabaseAdapter.getInstance(getTargetContext());
 		adapter.deleteAllArticles();
 		adapter.deleteAll();
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		adapter.deleteAllArticles();
 		adapter.deleteAll();
 	}
-	
+
+	@Test
 	public void testParseFeedInfoRSS1() {
 		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://news.yahoo.co.jp/pickup/rss.xml");
 		try {
@@ -48,6 +60,7 @@ public class RssParserTest extends AndroidTestCase {
 		//http://sierblog.com/index.rdf
 	}
 
+	@Test
 	public void testParseFeedInfoRSS1_rdf() {
 		String testUrl = "http://b.hatena.ne.jp/hotentry/it.rss";
 		NetworkTaskManager.getInstance(getContext()).addNewFeed(testUrl);
@@ -64,6 +77,7 @@ public class RssParserTest extends AndroidTestCase {
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 	}
 
+	@Test
 	public void testParseFeedInfoRSS2() {
 		NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getContext());
 		networkTaskManager.addNewFeed("http://hiroki.jp/feed/");
@@ -104,6 +118,7 @@ public class RssParserTest extends AndroidTestCase {
 		//http://developers.linecorp.com/blog/ja/?feed=rss2
 	}
 
+	@Test
 	public void testParseFeedInfoATOM() {
 		// Publickey
 		String publicKeyFeedUrl = "http://www.publickey1.jp/atom.xml";
@@ -133,7 +148,7 @@ public class RssParserTest extends AndroidTestCase {
 		Feed googleTestFeed = adapter.getFeedByUrl("http://feeds.feedburner.com/blogspot/RLXA");
 		assertNotNull(googleTestFeed);
 		assertEquals("http://feeds.feedburner.com/blogspot/RLXA", googleTestFeed.getUrl());
-		assertEquals("http://googletesting.blogspot.com/", googleTestFeed.getSiteUrl());
+		assertEquals("http://testing.googleblog.com/", googleTestFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, googleTestFeed.getIconPath());
 
 		// MOONGIFT
@@ -151,6 +166,7 @@ public class RssParserTest extends AndroidTestCase {
 		assertEquals(Feed.DEDAULT_ICON_PATH, monngiftFeed.getIconPath());
 	}
 
+	@Test
 	public void testParseFeedInfoTopHtml() {
 		// Test top URL
 		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://gigazine.net");
@@ -167,6 +183,7 @@ public class RssParserTest extends AndroidTestCase {
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 	}
 
+	@Test
 	public void testParseFeedInfoTopHtml2() {
 		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://tech.mercari.com/");
 		try {
@@ -181,9 +198,10 @@ public class RssParserTest extends AndroidTestCase {
 		assertNotNull(mercariFeed);
 		assertEquals("http://tech.mercari.com/rss", mercariFeed.getUrl());
 		assertEquals("http://tech.mercari.com", mercariFeed.getSiteUrl());
-		assertEquals(mercariFeed.DEDAULT_ICON_PATH, mercariFeed.getIconPath());
+		assertEquals(Feed.DEDAULT_ICON_PATH, mercariFeed.getIconPath());
 	}
 
+	@Test
 	public void testParseFeedInfoTopHtmlFeedURLStartWithSlash() {
 		// //smhn.info/feed is returned
 		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://smhn.info");
@@ -198,9 +216,10 @@ public class RssParserTest extends AndroidTestCase {
 		assertNotNull(smhnFeed);
 		assertEquals("http://smhn.info/feed", smhnFeed.getUrl());
 		assertEquals("http://smhn.info", smhnFeed.getSiteUrl());
-		assertEquals(smhnFeed.DEDAULT_ICON_PATH, smhnFeed.getIconPath());
+		assertEquals(Feed.DEDAULT_ICON_PATH, smhnFeed.getIconPath());
 	}
 
+	@Test
 	public void testParseFeedInfoGzip() {
 		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://ground-sesame.hatenablog.jp");
 		try {
@@ -214,9 +233,10 @@ public class RssParserTest extends AndroidTestCase {
 		assertEquals("http://ground-sesame.hatenablog.jp/rss", surigomaFeed.getUrl());
 		assertEquals("http://ground-sesame.hatenablog.jp", surigomaFeed.getSiteUrl());
 
-		assertEquals(surigomaFeed.DEDAULT_ICON_PATH, surigomaFeed.getIconPath());
+		assertEquals(Feed.DEDAULT_ICON_PATH, surigomaFeed.getIconPath());
 	}
 
+	@Test
 	public void testPathOnlyUrl() {
 		addNewFeedAndCheckResult("http://b.hatena.ne.jp/hotentry/game", "http://b.hatena.ne.jp/hotentry/game.rss", "http://b.hatena.ne.jp");
 	}
@@ -234,6 +254,6 @@ public class RssParserTest extends AndroidTestCase {
 		assertEquals(expectedFeedUrl, addedFeed.getUrl());
 		assertEquals(expectedSiteUrl, addedFeed.getSiteUrl());
 
-		assertEquals(addedFeed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
+		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 	}
 }
