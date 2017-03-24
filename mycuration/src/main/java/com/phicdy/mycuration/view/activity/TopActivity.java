@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
@@ -147,30 +148,32 @@ public class TopActivity extends AppCompatActivity implements
         searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary));
 
         // Start tutorial at first time
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                View view = findViewById(R.id.add);
-                new MaterialShowcaseView.Builder(TopActivity.this)
-                        .setTarget(view)
-                        .setContentText(
-                                R.string.tutorial_go_to_search_rss_description)
-                        .setDismissText(R.string.tutorial_next)
-                        .singleUse(SHOWCASE_ID)
-                        .setListener(new IShowcaseListener() {
-                            @Override
-                            public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
+        if (!BuildConfig.DEBUG) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    View view = findViewById(R.id.add);
+                    new MaterialShowcaseView.Builder(TopActivity.this)
+                            .setTarget(view)
+                            .setContentText(
+                                    R.string.tutorial_go_to_search_rss_description)
+                            .setDismissText(R.string.tutorial_next)
+                            .singleUse(SHOWCASE_ID)
+                            .setListener(new IShowcaseListener() {
+                                @Override
+                                public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
 
-                            }
+                                }
 
-                            @Override
-                            public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
-                                goToFeedSearch();
-                            }
-                        })
-                        .show();
-            }
-        });
+                                @Override
+                                public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
+                                    goToFeedSearch();
+                                }
+                            })
+                            .show();
+                }
+            });
+        }
         return true;
     }
 

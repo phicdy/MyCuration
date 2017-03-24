@@ -25,6 +25,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.FeedSearchPresenter;
@@ -118,43 +119,45 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
                 .getSearchableInfo(getComponentName()));
 
         // Start tutorial at first time
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                View view = findViewById(R.id.search_rss);
-                ShowcaseConfig config = new ShowcaseConfig();
-                config.setDelay(500); // half second between each showcase view
+        if (!BuildConfig.DEBUG) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    View view = findViewById(R.id.search_rss);
+                    ShowcaseConfig config = new ShowcaseConfig();
+                    config.setDelay(500); // half second between each showcase view
 
-                MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(FeedSearchActivity.this, SHOWCASE_ID);
-                sequence.setConfig(config);
+                    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(FeedSearchActivity.this, SHOWCASE_ID);
+                    sequence.setConfig(config);
 
-                // Search tutorial
-                sequence.addSequenceItem(
-                        new MaterialShowcaseView.Builder(FeedSearchActivity.this)
-                                .setTarget(view)
-                                .setContentText(R.string.tutorial_search_rss_description)
-                                .setDismissText(R.string.tutorial_next)
-                                .build()
-                );
+                    // Search tutorial
+                    sequence.addSequenceItem(
+                            new MaterialShowcaseView.Builder(FeedSearchActivity.this)
+                                    .setTarget(view)
+                                    .setContentText(R.string.tutorial_search_rss_description)
+                                    .setDismissText(R.string.tutorial_next)
+                                    .build()
+                    );
 
-                // Add button tutorial
-                sequence.addSequenceItem(
-                        new MaterialShowcaseView.Builder(FeedSearchActivity.this)
-                                .setTarget(fab)
-                                .setContentText(R.string.tutorial_add_rss_description)
-                                .setDismissText(R.string.tutorial_close)
-                                .setDismissOnTouch(true)
-                                .build()
-                );
+                    // Add button tutorial
+                    sequence.addSequenceItem(
+                            new MaterialShowcaseView.Builder(FeedSearchActivity.this)
+                                    .setTarget(fab)
+                                    .setContentText(R.string.tutorial_add_rss_description)
+                                    .setDismissText(R.string.tutorial_close)
+                                    .setDismissOnTouch(true)
+                                    .build()
+                    );
 
-                // Open software keyboard if tutorial already finished
-                if (sequence.hasFired()) {
-                    searchView.setIconified(false);
+                    // Open software keyboard if tutorial already finished
+                    if (sequence.hasFired()) {
+                        searchView.setIconified(false);
+                    }
+
+                    sequence.start();
                 }
-
-                sequence.start();
-            }
-        });
+            });
+        }
         return true;
     }
 
