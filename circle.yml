@@ -17,15 +17,6 @@ test:
       # unit test
     - ./gradlew testUiTestDebugUnitTest 
     - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/test-results/testUiTestDebugUnitTest/* $CIRCLE_TEST_REPORTS
-      # start the emulator
-    - emulator -avd circleci-android24 -no-window:
-        background: true
-        parallel: true
-      # wait for it to have booted
-    - circle-android wait-for-boot
-      # run tests  against the emulator.
-    - ./gradlew connectedUiTestDebugAndroidTest 
-    - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/outputs/androidTest-results/connected/flavors/UITEST/* $CIRCLE_TEST_REPORTS
 deployment:
   master:
     branch: master
