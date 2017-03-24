@@ -1,24 +1,21 @@
 package com.phicdy.mycuration.view.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
-import android.widget.ShareActionProvider;
 
 import com.phicdy.mycuration.R;
-import com.phicdy.mycuration.view.activity.ArticlesListActivity;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class InternalWebViewActivity extends Activity {
+public class InternalWebViewActivity extends AppCompatActivity {
 	
 	private String url;
-	private ShareActionProvider mShareActionProvider;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,22 +32,20 @@ public class InternalWebViewActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    // Inflate menu resource file.
 	    getMenuInflater().inflate(R.menu.menu_internal_web_view, menu);
-
-	    // Locate MenuItem with ShareActionProvider
-	    MenuItem item = menu.findItem(R.id.menu_item_share);
-
-	    // Fetch and store ShareActionProvider
-	    mShareActionProvider = (ShareActionProvider) item.getActionProvider();
-	    
-	    if(mShareActionProvider != null && url != null) {
-	    	Intent intent = new Intent(Intent.ACTION_SEND);
-	    	intent.setType("text/plain");
-	    	intent.putExtra(Intent.EXTRA_TEXT, url);
-	    	mShareActionProvider.setShareIntent(intent);
-	    }
-
-	    // Return true to display menu
 	    return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+			case R.id.menu_item_share:
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_TEXT, url);
+                startActivity(intent);
+                break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
