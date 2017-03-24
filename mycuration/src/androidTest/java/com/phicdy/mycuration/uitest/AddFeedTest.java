@@ -55,7 +55,7 @@ public class AddFeedTest {
 
         // Go to feed tab
         List<UiObject2> tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 5000);
+                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 15000);
         if (tabs == null) fail("Tab was not found");
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();
@@ -106,7 +106,7 @@ public class AddFeedTest {
 
         // Go to feed tab
         List<UiObject2> tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 5000);
+                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 15000);
         if (tabs == null) fail("Tab was not found");
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();
@@ -143,7 +143,7 @@ public class AddFeedTest {
 
         // Go to feed tab
         List<UiObject2> tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 5000);
+                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 15000);
         if (tabs == null) fail("Tab was not found");
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();
