@@ -52,6 +52,10 @@ public class FeedUrlHookTest {
         // Launch default browser
         Context context = InstrumentationRegistry.getContext();
         Intent intent = context.getPackageManager().getLaunchIntentForPackage("com.android.browser");
+        if (intent == null) {
+            // Default browser is not existed
+            return;
+        }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
 
