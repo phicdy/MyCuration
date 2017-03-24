@@ -25,6 +25,7 @@ test:
     - circle-android wait-for-boot
       # run tests  against the emulator.
     - ./gradlew connectedUiTestDebugAndroidTest 
+    - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/outputs/androidTest-results/connected/flavors/UITEST/* $CIRCLE_TEST_REPORTS
 deployment:
   master:
     branch: master
