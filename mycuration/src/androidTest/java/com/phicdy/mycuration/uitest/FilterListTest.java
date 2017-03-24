@@ -238,6 +238,11 @@ public class FilterListTest {
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
+        // Show edit text for URL if needed
+        UiObject2 searchButton = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "search_button")), 5000);
+        if (searchButton != null) searchButton.click();
+
         // Open yahoo RSS URL
         UiObject2 urlEditText = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000);
@@ -250,6 +255,11 @@ public class FilterListTest {
                 By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
+
+        // Show edit text for URL if needed
+        searchButton = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "search_button")), 5000);
+        if (searchButton != null) searchButton.click();
 
         // Open second yahoo RSS URL
         urlEditText = device.wait(Until.findObject(
