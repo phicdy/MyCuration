@@ -1,4 +1,4 @@
-## MyCuration
+## MyCuration  [![CircleCI](https://circleci.com/gh/phicdy/MyCuration.svg?style=svg)](https://circleci.com/gh/phicdy/MyCuration)
 
 MyCuration is RSS(Feed) Reader that has curation and filter feature.
 
