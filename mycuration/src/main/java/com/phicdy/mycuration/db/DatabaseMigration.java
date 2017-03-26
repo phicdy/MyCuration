@@ -7,8 +7,8 @@ import java.util.List;
 
 class DatabaseMigration {
 
-    private List<DatabaseMigrationTask> tasks = new ArrayList<>();
-    private int oldVersion;
+    private final List<DatabaseMigrationTask> tasks = new ArrayList<>();
+    private final int oldVersion;
 
     static final int FIRST_VERSION = 1;
     static final int DATABASE_VERSION_ADD_ENABLED_TO_FILTER = 2;

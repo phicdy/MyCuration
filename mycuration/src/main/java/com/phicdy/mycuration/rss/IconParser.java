@@ -9,8 +9,6 @@ import java.net.URL;
 
 public class IconParser {
      
-    private static final String LOG_TAG = "FilFeed.IconParser";
-     
     public IconParser() {
     }
      

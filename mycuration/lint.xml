@@ -4,4 +4,7 @@
         <ignore regexp="gcm_defaultSenderId"/>
         <ignore regexp="google_app_id"/>
     </issue>
+    <issue id="InvalidPackage">
+        <ignore regexp="junit-.+.jar" />
+    </issue>
 </lint>

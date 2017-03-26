@@ -28,7 +28,6 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
 
     public static final String OPEN_URL_ID = "openUrl";
     private static final int DEFAULT_CURATION_ID = -1;
-    private static final String LOG_TAG = "MyCuration.ArticlesList";
 
     private GestureDetector mGestureDetector;
 
@@ -132,7 +131,8 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             @Override
             public boolean onFling(MotionEvent event1, MotionEvent event2,
                                    float velocityX, float velocityY) {
-                return fragment.onFlying(event1, event2, velocityX);
+                fragment.onFlying(event1, event2, velocityX);
+                return true;
             }
         };
         mGestureDetector = new GestureDetector(this, mOnGestureListener);

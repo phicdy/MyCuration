@@ -2,6 +2,6 @@ package com.phicdy.mycuration.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
-public interface DatabaseMigrationTask {
+interface DatabaseMigrationTask {
     void execute(SQLiteDatabase db, int oldVersion);
 }

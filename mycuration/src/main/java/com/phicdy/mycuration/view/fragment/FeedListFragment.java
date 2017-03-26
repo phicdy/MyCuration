@@ -142,7 +142,7 @@ public class FeedListFragment extends Fragment implements FeedListView {
 
     @Override
     public void setRefreshing(boolean doScroll) {
-        feedsListView.setRefreshing(true);
+        feedsListView.setRefreshing(doScroll);
     }
 
     @Override

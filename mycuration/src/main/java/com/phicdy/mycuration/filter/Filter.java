@@ -6,10 +6,10 @@ import com.phicdy.mycuration.rss.Feed;
 import java.util.ArrayList;
 
 public class Filter {
-	private int id_;
-	private String title_;
-	private String keyword_;
-	private String url_;
+	private final int id_;
+	private final String title_;
+	private final String keyword_;
+	private final String url_;
 	private ArrayList<Feed> feeds;
     private int feedId;
 	private String feedTitle;
@@ -35,6 +35,7 @@ public class Filter {
 					TITLE + " text,"+
 					ENABLED + " integer)";
 
+	@SuppressWarnings("deprecation")
     @Deprecated
     public static final String CREATE_TABLE_SQL_VER2 =
             "create table " + TABLE_NAME + "(" +
@@ -46,6 +47,7 @@ public class Filter {
                     ENABLED + " integer, " +
                     "foreign key(" + FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))";
 
+	@SuppressWarnings("deprecation")
     @Deprecated
     public static final String CREATE_TABLE_SQL_VER1 =
             "create table " + TABLE_NAME + "(" +
@@ -109,14 +111,6 @@ public class Filter {
 		return feeds;
 	}
 
-	public void setTitle(String title) {
-		title_ = title;
-	}
-	
-	public void setId(Integer id) {
-		id_ = id;
-	}
-	
 	public Integer getId() {
 		return id_;
 	}

@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.view.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,7 +54,8 @@ public class InternalWebViewActivity extends AppCompatActivity {
 		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
 	}
 	
-	private void initWebView() {
+	@SuppressLint("SetJavaScriptEnabled")
+    private void initWebView() {
 		if(url == null || !(url.startsWith("http://") || url.startsWith("https://"))) {
 			return;
 		}

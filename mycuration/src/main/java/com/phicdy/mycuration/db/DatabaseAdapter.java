@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class DatabaseAdapter {
 	
-	private Context context;
+	private final Context context;
     private static DatabaseAdapter sharedDbAdapter;
 	private static SQLiteDatabase db;
 
@@ -858,7 +858,7 @@ public class DatabaseAdapter {
 		return filter;
 	}
 
-	public boolean applyFiltersOfFeed(ArrayList<Filter> filterList, int feedId) {
+	public void applyFiltersOfFeed(ArrayList<Filter> filterList, int feedId) {
 		// If articles are hit in condition, Set articles status to "read"
 		ContentValues value = new ContentValues();
 		value.put(Article.STATUS, "read");
@@ -890,13 +890,12 @@ public class DatabaseAdapter {
 				Log.e("Apply Filtering", "Article can't be updated.Feed ID = "
 						+ feedId);
 				db.endTransaction();
-				return false;
+				return;
 			} finally {
 				db.endTransaction();
 			}
 			
 		}
-		return true;
 	}
 
     /**
@@ -1176,10 +1175,8 @@ public class DatabaseAdapter {
     /**
      * Helper method to delete all of the feeds.
      * This method also deletes relation between filter and feed.
-     *
-     * @return result of delete
      */
-	public boolean deleteAll() {
+	public void deleteAll() {
 		try {
             db.beginTransaction();
             db.delete(CurationCondition.TABLE_NAME, null, null);
@@ -1219,7 +1216,6 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-        return true;
 	}
 
     /**

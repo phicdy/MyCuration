@@ -20,7 +20,7 @@ public class IconParserTest {
 		IconParser parser = new IconParser();
 		assertEquals("http://gigazine.net/favicon.ico", parser.parseHtml("http://gigazine.net"));
 		assertEquals("https://s0.wp.com/wp-content/themes/vip/techcrunch-jp-2015/assets/images/favicon.ico", parser.parseHtml("http://jp.techcrunch.com"));
-		assertEquals((Object)"http://b.hatena.ne.jp/favicon.ico", (Object)parser.parseHtml("http://b.hatena.ne.jp"));
+		assertEquals("http://b.hatena.ne.jp/favicon.ico", parser.parseHtml("http://b.hatena.ne.jp"));
 	}
 
 }

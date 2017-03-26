@@ -74,6 +74,7 @@ class AddFilterFeedRegistrationTask implements DatabaseMigrationTask {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private ArrayList<Filter> getOldAllFilters(SQLiteDatabase db, int oldVersion) {
         Cursor cursor = null;
         ArrayList<Filter> filters = new ArrayList<>();

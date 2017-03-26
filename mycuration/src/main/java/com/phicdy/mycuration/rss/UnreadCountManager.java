@@ -10,12 +10,10 @@ import java.util.Map;
 
 public class UnreadCountManager {
     private int total = 0;
-    private Map<Integer, Integer> unreadCountMap = new HashMap<>();
+    private final Map<Integer, Integer> unreadCountMap = new HashMap<>();
     private ArrayList<Feed> allFeeds;
-    private DatabaseAdapter adapter;
+    private final DatabaseAdapter adapter;
     private static UnreadCountManager mgr;
-
-    private static final String LOG_TAG = "FilFeed.Unread";
 
     private UnreadCountManager(Context context) {
         this.adapter = DatabaseAdapter.getInstance(context);
@@ -33,7 +31,7 @@ public class UnreadCountManager {
         return mgr;
     }
 
-    public void init() {
+    private void init() {
         total = 0;
         allFeeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         synchronized (unreadCountMap) {

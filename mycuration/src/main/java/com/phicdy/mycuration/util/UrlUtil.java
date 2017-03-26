@@ -10,10 +10,7 @@ public class UrlUtil {
 		String regex = "^(http|https):\\/\\/.+\\/\\?.+$";
 		Pattern p = Pattern.compile(regex);
 		Matcher m = p.matcher(url);
-		if ((url != null) && m.find()) {
-			return true;
-		}
-		return false;
+		return m.find();
 	}
 	
 	public static String removeUrlParameter(String url) {
@@ -27,9 +24,6 @@ public class UrlUtil {
 	}
 	
 	public static boolean isCorrectUrl(String url) {
-		if(url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
-			return true;
-		}
-		return false;
+		return url != null && (url.startsWith("http://") || url.startsWith("https://"));
 	}
 }

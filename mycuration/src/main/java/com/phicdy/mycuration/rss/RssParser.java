@@ -26,9 +26,9 @@ import java.util.Date;
 
 public class RssParser {
 
-	private DatabaseAdapter dbAdapter;
+	private final DatabaseAdapter dbAdapter;
 	private boolean isArticleFlag = false;
-	private Context context;
+	private final Context context;
 
 	private static final String LOG_TAG = "FilFeed.RssParser";
 
@@ -137,7 +137,6 @@ public class RssParser {
 						}
 						Log.d(LOG_TAG, "RSS URL was found, " + feedUrl);
 						parseRssXml(feedUrl);
-						return;
 					} else {
 						Log.d(LOG_TAG, "Fail, not RSS");
 						sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
@@ -159,11 +158,9 @@ public class RssParser {
 		}.start();
 	}
 
-	public boolean parseXml(InputStream is, int feedId) {
-//		Log.d(LOG_TAG, "Parse start");
-
+	public void parseXml(InputStream is, int feedId) {
 		boolean result = true;
-		ArrayList<Article> articles = new ArrayList<Article>();
+		ArrayList<Article> articles = new ArrayList<>();
 
 		// TODO Get hatena bookmark(?) count
 		Article article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null, null);
@@ -273,7 +270,7 @@ public class RssParser {
 					break;
 				}
 				if (!result) {
-					return false;
+					return;
 				}
 				// If article is already saved, stop parse
 				if (isArticleFlag) {
@@ -294,12 +291,9 @@ public class RssParser {
 			for (Article addedArticle : articles) {
 				NetworkTaskManager.getInstance(context).getHatenaPoint(addedArticle);
 			}
-		} catch (XmlPullParserException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (XmlPullParserException | IOException e) {
 			e.printStackTrace();
 		}
-		return result;
 	}
 
 	private void sendFailAddFeedUrlBroadcast(@NetworkTaskManager.AddFeedUrlError int error) {

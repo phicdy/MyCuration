@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">MyCuration</string>
-    <string name="action_settings">Settings</string>
 
     <!-- 記事一覧 -->
     <string name="all">全ての記事</string>
@@ -14,20 +13,13 @@
     <string name="hide_rsses">既読のRSSを隠す</string>
     <string name="loading">読み込み中…</string>
 
-    <string name="add_filter_button">+</string>
     <string name="keyword">キーワード</string>
     <string name="keyword_description">記事タイトルに指定したキーワードが含まれていると自動的に既読になります</string>
-    <string name="include">を含む</string>
     <string name="article_url">記事URL</string>
     <string name="article_url_description">記事URLに指定したURLが含まれていると自動的に既読になります。はてなブックマークなど1つのRSSに複数のURLが含まれている場合に便利です</string>
-    <string name="register">登録</string>
     <string name="cancel">キャンセル</string>
     <string name="title_empty_error">タイトルを入力してください。</string>
     <string name="both_keyword_and_url_empty_error">キーワードと記事URLどちらかを入力してください。</string>
-    <string name="same_filter_exists_error">既に同じフィルターが登録されています。</string>
-    <string name="task_exists_error">更新が実行中です。しばらくお待ち下さい。</string>
-    <string name="ok">OK</string>
-    <string name="app_icon_description">icon</string>
     <string name="no_rss_message">"まずはRSSを登録しましょう！"</string>
 
     <string name="rss">RSS</string>
@@ -50,7 +42,6 @@
     <string name="edit_rss_title_error">タイトルを編集に失敗しました。</string>
     
     <string name="target_rss">対象RSS</string>
-    <string name="rss_url">RSSまたは\nページのURL :</string>
 
     <string name="home">ホーム</string>
 
@@ -59,7 +50,6 @@
     <string name="filter_saved">フィルターを登録しました。</string>
     <string name="filter_saved_error">フィルターの登録に失敗しました。</string>
     <string name="percent_only_error">この単語では登録できません。</string>
-    <string name="filter_title">フィルター名</string>
     <string name="add_filter">フィルター登録</string>
     <string name="delete_filter">フィルター削除</string>
     <string name="edit_filter">フィルターの編集</string>
@@ -80,17 +70,13 @@
     <string name="auto_update_setting">自動記事更新の設定</string>
     <string name="see_setting">閲覧の設定</string>
     <string name="interval">自動更新の頻度</string>
-    <string name="hour">時間</string>
     <string name="article_sort">新しい記事を先頭</string>
     <string name="all_read_behavior">全ての記事を既読にした時の動作</string>
     <string name="all_read_back">RSS一覧に戻る</string>
     <string name="all_read_not_back">RSS一覧に戻らない</string>
     <string name="open_internal">内蔵ブラウザで開く</string>
     <string name="swipe_direction">スワイプ方向</string>
-    <string name="right_to_left">右から左で記事を既読</string>
-    <string name="left_to_right">左から右で記事を既読</string>
     <string name="save">保存</string>
-    <string name="saved">設定が保存されました</string>
     <string name="debug">デバッグ</string>
     <string name="import_db">データベースのインポート</string>
     <string name="export_db">データベースのエクスポート</string>
@@ -120,13 +106,6 @@
     
     <string name="share">共有</string>
     
-    <!-- エラー -->
-    <string name="error_xml_parse">サイトの解析に失敗しました</string>
-    <string name="error_io">接続に失敗しました</string>
-    <string name="error_rss_is_not_found">RSSが見つかりませんでした</string>
-    <string name="error_invalid_rss_url">不正なRSSのURLです</string>
-    <string name="error_invalid_html">サイトのHTMLが不正です</string>
-
     <!-- キュレーション -->
     <string name="curation">キュレーション</string>
     <string name="curation_name">キュレーション名</string>
@@ -168,8 +147,6 @@
     <string name="read_all_articles">記事全既読</string>
     <string name="update_rss">RSS更新</string>
     <string name="scroll_article_list">記事リストをスクロール</string>
-    <string name="swipe_left_to_right">左から右にスワイプ</string>
-    <string name="swipe_right_to_left">右から左にスワイプ</string>
     <string name="change_auto_update_interval">自動更新間隔変更</string>
     <string name="change_all_read_behavior">全部記事読了後の動作変更</string>
     <string name="change_swipe_direction">スワイプ方向変更</string>
@@ -188,5 +165,4 @@
     <string name="update_filter">フィルター更新</string>
     <string name="add_new_filter_no_title">タイトルなしフィルター追加</string>
     <string name="add_new_filter_no_keyword_url">キーワードURLなしフィルター追加</string>
-    <string name="add_new_filter_cancel">フィルター追加キャンセル</string>
 </resources>

@@ -11,7 +11,6 @@ import java.util.Calendar;
 public class AlarmManagerTaskManager {
 
 	private static final int HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE_SECOND = 10;
-	private static final int HATENA_UPDATE_INTERVAL_SECOND = 60 * 60 * 3;
     private final Context context;
 
     public AlarmManagerTaskManager(Context context) {

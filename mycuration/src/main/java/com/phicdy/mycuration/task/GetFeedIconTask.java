@@ -11,31 +11,14 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 
-	/**
-	 * 
-	 * @author phicdy
-	 * @param String
-	 *            : data type for task(ex.download URL)
-	 * @param String
-	 *            : data type for displaying the progress
-	 * @param Feed
-	 *            : submit data type when task will finish
-	 */
-
-	private DatabaseAdapter dbAdapter;
-	private Context context;
-
-	public static final String LOG_TAG = "FilFeed.GetIcon";
+	private final DatabaseAdapter dbAdapter;
+	private final Context context;
 
 	public GetFeedIconTask(Context context) {
 		this.context = context;
@@ -64,11 +47,10 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 	/**
 	 * Get articles from RSS Feed
 	 * 
-	 * @return
 	 */
 	@Override
 	protected Void doInBackground(String... url) {
-		getFeedIcon(url[0]);
+        getFeedIcon(url[0]);
 		return null;
 	}
 
@@ -97,18 +79,20 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 			String iconSaveFolderStr = FileUtil.iconSaveFolder(context);
 			File iconSaveFolder  = new File(iconSaveFolderStr);
 			if(!iconSaveFolder.exists()) {
-				iconSaveFolder.mkdir();
+				if(!iconSaveFolder.mkdir()) {
+					return;
+				}
 			}
 			
 			String iconPath = FileUtil.generateIconFilePath(context, siteUrl);
-			
+            if (iconPath == null) return;
 			DataOutputStream dataOutStream = new DataOutputStream(
 					new BufferedOutputStream(new FileOutputStream(
 							 iconPath)));
 
 			// Read Data
 			byte[] b = new byte[4096];
-			int readByte = 0;
+			int readByte;
 
 			while (-1 != (readByte = dataInStream.read(b))) {
 				dataOutStream.write(b, 0, readByte);
@@ -120,14 +104,6 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 			
 			dbAdapter.saveIconPath(siteUrl, iconPath);
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

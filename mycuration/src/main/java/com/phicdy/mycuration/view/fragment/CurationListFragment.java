@@ -41,8 +41,6 @@ public class CurationListFragment extends Fragment implements CurationListView {
     private static final int EDIT_CURATION_MENU_ID = 1;
     private static final int DELETE_CURATION_MENU_ID = 2;
 
-    private static final String LOG_TAG = "FilFeed.CurationList";
-
     public CurationListFragment() {
     }
 

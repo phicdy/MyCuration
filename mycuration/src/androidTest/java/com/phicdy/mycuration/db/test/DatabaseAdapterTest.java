@@ -31,8 +31,8 @@ import static org.junit.Assert.assertThat;
 public class DatabaseAdapterTest {
 
 	private DatabaseAdapter adapter;
-	private ArrayList<Article> testUnreadArticles = new ArrayList<>();
-	private ArrayList<Article> testReadArticles = new ArrayList<>();
+	private final ArrayList<Article> testUnreadArticles = new ArrayList<>();
+	private final ArrayList<Article> testReadArticles = new ArrayList<>();
 
 	private static final String TEST_FEED_TITLE = "testfeed";
 	private static final String TEST_FEED_URL = "http://www.yahoo.co.jp";
@@ -43,7 +43,6 @@ public class DatabaseAdapterTest {
 	private final String TEST_WORD1 = "word1";
 	private final String TEST_WORD2 = "word2";
 	private final String TEST_WORD3 = "word3";
-	private final int TEST_WORDS_SIZE = 3;
 
 	public DatabaseAdapterTest() {
 		super();
@@ -184,6 +183,7 @@ public class DatabaseAdapterTest {
 		assertThat(map.indexOfKey(curationId), is(0));
         assertThat(map.size(), is(1));
 		ArrayList<String> addedWords = map.get(curationId);
+		final int TEST_WORDS_SIZE = 3;
 		assertEquals(TEST_WORDS_SIZE, addedWords.size());
 		assertEquals(TEST_WORD1, addedWords.get(0));
 		assertEquals(TEST_WORD2, addedWords.get(1));

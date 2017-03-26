@@ -29,8 +29,8 @@ public class NetworkTaskManager {
 
 	private static NetworkTaskManager networkTaskManager;
 	private static ExecutorService executorService;
-	private Context context;
-	private RequestQueue mQueue;
+	private final Context context;
+	private final RequestQueue mQueue;
 	// Manage queue status
 	private int numOfFeedRequest = 0;
 
@@ -58,9 +58,9 @@ public class NetworkTaskManager {
 		return networkTaskManager;
 	}
 
-	public boolean updateAllFeeds(final ArrayList<Feed> feeds) {
+	public void updateAllFeeds(final ArrayList<Feed> feeds) {
 		if (isUpdatingFeed()) {
-			return false;
+			return;
 		}
 		numOfFeedRequest = 0;
 		for (final Feed feed : feeds) {
@@ -70,7 +70,6 @@ public class NetworkTaskManager {
 				task.execute(feed.getSiteUrl());
 			}
 		}
-		return true;
 	}
 
 	public void updateFeed(final Feed feed) {
@@ -152,13 +151,10 @@ public class NetworkTaskManager {
 	}
 	
 	public synchronized boolean isUpdatingFeed() {
-		if (numOfFeedRequest == 0) {
-			return false;
-		}
-		return true;
+		return numOfFeedRequest != 0;
 	}
 	
-	public void addHatenaBookmarkUpdateRequest(InputStreamRequest request) {
+	void addHatenaBookmarkUpdateRequest(InputStreamRequest request) {
 		if (request != null) {
 			mQueue.add(request);
 		}
@@ -174,8 +170,8 @@ public class NetworkTaskManager {
 
 	private class UpdateFeedTask implements Runnable {
 
-		private InputStream in;
-		private int feedId;
+		private final InputStream in;
+		private final int feedId;
 
 		public UpdateFeedTask(InputStream in, int feedId) {
 			this.in = in;
@@ -200,7 +196,7 @@ public class NetworkTaskManager {
 
 	private class GetHatenaPointTask implements Runnable {
 
-		private Article article;
+		private final Article article;
 
 		public GetHatenaPointTask(Article article) {
 			this.article = article;

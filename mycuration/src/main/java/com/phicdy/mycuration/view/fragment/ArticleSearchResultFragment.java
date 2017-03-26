@@ -35,8 +35,7 @@ public class ArticleSearchResultFragment extends Fragment implements ArticleSear
     private ListView resultListView;
     private ArrayList<Article> articles;
 
-    public static final String OPEN_URL_ID = "openUrl";
-    private static final String LOG_TAG = "MyCuration.SearchResult";
+    private static final String OPEN_URL_ID = "openUrl";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

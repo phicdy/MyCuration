@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class AddCurationPresenter implements Presenter {
 
     private AddCurationView view;
-    private DatabaseAdapter adapter;
+    private final DatabaseAdapter adapter;
 
     private int editCurationid = NOT_EDIT_CURATION_ID;
     public static final int NOT_EDIT_CURATION_ID = -1;

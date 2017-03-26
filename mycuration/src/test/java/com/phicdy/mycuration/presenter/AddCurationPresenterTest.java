@@ -315,7 +315,7 @@ public class AddCurationPresenterTest {
         private String curationName = "";
         private String word = "";
         private String errorToastMessage = "";
-        private ArrayList<String> words = new ArrayList<>();
+        private final ArrayList<String> words = new ArrayList<>();
         private int editCurationId = AddCurationPresenter.NOT_EDIT_CURATION_ID;
         private boolean isSuccessToastShowed = false;
         private boolean isEmptyWordErrorToastShowed = false;

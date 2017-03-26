@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.view.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,11 +56,6 @@ public class FilterListFragment extends Fragment implements FilterListView {
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-	}
-
-	@Override
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		filtersListView = (ListView)getActivity().findViewById(R.id.lv_filter);
@@ -112,11 +106,6 @@ public class FilterListFragment extends Fragment implements FilterListView {
         registerForContextMenu(filtersListView);
 	}
 	
-	@Override
-	public void onPause() {
-		super.onPause();
-	}
-
     @Override
     public void remove(int position) {
         filtersListAdapter.remove(filtersListAdapter.getItem(position));

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class RegisterFilterPresenter implements Presenter {
 
     private RegisterFilterView view;
-    private DatabaseAdapter dbAdapter;
+    private final DatabaseAdapter dbAdapter;
     private ArrayList<Feed> selectedFeedList = new ArrayList<>();
 
     private int editFilterId = NEW_FILTER_ID;

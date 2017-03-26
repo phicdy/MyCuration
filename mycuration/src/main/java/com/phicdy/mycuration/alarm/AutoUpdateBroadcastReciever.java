@@ -18,15 +18,13 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 
 	public static final String AUTO_UPDATE_ACTION = "autoUpdateFeed";
 	public static final String AUTO_UPDATE_HATENA_ACTION = "autoUpdateHatena";
-	
-	DatabaseAdapter dbAdapter;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if(intent == null) {
 			return;
 		}
-		dbAdapter = DatabaseAdapter.getInstance(context);
+		DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
 		if(intent.getAction().equals(AUTO_UPDATE_ACTION)) {
 			NetworkTaskManager updateTask = NetworkTaskManager.getInstance(context);
 	
@@ -62,7 +60,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 					if (unreadArticle == null) {
 						continue;
 					}
-					if ((unreadArticle.getPoint() != Article.DEDAULT_HATENA_POINT) && !isWifiConnected) {
+					if ((!unreadArticle.getPoint().equals(Article.DEDAULT_HATENA_POINT)) && !isWifiConnected) {
 						continue;
 					}
 					GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(

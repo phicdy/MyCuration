@@ -4,7 +4,7 @@ public class CurationSelection {
 	public static final String TABLE_NAME = "curationSelections";
 	public static final String CURATION_ID = "curationId";
 	public static final String ARTICLE_ID = "articleId";
-	public static final String ID = "_id";
+	private static final String ID = "_id";
 
 	public static final String CREATE_TABLE_SQL =
 			"create table " + TABLE_NAME + "(" +

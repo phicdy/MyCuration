@@ -218,6 +218,7 @@ public class FilterListTest {
         assertThat(url.getText(), is("URL: " + editUrl));
     }
 
+    @SuppressWarnings("deprecation")
     private void addTestFeedsAndFilter(String testTitle, String testKeyword, String testUrl) {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         // Launch MainActivity

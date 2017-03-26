@@ -22,8 +22,6 @@ import java.util.ArrayList;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.is;
@@ -59,6 +57,7 @@ public class DatabaseMigrationTest {
         adapter.deleteAll();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void migrationFrom1To3() {
         db.execSQL(Filter.DROP_TABLE_SQL);
@@ -105,6 +104,7 @@ public class DatabaseMigrationTest {
         assertTrue(adapter.saveNewFilter("hoge", target, "hoge", "http://www.google.com"));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void migrationFrom2To3() {
         db.execSQL(Filter.DROP_TABLE_SQL);

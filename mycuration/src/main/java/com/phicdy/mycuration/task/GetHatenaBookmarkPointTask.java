@@ -15,30 +15,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
 public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void> {
 
-	/**
-	 * 
-	 * @author phicdy
-	 * @param String
-	 *            : data type for task(ex.download URL)
-	 * @param String
-	 *            : data type for displaying the progress
-	 * @param Feed
-	 *            : submit data type when task will finish
-	 */
-
-	private DatabaseAdapter dbAdapter;
+	private final DatabaseAdapter dbAdapter;
 	private Article targetArticle;
-	private Context context;
-	
+	private final Context context;
+
 	private static final String GET_HATENA_BOOKMARK_COUNT_URL = "http://api.b.st-hatena.com/entry.count";
 	private static final String CHAR_SET = "UTF-8";
-	private static final String LOG_TAG = "FilFeed.GetHatena";
 
 	public GetHatenaBookmarkPointTask(Context context) {
+        this.context = context;
 		dbAdapter = DatabaseAdapter.getInstance(context);
 	}
 
@@ -63,8 +51,6 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void>
 
 	/**
 	 * Get articles from RSS Feed
-	 * 
-	 * @return
 	 */
 	@Override
 	protected Void doInBackground(Article... setting) {
@@ -80,7 +66,6 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void>
 	private void addUpdateRequetToQueue() {
 		NetworkTaskManager mgr = NetworkTaskManager.getInstance(context);
 		mgr.addHatenaBookmarkUpdateRequest(createRequest());
-		return;
 	}
 	
 	private InputStreamRequest createRequest() {
@@ -120,18 +105,12 @@ public class GetHatenaBookmarkPointTask extends AsyncTask<Article, String, Void>
 			while ((line = br.readLine()) != null) {
 				point = Integer.valueOf(line);
 			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (NumberFormatException | IOException e) {
 			e.printStackTrace();
 		} finally {
 			// Close for memory leak
 			try {
-				if (in != null) {
-					in.close();
-				}
+				in.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ import java.util.Iterator;
 public class SelectFilterTargetRssFragment extends ListFragment {
 
     private ArrayList<Feed> selectedList = new ArrayList<>();
-    private TargetRssListAdapter adapter;
 
     public SelectFilterTargetRssFragment() {
     }
@@ -43,7 +41,7 @@ public class SelectFilterTargetRssFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
         Context context = getActivity();
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
-        adapter = new TargetRssListAdapter(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles(), context);
+        TargetRssListAdapter adapter = new TargetRssListAdapter(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles(), context);
         getListView().setAdapter(adapter);
     }
 

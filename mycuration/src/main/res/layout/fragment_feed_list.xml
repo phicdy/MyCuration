@@ -24,7 +24,7 @@
         <TextView
             android:id="@+id/allUnreadFeed"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="12dp"
@@ -40,7 +40,7 @@
             android:layout_marginRight="8dp"
             android:textSize="14sp"
             android:layout_gravity="center_vertical"
-            android:gravity="center_vertical|right" />
+            android:gravity="center_vertical|end" />
     </LinearLayout>
 
     <com.handmark.pulltorefresh.library.PullToRefreshListView 

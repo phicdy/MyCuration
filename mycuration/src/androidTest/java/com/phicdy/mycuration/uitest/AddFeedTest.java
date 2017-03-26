@@ -54,6 +54,7 @@ public class AddFeedTest {
         context.startActivity(intent);
 
         // Go to feed tab
+        @SuppressWarnings("deprecation")
         List<UiObject2> tabs = device.wait(Until.findObjects(
                 By.clazz(android.support.v7.app.ActionBar.Tab.class)), 15000);
         if (tabs == null) fail("Tab was not found");
@@ -105,6 +106,7 @@ public class AddFeedTest {
         context.startActivity(intent);
 
         // Go to feed tab
+        @SuppressWarnings("deprecation")
         List<UiObject2> tabs = device.wait(Until.findObjects(
                 By.clazz(android.support.v7.app.ActionBar.Tab.class)), 15000);
         if (tabs == null) fail("Tab was not found");
@@ -142,6 +144,7 @@ public class AddFeedTest {
         context.startActivity(intent);
 
         // Go to feed tab
+        @SuppressWarnings("deprecation")
         List<UiObject2> tabs = device.wait(Until.findObjects(
                 By.clazz(android.support.v7.app.ActionBar.Tab.class)), 15000);
         if (tabs == null) fail("Tab was not found");

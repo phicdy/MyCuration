@@ -14,31 +14,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
-public class InputStreamRequest extends Request<InputStream> {
+class InputStreamRequest extends Request<InputStream> {
 
 	private final Listener<InputStream> mListener;
 
-	/**
-	 * 
-	 * @param method
-	 * @param url
-	 * @param listener
-	 * @param errorListener
-	 */
-	public InputStreamRequest(int method, String url,
-			Listener<InputStream> listener, ErrorListener errorListener) {
+	private InputStreamRequest(int method, String url,
+							   Listener<InputStream> listener, ErrorListener errorListener) {
 		super(method, url, errorListener);
 		mListener = listener;
 	}
 
-	/**
-	 * 
-	 * @param url
-	 * @param listener
-	 * @param errorListener
-	 */
-	public InputStreamRequest(String url, Listener<InputStream> listener,
-			ErrorListener errorListener) {
+	InputStreamRequest(String url, Listener<InputStream> listener,
+					   ErrorListener errorListener) {
 		this(Method.GET, url, listener, errorListener);
 	}
 

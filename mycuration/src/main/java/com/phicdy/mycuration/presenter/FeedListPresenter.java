@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class FeedListPresenter implements Presenter {
 
     private FeedListView view;
-    private DatabaseAdapter dbAdapter;
-    private NetworkTaskManager networkTaskManager;
-    private UnreadCountManager unreadCountManager;
+    private final DatabaseAdapter dbAdapter;
+    private final NetworkTaskManager networkTaskManager;
+    private final UnreadCountManager unreadCountManager;
 
     private ArrayList<Feed> feeds = new ArrayList<>();
     private ArrayList<Feed> allFeeds = new ArrayList<>();
@@ -115,14 +115,17 @@ public class FeedListPresenter implements Presenter {
         view.showEditTitleDialog(position, getFeedTitleAtPosition(position));
     }
 
+    @NonNull
     private String getFeedTitleAtPosition(int position) {
         if (position < 0 || feeds == null || position > feeds.size()-1) {
-            return null;
+            return "";
         }
         if (isHided) {
             feeds.get(position).getTitle();
         }
-        return allFeeds.get(position).getTitle();
+        String title = allFeeds.get(position).getTitle();
+        if (title == null) title = "";
+        return title;
     }
 
     public void onEditFeedOkButtonClicked(String newTitle, int position) {
@@ -221,7 +224,7 @@ public class FeedListPresenter implements Presenter {
         mListener.onListClicked(feedId);
     }
 
-    private boolean changeHideStatus() {
+    private void changeHideStatus() {
         if (isHided) {
             isHided = false;
             view.init(allFeeds);
@@ -229,7 +232,6 @@ public class FeedListPresenter implements Presenter {
             isHided = true;
             view.init(feeds);
         }
-        return isHided;
     }
 
     public void onRefresh() {

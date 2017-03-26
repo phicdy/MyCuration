@@ -47,7 +47,7 @@
             android:contentDescription="@string/filter" />
 	    <EditText
 	        android:id="@+id/filterKeyword"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:inputType="text"
             android:textSize="@dimen/text_size_register_filter"

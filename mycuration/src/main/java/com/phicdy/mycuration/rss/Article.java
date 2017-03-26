@@ -2,15 +2,15 @@ package com.phicdy.mycuration.rss;
 
 
 public class Article {
-	private int id_;
+	private final int id_;
 	private String title_;
 	private String url_;
 	private String status_;
-	private String point_;
+	private final String point_;
 	private long postedDate_;
-	private int feedId_;
-	private String feedTitle;
-	private String feedIconPath;
+	private final int feedId_;
+	private final String feedTitle;
+	private final String feedIconPath;
 
 	public static final String TABLE_NAME = "articles";
 	public static final String ID = "_id";
@@ -55,10 +55,6 @@ public class Article {
 		return feedTitle;
 	}
 
-	public void setFeedTitle(String feedTitle) {
-		this.feedTitle = feedTitle;
-	}
-
 	public void setTitle(String title) {
 		title_ = title;
 	}
@@ -67,20 +63,8 @@ public class Article {
 		url_ = url;
 	}
 	
-	public void setPoint(String point) {
-		point_ = point;
-	}
-	
 	public void setPostedDate(long postedDate) {
 		postedDate_ = postedDate;
-	}
-	
-	public void setId(int id) {
-		id_ = id;
-	}
-	
-	public void setFeedId(int feedId) {
-		feedId_ = feedId;
 	}
 	
 	public void setStatus(String status) {

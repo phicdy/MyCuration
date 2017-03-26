@@ -1,10 +1,9 @@
 package com.phicdy.mycuration.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class PreferenceHelper extends Activity {
+public class PreferenceHelper {
 
 	private static final String PREF_KEY = "FilterPref";
 	private static final String KEY_AUTO_UPDATE_INTERVAL = "autoUpdateInterval";
@@ -16,17 +15,16 @@ public class PreferenceHelper extends Activity {
 	
 	public static final int SWIPE_RIGHT_TO_LEFT = 0;
 	public static final int SWIPE_LEFT_TO_RIGHT = 1;
-	public static final int SWIPE_DEFAULT = SWIPE_RIGHT_TO_LEFT;
+	private static final int SWIPE_DEFAULT = SWIPE_RIGHT_TO_LEFT;
 	private static final int[] SWIPE_DIRECTIONS = {SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT};
 	private static final int DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60;
 	
-	public static int DEFAULT_VALUE = 0;
 	private static PreferenceHelper preMgr;
 	private SharedPreferences pref = null;
 	private SharedPreferences.Editor editor = null;
 
 	private PreferenceHelper(Context context) {
-		pref = context.getSharedPreferences(PREF_KEY, MODE_PRIVATE);
+		pref = context.getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
 	}
 
 	public static PreferenceHelper getInstance(Context context) {
@@ -47,59 +45,43 @@ public class PreferenceHelper extends Activity {
 	public void setAutoUpdateIntervalSecond(int intervalSecond) {
 		editor = pref.edit();
 		editor.putInt(KEY_AUTO_UPDATE_INTERVAL, intervalSecond);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public boolean getSortNewArticleTop() {
-		if(pref.contains(KEY_SORT_NEW_ARTICLE_TOP)) {
-			return pref.getBoolean(KEY_SORT_NEW_ARTICLE_TOP, true);
-		}
-		return true;
+		return !pref.contains(KEY_SORT_NEW_ARTICLE_TOP) || pref.getBoolean(KEY_SORT_NEW_ARTICLE_TOP, true);
 	}
 
 	public void setSortNewArticleTop(boolean isNewArticleTop) {
 		editor = pref.edit();
 		editor.putBoolean(KEY_SORT_NEW_ARTICLE_TOP, isNewArticleTop);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public boolean getAllReadBack() {
-		if(pref.contains(KEY_ALL_READ_BACK)) {
-			return pref.getBoolean(KEY_ALL_READ_BACK, true);
-		}
-		return true;
+		return !pref.contains(KEY_ALL_READ_BACK) || pref.getBoolean(KEY_ALL_READ_BACK, true);
 	}
 
 	public void setAllReadBack(boolean isAllReadBack) {
 		editor = pref.edit();
 		editor.putBoolean(KEY_ALL_READ_BACK, isAllReadBack);
-		editor.commit();
-	}
-	
-	public int getSearchFeedId() {
-		if(pref.contains(KEY_SEARCH_FEED_ID)) {
-			return pref.getInt(KEY_SEARCH_FEED_ID, DEFAULT_VALUE);
-		}
-		return DEFAULT_VALUE;
+		editor.apply();
 	}
 
 	public void setSearchFeedId(int feedId) {
 		editor = pref.edit();
 		editor.putInt(KEY_SEARCH_FEED_ID, feedId);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public boolean isOpenInternal() {
-		if(pref.contains(KEY_OPEN_INTERNAL_ID)) {
-			return pref.getBoolean(KEY_OPEN_INTERNAL_ID, false);
-		}
-		return false;
+		return pref.contains(KEY_OPEN_INTERNAL_ID) && pref.getBoolean(KEY_OPEN_INTERNAL_ID, false);
 	}
 
 	public void setOpenInternal(boolean isOpenInternal) {
 		editor = pref.edit();
 		editor.putBoolean(KEY_OPEN_INTERNAL_ID, isOpenInternal);
-		editor.commit();
+		editor.apply();
 	}
 	
 	public int getSwipeDirection() {
@@ -109,15 +91,14 @@ public class PreferenceHelper extends Activity {
 		return SWIPE_DEFAULT;
 	}
 	
-	public boolean setSwipeDirection(int newSwipeDirection) {
+	public void setSwipeDirection(int newSwipeDirection) {
 		for (int direction : SWIPE_DIRECTIONS) {
 			if (direction == newSwipeDirection) {
 				editor = pref.edit();
 				editor.putInt(KEY_SWIPE_DIRECTION, newSwipeDirection);
-				editor.commit();
-				return true;
+				editor.apply();
+                return;
 			}
 		}
-		return false;
 	}
 }

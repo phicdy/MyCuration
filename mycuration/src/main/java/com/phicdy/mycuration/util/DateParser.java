@@ -20,6 +20,7 @@ public class DateParser {
 		try {
 			formatWithPubDate = input.parse(pubDate);
 		} catch (ParseException e) {
+			e.printStackTrace();
 		}
 		if(formatWithPubDate == null) {
 			//2014-06-25 17:24:07
@@ -30,6 +31,7 @@ public class DateParser {
 			try {
 				formatWithNoTimeZone = noTimezone.parse(pubDate);
 			} catch (ParseException e2) {
+				e2.printStackTrace();
 			}
 			if(formatWithNoTimeZone == null) {
 				//2014-07-27T14:38:34+09:00
@@ -46,6 +48,7 @@ public class DateParser {
 					try {
 						formatWithW3cdtf = w3cdtf.parse(replaced);
 					} catch (ParseException e) {
+                        e.printStackTrace();
 					}
 					if(formatWithW3cdtf == null) {
 						return null;

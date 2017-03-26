@@ -18,14 +18,14 @@ import java.util.Random;
 public class ArticleListPresenter implements Presenter {
 
     private ArticleListView view;
-    private int feedId;
-    private int curationId;
-    private DatabaseAdapter adapter;
-    private UnreadCountManager unreadCountManager;
-    private boolean isOpenInternal;
-    private boolean isAllReadBack;
-    private boolean isNewArticleTop;
-    private int swipeDirection;
+    private final int feedId;
+    private final int curationId;
+    private final DatabaseAdapter adapter;
+    private final UnreadCountManager unreadCountManager;
+    private final boolean isOpenInternal;
+    private final boolean isAllReadBack;
+    private final boolean isNewArticleTop;
+    private final int swipeDirection;
     private AsyncTask<Long, Void, Void> mTask;
 
     private boolean isSwipeRightToLeft = false;
@@ -185,13 +185,13 @@ public class ArticleListPresenter implements Presenter {
         return  isAllRead;
     }
 
-    public boolean onFlying(int touchedPosition, MotionEvent event1, MotionEvent event2, float velocityX) {
-        if (touchedPosition < 0 || touchedPosition > view.size()-1) return true;
+    public void onFlying(int touchedPosition, MotionEvent event1, MotionEvent event2, float velocityX) {
+        if (touchedPosition < 0 || touchedPosition > view.size()-1) return;
         isSwipeLeftToRight = false;
         isSwipeRightToLeft = false;
         try {
             if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
-                return true;
+                return;
             }
             // event1 is first motion event and event2 is second motion event.
             // So, if the distance from event1'x to event2'x is longer than a certain value, it is swipe
@@ -230,7 +230,6 @@ public class ArticleListPresenter implements Presenter {
         } catch (Exception e) {
             // nothing
         }
-        return true;
     }
 
     public void onListItemLongClicked(@NonNull Article item) {

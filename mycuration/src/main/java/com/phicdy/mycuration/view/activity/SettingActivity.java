@@ -10,7 +10,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SettingActivity extends PreferenceActivity {
 
-	private SettingFragment fragment = new SettingFragment();
+	private final SettingFragment fragment = new SettingFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

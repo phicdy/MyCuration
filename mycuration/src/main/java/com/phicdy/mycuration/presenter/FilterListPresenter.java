@@ -8,7 +8,7 @@ import com.phicdy.mycuration.view.FilterListView;
 
 public class FilterListPresenter implements Presenter {
     private FilterListView view;
-    private DatabaseAdapter dbAdapter;
+    private final DatabaseAdapter dbAdapter;
     public FilterListPresenter(DatabaseAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;
     }

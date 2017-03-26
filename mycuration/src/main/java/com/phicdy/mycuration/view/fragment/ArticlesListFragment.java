@@ -55,7 +55,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     private PullToRefreshListView articlesListView;
     private ListView listView;
     private ArticlesListAdapter articlesListAdapter;
-    public static final String OPEN_URL_ID = "openUrl";
+    private static final String OPEN_URL_ID = "openUrl";
 
     private View footer;
     private FloatingActionButton fab;
@@ -202,22 +202,16 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
         });
     }
 
-    public boolean onFlying(MotionEvent event1, MotionEvent event2, float velocityX) {
+    public void onFlying(MotionEvent event1, MotionEvent event2, float velocityX) {
         // Set touched position in articles list from touch event
         int touchedPosition = listView.pointToPosition(
                 (int) event1.getX(), (int) event1.getY()) - 1;
-        if (touchedPosition < 0 || touchedPosition > articlesListAdapter.getCount()) return true;
+        if (touchedPosition < 0 || touchedPosition > articlesListAdapter.getCount()) return;
         presenter.onFlying(touchedPosition, event1, event2, velocityX);
-        return true;
     }
 
     public void handleAllRead() {
         presenter.handleAllRead();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @Override

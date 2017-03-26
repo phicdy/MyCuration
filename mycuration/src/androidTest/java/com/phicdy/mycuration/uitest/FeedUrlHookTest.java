@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -104,6 +103,7 @@ public class FeedUrlHookTest {
         context.startActivity(intent);
 
         // Go to feed tab
+        @SuppressWarnings("deprecation")
         List<UiObject2> tabs = device.wait(Until.findObjects(
                 By.clazz(android.support.v7.app.ActionBar.Tab.class)), 5000);
         if (tabs == null) fail("Tab was not found");

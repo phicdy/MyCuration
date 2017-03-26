@@ -14,7 +14,7 @@ public class ArticleSearchResultPresenter implements Presenter {
     private ArticleSearchResultView view;
     private boolean isNewTop = false;
     private boolean isOpenInternal = false;
-    private DatabaseAdapter dbAdapter;
+    private final DatabaseAdapter dbAdapter;
 
     public ArticleSearchResultPresenter(boolean isNewTop, boolean isOpenInternal, DatabaseAdapter dbAdapter) {
         this.isNewTop = isNewTop;

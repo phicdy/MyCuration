@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Feed implements Parcelable{
-	private int id_;
+	private final int id_;
 	private String title_;
 	private String url_;
 	private String iconPath;
@@ -16,7 +16,7 @@ public class Feed implements Parcelable{
 	public static final String TITLE = "title";
 	public static final String ID = "_id";
 	public static final String URL = "url";
-	public static final String FORMAT = "format";
+	private static final String FORMAT = "format";
 	public static final String SITE_URL = "siteUrl";
 	public static final String ICON_PATH = "iconPath";
 	public static final String UNREAD_ARTICLE = "unreadArticle";
@@ -25,9 +25,9 @@ public class Feed implements Parcelable{
 	public static final int ALL_FEED_ID = -1;
 	public static final int DEFAULT_FEED_ID = -100;
 
-	public static final String RSS_1 = "RSS1.0";
-	public static final String RSS_2 = "RSS2.0";
-	public static final String ATOM = "ATOM";
+	static final String RSS_1 = "RSS1.0";
+	static final String RSS_2 = "RSS2.0";
+	static final String ATOM = "ATOM";
 
 	public static final String CREATE_TABLE_SQL =
 			"create table " + TABLE_NAME + "(" +
@@ -66,24 +66,8 @@ public class Feed implements Parcelable{
 		return siteUrl;
 	}
 
-	public void setSiteUrl(String siteUrl) {
-		this.siteUrl = siteUrl;
-	}
-
 	public void setTitle(String title) {
 		title_ = title;
-	}
-	
-	public void setUrl(String url) {
-		url_ = url;
-	}
-	
-	public void setId(Integer id) {
-		id_ = id;
-	}
-	
-	public void setUnreadArticlesCount(int unreadArticlesCount) {
-		unreadAriticlesCount_ = unreadArticlesCount;
 	}
 	
 	public int getUnreadAriticlesCount() {
@@ -133,7 +117,7 @@ public class Feed implements Parcelable{
 		}
 	};
 
-	public Feed(Parcel in) {
+	private Feed(Parcel in) {
 		id_      = in.readInt();
 		title_   = in.readString();
 		url_     = in.readString();

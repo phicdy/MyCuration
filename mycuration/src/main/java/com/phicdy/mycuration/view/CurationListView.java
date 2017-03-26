@@ -1,7 +1,5 @@
 package com.phicdy.mycuration.view;
 
-import android.support.annotation.NonNull;
-
 import com.phicdy.mycuration.rss.Curation;
 
 import java.util.ArrayList;

@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">MyCuration</string>
-    <string name="action_settings">Settings</string>
 
     <!-- Article list -->
     <string name="all">All articles</string>
@@ -14,20 +13,13 @@
     <string name="hide_rsses">Hide rsses</string>
     <string name="loading">Updating…</string>
 
-    <string name="add_filter_button">+</string>
     <string name="keyword">Keyword</string>
     <string name="keyword_description">When the keyword is included in article title, it becomes read status</string>
-    <string name="include">include</string>
     <string name="article_url">Article URL</string>
     <string name="article_url_description">When the URL is included in article URL, it becomes read status</string>
-    <string name="register">Register</string>
     <string name="cancel">Cancel</string>
     <string name="title_empty_error">Please input the title</string>
     <string name="both_keyword_and_url_empty_error">Please input the keyword or URL</string>
-    <string name="same_filter_exists_error">Same filter exists</string>
-    <string name="task_exists_error">Updating....Please wait.</string>
-    <string name="ok">OK</string>
-    <string name="app_icon_description">icon</string>
     <string name="no_rss_message">Let\'s add first rss!</string>
 
     <string name="rss">RSS</string>
@@ -35,7 +27,7 @@
     <string name="add_rss_success">Succeeded to add rss</string>
     <string name="add_rss_error_generic">Failed to add rss</string>
     <string name="add_rss_error_invalid_url">Invalid URL</string>
-    <string name="adding_rss">Adding new rss...</string>
+    <string name="adding_rss">Adding new rss…</string>
 
     <string name="delete_rss">Delete the rss</string>
     <string name="delete_rss_alert">Do you delete the rss ?</string>
@@ -50,7 +42,6 @@
     <string name="edit_rss_title_error">Failed to edit the title</string>
 
     <string name="target_rss">Target rss</string>
-    <string name="rss_url">RSS or\nPage URL :</string>
 
     <string name="home">Home</string>
 
@@ -59,11 +50,10 @@
     <string name="filter_saved">Succeeded to register new filter</string>
     <string name="filter_saved_error">Failed to register new filter</string>
     <string name="percent_only_error">You can not add this word</string>
-    <string name="filter_title">Filter title</string>
     <string name="add_filter">Register</string>
     <string name="delete_filter">Delete filter</string>
     <string name="edit_filter">Edit filter</string>
-    <string name="not_get_hatena_point">Updating...</string>
+    <string name="not_get_hatena_point">Updating…</string>
     <string name="none">None</string>
     <string name="no_filter">Let\'s add first filter!</string>
     <string name="sample_filter_title">Sample filter title</string>
@@ -80,17 +70,13 @@
     <string name="auto_update_setting">Auto Update</string>
     <string name="see_setting">Browsing</string>
     <string name="interval">Interval</string>
-    <string name="hour">hour</string>
     <string name="article_sort">Sort from latest</string>
     <string name="all_read_behavior">Behavior you read all of the articles</string>
     <string name="all_read_back">Go back to rss list</string>
     <string name="all_read_not_back">Not go back to rss list</string>
     <string name="open_internal">Internal browser</string>
     <string name="swipe_direction">Swipe direction</string>
-    <string name="right_to_left">Read article by swipe from right to left</string>
-    <string name="left_to_right">Read article by swipe from left to right</string>
     <string name="save">Save</string>
-    <string name="saved">Settings are saved</string>
     <string name="debug">Debug</string>
     <string name="import_db">Import DB</string>
     <string name="export_db">Export DB</string>
@@ -120,19 +106,12 @@
 
     <string name="share">Share</string>
 
-    <!-- Error -->
-    <string name="error_xml_parse">Failed to parse the site</string>
-    <string name="error_io">Connection Error</string>
-    <string name="error_rss_is_not_found">No rss found</string>
-    <string name="error_invalid_rss_url">Invalid rss URL</string>
-    <string name="error_invalid_html">Invalid HTML</string>
-
     <!-- Curation -->
     <string name="curation">Curation</string>
     <string name="curation_name">Curation Name</string>
     <string name="no_curation_message">Let\'s register first curation</string>
     <string name="add_word">Add</string>
-    <string name="adding_curation">Adding curation...</string>
+    <string name="adding_curation">Adding curation…</string>
     <string name="word_setting">Word setting</string>
     <string name="delete_curation">Delete curation</string>
     <string name="edit_curation">Edit curation</string>
@@ -168,8 +147,6 @@
     <string name="read_all_articles">記事全既読</string>
     <string name="update_rss">フィード更新</string>
     <string name="scroll_article_list">記事リストをスクロール</string>
-    <string name="swipe_left_to_right">左から右にスワイプ</string>
-    <string name="swipe_right_to_left">右から左にスワイプ</string>
     <string name="change_auto_update_interval">自動更新間隔変更</string>
     <string name="change_all_read_behavior">全部記事読了後の動作変更</string>
     <string name="change_swipe_direction">スワイプ方向変更</string>
@@ -188,5 +165,4 @@
     <string name="update_filter">フィルター更新</string>
     <string name="add_new_filter_no_title">タイトルなしフィルター追加</string>
     <string name="add_new_filter_no_keyword_url">キーワードURLなしフィルター追加</string>
-    <string name="add_new_filter_cancel">フィルター追加キャンセル</string>
 </resources>

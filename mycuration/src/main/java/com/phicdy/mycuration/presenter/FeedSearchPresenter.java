@@ -14,9 +14,9 @@ import java.net.URLEncoder;
 
 public class FeedSearchPresenter implements Presenter {
 
-    private NetworkTaskManager networkTaskManager;
-    private DatabaseAdapter adapter;
-    private UnreadCountManager unreadManager;
+    private final NetworkTaskManager networkTaskManager;
+    private final DatabaseAdapter adapter;
+    private final UnreadCountManager unreadManager;
     private FeedSearchView view;
 
     public FeedSearchPresenter(@NonNull NetworkTaskManager networkTaskManager,

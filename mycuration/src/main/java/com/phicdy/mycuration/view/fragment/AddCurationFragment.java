@@ -29,21 +29,18 @@ import java.util.ArrayList;
 public class AddCurationFragment extends Fragment implements AddCurationView {
 
     private ListView curationWordListView;
-    private Button btnAdd;
     private EditText etInput;
     private EditText etName;
     private CurationWordListAdapter curationWordListAdapter;
     private MyProgressDialogFragment progressDialog;
 
     private Handler handler;
-    private DatabaseAdapter adapter;
 
     private ArrayList<String> addedWords = new ArrayList<>();
 
 
     private AddCurationPresenter presenter;
     public static final String EDIT_CURATION_ID = "editCurationId";
-    private static final String LOG_TAG = "FilFeed.CurationWordList";
 
     public AddCurationFragment() {
     }
@@ -51,7 +48,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = DatabaseAdapter.getInstance(getActivity());
+        DatabaseAdapter adapter = DatabaseAdapter.getInstance(getActivity());
         presenter = new AddCurationPresenter(adapter);
         presenter.setView(this);
         presenter.create();
@@ -80,7 +77,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        btnAdd = (Button) getActivity().findViewById(R.id.btn_add_word);
+        Button btnAdd = (Button) getActivity().findViewById(R.id.btn_add_word);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +113,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         return addedWords;
     }
 
-    public void removedWordAtPosition(int position) {
+    private void removedWordAtPosition(int position) {
         addedWords.remove(position);
         curationWordListAdapter.notifyDataSetChanged();
     }

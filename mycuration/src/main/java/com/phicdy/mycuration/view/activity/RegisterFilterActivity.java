@@ -26,9 +26,9 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
 
     private RegisterFilterPresenter presenter;
 
-    EditText etTitle;
-	EditText etKeyword;
-	EditText etFilterUrl;
+    private EditText etTitle;
+	private EditText etKeyword;
+	private EditText etFilterUrl;
 	private TextView tvTargetRss;
 
     public static final String KEY_SELECTED_FEED = "keySelectedFeed";
