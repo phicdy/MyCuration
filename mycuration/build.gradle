@@ -24,6 +24,7 @@ android {
 
     lintOptions {
         disable 'MissingTranslation'
+        disable "RtlHardcoded"
         abortOnError true
     }
 

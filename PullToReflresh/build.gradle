@@ -17,6 +17,9 @@ android {
     }
 
     lintOptions {
+        disable "RtlHardcoded"
         abortOnError false
+        ignoreWarnings true
     }
 }
+
