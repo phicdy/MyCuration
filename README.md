@@ -1,6 +1,17 @@
 ## MyCuration  [![CircleCI](https://circleci.com/gh/phicdy/MyCuration.svg?style=svg)](https://circleci.com/gh/phicdy/MyCuration)
 
+<a href="https://play.google.com/store/apps/details?id=com.phicdy.mycuration&hl=ja"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="80px"/></a> 
+
 MyCuration is RSS(Feed) Reader that has curation and filter feature.
+
+## Credits
+
+* [Jsoup](https://github.com/jhy/jsoup/)
+* [FloatingActionButton](https://github.com/makovkastar/FloatingActionButton)
+* [Android-ProgressFragment](https://github.com/johnkil/Android-ProgressFragment)
+* [Calligraphy](https://github.com/chrisjenx/Calligraphy)
+* [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
+* [stetho](https://github.com/facebook/stetho)
 
 ## License
 
