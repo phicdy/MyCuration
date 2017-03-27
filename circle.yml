@@ -21,7 +21,7 @@ test:
       # test coverage
     - ./gradlew jacocoTestReport
     - mkdir -p $CIRCLE_TEST_REPORTS/jacoco/
-    - cp -r ./build/reports/jacoco/* $CIRCLE_TEST_REPORTS/jacoco
+    - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/reports/jacoco/* $CIRCLE_TEST_REPORTS/jacoco
     - bash <(curl -s https://codecov.io/bash)
 deployment:
   master:
