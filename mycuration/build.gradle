@@ -1,3 +1,4 @@
+apply plugin: 'jacoco'
 apply plugin: 'com.android.application'
 
 android {
@@ -36,8 +37,42 @@ android {
             minSdkVersion 18
         }
     }
+
 }
 
+jacoco {
+    toolVersion = "0.7.7.201606060606"
+}
+
+// A list of directories which should be included in coverage report
+def coverageSourceDirs = ['src/main/java']
+// A list of files which should be excluded from coverage report since they are generated and/or framework code
+def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*',
+                            '**/BuildConfig.class', '**/*Activity*.class',
+                            '**/*Fragment*.class', '**/*Receiver.class',
+                            '**/*Manifest*.class', '**/*Application*.class']
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testUiTestDebugUnitTest']) {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+        xml.destination "${buildDir}/reports/jacoco/jacocoTestReport.xml"
+        html.destination "${buildDir}/reports/jacoco/html"
+        classDirectories = files(
+                fileTree(
+                        dir: "${buildDir}/intermediates/classes/uiTest/debug",
+                        exclude: coverageExcludeFiles))
+    }
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files "${buildDir}/jacoco/testUiTestDebugUnitTest.exec"
+
+    doLast {
+        println "jacoco xml report has been generated to file://${buildDir}/reports/jacoco/jacocoTestReport.xml"
+        println "jacoco html report has been generated to file://${reports.html.destination}/index.html"
+    }
+}
 
 repositories {
     jcenter()
