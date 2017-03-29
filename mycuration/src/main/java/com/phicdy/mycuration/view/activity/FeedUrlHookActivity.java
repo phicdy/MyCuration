@@ -94,6 +94,7 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
         };
         IntentFilter filter = new IntentFilter();
         filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
+        filter.addAction(NetworkTaskManager.FINISH_UPDATE_ACTION);
         registerReceiver(receiver, filter);
     }
 

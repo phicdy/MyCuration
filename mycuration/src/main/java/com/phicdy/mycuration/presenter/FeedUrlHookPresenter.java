@@ -65,11 +65,14 @@ public class FeedUrlHookPresenter implements Presenter {
                 } else {
                     view.showGenericErrorToast();
                 }
+                view.dismissProgressDialog();
+                view.finishView();
             } else {
                 unreadCountManager.addFeed(newFeed);
                 networkTaskManager.updateFeed(newFeed);
                 view.showSuccessToast();
             }
+        } else if (action.equals(NetworkTaskManager.FINISH_UPDATE_ACTION)) {
             view.dismissProgressDialog();
             view.finishView();
         }
