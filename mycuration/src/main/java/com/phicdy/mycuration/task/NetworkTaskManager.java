@@ -35,6 +35,7 @@ public class NetworkTaskManager {
 	private int numOfFeedRequest = 0;
 
 	public static final String FINISH_ADD_FEED = "FINISH_ADD_FEED";
+    public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
 	public static final String ADDED_FEED_URL = "ADDED_FEED_URL";
 	public static final String ADD_FEED_ERROR_REASON = "ADDED_FEED_ERROR_REASON";
 	@Retention(RetentionPolicy.SOURCE)
@@ -84,14 +85,13 @@ public class NetworkTaskManager {
 						executorService.execute(new UpdateFeedTask(in, feed.getId()));
 					}
 				}, new ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				finishOneRequest();
-				UnreadCountManager.getInstance(context).refreshConut(feed.getId());
-				context.sendBroadcast(new Intent(FeedListFragment.FINISH_UPDATE_ACTION));
-			}
-		});
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        finishOneRequest();
+                        UnreadCountManager.getInstance(context).refreshConut(feed.getId());
+                        context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
+                    }
+				});
 
 		addNumOfRequest();
 		mQueue.add(request);
@@ -99,46 +99,8 @@ public class NetworkTaskManager {
 
 	public void addNewFeed(String feedUrl) {
 		final String requestUrl = UrlUtil.removeUrlParameter(feedUrl);
-//		InputStreamRequest request = new InputStreamRequest(requestUrl,
-//				new Listener<InputStream>() {
-//
-//					@Override
-//					public void onResponse(final InputStream in) {
-						RssParser parser = new RssParser(context);
-//						try {
-//							boolean isSucceeded = parser.parseFeedInfo(in, requestUrl);
+        RssParser parser = new RssParser(context);
 		parser.parseRssXml(requestUrl);
-//							//Update new feed
-//							if(isSucceeded) {
-//								//Get Feed id from feed URL
-//								DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
-//								Feed feed = dbAdapter.getFeedByUrl(requestUrl);
-//
-//								//Parse XML and get new Articles
-//								if (feed != null) {
-//									NetworkTaskManager taskManager = NetworkTaskManager.getInstance(context);
-//									taskManager.updateFeed(feed);
-//									Intent intent = new Intent(FINISH_ADD_FEED);
-//									intent.putExtra(ADDED_FEED_URL, requestUrl);
-//									context.sendBroadcast(intent);
-//								}
-//							}else {
-//								Intent intent = new Intent(FINISH_ADD_FEED);
-//								context.sendBroadcast(intent);
-//							}
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				}, new ErrorListener() {
-//
-//			@Override
-//			public void onErrorResponse(VolleyError error) {
-//			}
-//		});
-//
-//		mQueue.add(request);
-
 	}
 
 
@@ -173,7 +135,7 @@ public class NetworkTaskManager {
 		private final InputStream in;
 		private final int feedId;
 
-		public UpdateFeedTask(InputStream in, int feedId) {
+		UpdateFeedTask(InputStream in, int feedId) {
 			this.in = in;
 			this.feedId = feedId;
 		}
@@ -190,15 +152,15 @@ public class NetworkTaskManager {
 			}
 			finishOneRequest();
 			UnreadCountManager.getInstance(context).refreshConut(feedId);
-			context.sendBroadcast(new Intent(FeedListFragment.FINISH_UPDATE_ACTION));
+			context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
 		}
 	}
 
 	private class GetHatenaPointTask implements Runnable {
 
-		private final Article article;
+		private Article article;
 
-		public GetHatenaPointTask(Article article) {
+		GetHatenaPointTask(Article article) {
 			this.article = article;
 		}
 

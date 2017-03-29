@@ -59,7 +59,6 @@ public class FeedListFragment extends Fragment implements FeedListView {
 
     private static final String FEEDS_KEY = "feedsKey";
     private static final String ALL_FEEDS_KEY = "allFeedsKey";
-    public static final String FINISH_UPDATE_ACTION = "FINISH_UPDATE";
 
     private static final String LOG_TAG = "FilFeed.FeedList";
 
@@ -280,7 +279,7 @@ public class FeedListFragment extends Fragment implements FeedListView {
             public void onReceive(Context context, Intent intent) {
                 // Set num of unread articles and update UI
                 String action = intent.getAction();
-                if (action.equals(FINISH_UPDATE_ACTION)) {
+                if (action.equals(NetworkTaskManager.FINISH_UPDATE_ACTION)) {
                     Log.d(LOG_TAG, "onReceive");
                     presenter.onFinishUpdate();
                 }else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
@@ -292,7 +291,7 @@ public class FeedListFragment extends Fragment implements FeedListView {
         };
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(FINISH_UPDATE_ACTION);
+        filter.addAction(NetworkTaskManager.FINISH_UPDATE_ACTION);
         filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
         getActivity().registerReceiver(receiver, filter);
     }
