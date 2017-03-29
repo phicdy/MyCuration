@@ -46,6 +46,7 @@ public class FeedListPresenter implements Presenter {
         // For show/hide
         if (allFeeds.size() != 0) {
             addShowHideLine(allFeeds);
+            view.showAllUnreadView();
         }
         generateHidedFeedList();
         refreshList();

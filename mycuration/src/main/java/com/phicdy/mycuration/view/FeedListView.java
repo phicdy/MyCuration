@@ -23,5 +23,6 @@ public interface FeedListView {
     void showGenericAddFeedErrorToast();
     void showInvalidUrlAddFeedErrorToast();
     void notifyDataSetChanged();
+    void showAllUnreadView();
     void hideAllUnreadView();
 }

@@ -217,6 +217,11 @@ public class FeedListFragment extends Fragment implements FeedListView {
     }
 
     @Override
+    public void showAllUnreadView() {
+        allUnread.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void hideAllUnreadView() {
         allUnread.setVisibility(View.GONE);
     }

@@ -93,7 +93,12 @@ public class AddFeedTest {
         if (feedUnreadCountList == null) fail("Feed count was not found");
         // Feed count list does not include show/hide option row, the size is 1
         if (feedUnreadCountList.size() != 1) fail("Feed count was not added");
-        assertThat(Integer.valueOf(feedUnreadCountList.get(0).getText()), greaterThan(0));
+        assertThat(Integer.valueOf(feedUnreadCountList.get(0).getText()), greaterThan(-1));
+
+        // Assert all article view shows
+        UiObject2 allArticleView = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "ll_all_unread")), 5000);
+        assertNotNull(allArticleView);
     }
 
     @Test
