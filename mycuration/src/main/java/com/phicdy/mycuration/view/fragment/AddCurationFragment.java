@@ -34,12 +34,18 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
     private CurationWordListAdapter curationWordListAdapter;
     private MyProgressDialogFragment progressDialog;
 
-    private Handler handler;
+    private static class InsertResultHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            boolean result = (boolean)msg.obj;
+            String errorMessage = msg.getData().getString(AddCurationPresenter.INSERT_ERROR_MESSAGE);
+            presenter.handleInsertResultMessage(result, errorMessage);
+        }
+    }
 
+    private final InsertResultHandler handler = new InsertResultHandler();
     private ArrayList<String> addedWords = new ArrayList<>();
-
-
-    private AddCurationPresenter presenter;
+    private static AddCurationPresenter presenter;
     public static final String EDIT_CURATION_ID = "editCurationId";
 
     public AddCurationFragment() {
@@ -52,14 +58,6 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         presenter = new AddCurationPresenter(adapter);
         presenter.setView(this);
         presenter.create();
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                boolean result = (boolean)msg.obj;
-                String errorMessage = msg.getData().getString(AddCurationPresenter.INSERT_ERROR_MESSAGE);
-                presenter.handleInsertResultMessage(result, errorMessage);
-            }
-        };
     }
 
     @Override

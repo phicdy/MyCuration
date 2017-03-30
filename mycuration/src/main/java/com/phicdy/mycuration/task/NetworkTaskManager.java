@@ -14,7 +14,6 @@ import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
-import com.phicdy.mycuration.view.fragment.FeedListFragment;
 import com.phicdy.mycuration.util.UrlUtil;
 
 import java.io.IOException;
@@ -158,7 +157,7 @@ public class NetworkTaskManager {
 
 	private class GetHatenaPointTask implements Runnable {
 
-		private Article article;
+		private final Article article;
 
 		GetHatenaPointTask(Article article) {
 			this.article = article;
