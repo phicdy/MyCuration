@@ -49,7 +49,7 @@ public class FilterListTest {
     }
 
     @Test
-    public void addYahooNews() {
+    public void addFilterForYahooNews() {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         String testTitle = "Test";
         String testKeyword = "TestKeyword";
