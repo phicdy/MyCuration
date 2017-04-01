@@ -50,7 +50,8 @@ public class AddFeedTest {
         // Launch MainActivity
         Context context = InstrumentationRegistry.getContext();
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
 
         // Go to feed tab
@@ -107,13 +108,17 @@ public class AddFeedTest {
         // Launch MainActivity
         Context context = InstrumentationRegistry.getContext();
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
+        device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
+        takeScreenshot(device, "after_startActivity_" + System.currentTimeMillis());
 
         // Go to feed tab
         @SuppressWarnings("deprecation")
-        List<UiObject2> tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 15000);
+        List<UiObject2> tabs = device.findObjects(
+                By.clazz(android.support.v7.app.ActionBar.Tab.class));
+        takeScreenshot(device, "main_ui_before_click_feed_tab_" + System.currentTimeMillis());
         if (tabs == null) fail("Tab was not found");
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();

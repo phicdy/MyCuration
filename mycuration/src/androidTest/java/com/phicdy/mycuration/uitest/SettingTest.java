@@ -42,11 +42,12 @@ public class SettingTest {
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+        device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
 
         // Go to feed tab
         @SuppressWarnings("deprecation")
-        List<UiObject2> tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab.class)), 15000);
+        List<UiObject2> tabs = device.findObjects(
+                By.clazz(android.support.v7.app.ActionBar.Tab.class));
         if (tabs == null) fail("Tab was not found");
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();
@@ -157,12 +158,12 @@ public class SettingTest {
         List<UiObject2> feedTitles = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000);
         if (feedTitles == null) fail("Feed was not found");
-        feedTitles.get(0).click();
+        feedTitles.get(0).clickAndWait(Until.newWindow(), 5000);
 
-        // Click first article
         UiObject2 articleList = device.wait(Until.findObject(
                 By.res("android:id/list")), 5000);
-        UiObject2 firstArticle = articleList.findObject(By.clazz(LinearLayout.class));
+        UiObject2 firstArticle = articleList.findObject(
+                By.clazz(LinearLayout.class));
         firstArticle.click();
 
         // Assert default browser is opened
@@ -201,6 +202,11 @@ public class SettingTest {
                 break;
             }
         }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         device.pressBack();
 
         // Click first feed
@@ -214,7 +220,7 @@ public class SettingTest {
                 By.res(BuildConfig.APPLICATION_ID, "fab")), 5000);
         fab.click();
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
