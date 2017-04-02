@@ -1,5 +1,6 @@
 apply plugin: 'jacoco'
 apply plugin: 'com.android.application'
+apply plugin: 'spoon'
 
 android {
     compileSdkVersion 25
@@ -74,6 +75,13 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testUiTestDebugUnitTest']
     }
 }
 
+spoon {
+    debug = true
+
+    // To grant permissions to Android M >= devices */
+    grantAllPermissions = true
+}
+
 repositories {
     jcenter()
 }
@@ -88,6 +96,7 @@ dependencies {
     uiTestCompile 'com.android.support.test:runner:0.5'
     uiTestCompile 'com.android.support.test:rules:0.5'
     uiTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    uiTestCompile 'com.squareup.spoon:spoon-client:1.6.4'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
