@@ -14,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.phicdy.mycuration.BuildConfig;
-import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,9 +32,9 @@ public class SettingTest extends UiTest {
 
     @Before
     public void setup() {
+        super.setup();
+
         Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
-        adapter.deleteAll();
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
 
         // Launch MainActivity
@@ -73,9 +72,7 @@ public class SettingTest extends UiTest {
 
     @After
     public void tearDown() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
-        adapter.deleteAll();
+        super.tearDown();
     }
 
     @Test

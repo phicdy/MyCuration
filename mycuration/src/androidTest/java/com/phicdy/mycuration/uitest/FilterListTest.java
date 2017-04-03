@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.phicdy.mycuration.BuildConfig;
-import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -36,16 +35,12 @@ public class FilterListTest extends UiTest {
 
     @Before
     public void setup() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
-        adapter.deleteAll();
+        super.setup();
     }
 
     @After
     public void tearDown() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
-        adapter.deleteAll();
+        super.tearDown();
     }
 
     @Test

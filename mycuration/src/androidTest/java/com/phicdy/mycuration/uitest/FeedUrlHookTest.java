@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.phicdy.mycuration.BuildConfig;
-import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,20 +28,16 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
-public class FeedUrlHookTest {
+public class FeedUrlHookTest extends UiTest {
 
     @Before
     public void setup() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
-        adapter.deleteAll();
+        super.setup();
     }
 
     @After
     public void tearDown() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
-        adapter.deleteAll();
+        super.tearDown();
     }
 
     @Test
