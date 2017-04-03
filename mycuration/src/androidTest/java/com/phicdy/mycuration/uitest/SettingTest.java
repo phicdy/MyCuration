@@ -29,7 +29,7 @@ import static junit.framework.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
-public class SettingTest {
+public class SettingTest extends UiTest {
 
     @Before
     public void setup() {
@@ -50,6 +50,7 @@ public class SettingTest {
                 By.clazz(android.support.v7.app.ActionBar.Tab.class));
         if (tabs == null) fail("Tab was not found");
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
+        takeScreenshot(device);
         tabs.get(1).click();
 
         // Click plus button
@@ -212,7 +213,10 @@ public class SettingTest {
         // Click first feed
         List<UiObject2> feedTitles = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000);
-        if (feedTitles == null) fail("Feed was not found");
+        if (feedTitles == null) {
+            takeScreenshot(device);
+            fail("Feed was not found");
+        }
         feedTitles.get(0).click();
 
         // Click fab
@@ -240,7 +244,10 @@ public class SettingTest {
         // Click setting button
         UiObject2 settingButton = device.wait(
                 Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
-        if (settingButton == null) fail("Setting button was not found");
+        if (settingButton == null) {
+            takeScreenshot(device);
+            fail("Setting button was not found");
+        }
         settingButton.click();
 
         // Disable option to go back to top

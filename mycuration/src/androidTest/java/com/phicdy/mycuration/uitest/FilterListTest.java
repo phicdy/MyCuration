@@ -32,7 +32,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
-public class FilterListTest {
+public class FilterListTest extends UiTest {
 
     @Before
     public void setup() {
@@ -234,6 +234,7 @@ public class FilterListTest {
                 By.clazz(android.support.v7.app.ActionBar.Tab.class));
         if (tabs == null) fail("Tab was not found");
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
+        takeScreenshot(device, "before_click_RSS_tab" + System.currentTimeMillis());
         tabs.get(1).click();
 
         // Click plus button

@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
-public class AddFeedTest {
+public class AddFeedTest extends UiTest {
 
     @Before
     public void setup() {
@@ -105,6 +105,7 @@ public class AddFeedTest {
     @Test
     public void tryInvalidUrl() {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        takeScreenshot(device, "start_of_tryInvalidUrl_" + System.currentTimeMillis());
         // Launch MainActivity
         Context context = InstrumentationRegistry.getContext();
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
