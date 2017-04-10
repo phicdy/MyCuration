@@ -6,6 +6,7 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.task.GetHatenaBookmark;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.DateParser;
 import com.phicdy.mycuration.util.TextUtil;
@@ -289,7 +290,7 @@ public class RssParser {
 			dbAdapter.saveNewArticles(articles, feedId);
 			Log.d(LOG_TAG, "Finish save, time:" + (System.currentTimeMillis() - now));
 			for (Article addedArticle : articles) {
-				NetworkTaskManager.getInstance(context).getHatenaPoint(addedArticle);
+				new GetHatenaBookmark().request(addedArticle.getUrl(), dbAdapter);
 			}
 		} catch (XmlPullParserException | IOException e) {
 			e.printStackTrace();

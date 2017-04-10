@@ -7,7 +7,7 @@ import android.content.Intent;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.task.GetHatenaBookmarkPointTask;
+import com.phicdy.mycuration.task.GetHatenaBookmark;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.NetworkUtil;
 import com.phicdy.mycuration.util.PreferenceHelper;
@@ -63,9 +63,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 					if ((!unreadArticle.getPoint().equals(Article.DEDAULT_HATENA_POINT)) && !isWifiConnected) {
 						continue;
 					}
-					GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(
-							context);
-					hatenaTask.execute(unreadArticle);
+                    new GetHatenaBookmark().request(unreadArticle.getUrl(), dbAdapter);
 				}
 			}
 		}

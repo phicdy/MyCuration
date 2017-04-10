@@ -11,7 +11,6 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
 
 import com.phicdy.mycuration.BuildConfig;
-import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,16 +31,12 @@ public class AddFeedTest extends UiTest {
 
     @Before
     public void setup() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
-        adapter.deleteAll();
+        super.setup();
     }
 
     @After
     public void tearDown() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
-        adapter.deleteAll();
+        super.tearDown();
     }
 
     @Test

@@ -4,32 +4,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IntDef;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.phicdy.mycuration.filter.FilterTask;
-import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
+import com.phicdy.mycuration.util.TextUtil;
 import com.phicdy.mycuration.util.UrlUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.http.GET;
+import retrofit2.http.Url;
 
 public class NetworkTaskManager {
 
 	private static NetworkTaskManager networkTaskManager;
 	private static ExecutorService executorService;
 	private final Context context;
-	private final RequestQueue mQueue;
 	// Manage queue status
 	private int numOfFeedRequest = 0;
 
@@ -47,7 +50,6 @@ public class NetworkTaskManager {
 
 	private NetworkTaskManager(Context context) {
 		this.context = context;
-		mQueue = Volley.newRequestQueue(context);
 		executorService = Executors.newFixedThreadPool(8);
 	}
 
@@ -72,28 +74,36 @@ public class NetworkTaskManager {
 		}
 	}
 
-	public void updateFeed(final Feed feed) {
-		InputStreamRequest request = new InputStreamRequest(feed.getUrl(),
-				new Listener<InputStream>() {
+	private interface FeedRequestService {
+        @GET
+        Call<ResponseBody> feeds(@Url String url);
+    }
 
-					@Override
-					public void onResponse(final InputStream in) {
-						if (in == null) {
-							return;
-						}
-						executorService.execute(new UpdateFeedTask(in, feed.getId()));
-					}
-				}, new ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        finishOneRequest();
-                        UnreadCountManager.getInstance(context).refreshConut(feed.getId());
-                        context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
-                    }
-				});
+	public void updateFeed(final Feed feed) {
+        if (TextUtil.isEmpty(feed.getUrl())) return;
+        URI uri = URI.create(feed.getUrl());
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(uri.getScheme() + "://" + uri.getHost())
+                .build();
+        FeedRequestService service = retrofit.create(FeedRequestService.class);
+        Call<ResponseBody> call = service.feeds(uri.getPath());
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response == null) return;
+                UpdateFeedTask task = new UpdateFeedTask(response.body().byteStream(), feed.getId());
+                executorService.execute(task);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+				finishOneRequest();
+				UnreadCountManager.getInstance(context).refreshConut(feed.getId());
+				context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
+            }
+        });
 
 		addNumOfRequest();
-		mQueue.add(request);
 	}
 
 	public void addNewFeed(String feedUrl) {
@@ -115,19 +125,9 @@ public class NetworkTaskManager {
 		return numOfFeedRequest != 0;
 	}
 	
-	void addHatenaBookmarkUpdateRequest(InputStreamRequest request) {
-		if (request != null) {
-			mQueue.add(request);
-		}
-	}
-
     public synchronized int getFeedRequestCountInQueue() {
         return numOfFeedRequest;
     }
-
-	public void getHatenaPoint(Article article) {
-		executorService.execute(new GetHatenaPointTask(article));
-	}
 
 	private class UpdateFeedTask implements Runnable {
 
@@ -152,21 +152,6 @@ public class NetworkTaskManager {
 			finishOneRequest();
 			UnreadCountManager.getInstance(context).refreshConut(feedId);
 			context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
-		}
-	}
-
-	private class GetHatenaPointTask implements Runnable {
-
-		private final Article article;
-
-		GetHatenaPointTask(Article article) {
-			this.article = article;
-		}
-
-		@Override
-		public void run() {
-			GetHatenaBookmarkPointTask hatenaTask = new GetHatenaBookmarkPointTask(context);
-			hatenaTask.execute(article);
 		}
 	}
 }
