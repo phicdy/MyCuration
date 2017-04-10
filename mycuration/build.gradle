@@ -103,7 +103,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.2'
     compile 'com.melnykov:floatingactionbutton:1.1.0'
     compile 'com.github.johnkil.android-progressfragment:progressfragment:1.4.0'
-    compile 'com.google.android.gms:play-services-analytics:10.2.0'
+    compile 'com.google.android.gms:play-services-analytics:10.2.1'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.android.support:design:25.3.1'
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
