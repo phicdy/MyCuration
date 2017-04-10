@@ -6,6 +6,7 @@ MyCuration is RSS(Feed) Reader that has curation and filter feature.
 
 ## Credits
 
+* [Retrofit](https://github.com/square/retrofit)
 * [Jsoup](https://github.com/jhy/jsoup/)
 * [FloatingActionButton](https://github.com/makovkastar/FloatingActionButton)
 * [Android-ProgressFragment](https://github.com/johnkil/Android-ProgressFragment)
