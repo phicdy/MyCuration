@@ -2,13 +2,13 @@ package com.phicdy.mycuration.view.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +20,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -331,6 +332,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
                 holder.articlePoint = (TextView) row.findViewById(R.id.articlePoint);
                 holder.articleUrl = (TextView) row.findViewById(R.id.tv_articleUrl);
                 holder.feedTitleView = (TextView) row.findViewById(R.id.feedTitle);
+                holder.feedIconView = (ImageView) row.findViewById(R.id.iv_feed_icon);
                 row.setTag(holder);
             }else {
                 holder = (ViewHolder)row.getTag();
@@ -359,17 +361,17 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
                 String feedTitle = article.getFeedTitle();
                 if(feedTitle == null) {
                     holder.feedTitleView.setVisibility(View.GONE);
+                    holder.feedIconView.setVisibility(View.GONE);
                 }else {
                     holder.feedTitleView.setText(feedTitle);
                     holder.feedTitleView.setTextColor(Color.BLACK);
 
                     String iconPath = article.getFeedIconPath();
                     if (!TextUtil.isEmpty(iconPath) && new File(iconPath).exists()) {
-                        holder.feedTitleView.setCompoundDrawables(Drawable.createFromPath(iconPath),
-                                null, null, null);
+                        Bitmap bmp = BitmapFactory.decodeFile(article.getFeedIconPath());
+                        holder.feedIconView.setImageBitmap(bmp);
                     }else {
-                        holder.feedTitleView.setCompoundDrawables(ContextCompat.getDrawable(getContext(), R.drawable.no_icon),
-                                null, null, null);
+                        holder.feedIconView.setImageResource(R.drawable.no_icon);
                     }
                 }
                 holder.articleTitle.setTextColor(Color.BLACK);
@@ -393,6 +395,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
             TextView articlePoint;
             TextView articleUrl;
             TextView feedTitleView;
+            ImageView feedIconView;
         }
     }
 }
