@@ -126,8 +126,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                int touchedPosition = position - 1;
-                Article clickedArticle = articlesListAdapter.getItem(touchedPosition);
+                Article clickedArticle = articlesListAdapter.getItem(position);
                 presenter.onListItemClicked(clickedArticle);
             }
         });
@@ -136,8 +135,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id) {
-                int touchedPosition = position - 1;
-                Article clickedArticle = articlesListAdapter.getItem(touchedPosition);
+                Article clickedArticle = articlesListAdapter.getItem(position);
                 if (clickedArticle != null) {
                     presenter.onListItemLongClicked(clickedArticle);
                 }
@@ -189,7 +187,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     public void onFlying(MotionEvent event1, MotionEvent event2, float velocityX) {
         // Set touched position in articles list from touch event
         int touchedPosition = listView.pointToPosition(
-                (int) event1.getX(), (int) event1.getY()) - 1;
+                (int) event1.getX(), (int) event1.getY());
         if (touchedPosition < 0 || touchedPosition > articlesListAdapter.getCount()) return;
         presenter.onFlying(touchedPosition, event1, event2, velocityX);
     }
