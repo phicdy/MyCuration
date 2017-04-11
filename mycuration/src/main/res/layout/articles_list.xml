@@ -22,19 +22,33 @@
             android:minHeight="24dp" />
         <!-- android:onClick="displayArticle" -->
 
-        <TextView
-            android:id="@+id/feedTitle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:text="@string/sample_rss_title"
-            android:drawableLeft="@drawable/no_icon"
-            android:drawablePadding="4dp"
-            android:layout_gravity="center_vertical"
-            android:textSize="12sp" />
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_feed_icon"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/no_icon"
+                android:contentDescription="@string/icon" />
+
+            <TextView
+                android:id="@+id/feedTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="@string/sample_rss_title"
+                android:layout_gravity="center_vertical"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_articleUrl"
