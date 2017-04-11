@@ -24,9 +24,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.melnykov.fab.FloatingActionButton;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
@@ -34,7 +31,6 @@ import com.phicdy.mycuration.presenter.ArticleListPresenter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
-import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.util.TextUtil;
@@ -52,7 +48,6 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     private ArticleListPresenter presenter;
 
-    private PullToRefreshListView articlesListView;
     private ListView listView;
     private ArticlesListAdapter articlesListAdapter;
     private static final String OPEN_URL_ID = "openUrl";
@@ -107,8 +102,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_articles_list, container, false);
-        articlesListView = (PullToRefreshListView) view.findViewById(R.id.articleListRefresh);
-        listView = articlesListView.getRefreshableView();
+        listView = (ListView) view.findViewById(R.id.lv_article);
         articlesListAdapter = new ArticlesListAdapter(new ArrayList<Article>());
         listView.setAdapter(articlesListAdapter);
         listView.setEmptyView(view.findViewById(R.id.emptyView));
@@ -165,17 +159,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
             }
         });
 
-        articlesListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
-            @Override
-            public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-                NetworkTaskManager networkTaskManager = NetworkTaskManager
-                        .getInstance(getActivity());
-                presenter.onListPulled(networkTaskManager);
-                GATrackerHelper.sendEvent(getString(R.string.update_rss));
-            }
-        });
-
-        articlesListView.setOnScrollListener(new OnScrollListener() {
+        listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
             }

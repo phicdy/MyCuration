@@ -8,7 +8,6 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
-import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.ArticleListView;
 
@@ -234,15 +233,6 @@ public class ArticleListPresenter implements Presenter {
 
     public void onListItemLongClicked(@NonNull Article item) {
         view.showShareUi(item.getUrl());
-    }
-
-    public void onListPulled(@NonNull NetworkTaskManager networkTaskManager) {
-        // Update Feeds
-        ArrayList<Feed> feeds = new ArrayList<>();
-        Feed selectedFeed = adapter.getFeedById(feedId);
-        String feedUrl = selectedFeed.getUrl();
-        feeds.add(new Feed(feedId, null, feedUrl, "", "", 0));
-        networkTaskManager.updateAllFeeds(feeds);
     }
 
     public void onFabButtonClicked() {
