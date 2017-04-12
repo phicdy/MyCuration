@@ -27,6 +27,7 @@ public class ArticleListPresenter implements Presenter {
     private final int swipeDirection;
     private AsyncTask<Long, Void, Void> mTask;
 
+    private ArrayList<Article> allArticles;
     private boolean isSwipeRightToLeft = false;
     private boolean isSwipeLeftToRight = false;
     private static final int SWIPE_MIN_WIDTH = 120;
@@ -59,7 +60,7 @@ public class ArticleListPresenter implements Presenter {
     }
 
     public void createView() {
-        ArrayList<Article> allArticles = loadAllArticles();
+        allArticles = loadAllArticles();
         loadArticle(LOAD_COUNT, allArticles);
         view.notifyListView();
     }
@@ -121,7 +122,6 @@ public class ArticleListPresenter implements Presenter {
         if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
             return;
         }
-        final ArrayList<Article> allArticles = loadAllArticles();
         if (view.size() == allArticles.size()) {
             // All articles are loaded
             view.removeFooter();
