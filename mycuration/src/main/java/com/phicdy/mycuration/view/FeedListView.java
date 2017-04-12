@@ -10,7 +10,7 @@ public interface FeedListView {
     void showDeleteFeedAlertDialog(int position);
     void showEditTitleDialog(int position, @NonNull String feedTitle);
     void setRefreshing(boolean doScroll);
-    void init(ArrayList<Feed> feeds);
+    void init(@NonNull ArrayList<Feed> feeds);
     void setTotalUnreadCount(int count);
     void onRefreshCompleted();
     void showEditFeedTitleEmptyErrorToast();
