@@ -13,7 +13,6 @@ public interface ArticleListView {
     void openExternalWebView(@NonNull String url);
     void notifyListView();
     int size();
-    void hideFabButton();
     void finish();
     Article getItem(int position);
     int getFirstVisiblePosition();

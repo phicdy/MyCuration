@@ -125,7 +125,6 @@ public class ArticleListPresenter implements Presenter {
         if (view.size() == allArticles.size()) {
             // All articles are loaded
             view.removeFooter();
-            view.hideFabButton();
             return;
         }
 

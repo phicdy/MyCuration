@@ -243,11 +243,6 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     }
 
     @Override
-    public void hideFabButton() {
-        fab.setVisibility(View.GONE);
-    }
-
-    @Override
     public void finish() {
         listener.finish();
     }
