@@ -6,8 +6,8 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
-import com.phicdy.mycuration.view.fragment.FeedListFragment;
 import com.phicdy.mycuration.view.FeedListView;
+import com.phicdy.mycuration.view.fragment.FeedListFragment;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,6 @@ public class FeedListPresenter implements Presenter {
 
     // Manage hide feed status
     private boolean isHided = true;
-    private int numOfAllFeeds = 0;
 
     public FeedListPresenter(DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
                              UnreadCountManager unreadCountManager) {
@@ -52,7 +51,6 @@ public class FeedListPresenter implements Presenter {
         refreshList();
         if (networkTaskManager.isUpdatingFeed()) {
             view.setRefreshing(true);
-            updateProgress();
         }
     }
 
@@ -91,14 +89,6 @@ public class FeedListPresenter implements Presenter {
 
     private void updateAllUnreadArticlesCount() {
         view.setTotalUnreadCount(unreadCountManager.getTotal());
-    }
-
-    private void updateProgress() {
-        int updatedFeed = numOfAllFeeds - networkTaskManager.getFeedRequestCountInQueue();
-        if ((updatedFeed == numOfAllFeeds) && !networkTaskManager.isUpdatingFeed()) {
-            updatedFeed = 0;
-        }
-        view.setProgress(updatedFeed, numOfAllFeeds);
     }
 
     @Override
@@ -246,13 +236,10 @@ public class FeedListPresenter implements Presenter {
 
     private void onRefreshComplete() {
         view.onRefreshCompleted();
-        updateProgress();
     }
 
     public void onFinishUpdate() {
-        if (networkTaskManager.isUpdatingFeed()) {
-            updateProgress();
-        }else {
+        if (!networkTaskManager.isUpdatingFeed()) {
             onRefreshComplete();
             refreshList();
         }
@@ -304,8 +291,7 @@ public class FeedListPresenter implements Presenter {
 
     public void activityCreated() {
         refreshList();
-        numOfAllFeeds = dbAdapter.getNumOfFeeds();
-
+        int numOfAllFeeds = dbAdapter.getNumOfFeeds();
         if (numOfAllFeeds == 0) {
             view.hideAllUnreadView();
         }else {

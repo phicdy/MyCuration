@@ -159,14 +159,6 @@ public class FeedListFragment extends Fragment implements FeedListView {
     }
 
     @Override
-    public void setProgress(int completedCount, int total) {
-        if (feedsListView != null ){
-            feedsListView.getLoadingLayoutProxy()
-                    .setRefreshingLabel(getString(R.string.loading) + "(" + completedCount + "/" + total + ")");
-        }
-    }
-
-    @Override
     public void onRefreshCompleted() {
         feedsListView.onRefreshComplete();
     }

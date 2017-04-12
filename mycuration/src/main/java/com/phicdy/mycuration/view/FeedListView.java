@@ -12,7 +12,6 @@ public interface FeedListView {
     void setRefreshing(boolean doScroll);
     void init(ArrayList<Feed> feeds);
     void setTotalUnreadCount(int count);
-    void setProgress(int completedCount, int total);
     void onRefreshCompleted();
     void showEditFeedTitleEmptyErrorToast();
     void showEditFeedFailToast();
