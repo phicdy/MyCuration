@@ -99,11 +99,6 @@ public class ArticleListPresenterTest {
         }
 
         @Override
-        public void hideFabButton() {
-
-        }
-
-        @Override
         public void finish() {
 
         }
