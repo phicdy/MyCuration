@@ -11,7 +11,6 @@
     <!-- RSS一覧 -->
     <string name="show_all_rsses">全てのRSSを表示</string>
     <string name="hide_rsses">既読のRSSを隠す</string>
-    <string name="loading">読み込み中…</string>
 
     <string name="keyword">キーワード</string>
     <string name="keyword_description">記事タイトルに指定したキーワードが含まれていると自動的に既読になります</string>
@@ -145,7 +144,6 @@
     <string name="tap_article_external">記事を外部ブラウザで開く</string>
     <string name="share_article">記事共有</string>
     <string name="read_all_articles">記事全既読</string>
-    <string name="update_rss">RSS更新</string>
     <string name="scroll_article_list">記事リストをスクロール</string>
     <string name="change_auto_update_interval">自動更新間隔変更</string>
     <string name="change_all_read_behavior">全部記事読了後の動作変更</string>

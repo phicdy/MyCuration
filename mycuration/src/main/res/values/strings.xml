@@ -11,7 +11,6 @@
     <!-- rss list -->
     <string name="show_all_rsses">Show all of rsses</string>
     <string name="hide_rsses">Hide rsses</string>
-    <string name="loading">Updating…</string>
 
     <string name="keyword">Keyword</string>
     <string name="keyword_description">When the keyword is included in article title, it becomes read status</string>
@@ -145,7 +144,6 @@
     <string name="tap_article_external">記事を外部ブラウザで開く</string>
     <string name="share_article">記事共有</string>
     <string name="read_all_articles">記事全既読</string>
-    <string name="update_rss">フィード更新</string>
     <string name="scroll_article_list">記事リストをスクロール</string>
     <string name="change_auto_update_interval">自動更新間隔変更</string>
     <string name="change_all_read_behavior">全部記事読了後の動作変更</string>
