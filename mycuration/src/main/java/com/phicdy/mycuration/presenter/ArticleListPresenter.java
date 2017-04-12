@@ -8,7 +8,6 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
-import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.ArticleListView;
 
@@ -28,6 +27,7 @@ public class ArticleListPresenter implements Presenter {
     private final int swipeDirection;
     private AsyncTask<Long, Void, Void> mTask;
 
+    private ArrayList<Article> allArticles;
     private boolean isSwipeRightToLeft = false;
     private boolean isSwipeLeftToRight = false;
     private static final int SWIPE_MIN_WIDTH = 120;
@@ -60,7 +60,7 @@ public class ArticleListPresenter implements Presenter {
     }
 
     public void createView() {
-        ArrayList<Article> allArticles = loadAllArticles();
+        allArticles = loadAllArticles();
         loadArticle(LOAD_COUNT, allArticles);
         view.notifyListView();
     }
@@ -122,11 +122,9 @@ public class ArticleListPresenter implements Presenter {
         if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
             return;
         }
-        final ArrayList<Article> allArticles = loadAllArticles();
         if (view.size() == allArticles.size()) {
             // All articles are loaded
             view.removeFooter();
-            view.hideFabButton();
             return;
         }
 
@@ -236,27 +234,18 @@ public class ArticleListPresenter implements Presenter {
         view.showShareUi(item.getUrl());
     }
 
-    public void onListPulled(@NonNull NetworkTaskManager networkTaskManager) {
-        // Update Feeds
-        ArrayList<Feed> feeds = new ArrayList<>();
-        Feed selectedFeed = adapter.getFeedById(feedId);
-        String feedUrl = selectedFeed.getUrl();
-        feeds.add(new Feed(feedId, null, feedUrl, "", "", 0));
-        networkTaskManager.updateAllFeeds(feeds);
-    }
-
     public void onFabButtonClicked() {
         if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
             return;
         }
         int firstPosition = view.getFirstVisiblePosition();
         int lastPosition = view.getLastVisiblePosition();
-        if (lastPosition == view.size()) {
+        if (lastPosition == view.size()-1) {
             // Article of last position is next article of last visible article.
             // When last article shows, it needs to add index for last article
             lastPosition++;
         }
-        for (int i = firstPosition; i < lastPosition - 1; i++) {
+        for (int i = firstPosition; i < lastPosition; i++) {
             if (i > view.size()-1) break;
             Article targetArticle = view.getItem(i);
             if (targetArticle == null) break;

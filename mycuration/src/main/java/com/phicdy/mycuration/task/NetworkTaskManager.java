@@ -125,10 +125,6 @@ public class NetworkTaskManager {
 		return numOfFeedRequest != 0;
 	}
 	
-    public synchronized int getFeedRequestCountInQueue() {
-        return numOfFeedRequest;
-    }
-
 	private class UpdateFeedTask implements Runnable {
 
 		private final InputStream in;

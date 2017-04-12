@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -27,8 +28,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.FeedListPresenter;
@@ -45,7 +44,9 @@ public class FeedListFragment extends Fragment implements FeedListView {
     private FeedListPresenter presenter;
     private TextView tvAllUnreadArticleCount;
     private LinearLayout allUnread;
-    private PullToRefreshListView feedsListView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ListView feedsListView;
+    private TextView emptyView;
 
     private RssFeedListAdapter rssFeedListAdapter;
     private OnFeedListFragmentListener mListener;
@@ -107,10 +108,10 @@ public class FeedListFragment extends Fragment implements FeedListView {
 
         switch (item.getItemId()) {
             case DELETE_FEED_MENU_ID:
-                presenter.onDeleteFeedMenuClicked(info.position-1);
+                presenter.onDeleteFeedMenuClicked(info.position);
                 return true;
             case EDIT_FEED_TITLE_MENU_ID:
-                presenter.onEditFeedMenuClicked(info.position-1);
+                presenter.onEditFeedMenuClicked(info.position);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -141,11 +142,13 @@ public class FeedListFragment extends Fragment implements FeedListView {
 
     @Override
     public void setRefreshing(boolean doScroll) {
-        feedsListView.setRefreshing(doScroll);
+        swipeRefreshLayout.setRefreshing(doScroll);
     }
 
     @Override
-    public void init(ArrayList<Feed> feeds) {
+    public void init(@NonNull ArrayList<Feed> feeds) {
+        if (feeds.size() == 0) emptyView.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
         rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
         feedsListView.setAdapter(rssFeedListAdapter);
         rssFeedListAdapter.notifyDataSetChanged();
@@ -159,16 +162,8 @@ public class FeedListFragment extends Fragment implements FeedListView {
     }
 
     @Override
-    public void setProgress(int completedCount, int total) {
-        if (feedsListView != null ){
-            feedsListView.getLoadingLayoutProxy()
-                    .setRefreshingLabel(getString(R.string.loading) + "(" + completedCount + "/" + total + ")");
-        }
-    }
-
-    @Override
     public void onRefreshCompleted() {
-        feedsListView.onRefreshComplete();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -255,18 +250,16 @@ public class FeedListFragment extends Fragment implements FeedListView {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                presenter.onFeedListClicked(position-1, mListener);
+                presenter.onFeedListClicked(position, mListener);
             }
 
         });
-        feedsListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
-
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+            public void onRefresh() {
                 presenter.onRefresh();
             }
         });
-        allUnread = (LinearLayout)getActivity().findViewById(R.id.ll_all_unread);
         allUnread.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -304,7 +297,16 @@ public class FeedListFragment extends Fragment implements FeedListView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_feed_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
+        feedsListView = (ListView) view.findViewById(R.id.feedList);
+        emptyView = (TextView) view.findViewById(R.id.emptyView);
+        feedsListView.setEmptyView(emptyView);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srl_container);
+        tvAllUnreadArticleCount = (TextView) view.findViewById(R.id.allUnreadCount);
+        allUnread = (LinearLayout) view.findViewById(R.id.ll_all_unread);
+        registerForContextMenu(feedsListView);
+        setAllListener();
+        return view;
     }
 
     @Override
@@ -321,12 +323,6 @@ public class FeedListFragment extends Fragment implements FeedListView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        feedsListView = (PullToRefreshListView) getActivity().findViewById(R.id.feedList);
-        TextView emptyView = (TextView)getActivity().findViewById(R.id.emptyView);
-        feedsListView.setEmptyView(emptyView);
-        tvAllUnreadArticleCount = (TextView)getActivity().findViewById(R.id.allUnreadCount);
-        registerForContextMenu(feedsListView.getRefreshableView());
-        setAllListener();
         presenter.activityCreated();
     }
 
