@@ -112,7 +112,7 @@ public class SettingTest extends UiTest {
 
         // Click first article
         UiObject2 articleList = device.wait(Until.findObject(
-                By.res("android:id/list")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "lv_article")), 5000);
         UiObject2 firstArticle = articleList.findObject(By.clazz(LinearLayout.class));
         firstArticle.click();
 
@@ -159,7 +159,7 @@ public class SettingTest extends UiTest {
         feedTitles.get(0).clickAndWait(Until.newWindow(), 5000);
 
         UiObject2 articleList = device.wait(Until.findObject(
-                By.res("android:id/list")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "lv_article")), 5000);
         UiObject2 firstArticle = articleList.findObject(
                 By.clazz(LinearLayout.class));
         firstArticle.click();
