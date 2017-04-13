@@ -4,6 +4,35 @@
 
 MyCuration is RSS(Feed) Reader that has curation and filter feature.
 
+## Feature
+
+### RSS Reader
+
+* Subscribe RSS(RSS1.0/2.0/ATOM)
+* Manage read/unread status
+* Manual/Schedule update
+* Sort articles by the published date
+* Search articles by keyword
+
+### Curation
+
+Collect articles from subscribed RSS by user settings
+
+#### Settings
+
+* Keywords in the article title
+
+### Filter
+
+Set status to read automatically by user settings
+
+#### Settings
+
+* Keyword in the article title
+* URL in the article URL
+* Target RSS
+* Enable/Disable
+
 ## Credits
 
 * [Retrofit](https://github.com/square/retrofit)
