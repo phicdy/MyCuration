@@ -51,7 +51,10 @@ def coverageSourceDirs = ['src/main/java']
 def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*',
                             '**/BuildConfig.class', '**/*Activity*.class',
                             '**/*Fragment*.class', '**/*Receiver.class',
-                            '**/*Manifest*.class', '**/*Application*.class']
+                            '**/*Manifest*.class', '**/*Application*.class',
+                            '**/com/phicdy/mycuration/db/*.*',
+                            '**/com/phicdy/mycuration/alarm/*.*',
+                            '**/com/phicdy/mycuration/tracker/*.*']
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testUiTestDebugUnitTest']) {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
