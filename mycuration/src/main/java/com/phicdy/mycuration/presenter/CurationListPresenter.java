@@ -37,10 +37,11 @@ public class CurationListPresenter implements Presenter {
     }
 
     public void onCurationEditClicked(int curationId) {
+        if (curationId < 0) return;
         view.startEditCurationActivity(curationId);
     }
 
-    public void onCurationDeleteClicked(Curation curation) {
+    public void onCurationDeleteClicked(@NonNull Curation curation) {
         dbAdapter.deleteCuration(curation.getId());
         view.delete(curation);
     }
