@@ -4,7 +4,7 @@
 
 MyCuration is RSS(Feed) Reader that has curation and filter feature.
 
-## Feature
+## Features
 
 ### RSS Reader
 
