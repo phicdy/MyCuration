@@ -240,12 +240,7 @@ public class ArticleListPresenter implements Presenter {
         }
         int firstPosition = view.getFirstVisiblePosition();
         int lastPosition = view.getLastVisiblePosition();
-        if (lastPosition == view.size()-1) {
-            // Article of last position is next article of last visible article.
-            // When last article shows, it needs to add index for last article
-            lastPosition++;
-        }
-        for (int i = firstPosition; i < lastPosition; i++) {
+        for (int i = firstPosition; i <= lastPosition; i++) {
             if (i > view.size()-1) break;
             Article targetArticle = view.getItem(i);
             if (targetArticle == null) break;
@@ -259,7 +254,7 @@ public class ArticleListPresenter implements Presenter {
         // Row in last visible position is hidden by buttons, so scroll to it
         final int PIXEL_FROM_TOP_AFTER_SCROLL = 4;
         view.scroll(lastPosition, PIXEL_FROM_TOP_AFTER_SCROLL);
-        if (isAllReadBack) {
+        if (isAllReadBack && view.isBottomVisible()) {
             if (isAllRead()) {
                 view.finish();
             }

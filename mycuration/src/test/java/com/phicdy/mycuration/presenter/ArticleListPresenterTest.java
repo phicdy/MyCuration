@@ -589,5 +589,10 @@ public class ArticleListPresenterTest {
         public void scroll(int positionToScroll, int pixelFromTopAfterScroll) {
 
         }
+
+        @Override
+        public boolean isBottomVisible() {
+            return false;
+        }
     }
 }
