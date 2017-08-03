@@ -277,6 +277,14 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
         listView.smoothScrollToPositionFromTop(positionToScroll, pixelFromTopAfterScroll);
     }
 
+    @Override
+    public boolean isBottomVisible() {
+        boolean isLastItemVisible = listView.getLastVisiblePosition() == listView.getAdapter().getCount()-1;
+        boolean isLastItemBottomVisible = listView.getChildAt(listView.getChildCount()-1).getBottom() ==
+                listView.getHeight();
+        return isLastItemVisible && isLastItemBottomVisible;
+    }
+
     /**
      *
      * @author phicdy Display articles list

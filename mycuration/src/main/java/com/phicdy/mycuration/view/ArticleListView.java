@@ -19,4 +19,5 @@ public interface ArticleListView {
     int getLastVisiblePosition();
     void showShareUi(@NonNull String url);
     void scroll(int positionToScroll, int pixelFromTopAfterScroll);
+    boolean isBottomVisible();
 }
