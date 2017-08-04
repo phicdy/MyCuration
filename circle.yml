@@ -24,11 +24,11 @@ dependencies:
     - /usr/local/android-sdk-linux/extras/google/m2repository
 test:
   override:
-    - ./gradlew assembleDebug
+    - ./gradlew assembleProductionDebug
     - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/outputs/apk/* $CIRCLE_ARTIFACTS
       # unit test
-    - ./gradlew testUiTestDebugUnitTest 
-    - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/test-results/testUiTestDebugUnitTest/* $CIRCLE_TEST_REPORTS
+    - ./gradlew testProductionDebugUnitTest 
+    - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/test-results/testProductionDebugUnitTest/* $CIRCLE_TEST_REPORTS
       # test coverage
     - ./gradlew jacocoTestReport
     - mkdir -p $CIRCLE_TEST_REPORTS/jacoco/
@@ -38,4 +38,5 @@ deployment:
   master:
     branch: master
     commands:
-      - ./gradlew assembleRelease
+      - ./gradlew assembleProductionRelease
+      - cp -r ~/$CIRCLE_PROJECT_REPONAME/mycuration/build/outputs/apk/* $CIRCLE_ARTIFACTS
