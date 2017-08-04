@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.task;
 
+import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IntDef;
@@ -90,16 +91,17 @@ public class NetworkTaskManager {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response == null) return;
+                if (response == null || response.body() == null) {
+                    finishOneRequest(feed.getId());
+					return;
+				}
                 UpdateFeedTask task = new UpdateFeedTask(response.body().byteStream(), feed.getId());
                 executorService.execute(task);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-				finishOneRequest();
-				UnreadCountManager.getInstance(context).refreshConut(feed.getId());
-				context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
+				finishOneRequest(feed.getId());
             }
         });
 
@@ -117,8 +119,10 @@ public class NetworkTaskManager {
 		numOfFeedRequest++;
 	}
 	
-	private synchronized void finishOneRequest() {
+	private synchronized void finishOneRequest(int feedId) {
 		numOfFeedRequest--;
+		UnreadCountManager.getInstance(context).refreshConut(feedId);
+		context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
 	}
 	
 	public synchronized boolean isUpdatingFeed() {
@@ -145,9 +149,7 @@ public class NetworkTaskManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			finishOneRequest();
-			UnreadCountManager.getInstance(context).refreshConut(feedId);
-			context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
+			finishOneRequest(feedId);
 		}
 	}
 }
