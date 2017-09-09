@@ -280,8 +280,11 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     @Override
     public boolean isBottomVisible() {
         boolean isLastItemVisible = listView.getLastVisiblePosition() == listView.getAdapter().getCount()-1;
-        boolean isLastItemBottomVisible = listView.getChildAt(listView.getChildCount()-1).getBottom() ==
-                listView.getHeight();
+        int chilidCount = listView.getChildCount();
+        if (chilidCount < 1) return false;
+        View lastItem = listView.getChildAt(chilidCount-1);
+        if (lastItem == null) return false;
+        boolean isLastItemBottomVisible = lastItem.getBottom() == listView.getHeight();
         return isLastItemVisible && isLastItemBottomVisible;
     }
 
