@@ -7,6 +7,9 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.util.TextUtil;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -19,6 +22,9 @@ import retrofit2.http.Query;
 public class GetHatenaBookmark {
 
     private static final String LOG_TAG = GetHatenaBookmark.class.toString();
+    private ScheduledExecutorService executorService;
+    private final DatabaseAdapter adapter;
+    private final HatenaRequestService hatenaRequestService;
 
     private interface HatenaRequestService {
         @GET("entry.count/")
@@ -26,34 +32,50 @@ public class GetHatenaBookmark {
     }
 
     /**
+     * Constructor
+     *
+     * @param adapter Database adapter to save the result
+     */
+    public GetHatenaBookmark(@NonNull DatabaseAdapter adapter) {
+        this.adapter = adapter;
+        executorService = Executors.newScheduledThreadPool(8);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.b.st-hatena.com")
+                .build();
+        hatenaRequestService = retrofit.create(HatenaRequestService.class);
+    }
+
+    /**
      *
      * Request Hatena bookmark API and save the result
      *
      * @param url URL to get Hatena bookmark
-     * @param adapter Database adapter to save the result
      */
-    public void request(@NonNull final String url, @NonNull final DatabaseAdapter adapter) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.b.st-hatena.com")
-                .build();
-        HatenaRequestService hatenaRequestService = retrofit.create(HatenaRequestService.class);
-        Call<ResponseBody> call = hatenaRequestService.bookmark(url);
-        call.enqueue(new Callback<ResponseBody>() {
+    public void request(@NonNull final String url, int delaySec) {
+        executorService.schedule(new Runnable() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    String point = response.body().string();
-                    if (TextUtil.isEmpty(point)) point = "0";
-                    adapter.saveHatenaPoint(url, point);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            public void run() {
+                Call<ResponseBody> call = hatenaRequestService.bookmark(url);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        String point = "0";
+                        try {
+                            point = response.body().string();
+                            if (TextUtil.isEmpty(point)) point = "0";
+                            adapter.saveHatenaPoint(url, point);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d(LOG_TAG, "Hatena request done, " + url + ": " + point);
+                    }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                Log.d(LOG_TAG, "Request error:" + throwable.toString());
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                        Log.d(LOG_TAG, "Request error:" + throwable.toString());
+                    }
+                });
             }
-        });
+        }, delaySec, TimeUnit.SECONDS);
     }
 }

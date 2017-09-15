@@ -289,8 +289,11 @@ public class RssParser {
 			long now = System.currentTimeMillis();
 			dbAdapter.saveNewArticles(articles, feedId);
 			Log.d(LOG_TAG, "Finish save, time:" + (System.currentTimeMillis() - now));
-			for (Article addedArticle : articles) {
-				new GetHatenaBookmark().request(addedArticle.getUrl(), dbAdapter);
+            GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark(dbAdapter);
+            int delaySec = 0;
+			for (int i = 0; i < articles.size(); i++) {
+				getHatenaBookmark.request(articles.get(i).getUrl(), delaySec);
+                if (i % 10 == 0) delaySec += 2;
 			}
 		} catch (XmlPullParserException | IOException e) {
 			e.printStackTrace();
