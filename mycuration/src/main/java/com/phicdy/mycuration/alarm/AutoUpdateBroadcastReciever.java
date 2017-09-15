@@ -49,21 +49,26 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				return;
 			}
 			boolean isWifiConnected = NetworkUtil.isWifiConnected(context);
-			for (Feed feed : feeds) {
+			GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark(dbAdapter);
+            int delaySec = 0;
+            int totalNum = 0;
+			for (int i = 0; i < feeds.size(); i++) {
 				ArrayList<Article> unreadArticles = dbAdapter
-						.getUnreadArticlesInAFeed(feed.getId(), true);
+						.getUnreadArticlesInAFeed(feeds.get(i).getId(), true);
 				if (unreadArticles == null || unreadArticles.isEmpty()) {
 					continue;
 				}
-				for (int i = 0; i < unreadArticles.size(); i++) {
-					Article unreadArticle = unreadArticles.get(i);
+				for (int l = 0; l < unreadArticles.size(); l++) {
+					Article unreadArticle = unreadArticles.get(l);
 					if (unreadArticle == null) {
 						continue;
 					}
 					if ((!unreadArticle.getPoint().equals(Article.DEDAULT_HATENA_POINT)) && !isWifiConnected) {
 						continue;
 					}
-                    new GetHatenaBookmark().request(unreadArticle.getUrl(), dbAdapter);
+					totalNum++;
+                    getHatenaBookmark.request(unreadArticle.getUrl(), delaySec);
+                    if (totalNum % 10 == 0) delaySec += 2;
 				}
 			}
 		}
