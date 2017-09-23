@@ -61,7 +61,12 @@ public class GetHatenaBookmark {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         String point = "0";
                         try {
-                            point = response.body().string();
+                            ResponseBody body = response.body();
+                            if (body == null) {
+                                point = "0";
+                            } else {
+                                point = body.string();
+                            }
                             if (TextUtil.isEmpty(point)) point = "0";
                             adapter.saveHatenaPoint(url, point);
                         } catch (IOException e) {
