@@ -264,7 +264,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     @Override
     public void showShareUi(@NonNull String url) {
-        GATrackerHelper.sendEvent(getString(R.string.share_article));
+        if (isAdded()) GATrackerHelper.sendEvent(getString(R.string.share_article));
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, url);
