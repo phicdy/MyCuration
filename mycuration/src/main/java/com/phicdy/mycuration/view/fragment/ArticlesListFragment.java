@@ -203,7 +203,11 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     @Override
     public void showFooter() {
-        listView.addFooterView(footer);
+        // It causes the crash of ClassCastException
+        // if ListView#addFooterView() is called before ListView#setAdapter()
+        if (listView.getAdapter() != null) {
+            listView.addFooterView(footer);
+        }
     }
 
     @Override
