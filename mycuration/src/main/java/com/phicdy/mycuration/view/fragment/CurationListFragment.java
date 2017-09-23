@@ -91,7 +91,10 @@ public class CurationListFragment extends Fragment implements CurationListView {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                mListener.onCurationListClicked(position);
+                Curation curation = curationAt(position);
+                if (curation != null) {
+                    mListener.onCurationListClicked(curation.getId());
+                }
             }
         });
     }
@@ -126,10 +129,6 @@ public class CurationListFragment extends Fragment implements CurationListView {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public int getCurationIdAtPosition (int position) {
-        return presenter.getCurationIdAt(position);
     }
 
     @Override
@@ -182,7 +181,7 @@ public class CurationListFragment extends Fragment implements CurationListView {
     }
 
     public interface OnCurationListFragmentListener {
-        void onCurationListClicked(int position);
+        void onCurationListClicked(int curationId);
     }
 
     class CurationListAdapter extends ArrayAdapter<Curation> {

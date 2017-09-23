@@ -250,10 +250,10 @@ public class TopActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCurationListClicked(int position) {
+    public void onCurationListClicked(int curationId) {
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(), ArticlesListActivity.class);
-        intent.putExtra(CURATION_ID, curationFragment.getCurationIdAtPosition(position));
+        intent.putExtra(CURATION_ID, curationId);
         startActivity(intent);
     }
 
