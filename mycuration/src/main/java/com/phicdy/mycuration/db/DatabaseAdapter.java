@@ -37,8 +37,8 @@ public class DatabaseAdapter {
     private static final int INSERT_ERROR_ID = -1;
     private static final int MIN_TABLE_ID = 1;
 
-	private static final String LOG_TAG = "FilFeed."
-			+ DatabaseAdapter.class.getName();
+	private static final String LOG_TAG = "MyCuration."
+			+ DatabaseAdapter.class.getSimpleName();
 
 	private DatabaseAdapter(Context context) {
 		this.context = context;
@@ -1301,6 +1301,7 @@ public class DatabaseAdapter {
 		try {
 			File backupStrage;
 			String sdcardRootPath = FileUtil.getSDCardRootPath();
+            Log.d(LOG_TAG, "SD Card path: " + sdcardRootPath);
 			if (FileUtil.isSDCardMouted(sdcardRootPath)) {
 				Log.d(LOG_TAG, "SD card is mounted");
 				backupStrage = new File(FileUtil.getSDCardRootPath());
@@ -1313,12 +1314,17 @@ public class DatabaseAdapter {
 
 				String backupDBFolderPath = BACKUP_FOLDER + "/";
 				File backupDBFolder = new File(backupStrage, backupDBFolderPath);
-				if (backupDBFolder.delete()) {
-                    if (backupDBFolder.mkdir()) {
-                        Log.d(LOG_TAG, "Succeeded to make directory");
+                if (backupDBFolder.exists()) {
+                    if (backupDBFolder.delete()) {
+                        Log.d(LOG_TAG, "Succeeded to delete backup directory");
                     } else {
-                        Log.d(LOG_TAG, "Failed to make directory");
+                        Log.d(LOG_TAG, "Failed to delete backup directory");
                     }
+                }
+                if (backupDBFolder.mkdir()) {
+                    Log.d(LOG_TAG, "Succeeded to make directory");
+                } else {
+                    Log.d(LOG_TAG, "Failed to make directory");
                 }
 				File backupDB = new File(backupStrage, backupDBFolderPath + DatabaseHelper.DATABASE_NAME);
 				File currentDB = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);
@@ -1329,6 +1335,9 @@ public class DatabaseAdapter {
 				dst.transferFrom(src, 0, src.size());
 				src.close();
 				dst.close();
+			} else {
+                // TODO Runtime Permission
+                Log.d(LOG_TAG, "SD Card is not writabble, enable storage permission in Android setting");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1363,7 +1372,10 @@ public class DatabaseAdapter {
 				dst.transferFrom(src, 0, src.size());
 				src.close();
 				dst.close();
-			}
+			} else {
+                // TODO Runtime Permission
+                Log.d(LOG_TAG, "SD Card is not readabble, enable storage permission in Android setting");
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
