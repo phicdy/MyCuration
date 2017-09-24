@@ -164,8 +164,12 @@ public class FilterListFragment extends Fragment implements FilterListView {
 			if(filter != null) {
 				//set filter title
 				holder.filterTitle.setText(filter.getTitle());
-				
-				holder.feedTitle.setText(filter.getFeedTitle());
+
+				if (filter.feeds() != null && filter.feeds().size() <= 1) {
+                    holder.feedTitle.setText(filter.getFeedTitle());
+                } else {
+                    holder.feedTitle.setText(getString(R.string.multiple_target_rss));
+                }
 				
 				String keyword = filter.getKeyword();
 				if (keyword == null || keyword.equals("")) {
