@@ -29,6 +29,7 @@ public class RssParser {
 
 	private final DatabaseAdapter dbAdapter;
 	private boolean isArticleFlag = false;
+    private boolean isCanonical = false;
 	private final Context context;
 
 	private static final String LOG_TAG = "FilFeed.RssParser";
@@ -37,6 +38,15 @@ public class RssParser {
 		dbAdapter = DatabaseAdapter.getInstance(context);
 		this.context = context;
 	}
+
+	private void parse(String canonicalUrl) {
+        if (isCanonical) {
+            sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
+            return;
+        }
+        isCanonical = true;
+        parseRssXml(canonicalUrl);
+    }
 
 	public void parseRssXml(final String baseUrl) {
 		Log.d(LOG_TAG, "Start to parse RSS XML, url:" + baseUrl);
@@ -119,6 +129,15 @@ public class RssParser {
 						sendAddUrlSuccessBroadcast(baseUrl);
 					}else if (!document.getElementsByTag("html").isEmpty()) {
 						Log.d(LOG_TAG, "html, try to get RSS URL");
+						// <link rel="canonical" href="http://xxxxxxxx">
+						Elements canonicalelements = document.getElementsByAttributeValue("rel", "canonical");
+                        if (!canonicalelements.isEmpty()) {
+                            // Canonical setting sets the actual site URL for google search
+                            String pcUrl = canonicalelements.get(0).attr("href");
+                            Log.d(LOG_TAG, "canonical setting is found, try to parse " + pcUrl);
+                            parse(pcUrl);
+                            return;
+                        }
 						//<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
 						Elements elements = document.getElementsByAttributeValue("type", "application/rss+xml");
 						if (elements.isEmpty()) {
