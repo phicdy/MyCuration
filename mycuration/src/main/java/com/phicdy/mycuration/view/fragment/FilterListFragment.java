@@ -164,20 +164,26 @@ public class FilterListFragment extends Fragment implements FilterListView {
 			if(filter != null) {
 				//set filter title
 				holder.filterTitle.setText(filter.getTitle());
-				
-				holder.feedTitle.setText(filter.getFeedTitle());
+
+				if (filter.feeds() != null && filter.feeds().size() <= 1) {
+                    holder.feedTitle.setText(filter.getFeedTitle());
+                } else {
+                    holder.feedTitle.setText(getString(R.string.multiple_target_rss));
+                }
 				
 				String keyword = filter.getKeyword();
 				if (keyword == null || keyword.equals("")) {
-					keyword = getString(R.string.none);
-				}
-				holder.filterKeyword.setText(getString(R.string.keyword) + ": " + keyword);
-				
+                    holder.filterKeyword.setVisibility(View.GONE);
+				} else {
+                    holder.filterKeyword.setText(getString(R.string.keyword) + ": " + keyword);
+                }
+
 				String url = filter.getUrl();
 				if (url == null || url.equals("")) {
-					url = getString(R.string.none);
-				}
-				holder.filterUrl.setText(getString(R.string.url, url));
+                    holder.filterUrl.setVisibility(View.GONE);
+				} else {
+                    holder.filterUrl.setText(getString(R.string.url, url));
+                }
 
 				final int p = position;
 				holder.filterEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

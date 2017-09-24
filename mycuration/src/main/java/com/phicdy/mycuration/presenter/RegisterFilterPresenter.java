@@ -50,15 +50,13 @@ public class RegisterFilterPresenter implements Presenter {
     }
 
     private void setTargetRssTitle(ArrayList<Feed> feeds) {
-        StringBuilder buf = new StringBuilder();
-        for (Feed feed : feeds) {
-            buf.append(feed.getTitle());
-            buf.append(",");
+        if (feeds == null || feeds.size() == 0) {
+            view.resetFilterTargetRss();
+        } else if (feeds.size() == 1) {
+            view.setFilterTargetRss(feeds.get(0).getTitle());
+        } else {
+            view.setMultipleFilterTargetRss();
         }
-        if (buf.length() > 0) {
-            buf.deleteCharAt(buf.length() - 1);
-        }
-        view.setFilterTargetRss(buf.toString());
     }
 
     @Override

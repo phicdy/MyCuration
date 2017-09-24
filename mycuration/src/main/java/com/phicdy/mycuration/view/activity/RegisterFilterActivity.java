@@ -117,6 +117,16 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
     }
 
     @Override
+    public void setMultipleFilterTargetRss() {
+        tvTargetRss.setText(R.string.multiple_target_rss);
+    }
+
+    @Override
+    public void resetFilterTargetRss() {
+        tvTargetRss.setText(R.string.target_rss);
+    }
+
+    @Override
     public void setFilterUrl(@NonNull String url) {
         etFilterUrl.setText(url);
     }

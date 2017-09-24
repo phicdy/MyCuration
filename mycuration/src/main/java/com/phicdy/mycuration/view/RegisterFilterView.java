@@ -9,6 +9,8 @@ public interface RegisterFilterView {
     String filterTitle();
     void setFilterTitle(@NonNull String title);
     void setFilterTargetRss(@NonNull String rss);
+    void setMultipleFilterTargetRss();
+    void resetFilterTargetRss();
     void setFilterUrl(@NonNull String url);
     void setFilterKeyword(@NonNull String keyword);
     void handleEmptyTitle();

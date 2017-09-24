@@ -40,8 +40,6 @@
     <string name="edit_rss_title_success">Succeede to edit the title</string>
     <string name="edit_rss_title_error">Failed to edit the title</string>
 
-    <string name="target_rss">Target rss</string>
-
     <string name="home">Home</string>
 
     <!-- Filter -->
@@ -63,6 +61,9 @@
     <string name="title_select_filter_rss">Select RSS</string>
     <string name="filter_name">Filter title</string>
     <string name="url">URL: %1$s</string>
+    <string name="target_rss">Target RSS</string>
+    <string name="multiple_target_rss">Multiple target RSS</string>
+
 
     <!-- Settings -->
     <string name="setting">Settings</string>
