@@ -173,10 +173,11 @@ public class FilterListFragment extends Fragment implements FilterListView {
 				
 				String keyword = filter.getKeyword();
 				if (keyword == null || keyword.equals("")) {
-					keyword = getString(R.string.none);
-				}
-				holder.filterKeyword.setText(getString(R.string.keyword) + ": " + keyword);
-				
+                    holder.filterKeyword.setVisibility(View.GONE);
+				} else {
+                    holder.filterKeyword.setText(getString(R.string.keyword) + ": " + keyword);
+                }
+
 				String url = filter.getUrl();
 				if (url == null || url.equals("")) {
                     holder.filterUrl.setVisibility(View.GONE);
