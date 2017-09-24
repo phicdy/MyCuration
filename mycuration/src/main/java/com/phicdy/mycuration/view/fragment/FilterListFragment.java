@@ -179,9 +179,10 @@ public class FilterListFragment extends Fragment implements FilterListView {
 				
 				String url = filter.getUrl();
 				if (url == null || url.equals("")) {
-					url = getString(R.string.none);
-				}
-				holder.filterUrl.setText(getString(R.string.url, url));
+                    holder.filterUrl.setVisibility(View.GONE);
+				} else {
+                    holder.filterUrl.setText(getString(R.string.url, url));
+                }
 
 				final int p = position;
 				holder.filterEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
