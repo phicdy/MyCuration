@@ -66,9 +66,10 @@
 
     <!-- 設定 -->
     <string name="setting">設定</string>
-    <string name="auto_update_setting">自動記事更新の設定</string>
+    <string name="auto_update_setting">自動更新の設定</string>
     <string name="see_setting">閲覧の設定</string>
     <string name="interval">自動更新の頻度</string>
+    <string name="auto_update_in_main_ui">起動時に更新</string>
     <string name="article_sort">新しい記事を先頭</string>
     <string name="all_read_behavior">全ての記事を既読にした時の動作</string>
     <string name="all_read_back">RSS一覧に戻る</string>
@@ -81,6 +82,7 @@
     <string name="export_db">データベースのエクスポート</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_article_sort">keyArticleSort</string>
+    <string name="key_auto_update_in_main_ui">keyAutoUpdateInMainUi</string>
     <string name="key_internal_browser">keyInternalBrowser</string>
     <string name="key_all_read_behavior">keyAllReadBehavior</string>
     <string name="key_swipe_direction">keySwipeDirection</string>

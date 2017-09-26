@@ -24,6 +24,7 @@ import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.TopActivityPresenter;
+import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.fragment.CurationListFragment;
@@ -60,7 +61,9 @@ public class TopActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top);
 
-        presenter = new TopActivityPresenter();
+        PreferenceHelper helper = PreferenceHelper.getInstance(this);
+        NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(this);
+        presenter = new TopActivityPresenter(helper.getAutoUpdateInMainUi(), networkTaskManager);
         presenter.setView(this);
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
         presenter.setDataAdapter(dbAdapter);

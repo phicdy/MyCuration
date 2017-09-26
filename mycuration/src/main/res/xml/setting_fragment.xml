@@ -7,6 +7,9 @@
             android:key="@string/key_update_interval"
             android:entries="@array/update_interval_items"
             android:entryValues="@array/update_interval_items_values"/>
+        <SwitchPreference
+            android:title="@string/auto_update_in_main_ui"
+            android:key="@string/key_auto_update_in_main_ui"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/see_setting" >
