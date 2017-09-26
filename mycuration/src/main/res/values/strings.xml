@@ -71,6 +71,7 @@
     <string name="see_setting">Browsing</string>
     <string name="interval">Interval</string>
     <string name="article_sort">Sort from latest</string>
+    <string name="auto_update_in_main_ui">Update in main UI automatically</string>
     <string name="all_read_behavior">Behavior you read all of the articles</string>
     <string name="all_read_back">Go back to rss list</string>
     <string name="all_read_not_back">Not go back to rss list</string>
@@ -82,6 +83,7 @@
     <string name="export_db">Export DB</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_article_sort">keyArticleSort</string>
+    <string name="key_auto_update_in_main_ui">keyAutoUpdateInMainUi</string>
     <string name="key_internal_browser">keyInternalBrowser</string>
     <string name="key_all_read_behavior">keyAllReadBehavior</string>
     <string name="key_swipe_direction">keySwipeDirection</string>

@@ -60,6 +60,8 @@ public class SettingPresenter implements Presenter {
             }
         }
 
+        view.setAutoUpdateInMainUi(helper.getAutoUpdateInMainUi());
+
         // Set default value of article sort option
         view.setArticleSort(helper.getSortNewArticleTop());
 

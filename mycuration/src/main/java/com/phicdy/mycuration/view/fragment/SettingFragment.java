@@ -27,6 +27,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
     private ListPreference prefUpdateInterval;
     private ListPreference prefAllReadBehavior;
     private ListPreference prefSwipeDirection;
+    private SwitchPreference prefAutoUpdateInMainUi;
     private SwitchPreference prefArticleSort;
     private SwitchPreference prefInternalBrowser;
     private Preference prefLicense;
@@ -80,6 +81,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
 
     private void initView() {
         prefUpdateInterval = (ListPreference) findPreference(getString(R.string.key_update_interval));
+        prefAutoUpdateInMainUi = (SwitchPreference)findPreference(getString(R.string.key_auto_update_in_main_ui));
         prefArticleSort = (SwitchPreference)findPreference(getString(R.string.key_article_sort));
         prefInternalBrowser = (SwitchPreference)findPreference(getString(R.string.key_internal_browser));
         prefAllReadBehavior = (ListPreference)findPreference(getString(R.string.key_all_read_behavior));
@@ -155,6 +157,11 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
     public void setUpdateInterval(int index, @NonNull String summary) {
         prefUpdateInterval.setValueIndex(index);
         prefUpdateInterval.setSummary(summary);
+    }
+
+    @Override
+    public void setAutoUpdateInMainUi(boolean isAutoUpdateInMainUi) {
+        prefAutoUpdateInMainUi.setChecked(isAutoUpdateInMainUi);
     }
 
     @Override

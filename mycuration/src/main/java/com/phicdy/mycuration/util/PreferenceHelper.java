@@ -7,6 +7,7 @@ public class PreferenceHelper {
 
 	private static final String PREF_KEY = "FilterPref";
 	private static final String KEY_AUTO_UPDATE_INTERVAL = "autoUpdateInterval";
+	private static final String KEY_AUTO_UPDATE_IN_MAIN_UI = "autoUpdateInMainUi";
 	private static final String KEY_SORT_NEW_ARTICLE_TOP = "sortNewArticleTop";
 	private static final String KEY_ALL_READ_BACK = "allReadBack";
 	private static final String KEY_SEARCH_FEED_ID = "searchFeedId";
@@ -47,7 +48,17 @@ public class PreferenceHelper {
 		editor.putInt(KEY_AUTO_UPDATE_INTERVAL, intervalSecond);
 		editor.apply();
 	}
-	
+
+	public boolean getAutoUpdateInMainUi() {
+		return !pref.contains(KEY_AUTO_UPDATE_IN_MAIN_UI) || pref.getBoolean(KEY_AUTO_UPDATE_IN_MAIN_UI, false);
+	}
+
+	public void setAutoUpdateInMainUi(boolean isAutoUpdateInMainUi) {
+		editor = pref.edit();
+		editor.putBoolean(KEY_AUTO_UPDATE_IN_MAIN_UI, isAutoUpdateInMainUi);
+		editor.apply();
+	}
+
 	public boolean getSortNewArticleTop() {
 		return !pref.contains(KEY_SORT_NEW_ARTICLE_TOP) || pref.getBoolean(KEY_SORT_NEW_ARTICLE_TOP, true);
 	}
