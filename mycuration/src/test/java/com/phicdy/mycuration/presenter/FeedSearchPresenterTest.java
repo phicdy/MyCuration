@@ -11,6 +11,7 @@ import com.phicdy.mycuration.view.FeedSearchView;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
@@ -377,6 +378,19 @@ public class FeedSearchPresenterTest {
         assertTrue(view.isGenericErrorToastShowed);
     }
 
+    @Test
+    public void WhenSearchGoogleSearchUrlIsSet() {
+        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
+        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
+        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
+        FeedSearchPresenter presenter = new FeedSearchPresenter(
+                networkTaskManager, adapter, unreadCountManager);
+        MockView view = new MockView();
+        presenter.setView(view);
+        presenter.handle("hoge");
+        assertEquals(view.searchViewUrl, "https://www.google.co.jp/search?q=hoge");
+    }
+
     private class MockView implements FeedSearchView {
         private boolean isReceiverRegistered = false;
         private boolean isFeedHookActivityForeground = false;
@@ -387,6 +401,7 @@ public class FeedSearchPresenterTest {
         private boolean isFinished = false;
         private String feedHookUrl;
         private String loadedUrl;
+        private String searchViewUrl;
 
         @Override
         public void startFeedUrlHookActivity(@NonNull String url) {
@@ -437,6 +452,11 @@ public class FeedSearchPresenterTest {
         @Override
         public void finishView() {
             isFinished = true;
+        }
+
+        @Override
+        public void setSearchViewTextFrom(@NonNull String url) {
+            searchViewUrl = url;
         }
     }
 }

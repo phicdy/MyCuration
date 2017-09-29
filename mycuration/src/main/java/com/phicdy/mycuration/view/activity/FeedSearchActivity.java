@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -68,7 +70,22 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
 
         // Enable JavaScript for Google Search
         webView = (WebView)findViewById(R.id.webview);
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return false;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                setSearchViewTextFrom(url);
+            }
+        });
         webView.getSettings().setJavaScriptEnabled(true);
 
         NetworkTaskManager manager = NetworkTaskManager.getInstance(this);
@@ -283,5 +300,10 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
     @Override
     public void finishView() {
         finish();
+    }
+
+    @Override
+    public void setSearchViewTextFrom(@NonNull String url) {
+        searchView.setQuery(url, false);
     }
 }
