@@ -60,6 +60,7 @@ public class FeedSearchPresenter implements Presenter {
             String encodedQuery = URLEncoder.encode(query, "utf-8");
             String url = "https://www.google.co.jp/search?q=" + encodedQuery;
             view.load(url);
+            view.setSearchViewTextFrom(url);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
