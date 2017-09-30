@@ -45,10 +45,10 @@ public class RssParser {
             return;
         }
         isCanonical = true;
-        parseRssXml(canonicalUrl);
+        parseRssXml(canonicalUrl, false);
     }
 
-	public void parseRssXml(final String baseUrl) {
+	public void parseRssXml(final String baseUrl, final boolean checkCanonical) {
 		Log.d(LOG_TAG, "Start to parse RSS XML, url:" + baseUrl);
 		new Thread() {
 			@Override
@@ -129,14 +129,16 @@ public class RssParser {
 						sendAddUrlSuccessBroadcast(baseUrl);
 					}else if (!document.getElementsByTag("html").isEmpty()) {
 						Log.d(LOG_TAG, "html, try to get RSS URL");
-						// <link rel="canonical" href="http://xxxxxxxx">
-						Elements canonicalelements = document.getElementsByAttributeValue("rel", "canonical");
-                        if (!canonicalelements.isEmpty()) {
-                            // Canonical setting sets the actual site URL for google search
-                            String pcUrl = canonicalelements.get(0).attr("href");
-                            Log.d(LOG_TAG, "canonical setting is found, try to parse " + pcUrl);
-                            parse(pcUrl);
-                            return;
+                        if (checkCanonical) {
+                            // <link rel="canonical" href="http://xxxxxxxx">
+                            Elements canonicalelements = document.getElementsByAttributeValue("rel", "canonical");
+                            if (!canonicalelements.isEmpty()) {
+                                // Canonical setting sets the actual site URL for google search
+                                String pcUrl = canonicalelements.get(0).attr("href");
+                                Log.d(LOG_TAG, "canonical setting is found, try to parse " + pcUrl);
+                                parse(pcUrl);
+                                return;
+                            }
                         }
 						//<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
 						Elements elements = document.getElementsByAttributeValue("type", "application/rss+xml");
@@ -156,7 +158,7 @@ public class RssParser {
 							feedUrl = new URL(url.getProtocol(), url.getHost(), feedUrl).toString();
 						}
 						Log.d(LOG_TAG, "RSS URL was found, " + feedUrl);
-						parseRssXml(feedUrl);
+						parseRssXml(feedUrl, false);
 					} else {
 						Log.d(LOG_TAG, "Fail, not RSS");
 						sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
