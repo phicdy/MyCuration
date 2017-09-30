@@ -4,10 +4,12 @@ import android.content.Intent;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.view.FeedUrlHookView;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -16,14 +18,26 @@ import static junit.framework.Assert.assertTrue;
 
 public class FeedUrlHookPresenterTest {
 
+    private NetworkTaskManager networkTaskManager;
+    private DatabaseAdapter adapter;
+    private UnreadCountManager unreadCountManager;
+    private FeedUrlHookPresenter presenter;
+    private RssParser parser;
+
+    @Before
+    public void setup() {
+        networkTaskManager = Mockito.mock(NetworkTaskManager.class);
+        adapter = Mockito.mock(DatabaseAdapter.class);
+        unreadCountManager = Mockito.mock(UnreadCountManager.class);
+        parser = Mockito.mock(RssParser.class);
+        presenter = new FeedUrlHookPresenter(
+                adapter, unreadCountManager, networkTaskManager, parser);
+
+    }
+
     @Test
     public void testOnCreate() {
         // For coverage
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         presenter.setView(new MockView());
         presenter.create();
         assertTrue(true);
@@ -32,11 +46,6 @@ public class FeedUrlHookPresenterTest {
     @Test
     public void testOnResume() {
         // For coverage
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         presenter.setView(new MockView());
         presenter.create();
         presenter.resume();
@@ -45,11 +54,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void receiverIsUnregisteredInAfterPause() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -60,11 +64,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void finishWhenInvalidActionComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -75,11 +74,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void finishWhenEmptyActionComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -90,11 +84,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void registerReceiverWhenActionViewAndUrlComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -105,11 +94,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void progressDialogShowsWhenActionViewAndUrlComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -120,11 +104,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void toastShowsWhenActionViewAndInvalidUrlComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -135,11 +114,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void registerReceiverWhenActionSendAndUrlComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -150,11 +124,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void progressDialogShowsWhenActionSendAndUrlComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -165,11 +134,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void toastShowsWhenActionSendAndInvalidUrlComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -180,11 +144,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void viewDoesNotFinishWhenInvalidActionComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -195,11 +154,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void viewFinishesWhenFinishAddFeedActionComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -211,11 +165,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void progressDialogDismissesWhenFinishAddFeedActionComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -227,14 +176,12 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void toastShowsWhenFinishAddFeedActionComes() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         String testUrl = "http://www.google.com";
         Feed testFeed = new Feed(1, "Google");
         Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
         FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
+                adapter, unreadCountManager, networkTaskManager, parser);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -246,11 +193,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void toastShowsWhenFinishAddFeedActionComesWithNotRssHtmlError() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -262,11 +204,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void toastShowsWhenFinishAddFeedActionComesWithUnknownError() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
@@ -278,11 +215,6 @@ public class FeedUrlHookPresenterTest {
 
     @Test
     public void toastShowsWhenFinishAddFeedActionComesWithInvalidUrlError() {
-        NetworkTaskManager networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager);
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();

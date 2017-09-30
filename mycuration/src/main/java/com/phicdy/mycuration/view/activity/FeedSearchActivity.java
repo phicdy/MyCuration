@@ -31,6 +31,7 @@ import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.FeedSearchPresenter;
+import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
@@ -91,7 +92,8 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
         NetworkTaskManager manager = NetworkTaskManager.getInstance(this);
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
         UnreadCountManager unreadCountManager = UnreadCountManager.getInstance(this);
-        presenter = new FeedSearchPresenter(manager, dbAdapter, unreadCountManager);
+        RssParser parser = new RssParser(this);
+        presenter = new FeedSearchPresenter(manager, dbAdapter, unreadCountManager, parser);
         presenter.setView(this);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);

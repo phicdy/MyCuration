@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.FeedUrlHookPresenter;
+import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
@@ -33,7 +34,8 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
         UnreadCountManager unreadCountManager = UnreadCountManager.getInstance(this);
         NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(this);
-		presenter = new FeedUrlHookPresenter(dbAdapter, unreadCountManager, networkTaskManager);
+        RssParser parser = new RssParser(this);
+		presenter = new FeedUrlHookPresenter(dbAdapter, unreadCountManager, networkTaskManager, parser);
 		presenter.setView(this);
 
 		Intent intent = getIntent();

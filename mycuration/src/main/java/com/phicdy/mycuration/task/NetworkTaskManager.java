@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.task;
 
-import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IntDef;
@@ -10,7 +9,6 @@ import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.util.TextUtil;
-import com.phicdy.mycuration.util.UrlUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -107,13 +105,6 @@ public class NetworkTaskManager {
 
 		addNumOfRequest();
 	}
-
-	public void addNewFeed(String feedUrl) {
-		final String requestUrl = UrlUtil.removeUrlParameter(feedUrl);
-        RssParser parser = new RssParser(context);
-		parser.parseRssXml(requestUrl, true);
-	}
-
 
 	private synchronized void addNumOfRequest() {
 		numOfFeedRequest++;

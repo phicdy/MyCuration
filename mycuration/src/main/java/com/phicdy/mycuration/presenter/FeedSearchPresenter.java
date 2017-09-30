@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.rss.RssParseExecutor;
+import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.UrlUtil;
@@ -17,14 +19,17 @@ public class FeedSearchPresenter implements Presenter {
     private final NetworkTaskManager networkTaskManager;
     private final DatabaseAdapter adapter;
     private final UnreadCountManager unreadManager;
+    private final RssParser parser;
     private FeedSearchView view;
 
     public FeedSearchPresenter(@NonNull NetworkTaskManager networkTaskManager,
                                @NonNull DatabaseAdapter adapter,
-                               @NonNull UnreadCountManager unreadManager) {
+                               @NonNull UnreadCountManager unreadManager,
+                               @NonNull RssParser parser) {
         this.networkTaskManager = networkTaskManager;
         this.adapter = adapter;
         this.unreadManager = unreadManager;
+        this.parser = parser;
     }
 
     public void setView(FeedSearchView view) {
@@ -53,7 +58,9 @@ public class FeedSearchPresenter implements Presenter {
         if (UrlUtil.isCorrectUrl(query)) {
             view.registerFinishReceiver();
             view.showProgressDialog();
-            networkTaskManager.addNewFeed(query);
+            RssParseExecutor executor = new RssParseExecutor();
+            executor.setParser(parser);
+            executor.start(query);
             return;
         }
         try {
