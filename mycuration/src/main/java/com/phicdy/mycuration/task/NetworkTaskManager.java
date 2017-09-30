@@ -111,7 +111,7 @@ public class NetworkTaskManager {
 	public void addNewFeed(String feedUrl) {
 		final String requestUrl = UrlUtil.removeUrlParameter(feedUrl);
         RssParser parser = new RssParser(context);
-		parser.parseRssXml(requestUrl);
+		parser.parseRssXml(requestUrl, true);
 	}
 
 
