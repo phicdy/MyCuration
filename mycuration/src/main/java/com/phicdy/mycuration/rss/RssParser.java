@@ -132,6 +132,10 @@ public class RssParser {
                     if (!canonicalelements.isEmpty()) {
                         // Canonical setting sets the actual site URL for google search
                         String pcUrl = canonicalelements.get(0).attr("href");
+                        if (!pcUrl.startsWith("http://") && !pcUrl.startsWith("https")) {
+                            // Path only, add protocol and host
+                            pcUrl = new URL(url.getProtocol(), url.getHost(), pcUrl).toString();
+                        }
                         Log.d(LOG_TAG, "canonical setting is found, try to parse " + pcUrl);
                         parse(pcUrl);
                         return;
