@@ -3,12 +3,14 @@ package com.phicdy.mycuration.rss;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 public class Feed implements Parcelable{
 	private final int id_;
 	private String title_;
 	private String url_;
 	private String iconPath;
+	private String format;
 	private int unreadAriticlesCount_;
 	private String siteUrl;
 
@@ -62,7 +64,15 @@ public class Feed implements Parcelable{
 		title_ = feedTitle;
 	}
 
-	public String getSiteUrl() {
+    public Feed(@NonNull String title, @NonNull String baseUrl, @NonNull String format, @NonNull String siteUrl) {
+        id_ = -1;
+		title_ = title;
+        url_ = baseUrl;
+		this.format = format;
+		this.siteUrl = siteUrl;
+    }
+
+    public String getSiteUrl() {
 		return siteUrl;
 	}
 
@@ -90,6 +100,9 @@ public class Feed implements Parcelable{
 		return iconPath;
 	}
 
+	public String getFormat() {
+        return format;
+    }
 
 	@Override
 	public int describeContents() {

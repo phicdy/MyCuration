@@ -1,13 +1,11 @@
 package com.phicdy.mycuration.rss;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.util.Xml;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.task.GetHatenaBookmark;
-import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.DateParser;
 import com.phicdy.mycuration.util.TextUtil;
 
@@ -30,33 +28,39 @@ public class RssParser {
 	private final DatabaseAdapter dbAdapter;
 	private boolean isArticleFlag = false;
     private boolean isCanonical = false;
-	private final Context context;
 
 	private static final String LOG_TAG = "FilFeed.RssParser";
 
 	public RssParser(Context context) {
 		dbAdapter = DatabaseAdapter.getInstance(context);
-		this.context = context;
 	}
 
-	private void parse(String canonicalUrl) {
+	private RssParseResult parse(String canonicalUrl) {
         if (isCanonical) {
-            sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
-            return;
+            return new RssParseResult(RssParseResult.NOT_FOUND);
         }
         isCanonical = true;
-        parseRssXml(canonicalUrl, false);
+        return parseRssXml(canonicalUrl, false);
     }
 
-	void parseRssXml(final String baseUrl, final boolean checkCanonical) {
+    /**
+     * Try to parse RSS (RSS 1.0/2.0 and ATOM) from the URL.
+     * If the URL is HTML URL, search RSS URL from link tag like below.
+     * <link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
+     *
+     * @param baseUrl URL to parse. RSS URL or HTML URL.
+     * @param checkCanonical If true, check canonical setting in the page like below
+     * <link rel="canonical" href="http://xxxxxxxx">
+     * @return RssParseResult. If not found or error occurs, feed instance in the result is null.
+     */
+	RssParseResult parseRssXml(final String baseUrl, final boolean checkCanonical) {
 		Log.d(LOG_TAG, "Start to parse RSS XML, url:" + baseUrl);
         try {
             final URL url = new URL(baseUrl);
             if (!"http".equalsIgnoreCase(url.getProtocol())
                     && !"https".equalsIgnoreCase(url.getProtocol())) {
                 Log.d(LOG_TAG, "URL does not start with http or https");
-                sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_INVALID_URL);
-                return;
+				return new RssParseResult(RssParseResult.INVALID_URL);
             }
             String pcUserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36";
             Document document = Jsoup.connect(baseUrl).userAgent(pcUserAgent).get();
@@ -75,8 +79,8 @@ public class RssParser {
                     siteUrl = url.getProtocol() + "://" + url.getHost();
                 }
                 String title = document.title();
-                dbAdapter.saveNewFeed(title, baseUrl, Feed.RSS_1, siteUrl);
-                sendAddUrlSuccessBroadcast(baseUrl);
+                Feed feed = new Feed(title, baseUrl, Feed.RSS_1, siteUrl);
+                return new RssParseResult(feed);
             }else if (!document.getElementsByTag("rss").isEmpty()) {
                 Log.d(LOG_TAG, "RSS 2.0");
                 // RSS 2.0
@@ -92,8 +96,8 @@ public class RssParser {
                     siteUrl = url.getProtocol() + "://" + url.getHost();
                 }
                 String title = document.title();
-                dbAdapter.saveNewFeed(title, baseUrl, Feed.RSS_2, siteUrl);
-                sendAddUrlSuccessBroadcast(baseUrl);
+                Feed feed = new Feed(title, baseUrl, Feed.RSS_2, siteUrl);
+                return new RssParseResult(feed);
             }else if (!document.getElementsByTag("feed").isEmpty()) {
                 Log.d(LOG_TAG, "ATOM");
                 // ATOM:
@@ -122,8 +126,8 @@ public class RssParser {
                     siteUrl = links.get(0).attr("href");
                 }
                 String title = document.title();
-                dbAdapter.saveNewFeed(title, baseUrl, Feed.ATOM, siteUrl);
-                sendAddUrlSuccessBroadcast(baseUrl);
+                Feed feed = new Feed(title, baseUrl, Feed.ATOM, siteUrl);
+                return new RssParseResult(feed);
             }else if (!document.getElementsByTag("html").isEmpty()) {
                 Log.d(LOG_TAG, "html, try to get RSS URL");
                 if (checkCanonical) {
@@ -137,16 +141,14 @@ public class RssParser {
                             pcUrl = new URL(url.getProtocol(), url.getHost(), pcUrl).toString();
                         }
                         Log.d(LOG_TAG, "canonical setting is found, try to parse " + pcUrl);
-                        parse(pcUrl);
-                        return;
+                        return parse(pcUrl);
                     }
                 }
                 //<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
                 Elements elements = document.getElementsByAttributeValue("type", "application/rss+xml");
                 if (elements.isEmpty()) {
                     Log.d(LOG_TAG, "RSS URL was not found");
-                    sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
-                    return;
+                    return new RssParseResult(RssParseResult.NOT_FOUND);
                 }
                 String feedUrl = elements.get(0).attr("href");
                 if (feedUrl.startsWith("//")) {
@@ -159,24 +161,21 @@ public class RssParser {
                     feedUrl = new URL(url.getProtocol(), url.getHost(), feedUrl).toString();
                 }
                 Log.d(LOG_TAG, "RSS URL was found, " + feedUrl);
-                parseRssXml(feedUrl, false);
+                return parseRssXml(feedUrl, false);
             } else {
                 Log.d(LOG_TAG, "Fail, not RSS");
-                sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
             }
         } catch (MalformedURLException e) {
             Log.d(LOG_TAG, "Fail, MalformedURLException");
             e.printStackTrace();
-            sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_INVALID_URL);
         } catch (IOException e) {
             Log.d(LOG_TAG, "Fail, IOException");
             e.printStackTrace();
-            sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_UNKNOWN);
         } catch (Exception e) {
             Log.d(LOG_TAG, "Fail, Exception");
             e.printStackTrace();
-            sendFailAddFeedUrlBroadcast(NetworkTaskManager.ERROR_UNKNOWN);
         }
+        return new RssParseResult(RssParseResult.NOT_FOUND);
 	}
 
 	public void parseXml(InputStream is, int feedId) {
@@ -318,17 +317,5 @@ public class RssParser {
 		} catch (XmlPullParserException | IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void sendFailAddFeedUrlBroadcast(@NetworkTaskManager.AddFeedUrlError int error) {
-		Intent intent = new Intent(NetworkTaskManager.FINISH_ADD_FEED);
-		intent.putExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, error);
-		context.sendBroadcast(intent);
-	}
-
-	private void sendAddUrlSuccessBroadcast(String url) {
-		Intent intent = new Intent(NetworkTaskManager.FINISH_ADD_FEED);
-		intent.putExtra(NetworkTaskManager.ADDED_FEED_URL, url);
-		context.sendBroadcast(intent);
 	}
 }

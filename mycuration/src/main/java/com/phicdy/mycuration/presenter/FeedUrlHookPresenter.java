@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.RssParseExecutor;
+import com.phicdy.mycuration.rss.RssParseResult;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
@@ -19,6 +20,25 @@ public class FeedUrlHookPresenter implements Presenter {
     private final UnreadCountManager unreadCountManager;
     private final NetworkTaskManager networkTaskManager;
     private final RssParser parser;
+    RssParseExecutor.RssParseCallback callback = new RssParseExecutor.RssParseCallback() {
+        @Override
+        public void succeeded(@NonNull String url) {
+            Feed newFeed = dbAdapter.getFeedByUrl(url);
+            unreadCountManager.addFeed(newFeed);
+            networkTaskManager.updateFeed(newFeed);
+        }
+
+        @Override
+        public void failed(@RssParseResult.FailedReason int reason) {
+            if (reason == RssParseResult.INVALID_URL) {
+                view.showInvalidUrlErrorToast();
+            } else {
+                view.showGenericErrorToast();
+            }
+            view.dismissProgressDialog();
+            view.finishView();
+        }
+    };
 
     public FeedUrlHookPresenter(@NonNull DatabaseAdapter dbAdapter,
                                 @NonNull UnreadCountManager unreadCountManager,
@@ -51,9 +71,8 @@ public class FeedUrlHookPresenter implements Presenter {
             if (UrlUtil.isCorrectUrl(url)) {
                 view.registerFinishAddReceiver();
                 view.showProgressDialog();
-                RssParseExecutor executor = new RssParseExecutor();
-                executor.setParser(parser);
-                executor.start(url);
+                RssParseExecutor executor = new RssParseExecutor(parser, dbAdapter);
+                executor.start(url, callback);
             }else {
                 view.showInvalidUrlErrorToast();
             }
@@ -63,24 +82,10 @@ public class FeedUrlHookPresenter implements Presenter {
     }
 
     public void handleFinish(@NonNull String action, @Nullable String feedUrl,
-                             int errorReason) {
-        if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
-            Feed newFeed = dbAdapter.getFeedByUrl(feedUrl);
-            if (errorReason != NetworkTaskManager.REASON_NOT_FOUND || newFeed == null) {
-                if (errorReason == NetworkTaskManager.ERROR_INVALID_URL) {
-                    view.showInvalidUrlErrorToast();
-                } else {
-                    view.showGenericErrorToast();
-                }
-                view.dismissProgressDialog();
-                view.finishView();
-            } else {
-                unreadCountManager.addFeed(newFeed);
-                networkTaskManager.updateFeed(newFeed);
-                view.showSuccessToast();
-            }
-        } else if (action.equals(NetworkTaskManager.FINISH_UPDATE_ACTION)) {
+                      int errorReason) {
+        if (action.equals(NetworkTaskManager.FINISH_UPDATE_ACTION)) {
             view.dismissProgressDialog();
+            view.showSuccessToast();
             view.finishView();
         }
     }

@@ -4,6 +4,8 @@ import android.content.Intent;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.rss.RssParseExecutor;
+import com.phicdy.mycuration.rss.RssParseResult;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
@@ -158,8 +160,7 @@ public class FeedUrlHookPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        presenter.handleFinish(NetworkTaskManager.FINISH_ADD_FEED,
-                "http://www.google.com", NetworkTaskManager.REASON_NOT_FOUND);
+        presenter.callback.failed(RssParseResult.NOT_FOUND);
         assertTrue(view.isFinished);
     }
 
@@ -175,41 +176,12 @@ public class FeedUrlHookPresenterTest {
     }
 
     @Test
-    public void toastShowsWhenFinishAddFeedActionComes() {
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        String testUrl = "http://www.google.com";
-        Feed testFeed = new Feed(1, "Google");
-        Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed);
-        FeedUrlHookPresenter presenter = new FeedUrlHookPresenter(
-                adapter, unreadCountManager, networkTaskManager, parser);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handleFinish(NetworkTaskManager.FINISH_ADD_FEED,
-                testUrl, NetworkTaskManager.REASON_NOT_FOUND);
-        assertTrue(view.isSuccessToastShowed);
-    }
-
-    @Test
     public void toastShowsWhenFinishAddFeedActionComesWithNotRssHtmlError() {
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        presenter.handleFinish(NetworkTaskManager.FINISH_ADD_FEED,
-                "http://www.google.com", NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
-        assertTrue(view.isGenericErrorToastShowed);
-    }
-
-    @Test
-    public void toastShowsWhenFinishAddFeedActionComesWithUnknownError() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handleFinish(NetworkTaskManager.FINISH_ADD_FEED,
-                "http://www.google.com", NetworkTaskManager.ERROR_UNKNOWN);
+        presenter.callback.failed(RssParseResult.NON_RSS_HTML);
         assertTrue(view.isGenericErrorToastShowed);
     }
 
@@ -219,8 +191,7 @@ public class FeedUrlHookPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        presenter.handleFinish(NetworkTaskManager.FINISH_ADD_FEED,
-                "http://www.google.com", NetworkTaskManager.ERROR_INVALID_URL);
+        presenter.callback.failed(RssParseResult.INVALID_URL);
         assertTrue(view.isInvalidUrlErrorToastShowed);
     }
 

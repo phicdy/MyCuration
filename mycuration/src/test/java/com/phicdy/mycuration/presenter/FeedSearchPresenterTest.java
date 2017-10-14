@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.rss.RssParseResult;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
@@ -98,16 +99,6 @@ public class FeedSearchPresenterTest {
     }
 
     @Test
-    public void receiverIsRegisteredWhenHandleUrl() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handle("http://www.google.com");
-        assertTrue(view.isReceiverRegistered);
-    }
-
-    @Test
     public void progressDialogShowsWhenHandleUrl() {
         MockView view = new MockView();
         presenter.setView(view);
@@ -194,7 +185,7 @@ public class FeedSearchPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        presenter.onFinishAddFeed(testUrl, NetworkTaskManager.REASON_NOT_FOUND);
+        presenter.callback.succeeded(testUrl);
         assertTrue(view.isSuccessToastShowed);
     }
 
@@ -330,16 +321,6 @@ public class FeedSearchPresenterTest {
         @Override
         public void dismissProgressDialog() {
             isProgressDialogForeground = false;
-        }
-
-        @Override
-        public void registerFinishReceiver() {
-            isReceiverRegistered = true;
-        }
-
-        @Override
-        public void unregisterFinishReceiver() {
-            isReceiverRegistered = false;
         }
 
         @Override

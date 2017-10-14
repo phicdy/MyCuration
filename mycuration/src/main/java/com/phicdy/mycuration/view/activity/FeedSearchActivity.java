@@ -3,15 +3,15 @@ package com.phicdy.mycuration.view.activity;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
+import android.support.annotation.UiThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -48,8 +48,6 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
     private WebView webView;
     private FloatingActionButton fab;
     private ProgressDialog dialog;
-
-    private BroadcastReceiver receiver;
 
     private static final String SHOWCASE_ID = "searchRssTutorial";
 
@@ -238,64 +236,25 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
     }
 
     @Override
-    public void registerFinishReceiver() {
-        receiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
-                    String url = intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL);
-                    int reason = intent.getIntExtra(
-                            NetworkTaskManager.ADD_FEED_ERROR_REASON,
-                            NetworkTaskManager.REASON_NOT_FOUND);
-                    presenter.onFinishAddFeed(url, reason);
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
-        registerReceiver(receiver, filter);
-    }
-
-    @Override
-    public void unregisterFinishReceiver() {
-        if (receiver != null) {
-            try {
-                unregisterReceiver(receiver);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-            receiver = null;
-        }
-    }
-
-    @Override
     public void load(@NonNull String url) {
         webView.loadUrl(url);
     }
 
     @Override
     public void showInvalidUrlErrorToast() {
-        Toast.makeText(getApplicationContext(),
-                R.string.add_rss_error_invalid_url,
-                Toast.LENGTH_SHORT).show();
+        showToastOnUiThread(R.string.add_rss_error_invalid_url, Toast.LENGTH_SHORT);
         GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error));
     }
 
     @Override
     public void showGenericErrorToast() {
-        Toast.makeText(getApplicationContext(),
-                R.string.add_rss_error_generic,
-                Toast.LENGTH_SHORT).show();
+        showToastOnUiThread(R.string.add_rss_error_generic, Toast.LENGTH_SHORT);
         GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error));
     }
 
     @Override
     public void showAddFeedSuccessToast() {
-        Toast.makeText(getApplicationContext(),
-                R.string.add_rss_success,
-                Toast.LENGTH_SHORT).show();
+        showToastOnUiThread(R.string.add_rss_success, Toast.LENGTH_SHORT);
         GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url));
     }
 
@@ -307,5 +266,16 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
     @Override
     public void setSearchViewTextFrom(@NonNull String url) {
         searchView.setQuery(url, false);
+    }
+
+
+    @UiThread
+    private void showToastOnUiThread(@StringRes final int res, final int toastLength) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), res, toastLength).show();
+            }
+        });
     }
 }

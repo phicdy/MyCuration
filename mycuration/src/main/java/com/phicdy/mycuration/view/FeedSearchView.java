@@ -6,8 +6,6 @@ public interface FeedSearchView {
     void startFeedUrlHookActivity(@NonNull String url);
     void showProgressDialog();
     void dismissProgressDialog();
-    void registerFinishReceiver();
-    void unregisterFinishReceiver();
     void load(@NonNull String url);
     void showInvalidUrlErrorToast();
     void showGenericErrorToast();
