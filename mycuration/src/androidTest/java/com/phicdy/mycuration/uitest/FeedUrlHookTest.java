@@ -111,7 +111,7 @@ public class FeedUrlHookTest extends UiTest {
         if (feedTitles == null) fail("Feed was not found");
         // Feed title list includes show/hide option row, the size is 2
         if (feedTitles.size() != 2) fail("Feed was not added");
-        assertThat(feedTitles.get(0).getText(), is("Yahoo!ニュース・トピックス - トップ"));
+        assertThat(feedTitles.get(0).getText(), is("Yahoo!ニュース・トピックス - 主要"));
         assertThat(feedTitles.get(1).getText(), is("全てのRSSを表示"));
 
         // Assert articles of yahoo RSS were added
