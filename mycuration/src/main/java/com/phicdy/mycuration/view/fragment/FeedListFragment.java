@@ -280,17 +280,12 @@ public class FeedListFragment extends Fragment implements FeedListView {
                 if (action.equals(NetworkTaskManager.FINISH_UPDATE_ACTION)) {
                     Log.d(LOG_TAG, "onReceive");
                     presenter.onFinishUpdate();
-                }else if (action.equals(NetworkTaskManager.FINISH_ADD_FEED)) {
-                    String feedUrl = intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL);
-                    int errorReason = intent.getIntExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON, -1);
-                    presenter.onFinishAddFeed(feedUrl, errorReason);
                 }
             }
         };
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(NetworkTaskManager.FINISH_UPDATE_ACTION);
-        filter.addAction(NetworkTaskManager.FINISH_ADD_FEED);
         getActivity().registerReceiver(receiver, filter);
     }
 

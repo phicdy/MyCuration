@@ -1,17 +1,19 @@
 package com.phicdy.mycuration.rss.test;
 
+import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.rss.RssParseExecutor;
+import com.phicdy.mycuration.rss.RssParseResult;
+import com.phicdy.mycuration.rss.RssParser;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.InstrumentationRegistry.getContext;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -19,6 +21,15 @@ import static junit.framework.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 public class RssParserTest {
 
+    private RssParseExecutor.RssParseCallback callback = new RssParseExecutor.RssParseCallback() {
+        @Override
+        public void succeeded(@NonNull String url) {
+        }
+
+        @Override
+        public void failed(@RssParseResult.FailedReason int reason) {
+        }
+    };
 	private DatabaseAdapter adapter;
 
 	public RssParserTest() {
@@ -40,7 +51,9 @@ public class RssParserTest {
 
 	@Test
 	public void testParseFeedInfoRSS1() {
-		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://news.yahoo.co.jp/pickup/rss.xml");
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start("http://news.yahoo.co.jp/pickup/rss.xml", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -62,8 +75,10 @@ public class RssParserTest {
 
 	@Test
 	public void testParseFeedInfoRSS1_rdf() {
-		String testUrl = "http://b.hatena.ne.jp/hotentry/it.rss";
-		NetworkTaskManager.getInstance(getContext()).addNewFeed(testUrl);
+        String testUrl = "http://b.hatena.ne.jp/hotentry/it.rss";
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start(testUrl, callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -79,8 +94,9 @@ public class RssParserTest {
 
 	@Test
 	public void testParseFeedInfoRSS2() {
-		NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getContext());
-		networkTaskManager.addNewFeed("http://hiroki.jp/feed/");
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start("http://hiroki.jp/feed/", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -94,7 +110,7 @@ public class RssParserTest {
 		assertEquals("http://hiroki.jp", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 
-		networkTaskManager.addNewFeed("http://www.infoq.com/jp/feed");
+        executor.start("http://www.infoq.com/jp/feed", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -122,8 +138,9 @@ public class RssParserTest {
 	public void testParseFeedInfoATOM() {
 		// Publickey
 		String publicKeyFeedUrl = "http://www.publickey1.jp/atom.xml";
-		NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getContext());
-		networkTaskManager.addNewFeed(publicKeyFeedUrl);
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start(publicKeyFeedUrl, callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -138,7 +155,7 @@ public class RssParserTest {
 		assertEquals(Feed.DEDAULT_ICON_PATH, publicKeyFeed.getIconPath());
 
 		// Google testing blog
-		networkTaskManager.addNewFeed("http://feeds.feedburner.com/blogspot/RLXA");
+        executor.start("http://feeds.feedburner.com/blogspot/RLXA", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -152,7 +169,7 @@ public class RssParserTest {
 		assertEquals(Feed.DEDAULT_ICON_PATH, googleTestFeed.getIconPath());
 
 		// MOONGIFT
-		networkTaskManager.addNewFeed("http://feeds.feedburner.com/moongift");
+        executor.start("http://feeds.feedburner.com/moongift", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -169,7 +186,9 @@ public class RssParserTest {
 	@Test
 	public void testParseFeedInfoTopHtml() {
 		// Test top URL
-		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://gigazine.net");
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start("http://gigazine.net", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -185,7 +204,9 @@ public class RssParserTest {
 
 	@Test
 	public void testParseFeedInfoTopHtml2() {
-		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://tech.mercari.com/");
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start("http://tech.mercari.com/", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -204,7 +225,9 @@ public class RssParserTest {
 	@Test
 	public void testParseFeedInfoTopHtmlFeedURLStartWithSlash() {
 		// //smhn.info/feed is returned
-		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://smhn.info");
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start("http://smhn.info", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -221,7 +244,9 @@ public class RssParserTest {
 
 	@Test
 	public void testParseFeedInfoGzip() {
-		NetworkTaskManager.getInstance(getContext()).addNewFeed("http://ground-sesame.hatenablog.jp");
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start("http://ground-sesame.hatenablog.jp", callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
@@ -242,7 +267,9 @@ public class RssParserTest {
 	}
 
 	private void addNewFeedAndCheckResult(String testUrl, String expectedFeedUrl, String expectedSiteUrl) {
-		NetworkTaskManager.getInstance(getContext()).addNewFeed(testUrl);
+        RssParser parser = new RssParser(getTargetContext());
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        executor.start(testUrl, callback);
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {

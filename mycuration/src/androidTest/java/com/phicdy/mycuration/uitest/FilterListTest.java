@@ -66,7 +66,7 @@ public class FilterListTest extends UiTest {
         UiObject2 target = filters.get(0).findObject(
                 By.res(BuildConfig.APPLICATION_ID, "filterTargetFeed"));
         assertNotNull(target);
-        assertThat(target.getText(), is("Yahoo!ニュース・トピックス - トップ "));
+        assertThat(target.getText(), is("Yahoo!ニュース・トピックス - 主要 "));
         UiObject2 keyword = filters.get(0).findObject(
                 By.res(BuildConfig.APPLICATION_ID, "filterKeyword"));
         assertNotNull(keyword);
@@ -141,7 +141,7 @@ public class FilterListTest extends UiTest {
         UiObject2 targetRss = device.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "tv_target_rss"));
         if (targetRss == null) fail("Target RSS was not found");
-        assertThat(targetRss.getText(), is("Yahoo!ニュース・トピックス - トップ"));
+        assertThat(targetRss.getText(), is("Yahoo!ニュース・トピックス - 主要"));
 
         // Assert filter keyword
         UiObject2 filterKeywordEditText = device.wait(Until.findObject(
@@ -202,7 +202,7 @@ public class FilterListTest extends UiTest {
         UiObject2 target = filters.get(0).findObject(
                 By.res(BuildConfig.APPLICATION_ID, "filterTargetFeed"));
         assertNotNull(target);
-        assertThat(target.getText(), is("Yahoo!ニュース・トピックス - 海外 "));
+        assertThat(target.getText(), is("Yahoo!ニュース・トピックス - 国際 "));
         UiObject2 keyword = filters.get(0).findObject(
                 By.res(BuildConfig.APPLICATION_ID, "filterKeyword"));
         assertNotNull(keyword);

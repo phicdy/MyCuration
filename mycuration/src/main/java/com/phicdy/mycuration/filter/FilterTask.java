@@ -18,6 +18,7 @@ public class FilterTask {
     public void applyFiltering(int feedId) {
         //Get Filters of Feed ID
         ArrayList<Filter> filterList = dbAdapter.getEnabledFiltersOfFeed(feedId);
+        if (filterList == null || filterList.size() == 0) return;
         dbAdapter.applyFiltersOfFeed(filterList, feedId);
     }
       

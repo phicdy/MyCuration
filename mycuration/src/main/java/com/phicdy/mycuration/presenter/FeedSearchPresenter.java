@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.rss.RssParseExecutor;
+import com.phicdy.mycuration.rss.RssParseResult;
+import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.UrlUtil;
@@ -17,14 +20,28 @@ public class FeedSearchPresenter implements Presenter {
     private final NetworkTaskManager networkTaskManager;
     private final DatabaseAdapter adapter;
     private final UnreadCountManager unreadManager;
+    private final RssParser parser;
     private FeedSearchView view;
+    RssParseExecutor.RssParseCallback callback = new RssParseExecutor.RssParseCallback() {
+        @Override
+        public void succeeded(@NonNull String url) {
+            onFinishAddFeed(url, RssParseResult.NOT_FAILED);
+        }
+
+        @Override
+        public void failed(@RssParseResult.FailedReason int reason) {
+            onFinishAddFeed("", reason);
+        }
+    };
 
     public FeedSearchPresenter(@NonNull NetworkTaskManager networkTaskManager,
                                @NonNull DatabaseAdapter adapter,
-                               @NonNull UnreadCountManager unreadManager) {
+                               @NonNull UnreadCountManager unreadManager,
+                               @NonNull RssParser parser) {
         this.networkTaskManager = networkTaskManager;
         this.adapter = adapter;
         this.unreadManager = unreadManager;
+        this.parser = parser;
     }
 
     public void setView(FeedSearchView view) {
@@ -41,7 +58,6 @@ public class FeedSearchPresenter implements Presenter {
 
     @Override
     public void pause() {
-        view.unregisterFinishReceiver();
     }
 
     public void onFabClicked(@NonNull String url) {
@@ -51,9 +67,9 @@ public class FeedSearchPresenter implements Presenter {
 
     public void handle(@NonNull String query) {
         if (UrlUtil.isCorrectUrl(query)) {
-            view.registerFinishReceiver();
             view.showProgressDialog();
-            networkTaskManager.addNewFeed(query);
+            RssParseExecutor executor = new RssParseExecutor(parser, adapter);
+            executor.start(query, callback);
             return;
         }
         try {
@@ -66,18 +82,18 @@ public class FeedSearchPresenter implements Presenter {
         }
     }
 
-    public void onFinishAddFeed(@NonNull String url, int reason) {
+    void onFinishAddFeed(@NonNull String url, int reason) {
         Feed newFeed = adapter.getFeedByUrl(url);
-        if (reason != NetworkTaskManager.REASON_NOT_FOUND || newFeed == null) {
+        if (reason == RssParseResult.NOT_FAILED && newFeed != null) {
+            unreadManager.addFeed(newFeed);
+            networkTaskManager.updateFeed(newFeed);
+            view.showAddFeedSuccessToast();
+        } else {
             if (reason == NetworkTaskManager.ERROR_INVALID_URL) {
                 view.showInvalidUrlErrorToast();
             } else {
                 view.showGenericErrorToast();
             }
-        } else {
-            unreadManager.addFeed(newFeed);
-            networkTaskManager.updateFeed(newFeed);
-            view.showAddFeedSuccessToast();
         }
         view.dismissProgressDialog();
         view.finishView();

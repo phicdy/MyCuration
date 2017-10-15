@@ -42,8 +42,8 @@ public class GetHatenaBookmarkTest {
         articles.add(new Article(1, "hoge", testUrl, Article.UNREAD, "", 1, testFeed.getId(), "", ""));
         adapter.saveNewArticles(articles, testFeed.getId());
 
-        GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark();
-        getHatenaBookmark.request(testUrl, adapter);
+        GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark(adapter);
+        getHatenaBookmark.request(testUrl, 0);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -53,22 +53,22 @@ public class GetHatenaBookmarkTest {
     }
 
     @Test
-    public void MyQiitaArticleReturns1() {
+    public void MyBlogArticleReturns1() {
         Context context = InstrumentationRegistry.getTargetContext();
         DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
 
         // Save test feed and article
         Feed testFeed = adapter.saveNewFeed("test", "http://hoge.com", "hoge", "");
         ArrayList<Article> articles = new ArrayList<>();
-        String testUrl = "http://qiita.com/phicdy/items/f7ca6df0cc458e7550fb";
+        String testUrl = "http://phicdy.hatenablog.com/entry/2014/09/01/214055";
         articles.add(new Article(1, "hoge", testUrl, Article.UNREAD, "", 1, testFeed.getId(), "", ""));
         adapter.saveNewArticles(articles, testFeed.getId());
 
         // Start request
-        GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark();
-        getHatenaBookmark.request(testUrl, adapter);
+        GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark(adapter);
+        getHatenaBookmark.request(testUrl, 0);
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
