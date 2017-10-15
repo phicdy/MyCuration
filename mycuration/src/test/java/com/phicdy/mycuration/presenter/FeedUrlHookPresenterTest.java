@@ -95,16 +95,6 @@ public class FeedUrlHookPresenterTest {
     }
 
     @Test
-    public void progressDialogShowsWhenActionViewAndUrlComes() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handle(Intent.ACTION_VIEW, "http://www.google.com");
-        assertTrue(view.isProgressDialogForeground);
-    }
-
-    @Test
     public void toastShowsWhenActionViewAndInvalidUrlComes() {
         MockView view = new MockView();
         presenter.setView(view);
@@ -122,16 +112,6 @@ public class FeedUrlHookPresenterTest {
         presenter.resume();
         presenter.handle(Intent.ACTION_SEND, "http://www.google.com");
         assertTrue(view.isReceiverRegistered);
-    }
-
-    @Test
-    public void progressDialogShowsWhenActionSendAndUrlComes() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handle(Intent.ACTION_SEND, "http://www.google.com");
-        assertTrue(view.isProgressDialogForeground);
     }
 
     @Test
