@@ -111,10 +111,12 @@ public class FeedListPresenter implements Presenter {
         if (position < 0 || feeds == null || position > feeds.size()-1) {
             return "";
         }
+        String title;
         if (isHided) {
-            feeds.get(position).getTitle();
+            title = feeds.get(position).getTitle();
+        } else {
+            title = allFeeds.get(position).getTitle();
         }
-        String title = allFeeds.get(position).getTitle();
         if (title == null) title = "";
         return title;
     }
