@@ -119,6 +119,10 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
                     presenter.updateInternalBrowser(isInternal);
                     // GA
                     GATrackerHelper.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
+                } else if (key.equals(getString(R.string.key_auto_update_in_main_ui))) {
+                    boolean isAutoUpdateInMainUi = prefAutoUpdateInMainUi.isChecked();
+                    presenter.updateAutoUpdateInMainUi(isAutoUpdateInMainUi);
+                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_in_main_ui_option), isAutoUpdateInMainUi ? 1: 0);
                 }
             }
         };

@@ -140,6 +140,10 @@ public class SettingPresenter implements Presenter {
         helper.setOpenInternal(isInternal);
     }
 
+    public void updateAutoUpdateInMainUi(boolean isEnaled) {
+        helper.setAutoUpdateInMainUi(isEnaled);
+    }
+
     public void onLicenseClicked() {
         view.startLicenseActivity();
     }
