@@ -50,7 +50,7 @@ public class PreferenceHelper {
 	}
 
 	public boolean getAutoUpdateInMainUi() {
-		return !pref.contains(KEY_AUTO_UPDATE_IN_MAIN_UI) || pref.getBoolean(KEY_AUTO_UPDATE_IN_MAIN_UI, false);
+		return pref.getBoolean(KEY_AUTO_UPDATE_IN_MAIN_UI, false);
 	}
 
 	public void setAutoUpdateInMainUi(boolean isAutoUpdateInMainUi) {

@@ -152,6 +152,7 @@
     <string name="change_swipe_direction">スワイプ方向変更</string>
     <string name="change_aricle_sort">記事並び替え方法変更</string>
     <string name="change_browser_option">記事を開くブラウザ変更</string>
+    <string name="change_auto_update_in_main_ui_option">起動時に更新変更</string>
     <string name="add_empty_curation_title">キュレーション名が空で追加</string>
     <string name="add_empty_curation_word">キュレーション条件単語が空で追加</string>
     <string name="add_same_curation_name">同じキュレーション名で追加</string>
