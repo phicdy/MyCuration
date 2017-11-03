@@ -1,7 +1,4 @@
 <resources>
-	<color name="window_bg">#ededf0</color>
-	<drawable name="window_bg">@color/window_bg</drawable>
-	
 	<color name="all_pressed">#727272</color>
 
 	<color name="primary">#212121</color>

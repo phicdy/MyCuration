@@ -2,9 +2,10 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
         classpath 'com.google.gms:google-services:3.0.0'
         classpath 'com.stanfy.spoon:spoon-gradle-plugin:1.2.2'
     }
@@ -13,6 +14,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        google()
         maven { url "https://jitpack.io" }
     }
 }
