@@ -80,6 +80,7 @@
     <string name="debug">デバッグ</string>
     <string name="import_db">データベースのインポート</string>
     <string name="export_db">データベースのエクスポート</string>
+    <string name="add_test_rss">テストRSS挿入</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_article_sort">keyArticleSort</string>
     <string name="key_auto_update_in_main_ui">keyAutoUpdateInMainUi</string>
@@ -89,6 +90,7 @@
     <string name="key_license">keyLicense</string>
     <string name="key_import_db">keyImportDb</string>
     <string name="key_export_db">keyExportDb</string>
+    <string name="key_add_rss">keyAddRss</string>
 
     <string name="all_read">全て既読にする</string>
     <string name="no_article">未読の記事がありません</string>
