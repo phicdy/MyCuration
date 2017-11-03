@@ -4,7 +4,7 @@ apply plugin: 'spoon'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.phicdy.mycuration"
@@ -30,11 +30,14 @@ android {
         abortOnError true
     }
 
+    flavorDimensions "mode"
     productFlavors {
         production {
+            dimension "mode"
             minSdkVersion 14
         }
         uiTest {
+            dimension "mode"
             minSdkVersion 18
         }
     }
@@ -99,26 +102,26 @@ repositories {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'org.hamcrest:hamcrest-library:1.3'
-    uiTestCompile 'com.android.support:support-annotations:25.3.1'
-    uiTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
-    uiTestCompile 'com.android.support.test:runner:0.5'
-    uiTestCompile 'com.android.support.test:rules:0.5'
-    uiTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    uiTestCompile 'com.squareup.spoon:spoon-client:1.6.4'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'org.jsoup:jsoup:1.8.2'
-    compile 'com.melnykov:floatingactionbutton:1.1.0'
-    compile 'com.github.johnkil.android-progressfragment:progressfragment:1.4.0'
-    compile 'com.google.android.gms:play-services-analytics:10.2.1'
-    compile 'uk.co.chrisjenx:calligraphy:2.1.0'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
-    compile 'com.facebook.stetho:stetho:1.4.2'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'org.hamcrest:hamcrest-library:1.3'
+    uiTestImplementation 'com.android.support:support-annotations:25.3.1'
+    uiTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    uiTestImplementation 'com.android.support.test:runner:0.5'
+    uiTestImplementation 'com.android.support.test:rules:0.5'
+    uiTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
+    uiTestImplementation 'com.squareup.spoon:spoon-client:1.6.4'
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:support-v4:25.3.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.2.0'
+    implementation 'org.jsoup:jsoup:1.8.2'
+    implementation 'com.melnykov:floatingactionbutton:1.1.0'
+    implementation 'com.github.johnkil.android-progressfragment:progressfragment:1.4.0'
+    implementation 'com.google.android.gms:play-services-analytics:10.2.1'
+    implementation 'uk.co.chrisjenx:calligraphy:2.1.0'
+    implementation 'com.android.support:design:25.3.1'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
+    implementation 'com.facebook.stetho:stetho:1.4.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
