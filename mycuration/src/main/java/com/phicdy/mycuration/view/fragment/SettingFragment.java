@@ -146,6 +146,14 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
                     return true;
                 }
             });
+            Preference prefAddRss = findPreference(getString(R.string.key_add_rss));
+            prefAddRss.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    presenter.onDebugAddRssClicked(DatabaseAdapter.getInstance(getActivity()));
+                    return true;
+                }
+            });
         }
 
         prefLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

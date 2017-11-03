@@ -3,6 +3,7 @@ package com.phicdy.mycuration.presenter;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
+import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.SettingView;
 
@@ -146,5 +147,18 @@ public class SettingPresenter implements Presenter {
 
     public void onLicenseClicked() {
         view.startLicenseActivity();
+    }
+
+    public void onDebugAddRssClicked(@NonNull DatabaseAdapter adapter) {
+        adapter.saveNewFeed(
+                "Yahoo!ニュース・トピックス - 主要",
+                "https://news.yahoo.co.jp/pickup/rss.xml",
+                "RSS2.0",
+                "https://news.yahoo.co.jp");
+        adapter.saveNewFeed(
+                "Yahoo!ニュース・トピックス - 国際",
+                "https://news.yahoo.co.jp/pickup/world/rss.xml",
+                "RSS2.0",
+                "https://news.yahoo.co.jp");
     }
 }

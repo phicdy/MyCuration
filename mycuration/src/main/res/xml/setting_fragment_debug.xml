@@ -49,5 +49,8 @@
         <Preference
             android:key="@string/key_export_db"
             android:title="@string/export_db" />
+        <Preference
+            android:key="@string/key_add_rss"
+            android:title="@string/add_test_rss" />
     </PreferenceCategory>
 </PreferenceScreen>
