@@ -18,7 +18,7 @@ public class IconParserTest {
 	@Test
 	public void testParseXml() {
 		IconParser parser = new IconParser();
-		assertEquals("http://gigazine.net/favicon.ico", parser.parseHtml("http://gigazine.net"));
+		assertEquals("https://gigazine.net/favicon.ico", parser.parseHtml("https://gigazine.net"));
 		assertEquals("https://s0.wp.com/wp-content/themes/vip/techcrunch-jp-2015/assets/images/favicon.ico", parser.parseHtml("http://jp.techcrunch.com"));
 		assertEquals("http://b.hatena.ne.jp/favicon.ico", parser.parseHtml("http://b.hatena.ne.jp"));
 	}
