@@ -79,7 +79,7 @@ public class NetworkTaskManager {
     }
 
 	public void updateFeed(final Feed feed) {
-        if (TextUtil.isEmpty(feed.getUrl())) return;
+        if (feed == null || TextUtil.isEmpty(feed.getUrl())) return;
         URI uri = URI.create(feed.getUrl());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(uri.getScheme() + "://" + uri.getHost())
