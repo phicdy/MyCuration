@@ -1,0 +1,40 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-27-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "mycuration/build.gradle" }}
+      - run:
+          name: Print Android home
+          command: echo $ANDROID_HOME
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - run:
+          name: Decode google-services.json
+          command: echo $GOOGLE_SERVICE | base64 --decode > ./mycuration/google-services.json
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "mycuration/build.gradle" }}
+      - run:
+          name: Run Tests
+          command: ./gradlew lint test
+      - run:
+          name: Create jacoco report
+          command: ./gradlew jacocoTestReport 
+      - run:
+          name: Publish to codecov
+          command: bash <(curl -s https://codecov.io/bash)
+      - store_artifacts:
+          path: mycuration/build/reports
+          destination: reports
+      - store_test_results:
+          path: mycuration/build/test-results
+
