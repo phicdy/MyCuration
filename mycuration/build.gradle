@@ -75,8 +75,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testUiTestDebugUnitTest']
         xml.enabled true
         html.enabled true
         csv.enabled false
-        xml.destination "${buildDir}/reports/jacoco/jacocoTestReport.xml"
-        html.destination "${buildDir}/reports/jacoco/html"
+        xml.destination new File("${buildDir}/reports/jacoco/jacocoTestReport.xml")
+        html.destination new File("${buildDir}/reports/jacoco/html")
         classDirectories = files(
                 fileTree(
                         dir: "${buildDir}/intermediates/classes/uiTest/debug",
