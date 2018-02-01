@@ -76,7 +76,7 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 					conn.getInputStream());
 
 			// Output Stream
-			String iconSaveFolderStr = FileUtil.iconSaveFolder(context);
+			String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(context);
 			File iconSaveFolder  = new File(iconSaveFolderStr);
 			if(!iconSaveFolder.exists()) {
 				if(!iconSaveFolder.mkdir()) {
@@ -84,7 +84,7 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 				}
 			}
 			
-			String iconPath = FileUtil.generateIconFilePath(context, siteUrl);
+			String iconPath = FileUtil.INSTANCE.generateIconFilePath(context, siteUrl);
             if (iconPath == null) return;
 			DataOutputStream dataOutStream = new DataOutputStream(
 					new BufferedOutputStream(new FileOutputStream(

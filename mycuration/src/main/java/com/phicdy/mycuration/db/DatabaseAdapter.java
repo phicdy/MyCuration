@@ -1300,11 +1300,11 @@ public class DatabaseAdapter {
 	public void exportDb() {
 		try {
 			File backupStrage;
-			String sdcardRootPath = FileUtil.getSDCardRootPath();
+			String sdcardRootPath = FileUtil.INSTANCE.getSdCardRootPath();
             Log.d(LOG_TAG, "SD Card path: " + sdcardRootPath);
-			if (FileUtil.isSDCardMouted(sdcardRootPath)) {
+			if (FileUtil.INSTANCE.isSDCardMouted(sdcardRootPath)) {
 				Log.d(LOG_TAG, "SD card is mounted");
-				backupStrage = new File(FileUtil.getSDCardRootPath());
+				backupStrage = new File(FileUtil.INSTANCE.getSdCardRootPath());
 			}else {
 				Log.d(LOG_TAG, "not mounted");
 				backupStrage = Environment.getExternalStorageDirectory();
@@ -1347,10 +1347,10 @@ public class DatabaseAdapter {
 	public void importDB() {
 		try {
 			File backupStrage;
-			String sdcardRootPath = FileUtil.getSDCardRootPath();
-			if (FileUtil.isSDCardMouted(sdcardRootPath)) {
+			String sdcardRootPath = FileUtil.INSTANCE.getSdCardRootPath();
+			if (FileUtil.INSTANCE.isSDCardMouted(sdcardRootPath)) {
 				Log.d(LOG_TAG, "SD card is mounted");
-				backupStrage = new File(FileUtil.getSDCardRootPath());
+				backupStrage = new File(FileUtil.INSTANCE.getSdCardRootPath());
 			}else {
 				Log.d(LOG_TAG, "not mounted");
 				backupStrage = Environment.getExternalStorageDirectory();
