@@ -48,7 +48,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 				return;
 			}
-			boolean isWifiConnected = NetworkUtil.isWifiConnected(context);
+			boolean isWifiConnected = NetworkUtil.INSTANCE.isWifiConnected(context);
 			GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark(dbAdapter);
             int delaySec = 0;
             int totalNum = 0;
