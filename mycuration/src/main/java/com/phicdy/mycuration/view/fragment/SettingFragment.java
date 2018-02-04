@@ -133,7 +133,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     DatabaseAdapter.getInstance(getActivity()).importDB();
-                    ToastHelper.showToast(getActivity(), getString(R.string.import_db), Toast.LENGTH_SHORT);
+                    ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.import_db), Toast.LENGTH_SHORT);
                     return true;
                 }
             });
@@ -142,7 +142,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     DatabaseAdapter.getInstance(getActivity()).exportDb();
-                    ToastHelper.showToast(getActivity(), getString(R.string.export_db), Toast.LENGTH_SHORT);
+                    ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.export_db), Toast.LENGTH_SHORT);
                     return true;
                 }
             });

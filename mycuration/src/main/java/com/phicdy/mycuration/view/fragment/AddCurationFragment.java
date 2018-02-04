@@ -203,22 +203,22 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
 
     @Override
     public void showSuccessToast() {
-        ToastHelper.showToast(getActivity(), getString(R.string.curation_added_success), Toast.LENGTH_SHORT);
+        ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.curation_added_success), Toast.LENGTH_SHORT);
     }
 
     @Override
     public void showErrorToast() {
-        ToastHelper.showToast(getActivity(), getString(R.string.curation_added_error), Toast.LENGTH_SHORT);
+        ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.curation_added_error), Toast.LENGTH_SHORT);
     }
 
     @Override
     public void showWordEmptyErrorToast() {
-        ToastHelper.showToast(getActivity(), getString(R.string.empty_word), Toast.LENGTH_SHORT);
+        ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.empty_word), Toast.LENGTH_SHORT);
     }
 
     @Override
     public void showToast(String text) {
-        ToastHelper.showToast(getActivity(), text, Toast.LENGTH_SHORT);
+        ToastHelper.INSTANCE.showToast(getActivity(), text, Toast.LENGTH_SHORT);
     }
 
     @Override
