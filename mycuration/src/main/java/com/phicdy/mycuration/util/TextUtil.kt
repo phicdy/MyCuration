@@ -1,14 +1,14 @@
-package com.phicdy.mycuration.util;
+package com.phicdy.mycuration.util
 
-import java.util.regex.Pattern;
+import java.util.regex.Pattern
 
-public class TextUtil {
+object TextUtil {
 
-    public static String removeLineFeed(String string) {
-        return Pattern.compile("\t|\r|\n|\r\n").matcher(string).replaceAll("");
+    fun removeLineFeed(string: String): String {
+        return Pattern.compile("\t|\r|\n|\r\n").matcher(string).replaceAll("")
     }
 
-    public static boolean isEmpty(String text) {
-        return text == null || text.equals("");
+    fun isEmpty(text: String?): Boolean {
+        return text == null || text == ""
     }
 }

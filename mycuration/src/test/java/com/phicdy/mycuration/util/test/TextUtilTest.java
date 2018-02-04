@@ -17,16 +17,16 @@ public class TextUtilTest  {
 
 	@Test
 	public void testRemoveLineFeed() {
-		assertEquals("aaa", TextUtil.removeLineFeed("aaa\r"));
-		assertEquals("aaa", TextUtil.removeLineFeed("aaa\n"));
-		assertEquals("aaa", TextUtil.removeLineFeed("aaa\t"));
-		assertEquals("aaa", TextUtil.removeLineFeed("aaa\r\n"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("aaa\r"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("aaa\n"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("aaa\t"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("aaa\r\n"));
 
-		assertEquals("aaa", TextUtil.removeLineFeed("a\ra\na"));
-		assertEquals("aaa", TextUtil.removeLineFeed("a\ra\ta"));
-		assertEquals("aaa", TextUtil.removeLineFeed("a\ra\r\na"));
-		assertEquals("aaa", TextUtil.removeLineFeed("a\na\ta"));
-		assertEquals("aaa", TextUtil.removeLineFeed("a\na\r\na"));
-		assertEquals("aaa", TextUtil.removeLineFeed("a\ta\r\na"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("a\ra\na"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("a\ra\ta"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("a\ra\r\na"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("a\na\ta"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("a\na\r\na"));
+		assertEquals("aaa", TextUtil.INSTANCE.removeLineFeed("a\ta\r\na"));
 	}
 }

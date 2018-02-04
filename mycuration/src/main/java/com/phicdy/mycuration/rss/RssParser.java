@@ -213,7 +213,7 @@ public class RssParser {
 					// add Title and Link to currentItem
 					if (itemFlag && tag.equals("title")
 							&& (article.getTitle() == null)) {
-						String title = TextUtil.removeLineFeed(parser.nextText());
+						String title = TextUtil.INSTANCE.removeLineFeed(parser.nextText());
 						Log.d(LOG_TAG, "set article title:" + title);
 						article.setTitle(title);
 					}

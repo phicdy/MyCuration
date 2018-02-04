@@ -359,7 +359,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
                     holder.feedTitleView.setTextColor(Color.BLACK);
 
                     String iconPath = article.getFeedIconPath();
-                    if (!TextUtil.isEmpty(iconPath) && new File(iconPath).exists()) {
+                    if (!TextUtil.INSTANCE.isEmpty(iconPath) && new File(iconPath).exists()) {
                         Bitmap bmp = BitmapFactory.decodeFile(article.getFeedIconPath());
                         holder.feedIconView.setImageBitmap(bmp);
                     }else {

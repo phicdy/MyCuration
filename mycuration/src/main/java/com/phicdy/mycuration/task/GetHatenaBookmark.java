@@ -67,7 +67,7 @@ public class GetHatenaBookmark {
                             } else {
                                 point = body.string();
                             }
-                            if (TextUtil.isEmpty(point)) point = "0";
+                            if (TextUtil.INSTANCE.isEmpty(point)) point = "0";
                             adapter.saveHatenaPoint(url, point);
                         } catch (IOException e) {
                             e.printStackTrace();
