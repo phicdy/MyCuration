@@ -61,7 +61,7 @@ public class TopActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top);
 
-        PreferenceHelper helper = PreferenceHelper.getInstance(this);
+        PreferenceHelper helper = PreferenceHelper.INSTANCE;
         NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(this);
         presenter = new TopActivityPresenter(helper.getAutoUpdateInMainUi(), networkTaskManager);
         presenter.setView(this);
@@ -189,7 +189,7 @@ public class TopActivity extends AppCompatActivity implements
     private void setAlarmManager() {
         // Start auto update alarmmanager
         AlarmManagerTaskManager manager = new AlarmManagerTaskManager(this);
-        PreferenceHelper helper = PreferenceHelper.getInstance(this);
+        PreferenceHelper helper = PreferenceHelper.INSTANCE;
         int intervalSec = helper.getAutoUpdateIntervalSecond();
         manager.setNewAlarm(intervalSec);
     }

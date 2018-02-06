@@ -75,7 +75,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
         intent.putExtra(TopActivity.FEED_ID, feedId);
 
         // Set swipe direction
-        PreferenceHelper prefMgr = PreferenceHelper.getInstance(getActivity());
+        PreferenceHelper prefMgr = PreferenceHelper.INSTANCE;
         prefMgr.setSearchFeedId(feedId);
         int swipeDirectionOption = prefMgr.getSwipeDirection();
         boolean isOpenInternal = prefMgr.isOpenInternal();

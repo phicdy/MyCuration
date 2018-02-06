@@ -46,7 +46,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
         } else {
             addPreferencesFromResource(R.xml.setting_fragment);
         }
-        PreferenceHelper helper = PreferenceHelper.getInstance(getActivity());
+        PreferenceHelper helper = PreferenceHelper.INSTANCE;
         String updateIntervalHourItems[] = getResources().getStringArray(R.array.update_interval_items_values);
         String updateIntervalStringItems[] = getResources().getStringArray(R.array.update_interval_items);
         String allReadBehaviorItems[] = getResources().getStringArray(R.array.all_read_behavior_values);

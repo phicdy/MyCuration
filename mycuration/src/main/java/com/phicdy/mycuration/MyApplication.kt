@@ -7,6 +7,7 @@ import com.facebook.stetho.Stetho
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.util.PreferenceHelper
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
@@ -25,6 +26,7 @@ class MyApplication : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+        PreferenceHelper.setUp(this)
         GATrackerHelper.setTracker(DefaultTracker.setUp(this))
         GATrackerHelper.setCategoryAction(getString(R.string.action))
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()

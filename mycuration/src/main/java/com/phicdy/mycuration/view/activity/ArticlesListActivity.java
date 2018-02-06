@@ -61,7 +61,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             gaTitle = getString(R.string.all);
         }else {
             // Select a feed
-            PreferenceHelper prefMgr = PreferenceHelper.getInstance(getApplicationContext());
+            PreferenceHelper prefMgr = PreferenceHelper.INSTANCE;
             prefMgr.setSearchFeedId(feedId);
             Feed selectedFeed = dbAdapter.getFeedById(feedId);
             setTitle(selectedFeed.getTitle());
