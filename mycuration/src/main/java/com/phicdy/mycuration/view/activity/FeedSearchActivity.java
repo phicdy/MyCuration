@@ -103,8 +103,6 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
                 presenter.onFabClicked(url);
             }
         });
-
-        handleIntent(getIntent());
     }
 
     @Override
