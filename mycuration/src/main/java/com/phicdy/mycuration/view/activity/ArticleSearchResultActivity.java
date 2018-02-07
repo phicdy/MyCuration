@@ -38,7 +38,7 @@ public class ArticleSearchResultActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		GATrackerHelper.sendScreen(getString(R.string.search_result));
+		GATrackerHelper.INSTANCE.sendScreen(getString(R.string.search_result));
 	}
 
 	@Override

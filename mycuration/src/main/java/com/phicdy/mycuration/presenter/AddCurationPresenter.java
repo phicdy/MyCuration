@@ -71,7 +71,7 @@ public class AddCurationPresenter implements Presenter {
 
     public void onAddMenuClicked() {
         String curationName = view.curationName();
-        if (TextUtil.isEmpty(curationName)) {
+        if (TextUtil.INSTANCE.isEmpty(curationName)) {
             view.handleEmptyCurationNameError();
             return;
         }

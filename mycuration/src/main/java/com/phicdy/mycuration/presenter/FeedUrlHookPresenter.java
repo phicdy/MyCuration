@@ -68,7 +68,7 @@ public class FeedUrlHookPresenter implements Presenter {
 
     public void handle(@NonNull String action, @NonNull String url) {
         if (action.equals(Intent.ACTION_VIEW) || action.equals(Intent.ACTION_SEND)) {
-            if (UrlUtil.isCorrectUrl(url)) {
+            if (UrlUtil.INSTANCE.isCorrectUrl(url)) {
                 view.registerFinishAddReceiver();
                 view.showProgressDialog();
                 RssParseExecutor executor = new RssParseExecutor(parser, dbAdapter);

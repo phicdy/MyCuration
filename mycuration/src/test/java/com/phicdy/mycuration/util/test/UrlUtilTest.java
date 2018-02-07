@@ -17,16 +17,16 @@ public class UrlUtilTest {
 
 	@Test
 	public void testRemoveUrlParameter() {
-		String removedUrl = UrlUtil.removeUrlParameter("http://harofree.blog.fc2.com/?ps");
+		String removedUrl = UrlUtil.INSTANCE.removeUrlParameter("http://harofree.blog.fc2.com/?ps");
 		assertEquals("http://harofree.blog.fc2.com/", removedUrl);
 	}
 
 	@Test
 	public void testHasParameterUrl() {
-		assertEquals(true, UrlUtil.hasParameterUrl("http://www.xxx.com/?aaa"));
-		assertEquals(true, UrlUtil.hasParameterUrl("https://www.xxx.com/?aaa"));
-		assertEquals(true, UrlUtil.hasParameterUrl("http://www.xxx.com/aaa/?bbb"));
-		assertEquals(false, UrlUtil.hasParameterUrl("http://www.xxx.com/aaa"));
-		assertEquals(false, UrlUtil.hasParameterUrl("http://www.xxx.com?/aaa"));
+		assertEquals(true, UrlUtil.INSTANCE.hasParameterUrl("http://www.xxx.com/?aaa"));
+		assertEquals(true, UrlUtil.INSTANCE.hasParameterUrl("https://www.xxx.com/?aaa"));
+		assertEquals(true, UrlUtil.INSTANCE.hasParameterUrl("http://www.xxx.com/aaa/?bbb"));
+		assertEquals(false, UrlUtil.INSTANCE.hasParameterUrl("http://www.xxx.com/aaa"));
+		assertEquals(false, UrlUtil.INSTANCE.hasParameterUrl("http://www.xxx.com?/aaa"));
 	}
 }

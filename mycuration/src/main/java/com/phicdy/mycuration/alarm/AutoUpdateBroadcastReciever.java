@@ -33,7 +33,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 			manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 
 			// Save new time
-			PreferenceHelper helper = PreferenceHelper.getInstance(context);
+			PreferenceHelper helper = PreferenceHelper.INSTANCE;
 			int intervalSec = helper.getAutoUpdateIntervalSecond();
 			manager.setNewAlarm(intervalSec);
 		}else if(intent.getAction().equals(AUTO_UPDATE_HATENA_ACTION)) {
@@ -48,7 +48,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 				return;
 			}
-			boolean isWifiConnected = NetworkUtil.isWifiConnected(context);
+			boolean isWifiConnected = NetworkUtil.INSTANCE.isWifiConnected(context);
 			GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark(dbAdapter);
             int delaySec = 0;
             int totalNum = 0;

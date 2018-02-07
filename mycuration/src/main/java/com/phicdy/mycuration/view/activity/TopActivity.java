@@ -61,7 +61,7 @@ public class TopActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top);
 
-        PreferenceHelper helper = PreferenceHelper.getInstance(this);
+        PreferenceHelper helper = PreferenceHelper.INSTANCE;
         NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(this);
         presenter = new TopActivityPresenter(helper.getAutoUpdateInMainUi(), networkTaskManager);
         presenter.setView(this);
@@ -189,7 +189,7 @@ public class TopActivity extends AppCompatActivity implements
     private void setAlarmManager() {
         // Start auto update alarmmanager
         AlarmManagerTaskManager manager = new AlarmManagerTaskManager(this);
-        PreferenceHelper helper = PreferenceHelper.getInstance(this);
+        PreferenceHelper helper = PreferenceHelper.INSTANCE;
         int intervalSec = helper.getAutoUpdateIntervalSecond();
         manager.setNewAlarm(intervalSec);
     }
@@ -210,7 +210,7 @@ public class TopActivity extends AppCompatActivity implements
 
     @Override
     public void goToFeedSearch() {
-        GATrackerHelper.sendEvent(getString(R.string.tap_add_rss));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.tap_add_rss));
         startActivity(new Intent(TopActivity.this, FeedSearchActivity.class));
     }
 
@@ -218,14 +218,14 @@ public class TopActivity extends AppCompatActivity implements
     public void goToAddCuration() {
         Intent intent = new Intent(getApplicationContext(), AddCurationActivity.class);
         startActivity(intent);
-        GATrackerHelper.sendEvent(getString(R.string.tap_add_curation));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.tap_add_curation));
     }
 
     @Override
     public void goToAddFilter() {
         Intent intent = new Intent(getApplicationContext(), RegisterFilterActivity.class);
         startActivity(intent);
-        GATrackerHelper.sendEvent(getString(R.string.tap_add_filter));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.tap_add_filter));
     }
 
     @Override

@@ -31,7 +31,7 @@ public class RssParseExecutor {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                RssParseResult result = parser.parseRssXml(UrlUtil.removeUrlParameter(url), true);
+                RssParseResult result = parser.parseRssXml(UrlUtil.INSTANCE.removeUrlParameter(url), true);
                 if (result != null && result.failedReason == RssParseResult.NOT_FAILED &&
                         result.feed != null) {
                     Feed feed = result.feed;

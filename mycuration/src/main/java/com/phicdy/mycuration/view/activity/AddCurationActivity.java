@@ -47,7 +47,7 @@ public class AddCurationActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        GATrackerHelper.sendScreen(getTitle().toString());
+        GATrackerHelper.INSTANCE.sendScreen(getTitle().toString());
     }
 
     @Override

@@ -46,7 +46,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
         } else {
             addPreferencesFromResource(R.xml.setting_fragment);
         }
-        PreferenceHelper helper = PreferenceHelper.getInstance(getActivity());
+        PreferenceHelper helper = PreferenceHelper.INSTANCE;
         String updateIntervalHourItems[] = getResources().getStringArray(R.array.update_interval_items_values);
         String updateIntervalStringItems[] = getResources().getStringArray(R.array.update_interval_items);
         String allReadBehaviorItems[] = getResources().getStringArray(R.array.all_read_behavior_values);
@@ -98,31 +98,31 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
                     AlarmManagerTaskManager manager = new AlarmManagerTaskManager(getActivity());
                     presenter.updateUpdateInterval(intervalHour, manager);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_interval), intervalHour);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_auto_update_interval), intervalHour);
                 } else if (key.equals(getString(R.string.key_all_read_behavior))) {
                     boolean isAllReadBack = (Integer.valueOf(prefAllReadBehavior.getValue()) == 1);
                     presenter.updateAllReadBehavior(isAllReadBack);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_all_read_behavior), isAllReadBack ? 1 : 0);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_all_read_behavior), isAllReadBack ? 1 : 0);
                 } else if (key.equals(getString(R.string.key_swipe_direction))) {
                     int swipeDirection = Integer.valueOf(prefSwipeDirection.getValue());
                     presenter.updateSwipeDirection(swipeDirection);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_swipe_direction), swipeDirection);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_swipe_direction), swipeDirection);
                 } else if (key.equals(getString(R.string.key_article_sort))) {
                     boolean isNewArticleTop = prefArticleSort.isChecked();
                     presenter.updateArticleSort(isNewArticleTop);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_aricle_sort), prefArticleSort.isChecked() ? 1 : 0);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_aricle_sort), prefArticleSort.isChecked() ? 1 : 0);
                 } else if (key.equals(getString(R.string.key_internal_browser))) {
                     boolean isInternal = prefInternalBrowser.isChecked();
                     presenter.updateInternalBrowser(isInternal);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
                 } else if (key.equals(getString(R.string.key_auto_update_in_main_ui))) {
                     boolean isAutoUpdateInMainUi = prefAutoUpdateInMainUi.isChecked();
                     presenter.updateAutoUpdateInMainUi(isAutoUpdateInMainUi);
-                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_in_main_ui_option), isAutoUpdateInMainUi ? 1: 0);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_auto_update_in_main_ui_option), isAutoUpdateInMainUi ? 1: 0);
                 }
             }
         };
@@ -133,7 +133,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     DatabaseAdapter.getInstance(getActivity()).importDB();
-                    ToastHelper.showToast(getActivity(), getString(R.string.import_db), Toast.LENGTH_SHORT);
+                    ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.import_db), Toast.LENGTH_SHORT);
                     return true;
                 }
             });
@@ -142,7 +142,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     DatabaseAdapter.getInstance(getActivity()).exportDb();
-                    ToastHelper.showToast(getActivity(), getString(R.string.export_db), Toast.LENGTH_SHORT);
+                    ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.export_db), Toast.LENGTH_SHORT);
                     return true;
                 }
             });

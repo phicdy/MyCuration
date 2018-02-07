@@ -40,7 +40,7 @@ public class ArticleSearchResultFragment extends Fragment implements ArticleSear
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PreferenceHelper prefMgr = PreferenceHelper.getInstance(getActivity());
+        PreferenceHelper prefMgr = PreferenceHelper.INSTANCE;
         boolean isNewTop = prefMgr.getSortNewArticleTop();
         boolean isOpenInternal = prefMgr.isOpenInternal();
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getActivity());

@@ -15,14 +15,14 @@ public class FileUtilTest {
 
 	@Test
 	public void testGetIconSavePath() {
-		assertEquals(FileUtil.getAppPath(getTargetContext()) + "icons/",
-				FileUtil.iconSaveFolder(getTargetContext()));
+		assertEquals(FileUtil.INSTANCE.getAppPath(getTargetContext()) + "icons/",
+				FileUtil.INSTANCE.iconSaveFolder(getTargetContext()));
 	}
 
 	@Test
 	public void testGenerateIconFileName() {
 		assertEquals(
-				FileUtil.getAppPath(getTargetContext()) + "icons/gigazine.net.png",
-				FileUtil.generateIconFilePath(getTargetContext(), "http://gigazine.net/"));
+				FileUtil.INSTANCE.getAppPath(getTargetContext()) + "icons/gigazine.net.png",
+				FileUtil.INSTANCE.generateIconFilePath(getTargetContext(), "http://gigazine.net/"));
 	}
 }

@@ -66,7 +66,7 @@ public class FeedSearchPresenter implements Presenter {
     }
 
     public void handle(@NonNull String query) {
-        if (UrlUtil.isCorrectUrl(query)) {
+        if (UrlUtil.INSTANCE.isCorrectUrl(query)) {
             view.showProgressDialog();
             RssParseExecutor executor = new RssParseExecutor(parser, adapter);
             executor.start(query, callback);

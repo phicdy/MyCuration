@@ -61,7 +61,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             gaTitle = getString(R.string.all);
         }else {
             // Select a feed
-            PreferenceHelper prefMgr = PreferenceHelper.getInstance(getApplicationContext());
+            PreferenceHelper prefMgr = PreferenceHelper.INSTANCE;
             prefMgr.setSearchFeedId(feedId);
             Feed selectedFeed = dbAdapter.getFeedById(feedId);
             setTitle(selectedFeed.getTitle());
@@ -97,7 +97,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
 
         switch (item.getItemId()) {
             case R.id.all_read:
-                GATrackerHelper.sendEvent(getString(R.string.read_all_articles));
+                GATrackerHelper.INSTANCE.sendEvent(getString(R.string.read_all_articles));
                 fragment.handleAllRead();
                 break;
             default:
@@ -113,7 +113,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             searchView.onActionViewCollapsed();
             searchView.setQuery("",false);
         }
-        GATrackerHelper.sendScreen(gaTitle);
+        GATrackerHelper.INSTANCE.sendScreen(gaTitle);
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
