@@ -56,7 +56,7 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
         if (url != null) {
             presenter.handle(action, url);
         }
-        GATrackerHelper.sendScreen(getString(R.string.add_rss_from_intent));
+        GATrackerHelper.INSTANCE.sendScreen(getString(R.string.add_rss_from_intent));
 	}
 
 	@Override
@@ -112,13 +112,13 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
     @Override
     public void showInvalidUrlErrorToast() {
         showToastOnUiThread(R.string.add_rss_error_invalid_url, Toast.LENGTH_SHORT);
-        GATrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_rss_from_intent_error));
     }
 
     @Override
     public void showGenericErrorToast() {
         showToastOnUiThread(R.string.add_rss_error_generic, Toast.LENGTH_SHORT);
-        GATrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_rss_from_intent_error));
     }
 
     @Override

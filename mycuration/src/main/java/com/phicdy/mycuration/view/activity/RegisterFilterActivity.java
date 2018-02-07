@@ -46,7 +46,7 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
         presenter = new RegisterFilterPresenter(dbAdapter, editFilterId);
         presenter.setView(this);
 
-		GATrackerHelper.sendScreen(getTitle().toString());
+		GATrackerHelper.INSTANCE.sendScreen(getTitle().toString());
 	}
 	
 	private void initView() {
@@ -139,13 +139,13 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
     @Override
     public void handleEmptyTitle() {
         Toast.makeText(RegisterFilterActivity.this, R.string.title_empty_error, Toast.LENGTH_SHORT).show();
-        GATrackerHelper.sendEvent(getString(R.string.add_new_filter_no_title));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_new_filter_no_title));
     }
 
     @Override
     public void handleEmptyCondition() {
         Toast.makeText(RegisterFilterActivity.this, R.string.both_keyword_and_url_empty_error, Toast.LENGTH_SHORT).show();
-        GATrackerHelper.sendEvent(getString(R.string.add_new_filter_no_keyword_url));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_new_filter_no_keyword_url));
     }
 
     @Override
@@ -165,11 +165,11 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
 
     @Override
     public void trackEdit() {
-        GATrackerHelper.sendEvent(getString(R.string.update_filter));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.update_filter));
     }
 
     @Override
     public void trackRegister() {
-        GATrackerHelper.sendEvent(getString(R.string.add_new_filter));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_new_filter));
     }
 }

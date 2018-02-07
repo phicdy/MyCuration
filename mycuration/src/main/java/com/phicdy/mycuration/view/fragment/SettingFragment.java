@@ -98,31 +98,31 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
                     AlarmManagerTaskManager manager = new AlarmManagerTaskManager(getActivity());
                     presenter.updateUpdateInterval(intervalHour, manager);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_interval), intervalHour);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_auto_update_interval), intervalHour);
                 } else if (key.equals(getString(R.string.key_all_read_behavior))) {
                     boolean isAllReadBack = (Integer.valueOf(prefAllReadBehavior.getValue()) == 1);
                     presenter.updateAllReadBehavior(isAllReadBack);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_all_read_behavior), isAllReadBack ? 1 : 0);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_all_read_behavior), isAllReadBack ? 1 : 0);
                 } else if (key.equals(getString(R.string.key_swipe_direction))) {
                     int swipeDirection = Integer.valueOf(prefSwipeDirection.getValue());
                     presenter.updateSwipeDirection(swipeDirection);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_swipe_direction), swipeDirection);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_swipe_direction), swipeDirection);
                 } else if (key.equals(getString(R.string.key_article_sort))) {
                     boolean isNewArticleTop = prefArticleSort.isChecked();
                     presenter.updateArticleSort(isNewArticleTop);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_aricle_sort), prefArticleSort.isChecked() ? 1 : 0);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_aricle_sort), prefArticleSort.isChecked() ? 1 : 0);
                 } else if (key.equals(getString(R.string.key_internal_browser))) {
                     boolean isInternal = prefInternalBrowser.isChecked();
                     presenter.updateInternalBrowser(isInternal);
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_browser_option), prefInternalBrowser.isChecked() ? 1 : 0);
                 } else if (key.equals(getString(R.string.key_auto_update_in_main_ui))) {
                     boolean isAutoUpdateInMainUi = prefAutoUpdateInMainUi.isChecked();
                     presenter.updateAutoUpdateInMainUi(isAutoUpdateInMainUi);
-                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_in_main_ui_option), isAutoUpdateInMainUi ? 1: 0);
+                    GATrackerHelper.INSTANCE.sendEvent(getString(R.string.change_auto_update_in_main_ui_option), isAutoUpdateInMainUi ? 1: 0);
                 }
             }
         };

@@ -179,7 +179,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
             @Override
             public void onClick(View v) {
                 presenter.onFabButtonClicked();
-                GATrackerHelper.sendEvent(getString(R.string.scroll_article_list));
+                GATrackerHelper.INSTANCE.sendEvent(getString(R.string.scroll_article_list));
             }
         });
     }
@@ -222,7 +222,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     @Override
     public void openInternalWebView(@NonNull String url) {
-        GATrackerHelper.sendEvent(getString(R.string.tap_article_internal));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.tap_article_internal));
         Intent intent = new Intent(getActivity(), InternalWebViewActivity.class);
         intent.putExtra(OPEN_URL_ID, url);
         startActivity(intent);
@@ -230,7 +230,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     @Override
     public void openExternalWebView(@NonNull String url) {
-        GATrackerHelper.sendEvent(getString(R.string.tap_article_external));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.tap_article_external));
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
@@ -268,7 +268,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     @Override
     public void showShareUi(@NonNull String url) {
-        if (isAdded()) GATrackerHelper.sendEvent(getString(R.string.share_article));
+        if (isAdded()) GATrackerHelper.INSTANCE.sendEvent(getString(R.string.share_article));
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, url);

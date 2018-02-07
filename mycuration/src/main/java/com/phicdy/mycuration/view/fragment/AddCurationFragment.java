@@ -160,7 +160,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_curation_name));
         msg.setData(bundle);
         handler.sendMessage(msg);
-        GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_title));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_empty_curation_title));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_word_list));
         msg.setData(bundle);
         handler.sendMessage(msg);
-        GATrackerHelper.sendEvent(getString(R.string.add_empty_curation_word));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_empty_curation_word));
     }
 
     @Override
@@ -182,7 +182,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name));
         msg.setData(bundle);
         handler.sendMessage(msg);
-        GATrackerHelper.sendEvent(getString(R.string.add_same_curation_name));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_same_curation_name));
     }
 
     @Override
@@ -190,7 +190,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         Message msg = Message.obtain();
         msg.obj = true;
         handler.sendMessage(msg);
-        GATrackerHelper.sendEvent(getString(R.string.add_new_curation));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_new_curation));
     }
 
     @Override
@@ -198,7 +198,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
         Message msg = Message.obtain();
         msg.obj = true;
         handler.sendMessage(msg);
-        GATrackerHelper.sendEvent(getString(R.string.update_curation));
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.update_curation));
     }
 
     @Override
