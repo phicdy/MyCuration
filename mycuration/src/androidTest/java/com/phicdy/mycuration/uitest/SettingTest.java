@@ -121,11 +121,10 @@ public class SettingTest extends UiTest {
         UiObject2 firstArticle = articleList.findObject(By.clazz(LinearLayout.class));
         firstArticle.click();
 
-        // Assert default browser is not opened
-        UiObject2 defaultBrowserUrlBar = device.wait(Until.findObject(
-                By.res("com.android.browser:id/taburlbar")), 5000);
-
-        assertNull(defaultBrowserUrlBar);
+        // Assert share button in internal browser exist
+        UiObject2 shareButton = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "menu_item_share")), 5000);
+        assertNotNull(shareButton);
     }
 
     @Test
@@ -174,10 +173,10 @@ public class SettingTest extends UiTest {
                 By.clazz(LinearLayout.class));
         firstArticle.click();
 
-        // Assert default browser is opened
-        UiObject2 defaultBrowserUrlBar = device.wait(Until.findObject(
-                By.res("com.android.browser:id/taburlbar")), 5000);
-        assertNotNull(defaultBrowserUrlBar);
+        // Assert share button in internal browser does not exist
+        UiObject2 shareButton = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "menu_item_share")), 5000);
+        assertNull(shareButton);
     }
 
     @Test
