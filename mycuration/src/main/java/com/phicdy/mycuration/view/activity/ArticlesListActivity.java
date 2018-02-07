@@ -65,7 +65,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             prefMgr.setSearchFeedId(feedId);
             Feed selectedFeed = dbAdapter.getFeedById(feedId);
             setTitle(selectedFeed.getTitle());
-            getString(R.string.ga_not_all_title);
+            gaTitle = getString(R.string.ga_not_all_title);
         }
         setAllListener();
     }
