@@ -98,6 +98,11 @@ public class SettingTest extends UiTest {
                         By.res("android:id/switch_widget"));
                 if (browserSwitch != null && !browserSwitch.isChecked()) {
                     browserSwitch.click();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -146,6 +151,11 @@ public class SettingTest extends UiTest {
                         By.res("android:id/switch_widget"));
                 if (browserSwitch != null && browserSwitch.isChecked()) {
                     browserSwitch.click();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
