@@ -33,7 +33,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 			manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 
 			// Save new time
-			PreferenceHelper helper = PreferenceHelper.getInstance(context);
+			PreferenceHelper helper = PreferenceHelper.INSTANCE;
 			int intervalSec = helper.getAutoUpdateIntervalSecond();
 			manager.setNewAlarm(intervalSec);
 		}else if(intent.getAction().equals(AUTO_UPDATE_HATENA_ACTION)) {

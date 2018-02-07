@@ -14,7 +14,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent != null && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             AlarmManagerTaskManager manager = new AlarmManagerTaskManager(context);
-            PreferenceHelper helper = PreferenceHelper.getInstance(context);
+            PreferenceHelper helper = PreferenceHelper.INSTANCE;
             int intervalSec = helper.getAutoUpdateIntervalSecond();
             manager.setNewAlarm(intervalSec);
         }

@@ -26,7 +26,7 @@ public class GetFeedIconTaskTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		File file = new File(FileUtil.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
+		File file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
 		assertTrue(file.exists());
 			
 		GetFeedIconTask greeBlogIconTask = new GetFeedIconTask(getTargetContext());
@@ -36,7 +36,7 @@ public class GetFeedIconTaskTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		File greeBlogIcon = new File(FileUtil.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
+		File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
 		assertEquals(false, greeBlogIcon.exists());
 	}
 }
