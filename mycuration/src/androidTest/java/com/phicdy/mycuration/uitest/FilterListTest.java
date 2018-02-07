@@ -12,8 +12,6 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.phicdy.mycuration.BuildConfig;
 
@@ -87,19 +85,9 @@ public class FilterListTest extends UiTest {
         longClickFirstFilter();
 
         // Click delete menu
-        UiObject2 dialogContentList = device.wait(Until.findObject(
-                By.res("android", "select_dialog_listview")), 5000);
-        if (dialogContentList == null) fail("Dialog was not found");
-        List<UiObject2> contents = dialogContentList.findObjects(
-                By.clazz(RelativeLayout.class).depth(2));
-        for (UiObject2 content : contents) {
-            UiObject2 contentText = content.findObject(
-                    By.clazz(TextView.class));
-            if (contentText != null && contentText.getText().equals("フィルター削除")) {
-                content.click();
-                break;
-            }
-        }
+        UiObject2 edit = device.wait(Until.findObject(By.text("フィルター削除")), 5000);
+        if (edit == null) fail("Edit filter menu was not found");
+        edit.click();
 
         // Assert filter was deleted
         UiObject2 emptyView = device.wait(Until.findObject(
@@ -117,19 +105,9 @@ public class FilterListTest extends UiTest {
         longClickFirstFilter();
 
         // Click edit menu
-        UiObject2 dialogContentList = device.wait(Until.findObject(
-                By.res("android", "select_dialog_listview")), 5000);
-        if (dialogContentList == null) fail("Dialog was not found");
-        List<UiObject2> contents = dialogContentList.findObjects(
-                By.clazz(RelativeLayout.class).depth(2));
-        for (UiObject2 content : contents) {
-            UiObject2 contentText = content.findObject(
-                    By.clazz(TextView.class));
-            if (contentText != null && contentText.getText().equals("フィルターの編集")) {
-                content.click();
-                break;
-            }
-        }
+        UiObject2 edit = device.wait(Until.findObject(By.text("フィルターの編集")), 5000);
+        if (edit == null) fail("Edit filter menu was not found");
+        edit.click();
 
         // Assert filter title
         UiObject2 filterTitleEditText = device.wait(Until.findObject(
