@@ -20,9 +20,9 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
@@ -89,7 +89,7 @@ public class AddFeedTest extends UiTest {
         if (feedUnreadCountList == null) fail("Feed count was not found");
         // Feed count list does not include show/hide option row, the size is 1
         if (feedUnreadCountList.size() != 1) fail("Feed count was not added");
-        assertThat(Integer.valueOf(feedUnreadCountList.get(0).getText()), greaterThan(-1));
+        assertTrue(Integer.valueOf(feedUnreadCountList.get(0).getText()) >= -1);
 
         // Assert all article view shows
         UiObject2 allArticleView = device.wait(Until.findObject(

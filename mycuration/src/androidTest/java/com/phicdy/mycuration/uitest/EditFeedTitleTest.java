@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static junit.framework.Assert.fail;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
