@@ -205,6 +205,11 @@ public class SettingTest extends UiTest {
                     UiObject2 check = device.findObject(
                             By.res("android:id/text1").text("RSS一覧に戻る"));
                     check.click();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -272,6 +277,11 @@ public class SettingTest extends UiTest {
                     UiObject2 check = device.findObject(
                             By.res("android:id/text1").text("RSS一覧に戻らない"));
                     check.click();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
