@@ -6,6 +6,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.StaleObjectException;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
@@ -140,8 +141,12 @@ public class SettingTest extends UiTest {
         // Disable internal browser
         UiObject2 settingsList = device.wait(
                 Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        List<UiObject2> settings;
+        try {
+            settings = settingsList.wait(Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        } catch (StaleObjectException e) {
+            settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
+        }
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));
