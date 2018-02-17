@@ -137,7 +137,8 @@ public class AddFeedTest extends UiTest {
         urlEditText.setText("http://ghaorgja.co.jp/rss.xml");
         device.pressEnter();
 
-        UiObject2 emptyView = device.findObject(By.res(BuildConfig.APPLICATION_ID, "emptyView"));
+        UiObject2 emptyView = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "emptyView")), 5000);
         assertThat(emptyView.getText(), is("まずはRSSを登録しましょう！"));
     }
 
