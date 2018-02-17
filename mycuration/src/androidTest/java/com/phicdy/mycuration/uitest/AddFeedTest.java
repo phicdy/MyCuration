@@ -95,6 +95,7 @@ public class AddFeedTest extends UiTest {
         UiObject2 allArticleView = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "ll_all_unread")), 5000);
         assertNotNull(allArticleView);
+        device.pressBack();
     }
 
     @Test
