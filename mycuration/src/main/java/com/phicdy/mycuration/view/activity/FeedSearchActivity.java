@@ -58,7 +58,7 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_search);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_feed_search);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
