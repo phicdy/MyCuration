@@ -131,7 +131,7 @@ public class TopActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final MenuItem searchMenuItem = menu.findItem(R.id.search);
+        final MenuItem searchMenuItem = menu.findItem(R.id.search_article_top_activity);
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getComponentName()));
@@ -155,7 +155,7 @@ public class TopActivity extends AppCompatActivity implements
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    View view = findViewById(R.id.add);
+                    View view = findViewById(R.id.add_new_rss);
                     new MaterialShowcaseView.Builder(TopActivity.this)
                             .setTarget(view)
                             .setContentText(

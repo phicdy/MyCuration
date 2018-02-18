@@ -54,7 +54,7 @@ public class SettingTest extends UiTest {
         tabs.get(1).click();
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -82,15 +82,14 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
         settingButton.click();
 
         // Enable internal browser
         UiObject2 settingsList = device.wait(
                 Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));
@@ -134,7 +133,7 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
         settingButton.click();
 
@@ -190,15 +189,14 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
         settingButton.click();
 
         // Enable option to go back to top
         UiObject2 settingsList = device.wait(
                 Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));
@@ -259,7 +257,7 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) {
             takeScreenshot(device);
             fail("Setting button was not found");
@@ -269,8 +267,7 @@ public class SettingTest extends UiTest {
         // Disable option to go back to top
         UiObject2 settingsList = device.wait(
                 Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));
@@ -322,15 +319,14 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
         settingButton.click();
 
         // Click license info
         UiObject2 settingsList = device.wait(
                 Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));

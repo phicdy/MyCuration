@@ -161,7 +161,7 @@ public class FilterListTest extends UiTest {
 
         // Click add button
         UiObject2 addButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "add_filter")), 5000);
         if (addButton == null) fail("Filter add button was not found");
         addButton.click();
 
@@ -211,7 +211,7 @@ public class FilterListTest extends UiTest {
         tabs.get(1).click();
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -229,7 +229,7 @@ public class FilterListTest extends UiTest {
 
         // Click plus button
         plusButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "add_new_rss")), 5000);
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -253,7 +253,7 @@ public class FilterListTest extends UiTest {
         tabs.get(2).click();
 
         // Click plus button
-        plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -295,7 +295,7 @@ public class FilterListTest extends UiTest {
 
         // Click add button
         UiObject2 addButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "add_filter")), 5000);
         if (addButton == null) fail("Filter add button was not found");
         addButton.click();
     }

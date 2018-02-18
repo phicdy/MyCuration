@@ -2,20 +2,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/add"
+        android:id="@+id/add_new_rss"
         android:icon="@drawable/ic_action_new"
         app:showAsAction="collapseActionView|ifRoom"
         android:title="@string/add_rss"/>
 
     <item
-        android:id="@+id/search"
+        android:id="@+id/search_article_top_activity"
         app:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/ic_action_search"
         app:showAsAction="collapseActionView|ifRoom"
         android:title="@string/search_article"/>
 
  	<item
-        android:id="@+id/setting"
+        android:id="@+id/setting_top_activity"
         android:orderInCategory="3"
         android:icon="@drawable/ic_settings"
         app:showAsAction="collapseActionView|ifRoom"
