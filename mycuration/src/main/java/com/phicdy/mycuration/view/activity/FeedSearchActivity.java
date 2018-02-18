@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -132,6 +133,12 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getComponentName()));
+        SearchView.SearchAutoComplete searchAutoComplete =
+                (SearchView.SearchAutoComplete) searchView
+                        .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary));
+
 
         // Start tutorial at first time
         if (!BuildConfig.DEBUG) {
