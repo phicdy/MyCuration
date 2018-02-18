@@ -6,6 +6,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.StaleObjectException;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
@@ -53,7 +54,7 @@ public class SettingTest extends UiTest {
         tabs.get(1).click();
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -81,23 +82,29 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Enable internal browser
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
+        List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));
             if (text.getText().equals("内蔵ブラウザで開く")) {
                 UiObject2 browserSwitch = setting.findObject(
-                        By.res("android:id/switchWidget"));
-                if (!browserSwitch.isChecked()) {
+                        By.res("android:id/switch_widget"));
+                if (browserSwitch == null)
+                    browserSwitch = setting.findObject(
+                            By.res("android:id/switchWidget"));
+                if (browserSwitch != null && !browserSwitch.isChecked()) {
                     browserSwitch.click();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -116,11 +123,10 @@ public class SettingTest extends UiTest {
         UiObject2 firstArticle = articleList.findObject(By.clazz(LinearLayout.class));
         firstArticle.click();
 
-        // Assert default browser is not opened
-        UiObject2 defaultBrowserUrlBar = device.wait(Until.findObject(
-                By.res("com.android.browser:id/taburlbar")), 5000);
-
-        assertNull(defaultBrowserUrlBar);
+        // Assert share button in internal browser exist
+        UiObject2 shareButton = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "menu_item_share")), 5000);
+        assertNotNull(shareButton);
     }
 
     @Test
@@ -129,23 +135,34 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Disable internal browser
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
+        List<UiObject2> settings;
+        try {
+            settings = settingsList.wait(Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        } catch (StaleObjectException e) {
+            settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
+        }
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));
             if (text.getText().equals("内蔵ブラウザで開く")) {
                 UiObject2 browserSwitch = setting.findObject(
-                        By.res("android:id/switchWidget"));
-                if (browserSwitch.isChecked()) {
+                        By.res("android:id/switch_widget"));
+                if (browserSwitch == null)
+                    browserSwitch = setting.findObject(
+                            By.res("android:id/switchWidget"));
+                if (browserSwitch != null && browserSwitch.isChecked()) {
                     browserSwitch.click();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -164,10 +181,10 @@ public class SettingTest extends UiTest {
                 By.clazz(LinearLayout.class));
         firstArticle.click();
 
-        // Assert default browser is opened
-        UiObject2 defaultBrowserUrlBar = device.wait(Until.findObject(
-                By.res("com.android.browser:id/taburlbar")), 5000);
-        assertNotNull(defaultBrowserUrlBar);
+        // Assert share button in internal browser does not exist
+        UiObject2 shareButton = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "menu_item_share")), 5000);
+        assertNull(shareButton);
     }
 
     @Test
@@ -176,15 +193,13 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Enable option to go back to top
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
+        List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));
@@ -196,6 +211,11 @@ public class SettingTest extends UiTest {
                     UiObject2 check = device.findObject(
                             By.res("android:id/text1").text("RSS一覧に戻る"));
                     check.click();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -240,18 +260,16 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) {
             takeScreenshot(device);
             fail("Setting button was not found");
         }
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Disable option to go back to top
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
+        List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));
@@ -263,6 +281,11 @@ public class SettingTest extends UiTest {
                     UiObject2 check = device.findObject(
                             By.res("android:id/text1").text("RSS一覧に戻らない"));
                     check.click();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -298,15 +321,13 @@ public class SettingTest extends UiTest {
 
         // Click setting button
         UiObject2 settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting")), 5000);
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Click license info
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
-        List<UiObject2> settings = settingsList.wait(
-                Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
+        List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
                     By.res("android:id/title"));

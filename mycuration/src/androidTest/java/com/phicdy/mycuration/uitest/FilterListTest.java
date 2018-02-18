@@ -12,8 +12,6 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.phicdy.mycuration.BuildConfig;
 
@@ -26,7 +24,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
@@ -87,19 +85,9 @@ public class FilterListTest extends UiTest {
         longClickFirstFilter();
 
         // Click delete menu
-        UiObject2 dialogContentList = device.wait(Until.findObject(
-                By.res("android", "select_dialog_listview")), 5000);
-        if (dialogContentList == null) fail("Dialog was not found");
-        List<UiObject2> contents = dialogContentList.findObjects(
-                By.clazz(RelativeLayout.class).depth(2));
-        for (UiObject2 content : contents) {
-            UiObject2 contentText = content.findObject(
-                    By.clazz(TextView.class));
-            if (contentText != null && contentText.getText().equals("フィルター削除")) {
-                content.click();
-                break;
-            }
-        }
+        UiObject2 edit = device.wait(Until.findObject(By.text("フィルター削除")), 5000);
+        if (edit == null) fail("Edit filter menu was not found");
+        edit.click();
 
         // Assert filter was deleted
         UiObject2 emptyView = device.wait(Until.findObject(
@@ -117,19 +105,9 @@ public class FilterListTest extends UiTest {
         longClickFirstFilter();
 
         // Click edit menu
-        UiObject2 dialogContentList = device.wait(Until.findObject(
-                By.res("android", "select_dialog_listview")), 5000);
-        if (dialogContentList == null) fail("Dialog was not found");
-        List<UiObject2> contents = dialogContentList.findObjects(
-                By.clazz(RelativeLayout.class).depth(2));
-        for (UiObject2 content : contents) {
-            UiObject2 contentText = content.findObject(
-                    By.clazz(TextView.class));
-            if (contentText != null && contentText.getText().equals("フィルターの編集")) {
-                content.click();
-                break;
-            }
-        }
+        UiObject2 edit = device.wait(Until.findObject(By.text("フィルターの編集")), 5000);
+        if (edit == null) fail("Edit filter menu was not found");
+        edit.click();
 
         // Assert filter title
         UiObject2 filterTitleEditText = device.wait(Until.findObject(
@@ -183,7 +161,7 @@ public class FilterListTest extends UiTest {
 
         // Click add button
         UiObject2 addButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "add_filter")), 5000);
         if (addButton == null) fail("Filter add button was not found");
         addButton.click();
 
@@ -233,7 +211,7 @@ public class FilterListTest extends UiTest {
         tabs.get(1).click();
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -251,7 +229,7 @@ public class FilterListTest extends UiTest {
 
         // Click plus button
         plusButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "add_new_rss")), 5000);
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -275,7 +253,7 @@ public class FilterListTest extends UiTest {
         tabs.get(2).click();
 
         // Click plus button
-        plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -317,7 +295,7 @@ public class FilterListTest extends UiTest {
 
         // Click add button
         UiObject2 addButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "add_filter")), 5000);
         if (addButton == null) fail("Filter add button was not found");
         addButton.click();
     }

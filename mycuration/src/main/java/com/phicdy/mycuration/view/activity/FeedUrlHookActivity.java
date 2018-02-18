@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.view.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +24,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
 
     private FeedUrlHookPresenter presenter;
-	private ProgressDialog dialog;
 	private BroadcastReceiver receiver;
 
 	@Override
@@ -69,19 +67,6 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
 	protected void attachBaseContext(Context newBase) {
 		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
 	}
-
-	@Override
-	public void showProgressDialog() {
-		dialog = new ProgressDialog(this);
-		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		dialog.setMessage(getString(R.string.adding_rss));
-		dialog.show();
-	}
-
-    @Override
-    public void dismissProgressDialog() {
-        if (dialog != null) dialog.dismiss();
-    }
 
     @Override
     public void registerFinishAddReceiver() {

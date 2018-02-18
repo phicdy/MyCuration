@@ -105,7 +105,7 @@ public class RegisterFilterPresenter implements Presenter {
 
     public void optionItemClicked(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.add:
+            case R.id.add_filter:
                 addMenuClicked();
                 break;
             default:

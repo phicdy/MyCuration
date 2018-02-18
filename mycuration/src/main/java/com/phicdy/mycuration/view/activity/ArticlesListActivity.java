@@ -65,7 +65,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             prefMgr.setSearchFeedId(feedId);
             Feed selectedFeed = dbAdapter.getFeedById(feedId);
             setTitle(selectedFeed.getTitle());
-            getString(R.string.ga_not_all_title);
+            gaTitle = getString(R.string.ga_not_all_title);
         }
         setAllListener();
     }
@@ -76,7 +76,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
         inflater.inflate(R.menu.menu_article, menu);
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final MenuItem searchMenuItem = menu.findItem(R.id.search);
+        final MenuItem searchMenuItem = menu.findItem(R.id.search_article);
         searchView = (SearchView)MenuItemCompat.getActionView(searchMenuItem);
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getComponentName()));

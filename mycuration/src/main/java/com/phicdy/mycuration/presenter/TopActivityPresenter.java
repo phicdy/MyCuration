@@ -85,10 +85,10 @@ public class TopActivityPresenter implements Presenter {
 
     public void optionItemClicked(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.add:
+            case R.id.add_new_rss:
                 addMenuClicked();
                 break;
-            case R.id.setting:
+            case R.id.setting_top_activity:
                 settingMenuClicked();
                 break;
             default:

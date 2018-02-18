@@ -20,9 +20,10 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
@@ -58,7 +59,7 @@ public class AddFeedTest extends UiTest {
         tabs.get(1).click();
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -73,6 +74,11 @@ public class AddFeedTest extends UiTest {
         if (urlEditText == null) fail("URL edit text was not found");
         urlEditText.setText("http://news.yahoo.co.jp/pickup/rss.xml");
         device.pressEnter();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // Assert yahoo RSS was added
         List<UiObject2> feedTitles = device.wait(Until.findObjects(
@@ -89,12 +95,13 @@ public class AddFeedTest extends UiTest {
         if (feedUnreadCountList == null) fail("Feed count was not found");
         // Feed count list does not include show/hide option row, the size is 1
         if (feedUnreadCountList.size() != 1) fail("Feed count was not added");
-        assertThat(Integer.valueOf(feedUnreadCountList.get(0).getText()), greaterThan(-1));
+        assertTrue(Integer.valueOf(feedUnreadCountList.get(0).getText()) >= -1);
 
         // Assert all article view shows
         UiObject2 allArticleView = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "ll_all_unread")), 5000);
         assertNotNull(allArticleView);
+        device.pressBack();
     }
 
     @Test
@@ -119,8 +126,15 @@ public class AddFeedTest extends UiTest {
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();
 
+        // Get current RSS size
+        UiObject2 rssList = device.findObject(By.res(BuildConfig.APPLICATION_ID, "feedList"));
+        int numOfRss = 0;
+        if (rssList != null) {
+            numOfRss = rssList.getChildCount();
+        }
+
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -136,8 +150,13 @@ public class AddFeedTest extends UiTest {
         urlEditText.setText("http://ghaorgja.co.jp/rss.xml");
         device.pressEnter();
 
-        UiObject2 emptyView = device.findObject(By.res(BuildConfig.APPLICATION_ID, "emptyView"));
-        assertThat(emptyView.getText(), is("まずはRSSを登録しましょう！"));
+        rssList = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "feedList")), 5000);
+        if (numOfRss == 0) {
+            assertNull(rssList);
+        } else {
+            assertThat(rssList.getChildCount(), is(numOfRss));
+        }
     }
 
     @Test
@@ -158,7 +177,7 @@ public class AddFeedTest extends UiTest {
         tabs.get(1).click();
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
