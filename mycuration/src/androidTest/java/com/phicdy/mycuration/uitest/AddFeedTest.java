@@ -73,6 +73,11 @@ public class AddFeedTest extends UiTest {
         if (urlEditText == null) fail("URL edit text was not found");
         urlEditText.setText("http://news.yahoo.co.jp/pickup/rss.xml");
         device.pressEnter();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // Assert yahoo RSS was added
         List<UiObject2> feedTitles = device.wait(Until.findObjects(
