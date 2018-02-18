@@ -4,8 +4,8 @@ import android.support.annotation.NonNull;
 
 public interface FeedSearchView {
     void startFeedUrlHookActivity(@NonNull String url);
-    void showProgressDialog();
-    void dismissProgressDialog();
+    void showProgressBar();
+    void dismissProgressBar();
     void load(@NonNull String url);
     void showInvalidUrlErrorToast();
     void showGenericErrorToast();

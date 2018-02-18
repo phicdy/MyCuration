@@ -314,12 +314,12 @@ public class FeedSearchPresenterTest {
         }
 
         @Override
-        public void showProgressDialog() {
+        public void showProgressBar() {
             isProgressDialogForeground = true;
         }
 
         @Override
-        public void dismissProgressDialog() {
+        public void dismissProgressBar() {
             isProgressDialogForeground = false;
         }
 

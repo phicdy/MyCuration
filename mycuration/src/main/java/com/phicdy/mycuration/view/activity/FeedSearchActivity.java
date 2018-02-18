@@ -228,16 +228,18 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
     }
 
     @Override
-    public void showProgressDialog() {
-        dialog = new ProgressDialog(this);
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage(getString(R.string.adding_rss));
-        dialog.show();
+    public void showProgressBar() {
+        findViewById(R.id.pb_add_url).setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void dismissProgressDialog() {
-        if (dialog != null) dialog.dismiss();
+    public void dismissProgressBar() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.pb_add_url).setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

@@ -145,17 +145,6 @@ public class FeedUrlHookPresenterTest {
     }
 
     @Test
-    public void progressDialogDismissesWhenFinishAddFeedActionComes() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handleFinish(NetworkTaskManager.FINISH_ADD_FEED,
-                "http://www.google.com", NetworkTaskManager.REASON_NOT_FOUND);
-        assertFalse(view.isProgressDialogForeground);
-    }
-
-    @Test
     public void toastShowsWhenFinishAddFeedActionComesWithNotRssHtmlError() {
         MockView view = new MockView();
         presenter.setView(view);
@@ -177,21 +166,10 @@ public class FeedUrlHookPresenterTest {
 
     private class MockView implements FeedUrlHookView {
         private boolean isReceiverRegistered = false;
-        private boolean isProgressDialogForeground = false;
         private boolean isSuccessToastShowed = false;
         private boolean isInvalidUrlErrorToastShowed = false;
         private boolean isGenericErrorToastShowed = false;
         private boolean isFinished = false;
-
-        @Override
-        public void showProgressDialog() {
-            isProgressDialogForeground = true;
-        }
-
-        @Override
-        public void dismissProgressDialog() {
-            isProgressDialogForeground = false;
-        }
 
         @Override
         public void registerFinishAddReceiver() {

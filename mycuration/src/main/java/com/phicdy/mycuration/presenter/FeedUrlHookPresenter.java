@@ -35,7 +35,6 @@ public class FeedUrlHookPresenter implements Presenter {
             } else {
                 view.showGenericErrorToast();
             }
-            view.dismissProgressDialog();
             view.finishView();
         }
     };
@@ -70,7 +69,6 @@ public class FeedUrlHookPresenter implements Presenter {
         if (action.equals(Intent.ACTION_VIEW) || action.equals(Intent.ACTION_SEND)) {
             if (UrlUtil.INSTANCE.isCorrectUrl(url)) {
                 view.registerFinishAddReceiver();
-                view.showProgressDialog();
                 RssParseExecutor executor = new RssParseExecutor(parser, dbAdapter);
                 executor.start(url, callback);
             }else {
@@ -84,7 +82,6 @@ public class FeedUrlHookPresenter implements Presenter {
     public void handleFinish(@NonNull String action, @Nullable String feedUrl,
                       int errorReason) {
         if (action.equals(NetworkTaskManager.FINISH_UPDATE_ACTION)) {
-            view.dismissProgressDialog();
             view.showSuccessToast();
             view.finishView();
         }
