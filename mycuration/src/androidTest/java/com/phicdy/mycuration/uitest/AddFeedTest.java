@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
@@ -125,6 +126,13 @@ public class AddFeedTest extends UiTest {
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();
 
+        // Get current RSS size
+        UiObject2 rssList = device.findObject(By.res(BuildConfig.APPLICATION_ID, "feedList"));
+        int numOfRss = 0;
+        if (rssList != null) {
+            numOfRss = rssList.getChildCount();
+        }
+
         // Click plus button
         UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
         if (plusButton == null) fail("Plus button was not found");
@@ -142,9 +150,13 @@ public class AddFeedTest extends UiTest {
         urlEditText.setText("http://ghaorgja.co.jp/rss.xml");
         device.pressEnter();
 
-        UiObject2 emptyView = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "emptyView")), 5000);
-        assertThat(emptyView.getText(), is("まずはRSSを登録しましょう！"));
+        rssList = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "feedList")), 5000);
+        if (numOfRss == 0) {
+            assertNull(rssList);
+        } else {
+            assertThat(rssList.getChildCount(), is(numOfRss));
+        }
     }
 
     @Test
