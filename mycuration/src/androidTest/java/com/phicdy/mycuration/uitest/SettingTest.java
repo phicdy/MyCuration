@@ -95,6 +95,9 @@ public class SettingTest extends UiTest {
             if (text.getText().equals("内蔵ブラウザで開く")) {
                 UiObject2 browserSwitch = setting.findObject(
                         By.res("android:id/switch_widget"));
+                if (browserSwitch == null)
+                    browserSwitch = setting.findObject(
+                            By.res("android:id/switchWidget"));
                 if (browserSwitch != null && !browserSwitch.isChecked()) {
                     browserSwitch.click();
                     try {
@@ -150,6 +153,9 @@ public class SettingTest extends UiTest {
             if (text.getText().equals("内蔵ブラウザで開く")) {
                 UiObject2 browserSwitch = setting.findObject(
                         By.res("android:id/switch_widget"));
+                if (browserSwitch == null)
+                    browserSwitch = setting.findObject(
+                            By.res("android:id/switchWidget"));
                 if (browserSwitch != null && browserSwitch.isChecked()) {
                     browserSwitch.click();
                     try {
