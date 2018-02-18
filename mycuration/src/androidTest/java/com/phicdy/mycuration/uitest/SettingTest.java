@@ -84,11 +84,10 @@ public class SettingTest extends UiTest {
         UiObject2 settingButton = device.wait(
                 Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Enable internal browser
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
         List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
@@ -135,11 +134,10 @@ public class SettingTest extends UiTest {
         UiObject2 settingButton = device.wait(
                 Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Disable internal browser
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
         List<UiObject2> settings;
         try {
             settings = settingsList.wait(Until.findObjects(By.clazz(LinearLayout.class).depth(1)), 5000);
@@ -191,11 +189,10 @@ public class SettingTest extends UiTest {
         UiObject2 settingButton = device.wait(
                 Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Enable option to go back to top
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
         List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
@@ -262,11 +259,10 @@ public class SettingTest extends UiTest {
             takeScreenshot(device);
             fail("Setting button was not found");
         }
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Disable option to go back to top
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
         List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
@@ -321,11 +317,10 @@ public class SettingTest extends UiTest {
         UiObject2 settingButton = device.wait(
                 Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000);
         if (settingButton == null) fail("Setting button was not found");
-        settingButton.click();
+        settingButton.clickAndWait(Until.newWindow(), 5000);
 
         // Click license info
-        UiObject2 settingsList = device.wait(
-                Until.findObject(By.clazz(ListView.class)), 5000);
+        UiObject2 settingsList = device.findObject(By.clazz(ListView.class));
         List<UiObject2> settings = settingsList.findObjects(By.clazz(LinearLayout.class).depth(1));
         for (UiObject2 setting : settings) {
             UiObject2 text = setting.findObject(
