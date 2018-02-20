@@ -12,12 +12,12 @@ import com.phicdy.mycuration.rss.CurationCondition;
 import com.phicdy.mycuration.rss.CurationSelection;
 import com.phicdy.mycuration.rss.Feed;
 
-class DatabaseHelper extends SQLiteOpenHelper{
+public class DatabaseHelper extends SQLiteOpenHelper{
   
-	static final String DATABASE_NAME = "rss_manage";
+	public static final String DATABASE_NAME = "rss_manage";
 	private static final int DATABASE_VERSION = 3;
 
-    DatabaseHelper(Context context) {
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

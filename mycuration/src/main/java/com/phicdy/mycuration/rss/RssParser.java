@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.rss;
 
-import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
 
@@ -31,8 +30,8 @@ public class RssParser {
 
 	private static final String LOG_TAG = "FilFeed.RssParser";
 
-	public RssParser(Context context) {
-		dbAdapter = DatabaseAdapter.getInstance(context);
+	public RssParser() {
+		dbAdapter = DatabaseAdapter.getInstance();
 	}
 
 	private RssParseResult parse(String canonicalUrl) {

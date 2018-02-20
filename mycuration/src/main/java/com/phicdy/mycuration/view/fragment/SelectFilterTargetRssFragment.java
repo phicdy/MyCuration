@@ -40,7 +40,7 @@ public class SelectFilterTargetRssFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Context context = getActivity();
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         TargetRssListAdapter adapter = new TargetRssListAdapter(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles(), context);
         getListView().setAdapter(adapter);
     }

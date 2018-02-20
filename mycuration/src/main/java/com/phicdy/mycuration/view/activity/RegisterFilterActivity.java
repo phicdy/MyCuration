@@ -41,7 +41,7 @@ public class RegisterFilterActivity extends AppCompatActivity implements Registe
 		setContentView(R.layout.activity_register_filter);
 
         initView();
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         int editFilterId = getIntent().getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID);
         presenter = new RegisterFilterPresenter(dbAdapter, editFilterId);
         presenter.setView(this);

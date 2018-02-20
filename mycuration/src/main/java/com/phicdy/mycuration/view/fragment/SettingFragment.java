@@ -14,12 +14,15 @@ import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.db.DatabaseHelper;
 import com.phicdy.mycuration.presenter.SettingPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.util.ToastHelper;
 import com.phicdy.mycuration.view.SettingView;
 import com.phicdy.mycuration.view.activity.LicenseActivity;
+
+import java.io.File;
 
 public class SettingFragment extends PreferenceFragment implements SettingView {
     private SettingPresenter presenter;
@@ -132,7 +135,8 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
             prefImport.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    DatabaseAdapter.getInstance(getActivity()).importDB();
+                    File currentDB = getActivity().getDatabasePath(DatabaseHelper.DATABASE_NAME);
+                    DatabaseAdapter.getInstance().importDB(currentDB);
                     ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.import_db), Toast.LENGTH_SHORT);
                     return true;
                 }
@@ -141,7 +145,8 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
             prefExport.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    DatabaseAdapter.getInstance(getActivity()).exportDb();
+                    File currentDB = getActivity().getDatabasePath(DatabaseHelper.DATABASE_NAME);
+                    DatabaseAdapter.getInstance().exportDb(currentDB);
                     ToastHelper.INSTANCE.showToast(getActivity(), getString(R.string.export_db), Toast.LENGTH_SHORT);
                     return true;
                 }
@@ -150,7 +155,7 @@ public class SettingFragment extends PreferenceFragment implements SettingView {
             prefAddRss.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    presenter.onDebugAddRssClicked(DatabaseAdapter.getInstance(getActivity()));
+                    presenter.onDebugAddRssClicked(DatabaseAdapter.getInstance());
                     return true;
                 }
             });

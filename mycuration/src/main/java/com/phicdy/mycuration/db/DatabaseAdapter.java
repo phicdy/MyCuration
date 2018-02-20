@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.db;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,9 +27,8 @@ import java.util.ArrayList;
 
 public class DatabaseAdapter {
 	
-	private final Context context;
     private static DatabaseAdapter sharedDbAdapter;
-	private static SQLiteDatabase db;
+	private SQLiteDatabase db;
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
 	public static final int NOT_FOUND_ID = -1;
@@ -40,21 +38,23 @@ public class DatabaseAdapter {
 	private static final String LOG_TAG = "MyCuration."
 			+ DatabaseAdapter.class.getSimpleName();
 
-	private DatabaseAdapter(Context context) {
-		this.context = context;
-        DatabaseHelper dbHelper = new DatabaseHelper(this.context);
-		if (db == null) {
-			db = dbHelper.getWritableDatabase();
-		}
+	private DatabaseAdapter() {
 	}
-	
-	public static DatabaseAdapter getInstance(Context context) {
+
+	public static void setUp(@NonNull DatabaseHelper dbHelper) {
 		if (sharedDbAdapter == null) {
 			synchronized (DatabaseAdapter.class) {
 				if (sharedDbAdapter == null) {
-					sharedDbAdapter = new DatabaseAdapter(context);
+					sharedDbAdapter = new DatabaseAdapter();
+					sharedDbAdapter.db = dbHelper.getWritableDatabase();
 				}
 			}
+		}
+	}
+	
+	public static DatabaseAdapter getInstance() {
+		if (sharedDbAdapter == null) {
+		    throw new IllegalStateException("Not setup yet");
 		}
 		return sharedDbAdapter;
 	}
@@ -1297,7 +1297,7 @@ public class DatabaseAdapter {
 		}
 	}
 
-	public void exportDb() {
+	public void exportDb(@NonNull File currentDB) {
 		try {
 			File backupStrage;
 			String sdcardRootPath = FileUtil.INSTANCE.getSdCardRootPath();
@@ -1327,7 +1327,6 @@ public class DatabaseAdapter {
                     Log.d(LOG_TAG, "Failed to make directory");
                 }
 				File backupDB = new File(backupStrage, backupDBFolderPath + DatabaseHelper.DATABASE_NAME);
-				File currentDB = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);
 
 				// Copy database
 				FileChannel src = new FileInputStream(currentDB).getChannel();
@@ -1344,7 +1343,7 @@ public class DatabaseAdapter {
 		}
 	}
 
-	public void importDB() {
+	public void importDB(@NonNull File currentDB) {
 		try {
 			File backupStrage;
 			String sdcardRootPath = FileUtil.INSTANCE.getSdCardRootPath();
@@ -1364,8 +1363,6 @@ public class DatabaseAdapter {
 				if (!newDB.exists()) {
 					return;
 				}
-
-				File currentDB = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);
 
 				FileChannel src = new FileInputStream(newDB).getChannel();
 				FileChannel dst = new FileOutputStream(currentDB).getChannel();

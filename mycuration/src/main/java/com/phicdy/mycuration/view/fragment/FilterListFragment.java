@@ -44,7 +44,7 @@ public class FilterListFragment extends Fragment implements FilterListView {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        dbAdapter = DatabaseAdapter.getInstance();
         presenter = new FilterListPresenter(dbAdapter);
         presenter.setView(this);
 	}

@@ -1,17 +1,15 @@
 package com.phicdy.mycuration.filter;
-  
-import java.util.ArrayList;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 
-import android.content.Context;
+import java.util.ArrayList;
   
 public class FilterTask {
 
     private final DatabaseAdapter dbAdapter;
       
-    public FilterTask(Context context) {
-        dbAdapter = DatabaseAdapter.getInstance(context);
+    public FilterTask() {
+        dbAdapter = DatabaseAdapter.getInstance();
     }
   
       

@@ -43,7 +43,7 @@ public class ArticleSearchResultFragment extends Fragment implements ArticleSear
         PreferenceHelper prefMgr = PreferenceHelper.INSTANCE;
         boolean isNewTop = prefMgr.getSortNewArticleTop();
         boolean isOpenInternal = prefMgr.isOpenInternal();
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         presenter = new ArticleSearchResultPresenter(isNewTop, isOpenInternal, dbAdapter);
         presenter.setView(this);
     }

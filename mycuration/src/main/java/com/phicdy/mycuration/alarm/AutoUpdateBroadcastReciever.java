@@ -24,7 +24,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 		if(intent == null) {
 			return;
 		}
-		DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(context);
+		DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
 		if(intent.getAction().equals(AUTO_UPDATE_ACTION)) {
 			NetworkTaskManager updateTask = NetworkTaskManager.getInstance(context);
 	
