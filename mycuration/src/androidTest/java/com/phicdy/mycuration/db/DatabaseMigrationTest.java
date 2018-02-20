@@ -47,7 +47,8 @@ public class DatabaseMigrationTest {
 
     @Before
 	public void setUp() {
-        adapter = DatabaseAdapter.getInstance(getTargetContext());
+        DatabaseAdapter.setUp(new DatabaseHelper(getTargetContext()));
+        adapter = DatabaseAdapter.getInstance();
         DatabaseHelper helper = new DatabaseHelper(getTargetContext());
         db = helper.getWritableDatabase();
 	}

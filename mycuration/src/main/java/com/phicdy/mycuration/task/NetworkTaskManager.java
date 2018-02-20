@@ -112,7 +112,7 @@ public class NetworkTaskManager {
 	
 	private synchronized void finishOneRequest(int feedId) {
 		numOfFeedRequest--;
-		UnreadCountManager.getInstance(context).refreshConut(feedId);
+		UnreadCountManager.getInstance().refreshConut(feedId);
 		context.sendBroadcast(new Intent(FINISH_UPDATE_ACTION));
 	}
 	
@@ -132,9 +132,9 @@ public class NetworkTaskManager {
 
 		@Override
 		public void run() {
-			RssParser parser = new RssParser(context);
+			RssParser parser = new RssParser();
 			parser.parseXml(in, feedId);
-			new FilterTask(context).applyFiltering(feedId);
+			new FilterTask().applyFiltering(feedId);
 			try {
 				in.close();
 			} catch (IOException e) {

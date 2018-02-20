@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.SparseArray;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.db.DatabaseHelper;
 import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
@@ -19,7 +20,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static android.support.test.InstrumentationRegistry.getContext;
+import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
@@ -54,7 +55,8 @@ public class DatabaseAdapterTest {
 
     @Before
 	public void setUp() {
-		adapter  = DatabaseAdapter.getInstance(getContext());
+		DatabaseAdapter.setUp(new DatabaseHelper(getTargetContext()));
+		adapter  = DatabaseAdapter.getInstance();
 		insertTestData();
 	}
 
@@ -108,8 +110,6 @@ public class DatabaseAdapterTest {
 	}
 	
 	private void insertTestData() {
-		DatabaseAdapter adapter = DatabaseAdapter.getInstance(getContext());
-
 		adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL);
 		Feed testFeed = adapter.getFeedByUrl(TEST_FEED_URL);
 		

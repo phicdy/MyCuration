@@ -65,7 +65,7 @@ public class TopActivity extends AppCompatActivity implements
         NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(this);
         presenter = new TopActivityPresenter(helper.getAutoUpdateInMainUi(), networkTaskManager);
         presenter.setView(this);
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         presenter.setDataAdapter(dbAdapter);
 
         curationFragment = new CurationListFragment();

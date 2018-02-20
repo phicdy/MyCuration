@@ -54,7 +54,7 @@ public class AddCurationFragment extends Fragment implements AddCurationView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(getActivity());
+        DatabaseAdapter adapter = DatabaseAdapter.getInstance();
         presenter = new AddCurationPresenter(adapter);
         presenter.setView(this);
         presenter.create();

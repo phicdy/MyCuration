@@ -1,7 +1,5 @@
 package com.phicdy.mycuration.rss;
 
-import android.content.Context;
-
 import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import java.util.ArrayList;
@@ -15,16 +13,16 @@ public class UnreadCountManager {
     private final DatabaseAdapter adapter;
     private static UnreadCountManager mgr;
 
-    private UnreadCountManager(Context context) {
-        this.adapter = DatabaseAdapter.getInstance(context);
+    private UnreadCountManager() {
+        this.adapter = DatabaseAdapter.getInstance();
         init();
     }
 
-    public static UnreadCountManager getInstance(Context context) {
+    public static UnreadCountManager getInstance() {
         if (mgr == null) {
             synchronized (UnreadCountManager.class) {
                 if (mgr == null) {
-                    mgr = new UnreadCountManager(context);
+                    mgr = new UnreadCountManager();
                 }
             }
         }

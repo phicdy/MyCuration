@@ -70,8 +70,8 @@ public class FeedListFragment extends Fragment implements FeedListView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        unreadManager = UnreadCountManager.getInstance(getActivity());
-        dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        unreadManager = UnreadCountManager.getInstance();
+        dbAdapter = DatabaseAdapter.getInstance();
         NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getActivity());
         setRetainInstance(true);
         presenter = new FeedListPresenter(dbAdapter, networkTaskManager, unreadManager);

@@ -31,10 +31,10 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_feed_url_hook);
 
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
-        UnreadCountManager unreadCountManager = UnreadCountManager.getInstance(this);
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
+        UnreadCountManager unreadCountManager = UnreadCountManager.getInstance();
         NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(this);
-        RssParser parser = new RssParser(this);
+        RssParser parser = new RssParser();
 		presenter = new FeedUrlHookPresenter(dbAdapter, unreadCountManager, networkTaskManager, parser);
 		presenter.setView(this);
 

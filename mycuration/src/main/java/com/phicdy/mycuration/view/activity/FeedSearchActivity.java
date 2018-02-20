@@ -89,9 +89,9 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
         webView.getSettings().setJavaScriptEnabled(true);
 
         NetworkTaskManager manager = NetworkTaskManager.getInstance(this);
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(this);
-        UnreadCountManager unreadCountManager = UnreadCountManager.getInstance(this);
-        RssParser parser = new RssParser(this);
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
+        UnreadCountManager unreadCountManager = UnreadCountManager.getInstance();
+        RssParser parser = new RssParser();
         presenter = new FeedSearchPresenter(manager, dbAdapter, unreadCountManager, parser);
         presenter.setView(this);
 

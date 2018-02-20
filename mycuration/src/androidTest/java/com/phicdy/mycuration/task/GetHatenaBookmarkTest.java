@@ -1,9 +1,7 @@
 package com.phicdy.mycuration.task;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.db.DatabaseHelper;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 
@@ -13,6 +11,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -20,22 +19,20 @@ public class GetHatenaBookmarkTest {
 
     @Before
     public void setup() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
+        DatabaseAdapter.setUp(new DatabaseHelper(getTargetContext()));
+        DatabaseAdapter adapter = DatabaseAdapter.getInstance();
         adapter.deleteAll();
     }
 
     @After
     public void tearDown() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
+        DatabaseAdapter adapter = DatabaseAdapter.getInstance();
         adapter.deleteAll();
     }
 
     @Test
     public void MyQiitaArticleReturns0() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
+        DatabaseAdapter adapter = DatabaseAdapter.getInstance();
         Feed testFeed = adapter.saveNewFeed("test", "http://hoge.com", "hoge", "");
         ArrayList<Article> articles = new ArrayList<>();
         String testUrl = "http://qiita.com/phicdy/items/1bcce3d6f040fc48f7bf";
@@ -54,8 +51,7 @@ public class GetHatenaBookmarkTest {
 
     @Test
     public void MyBlogArticleReturns1() {
-        Context context = InstrumentationRegistry.getTargetContext();
-        DatabaseAdapter adapter = DatabaseAdapter.getInstance(context);
+        DatabaseAdapter adapter = DatabaseAdapter.getInstance();
 
         // Save test feed and article
         Feed testFeed = adapter.saveNewFeed("test", "http://hoge.com", "hoge", "");

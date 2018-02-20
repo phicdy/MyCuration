@@ -22,7 +22,7 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 
 	public GetFeedIconTask(Context context) {
 		this.context = context;
-		dbAdapter = DatabaseAdapter.getInstance(context);
+		dbAdapter = DatabaseAdapter.getInstance();
 	}
 
 	/**

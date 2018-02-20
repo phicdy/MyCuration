@@ -50,7 +50,7 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
         int curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID);
         intent.putExtra(TopActivity.FEED_ID, feedId);
 
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         if (curationId != DEFAULT_CURATION_ID) {
             // Curation
             setTitle(dbAdapter.getCurationNameById(curationId));

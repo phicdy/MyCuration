@@ -47,10 +47,10 @@ public class CurationListFragment extends Fragment implements CurationListView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getActivity());
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         presenter = new CurationListPresenter(dbAdapter);
         presenter.setView(this);
-        unreadManager = UnreadCountManager.getInstance(getActivity());
+        unreadManager = UnreadCountManager.getInstance();
     }
 
     @Override

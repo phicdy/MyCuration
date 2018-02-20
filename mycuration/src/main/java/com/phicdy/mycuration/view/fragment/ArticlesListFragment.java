@@ -64,8 +64,8 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance(getActivity());
-        UnreadCountManager unreadManager = UnreadCountManager.getInstance(getActivity());
+        DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
+        UnreadCountManager unreadManager = UnreadCountManager.getInstance();
 
         // Set feed id and url from main activity
         Intent intent = getActivity().getIntent();

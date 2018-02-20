@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.db.DatabaseHelper;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.RssParseExecutor;
 import com.phicdy.mycuration.rss.RssParseResult;
@@ -38,7 +39,8 @@ public class RssParserTest {
 
 	@Before
 	public void setUp() throws Exception {
-		adapter = DatabaseAdapter.getInstance(getTargetContext());
+        DatabaseAdapter.setUp(new DatabaseHelper(getTargetContext()));
+		adapter = DatabaseAdapter.getInstance();
 		adapter.deleteAllArticles();
 		adapter.deleteAll();
 	}
@@ -51,8 +53,8 @@ public class RssParserTest {
 
 	@Test
 	public void testParseFeedInfoRSS1() {
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start("http://news.yahoo.co.jp/pickup/rss.xml", callback);
 		try {
 			Thread.sleep(10000);
@@ -76,8 +78,8 @@ public class RssParserTest {
 	@Test
 	public void testParseFeedInfoRSS1_rdf() {
         String testUrl = "http://b.hatena.ne.jp/hotentry/it.rss";
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start(testUrl, callback);
 		try {
 			Thread.sleep(10000);
@@ -94,8 +96,8 @@ public class RssParserTest {
 
 	@Test
 	public void testParseFeedInfoRSS2() {
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start("http://hiroki.jp/feed/", callback);
 		try {
 			Thread.sleep(10000);
@@ -138,8 +140,8 @@ public class RssParserTest {
 	public void testParseFeedInfoATOM() {
 		// Publickey
 		String publicKeyFeedUrl = "http://www.publickey1.jp/atom.xml";
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start(publicKeyFeedUrl, callback);
 		try {
 			Thread.sleep(10000);
@@ -186,8 +188,8 @@ public class RssParserTest {
 	@Test
 	public void testParseFeedInfoTopHtml() {
 		// Test top URL
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start("http://gigazine.net", callback);
 		try {
 			Thread.sleep(10000);
@@ -195,17 +197,17 @@ public class RssParserTest {
 			e.printStackTrace();
 		}
 
-		Feed addedFeed = adapter.getFeedByUrl("http://gigazine.net/news/rss_2.0/");
+		Feed addedFeed = adapter.getFeedByUrl("https://gigazine.net/news/rss_2.0/");
 		assertNotNull(addedFeed);
-		assertEquals("http://gigazine.net/news/rss_2.0/", addedFeed.getUrl());
-		assertEquals("http://gigazine.net", addedFeed.getSiteUrl());
+		assertEquals("https://gigazine.net/news/rss_2.0/", addedFeed.getUrl());
+		assertEquals("https://gigazine.net", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 	}
 
 	@Test
 	public void testParseFeedInfoTopHtml2() {
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start("http://tech.mercari.com/", callback);
 		try {
 			Thread.sleep(10000);
@@ -225,8 +227,8 @@ public class RssParserTest {
 	@Test
 	public void testParseFeedInfoTopHtmlFeedURLStartWithSlash() {
 		// //smhn.info/feed is returned
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start("http://smhn.info", callback);
 		try {
 			Thread.sleep(10000);
@@ -244,8 +246,8 @@ public class RssParserTest {
 
 	@Test
 	public void testParseFeedInfoGzip() {
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start("http://ground-sesame.hatenablog.jp", callback);
 		try {
 			Thread.sleep(10000);
@@ -267,8 +269,8 @@ public class RssParserTest {
 	}
 
 	private void addNewFeedAndCheckResult(String testUrl, String expectedFeedUrl, String expectedSiteUrl) {
-        RssParser parser = new RssParser(getTargetContext());
-        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance(getTargetContext()));
+        RssParser parser = new RssParser();
+        RssParseExecutor executor = new RssParseExecutor(parser, DatabaseAdapter.getInstance());
         executor.start(testUrl, callback);
 		try {
 			Thread.sleep(10000);
