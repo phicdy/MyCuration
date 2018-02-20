@@ -197,10 +197,10 @@ public class RssParserTest {
 			e.printStackTrace();
 		}
 
-		Feed addedFeed = adapter.getFeedByUrl("http://gigazine.net/news/rss_2.0/");
+		Feed addedFeed = adapter.getFeedByUrl("https://gigazine.net/news/rss_2.0/");
 		assertNotNull(addedFeed);
-		assertEquals("http://gigazine.net/news/rss_2.0/", addedFeed.getUrl());
-		assertEquals("http://gigazine.net", addedFeed.getSiteUrl());
+		assertEquals("https://gigazine.net/news/rss_2.0/", addedFeed.getUrl());
+		assertEquals("https://gigazine.net", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 	}
 
