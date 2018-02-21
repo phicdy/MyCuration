@@ -19,7 +19,8 @@ public class GetFeedIconTaskTest {
 
     @Test
 	public void testGetFeedIcon() {
-		GetFeedIconTask task = new GetFeedIconTask(getTargetContext());
+		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(getTargetContext());
+		GetFeedIconTask task = new GetFeedIconTask(iconSaveFolderStr);
 		task.execute("http://kindou.info");
 		try {
 			Thread.sleep(3000);
@@ -28,8 +29,8 @@ public class GetFeedIconTaskTest {
 		}
 		File file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
 		assertTrue(file.exists());
-			
-		GetFeedIconTask greeBlogIconTask = new GetFeedIconTask(getTargetContext());
+
+		GetFeedIconTask greeBlogIconTask = new GetFeedIconTask(iconSaveFolderStr);
 		greeBlogIconTask.execute("http://labs.gree.jp/blog");
 		try {
 			Thread.sleep(3000);

@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.task;
 
-import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.IconParser;
@@ -17,12 +17,10 @@ import java.net.URL;
 
 public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 
-	private final DatabaseAdapter dbAdapter;
-	private final Context context;
+	private final String iconSaveDir;
 
-	public GetFeedIconTask(Context context) {
-		this.context = context;
-		dbAdapter = DatabaseAdapter.getInstance();
+	public GetFeedIconTask(@NonNull String iconSaveDir) {
+		this.iconSaveDir = iconSaveDir;
 	}
 
 	/**
@@ -76,15 +74,14 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 					conn.getInputStream());
 
 			// Output Stream
-			String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(context);
-			File iconSaveFolder  = new File(iconSaveFolderStr);
+			File iconSaveFolder  = new File(iconSaveDir);
 			if(!iconSaveFolder.exists()) {
 				if(!iconSaveFolder.mkdir()) {
 					return;
 				}
 			}
 			
-			String iconPath = FileUtil.INSTANCE.generateIconFilePath(context, siteUrl);
+			String iconPath = FileUtil.INSTANCE.generateIconFilePath(iconSaveDir, siteUrl);
             if (iconPath == null) return;
 			DataOutputStream dataOutStream = new DataOutputStream(
 					new BufferedOutputStream(new FileOutputStream(
@@ -101,7 +98,8 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 			// Close Stream
 			dataInStream.close();
 			dataOutStream.close();
-			
+
+            DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
 			dbAdapter.saveIconPath(siteUrl, iconPath);
 
 		} catch (Exception e) {

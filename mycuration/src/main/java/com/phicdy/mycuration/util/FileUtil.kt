@@ -90,8 +90,7 @@ object FileUtil {
 		return appPath!! + "icons/"
 	}
 
-	fun generateIconFilePath(context: Context, urlStr: String): String? {
-		val folder = iconSaveFolder(context)
+	fun generateIconFilePath(folder: String, urlStr: String): String? {
 		val host: String
 		try {
 			host = URL(urlStr).host
