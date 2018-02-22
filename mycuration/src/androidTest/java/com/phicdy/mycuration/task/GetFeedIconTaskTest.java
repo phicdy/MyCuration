@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.task.test;
+package com.phicdy.mycuration.task;
 
 import android.support.test.runner.AndroidJUnit4;
 
