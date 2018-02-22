@@ -20,27 +20,8 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 
 	private final String iconSaveDir;
 
-	public GetFeedIconTask(@NonNull String iconSaveDir) {
+	GetFeedIconTask(@NonNull String iconSaveDir) {
 		this.iconSaveDir = iconSaveDir;
-	}
-
-	/**
-	 * Execute on main thread
-	 */
-	protected void onPostExecute(Void result) {
-		super.onPostExecute(result);
-	}
-
-	/**
-	 * Execute before doing task
-	 */
-	@Override
-	protected void onPreExecute() {
-	}
-
-	@Override
-	protected void onProgressUpdate(Void... values) {
-		super.onProgressUpdate(values);
 	}
 
 	/**
