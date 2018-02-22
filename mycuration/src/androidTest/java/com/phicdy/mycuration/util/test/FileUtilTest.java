@@ -21,8 +21,9 @@ public class FileUtilTest {
 
 	@Test
 	public void testGenerateIconFileName() {
+		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(getTargetContext());
 		assertEquals(
 				FileUtil.INSTANCE.getAppPath(getTargetContext()) + "icons/gigazine.net.png",
-				FileUtil.INSTANCE.generateIconFilePath(getTargetContext(), "http://gigazine.net/"));
+				FileUtil.INSTANCE.generateIconFilePath(iconSaveFolderStr, "http://gigazine.net/"));
 	}
 }

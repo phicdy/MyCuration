@@ -8,6 +8,7 @@ import com.phicdy.mycuration.filter.FilterTask;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
+import com.phicdy.mycuration.util.FileUtil;
 import com.phicdy.mycuration.util.TextUtil;
 
 import java.io.IOException;
@@ -67,7 +68,8 @@ public class NetworkTaskManager {
 		for (final Feed feed : feeds) {
 			updateFeed(feed);
 			if (feed.getIconPath() == null || feed.getIconPath().equals(Feed.DEDAULT_ICON_PATH)) {
-				GetFeedIconTask task = new GetFeedIconTask(context);
+				String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(context);
+				GetFeedIconTask task = new GetFeedIconTask(iconSaveFolderStr);
 				task.execute(feed.getSiteUrl());
 			}
 		}
