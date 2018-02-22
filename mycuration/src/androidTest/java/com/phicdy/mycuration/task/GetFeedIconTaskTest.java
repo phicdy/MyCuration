@@ -12,13 +12,14 @@ import java.io.File;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class GetFeedIconTaskTest {
 
     @Test
-	public void testGetFeedIcon() {
+	public void iconExistsWhenGetKindouIcon() {
 		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(getTargetContext());
 		GetFeedIconTask task = new GetFeedIconTask(iconSaveFolderStr);
 		task.execute("http://kindou.info");
@@ -29,7 +30,11 @@ public class GetFeedIconTaskTest {
 		}
 		File file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
 		assertTrue(file.exists());
+	}
 
+	@Test
+	public void iconDoesNotExistWhenGetGreeBlogIcon() {
+		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(getTargetContext());
 		GetFeedIconTask greeBlogIconTask = new GetFeedIconTask(iconSaveFolderStr);
 		greeBlogIconTask.execute("http://labs.gree.jp/blog");
 		try {
@@ -38,6 +43,6 @@ public class GetFeedIconTaskTest {
 			e.printStackTrace();
 		}
 		File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
-		assertEquals(false, greeBlogIcon.exists());
+		assertFalse(greeBlogIcon.exists());
 	}
 }
