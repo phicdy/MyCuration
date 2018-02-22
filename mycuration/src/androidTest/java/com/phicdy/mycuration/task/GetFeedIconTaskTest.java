@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.phicdy.mycuration.task.GetFeedIconTask;
 import com.phicdy.mycuration.util.FileUtil;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,8 +19,18 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class GetFeedIconTaskTest {
 
+    @After
+    public void tearDown() {
+        File file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
+        if (file.exists()) file.delete();
+        File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
+        if (greeBlogIcon.exists()) greeBlogIcon.delete();
+    }
+
     @Test
 	public void iconExistsWhenGetKindouIcon() {
+        File file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
+        if (file.exists()) assertTrue(file.delete());
 		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(getTargetContext());
 		GetFeedIconTask task = new GetFeedIconTask(iconSaveFolderStr);
 		task.execute("http://kindou.info");
@@ -28,12 +39,14 @@ public class GetFeedIconTaskTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		File file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
+		file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
 		assertTrue(file.exists());
 	}
 
 	@Test
 	public void iconDoesNotExistWhenGetGreeBlogIcon() {
+        File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
+        if (greeBlogIcon.exists()) assertTrue(greeBlogIcon.delete());
 		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(getTargetContext());
 		GetFeedIconTask greeBlogIconTask = new GetFeedIconTask(iconSaveFolderStr);
 		greeBlogIconTask.execute("http://labs.gree.jp/blog");
@@ -42,7 +55,7 @@ public class GetFeedIconTaskTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
+        greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
 		assertFalse(greeBlogIcon.exists());
 	}
 }
