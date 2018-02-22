@@ -12,6 +12,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -55,7 +56,9 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 	private void getFeedIcon(String siteUrl) {
 		IconParser parser = new IconParser();
 		String iconUrlStr = parser.parseHtml(siteUrl);
-		
+
+        DataInputStream dataInStream = null;
+        DataOutputStream dataOutStream = null;
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(iconUrlStr).openConnection();
 			conn.setAllowUserInteraction(false);
@@ -64,47 +67,45 @@ public class GetFeedIconTask extends AsyncTask<String, Void, Void> {
 			conn.connect();
 
 			int httpStatusCode = conn.getResponseCode();
-
-			if (httpStatusCode != HttpURLConnection.HTTP_OK) {
-				throw new Exception();
-			}
-
-			// Input Stream
-			DataInputStream dataInStream = new DataInputStream(
-					conn.getInputStream());
-
-			// Output Stream
+			if (httpStatusCode != HttpURLConnection.HTTP_OK) return;
+			dataInStream = new DataInputStream(conn.getInputStream());
 			File iconSaveFolder  = new File(iconSaveDir);
 			if(!iconSaveFolder.exists()) {
 				if(!iconSaveFolder.mkdir()) {
 					return;
 				}
 			}
-			
+
 			String iconPath = FileUtil.INSTANCE.generateIconFilePath(iconSaveDir, siteUrl);
             if (iconPath == null) return;
-			DataOutputStream dataOutStream = new DataOutputStream(
-					new BufferedOutputStream(new FileOutputStream(
-							 iconPath)));
+			dataOutStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(iconPath)));
 
-			// Read Data
 			byte[] b = new byte[4096];
 			int readByte;
-
 			while (-1 != (readByte = dataInStream.read(b))) {
 				dataOutStream.write(b, 0, readByte);
 			}
 
-			// Close Stream
-			dataInStream.close();
-			dataOutStream.close();
-
             DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
 			dbAdapter.saveIconPath(siteUrl, iconPath);
-
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		} finally {
+		    if (dataInStream != null) {
+                try {
+                    dataInStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (dataOutStream != null) {
+                try {
+                    dataOutStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
 	}
 }
