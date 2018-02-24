@@ -9,8 +9,7 @@ import java.util.Map;
 public class UnreadCountManager {
     private int total = 0;
     private final Map<Integer, Integer> unreadCountMap = new HashMap<>();
-    private ArrayList<Feed> allFeeds;
-    private final DatabaseAdapter adapter;
+    private DatabaseAdapter adapter;
     private static UnreadCountManager mgr;
 
     private UnreadCountManager() {
@@ -31,7 +30,7 @@ public class UnreadCountManager {
 
     private void init() {
         total = 0;
-        allFeeds = adapter.getAllFeedsWithNumOfUnreadArticles();
+        final ArrayList<Feed> allFeeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         synchronized (unreadCountMap) {
             unreadCountMap.clear();
             for (Feed feed : allFeeds) {
@@ -123,9 +122,9 @@ public class UnreadCountManager {
     public void readAll() {
         synchronized (unreadCountMap) {
             total = 0;
-            for (Feed feed : allFeeds) {
-                unreadCountMap.put(feed.getId(), 0);
-                updateDatbase(feed.getId());
+            for (Integer id: unreadCountMap.keySet()) {
+                unreadCountMap.put(id, 0);
+                updateDatbase(id);
             }
         }
     }
