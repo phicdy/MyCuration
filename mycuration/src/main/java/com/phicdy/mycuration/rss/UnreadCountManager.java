@@ -1,5 +1,7 @@
 package com.phicdy.mycuration.rss;
 
+import android.support.annotation.NonNull;
+
 import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import java.util.ArrayList;
@@ -9,12 +11,16 @@ import java.util.Map;
 public class UnreadCountManager {
     private int total = 0;
     private final Map<Integer, Integer> unreadCountMap = new HashMap<>();
-    private ArrayList<Feed> allFeeds;
-    private final DatabaseAdapter adapter;
+    private DatabaseAdapter adapter;
     private static UnreadCountManager mgr;
 
     private UnreadCountManager() {
         this.adapter = DatabaseAdapter.getInstance();
+        init();
+    }
+
+    private UnreadCountManager(@NonNull DatabaseAdapter adapter) {
+        this.adapter = adapter;
         init();
     }
 
@@ -29,9 +35,19 @@ public class UnreadCountManager {
         return mgr;
     }
 
+    static UnreadCountManager newInstance(@NonNull DatabaseAdapter adapter) {
+        mgr = new UnreadCountManager(adapter);
+        return mgr;
+    }
+
+    void clear() {
+        mgr.total = 0;
+        mgr.unreadCountMap.clear();
+    }
+
     private void init() {
         total = 0;
-        allFeeds = adapter.getAllFeedsWithNumOfUnreadArticles();
+        final ArrayList<Feed> allFeeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         synchronized (unreadCountMap) {
             unreadCountMap.clear();
             for (Feed feed : allFeeds) {
@@ -123,9 +139,9 @@ public class UnreadCountManager {
     public void readAll() {
         synchronized (unreadCountMap) {
             total = 0;
-            for (Feed feed : allFeeds) {
-                unreadCountMap.put(feed.getId(), 0);
-                updateDatbase(feed.getId());
+            for (Integer id: unreadCountMap.keySet()) {
+                unreadCountMap.put(id, 0);
+                updateDatbase(id);
             }
         }
     }

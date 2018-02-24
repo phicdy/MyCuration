@@ -83,8 +83,12 @@ public class Feed implements Parcelable{
 	public int getUnreadAriticlesCount() {
 		return unreadAriticlesCount_;
 	}
-	
-	public int getId() {
+
+    public void setUnreadAriticlesCount(int unreadAriticlesCount) {
+        unreadAriticlesCount_ = unreadAriticlesCount;
+    }
+
+    public int getId() {
 		return id_;
 	}
 	
