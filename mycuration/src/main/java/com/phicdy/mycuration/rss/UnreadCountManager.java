@@ -1,5 +1,7 @@
 package com.phicdy.mycuration.rss;
 
+import android.support.annotation.NonNull;
+
 import com.phicdy.mycuration.db.DatabaseAdapter;
 
 import java.util.ArrayList;
@@ -17,6 +19,11 @@ public class UnreadCountManager {
         init();
     }
 
+    private UnreadCountManager(@NonNull DatabaseAdapter adapter) {
+        this.adapter = adapter;
+        init();
+    }
+
     public static UnreadCountManager getInstance() {
         if (mgr == null) {
             synchronized (UnreadCountManager.class) {
@@ -26,6 +33,16 @@ public class UnreadCountManager {
             }
         }
         return mgr;
+    }
+
+    static UnreadCountManager newInstance(@NonNull DatabaseAdapter adapter) {
+        mgr = new UnreadCountManager(adapter);
+        return mgr;
+    }
+
+    void clear() {
+        mgr.total = 0;
+        mgr.unreadCountMap.clear();
     }
 
     private void init() {
