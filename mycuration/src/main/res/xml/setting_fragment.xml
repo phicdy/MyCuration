@@ -7,6 +7,14 @@
             android:key="@string/key_update_interval"
             android:entries="@array/update_interval_items"
             android:entryValues="@array/update_interval_items_values"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/launch_setting" >
+        <ListPreference
+            android:title="@string/launch_tab"
+            android:key="@string/key_launch_tab"
+            android:entries="@array/launch_tab_items"
+            android:entryValues="@array/launch_tab_items_values"/>
         <SwitchPreference
             android:title="@string/auto_update_in_main_ui"
             android:key="@string/key_auto_update_in_main_ui"/>
