@@ -15,11 +15,16 @@ object PreferenceHelper {
     private const val KEY_SEARCH_FEED_ID = "searchFeedId"
     private const val KEY_OPEN_INTERNAL_ID = "openInternal"
     private const val KEY_SWIPE_DIRECTION = "swipeDirection"
+    private const val KEY_LAUNCH_TAB = "launchTab"
 
     const val SWIPE_RIGHT_TO_LEFT = 0
     const val SWIPE_LEFT_TO_RIGHT = 1
     const val SWIPE_DEFAULT = SWIPE_RIGHT_TO_LEFT
+    const val LAUNCH_CURATION = 0
+    const val LAUNCH_RSS = 1
+    const val LAUNCH_TAB_DEFAULT = LAUNCH_CURATION
     private val SWIPE_DIRECTIONS = intArrayOf(SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT)
+    private val LAUNCH_TABS = intArrayOf(LAUNCH_CURATION, LAUNCH_RSS)
     private const val DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60
 
     fun setUp(context: Context) {
@@ -77,6 +82,21 @@ object PreferenceHelper {
                 if (direction == newSwipeDirection) {
                     editor = pref.edit()
                     editor.putInt(KEY_SWIPE_DIRECTION, newSwipeDirection)
+                    editor.apply()
+                    return
+                }
+            }
+        }
+
+    var launchTab: Int
+        get() = if (pref.contains(KEY_LAUNCH_TAB)) {
+            pref.getInt(KEY_LAUNCH_TAB, LAUNCH_TAB_DEFAULT)
+        } else LAUNCH_TAB_DEFAULT
+        set(newLaunchTab) {
+            for (tab in LAUNCH_TABS) {
+                if (tab == newLaunchTab) {
+                    editor = pref.edit()
+                    editor.putInt(KEY_LAUNCH_TAB, newLaunchTab)
                     editor.apply()
                     return
                 }

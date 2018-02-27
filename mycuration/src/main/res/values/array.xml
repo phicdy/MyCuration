@@ -52,4 +52,15 @@
         <item>12</item>
         <item>24</item>
     </string-array>
+
+    <string-array name="launch_tab_items">
+        <item>キュレーション</item>
+        <item>RSS</item>
+    </string-array>
+
+    <string-array name="launch_tab_items_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
 </resources>

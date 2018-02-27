@@ -14,14 +14,16 @@ public class TopActivityPresenter implements Presenter {
     private DatabaseAdapter dbAdapter;
     private boolean isAutoUpdate = false;
     private NetworkTaskManager networkTaskManager;
+    private int launchTab = POSITION_CURATION_FRAGMENT;
 
     private static final int POSITION_CURATION_FRAGMENT = 0;
     private static final int POSITION_FEED_FRAGMENT = 1;
     private static final int POSITION_FILTER_FRAGMENT = 2;
 
-    public TopActivityPresenter(boolean isAutoUpdate, NetworkTaskManager networkTaskManager) {
+    public TopActivityPresenter(boolean isAutoUpdate, NetworkTaskManager networkTaskManager, int launchTab) {
         this.isAutoUpdate = isAutoUpdate;
         this.networkTaskManager = networkTaskManager;
+        this.launchTab = launchTab;
     }
 
     public void setView(@NonNull TopActivityView view) {
@@ -30,6 +32,7 @@ public class TopActivityPresenter implements Presenter {
 
     @Override
     public void create() {
+        view.changeTab(launchTab);
     }
 
     @Override

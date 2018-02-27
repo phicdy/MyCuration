@@ -7,5 +7,6 @@ public interface TopActivityView {
     void goToAddCuration();
     void goToAddFilter();
     void goToSetting();
+    void changeTab(int position);
     int currentTabPosition();
 }
