@@ -26,6 +26,7 @@ class SettingFragment : PreferenceFragment(), SettingView {
     private lateinit var presenter: SettingPresenter
 
     private lateinit var prefUpdateInterval: ListPreference
+    private lateinit var prefLaunchTab: ListPreference
     private lateinit var prefAllReadBehavior: ListPreference
     private lateinit var prefSwipeDirection: ListPreference
     private lateinit var prefAutoUpdateInMainUi: SwitchPreference
@@ -47,10 +48,13 @@ class SettingFragment : PreferenceFragment(), SettingView {
         val updateIntervalStringItems = resources.getStringArray(R.array.update_interval_items)
         val allReadBehaviorItems = resources.getStringArray(R.array.all_read_behavior_values)
         val allReadBehaviorStringItems = resources.getStringArray(R.array.all_read_behavior)
+        val launchTabItems = resources.getStringArray(R.array.launch_tab_items_values)
+        val launchTabStringItems = resources.getStringArray(R.array.launch_tab_items)
         val swipeDirectionItems = resources.getStringArray(R.array.swipe_direction_items_values)
         val swipeDirectionStringItems = resources.getStringArray(R.array.swipe_direction_items)
         presenter = SettingPresenter(helper, updateIntervalHourItems,
                 updateIntervalStringItems, allReadBehaviorItems, allReadBehaviorStringItems,
+                launchTabItems, launchTabStringItems,
                 swipeDirectionItems, swipeDirectionStringItems)
         presenter.setView(this)
     }
@@ -79,6 +83,7 @@ class SettingFragment : PreferenceFragment(), SettingView {
         prefInternalBrowser = findPreference(getString(R.string.key_internal_browser)) as SwitchPreference
         prefAllReadBehavior = findPreference(getString(R.string.key_all_read_behavior)) as ListPreference
         prefSwipeDirection = findPreference(getString(R.string.key_swipe_direction)) as ListPreference
+        prefLaunchTab = findPreference(getString(R.string.key_launch_tab)) as ListPreference
         prefLicense = findPreference(getString(R.string.key_license))
     }
 
@@ -120,6 +125,10 @@ class SettingFragment : PreferenceFragment(), SettingView {
                     val isAutoUpdateInMainUi = prefAutoUpdateInMainUi.isChecked
                     presenter.updateAutoUpdateInMainUi(isAutoUpdateInMainUi)
                     GATrackerHelper.sendEvent(getString(R.string.change_auto_update_in_main_ui_option), (if (isAutoUpdateInMainUi) 1 else 0).toLong())
+                }
+                getString(R.string.key_launch_tab) -> {
+                    val launchTab = Integer.valueOf(prefLaunchTab.value)
+                    presenter.updateLaunchTab(launchTab)
                 }
             }
         }
@@ -177,6 +186,11 @@ class SettingFragment : PreferenceFragment(), SettingView {
     override fun setSwipeDirection(index: Int, summary: String) {
         prefSwipeDirection.setValueIndex(index)
         prefSwipeDirection.summary = summary
+    }
+
+    override fun setLaunchTab(index: Int, summary: String) {
+        prefLaunchTab.setValueIndex(index)
+        prefLaunchTab.summary = summary
     }
 
     override fun startLicenseActivity() {

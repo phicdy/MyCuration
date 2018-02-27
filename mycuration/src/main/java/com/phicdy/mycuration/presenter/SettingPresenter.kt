@@ -10,6 +10,8 @@ class SettingPresenter(private val helper: PreferenceHelper,
                        private val updateIntervalStringItems: Array<String>,
                        private val allReadBehaviorItems: Array<String>,
                        private val allReadBehaviorStringItems: Array<String>,
+                       private val launchTabItems: Array<String>,
+                       private val launchTabStringItems: Array<String>,
                        private val swipeDirectionItems: Array<String>,
                        private val swipeDirectionStringItems: Array<String>) : Presenter {
     private lateinit var view: SettingView
@@ -58,6 +60,13 @@ class SettingPresenter(private val helper: PreferenceHelper,
         for (i in swipeDirectionItems.indices) {
             if (Integer.valueOf(swipeDirectionItems[i]) == helper.swipeDirection) {
                 view.setSwipeDirection(i, swipeDirectionStringItems[i])
+                break
+            }
+        }
+
+        for (i in launchTabItems.indices) {
+            if (Integer.valueOf(launchTabItems[i]) == helper.launchTab) {
+                view.setLaunchTab(i, launchTabStringItems[i])
                 break
             }
         }
@@ -118,6 +127,18 @@ class SettingPresenter(private val helper: PreferenceHelper,
 
     fun updateAutoUpdateInMainUi(isEnaled: Boolean) {
         helper.autoUpdateInMainUi = isEnaled
+    }
+
+    fun updateLaunchTab(tab: Int) {
+        helper.launchTab = tab
+
+        // Refresh summary
+        for (i in launchTabItems.indices) {
+            if (Integer.valueOf(launchTabItems[i]) == tab) {
+                view.setLaunchTab(i, launchTabStringItems[i])
+                break
+            }
+        }
     }
 
     fun onLicenseClicked() {

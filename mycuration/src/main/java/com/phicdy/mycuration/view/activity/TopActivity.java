@@ -63,7 +63,7 @@ public class TopActivity extends AppCompatActivity implements
 
         PreferenceHelper helper = PreferenceHelper.INSTANCE;
         NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(this);
-        presenter = new TopActivityPresenter(helper.getAutoUpdateInMainUi(), networkTaskManager);
+        presenter = new TopActivityPresenter(helper.getAutoUpdateInMainUi(), networkTaskManager, helper.getLaunchTab());
         presenter.setView(this);
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         presenter.setDataAdapter(dbAdapter);
@@ -266,6 +266,13 @@ public class TopActivity extends AppCompatActivity implements
             searchView.onActionViewCollapsed();
             searchView.setQuery("",false);
         }
+    }
+
+    @Override
+    public void changeTab(int position) {
+        if (position != POSITION_CURATION_FRAGMENT && position != POSITION_FEED_FRAGMENT &&
+                position != POSITION_FILTER_FRAGMENT) return;
+        mViewPager.setCurrentItem(position);
     }
 
     private class SectionsPagerAdapter extends FragmentPagerAdapter {

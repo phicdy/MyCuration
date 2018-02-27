@@ -7,5 +7,6 @@ interface SettingView {
     fun setInternalBrowser(isEnabled: Boolean)
     fun setAllReadBehavior(index: Int, summary: String)
     fun setSwipeDirection(index: Int, summary: String)
+    fun setLaunchTab(index: Int, summary: String)
     fun startLicenseActivity()
 }
