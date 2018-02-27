@@ -1,6 +1,8 @@
 package com.phicdy.mycuration.view
 
 interface SettingView {
+    fun initView()
+    fun initListener()
     fun setUpdateInterval(index: Int, summary: String)
     fun setAutoUpdateInMainUi(isAutoUpdateInMainUi: Boolean)
     fun setArticleSort(isNewArticleTop: Boolean)

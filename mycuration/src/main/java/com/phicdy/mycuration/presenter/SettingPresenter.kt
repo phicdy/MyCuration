@@ -27,6 +27,9 @@ class SettingPresenter(private val helper: PreferenceHelper,
     override fun pause() {}
 
     fun activityCreate() {
+        view.initView()
+        view.initListener()
+
         // Calc interval hour from saved interval second
         val autoUpdateIntervalSecond = helper.autoUpdateIntervalSecond
         val autoUpdateIntervalHour = autoUpdateIntervalSecond / (60 * 60)

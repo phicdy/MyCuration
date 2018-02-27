@@ -61,8 +61,6 @@ class SettingFragment : PreferenceFragment(), SettingView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        initView()
-        initListener()
         presenter.activityCreate()
     }
 
@@ -76,7 +74,7 @@ class SettingFragment : PreferenceFragment(), SettingView {
         preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
-    private fun initView() {
+    override fun initView() {
         prefUpdateInterval = findPreference(getString(R.string.key_update_interval)) as ListPreference
         prefAutoUpdateInMainUi = findPreference(getString(R.string.key_auto_update_in_main_ui)) as SwitchPreference
         prefArticleSort = findPreference(getString(R.string.key_article_sort)) as SwitchPreference
@@ -87,7 +85,7 @@ class SettingFragment : PreferenceFragment(), SettingView {
         prefLicense = findPreference(getString(R.string.key_license))
     }
 
-    private fun initListener() {
+    override fun initListener() {
         listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
                 getString(R.string.key_update_interval) -> {
