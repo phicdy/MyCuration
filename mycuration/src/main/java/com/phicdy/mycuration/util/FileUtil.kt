@@ -69,7 +69,7 @@ object FileUtil {
 		return isMounted
 	}
 
-	fun getAppPath(context: Context): String? {
+	fun getAppPath(context: Context): String {
 		val pkgMgr = context.packageManager
 		try {
 			val path = pkgMgr.getPackageInfo(context.packageName, 0).applicationInfo.dataDir
@@ -82,12 +82,17 @@ object FileUtil {
 			e.printStackTrace()
 		}
 
-		return null
+		return ""
 	}
 
-	fun iconSaveFolder(context: Context): String {
+	private lateinit var iconSaveFolder: String
+	fun setUpIconSaveFolder(context: Context) {
 		val appPath = getAppPath(context)
-		return appPath!! + "icons/"
+		iconSaveFolder = appPath + "icons/"
+	}
+
+	fun iconSaveFolder(): String {
+		return iconSaveFolder
 	}
 
 	fun generateIconFilePath(folder: String, urlStr: String): String? {

@@ -10,6 +10,7 @@ import com.phicdy.mycuration.db.DatabaseAdapter
 import com.phicdy.mycuration.db.DatabaseHelper
 import com.phicdy.mycuration.task.NetworkTaskManager
 import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
@@ -32,6 +33,7 @@ class MyApplication : Application() {
         PreferenceHelper.setUp(this)
         NetworkTaskManager.setUp(this)
         DatabaseAdapter.setUp(DatabaseHelper(this))
+        FileUtil.setUpIconSaveFolder(this)
         GATrackerHelper.setTracker(DefaultTracker.setUp(this))
         GATrackerHelper.setCategoryAction(getString(R.string.action))
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()

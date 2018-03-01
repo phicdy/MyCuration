@@ -64,7 +64,7 @@ object NetworkTaskManager {
         for (feed in feeds) {
             updateFeed(feed)
             if (feed.iconPath == null || feed.iconPath == Feed.DEDAULT_ICON_PATH) {
-                val iconSaveFolderStr = FileUtil.iconSaveFolder(context)
+                val iconSaveFolderStr = FileUtil.iconSaveFolder()
                 val task = GetFeedIconTask(iconSaveFolderStr)
                 task.execute(feed.siteUrl)
             }
