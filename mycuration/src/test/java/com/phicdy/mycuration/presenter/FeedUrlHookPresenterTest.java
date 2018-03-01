@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presenter;
 
+import android.content.Context;
 import android.content.Intent;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
@@ -28,7 +29,8 @@ public class FeedUrlHookPresenterTest {
 
     @Before
     public void setup() {
-        networkTaskManager = Mockito.mock(NetworkTaskManager.class);
+        NetworkTaskManager.INSTANCE.setUp(Mockito.mock(Context.class));
+        networkTaskManager = NetworkTaskManager.INSTANCE;
         adapter = Mockito.mock(DatabaseAdapter.class);
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
         parser = Mockito.mock(RssParser.class);

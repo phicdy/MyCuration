@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.presenter;
 
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
@@ -43,7 +44,8 @@ public class FeedListPresenterTest {
         allFeeds.add(new Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0));
         allFeeds.add(new Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 1));
         Mockito.when(adapter.getAllFeedsWithNumOfUnreadArticles()).thenReturn(allFeeds);
-        networkTaskManager = Mockito.mock(NetworkTaskManager.class);
+        NetworkTaskManager.INSTANCE.setUp(Mockito.mock(Context.class));
+        networkTaskManager = NetworkTaskManager.INSTANCE;
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
         Mockito.when(unreadCountManager.getUnreadCount(FIRST_RSS_ID))
                 .thenReturn(0);

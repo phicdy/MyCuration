@@ -8,6 +8,7 @@ import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.phicdy.mycuration.db.DatabaseAdapter
 import com.phicdy.mycuration.db.DatabaseHelper
+import com.phicdy.mycuration.task.NetworkTaskManager
 import com.phicdy.mycuration.tracker.GATrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 
@@ -29,6 +30,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         PreferenceHelper.setUp(this)
+        NetworkTaskManager.setUp(this)
         DatabaseAdapter.setUp(DatabaseHelper(this))
         GATrackerHelper.setTracker(DefaultTracker.setUp(this))
         GATrackerHelper.setCategoryAction(getString(R.string.action))

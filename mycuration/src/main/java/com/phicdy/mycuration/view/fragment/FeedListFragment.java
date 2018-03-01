@@ -72,7 +72,7 @@ public class FeedListFragment extends Fragment implements FeedListView {
 
         unreadManager = UnreadCountManager.getInstance();
         dbAdapter = DatabaseAdapter.getInstance();
-        NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(getActivity());
+        NetworkTaskManager networkTaskManager = NetworkTaskManager.INSTANCE;
         setRetainInstance(true);
         presenter = new FeedListPresenter(dbAdapter, networkTaskManager, unreadManager);
         presenter.setView(this);

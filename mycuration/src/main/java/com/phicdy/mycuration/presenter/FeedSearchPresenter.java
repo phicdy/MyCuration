@@ -82,7 +82,7 @@ public class FeedSearchPresenter implements Presenter {
         }
     }
 
-    void onFinishAddFeed(@NonNull String url, int reason) {
+    void onFinishAddFeed(@NonNull String url, long reason) {
         Feed newFeed = adapter.getFeedByUrl(url);
         if (reason == RssParseResult.NOT_FAILED && newFeed != null) {
             unreadManager.addFeed(newFeed);
