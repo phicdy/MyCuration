@@ -33,6 +33,7 @@ abstract class UiTest {
         for (Feed feed : feeds) {
             manager.deleteFeed(feed.getId());
         }
+        manager.readAll();
         adapter.deleteAll();
     }
 
