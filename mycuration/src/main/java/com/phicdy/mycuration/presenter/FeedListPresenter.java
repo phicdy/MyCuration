@@ -9,7 +9,12 @@ import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.view.FeedListView;
 import com.phicdy.mycuration.view.fragment.FeedListFragment;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class FeedListPresenter implements Presenter {
 
@@ -233,7 +238,28 @@ public class FeedListPresenter implements Presenter {
             return;
         }
 
-        networkTaskManager.updateAllFeeds(allFeeds);
+        networkTaskManager.updateAllFeeds(allFeeds)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Feed>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        s.request(allFeeds.size()-1);
+                    }
+
+                    @Override
+                    public void onNext(Feed feed) {
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        onFinishUpdate();
+                    }
+                });
     }
 
     private void onRefreshComplete() {
@@ -241,54 +267,8 @@ public class FeedListPresenter implements Presenter {
     }
 
     public void onFinishUpdate() {
-        if (!networkTaskManager.isUpdatingFeed()) {
             onRefreshComplete();
             refreshList();
-        }
-    }
-
-    public void onFinishAddFeed(@NonNull String feedUrl, int errorReason) {
-        Feed newFeed = dbAdapter.getFeedByUrl(feedUrl);
-        if (errorReason != 1 || newFeed == null) {
-            if (errorReason == NetworkTaskManager.ERROR_INVALID_URL) {
-                view.showInvalidUrlAddFeedErrorToast();
-            } else {
-                view.showGenericAddFeedErrorToast();
-            }
-        } else {
-            view.showAddFeedSuccessToast();
-            addFeed(newFeed);
-            unreadCountManager.addFeed(newFeed);
-            networkTaskManager.updateFeed(newFeed);
-            refreshList();
-        }
-    }
-
-    private void addFeed(Feed newFeed) {
-        deleteShowHideLineIfNeeded();
-        if (newFeed.getUnreadAriticlesCount() > 0) {
-            feeds.add(newFeed);
-            addShowHideLine(feeds);
-        }
-        allFeeds.add(newFeed);
-        addShowHideLine(allFeeds);
-        unreadCountManager.addFeed(newFeed);
-        view.notifyDataSetChanged();
-    }
-
-    private void deleteShowHideLineIfNeeded() {
-        if (feeds != null && feeds.size() > 0) {
-            int lastIndex = feeds.size() - 1;
-            if (feeds.get(lastIndex).getId() == Feed.DEFAULT_FEED_ID) {
-                feeds.remove(lastIndex);
-            }
-        }
-        if (allFeeds != null && allFeeds.size() > 0) {
-            int lastIndex = allFeeds.size() - 1;
-            if (allFeeds.get(lastIndex).getId() == Feed.DEFAULT_FEED_ID) {
-                allFeeds.remove(lastIndex);
-            }
-        }
     }
 
     public void activityCreated() {

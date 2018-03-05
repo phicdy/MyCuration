@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presenter
 
-import android.content.Context
 import com.phicdy.mycuration.task.NetworkTaskManager
 import com.phicdy.mycuration.view.TopActivityView
 import org.junit.Before
@@ -16,7 +15,6 @@ class TopActivityPresenterTest {
 
     @Before
     fun setup() {
-        NetworkTaskManager.setUp(Mockito.mock(Context::class.java))
         networkTaskManager = NetworkTaskManager
         mockView = Mockito.mock(TopActivityView::class.java)
     }

@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presenter;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
@@ -32,7 +31,6 @@ public class FeedSearchPresenterTest {
 
     @Before
     public void setup() {
-        NetworkTaskManager.INSTANCE.setUp(Mockito.mock(Context.class));
         networkTaskManager = NetworkTaskManager.INSTANCE;
         DatabaseAdapter.setUp(Mockito.mock(DatabaseHelper.class));
         adapter = Mockito.mock(DatabaseAdapter.class);

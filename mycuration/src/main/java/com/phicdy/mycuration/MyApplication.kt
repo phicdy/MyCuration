@@ -2,17 +2,14 @@ package com.phicdy.mycuration
 
 import android.app.Application
 import android.content.Context
-
 import com.facebook.stetho.Stetho
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.phicdy.mycuration.db.DatabaseAdapter
 import com.phicdy.mycuration.db.DatabaseHelper
-import com.phicdy.mycuration.task.NetworkTaskManager
 import com.phicdy.mycuration.tracker.GATrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
-
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
 class MyApplication : Application() {
@@ -31,7 +28,6 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         PreferenceHelper.setUp(this)
-        NetworkTaskManager.setUp(this)
         DatabaseAdapter.setUp(DatabaseHelper(this))
         FileUtil.setUpIconSaveFolder(this)
         GATrackerHelper.setTracker(DefaultTracker.setUp(this))
