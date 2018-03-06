@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.task
 
 import android.os.AsyncTask
+import android.util.Log
 
 import com.phicdy.mycuration.db.DatabaseAdapter
 import com.phicdy.mycuration.rss.IconParser
@@ -28,7 +29,7 @@ class GetFeedIconTask internal constructor(private val iconSaveDir: String) : As
 
     private fun getFeedIcon(siteUrl: String) {
         val parser = IconParser()
-        val iconUrlStr = parser.parseHtml(siteUrl)
+        val iconUrlStr = parser.parseHtml(siteUrl) ?: return
 
         var dataInStream: DataInputStream? = null
         var dataOutStream: DataOutputStream? = null
