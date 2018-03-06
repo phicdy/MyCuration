@@ -29,7 +29,7 @@ public class IconParser {
 						if (href.startsWith("//")) {
 							return url.getProtocol() + ":" + href;
 						}
-						return url.getProtocol() + "://" + url.getHost() + href;
+						return new URL(url.getProtocol(), url.getHost(), href).toString();
 					}
 					return href;
 				}
