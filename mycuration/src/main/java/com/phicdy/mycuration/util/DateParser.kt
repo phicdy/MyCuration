@@ -33,7 +33,7 @@ object DateParser {
         } catch (e2: ParseException) {
         }
 
-        //2014-07-27T14:38:34+09:00
+        //2014-07-27T14:38:34+0900
         if (!pubDate.contains("T")) {
             Log.d(LOG_TAG, "Invalid format, return null")
             return null
@@ -41,7 +41,7 @@ object DateParser {
         var replaced = pubDate.replace("T", " ")
         if (pubDate.contains("Z")) {
             //2014-07-27T14:38:34Z
-            replaced = replaced.replace("Z", "+09:00")
+            replaced = replaced.replace("Z", "+0900")
         }
 
         val w3cdtf = SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ",
