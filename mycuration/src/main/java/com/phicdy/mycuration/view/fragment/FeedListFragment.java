@@ -34,6 +34,7 @@ import com.phicdy.mycuration.presenter.FeedListPresenter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.FeedListView;
 
 import java.io.File;
@@ -74,7 +75,9 @@ public class FeedListFragment extends Fragment implements FeedListView {
         dbAdapter = DatabaseAdapter.getInstance();
         NetworkTaskManager networkTaskManager = NetworkTaskManager.INSTANCE;
         setRetainInstance(true);
-        presenter = new FeedListPresenter(dbAdapter, networkTaskManager, unreadManager);
+        PreferenceHelper helper = PreferenceHelper.INSTANCE;
+        presenter = new FeedListPresenter(helper.getAutoUpdateInMainUi(),
+                dbAdapter, networkTaskManager, unreadManager);
         presenter.setView(this);
     }
 

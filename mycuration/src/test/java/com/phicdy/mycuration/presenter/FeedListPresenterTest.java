@@ -50,7 +50,7 @@ public class FeedListPresenterTest {
         Mockito.when(unreadCountManager.getUnreadCount(SECOND_RSS_ID))
                 .thenReturn(1);
         Mockito.when(unreadCountManager.getUnreadCount(Feed.DEFAULT_FEED_ID)).thenReturn(-1);
-        presenter = new FeedListPresenter(adapter, networkTaskManager, unreadCountManager);
+        presenter = new FeedListPresenter(false, adapter, networkTaskManager, unreadCountManager);
         view = new MockView();
         presenter.setView(view);
     }

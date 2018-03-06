@@ -18,6 +18,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class FeedListPresenter implements Presenter {
 
+    private final boolean autoUpdateInMainUi;
     private FeedListView view;
     private final DatabaseAdapter dbAdapter;
     private final NetworkTaskManager networkTaskManager;
@@ -29,8 +30,9 @@ public class FeedListPresenter implements Presenter {
     // Manage hide feed status
     private boolean isHided = true;
 
-    public FeedListPresenter(DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
+    public FeedListPresenter(boolean autoUpdateInMainUi, DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
                              UnreadCountManager unreadCountManager) {
+        this.autoUpdateInMainUi = autoUpdateInMainUi;
         this.dbAdapter = dbAdapter;
         this.networkTaskManager = networkTaskManager;
         this.unreadCountManager = unreadCountManager;
@@ -56,6 +58,31 @@ public class FeedListPresenter implements Presenter {
         refreshList();
         if (networkTaskManager.isUpdatingFeed()) {
             view.setRefreshing(true);
+        }
+        if (autoUpdateInMainUi && !networkTaskManager.isUpdatingFeed()) {
+            view.setRefreshing(true);
+            networkTaskManager.updateAllFeeds(allFeeds)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Feed>() {
+                        @Override
+                        public void onSubscribe(Subscription s) {
+                            s.request(allFeeds.size()-1);
+                        }
+
+                        @Override
+                        public void onNext(Feed feed) {
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            onFinishUpdate();
+                        }
+                    });
         }
     }
 
