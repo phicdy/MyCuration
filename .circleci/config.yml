@@ -4,6 +4,8 @@ jobs:
     working_directory: ~/code
     docker:
       - image: circleci/android:api-27-alpha
+        environment:
+          TZ: Asia/Tokyo
     environment:
       JVM_OPTS: -Xmx3200m
     steps:
