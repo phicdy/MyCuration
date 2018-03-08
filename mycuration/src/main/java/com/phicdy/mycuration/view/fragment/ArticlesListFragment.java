@@ -150,13 +150,6 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
             }
         });
 
-        listView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return listener.onListViewTouchEvent(event);
-            }
-        });
-
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
