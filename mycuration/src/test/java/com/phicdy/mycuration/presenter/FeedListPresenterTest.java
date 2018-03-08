@@ -43,14 +43,14 @@ public class FeedListPresenterTest {
         allFeeds.add(new Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0));
         allFeeds.add(new Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 1));
         Mockito.when(adapter.getAllFeedsWithNumOfUnreadArticles()).thenReturn(allFeeds);
-        networkTaskManager = Mockito.mock(NetworkTaskManager.class);
+        networkTaskManager = NetworkTaskManager.INSTANCE;
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
         Mockito.when(unreadCountManager.getUnreadCount(FIRST_RSS_ID))
                 .thenReturn(0);
         Mockito.when(unreadCountManager.getUnreadCount(SECOND_RSS_ID))
                 .thenReturn(1);
         Mockito.when(unreadCountManager.getUnreadCount(Feed.DEFAULT_FEED_ID)).thenReturn(-1);
-        presenter = new FeedListPresenter(adapter, networkTaskManager, unreadCountManager);
+        presenter = new FeedListPresenter(false, adapter, networkTaskManager, unreadCountManager);
         view = new MockView();
         presenter.setView(view);
     }

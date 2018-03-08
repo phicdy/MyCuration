@@ -3,8 +3,6 @@ package com.phicdy.mycuration.presenter;
 import android.content.Intent;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.rss.RssParseExecutor;
 import com.phicdy.mycuration.rss.RssParseResult;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
@@ -15,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 public class FeedUrlHookPresenterTest {
@@ -28,7 +25,7 @@ public class FeedUrlHookPresenterTest {
 
     @Before
     public void setup() {
-        networkTaskManager = Mockito.mock(NetworkTaskManager.class);
+        networkTaskManager = NetworkTaskManager.INSTANCE;
         adapter = Mockito.mock(DatabaseAdapter.class);
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
         parser = Mockito.mock(RssParser.class);
@@ -55,16 +52,6 @@ public class FeedUrlHookPresenterTest {
     }
 
     @Test
-    public void receiverIsUnregisteredInAfterPause() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.pause();
-        assertFalse(view.isReceiverRegistered);
-    }
-
-    @Test
     public void finishWhenInvalidActionComes() {
         MockView view = new MockView();
         presenter.setView(view);
@@ -85,16 +72,6 @@ public class FeedUrlHookPresenterTest {
     }
 
     @Test
-    public void registerReceiverWhenActionViewAndUrlComes() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handle(Intent.ACTION_VIEW, "http://www.google.com");
-        assertTrue(view.isReceiverRegistered);
-    }
-
-    @Test
     public void toastShowsWhenActionViewAndInvalidUrlComes() {
         MockView view = new MockView();
         presenter.setView(view);
@@ -105,16 +82,6 @@ public class FeedUrlHookPresenterTest {
     }
 
     @Test
-    public void registerReceiverWhenActionSendAndUrlComes() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handle(Intent.ACTION_SEND, "http://www.google.com");
-        assertTrue(view.isReceiverRegistered);
-    }
-
-    @Test
     public void toastShowsWhenActionSendAndInvalidUrlComes() {
         MockView view = new MockView();
         presenter.setView(view);
@@ -122,16 +89,6 @@ public class FeedUrlHookPresenterTest {
         presenter.resume();
         presenter.handle(Intent.ACTION_SEND, "hogehoge");
         assertTrue(view.isInvalidUrlErrorToastShowed);
-    }
-
-    @Test
-    public void viewDoesNotFinishWhenInvalidActionComes() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handleFinish("hogehoge", "http://www.google.com", NetworkTaskManager.REASON_NOT_FOUND);
-        assertFalse(view.isFinished);
     }
 
     @Test
@@ -165,21 +122,10 @@ public class FeedUrlHookPresenterTest {
     }
 
     private class MockView implements FeedUrlHookView {
-        private boolean isReceiverRegistered = false;
         private boolean isSuccessToastShowed = false;
         private boolean isInvalidUrlErrorToastShowed = false;
         private boolean isGenericErrorToastShowed = false;
         private boolean isFinished = false;
-
-        @Override
-        public void registerFinishAddReceiver() {
-            isReceiverRegistered = true;
-        }
-
-        @Override
-        public void unregisterFinishAddReceiver() {
-            isReceiverRegistered = false;
-        }
 
         @Override
         public void showSuccessToast() {

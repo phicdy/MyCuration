@@ -35,6 +35,8 @@ Set status to read automatically by user settings
 
 ## Credits
 
+* [RxJava](https://github.com/ReactiveX/RxJava)
+* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [Retrofit](https://github.com/square/retrofit)
 * [Jsoup](https://github.com/jhy/jsoup/)
 * [FloatingActionButton](https://github.com/makovkastar/FloatingActionButton)

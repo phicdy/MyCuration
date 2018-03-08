@@ -5,24 +5,19 @@ import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.view.TopActivityView;
 
 public class TopActivityPresenter implements Presenter {
 
     private TopActivityView view;
     private DatabaseAdapter dbAdapter;
-    private boolean isAutoUpdate = false;
-    private NetworkTaskManager networkTaskManager;
     private int launchTab = POSITION_CURATION_FRAGMENT;
 
     private static final int POSITION_CURATION_FRAGMENT = 0;
     private static final int POSITION_FEED_FRAGMENT = 1;
     private static final int POSITION_FILTER_FRAGMENT = 2;
 
-    public TopActivityPresenter(boolean isAutoUpdate, NetworkTaskManager networkTaskManager, int launchTab) {
-        this.isAutoUpdate = isAutoUpdate;
-        this.networkTaskManager = networkTaskManager;
+    public TopActivityPresenter(int launchTab) {
         this.launchTab = launchTab;
     }
 
@@ -45,9 +40,6 @@ public class TopActivityPresenter implements Presenter {
         }).start();
 
         view.closeSearchView();
-        if (isAutoUpdate && !networkTaskManager.isUpdatingFeed()) {
-            networkTaskManager.updateAllFeeds(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles());
-        }
     }
 
     @Override

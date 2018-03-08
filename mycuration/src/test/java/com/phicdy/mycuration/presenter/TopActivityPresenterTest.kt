@@ -15,13 +15,13 @@ class TopActivityPresenterTest {
 
     @Before
     fun setup() {
-        networkTaskManager = Mockito.mock(NetworkTaskManager::class.java)
+        networkTaskManager = NetworkTaskManager
         mockView = Mockito.mock(TopActivityView::class.java)
     }
 
     @Test
     fun changeTabIsCalledWhenOnCreate() {
-        val presenter = TopActivityPresenter(false, networkTaskManager, 0)
+        val presenter = TopActivityPresenter(0)
         presenter.setView(mockView)
         presenter.create()
         Mockito.verify(mockView, times(1)).changeTab(0)

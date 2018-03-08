@@ -3,8 +3,8 @@ package com.phicdy.mycuration.presenter;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.db.DatabaseHelper;
 import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.rss.RssParseResult;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
@@ -31,7 +31,8 @@ public class FeedSearchPresenterTest {
 
     @Before
     public void setup() {
-        networkTaskManager = Mockito.mock(NetworkTaskManager.class);
+        networkTaskManager = NetworkTaskManager.INSTANCE;
+        DatabaseAdapter.setUp(Mockito.mock(DatabaseHelper.class));
         adapter = Mockito.mock(DatabaseAdapter.class);
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
         parser = Mockito.mock(RssParser.class);

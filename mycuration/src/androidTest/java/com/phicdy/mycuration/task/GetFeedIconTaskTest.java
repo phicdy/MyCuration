@@ -6,6 +6,7 @@ import com.phicdy.mycuration.task.GetFeedIconTask;
 import com.phicdy.mycuration.util.FileUtil;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -19,19 +20,24 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class GetFeedIconTaskTest {
 
+    @Before
+	public void setup() {
+    	FileUtil.INSTANCE.setUpIconSaveFolder(getTargetContext());
+	}
+
     @After
     public void tearDown() {
-        File file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
+        File file = new File(FileUtil.INSTANCE.iconSaveFolder() + "/kindou.info.png");
         if (file.exists()) file.delete();
-        File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
+        File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder() + "/labs.gree.jp.png");
         if (greeBlogIcon.exists()) greeBlogIcon.delete();
     }
 
     @Test
 	public void iconExistsWhenGetKindouIcon() {
-        File file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
+        File file = new File(FileUtil.INSTANCE.iconSaveFolder() + "/kindou.info.png");
         if (file.exists()) assertTrue(file.delete());
-		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(getTargetContext());
+		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder();
 		GetFeedIconTask task = new GetFeedIconTask(iconSaveFolderStr);
 		task.execute("http://kindou.info");
 		try {
@@ -39,15 +45,15 @@ public class GetFeedIconTaskTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		file = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/kindou.info.png");
+		file = new File(FileUtil.INSTANCE.iconSaveFolder() + "/kindou.info.png");
 		assertTrue(file.exists());
 	}
 
 	@Test
 	public void iconDoesNotExistWhenGetGreeBlogIcon() {
-        File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
+        File greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder() + "/labs.gree.jp.png");
         if (greeBlogIcon.exists()) assertTrue(greeBlogIcon.delete());
-		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder(getTargetContext());
+		String iconSaveFolderStr = FileUtil.INSTANCE.iconSaveFolder();
 		GetFeedIconTask greeBlogIconTask = new GetFeedIconTask(iconSaveFolderStr);
 		greeBlogIconTask.execute("http://labs.gree.jp/blog");
 		try {
@@ -55,7 +61,7 @@ public class GetFeedIconTaskTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-        greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder(getTargetContext()) + "/labs.gree.jp.png");
+        greeBlogIcon = new File(FileUtil.INSTANCE.iconSaveFolder() + "/labs.gree.jp.png");
 		assertFalse(greeBlogIcon.exists());
 	}
 }

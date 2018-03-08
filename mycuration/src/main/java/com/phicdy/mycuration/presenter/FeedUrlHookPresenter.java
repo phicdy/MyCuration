@@ -2,7 +2,6 @@ package com.phicdy.mycuration.presenter;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
@@ -26,6 +25,8 @@ public class FeedUrlHookPresenter implements Presenter {
             Feed newFeed = dbAdapter.getFeedByUrl(url);
             unreadCountManager.addFeed(newFeed);
             networkTaskManager.updateFeed(newFeed);
+            view.showSuccessToast();
+            view.finishView();
         }
 
         @Override
@@ -62,27 +63,17 @@ public class FeedUrlHookPresenter implements Presenter {
 
     @Override
     public void pause() {
-        view.unregisterFinishAddReceiver();
     }
 
     public void handle(@NonNull String action, @NonNull String url) {
         if (action.equals(Intent.ACTION_VIEW) || action.equals(Intent.ACTION_SEND)) {
             if (UrlUtil.INSTANCE.isCorrectUrl(url)) {
-                view.registerFinishAddReceiver();
                 RssParseExecutor executor = new RssParseExecutor(parser, dbAdapter);
                 executor.start(url, callback);
             }else {
                 view.showInvalidUrlErrorToast();
             }
         }else {
-            view.finishView();
-        }
-    }
-
-    public void handleFinish(@NonNull String action, @Nullable String feedUrl,
-                      int errorReason) {
-        if (action.equals(NetworkTaskManager.FINISH_UPDATE_ACTION)) {
-            view.showSuccessToast();
             view.finishView();
         }
     }

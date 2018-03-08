@@ -26,7 +26,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 		}
 		DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
 		if(intent.getAction().equals(AUTO_UPDATE_ACTION)) {
-			NetworkTaskManager updateTask = NetworkTaskManager.getInstance(context);
+			NetworkTaskManager updateTask = NetworkTaskManager.INSTANCE;
 	
 			updateTask.updateAllFeeds(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles());
 			AlarmManagerTaskManager manager = new AlarmManagerTaskManager(context);
@@ -43,7 +43,7 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 				return;
 			}
 			// Update has higher priority
-			if (NetworkTaskManager.getInstance(context).isUpdatingFeed()) {
+			if (NetworkTaskManager.INSTANCE.isUpdatingFeed()) {
 				AlarmManagerTaskManager manager = new AlarmManagerTaskManager(context);
 				manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 				return;

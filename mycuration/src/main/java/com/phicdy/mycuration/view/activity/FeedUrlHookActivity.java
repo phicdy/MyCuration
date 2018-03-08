@@ -1,10 +1,8 @@
 package com.phicdy.mycuration.view.activity;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
@@ -24,7 +22,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
 
     private FeedUrlHookPresenter presenter;
-	private BroadcastReceiver receiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +30,7 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
 
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         UnreadCountManager unreadCountManager = UnreadCountManager.getInstance();
-        NetworkTaskManager networkTaskManager = NetworkTaskManager.getInstance(this);
+        NetworkTaskManager networkTaskManager = NetworkTaskManager.INSTANCE;
         RssParser parser = new RssParser();
 		presenter = new FeedUrlHookPresenter(dbAdapter, unreadCountManager, networkTaskManager, parser);
 		presenter.setView(this);
@@ -67,32 +64,6 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
 	protected void attachBaseContext(Context newBase) {
 		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
 	}
-
-    @Override
-    public void registerFinishAddReceiver() {
-        receiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                String feedUrl = intent.getStringExtra(NetworkTaskManager.ADDED_FEED_URL);
-                int errorReason = intent.getIntExtra(NetworkTaskManager.ADD_FEED_ERROR_REASON,
-                        NetworkTaskManager.REASON_NOT_FOUND);
-                presenter.handleFinish(action, feedUrl, errorReason);
-            }
-        };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(NetworkTaskManager.FINISH_UPDATE_ACTION);
-        registerReceiver(receiver, filter);
-    }
-
-    @Override
-    public void unregisterFinishAddReceiver() {
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-            receiver = null;
-        }
-    }
 
     @Override
     public void showInvalidUrlErrorToast() {
