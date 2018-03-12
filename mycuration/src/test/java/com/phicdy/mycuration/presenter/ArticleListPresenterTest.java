@@ -52,7 +52,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        assertThat(view.loadedArticles.size(), is(0));
+        assertThat(presenter.articleSize(), is(0));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        assertThat(view.loadedArticles.size(), is(0));
+        assertThat(presenter.articleSize(), is(0));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        assertThat(view.loadedArticles.size(), is(0));
+        assertThat(presenter.articleSize(), is(0));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        assertThat(view.loadedArticles.size(), is(1));
+        assertThat(presenter.articleSize(), is(1));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        assertThat(view.loadedArticles.size(), is(1));
+        assertThat(presenter.articleSize(), is(1));
     }
 
     @Test
@@ -169,7 +169,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        assertThat(view.loadedArticles.size(), is(1));
+        assertThat(presenter.articleSize(), is(1));
     }
 
     @Test
@@ -202,9 +202,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        for (Article loadedArticle : view.loadedArticles) {
-            assertThat(loadedArticle.getStatus(), is(Article.UNREAD));
-        }
+        assertTrue(presenter.isAllUnreadArticle());
     }
 
     @Test
@@ -237,9 +235,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        for (Article loadedArticle : view.loadedArticles) {
-            assertThat(loadedArticle.getStatus(), is(Article.UNREAD));
-        }
+        assertTrue(presenter.isAllUnreadArticle());
     }
 
     @Test
@@ -271,22 +267,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        for (Article loadedArticle : view.loadedArticles) {
-            assertThat(loadedArticle.getStatus(), is(Article.UNREAD));
-        }
-    }
-
-    @Test
-    public void footerIsInvisibleOnResume() {
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        UnreadCountManager manager = Mockito.mock(UnreadCountManager.class);
-        ArticleListPresenter presenter = new ArticleListPresenter(
-                1, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.resume();
-        assertFalse(view.isFooterVisible);
+        assertTrue(presenter.isAllUnreadArticle());
     }
 
     @Test
@@ -324,7 +305,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        presenter.onListItemClicked(clickedArticle);
+        presenter.onListItemClicked(0);
         assertThat(clickedArticle.getStatus(), is(Article.TOREAD));
     }
 
@@ -350,7 +331,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        presenter.onListItemClicked(clickedArticle);
+        presenter.onListItemClicked(0);
         assertThat(clickedArticle.getStatus(), is(Article.TOREAD));
     }
 
@@ -376,7 +357,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        presenter.onListItemClicked(clickedArticle);
+        presenter.onListItemClicked(0);
         assertThat(clickedArticle.getStatus(), is(Article.READ));
     }
 
@@ -402,7 +383,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        presenter.onListItemClicked(clickedArticle);
+        presenter.onListItemClicked(0);
         assertThat(view.openedUrl, is(clickedArticle.getUrl()));
     }
 
@@ -428,7 +409,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        presenter.onListItemClicked(clickedArticle);
+        presenter.onListItemClicked(0);
         assertThat(view.openedUrl, is(clickedArticle.getUrl()));
     }
 
@@ -454,7 +435,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        presenter.onListItemClicked(clickedArticle);
+        presenter.onListItemClicked(0);
         assertTrue(view.isOpenedInternalWebView);
     }
 
@@ -480,7 +461,7 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        presenter.onListItemClicked(clickedArticle);
+        presenter.onListItemClicked(0);
         assertTrue(view.isOpenedExternalWebView);
     }
 
@@ -506,37 +487,15 @@ public class ArticleListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.createView();
-        presenter.onListItemLongClicked(longClickedArticle);
+        presenter.onListItemLongClicked(0);
         assertThat(view.shareUrl, is(longClickedArticle.getUrl()));
     }
     private class MockView implements ArticleListView {
 
-        private boolean isFooterVisible = false;
         private boolean isOpenedInternalWebView = false;
         private boolean isOpenedExternalWebView = false;
         private String shareUrl;
         private String openedUrl;
-        private ArrayList<Article> loadedArticles = new ArrayList<>();
-
-        @Override
-        public void invalidateView() {
-
-        }
-
-        @Override
-        public void showFooter() {
-            isFooterVisible = true;
-        }
-
-        @Override
-        public void removeFooter() {
-            isFooterVisible = false;
-        }
-
-        @Override
-        public void addArticle(Article article) {
-            loadedArticles.add(article);
-        }
 
         @Override
         public void openInternalWebView(@NonNull String url) {
@@ -556,18 +515,7 @@ public class ArticleListPresenterTest {
         }
 
         @Override
-        public int size() {
-            return 0;
-        }
-
-        @Override
         public void finish() {
-
-        }
-
-        @Override
-        public Article getItem(int position) {
-            return null;
         }
 
         @Override
@@ -586,13 +534,18 @@ public class ArticleListPresenterTest {
         }
 
         @Override
-        public void scroll(int positionToScroll, int pixelFromTopAfterScroll) {
+        public void scrollTo(int position) {
 
         }
 
         @Override
         public boolean isBottomVisible() {
             return false;
+        }
+
+        @Override
+        public void showEmptyView() {
+
         }
     }
 }
