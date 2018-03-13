@@ -152,9 +152,11 @@ public class FeedListFragment extends Fragment implements FeedListView {
     public void init(@NonNull ArrayList<Feed> feeds) {
         if (feeds.size() == 0) emptyView.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
-        rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
-        feedsListView.setAdapter(rssFeedListAdapter);
-        rssFeedListAdapter.notifyDataSetChanged();
+        if (getActivity() != null) {
+            rssFeedListAdapter = new RssFeedListAdapter(feeds, getActivity());
+            feedsListView.setAdapter(rssFeedListAdapter);
+            rssFeedListAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
