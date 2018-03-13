@@ -29,6 +29,7 @@ import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.ArticleListView;
+import com.phicdy.mycuration.view.ArticleRecyclerView;
 import com.phicdy.mycuration.view.activity.InternalWebViewActivity;
 import com.phicdy.mycuration.view.activity.TopActivity;
 
@@ -38,7 +39,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     private ArticleListPresenter presenter;
 
-    private RecyclerView recyclerView;
+    private ArticleRecyclerView recyclerView;
     private SimpleItemRecyclerViewAdapter articlesListAdapter;
     private static final String OPEN_URL_ID = "openUrl";
 
@@ -93,7 +94,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_articles_list, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.rv_article);
+        recyclerView = (ArticleRecyclerView) view.findViewById(R.id.rv_article);
         emptyView = (TextView) view.findViewById(R.id.emptyViewArticle);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         articlesListAdapter = new SimpleItemRecyclerViewAdapter();
@@ -114,6 +115,7 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
         recyclerView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                v.performClick();
                 return listener.onListViewTouchEvent(event);
             }
         });
