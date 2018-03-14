@@ -179,7 +179,7 @@ public class ArticleListPresenter implements Presenter {
 
     private boolean isAllRead() {
         boolean isAllRead = true;
-        for (int i = 0; i < loadedPosition; i++) {
+        for (int i = 0; i <= loadedPosition; i++) {
             Article article = allArticles.get(i);
             if(article.getStatus().equals(Article.UNREAD)) {
                 isAllRead = false;
