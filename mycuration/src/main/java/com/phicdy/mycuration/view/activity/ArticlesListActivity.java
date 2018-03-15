@@ -8,7 +8,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,8 +18,8 @@ import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
-import com.phicdy.mycuration.view.fragment.ArticlesListFragment;
 import com.phicdy.mycuration.util.PreferenceHelper;
+import com.phicdy.mycuration.view.fragment.ArticlesListFragment;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -28,8 +27,6 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
 
     public static final String OPEN_URL_ID = "openUrl";
     private static final int DEFAULT_CURATION_ID = -1;
-
-    private GestureDetector mGestureDetector;
 
     private SearchView searchView;
 
@@ -67,7 +64,6 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             setTitle(selectedFeed.getTitle());
             gaTitle = getString(R.string.ga_not_all_title);
         }
-        setAllListener();
     }
 
     @Override
@@ -114,32 +110,5 @@ public class ArticlesListActivity extends AppCompatActivity implements ArticlesL
             searchView.setQuery("",false);
         }
         GATrackerHelper.INSTANCE.sendScreen(gaTitle);
-    }
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return mGestureDetector.onTouchEvent(event);
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
-    private void setAllListener() {
-        // Handle swipe event
-        SimpleOnGestureListener mOnGestureListener = new SimpleOnGestureListener() {
-            @Override
-            public boolean onFling(MotionEvent event1, MotionEvent event2,
-                                   float velocityX, float velocityY) {
-                fragment.onFlying(event1, event2, velocityX);
-                return true;
-            }
-        };
-        mGestureDetector = new GestureDetector(this, mOnGestureListener);
-    }
-
-    @Override
-    public boolean onListViewTouchEvent(MotionEvent event) {
-        return mGestureDetector.onTouchEvent(event);
     }
 }

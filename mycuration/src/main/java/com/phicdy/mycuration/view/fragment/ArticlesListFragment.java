@@ -11,11 +11,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,6 +34,10 @@ import com.phicdy.mycuration.view.activity.TopActivity;
 
 import java.security.InvalidParameterException;
 
+import static android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE;
+import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
+import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
+
 public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     private ArticleListPresenter presenter;
@@ -49,7 +52,6 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     private TextView emptyView;
 
     public interface OnArticlesListFragmentListener {
-        boolean onListViewTouchEvent(MotionEvent event);
         void finish();
     }
 
@@ -112,13 +114,24 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     }
 
     private void setAllListener() {
-        recyclerView.setOnTouchListener(new OnTouchListener() {
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                v.performClick();
-                return listener.onListViewTouchEvent(event);
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return makeFlag(ACTION_STATE_SWIPE, LEFT | RIGHT);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                presenter.onSwiped(direction, viewHolder.getAdapterPosition());
             }
         });
+        helper.attachToRecyclerView(recyclerView);
+        recyclerView.addItemDecoration(helper);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -142,13 +155,6 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
                 GATrackerHelper.INSTANCE.sendEvent(getString(R.string.scroll_article_list));
             }
         });
-    }
-
-    public void onFlying(MotionEvent event1, MotionEvent event2, float velocityX) {
-        if (event1 == null || event2 == null) return;
-        // Set touched position in articles list from touch event
-        View touchedView = recyclerView.findChildViewUnder(event1.getX(), event1.getY());
-        presenter.onFlying(recyclerView.getChildAdapterPosition(touchedView), event1, event2, velocityX);
     }
 
     public void handleAllRead() {

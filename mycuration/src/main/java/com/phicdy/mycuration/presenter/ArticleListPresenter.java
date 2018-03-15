@@ -2,7 +2,6 @@ package com.phicdy.mycuration.presenter;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.view.MotionEvent;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
@@ -20,6 +19,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
+import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
+import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
+
 public class ArticleListPresenter implements Presenter {
 
     private ArticleListView view;
@@ -36,9 +38,6 @@ public class ArticleListPresenter implements Presenter {
     private ArrayList<Article> allArticles;
     private boolean isSwipeRightToLeft = false;
     private boolean isSwipeLeftToRight = false;
-    private static final int SWIPE_MIN_WIDTH = 120;
-    private static final int SWIPE_MAX_OFF_PATH = 250;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 
     public static final int DEFAULT_CURATION_ID = -1;
     private static final int LOAD_COUNT = 100;
@@ -158,6 +157,7 @@ public class ArticleListPresenter implements Presenter {
     private void setReadStatusToTouchedView(Article article, final String status, boolean isAllReadBack) {
         String oldStatus = article.getStatus();
         if (oldStatus.equals(status) || (oldStatus.equals(Article.READ) && status.equals(Article.TOREAD))) {
+            view.notifyListView();
             return;
         }
         adapter.saveStatus(article.getId(), status);
@@ -187,53 +187,6 @@ public class ArticleListPresenter implements Presenter {
             }
         }
         return  isAllRead;
-    }
-
-    public void onFlying(int touchedPosition, MotionEvent event1, MotionEvent event2, float velocityX) {
-        if (touchedPosition < 0 || touchedPosition > loadedPosition) return;
-        isSwipeLeftToRight = false;
-        isSwipeRightToLeft = false;
-        try {
-            if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
-                return;
-            }
-            // event1 is first motion event and event2 is second motion event.
-            // So, if the distance from event1'x to event2'x is longer than a certain value, it is swipe
-            // And if event1'x is bigger than event2'x, it is swipe from right
-            // And if event1'x is smaller than event2'x, it is swipe from left
-            Article touchedArticle = allArticles.get(touchedPosition);
-            if (event1.getX() - event2.getX() > SWIPE_MIN_WIDTH
-                    && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                // Right to Left
-                isSwipeRightToLeft = true;
-                switch (swipeDirection) {
-                    case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
-                        setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack);
-                        break;
-                    case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
-                        setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack);
-                        break;
-                    default:
-                        break;
-                }
-            } else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
-                    && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                // Left to Right
-                isSwipeLeftToRight = true;
-                switch (swipeDirection) {
-                    case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
-                        setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack);
-                        break;
-                    case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
-                        setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } catch (Exception e) {
-            // nothing
-        }
     }
 
     public void onListItemLongClicked(int position) {
@@ -352,5 +305,39 @@ public class ArticleListPresenter implements Presenter {
             if (index == loadedPosition) break;
         }
         return true;
+    }
+
+    public void onSwiped(int direction, int touchedPosition) {
+        Article touchedArticle = allArticles.get(touchedPosition);
+        switch (direction) {
+            case LEFT:
+                isSwipeRightToLeft = true;
+                switch (swipeDirection) {
+                    case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
+                        setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack);
+                        break;
+                    case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
+                        setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack);
+                        break;
+                    default:
+                        break;
+                }
+                isSwipeRightToLeft = false;
+                break;
+            case RIGHT:
+                isSwipeLeftToRight = true;
+                switch (swipeDirection) {
+                    case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
+                        setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack);
+                        break;
+                    case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
+                        setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack);
+                        break;
+                    default:
+                        break;
+                }
+                isSwipeLeftToRight = false;
+                break;
+        }
     }
 }
