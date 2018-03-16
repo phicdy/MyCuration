@@ -9,55 +9,49 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.melnykov.fab.FloatingActionButton;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presenter.ArticleListPresenter;
-import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.util.TextUtil;
 import com.phicdy.mycuration.view.ArticleListView;
+import com.phicdy.mycuration.view.ArticleRecyclerView;
 import com.phicdy.mycuration.view.activity.InternalWebViewActivity;
 import com.phicdy.mycuration.view.activity.TopActivity;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.security.InvalidParameterException;
+
+import static android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE;
+import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
+import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
 
 public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     private ArticleListPresenter presenter;
 
-    private ListView listView;
-    private ArticlesListAdapter articlesListAdapter;
+    private ArticleRecyclerView recyclerView;
+    private SimpleItemRecyclerViewAdapter articlesListAdapter;
     private static final String OPEN_URL_ID = "openUrl";
 
-    private View footer;
     private FloatingActionButton fab;
 
     private OnArticlesListFragmentListener listener;
+    private TextView emptyView;
+
     public interface OnArticlesListFragmentListener {
-        boolean onListViewTouchEvent(MotionEvent event);
         void finish();
     }
 
@@ -102,12 +96,11 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_articles_list, container, false);
-        listView = (ListView) view.findViewById(R.id.lv_article);
-        articlesListAdapter = new ArticlesListAdapter(new ArrayList<Article>());
-        listView.setAdapter(articlesListAdapter);
-        listView.setEmptyView(view.findViewById(R.id.emptyView));
-        footer = inflater.inflate(R.layout.footer_article_list_activity, container, false);
-        listView.addFooterView(footer);
+        recyclerView = (ArticleRecyclerView) view.findViewById(R.id.rv_article);
+        emptyView = (TextView) view.findViewById(R.id.emptyViewArticle);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        articlesListAdapter = new SimpleItemRecyclerViewAdapter();
+        recyclerView.setAdapter(articlesListAdapter);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         setAllListener();
         presenter.createView();
@@ -121,57 +114,37 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     }
 
     private void setAllListener() {
-        // When an article selected, open this URL in default browser
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Article clickedArticle = articlesListAdapter.getItem(position);
-                presenter.onListItemClicked(clickedArticle);
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return makeFlag(ACTION_STATE_SWIPE, LEFT | RIGHT);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                presenter.onSwiped(direction, viewHolder.getAdapterPosition());
             }
         });
+        helper.attachToRecyclerView(recyclerView);
+        recyclerView.addItemDecoration(helper);
 
-        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
-                Article clickedArticle = articlesListAdapter.getItem(position);
-                if (clickedArticle != null) {
-                    presenter.onListItemLongClicked(clickedArticle);
-                }
-                return true;
-            }
-        });
-
-        listView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return listener.onListViewTouchEvent(event);
-            }
-        });
-
-        listView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return listener.onListViewTouchEvent(event);
-            }
-        });
-
-        listView.setOnScrollListener(new OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (totalItemCount == visibleItemCount) {
-                    // All of the items are visible
-                    return;
-                }
-                if (totalItemCount == firstVisibleItem + visibleItemCount) {
-                    // Reach end of the list
-                    presenter.loadArticles();
-                }
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int lastItemPosition = manager.findLastVisibleItemPosition();
+                presenter.onScrolled(lastItemPosition);
             }
         });
 
@@ -184,40 +157,8 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
         });
     }
 
-    public void onFlying(MotionEvent event1, MotionEvent event2, float velocityX) {
-        // Set touched position in articles list from touch event
-        int touchedPosition = listView.pointToPosition(
-                (int) event1.getX(), (int) event1.getY());
-        if (touchedPosition < 0 || touchedPosition > articlesListAdapter.getCount()) return;
-        presenter.onFlying(touchedPosition, event1, event2, velocityX);
-    }
-
     public void handleAllRead() {
         presenter.handleAllRead();
-    }
-
-    @Override
-    public void invalidateView() {
-        listView.invalidateViews();
-    }
-
-    @Override
-    public void showFooter() {
-        // It causes the crash of ClassCastException
-        // if ListView#addFooterView() is called before ListView#setAdapter()
-        if (listView.getAdapter() != null) {
-            listView.addFooterView(footer);
-        }
-    }
-
-    @Override
-    public void removeFooter() {
-        listView.removeFooterView(footer);
-    }
-
-    @Override
-    public void addArticle(Article article) {
-        articlesListAdapter.add(article);
     }
 
     @Override
@@ -242,28 +183,20 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     }
 
     @Override
-    public int size() {
-        return articlesListAdapter.getCount();
-    }
-
-    @Override
     public void finish() {
         listener.finish();
     }
 
     @Override
-    public Article getItem(int position) {
-        return articlesListAdapter.getItem(position);
-    }
-
-    @Override
     public int getFirstVisiblePosition() {
-        return listView.getFirstVisiblePosition();
+        LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        return manager.findFirstVisibleItemPosition();
     }
 
     @Override
     public int getLastVisiblePosition() {
-        return listView.getLastVisiblePosition();
+        LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        return manager.findLastCompletelyVisibleItemPosition();
     }
 
     @Override
@@ -276,118 +209,165 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     }
 
     @Override
-    public void scroll(int positionToScroll, int pixelFromTopAfterScroll) {
-        if (positionToScroll < 0 || pixelFromTopAfterScroll < 0) return;
-        listView.smoothScrollToPositionFromTop(positionToScroll, pixelFromTopAfterScroll);
+    public void scrollTo(int position) {
+        recyclerView.smoothScrollToPosition(position);
     }
 
     @Override
     public boolean isBottomVisible() {
-        boolean isLastItemVisible = listView.getLastVisiblePosition() == listView.getAdapter().getCount()-1;
-        int chilidCount = listView.getChildCount();
+        boolean isLastItemVisible = getLastVisiblePosition() == recyclerView.getAdapter().getItemCount()-1;
+        int chilidCount = recyclerView.getChildCount();
         if (chilidCount < 1) return false;
-        View lastItem = listView.getChildAt(chilidCount-1);
+        View lastItem = recyclerView.getChildAt(chilidCount-1);
         if (lastItem == null) return false;
-        boolean isLastItemBottomVisible = lastItem.getBottom() == listView.getHeight();
+        boolean isLastItemBottomVisible = lastItem.getBottom() == recyclerView.getHeight();
         return isLastItemVisible && isLastItemBottomVisible;
     }
 
-    /**
-     *
-     * @author phicdy Display articles list
-     */
-    private class ArticlesListAdapter extends ArrayAdapter<Article> {
+    @Override
+    public void showEmptyView() {
+        recyclerView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+    }
 
-        private ViewHolder holder;
+    public class SimpleItemRecyclerViewAdapter
+            extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        ArticlesListAdapter(ArrayList<Article> articles) {
-            /*
-            * @param cotext
-            *
-            * @param int : Resource ID
-            *
-            * @param T[] objects : data list
-            */
-            super(getActivity(), R.layout.articles_list, articles);
-        }
-        @NonNull
+        public static final int VIEW_TYPE_ARTICLE = 0;
+        public static final int VIEW_TYPE_FOOTER = 1;
         @Override
-        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            // Use contentView
-            View row = convertView;
-            if (convertView == null) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.articles_list, parent, false);
-                holder = new ViewHolder();
-                holder.articleTitle = (TextView)row.findViewById(R.id.articleTitle);
-                holder.articlePostedTime = (TextView) row.findViewById(R.id.articlePostedTime);
-                holder.articlePoint = (TextView) row.findViewById(R.id.articlePoint);
-                holder.articleUrl = (TextView) row.findViewById(R.id.tv_articleUrl);
-                holder.feedTitleView = (TextView) row.findViewById(R.id.feedTitle);
-                holder.feedIconView = (ImageView) row.findViewById(R.id.iv_feed_icon);
-                row.setTag(holder);
-            }else {
-                holder = (ViewHolder)row.getTag();
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            RecyclerView.ViewHolder holder;
+            switch (viewType) {
+                case VIEW_TYPE_FOOTER:
+                    View footer = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.footer_article_list_activity, parent, false);
+                    holder = new FooterViewHolder(footer);
+                    break;
+                case VIEW_TYPE_ARTICLE:
+                    View view = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.articles_list, parent, false);
+                    holder = new ArticleViewHolder(view);
+                    break;
+                default:
+                    throw new InvalidParameterException("Invalid view type for article list");
             }
-            
-            Article article = this.getItem(position);
-            if (article != null) {
-                holder.articleTitle.setText(article.getTitle());
-                holder.articleUrl.setText(article.getUrl());
-
-                // Set article posted date
-                SimpleDateFormat format = new SimpleDateFormat(
-                        "yyyy/MM/dd HH:mm:ss", Locale.US);
-                String dateString = format.format(new Date(article
-                        .getPostedDate()));
-                holder.articlePostedTime.setText(dateString);
-
-                // Set RSS Feed unread article count
-                String hatenaPoint = article.getPoint();
-                if(hatenaPoint.equals(Article.DEDAULT_HATENA_POINT)) {
-                    holder.articlePoint.setText(getString(R.string.not_get_hatena_point));
-                }else {
-                    holder.articlePoint.setText(hatenaPoint);
-                }
-
-                String feedTitle = article.getFeedTitle();
-                if(feedTitle == null) {
-                    holder.feedTitleView.setVisibility(View.GONE);
-                    holder.feedIconView.setVisibility(View.GONE);
-                }else {
-                    holder.feedTitleView.setText(feedTitle);
-                    holder.feedTitleView.setTextColor(Color.BLACK);
-
-                    String iconPath = article.getFeedIconPath();
-                    if (!TextUtil.INSTANCE.isEmpty(iconPath) && new File(iconPath).exists()) {
-                        Bitmap bmp = BitmapFactory.decodeFile(article.getFeedIconPath());
-                        holder.feedIconView.setImageBitmap(bmp);
-                    }else {
-                        holder.feedIconView.setImageResource(R.drawable.no_icon);
-                    }
-                }
-                holder.articleTitle.setTextColor(Color.BLACK);
-                holder.articlePostedTime.setTextColor(Color.BLACK);
-                holder.articlePoint.setTextColor(Color.BLACK);
-
-                // Change color if already be read
-                if (article.getStatus().equals(Article.TOREAD) || article.getStatus().equals(Article.READ)) {
-                    holder.articleTitle.setTextColor(Color.GRAY);
-                    holder.articlePostedTime.setTextColor(Color.GRAY);
-                    holder.articlePoint.setTextColor(Color.GRAY);
-                    holder.feedTitleView.setTextColor(Color.GRAY);
-                }
-            }
-            return row;
+            return holder;
         }
 
-        private class ViewHolder {
-            TextView articleTitle;
-            TextView articlePostedTime;
-            TextView articlePoint;
-            TextView articleUrl;
-            TextView feedTitleView;
-            ImageView feedIconView;
+        @Override
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+            if (holder instanceof ArticleViewHolder) {
+                ArticleViewHolder articleViewHolder = (ArticleViewHolder) holder;
+                articleViewHolder.mView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        presenter.onListItemClicked(holder.getAdapterPosition());
+                    }
+                });
+                articleViewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        presenter.onListItemLongClicked(holder.getAdapterPosition());
+                        return true;
+                    }
+                });
+                presenter.onBindViewHolder(articleViewHolder, position);
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return presenter.onGetItemViewType(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return presenter.articleSize();
+        }
+
+        class FooterViewHolder extends RecyclerView.ViewHolder {
+            FooterViewHolder(View itemView) {
+                super(itemView);
+            }
+        }
+        public class ArticleViewHolder extends RecyclerView.ViewHolder {
+            final View mView;
+            final TextView articleTitle;
+            final TextView articlePostedTime;
+            final TextView articlePoint;
+            final TextView articleUrl;
+            final TextView feedTitleView;
+            final ImageView feedIconView;
+
+            ArticleViewHolder(View view) {
+                super(view);
+                articleTitle = (TextView)view.findViewById(R.id.articleTitle);
+                articlePostedTime = (TextView) view.findViewById(R.id.articlePostedTime);
+                articlePoint = (TextView) view.findViewById(R.id.articlePoint);
+                articleUrl = (TextView) view.findViewById(R.id.tv_articleUrl);
+                feedTitleView = (TextView) view.findViewById(R.id.feedTitle);
+                feedIconView = (ImageView) view.findViewById(R.id.iv_feed_icon);
+                mView = view;
+            }
+
+            public void setArticleTitle(@NonNull String title) {
+                articleTitle.setText(title);
+            }
+
+            public void setArticleUrl(@NonNull String url) {
+                articleUrl.setText(url);
+            }
+
+            public void setArticlePostedTime(@NonNull String time) {
+                articlePostedTime.setText(time);
+            }
+
+            public void setNotGetPoint() {
+                articlePoint.setText(getString(R.string.not_get_hatena_point));
+            }
+
+            public void setArticlePoint(@NonNull String point) {
+                articlePoint.setText(point);
+            }
+
+            public void hideRssInfo() {
+                feedTitleView.setVisibility(View.GONE);
+                feedIconView.setVisibility(View.GONE);
+            }
+
+            public void setRssTitle(@NonNull String title) {
+                feedTitleView.setText(title);
+                feedTitleView.setTextColor(Color.BLACK);
+            }
+
+            public void setRssIcon(@NonNull String path) {
+                Bitmap bmp = BitmapFactory.decodeFile(path);
+                feedIconView.setImageBitmap(bmp);
+            }
+
+            public void setDefaultRssIcon() {
+                feedIconView.setImageResource(R.drawable.no_icon);
+            }
+
+            public void changeColorToRead() {
+                articleTitle.setTextColor(Color.GRAY);
+                articlePostedTime.setTextColor(Color.GRAY);
+                articlePoint.setTextColor(Color.GRAY);
+                feedTitleView.setTextColor(Color.GRAY);
+            }
+
+            public void changeColorToUnread() {
+                articleTitle.setTextColor(Color.BLACK);
+                articlePostedTime.setTextColor(Color.BLACK);
+                articlePoint.setTextColor(Color.BLACK);
+                feedTitleView.setTextColor(Color.BLACK);
+            }
+
+            @Override
+            public String toString() {
+                return super.toString();
+            }
         }
     }
 }

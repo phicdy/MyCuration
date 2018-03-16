@@ -35,6 +35,7 @@ Set status to read automatically by user settings
 
 ## Credits
 
+* [RecyclerView](https://dl.google.com/dl/android/maven2/index.html)
 * [RxJava](https://github.com/ReactiveX/RxJava)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [Retrofit](https://github.com/square/retrofit)
@@ -49,7 +50,7 @@ Set status to read automatically by user settings
 
 The MIT License (MIT)
 
-Copyright (c) 2015 phicdy
+Copyright (c) 2018 phicdy
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

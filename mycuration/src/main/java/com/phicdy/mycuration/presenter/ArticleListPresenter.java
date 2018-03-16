@@ -2,17 +2,25 @@ package com.phicdy.mycuration.presenter;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.view.MotionEvent;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
+import com.phicdy.mycuration.util.TextUtil;
 import com.phicdy.mycuration.view.ArticleListView;
+import com.phicdy.mycuration.view.fragment.ArticlesListFragment;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
+
+import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
+import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
 
 public class ArticleListPresenter implements Presenter {
 
@@ -30,12 +38,10 @@ public class ArticleListPresenter implements Presenter {
     private ArrayList<Article> allArticles;
     private boolean isSwipeRightToLeft = false;
     private boolean isSwipeLeftToRight = false;
-    private static final int SWIPE_MIN_WIDTH = 120;
-    private static final int SWIPE_MAX_OFF_PATH = 250;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 
     public static final int DEFAULT_CURATION_ID = -1;
     private static final int LOAD_COUNT = 100;
+    private int loadedPosition = -1;
 
     public ArticleListPresenter(int feedId, int curationId, DatabaseAdapter adapter,
                                 UnreadCountManager unreadCountManager,
@@ -61,8 +67,12 @@ public class ArticleListPresenter implements Presenter {
 
     public void createView() {
         allArticles = loadAllArticles();
-        loadArticle(LOAD_COUNT, allArticles);
-        view.notifyListView();
+        loadArticle(LOAD_COUNT);
+        if (allArticles.size() == 0) {
+            view.showEmptyView();
+        } else {
+            view.notifyListView();
+        }
     }
 
     private @NonNull ArrayList<Article> loadAllArticles() {
@@ -86,26 +96,23 @@ public class ArticleListPresenter implements Presenter {
         return allArticles;
     }
 
-    private void loadArticle(int num, ArrayList<Article> articles) {
-        int currentSize = view.size();
-        for (int i = currentSize; i < currentSize+num; i++) {
-            if (i >= articles.size()) {
-                break;
-            }
-            view.addArticle(articles.get(i));
-        }
+    private void loadArticle(int num) {
+        if (loadedPosition >= allArticles.size() || num < 0) return;
+        loadedPosition += num;
+        if (loadedPosition >= allArticles.size()-1) loadedPosition = allArticles.size()-1;
     }
 
     @Override
     public void resume() {
-        view.removeFooter();
     }
 
     @Override
     public void pause() {
     }
 
-    public void onListItemClicked(Article article) {
+    public void onListItemClicked(int position) {
+        if (position < 0) return;
+        Article article = allArticles.get(position);
         if(!isSwipeLeftToRight && !isSwipeRightToLeft) {
             setReadStatusToTouchedView(article, Article.TOREAD, false);
             if(isOpenInternal) {
@@ -118,17 +125,16 @@ public class ArticleListPresenter implements Presenter {
         isSwipeLeftToRight = false;
     }
 
-    public void loadArticles() {
+    public void onScrolled(int lastItemPosition) {
+        if (loadedPosition == allArticles.size()-1) {
+            // All articles are loaded
+            return;
+        }
+        if (lastItemPosition < loadedPosition+1) return;
         if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
             return;
         }
-        if (view.size() == allArticles.size()) {
-            // All articles are loaded
-            view.removeFooter();
-            return;
-        }
 
-        view.showFooter();
         mTask = new AsyncTask<Long, Void, Void>() {
 
             @Override
@@ -142,9 +148,8 @@ public class ArticleListPresenter implements Presenter {
             }
 
             protected void onPostExecute(Void result) {
-                loadArticle(LOAD_COUNT, allArticles);
-                view.invalidateView();
-                view.removeFooter();
+                loadArticle(LOAD_COUNT);
+                view.notifyListView();
             }
         }.execute(Math.abs(new Random(System.currentTimeMillis()).nextLong() % 1000));
     }
@@ -152,6 +157,7 @@ public class ArticleListPresenter implements Presenter {
     private void setReadStatusToTouchedView(Article article, final String status, boolean isAllReadBack) {
         String oldStatus = article.getStatus();
         if (oldStatus.equals(status) || (oldStatus.equals(Article.READ) && status.equals(Article.TOREAD))) {
+            view.notifyListView();
             return;
         }
         adapter.saveStatus(article.getId(), status);
@@ -173,8 +179,8 @@ public class ArticleListPresenter implements Presenter {
 
     private boolean isAllRead() {
         boolean isAllRead = true;
-        for (int i = 0; i < view.size(); i++) {
-            Article article = view.getItem(i);
+        for (int i = 0; i <= loadedPosition; i++) {
+            Article article = allArticles.get(i);
             if(article.getStatus().equals(Article.UNREAD)) {
                 isAllRead = false;
                 break;
@@ -183,66 +189,21 @@ public class ArticleListPresenter implements Presenter {
         return  isAllRead;
     }
 
-    public void onFlying(int touchedPosition, MotionEvent event1, MotionEvent event2, float velocityX) {
-        if (touchedPosition < 0 || touchedPosition > view.size()-1) return;
-        isSwipeLeftToRight = false;
-        isSwipeRightToLeft = false;
-        try {
-            if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
-                return;
-            }
-            // event1 is first motion event and event2 is second motion event.
-            // So, if the distance from event1'x to event2'x is longer than a certain value, it is swipe
-            // And if event1'x is bigger than event2'x, it is swipe from right
-            // And if event1'x is smaller than event2'x, it is swipe from left
-            Article touchedArticle = view.getItem(touchedPosition);
-            if (event1.getX() - event2.getX() > SWIPE_MIN_WIDTH
-                    && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                // Right to Left
-                isSwipeRightToLeft = true;
-                switch (swipeDirection) {
-                    case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
-                        setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack);
-                        break;
-                    case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
-                        setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack);
-                        break;
-                    default:
-                        break;
-                }
-            } else if (event2.getX() - event1.getX() > SWIPE_MIN_WIDTH
-                    && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                // Left to Right
-                isSwipeLeftToRight = true;
-                switch (swipeDirection) {
-                    case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
-                        setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack);
-                        break;
-                    case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
-                        setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } catch (Exception e) {
-            // nothing
-        }
-    }
-
-    public void onListItemLongClicked(@NonNull Article item) {
-        view.showShareUi(item.getUrl());
+    public void onListItemLongClicked(int position) {
+        if (position < 0) return;
+        Article article = allArticles.get(position);
+        view.showShareUi(article.getUrl());
     }
 
     public void onFabButtonClicked() {
-        if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
+        if (allArticles.size() == 0 || (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING)) {
             return;
         }
         int firstPosition = view.getFirstVisiblePosition();
         int lastPosition = view.getLastVisiblePosition();
         for (int i = firstPosition; i <= lastPosition; i++) {
-            if (i > view.size()-1) break;
-            Article targetArticle = view.getItem(i);
+            if (i > loadedPosition) break;
+            Article targetArticle = allArticles.get(i);
             if (targetArticle == null) break;
             if (targetArticle.getStatus().equals(Article.UNREAD)) {
                 targetArticle.setStatus(Article.TOREAD);
@@ -251,9 +212,10 @@ public class ArticleListPresenter implements Presenter {
             }
         }
         view.notifyListView();
-        // Row in last visible position is hidden by buttons, so scroll to it
-        final int PIXEL_FROM_TOP_AFTER_SCROLL = 4;
-        view.scroll(lastPosition, PIXEL_FROM_TOP_AFTER_SCROLL);
+        final int visibleNum = lastPosition - firstPosition;
+        int positionAfterScroll = lastPosition + visibleNum;
+        if (positionAfterScroll >= loadedPosition) positionAfterScroll = loadedPosition;
+        view.scrollTo(positionAfterScroll);
         if (isAllReadBack && view.isBottomVisible()) {
             if (isAllRead()) {
                 view.finish();
@@ -272,10 +234,110 @@ public class ArticleListPresenter implements Presenter {
         if (isAllReadBack) {
             view.finish();
         } else {
-            for (int i = 0; i < view.size(); i++) {
-                view.getItem(i).setStatus(Article.READ);
+            for (int i = 0; i < allArticles.size(); i++) {
+                allArticles.get(i).setStatus(Article.READ);
             }
             view.notifyListView();
+        }
+    }
+
+    public void onBindViewHolder(ArticlesListFragment.SimpleItemRecyclerViewAdapter.ArticleViewHolder holder, int position) {
+        Article article = allArticles.get(position);
+        if (article != null) {
+            holder.setArticleTitle(article.getTitle());
+            holder.setArticleUrl(article.getUrl());
+
+            // Set article posted date
+            SimpleDateFormat format = new SimpleDateFormat(
+                    "yyyy/MM/dd HH:mm:ss", Locale.US);
+            String dateString = format.format(new Date(article
+                    .getPostedDate()));
+            holder.setArticlePostedTime(dateString);
+
+            // Set RSS Feed unread article count
+            String hatenaPoint = article.getPoint();
+            if(hatenaPoint.equals(Article.DEDAULT_HATENA_POINT)) {
+                holder.setNotGetPoint();
+            }else {
+                holder.setArticlePoint(hatenaPoint);
+            }
+
+            String feedTitle = article.getFeedTitle();
+            if(feedTitle == null) {
+                holder.hideRssInfo();
+            }else {
+                holder.setRssTitle(article.getFeedTitle());
+
+                String iconPath = article.getFeedIconPath();
+                if (!TextUtil.INSTANCE.isEmpty(iconPath) && new File(iconPath).exists()) {
+                    holder.setRssIcon(article.getFeedIconPath());
+                }else {
+                    holder.setDefaultRssIcon();
+                }
+            }
+
+            // Change color if already be read
+            if (article.getStatus().equals(Article.TOREAD) || article.getStatus().equals(Article.READ)) {
+                holder.changeColorToRead();
+            } else {
+                holder.changeColorToUnread();
+            }
+        }
+
+    }
+
+    public int articleSize() {
+        if (loadedPosition == allArticles.size()-1) return allArticles.size();
+        // Index starts with 0 and add +1 for footer, so add 2
+        return loadedPosition+2;
+    }
+
+    public int onGetItemViewType(int position) {
+        if (position == loadedPosition+1) return ArticlesListFragment.SimpleItemRecyclerViewAdapter.VIEW_TYPE_FOOTER;
+        return ArticlesListFragment.SimpleItemRecyclerViewAdapter.VIEW_TYPE_ARTICLE;
+    }
+
+    boolean isAllUnreadArticle() {
+        int index = 0;
+        for (Article article : allArticles) {
+            if (!article.getStatus().equals(Article.UNREAD)) return false;
+            index++;
+            if (index == loadedPosition) break;
+        }
+        return true;
+    }
+
+    public void onSwiped(int direction, int touchedPosition) {
+        Article touchedArticle = allArticles.get(touchedPosition);
+        switch (direction) {
+            case LEFT:
+                isSwipeRightToLeft = true;
+                switch (swipeDirection) {
+                    case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
+                        setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack);
+                        break;
+                    case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
+                        setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack);
+                        break;
+                    default:
+                        break;
+                }
+                isSwipeRightToLeft = false;
+                break;
+            case RIGHT:
+                isSwipeLeftToRight = true;
+                switch (swipeDirection) {
+                    case PreferenceHelper.SWIPE_RIGHT_TO_LEFT:
+                        setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack);
+                        break;
+                    case PreferenceHelper.SWIPE_LEFT_TO_RIGHT:
+                        setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack);
+                        break;
+                    default:
+                        break;
+                }
+                isSwipeLeftToRight = false;
+                break;
         }
     }
 }
