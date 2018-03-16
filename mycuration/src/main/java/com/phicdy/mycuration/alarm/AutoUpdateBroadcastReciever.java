@@ -12,7 +12,12 @@ import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.NetworkUtil;
 import com.phicdy.mycuration.util.PreferenceHelper;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
+
+import io.reactivex.schedulers.Schedulers;
 
 public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 
@@ -21,14 +26,31 @@ public class AutoUpdateBroadcastReciever extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		if(intent == null) {
-			return;
-		}
+		if(intent == null || intent.getAction() == null) return;
 		DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
 		if(intent.getAction().equals(AUTO_UPDATE_ACTION)) {
 			NetworkTaskManager updateTask = NetworkTaskManager.INSTANCE;
-	
-			updateTask.updateAllFeeds(dbAdapter.getAllFeedsWithoutNumOfUnreadArticles());
+			final ArrayList<Feed> feeds = dbAdapter.getAllFeedsWithoutNumOfUnreadArticles();
+            updateTask.updateAllFeeds(feeds)
+                    .observeOn(Schedulers.io())
+                    .subscribe(new Subscriber<Feed>() {
+                        @Override
+                        public void onSubscribe(Subscription s) {
+                            s.request(feeds.size());
+                        }
+
+                        @Override
+                        public void onNext(Feed feed) {
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                        }
+
+                        @Override
+                        public void onComplete() {
+                        }
+                    });
 			AlarmManagerTaskManager manager = new AlarmManagerTaskManager(context);
 			manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context);
 
