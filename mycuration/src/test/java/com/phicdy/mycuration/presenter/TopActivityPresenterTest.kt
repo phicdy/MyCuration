@@ -20,10 +20,27 @@ class TopActivityPresenterTest {
     }
 
     @Test
-    fun changeTabIsCalledWhenOnCreate() {
+    fun `changeTab is called when onCreate`() {
         val presenter = TopActivityPresenter(0)
         presenter.setView(mockView)
         presenter.create()
         Mockito.verify(mockView, times(1)).changeTab(0)
+    }
+
+    @Test
+    fun `initViewPager is called when onCreate`() {
+        val presenter = TopActivityPresenter(0)
+        presenter.setView(mockView)
+        presenter.create()
+        Mockito.verify(mockView, times(1)).initViewPager()
+    }
+
+
+    @Test
+    fun `setAlarmManager is called when onCreate`() {
+        val presenter = TopActivityPresenter(0)
+        presenter.setView(mockView)
+        presenter.create()
+        Mockito.verify(mockView, times(1)).setAlarmManager()
     }
 }

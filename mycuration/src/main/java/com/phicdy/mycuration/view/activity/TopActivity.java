@@ -65,15 +65,12 @@ public class TopActivity extends AppCompatActivity implements
         presenter.setView(this);
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
         presenter.setDataAdapter(dbAdapter);
-
-        curationFragment = new CurationListFragment();
-        setTitle(getString(R.string.home));
-        initViewPager();
-        setAlarmManager();
         presenter.create();
     }
 
-    private void initViewPager() {
+    @Override
+    public void initViewPager() {
+        curationFragment = new CurationListFragment();
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -184,7 +181,8 @@ public class TopActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void setAlarmManager() {
+    @Override
+    public void setAlarmManager() {
         // Start auto update alarmmanager
         AlarmManagerTaskManager manager = new AlarmManagerTaskManager(this);
         PreferenceHelper helper = PreferenceHelper.INSTANCE;
