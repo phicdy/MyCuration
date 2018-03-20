@@ -60,14 +60,15 @@ public class FeedListPresenter implements Presenter {
         if (networkTaskManager.isUpdatingFeed()) {
             view.setRefreshing(true);
         }
-        if (preferenceHelper.getAutoUpdateInMainUi() && isAfterInterval() &&
-                !networkTaskManager.isUpdatingFeed()) {
+        if (allFeeds.size() > 0 && preferenceHelper.getAutoUpdateInMainUi() &&
+                isAfterInterval() && !networkTaskManager.isUpdatingFeed()) {
             view.setRefreshing(true);
             networkTaskManager.updateAllFeeds(allFeeds)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Feed>() {
                         @Override
                         public void onSubscribe(Subscription s) {
+                            // Skip hide line
                             s.request(allFeeds.size()-1);
                         }
 
