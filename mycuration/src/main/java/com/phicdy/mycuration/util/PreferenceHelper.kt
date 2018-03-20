@@ -16,6 +16,7 @@ object PreferenceHelper {
     private const val KEY_OPEN_INTERNAL_ID = "openInternal"
     private const val KEY_SWIPE_DIRECTION = "swipeDirection"
     private const val KEY_LAUNCH_TAB = "launchTab"
+    private const val KEY_LAST_UPDATE_DATE = "lastUpdateDate"
 
     const val SWIPE_RIGHT_TO_LEFT = 0
     const val SWIPE_LEFT_TO_RIGHT = 1
@@ -46,6 +47,14 @@ object PreferenceHelper {
         set(isAutoUpdateInMainUi) {
             editor = pref.edit()
             editor.putBoolean(KEY_AUTO_UPDATE_IN_MAIN_UI, isAutoUpdateInMainUi)
+            editor.apply()
+        }
+
+    var lastUpdateDate: Long
+        get() = pref.getLong(KEY_LAST_UPDATE_DATE, 0)
+        set(lastUpdateDate) {
+            editor = pref.edit()
+            editor.putLong(KEY_LAST_UPDATE_DATE, lastUpdateDate)
             editor.apply()
         }
 

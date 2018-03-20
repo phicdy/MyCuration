@@ -1,12 +1,15 @@
 package com.phicdy.mycuration.presenter;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.FeedListView;
 import com.phicdy.mycuration.view.fragment.FeedListFragment;
 
@@ -25,6 +28,7 @@ public class FeedListPresenterTest {
     private DatabaseAdapter adapter;
     private NetworkTaskManager networkTaskManager;
     private UnreadCountManager unreadCountManager;
+    private PreferenceHelper preferenceHelper;
     private MockView view;
 
     private static final String FIRST_RSS_TITLE = "rss1";
@@ -45,12 +49,19 @@ public class FeedListPresenterTest {
         Mockito.when(adapter.getAllFeedsWithNumOfUnreadArticles()).thenReturn(allFeeds);
         networkTaskManager = NetworkTaskManager.INSTANCE;
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
+
+        Context mockContext = Mockito.mock(Context.class);
+        Mockito.when(mockContext.getSharedPreferences("FilterPref", Context.MODE_PRIVATE))
+                .thenReturn(Mockito.mock(SharedPreferences.class));
+        PreferenceHelper.INSTANCE.setUp(mockContext);
+        preferenceHelper = PreferenceHelper.INSTANCE;
+
         Mockito.when(unreadCountManager.getUnreadCount(FIRST_RSS_ID))
                 .thenReturn(0);
         Mockito.when(unreadCountManager.getUnreadCount(SECOND_RSS_ID))
                 .thenReturn(1);
         Mockito.when(unreadCountManager.getUnreadCount(Feed.DEFAULT_FEED_ID)).thenReturn(-1);
-        presenter = new FeedListPresenter(false, adapter, networkTaskManager, unreadCountManager);
+        presenter = new FeedListPresenter(preferenceHelper, adapter, networkTaskManager, unreadCountManager);
         view = new MockView();
         presenter.setView(view);
     }

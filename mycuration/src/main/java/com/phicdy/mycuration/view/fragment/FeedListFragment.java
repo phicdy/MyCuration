@@ -76,8 +76,7 @@ public class FeedListFragment extends Fragment implements FeedListView {
         NetworkTaskManager networkTaskManager = NetworkTaskManager.INSTANCE;
         setRetainInstance(true);
         PreferenceHelper helper = PreferenceHelper.INSTANCE;
-        presenter = new FeedListPresenter(helper.getAutoUpdateInMainUi(),
-                dbAdapter, networkTaskManager, unreadManager);
+        presenter = new FeedListPresenter(helper, dbAdapter, networkTaskManager, unreadManager);
         presenter.setView(this);
     }
 
