@@ -6,6 +6,7 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.FeedListView;
 import com.phicdy.mycuration.view.fragment.FeedListFragment;
 
@@ -18,7 +19,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class FeedListPresenter implements Presenter {
 
-    private final boolean autoUpdateInMainUi;
+    private final PreferenceHelper preferenceHelper;
     private FeedListView view;
     private final DatabaseAdapter dbAdapter;
     private final NetworkTaskManager networkTaskManager;
@@ -30,9 +31,9 @@ public class FeedListPresenter implements Presenter {
     // Manage hide feed status
     private boolean isHided = true;
 
-    public FeedListPresenter(boolean autoUpdateInMainUi, DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
+    public FeedListPresenter(PreferenceHelper helper, DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
                              UnreadCountManager unreadCountManager) {
-        this.autoUpdateInMainUi = autoUpdateInMainUi;
+        this.preferenceHelper = helper;
         this.dbAdapter = dbAdapter;
         this.networkTaskManager = networkTaskManager;
         this.unreadCountManager = unreadCountManager;
@@ -59,7 +60,8 @@ public class FeedListPresenter implements Presenter {
         if (networkTaskManager.isUpdatingFeed()) {
             view.setRefreshing(true);
         }
-        if (autoUpdateInMainUi && !networkTaskManager.isUpdatingFeed()) {
+        if (preferenceHelper.getAutoUpdateInMainUi() && isAfterInterval() &&
+                !networkTaskManager.isUpdatingFeed()) {
             view.setRefreshing(true);
             networkTaskManager.updateAllFeeds(allFeeds)
                     .observeOn(AndroidSchedulers.mainThread())
@@ -84,6 +86,10 @@ public class FeedListPresenter implements Presenter {
                         }
                     });
         }
+    }
+
+    private boolean isAfterInterval() {
+        return (System.currentTimeMillis() - preferenceHelper.getLastUpdateDate()) >= 1000*60;
     }
 
     private void addShowHideLine(ArrayList<Feed> feeds) {
@@ -294,8 +300,9 @@ public class FeedListPresenter implements Presenter {
     }
 
     public void onFinishUpdate() {
-            onRefreshComplete();
-            refreshList();
+        onRefreshComplete();
+        refreshList();
+        preferenceHelper.setLastUpdateDate(System.currentTimeMillis());
     }
 
     public void activityCreated() {

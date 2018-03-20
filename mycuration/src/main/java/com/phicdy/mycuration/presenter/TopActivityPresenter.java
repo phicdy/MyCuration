@@ -27,6 +27,8 @@ public class TopActivityPresenter implements Presenter {
 
     @Override
     public void create() {
+        view.initViewPager();
+        view.setAlarmManager();
         view.changeTab(launchTab);
     }
 
