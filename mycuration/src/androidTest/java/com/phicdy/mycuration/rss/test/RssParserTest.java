@@ -66,7 +66,7 @@ public class RssParserTest {
 //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
 		assertNotNull(addedFeed);
 		assertEquals("http://news.yahoo.co.jp/pickup/rss.xml", addedFeed.getUrl());
-		assertEquals("http://news.yahoo.co.jp", addedFeed.getSiteUrl());
+		assertEquals("https://news.yahoo.co.jp/", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 
 		//http://feed.japan.cnet.com/rss/index.rdf
@@ -90,7 +90,7 @@ public class RssParserTest {
 		Feed addedFeed = adapter.getFeedByUrl(testUrl);
 		assertNotNull(addedFeed);
 		assertEquals(testUrl, addedFeed.getUrl());
-		assertEquals("http://b.hatena.ne.jp", addedFeed.getSiteUrl());
+		assertEquals("http://b.hatena.ne.jp/hotentry/it", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 	}
 
@@ -109,7 +109,7 @@ public class RssParserTest {
 //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
 		assertNotNull(addedFeed);
 		assertEquals("http://hiroki.jp/feed/", addedFeed.getUrl());
-		assertEquals("http://hiroki.jp", addedFeed.getSiteUrl());
+		assertEquals("https://hiroki.jp", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 
         executor.start("http://www.infoq.com/jp/feed", callback);
@@ -123,7 +123,7 @@ public class RssParserTest {
 //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
 		assertNotNull(infoqFeed);
 		assertEquals("http://www.infoq.com/jp/feed", infoqFeed.getUrl());
-		assertEquals("http://www.infoq.com", infoqFeed.getSiteUrl());
+		assertEquals("http://www.infoq.com/jp/", infoqFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, infoqFeed.getIconPath());
 
 		//http://blog.riywo.com/feed
@@ -200,7 +200,7 @@ public class RssParserTest {
 		Feed addedFeed = adapter.getFeedByUrl("https://gigazine.net/news/rss_2.0/");
 		assertNotNull(addedFeed);
 		assertEquals("https://gigazine.net/news/rss_2.0/", addedFeed.getUrl());
-		assertEquals("https://gigazine.net", addedFeed.getSiteUrl());
+		assertEquals("http://gigazine.net/", addedFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.getIconPath());
 	}
 
@@ -220,7 +220,7 @@ public class RssParserTest {
 
 		assertNotNull(mercariFeed);
 		assertEquals("http://tech.mercari.com/rss", mercariFeed.getUrl());
-		assertEquals("http://tech.mercari.com", mercariFeed.getSiteUrl());
+		assertEquals("http://tech.mercari.com/", mercariFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, mercariFeed.getIconPath());
 	}
 
@@ -240,7 +240,7 @@ public class RssParserTest {
 
 		assertNotNull(smhnFeed);
 		assertEquals("http://smhn.info/feed", smhnFeed.getUrl());
-		assertEquals("http://smhn.info", smhnFeed.getSiteUrl());
+		assertEquals("https://smhn.info", smhnFeed.getSiteUrl());
 		assertEquals(Feed.DEDAULT_ICON_PATH, smhnFeed.getIconPath());
 	}
 
@@ -258,15 +258,17 @@ public class RssParserTest {
 		Feed surigomaFeed = adapter.getFeedByUrl("http://ground-sesame.hatenablog.jp/rss");
 		assertNotNull(surigomaFeed);
 		assertEquals("http://ground-sesame.hatenablog.jp/rss", surigomaFeed.getUrl());
-		assertEquals("http://ground-sesame.hatenablog.jp", surigomaFeed.getSiteUrl());
+		assertEquals("http://ground-sesame.hatenablog.jp/", surigomaFeed.getSiteUrl());
 
 		assertEquals(Feed.DEDAULT_ICON_PATH, surigomaFeed.getIconPath());
 	}
 
-	@Test
-	public void testPathOnlyUrl() {
-		addNewFeedAndCheckResult("http://b.hatena.ne.jp/hotentry/game", "http://b.hatena.ne.jp/hotentry/game.rss", "http://b.hatena.ne.jp");
-	}
+    @Test
+    public void testPathOnlyUrl() {
+        addNewFeedAndCheckResult("http://b.hatena.ne.jp/hotentry/game",
+                "http://b.hatena.ne.jp/hotentry/game.rss",
+                "http://b.hatena.ne.jp/hotentry/game");
+    }
 
 	private void addNewFeedAndCheckResult(String testUrl, String expectedFeedUrl, String expectedSiteUrl) {
         RssParser parser = new RssParser();
