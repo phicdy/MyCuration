@@ -33,7 +33,7 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presentation.presenter.FeedListPresenter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
-import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.presentation.view.FeedListView;
 

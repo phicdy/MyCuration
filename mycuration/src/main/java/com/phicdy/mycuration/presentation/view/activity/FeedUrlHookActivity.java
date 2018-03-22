@@ -13,7 +13,7 @@ import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
-import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView;
 

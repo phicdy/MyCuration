@@ -1,8 +1,7 @@
-package com.phicdy.mycuration.task;
+package com.phicdy.mycuration.domain.task;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.phicdy.mycuration.task.GetFeedIconTask;
 import com.phicdy.mycuration.util.FileUtil;
 
 import org.junit.After;

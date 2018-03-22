@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.task;
+package com.phicdy.mycuration.domain.task;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.db.DatabaseHelper;

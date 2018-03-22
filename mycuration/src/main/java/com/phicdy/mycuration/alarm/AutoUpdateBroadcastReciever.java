@@ -7,8 +7,8 @@ import android.content.Intent;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.task.GetHatenaBookmark;
-import com.phicdy.mycuration.task.NetworkTaskManager;
+import com.phicdy.mycuration.domain.task.GetHatenaBookmark;
+import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.NetworkUtil;
 import com.phicdy.mycuration.util.PreferenceHelper;
 

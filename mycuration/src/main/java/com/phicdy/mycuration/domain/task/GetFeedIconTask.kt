@@ -1,7 +1,6 @@
-package com.phicdy.mycuration.task
+package com.phicdy.mycuration.domain.task
 
 import android.os.AsyncTask
-import android.util.Log
 
 import com.phicdy.mycuration.db.DatabaseAdapter
 import com.phicdy.mycuration.rss.IconParser

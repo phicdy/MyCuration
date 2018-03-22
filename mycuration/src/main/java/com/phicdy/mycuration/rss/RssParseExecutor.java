@@ -1,11 +1,8 @@
 package com.phicdy.mycuration.rss;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.UrlUtil;
 
 import java.util.concurrent.ExecutorService;

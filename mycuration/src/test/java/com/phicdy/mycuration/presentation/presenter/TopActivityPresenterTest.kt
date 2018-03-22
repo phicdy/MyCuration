@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.task.NetworkTaskManager
+import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import org.junit.Before
 import org.junit.Test

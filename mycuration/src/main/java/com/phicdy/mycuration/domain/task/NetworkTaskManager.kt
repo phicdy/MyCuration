@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.task
+package com.phicdy.mycuration.domain.task
 
 import android.support.annotation.IntDef
 import android.util.Log

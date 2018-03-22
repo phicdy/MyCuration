@@ -4,7 +4,7 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.task.GetHatenaBookmark;
+import com.phicdy.mycuration.domain.task.GetHatenaBookmark;
 import com.phicdy.mycuration.util.DateParser;
 import com.phicdy.mycuration.util.TextUtil;
 
