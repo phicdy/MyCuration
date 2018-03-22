@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.filter.Filter;
-import com.phicdy.mycuration.view.FilterListView;
+import com.phicdy.mycuration.presentation.view.FilterListView;
 
 public class FilterListPresenter implements Presenter {
     private FilterListView view;

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Curation;
-import com.phicdy.mycuration.view.CurationListView;
+import com.phicdy.mycuration.presentation.view.CurationListView;
 
 import java.util.ArrayList;
 

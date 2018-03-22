@@ -9,8 +9,8 @@ import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.util.TextUtil;
-import com.phicdy.mycuration.view.ArticleListView;
-import com.phicdy.mycuration.view.fragment.ArticlesListFragment;
+import com.phicdy.mycuration.presentation.view.ArticleListView;
+import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

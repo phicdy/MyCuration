@@ -7,7 +7,7 @@ import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.view.RegisterFilterView;
+import com.phicdy.mycuration.presentation.view.RegisterFilterView;
 
 import java.util.ArrayList;
 

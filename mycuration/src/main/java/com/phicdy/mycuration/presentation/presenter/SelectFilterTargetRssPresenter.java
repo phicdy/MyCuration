@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
-import com.phicdy.mycuration.view.SelectTargetRssView;
+import com.phicdy.mycuration.presentation.view.SelectTargetRssView;
 
 public class SelectFilterTargetRssPresenter implements Presenter {
 

@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.phicdy.mycuration.view.activity.InternalWebViewActivity">
+    tools:context="com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity">
 
     <item
         android:id="@+id/menu_item_share"

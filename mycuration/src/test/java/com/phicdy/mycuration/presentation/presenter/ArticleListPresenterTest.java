@@ -7,7 +7,7 @@ import com.phicdy.mycuration.rss.Article;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.view.ArticleListView;
+import com.phicdy.mycuration.presentation.view.ArticleListView;
 
 import org.junit.Test;
 import org.mockito.Mockito;

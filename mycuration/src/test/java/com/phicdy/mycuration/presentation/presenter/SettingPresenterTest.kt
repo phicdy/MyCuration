@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.presenter
 import android.content.Context
 import android.content.SharedPreferences
 import com.phicdy.mycuration.util.PreferenceHelper
-import com.phicdy.mycuration.view.SettingView
+import com.phicdy.mycuration.presentation.view.SettingView
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito

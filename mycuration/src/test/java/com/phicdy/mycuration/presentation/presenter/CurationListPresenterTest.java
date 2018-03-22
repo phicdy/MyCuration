@@ -2,7 +2,7 @@ package com.phicdy.mycuration.presentation.presenter;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Curation;
-import com.phicdy.mycuration.view.CurationListView;
+import com.phicdy.mycuration.presentation.view.CurationListView;
 
 import org.junit.Test;
 import org.mockito.Mockito;

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.util.TextUtil;
-import com.phicdy.mycuration.view.AddCurationView;
+import com.phicdy.mycuration.presentation.view.AddCurationView;
 
 import java.util.ArrayList;
 

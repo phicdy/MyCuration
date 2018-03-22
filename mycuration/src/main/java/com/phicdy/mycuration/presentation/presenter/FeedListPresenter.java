@@ -7,8 +7,8 @@ import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.view.FeedListView;
-import com.phicdy.mycuration.view.fragment.FeedListFragment;
+import com.phicdy.mycuration.presentation.view.FeedListView;
+import com.phicdy.mycuration.presentation.view.fragment.FeedListFragment;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

@@ -8,7 +8,7 @@ import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
-import com.phicdy.mycuration.view.FeedSearchView;
+import com.phicdy.mycuration.presentation.view.FeedSearchView;
 
 import org.junit.Before;
 import org.junit.Test;

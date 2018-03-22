@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.view.RegisterFilterView;
+import com.phicdy.mycuration.presentation.view.RegisterFilterView;
 
 import org.junit.Before;
 import org.junit.Test;

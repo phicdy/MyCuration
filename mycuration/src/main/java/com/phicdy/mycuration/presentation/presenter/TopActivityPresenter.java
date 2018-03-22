@@ -5,7 +5,7 @@ import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.view.TopActivityView;
+import com.phicdy.mycuration.presentation.view.TopActivityView;
 
 public class TopActivityPresenter implements Presenter {
 

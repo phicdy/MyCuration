@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.view.AddCurationView;
+import com.phicdy.mycuration.presentation.view.AddCurationView;
 
 import org.junit.Before;
 import org.junit.Test;

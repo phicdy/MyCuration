@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.phicdy.mycuration.view.activity.FeedSearchActivity">
+    tools:context="com.phicdy.mycuration.presentation.view.activity.FeedSearchActivity">
 
 
     <android.support.design.widget.AppBarLayout

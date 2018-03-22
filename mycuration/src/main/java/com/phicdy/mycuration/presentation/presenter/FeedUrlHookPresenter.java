@@ -11,7 +11,7 @@ import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.UrlUtil;
-import com.phicdy.mycuration.view.FeedUrlHookView;
+import com.phicdy.mycuration.presentation.view.FeedUrlHookView;
 
 public class FeedUrlHookPresenter implements Presenter {
     private FeedUrlHookView view;

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Article;
-import com.phicdy.mycuration.view.ArticleSearchResultView;
+import com.phicdy.mycuration.presentation.view.ArticleSearchResultView;
 
 import org.junit.Test;
 import org.mockito.Mockito;
