@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
-import com.phicdy.mycuration.presenter.SelectFilterTargetRssPresenter;
+import com.phicdy.mycuration.presentation.presenter.SelectFilterTargetRssPresenter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.view.fragment.SelectFilterTargetRssFragment;
 import com.phicdy.mycuration.view.SelectTargetRssView;

@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.melnykov.fab.FloatingActionButton;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.presenter.ArticleListPresenter;
+import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter;
 import com.phicdy.mycuration.rss.Feed;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;

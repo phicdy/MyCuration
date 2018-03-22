@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.filter.Filter;
-import com.phicdy.mycuration.presenter.FilterListPresenter;
+import com.phicdy.mycuration.presentation.presenter.FilterListPresenter;
 import com.phicdy.mycuration.view.FilterListView;
 import com.phicdy.mycuration.view.activity.RegisterFilterActivity;
 

@@ -23,7 +23,7 @@ import com.phicdy.mycuration.BuildConfig;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.presenter.TopActivityPresenter;
+import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.view.TopActivityView;

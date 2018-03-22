@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presenter
+package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.task.NetworkTaskManager
 import com.phicdy.mycuration.view.TopActivityView

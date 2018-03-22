@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.presenter.FeedUrlHookPresenter;
+import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter;
 import com.phicdy.mycuration.rss.RssParser;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.task.NetworkTaskManager;

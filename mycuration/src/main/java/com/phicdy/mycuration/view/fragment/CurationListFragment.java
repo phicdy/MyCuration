@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.presenter.CurationListPresenter;
+import com.phicdy.mycuration.presentation.presenter.CurationListPresenter;
 import com.phicdy.mycuration.rss.Curation;
 import com.phicdy.mycuration.rss.UnreadCountManager;
 import com.phicdy.mycuration.view.CurationListView;

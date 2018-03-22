@@ -14,7 +14,7 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.db.DatabaseAdapter
 import com.phicdy.mycuration.db.DatabaseHelper
-import com.phicdy.mycuration.presenter.SettingPresenter
+import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.tracker.GATrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.ToastHelper

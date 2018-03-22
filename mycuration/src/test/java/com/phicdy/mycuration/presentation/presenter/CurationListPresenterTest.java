@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presenter;
+package com.phicdy.mycuration.presentation.presenter;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.rss.Curation;

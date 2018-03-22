@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presenter;
+package com.phicdy.mycuration.presentation.presenter;
 
 interface Presenter {
     void create();

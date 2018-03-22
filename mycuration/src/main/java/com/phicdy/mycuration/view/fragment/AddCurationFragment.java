@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.presenter.AddCurationPresenter;
+import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.ToastHelper;
 import com.phicdy.mycuration.view.AddCurationView;
