@@ -1,6 +1,8 @@
 package com.phicdy.mycuration.rss
 
 
+import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.data.rss.UnreadCountManager
 import com.phicdy.mycuration.db.DatabaseAdapter
 import com.phicdy.mycuration.db.DatabaseHelper
 

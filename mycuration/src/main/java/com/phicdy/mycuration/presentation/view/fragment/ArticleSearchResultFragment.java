@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presentation.presenter.ArticleSearchResultPresenter;
-import com.phicdy.mycuration.rss.Article;
+import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.presentation.view.ArticleSearchResultView;

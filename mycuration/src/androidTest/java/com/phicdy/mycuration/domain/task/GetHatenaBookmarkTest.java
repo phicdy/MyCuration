@@ -2,8 +2,8 @@ package com.phicdy.mycuration.domain.task;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.db.DatabaseHelper;
-import com.phicdy.mycuration.rss.Article;
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Article;
+import com.phicdy.mycuration.data.rss.Feed;
 
 import org.junit.After;
 import org.junit.Before;

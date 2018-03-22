@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment;

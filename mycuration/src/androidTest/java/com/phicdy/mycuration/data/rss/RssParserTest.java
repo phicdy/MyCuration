@@ -1,14 +1,14 @@
-package com.phicdy.mycuration.rss.test;
+package com.phicdy.mycuration.data.rss;
 
 import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.db.DatabaseHelper;
-import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.rss.RssParseExecutor;
-import com.phicdy.mycuration.rss.RssParseResult;
-import com.phicdy.mycuration.rss.RssParser;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseHelper;
+import com.phicdy.mycuration.data.rss.Feed;
+import com.phicdy.mycuration.data.rss.RssParseExecutor;
+import com.phicdy.mycuration.data.rss.RssParseResult;
+import com.phicdy.mycuration.data.rss.RssParser;
 
 import org.junit.After;
 import org.junit.Before;

@@ -3,9 +3,9 @@ package com.phicdy.mycuration.presentation.presenter;
 import android.content.Intent;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.rss.RssParseResult;
-import com.phicdy.mycuration.rss.RssParser;
-import com.phicdy.mycuration.rss.UnreadCountManager;
+import com.phicdy.mycuration.data.rss.RssParseResult;
+import com.phicdy.mycuration.data.rss.RssParser;
+import com.phicdy.mycuration.data.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView;
 

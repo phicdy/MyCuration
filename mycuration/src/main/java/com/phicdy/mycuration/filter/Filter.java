@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.filter;
 
 
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Feed;
 
 import java.util.ArrayList;
 

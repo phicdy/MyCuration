@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.rss.Feed;
-import com.phicdy.mycuration.rss.RssParseExecutor;
-import com.phicdy.mycuration.rss.RssParseResult;
-import com.phicdy.mycuration.rss.RssParser;
-import com.phicdy.mycuration.rss.UnreadCountManager;
+import com.phicdy.mycuration.data.rss.Feed;
+import com.phicdy.mycuration.data.rss.RssParseExecutor;
+import com.phicdy.mycuration.data.rss.RssParseResult;
+import com.phicdy.mycuration.data.rss.RssParser;
+import com.phicdy.mycuration.data.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.UrlUtil;
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView;

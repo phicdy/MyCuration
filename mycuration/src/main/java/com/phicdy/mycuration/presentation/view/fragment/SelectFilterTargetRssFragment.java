@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Feed;
 
 import java.io.File;
 import java.util.ArrayList;

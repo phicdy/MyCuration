@@ -3,9 +3,9 @@ package com.phicdy.mycuration.domain.task
 import android.support.annotation.IntDef
 import android.util.Log
 import com.phicdy.mycuration.filter.FilterTask
-import com.phicdy.mycuration.rss.Feed
-import com.phicdy.mycuration.rss.RssParser
-import com.phicdy.mycuration.rss.UnreadCountManager
+import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.data.rss.RssParser
+import com.phicdy.mycuration.data.rss.UnreadCountManager
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable

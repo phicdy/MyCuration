@@ -11,7 +11,7 @@ import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.presentation.presenter.SelectFilterTargetRssPresenter;
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.presentation.view.fragment.SelectFilterTargetRssFragment;
 import com.phicdy.mycuration.presentation.view.SelectTargetRssView;
 

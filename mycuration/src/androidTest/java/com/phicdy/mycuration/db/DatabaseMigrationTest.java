@@ -9,7 +9,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.filter.FilterFeedRegistration;
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 
 import org.junit.After;

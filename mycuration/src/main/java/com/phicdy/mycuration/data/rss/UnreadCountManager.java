@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.rss;
+package com.phicdy.mycuration.data.rss;
 
 import android.support.annotation.NonNull;
 
@@ -35,12 +35,12 @@ public class UnreadCountManager {
         return mgr;
     }
 
-    static UnreadCountManager newInstance(@NonNull DatabaseAdapter adapter) {
+    public static UnreadCountManager newInstance(@NonNull DatabaseAdapter adapter) {
         mgr = new UnreadCountManager(adapter);
         return mgr;
     }
 
-    void clear() {
+    public void clear() {
         mgr.total = 0;
         mgr.unreadCountMap.clear();
     }

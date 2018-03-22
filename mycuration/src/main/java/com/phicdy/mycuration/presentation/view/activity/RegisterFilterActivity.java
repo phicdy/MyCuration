@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.db.DatabaseAdapter;
 import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter;
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment;
 import com.phicdy.mycuration.presentation.view.RegisterFilterView;

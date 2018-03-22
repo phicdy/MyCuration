@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.rss.test;
 
-import com.phicdy.mycuration.rss.IconParser;
+import com.phicdy.mycuration.data.rss.IconParser;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

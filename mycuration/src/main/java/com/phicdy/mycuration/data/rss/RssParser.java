@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.rss;
+package com.phicdy.mycuration.data.rss;
 
 import android.util.Log;
 import android.util.Xml;

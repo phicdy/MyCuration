@@ -12,11 +12,11 @@ import android.util.SparseArray;
 
 import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.filter.FilterFeedRegistration;
-import com.phicdy.mycuration.rss.Article;
-import com.phicdy.mycuration.rss.Curation;
-import com.phicdy.mycuration.rss.CurationCondition;
-import com.phicdy.mycuration.rss.CurationSelection;
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Article;
+import com.phicdy.mycuration.data.rss.Curation;
+import com.phicdy.mycuration.data.rss.CurationCondition;
+import com.phicdy.mycuration.data.rss.CurationSelection;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.util.FileUtil;
 
 import java.io.File;

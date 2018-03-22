@@ -2,8 +2,6 @@ package com.phicdy.mycuration.presentation.view;
 
 import android.support.annotation.NonNull;
 
-import com.phicdy.mycuration.rss.Article;
-
 public interface ArticleListView {
     void openInternalWebView(@NonNull String url);
     void openExternalWebView(@NonNull String url);

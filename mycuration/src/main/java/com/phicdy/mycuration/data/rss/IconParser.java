@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.rss;
+package com.phicdy.mycuration.data.rss;
  
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

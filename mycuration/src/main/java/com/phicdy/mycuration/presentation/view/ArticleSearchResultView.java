@@ -2,7 +2,7 @@ package com.phicdy.mycuration.presentation.view;
 
 import android.support.annotation.NonNull;
 
-import com.phicdy.mycuration.rss.Article;
+import com.phicdy.mycuration.data.rss.Article;
 
 import java.util.ArrayList;
 

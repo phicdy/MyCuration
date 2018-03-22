@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.presenter;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.rss.Feed;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.presentation.view.RegisterFilterView;
 
 import org.junit.Before;
