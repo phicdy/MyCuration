@@ -4,8 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.test.uiautomator.UiDevice;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.db.DatabaseHelper;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseHelper;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.data.rss.UnreadCountManager;
 import com.squareup.spoon.Spoon;

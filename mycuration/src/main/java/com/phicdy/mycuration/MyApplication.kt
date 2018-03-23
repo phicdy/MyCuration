@@ -5,8 +5,8 @@ import android.content.Context
 import com.facebook.stetho.Stetho
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
-import com.phicdy.mycuration.db.DatabaseAdapter
-import com.phicdy.mycuration.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.tracker.GATrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper

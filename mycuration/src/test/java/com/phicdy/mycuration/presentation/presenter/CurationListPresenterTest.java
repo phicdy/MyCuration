@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.rss.Curation;
 import com.phicdy.mycuration.presentation.view.CurationListView;
 

@@ -1,14 +1,12 @@
-package com.phicdy.mycuration.db.test;
+package com.phicdy.mycuration.data.db;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.SparseArray;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.db.DatabaseHelper;
-import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Feed;
+import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 
 import org.junit.After;

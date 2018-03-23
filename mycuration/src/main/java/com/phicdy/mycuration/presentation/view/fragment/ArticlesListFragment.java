@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.melnykov.fab.FloatingActionButton;
 import com.phicdy.mycuration.R;
-import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter;
 import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity;
 import com.phicdy.mycuration.presentation.view.activity.TopActivity;

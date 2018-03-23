@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.db;
+package com.phicdy.mycuration.data.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.filter.Filter;
 import com.phicdy.mycuration.filter.FilterFeedRegistration;
-import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 
 import org.junit.After;

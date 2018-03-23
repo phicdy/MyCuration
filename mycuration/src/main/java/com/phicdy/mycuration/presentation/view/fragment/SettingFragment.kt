@@ -12,14 +12,13 @@ import android.widget.Toast
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.alarm.AlarmManagerTaskManager
-import com.phicdy.mycuration.db.DatabaseAdapter
-import com.phicdy.mycuration.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.tracker.GATrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.ToastHelper
 import com.phicdy.mycuration.presentation.view.SettingView
-import com.phicdy.mycuration.presentation.view.activity.LicenseActivity
 
 
 class SettingFragment : PreferenceFragment(), SettingView {

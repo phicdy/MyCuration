@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.filter;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
 
 import java.util.ArrayList;
   

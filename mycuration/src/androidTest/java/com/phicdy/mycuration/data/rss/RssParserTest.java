@@ -5,10 +5,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.db.DatabaseHelper;
-import com.phicdy.mycuration.data.rss.Feed;
-import com.phicdy.mycuration.data.rss.RssParseExecutor;
-import com.phicdy.mycuration.data.rss.RssParseResult;
-import com.phicdy.mycuration.data.rss.RssParser;
 
 import org.junit.After;
 import org.junit.Before;

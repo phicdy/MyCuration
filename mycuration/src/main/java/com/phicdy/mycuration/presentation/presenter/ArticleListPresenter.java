@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.presenter;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.data.rss.UnreadCountManager;

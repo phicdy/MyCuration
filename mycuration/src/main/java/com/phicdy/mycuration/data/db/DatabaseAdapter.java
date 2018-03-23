@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.db;
+package com.phicdy.mycuration.data.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;

@@ -2,7 +2,7 @@ package com.phicdy.mycuration.data.rss;
 
 import android.support.annotation.NonNull;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.util.UrlUtil;
 
 import java.util.concurrent.ExecutorService;

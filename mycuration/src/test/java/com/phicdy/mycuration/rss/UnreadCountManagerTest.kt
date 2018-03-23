@@ -3,8 +3,8 @@ package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.data.rss.UnreadCountManager
-import com.phicdy.mycuration.db.DatabaseAdapter
-import com.phicdy.mycuration.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.db.DatabaseHelper
 
 import org.junit.After
 import org.junit.Before

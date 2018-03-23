@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.phicdy.mycuration.R;
-import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.presentation.presenter.ArticleSearchResultPresenter;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity;

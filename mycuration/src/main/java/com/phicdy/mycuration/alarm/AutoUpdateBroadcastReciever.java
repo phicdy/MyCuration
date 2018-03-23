@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.task.GetHatenaBookmark;

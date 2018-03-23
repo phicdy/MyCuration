@@ -29,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
-import com.phicdy.mycuration.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.presentation.presenter.FeedListPresenter;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.data.rss.UnreadCountManager;

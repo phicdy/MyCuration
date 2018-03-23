@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.domain.task;
 
-import com.phicdy.mycuration.db.DatabaseAdapter;
-import com.phicdy.mycuration.db.DatabaseHelper;
+import com.phicdy.mycuration.data.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.db.DatabaseHelper;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Feed;
 
