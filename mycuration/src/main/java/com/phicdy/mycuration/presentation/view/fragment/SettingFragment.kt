@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.view.fragment
+package com.phicdy.mycuration.presentation.view.fragment
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,7 +11,7 @@ import android.widget.Toast
 
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.alarm.AlarmManagerTaskManager
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter

@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.alarm.AlarmManagerTaskManager
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.presentation.view.SettingView

@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.alarm;
+package com.phicdy.mycuration.domain.alarm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

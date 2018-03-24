@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.alarm;
+package com.phicdy.mycuration.domain.alarm;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

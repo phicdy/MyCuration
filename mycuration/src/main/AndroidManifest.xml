@@ -76,7 +76,7 @@
         </activity>
 
         <receiver
-            android:name=".alarm.AutoUpdateBroadcastReciever"
+            android:name=".domain.alarm.AutoUpdateBroadcastReciever"
             android:exported="false">
             <intent-filter>
                 <action android:name="autoUpdateFeed" />
@@ -104,7 +104,7 @@
             android:label="@string/title_activity_add_curation" />
 
         <receiver
-            android:name=".alarm.BootReceiver"
+            android:name=".domain.alarm.BootReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

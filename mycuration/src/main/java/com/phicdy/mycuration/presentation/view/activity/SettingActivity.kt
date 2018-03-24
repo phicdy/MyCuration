@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.preference.PreferenceActivity
 
-import com.phicdy.mycuration.view.fragment.SettingFragment
+import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
