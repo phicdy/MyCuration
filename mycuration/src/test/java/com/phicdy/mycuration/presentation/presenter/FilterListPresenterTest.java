@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.presenter;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
-import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.data.filter.Filter;
 import com.phicdy.mycuration.presentation.view.FilterListView;
 
 import org.junit.Test;

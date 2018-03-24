@@ -6,7 +6,7 @@ import android.util.SparseArray;
 
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Feed;
-import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.data.filter.Filter;
 import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 
 import org.junit.After;

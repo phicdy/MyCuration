@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
-import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.data.filter.Filter;
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter;
 import com.phicdy.mycuration.presentation.view.FilterListView;
 import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity;

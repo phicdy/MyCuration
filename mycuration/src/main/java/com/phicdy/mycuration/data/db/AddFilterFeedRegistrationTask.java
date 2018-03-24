@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 
-import com.phicdy.mycuration.filter.Filter;
-import com.phicdy.mycuration.filter.FilterFeedRegistration;
+import com.phicdy.mycuration.data.filter.Filter;
+import com.phicdy.mycuration.data.filter.FilterFeedRegistration;
 
 import java.util.ArrayList;
 

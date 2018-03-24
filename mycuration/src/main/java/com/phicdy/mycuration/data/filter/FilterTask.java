@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.filter;
+package com.phicdy.mycuration.data.filter;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 

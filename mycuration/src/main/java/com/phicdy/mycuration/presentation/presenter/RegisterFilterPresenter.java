@@ -5,7 +5,7 @@ import android.view.MenuItem;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
-import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.data.filter.Filter;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.presentation.view.RegisterFilterView;
 

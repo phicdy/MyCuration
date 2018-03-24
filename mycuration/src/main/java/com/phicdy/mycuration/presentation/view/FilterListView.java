@@ -2,7 +2,7 @@ package com.phicdy.mycuration.presentation.view;
 
 import android.support.annotation.NonNull;
 
-import com.phicdy.mycuration.filter.Filter;
+import com.phicdy.mycuration.data.filter.Filter;
 
 import java.util.ArrayList;
 

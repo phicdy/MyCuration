@@ -10,8 +10,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.phicdy.mycuration.filter.Filter;
-import com.phicdy.mycuration.filter.FilterFeedRegistration;
+import com.phicdy.mycuration.data.filter.Filter;
+import com.phicdy.mycuration.data.filter.FilterFeedRegistration;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Curation;
 import com.phicdy.mycuration.data.rss.CurationCondition;
