@@ -2,7 +2,7 @@ package com.phicdy.mycuration.domain.task
 
 import android.support.annotation.IntDef
 import android.util.Log
-import com.phicdy.mycuration.data.filter.FilterTask
+import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
