@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.phicdy.mycuration.R;
 
@@ -53,15 +55,21 @@ public class InternalWebViewActivity extends AppCompatActivity {
 	protected void attachBaseContext(Context newBase) {
 		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
 	}
-	
-	@SuppressLint("SetJavaScriptEnabled")
+
+    @SuppressLint("SetJavaScriptEnabled")
     private void initWebView() {
-		if(url == null || !(url.startsWith("http://") || url.startsWith("https://"))) {
-			return;
-		}
-		WebView webView = (WebView)findViewById(R.id.internal_web_view);
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.getSettings().setBuiltInZoomControls(true);
-		webView.loadUrl(url);
-	}
+        if(url == null || !(url.startsWith("http://") || url.startsWith("https://"))) {
+            return;
+        }
+        WebView webView = (WebView)findViewById(R.id.internal_web_view);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.loadUrl(url);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return false;
+            }
+        });
+    }
 }
