@@ -1,5 +1,5 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fr_article_search_result"
-    android:name="com.phicdy.mycuration.view.fragment.ArticleSearchResultFragment"
+    android:name="com.phicdy.mycuration.presentation.view.fragment.ArticleSearchResultFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
