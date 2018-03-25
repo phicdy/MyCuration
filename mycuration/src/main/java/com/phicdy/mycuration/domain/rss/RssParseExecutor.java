@@ -1,8 +1,9 @@
-package com.phicdy.mycuration.data.rss;
+package com.phicdy.mycuration.domain.rss;
 
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.util.UrlUtil;
 
 import java.util.concurrent.ExecutorService;

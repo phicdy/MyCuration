@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.db.DatabaseHelper;
 import com.phicdy.mycuration.data.rss.Feed;
-import com.phicdy.mycuration.data.rss.RssParser;
-import com.phicdy.mycuration.data.rss.UnreadCountManager;
+import com.phicdy.mycuration.domain.rss.RssParser;
+import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.presentation.view.FeedSearchView;
 

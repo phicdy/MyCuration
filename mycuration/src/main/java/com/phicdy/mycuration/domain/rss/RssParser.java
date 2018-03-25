@@ -1,9 +1,11 @@
-package com.phicdy.mycuration.data.rss;
+package com.phicdy.mycuration.domain.rss;
 
 import android.util.Log;
 import android.util.Xml;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
+import com.phicdy.mycuration.data.rss.Article;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.task.GetHatenaBookmark;
 import com.phicdy.mycuration.util.DateParser;
 import com.phicdy.mycuration.util.TextUtil;

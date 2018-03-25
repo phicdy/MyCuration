@@ -1,10 +1,11 @@
-package com.phicdy.mycuration.data.rss;
+package com.phicdy.mycuration.domain.rss;
 
 import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.db.DatabaseHelper;
+import com.phicdy.mycuration.data.rss.Feed;
 
 import org.junit.After;
 import org.junit.Before;

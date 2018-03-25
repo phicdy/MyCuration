@@ -7,7 +7,7 @@ import android.support.test.uiautomator.UiDevice;
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.db.DatabaseHelper;
 import com.phicdy.mycuration.data.rss.Feed;
-import com.phicdy.mycuration.data.rss.UnreadCountManager;
+import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.squareup.spoon.Spoon;
 
 import java.io.File;

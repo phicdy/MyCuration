@@ -1,7 +1,9 @@
-package com.phicdy.mycuration.data.rss;
+package com.phicdy.mycuration.domain.rss;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+
+import com.phicdy.mycuration.data.rss.Feed;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

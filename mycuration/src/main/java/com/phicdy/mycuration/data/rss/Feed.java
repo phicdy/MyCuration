@@ -27,9 +27,9 @@ public class Feed implements Parcelable{
 	public static final int ALL_FEED_ID = -1;
 	public static final int DEFAULT_FEED_ID = -100;
 
-	static final String RSS_1 = "RSS1.0";
-	static final String RSS_2 = "RSS2.0";
-	static final String ATOM = "ATOM";
+	public static final String RSS_1 = "RSS1.0";
+	public static final String RSS_2 = "RSS2.0";
+	public static final String ATOM = "ATOM";
 
 	public static final String CREATE_TABLE_SQL =
 			"create table " + TABLE_NAME + "(" +

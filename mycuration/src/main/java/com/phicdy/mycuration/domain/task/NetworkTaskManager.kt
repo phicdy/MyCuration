@@ -4,8 +4,8 @@ import android.support.annotation.IntDef
 import android.util.Log
 import com.phicdy.mycuration.data.filter.FilterTask
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.data.rss.RssParser
-import com.phicdy.mycuration.data.rss.UnreadCountManager
+import com.phicdy.mycuration.domain.rss.RssParser
+import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable

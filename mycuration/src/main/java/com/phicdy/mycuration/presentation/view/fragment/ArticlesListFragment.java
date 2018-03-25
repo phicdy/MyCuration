@@ -26,7 +26,7 @@ import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter;
 import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity;
 import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 import com.phicdy.mycuration.data.rss.Feed;
-import com.phicdy.mycuration.data.rss.UnreadCountManager;
+import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.tracker.GATrackerHelper;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.presentation.view.ArticleListView;

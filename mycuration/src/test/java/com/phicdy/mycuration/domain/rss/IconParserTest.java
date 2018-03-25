@@ -1,12 +1,10 @@
-package com.phicdy.mycuration.rss.test;
-
-import com.phicdy.mycuration.data.rss.IconParser;
+package com.phicdy.mycuration.domain.rss;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
 public class IconParserTest {
