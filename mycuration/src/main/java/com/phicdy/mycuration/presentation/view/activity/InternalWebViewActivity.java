@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
@@ -18,6 +19,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class InternalWebViewActivity extends AppCompatActivity {
 	
 	private String url;
+	private WebView webView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class InternalWebViewActivity extends AppCompatActivity {
         if(url == null || !(url.startsWith("http://") || url.startsWith("https://"))) {
             return;
         }
-        WebView webView = (WebView)findViewById(R.id.internal_web_view);
+        webView = (WebView)findViewById(R.id.internal_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.loadUrl(url);
@@ -71,5 +73,16 @@ public class InternalWebViewActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	        if (webView.canGoBack()) {
+	            webView.goBack();
+	            return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
