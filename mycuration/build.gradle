@@ -11,8 +11,8 @@ android {
         applicationId "com.phicdy.mycuration"
         minSdkVersion 14
         targetSdkVersion 25
-        versionName "1.4.8"
-        versionCode 28
+        versionName "1.4.9"
+        versionCode 29
 
         testApplicationId "com.phicdy.mycuration.test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
