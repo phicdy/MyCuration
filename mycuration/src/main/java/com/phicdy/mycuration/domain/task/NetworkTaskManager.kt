@@ -2,8 +2,8 @@ package com.phicdy.mycuration.domain.task
 
 import android.support.annotation.IntDef
 import android.util.Log
-import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.util.FileUtil
@@ -34,17 +34,15 @@ object NetworkTaskManager {
     annotation class AddFeedUrlError
 
     fun updateAllFeeds(feeds: ArrayList<Feed>): Flowable<Feed> {
-        return Flowable.fromIterable(feeds)
+        return Flowable.fromIterable<Feed>(feeds)
                 .subscribeOn(Schedulers.io())
-                .filter { it.id > 0 }
-                .flatMap {
-                    Log.d("test", "flatMap, Thread:" + Thread.currentThread().name + ", feed:" + it.title)
-                    return@flatMap Flowable.just(it).subscribeOn(Schedulers.newThread())
+                .filter { feed -> feed.id > 0 }
+                .flatMap({ data -> Flowable.just(data).subscribeOn(Schedulers.io()) })
+                { _, newData ->
+                    Log.d("NetworkTask", "BiFunction, Thread:" + Thread.currentThread().name + ", feed:" + newData.title)
+                    updateFeed(newData)
+                    newData
                 }
-                .doOnNext({
-                    Log.d("doOnNext", "Thread:" + Thread.currentThread().name + ", it:" + it.title)
-                    updateFeed(it) ?: return@doOnNext
-                })
     }
 
     private interface FeedRequestService {
