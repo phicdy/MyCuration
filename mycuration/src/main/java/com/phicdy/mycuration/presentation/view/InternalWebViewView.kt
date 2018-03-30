@@ -4,6 +4,7 @@ import android.view.KeyEvent
 
 interface InternalWebViewView {
     fun initWebView()
+    fun initToolbar()
     fun load(url: String)
     fun share(url: String)
     fun goBack()

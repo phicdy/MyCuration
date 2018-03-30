@@ -9,6 +9,7 @@ class InternalWebViewPresenter(private val view: InternalWebViewView, private va
     override fun create() {
         if (!UrlUtil.isCorrectUrl(url)) return
         view.initWebView()
+        view.initToolbar()
         view.load(url!!)
     }
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -36,9 +37,9 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_item_share -> {
-                presenter.onShareMenuClicked()
-            }
+            R.id.menu_item_share -> presenter.onShareMenuClicked()
+            // For arrow button on toolbar
+            android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -53,6 +54,18 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
                 return false
             }
         })
+    }
+
+    override fun initToolbar() {
+        val toolbar = findViewById(R.id.toolbar_internal_webview) as Toolbar
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            // Show back arrow icon
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setDisplayShowHomeEnabled(true)
+            actionBar.setTitle(R.string.app_name)
+        }
     }
 
     override fun load(url: String) {
@@ -73,6 +86,7 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
     override fun parentOnKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         return super.onKeyDown(keyCode, event)
     }
+
     override fun goBack() {
         webView.goBack()
     }
