@@ -20,11 +20,14 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
     private var url: String? = null
     private lateinit var webView: WebView
     private lateinit var presenter: InternalWebViewPresenter
+    companion object {
+        const val KEY_OPEN_URL = "openUrl"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_internal_web_view)
-        url = intent.getStringExtra(ArticlesListActivity.OPEN_URL_ID)
+        url = intent.getStringExtra(KEY_OPEN_URL)
         presenter = InternalWebViewPresenter(this, url)
         presenter.create()
     }
