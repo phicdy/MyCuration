@@ -126,25 +126,7 @@ class ArticleListPresenterTest {
     fun AllUnreadArticlesOfFeedAreOnlyLoadedAfterOnCreateView() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 2 unread artcile and 2 read exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
-        unreadArticles.add(Article(1, "unread", "http://www.google.com",
-                Article.UNREAD, "1", 1, 1, "feed", ""))
-        unreadArticles.add(Article(2, "unread2", "http://www.google.com",
-                Article.UNREAD, "1", 1, 1, "feed", ""))
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-        val readArticles = ArrayList<Article>()
-        readArticles.add(Article(3, "read", "http://www.google.com",
-                Article.READ, "1", 1, 1, "feed", ""))
-        readArticles.add(Article(4, "read1", "http://www.google.com",
-                Article.READ, "1", 1, 1, "feed", ""))
-        `when`(adapter.getAllArticlesInAFeed(testFeedId, true))
-                .thenReturn(readArticles)
-
+        val adapter = mock2Unread2ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -159,25 +141,7 @@ class ArticleListPresenterTest {
     fun AllUnreadArticlesAreOnlyLoadedAfterOnCreateView() {
         val testFeedId = Feed.ALL_FEED_ID
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 2 unread artcile and 2 read exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
-        unreadArticles.add(Article(1, "unread", "http://www.google.com",
-                Article.UNREAD, "1", 1, 1, "feed", ""))
-        unreadArticles.add(Article(2, "unread2", "http://www.google.com",
-                Article.UNREAD, "1", 1, 2, "feed", ""))
-        `when`(adapter.getAllUnreadArticles(true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle).thenReturn(true)
-        val readArticles = ArrayList<Article>()
-        readArticles.add(Article(3, "read", "http://www.google.com",
-                Article.READ, "1", 1, 3, "feed", ""))
-        readArticles.add(Article(4, "read1", "http://www.google.com",
-                Article.READ, "1", 1, 4, "feed", ""))
-        `when`(adapter.getTop300Articles(true))
-                .thenReturn(readArticles)
-
+        val adapter = mock2Unread2ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -192,24 +156,7 @@ class ArticleListPresenterTest {
     fun AllUnreadArticlesOfCurationAreOnlyLoadedAfterOnCreateView() {
         val testCurationId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 2 unread artcile and 2 read exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
-        unreadArticles.add(Article(1, "unread", "http://www.google.com",
-                Article.UNREAD, "1", 1, 1, "feed", ""))
-        unreadArticles.add(Article(2, "unread2", "http://www.google.com",
-                Article.UNREAD, "1", 1, 2, "feed", ""))
-        `when`(adapter.getAllUnreadArticlesOfCuration(testCurationId, true))
-                .thenReturn(unreadArticles)
-        val readArticles = ArrayList<Article>()
-        readArticles.add(Article(3, "read", "http://www.google.com",
-                Article.READ, "1", 1, 3, "feed", ""))
-        readArticles.add(Article(4, "read1", "http://www.google.com",
-                Article.READ, "1", 1, 4, "feed", ""))
-        `when`(adapter.getAllArticlesOfCuration(testCurationId, true))
-                .thenReturn(readArticles)
-
+        val adapter = mock2Unread2ReadArticleDatabase(testCurationId)
         val presenter = ArticleListPresenter(
                 Feed.DEFAULT_FEED_ID, testCurationId, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -237,20 +184,9 @@ class ArticleListPresenterTest {
     fun UnreadArticleStatusBecomesToReadWhenClicked() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 1 unread artcile exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
-        unreadArticles.add(clickedArticle)
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-        val mockFeed = Mockito.mock(Feed::class.java)
-        `when`(mockFeed.title).thenReturn("feed")
-        `when`(adapter.getFeedById(testFeedId)).thenReturn(mockFeed);
-
+        val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -266,20 +202,9 @@ class ArticleListPresenterTest {
     fun ToreadArticleStatusIsStillToReadWhenClicked() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 1 toread artcile exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.TOREAD, "1", 1, 1, "feed", "")
-        unreadArticles.add(clickedArticle)
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-        val mockFeed = Mockito.mock(Feed::class.java)
-        `when`(mockFeed.title).thenReturn("feed")
-        `when`(adapter.getFeedById(testFeedId)).thenReturn(mockFeed)
-
+        val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -295,20 +220,9 @@ class ArticleListPresenterTest {
     fun ReadArticleStatusIsStillReadWhenClicked() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 1 read artcile exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.READ, "1", 1, 1, "feed", "")
-        unreadArticles.add(clickedArticle)
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-        val mockFeed = Mockito.mock(Feed::class.java)
-        `when`(mockFeed.title).thenReturn("feed")
-        `when`(adapter.getFeedById(testFeedId)).thenReturn(mockFeed)
-
+        val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -324,20 +238,9 @@ class ArticleListPresenterTest {
     fun ArticleIsOpenedWithInternalOptionWhenClicked() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 1 unread artcile exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
-        unreadArticles.add(clickedArticle)
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-        val mockFeed = Mockito.mock(Feed::class.java)
-        `when`(mockFeed.title).thenReturn("feed")
-        `when`(adapter.getFeedById(testFeedId)).thenReturn(mockFeed)
-
+        val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -353,17 +256,9 @@ class ArticleListPresenterTest {
     fun ArticleIsOpenedWithExternalOptionWhenClicked() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 1 unread artcile exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
-        unreadArticles.add(clickedArticle)
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-
+        val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, false, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -379,20 +274,9 @@ class ArticleListPresenterTest {
     fun IntenalWebViewIsOpenedWithInternalOptionWhenClicked() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 1 unread artcile exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
-        unreadArticles.add(clickedArticle)
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-        val mockFeed = Mockito.mock(Feed::class.java)
-        `when`(mockFeed.title).thenReturn("feed")
-        `when`(adapter.getFeedById(testFeedId)).thenReturn(mockFeed)
-
+        val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -408,17 +292,9 @@ class ArticleListPresenterTest {
     fun ExtenalWebViewIsOpenedWithExternalOptionWhenClicked() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 1 unread artcile exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
-        unreadArticles.add(clickedArticle)
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-
+        val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, false, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -434,17 +310,9 @@ class ArticleListPresenterTest {
     fun ShareUiShowsWhenLongClicked() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
-
-        // Mock 1 unread artcile exists
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val unreadArticles = ArrayList<Article>()
         val longClickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
-        unreadArticles.add(longClickedArticle)
-        `when`(adapter.getUnreadArticlesInAFeed(testFeedId, true))
-                .thenReturn(unreadArticles)
-        `when`(adapter.isExistArticle(testFeedId)).thenReturn(true)
-
+        val adapter = mock1ArticleDatabase(longClickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
                 manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
@@ -478,6 +346,39 @@ class ArticleListPresenterTest {
         `when`(adapter.getAllArticlesInAFeed(testId, true)).thenReturn(articles)
         `when`(adapter.getTop300Articles(true)).thenReturn(articles)
         `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(articles)
+        return adapter
+    }
+
+    private fun mock1ArticleDatabase(article: Article): DatabaseAdapter {
+        val testId = 1
+        val adapter = Mockito.mock(DatabaseAdapter::class.java)
+        val articles = ArrayList<Article>()
+        articles.add(article)
+        `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(articles)
+        `when`(adapter.isExistArticle(testId)).thenReturn(true)
+        val mockFeed = Mockito.mock(Feed::class.java)
+        `when`(mockFeed.title).thenReturn("feed")
+        `when`(adapter.getFeedById(testId)).thenReturn(mockFeed);
+        return adapter
+    }
+
+    private fun mock2Unread2ReadArticleDatabase(testId: Int): DatabaseAdapter {
+        val adapter = Mockito.mock(DatabaseAdapter::class.java)
+        val unreadArticles = ArrayList<Article>()
+        unreadArticles.add(Article(1, "unread", "http://www.google.com",
+                Article.UNREAD, "1", 1, 1, "feed", ""))
+        unreadArticles.add(Article(2, "unread2", "http://www.google.com",
+                Article.UNREAD, "1", 1, 2, "feed", ""))
+        `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(unreadArticles)
+        `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(unreadArticles)
+        `when`(adapter.isExistArticle(testId)).thenReturn(true)
+        val readArticles = ArrayList<Article>()
+        readArticles.add(Article(3, "read", "http://www.google.com",
+                Article.READ, "1", 1, 3, "feed", ""))
+        readArticles.add(Article(4, "read1", "http://www.google.com",
+                Article.READ, "1", 1, 4, "feed", ""))
+        `when`(adapter.getAllArticlesInAFeed(testId, true)).thenReturn(readArticles)
+        `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(readArticles)
         return adapter
     }
 
