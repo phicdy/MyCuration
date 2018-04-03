@@ -33,7 +33,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun NoArticlesAreLoadedAfterOnCreateViewWithEmptyDBForFeed() {
+    fun `No articles are loaded after onCreateView with empty DB for feed`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mockEmptyDatabase(testFeedId)
@@ -48,7 +48,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun NoArticlesAreLoadedAfterOnCreateViewWithEmptyDBForAllFeed() {
+    fun `No Articles are loaded after onCreateView with empty DB for all feed`() {
         val testFeedId = Feed.ALL_FEED_ID
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mockEmptyDatabase(testFeedId)
@@ -63,7 +63,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun NoArticlesAreLoadedAfterOnCreateViewWithEmptyDBForCuration() {
+    fun `No Articles are loaded after onCreateView with empty DB for curation`() {
         val testCurationId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mockEmptyDatabase(testCurationId)
@@ -78,7 +78,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun AllArticlesOfFeedAreLoadedAfterOnCreateViewIfAlreadyRead() {
+    fun `All artciles of feed are loaded after onCreateView if already read`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock1ReadArticleDatabase(testFeedId)
@@ -93,7 +93,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun AllArticlesAreLoadedAfterOnCreateViewIfAlreadyRead() {
+    fun `All artciles are loaded after onCreateView if already read`() {
         val testFeedId = Feed.ALL_FEED_ID
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock1ReadArticleDatabase(testFeedId)
@@ -108,7 +108,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun AllArticlesOfCurationAreLoadedAfterOnCreateViewIfAlreadyRead() {
+    fun `All artciles OfCurationare loaded after onCreateView if already read`() {
         val testCurationId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock1ReadArticleDatabase(testCurationId)
@@ -123,7 +123,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun AllUnreadArticlesOfFeedAreOnlyLoadedAfterOnCreateView() {
+    fun `All unread articles of feed are only loaded after onCreateView`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock2Unread2ReadArticleDatabase(testFeedId)
@@ -138,7 +138,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun AllUnreadArticlesAreOnlyLoadedAfterOnCreateView() {
+    fun `All unread articles are only loaded after onCreateView`() {
         val testFeedId = Feed.ALL_FEED_ID
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock2Unread2ReadArticleDatabase(testFeedId)
@@ -153,7 +153,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun AllUnreadArticlesOfCurationAreOnlyLoadedAfterOnCreateView() {
+    fun `All unread articles of curation are only loaded after onCreateView`() {
         val testCurationId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock2Unread2ReadArticleDatabase(testCurationId)
@@ -181,7 +181,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun UnreadArticleStatusBecomesToReadWhenClicked() {
+    fun `unread article status becomes to read when clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
@@ -199,7 +199,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun ToreadArticleStatusIsStillToReadWhenClicked() {
+    fun `Toread article status is still to read when clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
@@ -217,7 +217,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun ReadArticleStatusIsStillReadWhenClicked() {
+    fun `Read article status is still read when clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
@@ -235,7 +235,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun ArticleIsOpenedWithInternalOptionWhenClicked() {
+    fun `Article is opened with internal option when clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
@@ -253,7 +253,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun ArticleIsOpenedWithExternalOptionWhenClicked() {
+    fun `Article is opened with external option when clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
@@ -271,7 +271,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun IntenalWebViewIsOpenedWithInternalOptionWhenClicked() {
+    fun `Intenal web view is opened with internal option when clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
@@ -289,7 +289,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun ExtenalWebViewIsOpenedWithExternalOptionWhenClicked() {
+    fun `Extenal web view is opened with external option when clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
@@ -307,7 +307,7 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun ShareUiShowsWhenLongClicked() {
+    fun `Share UI shows when long clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
         val longClickedArticle = Article(1, "unread", "http://www.google.com",
@@ -336,8 +336,7 @@ class ArticleListPresenterTest {
     private fun mock1ReadArticleDatabase(testId: Int): DatabaseAdapter {
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(ArrayList())
-        `when`(adapter.getAllUnreadArticlesOfCuration(testId, true))
-                .thenReturn(ArrayList())
+        `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
         `when`(adapter.isExistArticle(testId)).thenReturn(true)
         `when`(adapter.isExistArticle).thenReturn(true)
         val articles = ArrayList<Article>()
