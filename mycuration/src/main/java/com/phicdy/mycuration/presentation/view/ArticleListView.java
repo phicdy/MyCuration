@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.view;
 import android.support.annotation.NonNull;
 
 public interface ArticleListView {
-    void openInternalWebView(@NonNull String url);
+    void openInternalWebView(@NonNull String url, @NonNull String rssTitle);
     void openExternalWebView(@NonNull String url);
     void notifyListView();
     void finish();

@@ -44,7 +44,6 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
 
     private ArticleRecyclerView recyclerView;
     private SimpleItemRecyclerViewAdapter articlesListAdapter;
-    private static final String OPEN_URL_ID = "openUrl";
 
     private FloatingActionButton fab;
 
@@ -162,10 +161,11 @@ public class ArticlesListFragment extends Fragment implements ArticleListView {
     }
 
     @Override
-    public void openInternalWebView(@NonNull String url) {
+    public void openInternalWebView(@NonNull String url, @NonNull String rssTitle) {
         GATrackerHelper.INSTANCE.sendEvent(getString(R.string.tap_article_internal));
         Intent intent = new Intent(getActivity(), InternalWebViewActivity.class);
-        intent.putExtra(OPEN_URL_ID, url);
+        intent.putExtra(InternalWebViewActivity.KEY_OPEN_URL, url);
+        intent.putExtra(InternalWebViewActivity.KEY_RSS_TITLE, rssTitle);
         startActivity(intent);
     }
 

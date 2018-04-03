@@ -721,8 +721,9 @@ public class DatabaseAdapter {
 		db.beginTransaction();
 		try {
 			// Get unread articles
-			String sql = "select _id,title,url,status,point,date from articles where feedId = "
-					+ feedId + " order by date ";
+			String sql = "select " + Article.ID + ", " + Article.TITLE +  ", " + Article.URL + ", " + Article.STATUS + "" +
+					", " + Article.POINT + ", " + Article.DATE + " from " + Article.TABLE_NAME + " where " + Article.FEEDID + " = "
+					+ feedId + " order by " + Article.DATE;
 			if(isNewestArticleTop) {
 				sql += "desc";
 			}else {
