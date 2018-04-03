@@ -116,7 +116,14 @@ public class ArticleListPresenter implements Presenter {
         if(!isSwipeLeftToRight && !isSwipeRightToLeft) {
             setReadStatusToTouchedView(article, Article.TOREAD, false);
             if(isOpenInternal) {
-                view.openInternalWebView(article.getUrl());
+                String feedTitle;
+                if (feedId == Feed.ALL_FEED_ID) {
+                    feedTitle = article.getFeedTitle();
+                } else {
+                    Feed feed = adapter.getFeedById(feedId);
+                    feedTitle = feed.getTitle();
+                }
+                view.openInternalWebView(article.getUrl(), feedTitle);
             }else {
                 view.openExternalWebView(article.getUrl());
             }

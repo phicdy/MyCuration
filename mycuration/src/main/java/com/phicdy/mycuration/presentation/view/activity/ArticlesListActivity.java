@@ -21,7 +21,6 @@ import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment;
 
 public class ArticlesListActivity extends AppCompatActivity implements ArticlesListFragment.OnArticlesListFragmentListener {
 
-    public static final String OPEN_URL_ID = "openUrl";
     private static final int DEFAULT_CURATION_ID = -1;
 
     private SearchView searchView;

@@ -22,6 +22,7 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
     private lateinit var presenter: InternalWebViewPresenter
     companion object {
         const val KEY_OPEN_URL = "openUrl"
+        const val KEY_RSS_TITLE = "rssTitle"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +68,8 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
             // Show back arrow icon
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setDisplayShowHomeEnabled(true)
-            actionBar.setTitle(R.string.app_name)
+            val rssTitle = intent.getStringExtra(KEY_RSS_TITLE)
+            actionBar.title = rssTitle
         }
     }
 

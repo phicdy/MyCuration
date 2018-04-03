@@ -289,6 +289,42 @@ class ArticleListPresenterTest {
     }
 
     @Test
+    fun `Title of intenal web view is opended article's RSS's title`() {
+        val testFeedId = 1
+        val manager = Mockito.mock(UnreadCountManager::class.java)
+        val clickedArticle = Article(1, "unread", "http://www.google.com",
+                Article.UNREAD, "1", 1, 1, "feed", "")
+        val adapter = mock1ArticleDatabase(clickedArticle)
+        val presenter = ArticleListPresenter(
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
+                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
+        val view = MockView()
+        presenter.setView(view)
+        presenter.create()
+        presenter.createView()
+        presenter.onListItemClicked(0)
+        assertThat(view.openTitle, `is`(clickedArticle.feedTitle))
+    }
+
+    @Test
+    fun `Title of intenal web view is opened article's RSS's title for all RSS`() {
+        val testFeedId = Feed.ALL_FEED_ID
+        val manager = Mockito.mock(UnreadCountManager::class.java)
+        val clickedArticle = Article(1, "unread", "http://www.google.com",
+                Article.UNREAD, "1", 1, 1, "feed", "")
+        val adapter = mock1ArticleDatabase(clickedArticle)
+        val presenter = ArticleListPresenter(
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
+                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
+        val view = MockView()
+        presenter.setView(view)
+        presenter.create()
+        presenter.createView()
+        presenter.onListItemClicked(0)
+        assertThat(view.openTitle, `is`(clickedArticle.feedTitle))
+    }
+
+    @Test
     fun `Extenal web view is opened with external option when clicked`() {
         val testFeedId = 1
         val manager = Mockito.mock(UnreadCountManager::class.java)
@@ -353,6 +389,8 @@ class ArticleListPresenterTest {
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
         val articles = ArrayList<Article>()
         articles.add(article)
+        `when`(adapter.getAllUnreadArticles(true)).thenReturn(articles)
+        `when`(adapter.getTop300Articles(true)).thenReturn(articles)
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(articles)
         `when`(adapter.isExistArticle(testId)).thenReturn(true)
         val mockFeed = Mockito.mock(Feed::class.java)
@@ -387,10 +425,12 @@ class ArticleListPresenterTest {
         internal var isOpenedExternalWebView = false
         internal var shareUrl: String? = null
         internal var openedUrl: String? = null
+        internal var openTitle: String? = null
 
         override fun openInternalWebView(url: String, rssTitle: String) {
             isOpenedInternalWebView = true
             openedUrl = url
+            openTitle = rssTitle
         }
 
         override fun openExternalWebView(url: String) {
