@@ -59,7 +59,7 @@ public class AddFeedTest extends UiTest {
         tabs.get(1).click();
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -134,7 +134,7 @@ public class AddFeedTest extends UiTest {
         }
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
@@ -177,7 +177,7 @@ public class AddFeedTest extends UiTest {
         tabs.get(1).click();
 
         // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 

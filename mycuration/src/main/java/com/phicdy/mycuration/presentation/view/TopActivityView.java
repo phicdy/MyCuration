@@ -3,6 +3,7 @@ package com.phicdy.mycuration.presentation.view;
 
 public interface TopActivityView {
     void initViewPager();
+    void initFab();
     void setAlarmManager();
     void closeSearchView();
     void goToFeedSearch();

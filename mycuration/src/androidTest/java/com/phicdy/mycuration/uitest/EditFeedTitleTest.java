@@ -65,7 +65,7 @@ public class EditFeedTitleTest extends UiTest {
 
         // Click plus button
         String url = "http://news.yahoo.co.jp/pickup/rss.xml";
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "add_new_rss"));
+        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
         if (plusButton == null) fail("Plus button was not found");
         plusButton.click();
 
