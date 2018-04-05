@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -103,6 +104,17 @@ public class TopActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void initFab() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_top);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.fabClicked();
+            }
+        });
+    }
+
     private void setActivityTitle(int position) {
         switch (position) {
             case POSITION_CURATION_FRAGMENT:
@@ -151,7 +163,7 @@ public class TopActivity extends AppCompatActivity implements
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    View view = findViewById(R.id.add_new_rss);
+                    View view = findViewById(R.id.fab_top);
                     new MaterialShowcaseView.Builder(TopActivity.this)
                             .setTarget(view)
                             .setContentText(

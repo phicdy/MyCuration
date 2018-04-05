@@ -28,6 +28,7 @@ public class TopActivityPresenter implements Presenter {
     @Override
     public void create() {
         view.initViewPager();
+        view.initFab();
         view.setAlarmManager();
         view.changeTab(launchTab);
     }
@@ -53,7 +54,7 @@ public class TopActivityPresenter implements Presenter {
         this.dbAdapter = adapter;
     }
 
-    private void addMenuClicked() {
+    public void fabClicked() {
         switch (view.currentTabPosition()) {
             case POSITION_CURATION_FRAGMENT:
                 if (dbAdapter.getNumOfFeeds() == 0) {
@@ -82,9 +83,6 @@ public class TopActivityPresenter implements Presenter {
 
     public void optionItemClicked(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.add_new_rss:
-                addMenuClicked();
-                break;
             case R.id.setting_top_activity:
                 settingMenuClicked();
                 break;
