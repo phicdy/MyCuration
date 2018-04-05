@@ -63,10 +63,8 @@ public class TopActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_top);
 
         PreferenceHelper helper = PreferenceHelper.INSTANCE;
-        presenter = new TopActivityPresenter(helper.getLaunchTab());
-        presenter.setView(this);
         DatabaseAdapter dbAdapter = DatabaseAdapter.getInstance();
-        presenter.setDataAdapter(dbAdapter);
+        presenter = new TopActivityPresenter(helper.getLaunchTab(), this, dbAdapter);
         presenter.create();
     }
 
