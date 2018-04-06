@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
+import android.view.KeyEvent
 import android.view.MenuItem
 
 import com.phicdy.mycuration.R
@@ -8,12 +9,6 @@ import com.phicdy.mycuration.presentation.view.TopActivityView
 
 class TopActivityPresenter(private val launchTab: Int, private val view: TopActivityView,
                            private val dbAdapter: DatabaseAdapter) : Presenter {
-
-    companion object {
-        private const val POSITION_CURATION_FRAGMENT = 0
-        private const val POSITION_FEED_FRAGMENT = 1
-        private const val POSITION_FILTER_FRAGMENT = 2
-    }
 
     override fun create() {
         view.initViewPager()
@@ -33,23 +28,31 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     }
 
     fun fabClicked() {
-        when (view.currentTabPosition()) {
-            POSITION_CURATION_FRAGMENT -> {
-                if (dbAdapter.numOfFeeds == 0) {
-                    view.goToFeedSearch()
-                    return
-                }
-                view.goToAddCuration()
-            }
-            POSITION_FEED_FRAGMENT -> view.goToFeedSearch()
-            POSITION_FILTER_FRAGMENT -> {
-                if (dbAdapter.numOfFeeds == 0) {
-                    view.goToFeedSearch()
-                    return
-                }
-                view.goToAddFilter()
-            }
+        view.startFabAnimation()
+    }
+
+    fun fabCurationClicked() {
+        if (dbAdapter.numOfFeeds == 0) {
+            view.goToFeedSearch()
+            return
         }
+        view.goToAddCuration()
+    }
+
+    fun fabRssClicked() {
+        view.goToFeedSearch()
+    }
+
+    fun fabFilterClicked() {
+        if (dbAdapter.numOfFeeds == 0) {
+            view.goToFeedSearch()
+            return
+        }
+        view.goToAddFilter()
+    }
+
+    fun addBackgroundClicked() {
+        view.closeAddFab()
     }
 
     private fun settingMenuClicked() {
@@ -60,5 +63,13 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
         when (item.itemId) {
             R.id.setting_top_activity -> settingMenuClicked()
         }
+    }
+
+    fun onKeyDown(keyCode: Int, isShowAddFabs: Boolean): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && isShowAddFabs) {
+            view.closeAddFab()
+            return true
+        }
+        return false
     }
 }

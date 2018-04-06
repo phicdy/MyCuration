@@ -18,26 +18,27 @@ import android.support.v7.widget.SearchView
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-
+import android.view.View
+import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
-import com.phicdy.mycuration.tracker.GATrackerHelper
-import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FeedListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
+import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.view.activity.SettingActivity
-
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 
 class TopActivity : AppCompatActivity(), FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener, TopActivityView {
-
     companion object {
         private const val POSITION_CURATION_FRAGMENT = 0
         private const val POSITION_FEED_FRAGMENT = 1
@@ -50,6 +51,10 @@ class TopActivity : AppCompatActivity(), FeedListFragment.OnFeedListFragmentList
     private lateinit var presenter: TopActivityPresenter
     private lateinit var mViewPager: ViewPager
     private lateinit var fab: FloatingActionButton
+    private lateinit var llAddCuration: LinearLayout
+    private lateinit var llAddRss: LinearLayout
+    private lateinit var llAddFilter: LinearLayout
+    private lateinit var back: FrameLayout
 
     private lateinit var curationFragment: CurationListFragment
     private var searchView: SearchView? = null
@@ -95,6 +100,51 @@ class TopActivity : AppCompatActivity(), FeedListFragment.OnFeedListFragmentList
     override fun initFab() {
         fab = findViewById(R.id.fab_top) as FloatingActionButton
         fab.setOnClickListener { presenter.fabClicked() }
+        back = findViewById(R.id.fl_add_background) as FrameLayout
+        back.setOnClickListener {
+            presenter.addBackgroundClicked()
+        }
+        llAddCuration = findViewById(R.id.ll_add_curation) as LinearLayout
+        llAddRss = findViewById(R.id.ll_add_rss) as LinearLayout
+        llAddFilter = findViewById(R.id.ll_add_filter) as LinearLayout
+        llAddCuration.setOnClickListener { presenter.fabCurationClicked() }
+        llAddRss.setOnClickListener { presenter.fabRssClicked() }
+        llAddFilter.setOnClickListener { presenter.fabFilterClicked() }
+    }
+
+    override fun startFabAnimation() {
+        back.visibility = View.VISIBLE
+
+        val animation = AnimationUtils.loadAnimation(this, R.anim.fab_rotation)
+        fab.startAnimation(animation)
+
+        llAddCuration.visibility = View.VISIBLE
+        val fadeInCuration = AnimationUtils.loadAnimation(this, R.anim.fab_fadein_curation)
+        llAddCuration.startAnimation(fadeInCuration)
+
+        llAddRss.visibility = View.VISIBLE
+        val fadeInRss = AnimationUtils.loadAnimation(this, R.anim.fab_fadein_rss)
+        llAddRss.startAnimation(fadeInRss)
+
+        llAddFilter.visibility = View.VISIBLE
+        val fadeInFilter = AnimationUtils.loadAnimation(this, R.anim.fab_fadein_filter)
+        llAddFilter.startAnimation(fadeInFilter)
+    }
+
+    override fun closeAddFab() {
+        back.visibility = View.GONE
+
+        val animation = AnimationUtils.loadAnimation(this, R.anim.fab_rotation_back)
+        fab.startAnimation(animation)
+
+        val fadeOutCuration = AnimationUtils.loadAnimation(this, R.anim.fab_fadeout_curation)
+        llAddCuration.startAnimation(fadeOutCuration)
+
+        val fadeOutRss = AnimationUtils.loadAnimation(this, R.anim.fab_fadeout_rss)
+        llAddRss.startAnimation(fadeOutRss)
+
+        val fadeOutFilter = AnimationUtils.loadAnimation(this, R.anim.fab_fadeout_filter)
+        llAddFilter.startAnimation(fadeOutFilter)
     }
 
     private fun setActivityTitle(position: Int) {
@@ -167,11 +217,8 @@ class TopActivity : AppCompatActivity(), FeedListFragment.OnFeedListFragmentList
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish()
-            return true
-        }
-        return false
+        if (presenter.onKeyDown(keyCode, back.visibility == View.VISIBLE)) return true
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun attachBaseContext(newBase: Context) {

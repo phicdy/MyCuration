@@ -1,29 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.phicdy.mycuration.presentation.view.activity.TopActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-    </android.support.design.widget.AppBarLayout>
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_add_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:alpha="0.8"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:background="@android:color/white"/>
+    <LinearLayout
+        android:id="@+id/ll_add_curation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/fab_top"
+        app:layout_constraintEnd_toStartOf="@id/ll_add_rss">
+        <TextView
+            android:id="@+id/btn_add_curation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="4dp"
+            android:textSize="14sp"
+            android:text="@string/curation" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add_curation"
+            android:layout_width="@dimen/small_fab_width"
+            android:layout_height="@dimen/small_fab_height"
+            android:layout_gravity="center_horizontal"
+            app:backgroundTint="@android:color/black"
+            app:srcCompat="@drawable/tab_curation"
+            app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/ll_add_rss" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_add_rss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginRight="24dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/fab_top"
+        app:layout_constraintEnd_toStartOf="@id/ll_add_filter">
+        <TextView
+            android:id="@+id/btn_add_rss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="4dp"
+            android:textSize="14sp"
+            android:text="@string/rss" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add_rss"
+            android:layout_width="@dimen/small_fab_width"
+            android:layout_height="@dimen/small_fab_height"
+            android:layout_gravity="center_horizontal"
+            app:backgroundTint="@android:color/black"
+            app:srcCompat="@drawable/tab_feed"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/ll_add_filter" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_add_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/fab_top"
+        app:layout_constraintEnd_toStartOf="@id/fab_top">
+        <TextView
+            android:id="@+id/btn_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="4dp"
+            android:textSize="14sp"
+            android:text="@string/filter" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add_filter"
+            android:layout_width="@dimen/small_fab_width"
+            android:layout_height="@dimen/small_fab_height"
+            android:layout_gravity="center_horizontal"
+            app:backgroundTint="@android:color/black"
+            app:srcCompat="@drawable/tab_filter" />
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_top"
@@ -32,5 +132,7 @@
         android:layout_gravity="right|bottom"
         android:layout_margin="16dp"
         app:backgroundTint="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_action_new" />
-</android.support.design.widget.CoordinatorLayout>
+</android.support.constraint.ConstraintLayout>

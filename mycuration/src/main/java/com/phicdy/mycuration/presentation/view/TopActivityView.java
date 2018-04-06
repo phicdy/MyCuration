@@ -5,6 +5,8 @@ public interface TopActivityView {
     void initViewPager();
     void initFab();
     void setAlarmManager();
+    void startFabAnimation();
+    void closeAddFab();
     void closeSearchView();
     void goToFeedSearch();
     void goToAddCuration();
