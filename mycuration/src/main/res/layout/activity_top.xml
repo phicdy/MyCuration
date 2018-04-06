@@ -50,13 +50,16 @@
         tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/fab_top"
         app:layout_constraintEnd_toStartOf="@id/ll_add_rss">
-        <TextView
+        <Button
             android:id="@+id/btn_add_curation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="4dp"
             android:textSize="14sp"
+            android:padding="8dp"
             android:text="@string/curation" />
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_add_curation"
@@ -79,10 +82,13 @@
         tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/fab_top"
         app:layout_constraintEnd_toStartOf="@id/ll_add_filter">
-        <TextView
+        <Button
             android:id="@+id/btn_add_rss"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="8dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="4dp"
             android:textSize="14sp"
@@ -108,10 +114,13 @@
         tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/fab_top"
         app:layout_constraintEnd_toStartOf="@id/fab_top">
-        <TextView
-            android:id="@+id/btn_test"
+        <Button
+            android:id="@+id/btn_add_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="8dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="4dp"
             android:textSize="14sp"

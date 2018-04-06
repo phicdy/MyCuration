@@ -20,6 +20,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
@@ -54,6 +55,9 @@ class TopActivity : AppCompatActivity(), FeedListFragment.OnFeedListFragmentList
     private lateinit var llAddCuration: LinearLayout
     private lateinit var llAddRss: LinearLayout
     private lateinit var llAddFilter: LinearLayout
+    private lateinit var btnAddCuration: Button
+    private lateinit var btnAddRss: Button
+    private lateinit var btnAddFilter: Button
     private lateinit var back: FrameLayout
 
     private lateinit var curationFragment: CurationListFragment
@@ -110,6 +114,13 @@ class TopActivity : AppCompatActivity(), FeedListFragment.OnFeedListFragmentList
         llAddCuration.setOnClickListener { presenter.fabCurationClicked() }
         llAddRss.setOnClickListener { presenter.fabRssClicked() }
         llAddFilter.setOnClickListener { presenter.fabFilterClicked() }
+
+        btnAddCuration = findViewById(R.id.btn_add_curation) as Button
+        btnAddRss = findViewById(R.id.btn_add_rss) as Button
+        btnAddFilter = findViewById(R.id.btn_add_filter) as Button
+        btnAddCuration.setOnClickListener { presenter.fabCurationClicked() }
+        btnAddRss.setOnClickListener { presenter.fabRssClicked() }
+        btnAddFilter.setOnClickListener { presenter.fabFilterClicked() }
     }
 
     override fun startFabAnimation() {
