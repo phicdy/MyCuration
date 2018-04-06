@@ -58,10 +58,7 @@ public class AddFeedTest extends UiTest {
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();
 
-        // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
-        if (plusButton == null) fail("Plus button was not found");
-        plusButton.click();
+        TopActivityControl.clickAddRssButton();
 
         // Show edit text for URL if needed
         UiObject2 searchButton = device.wait(Until.findObject(
@@ -133,10 +130,7 @@ public class AddFeedTest extends UiTest {
             numOfRss = rssList.getChildCount();
         }
 
-        // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
-        if (plusButton == null) fail("Plus button was not found");
-        plusButton.click();
+        TopActivityControl.clickAddRssButton();
 
         // Show edit text for URL if needed
         UiObject2 searchButton = device.wait(Until.findObject(
@@ -176,10 +170,7 @@ public class AddFeedTest extends UiTest {
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(1).click();
 
-        // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
-        if (plusButton == null) fail("Plus button was not found");
-        plusButton.click();
+        TopActivityControl.clickAddRssButton();
 
         // Open invalid RSS URL
         UiObject2 fab = device.wait(Until.findObject(
@@ -192,4 +183,5 @@ public class AddFeedTest extends UiTest {
                 By.res(BuildConfig.APPLICATION_ID, "fab")), 5000);
         assertNotNull(fab);
     }
+
 }

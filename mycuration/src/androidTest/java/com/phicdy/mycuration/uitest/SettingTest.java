@@ -53,10 +53,7 @@ public class SettingTest extends UiTest {
         takeScreenshot(device);
         tabs.get(1).click();
 
-        // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
-        if (plusButton == null) fail("Plus button was not found");
-        plusButton.click();
+        TopActivityControl.clickAddRssButton();
 
         // Show edit text for URL if needed
         UiObject2 searchButton = device.wait(Until.findObject(

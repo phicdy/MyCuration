@@ -210,10 +210,7 @@ public class FilterListTest extends UiTest {
         takeScreenshot(device, "before_click_RSS_tab" + System.currentTimeMillis());
         tabs.get(1).click();
 
-        // Click plus button
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
-        if (plusButton == null) fail("Plus button was not found");
-        plusButton.click();
+        TopActivityControl.clickAddRssButton();
 
         // Show edit text for URL if needed
         UiObject2 searchButton = device.wait(Until.findObject(
@@ -227,11 +224,7 @@ public class FilterListTest extends UiTest {
         urlEditText.setText("http://news.yahoo.co.jp/pickup/rss.xml");
         device.pressEnter();
 
-        // Click plus button
-        plusButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "fab_top")), 5000);
-        if (plusButton == null) fail("Plus button was not found");
-        plusButton.click();
+        TopActivityControl.clickAddRssButton();
 
         // Show edit text for URL if needed
         searchButton = device.wait(Until.findObject(
@@ -252,10 +245,7 @@ public class FilterListTest extends UiTest {
         if (tabs.size() != 3) fail("Tab size was invalid, size: " + tabs.size());
         tabs.get(2).click();
 
-        // Click plus button
-        plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
-        if (plusButton == null) fail("Plus button was not found");
-        plusButton.click();
+        TopActivityControl.clickAddFilterButton();
 
         // Input filter title
         UiObject2 filterTitleEditText = device.wait(Until.findObject(
