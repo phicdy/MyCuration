@@ -63,11 +63,7 @@ public class EditFeedTitleTest extends UiTest {
             tabs.get(1).click();
         }
 
-        // Click plus button
-        String url = "http://news.yahoo.co.jp/pickup/rss.xml";
-        UiObject2 plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"));
-        if (plusButton == null) fail("Plus button was not found");
-        plusButton.click();
+        TopActivityControl.clickAddRssButton();
 
         // Show edit text for URL if needed
         UiObject2 searchButton = device.wait(Until.findObject(
@@ -78,6 +74,7 @@ public class EditFeedTitleTest extends UiTest {
         UiObject2 urlEditText = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000);
         if (urlEditText == null) fail("URL edit text was not found");
+        String url = "http://news.yahoo.co.jp/pickup/rss.xml";
         urlEditText.setText(url);
         device.pressEnter();
         device.wait(Until.gone(By.text("RSSを追加しています。")), 5000);
