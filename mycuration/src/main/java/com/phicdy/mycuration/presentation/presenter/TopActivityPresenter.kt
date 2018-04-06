@@ -32,6 +32,7 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     }
 
     fun fabCurationClicked() {
+        view.closeAddFab()
         if (dbAdapter.numOfFeeds == 0) {
             view.goToFeedSearch()
             return
@@ -40,10 +41,12 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     }
 
     fun fabRssClicked() {
+        view.closeAddFab()
         view.goToFeedSearch()
     }
 
     fun fabFilterClicked() {
+        view.closeAddFab()
         if (dbAdapter.numOfFeeds == 0) {
             view.goToFeedSearch()
             return
@@ -56,6 +59,7 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     }
 
     private fun settingMenuClicked() {
+        view.closeAddFab()
         view.goToSetting()
     }
 
