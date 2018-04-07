@@ -3,6 +3,7 @@ package com.phicdy.mycuration.presentation.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
@@ -19,6 +20,7 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
 
     private var url: String? = null
     private lateinit var webView: WebView
+    private lateinit var scrollView: NestedScrollView
     private lateinit var presenter: InternalWebViewPresenter
     companion object {
         const val KEY_OPEN_URL = "openUrl"
@@ -55,9 +57,17 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
         webView.settings.builtInZoomControls = true
         webView.setWebViewClient(object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                scrollView.scrollY = 0
                 return false
             }
+
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                scrollView.scrollY = 0
+                return false
+            }
+
         })
+        scrollView = findViewById(R.id.nsv_internal_web_view) as NestedScrollView
     }
 
     override fun initToolbar() {
@@ -94,5 +104,6 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
 
     override fun goBack() {
         webView.goBack()
+        scrollView.scrollY = 0
     }
 }
