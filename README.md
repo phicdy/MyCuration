@@ -46,6 +46,11 @@ Set status to read automatically by user settings
 * [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
 * [stetho](https://github.com/facebook/stetho)
 
+## Devlopment Environment
+
+* Put your `google-services.json` for Google Analytics
+* Replace your release setting in `mycuration/signingConfigs`
+
 ## License
 
 The MIT License (MIT)
