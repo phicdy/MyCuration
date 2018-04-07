@@ -725,9 +725,9 @@ public class DatabaseAdapter {
 					", " + Article.POINT + ", " + Article.DATE + " from " + Article.TABLE_NAME + " where " + Article.FEEDID + " = "
 					+ feedId + " order by " + Article.DATE;
 			if(isNewestArticleTop) {
-				sql += "desc";
+				sql += " desc";
 			}else {
-				sql += "asc";
+				sql += " asc";
 			}
 			Cursor cursor = db.rawQuery(sql, null);
 			while (cursor.moveToNext()) {
