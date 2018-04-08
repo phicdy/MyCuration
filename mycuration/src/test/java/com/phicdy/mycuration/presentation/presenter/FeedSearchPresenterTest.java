@@ -296,6 +296,17 @@ public class FeedSearchPresenterTest {
         assertEquals(view.searchViewUrl, "https://www.google.co.jp/search?q=hoge");
     }
 
+    @Test
+    public void failedUrlWillBeTracked() {
+        MockView view = new MockView();
+        presenter.setView(view);
+        presenter.create();
+        presenter.resume();
+        String testUrl = "http://hogeagj.com";
+        presenter.onFinishAddFeed(testUrl, 999999);
+        assertThat(view.trackedUrl, is(testUrl));
+    }
+
     private class MockView implements FeedSearchView {
         private boolean isReceiverRegistered = false;
         private boolean isFeedHookActivityForeground = false;
@@ -307,6 +318,7 @@ public class FeedSearchPresenterTest {
         private String feedHookUrl;
         private String loadedUrl;
         private String searchViewUrl;
+        private String trackedUrl;
 
         @Override
         public void startFeedUrlHookActivity(@NonNull String url) {
@@ -352,6 +364,11 @@ public class FeedSearchPresenterTest {
         @Override
         public void setSearchViewTextFrom(@NonNull String url) {
             searchViewUrl = url;
+        }
+
+        @Override
+        public void trackFailedUrl(@NonNull String url) {
+            trackedUrl = url;
         }
     }
 }

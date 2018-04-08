@@ -16,7 +16,7 @@ public class RssParseExecutor {
 
     public interface RssParseCallback {
         void succeeded(@NonNull String url);
-        void failed(@RssParseResult.FailedReason int reason);
+        void failed(@RssParseResult.FailedReason int reason, @NonNull String url);
     }
 
     public RssParseExecutor(@NonNull RssParser parser, @NonNull DatabaseAdapter adapter) {
@@ -36,7 +36,7 @@ public class RssParseExecutor {
                     adapter.saveNewFeed(feed.getTitle(), feed.getUrl(), feed.getFormat(), feed.getSiteUrl());
                     callback.succeeded(url);
                 } else {
-                    callback.failed(result != null ? result.failedReason : RssParseResult.NOT_FOUND);
+                    callback.failed(result != null ? result.failedReason : RssParseResult.NOT_FOUND, url);
                 }
             }
         });

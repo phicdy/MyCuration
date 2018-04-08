@@ -30,12 +30,13 @@ public class FeedUrlHookPresenter implements Presenter {
         }
 
         @Override
-        public void failed(@RssParseResult.FailedReason int reason) {
+        public void failed(@RssParseResult.FailedReason int reason, @NonNull String url) {
             if (reason == RssParseResult.INVALID_URL) {
                 view.showInvalidUrlErrorToast();
             } else {
                 view.showGenericErrorToast();
             }
+            view.trackFailedUrl(url);
             view.finishView();
         }
     };
@@ -72,6 +73,7 @@ public class FeedUrlHookPresenter implements Presenter {
                 executor.start(url, callback);
             }else {
                 view.showInvalidUrlErrorToast();
+                view.trackFailedUrl(url);
             }
         }else {
             view.finishView();
