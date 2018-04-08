@@ -92,36 +92,43 @@ class SettingFragment : PreferenceFragment(), SettingView {
                     val manager = AlarmManagerTaskManager(activity)
                     presenter.updateUpdateInterval(intervalHour, manager)
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_interval), intervalHour.toLong())
+                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_interval), intervalHour.toLong().toString())
                 }
                 getString(R.string.key_all_read_behavior) -> {
                     val isAllReadBack = Integer.valueOf(prefAllReadBehavior.value) == 1
                     presenter.updateAllReadBehavior(isAllReadBack)
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_all_read_behavior), (if (isAllReadBack) 1 else 0).toLong())
+                    val allReadBehaviorStringItems = resources.getStringArray(R.array.all_read_behavior)
+                    GATrackerHelper.sendEvent(getString(R.string.change_all_read_behavior),
+                            allReadBehaviorStringItems[Integer.valueOf(prefAllReadBehavior.value)])
                 }
                 getString(R.string.key_swipe_direction) -> {
                     val swipeDirection = Integer.valueOf(prefSwipeDirection.value)
                     presenter.updateSwipeDirection(swipeDirection)
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_swipe_direction), swipeDirection.toLong())
+                    val swipeDirectionStringItems = resources.getStringArray(R.array.swipe_direction_items)
+                    GATrackerHelper.sendEvent(getString(R.string.change_swipe_direction),
+                            swipeDirectionStringItems[Integer.valueOf(prefSwipeDirection.value)])
                 }
                 getString(R.string.key_article_sort) -> {
                     val isNewArticleTop = prefArticleSort.isChecked
                     presenter.updateArticleSort(isNewArticleTop)
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_aricle_sort), (if (prefArticleSort.isChecked) 1 else 0).toLong())
+                    GATrackerHelper.sendEvent(getString(R.string.change_aricle_sort),
+                            if (prefArticleSort.isChecked) getString(R.string.article_sort) else getString(R.string.not_article_sort))
                 }
                 getString(R.string.key_internal_browser) -> {
                     val isInternal = prefInternalBrowser.isChecked
                     presenter.updateInternalBrowser(isInternal)
                     // GA
-                    GATrackerHelper.sendEvent(getString(R.string.change_browser_option), (if (prefInternalBrowser.isChecked) 1 else 0).toLong())
+                    GATrackerHelper.sendEvent(getString(R.string.change_browser_option),
+                            if (prefInternalBrowser.isChecked) getString(R.string.open_internal) else getString(R.string.not_open_internal))
                 }
                 getString(R.string.key_auto_update_in_main_ui) -> {
                     val isAutoUpdateInMainUi = prefAutoUpdateInMainUi.isChecked
                     presenter.updateAutoUpdateInMainUi(isAutoUpdateInMainUi)
-                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_in_main_ui_option), (if (isAutoUpdateInMainUi) 1 else 0).toLong())
+                    GATrackerHelper.sendEvent(getString(R.string.change_auto_update_in_main_ui_option),
+                            if (isAutoUpdateInMainUi) getString(R.string.auto_update_in_main_ui) else getString(R.string.not_auto_update_in_main_ui))
                 }
                 getString(R.string.key_launch_tab) -> {
                     val launchTab = Integer.valueOf(prefLaunchTab.value)

@@ -72,11 +72,14 @@
     <string name="see_setting">閲覧の設定</string>
     <string name="interval">自動更新の頻度</string>
     <string name="auto_update_in_main_ui">起動時に更新</string>
+    <string name="not_auto_update_in_main_ui">起動時に更新しない</string>
     <string name="article_sort">新しい記事を先頭</string>
+    <string name="not_article_sort">新しい記事を先頭にしない</string>
     <string name="all_read_behavior">全ての記事を既読にした時の動作</string>
     <string name="all_read_back">RSS一覧に戻る</string>
     <string name="all_read_not_back">RSS一覧に戻らない</string>
     <string name="open_internal">内蔵ブラウザで開く</string>
+    <string name="not_open_internal">内蔵ブラウザで開かない</string>
     <string name="swipe_direction">スワイプ方向</string>
     <string name="save">保存</string>
     <string name="debug">デバッグ</string>

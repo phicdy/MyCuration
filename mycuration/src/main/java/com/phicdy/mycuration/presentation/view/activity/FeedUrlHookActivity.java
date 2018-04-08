@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
 import android.widget.Toast;
@@ -68,18 +69,21 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
     @Override
     public void showInvalidUrlErrorToast() {
         showToastOnUiThread(R.string.add_rss_error_invalid_url, Toast.LENGTH_SHORT);
-        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_rss_from_intent_error));
     }
 
     @Override
     public void showGenericErrorToast() {
         showToastOnUiThread(R.string.add_rss_error_generic, Toast.LENGTH_SHORT);
-        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_rss_from_intent_error));
     }
 
     @Override
     public void finishView() {
         finish();
+    }
+
+    @Override
+    public void trackFailedUrl(@NonNull String url) {
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_rss_from_intent_error), url);
     }
 
     @Override

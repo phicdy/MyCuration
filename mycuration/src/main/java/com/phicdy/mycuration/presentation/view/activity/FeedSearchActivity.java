@@ -250,13 +250,11 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
     @Override
     public void showInvalidUrlErrorToast() {
         showToastOnUiThread(R.string.add_rss_error_invalid_url, Toast.LENGTH_SHORT);
-        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_rss_input_url_error));
     }
 
     @Override
     public void showGenericErrorToast() {
         showToastOnUiThread(R.string.add_rss_error_generic, Toast.LENGTH_SHORT);
-        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_rss_input_url_error));
     }
 
     @Override
@@ -275,6 +273,10 @@ public class FeedSearchActivity extends AppCompatActivity implements FeedSearchV
         searchView.setQuery(url, false);
     }
 
+    @Override
+    public void trackFailedUrl(@NonNull String url) {
+        GATrackerHelper.INSTANCE.sendEvent(getString(R.string.add_rss_input_url_error), url);
+    }
 
     @UiThread
     private void showToastOnUiThread(@StringRes final int res, final int toastLength) {

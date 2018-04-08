@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.domain.rss.RssParseResult;
@@ -14,6 +15,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class FeedUrlHookPresenterTest {
 
@@ -31,7 +34,6 @@ public class FeedUrlHookPresenterTest {
         parser = Mockito.mock(RssParser.class);
         presenter = new FeedUrlHookPresenter(
                 adapter, unreadCountManager, networkTaskManager, parser);
-
     }
 
     @Test
@@ -97,7 +99,7 @@ public class FeedUrlHookPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        presenter.callback.failed(RssParseResult.NOT_FOUND);
+        presenter.callback.failed(RssParseResult.NOT_FOUND, "");
         assertTrue(view.isFinished);
     }
 
@@ -107,7 +109,7 @@ public class FeedUrlHookPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        presenter.callback.failed(RssParseResult.NON_RSS_HTML);
+        presenter.callback.failed(RssParseResult.NON_RSS_HTML, "");
         assertTrue(view.isGenericErrorToastShowed);
     }
 
@@ -117,8 +119,19 @@ public class FeedUrlHookPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        presenter.callback.failed(RssParseResult.INVALID_URL);
+        presenter.callback.failed(RssParseResult.INVALID_URL, "");
         assertTrue(view.isInvalidUrlErrorToastShowed);
+    }
+
+    @Test
+    public void failedUrlWillBeTracked() {
+        MockView view = new MockView();
+        presenter.setView(view);
+        presenter.create();
+        presenter.resume();
+        String failUrl = "http://www.google.com";
+        presenter.callback.failed(RssParseResult.INVALID_URL, failUrl);
+        assertThat(view.trackedUrl, is(failUrl));
     }
 
     private class MockView implements FeedUrlHookView {
@@ -126,6 +139,7 @@ public class FeedUrlHookPresenterTest {
         private boolean isInvalidUrlErrorToastShowed = false;
         private boolean isGenericErrorToastShowed = false;
         private boolean isFinished = false;
+        private String trackedUrl = "";
 
         @Override
         public void showSuccessToast() {
@@ -145,6 +159,11 @@ public class FeedUrlHookPresenterTest {
         @Override
         public void finishView() {
             isFinished = true;
+        }
+
+        @Override
+        public void trackFailedUrl(@NonNull String url) {
+            trackedUrl = url;
         }
     }
 }

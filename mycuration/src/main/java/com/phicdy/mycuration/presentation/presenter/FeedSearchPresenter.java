@@ -29,8 +29,8 @@ public class FeedSearchPresenter implements Presenter {
         }
 
         @Override
-        public void failed(@RssParseResult.FailedReason int reason) {
-            onFinishAddFeed("", reason);
+        public void failed(@RssParseResult.FailedReason int reason, @NonNull String url) {
+            onFinishAddFeed(url, reason);
         }
     };
 
@@ -94,6 +94,7 @@ public class FeedSearchPresenter implements Presenter {
             } else {
                 view.showGenericErrorToast();
             }
+            view.trackFailedUrl(url);
         }
         view.dismissProgressBar();
         view.finishView();

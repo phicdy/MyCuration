@@ -12,4 +12,5 @@ public interface FeedSearchView {
     void showAddFeedSuccessToast();
     void finishView();
     void setSearchViewTextFrom(@NonNull String url);
+    void trackFailedUrl(@NonNull String url);
 }
