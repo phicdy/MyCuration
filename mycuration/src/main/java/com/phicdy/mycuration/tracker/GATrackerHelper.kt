@@ -31,12 +31,12 @@ object GATrackerHelper {
                 .build())
     }
 
-    fun sendEvent(action: String, value: Long) {
+    fun sendEvent(action: String, label: String) {
         if (BuildConfig.DEBUG) return
         tracker.send(HitBuilders.EventBuilder()
                 .setCategory(categoryAction)
                 .setAction(action)
-                .setValue(value)
+                .setLabel(label)
                 .build())
     }
 }
