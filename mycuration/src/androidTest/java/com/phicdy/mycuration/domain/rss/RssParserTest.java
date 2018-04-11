@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.db.DatabaseHelper;
 import com.phicdy.mycuration.data.rss.Feed;
+import com.phicdy.mycuration.util.UrlUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +16,8 @@ import org.junit.runner.RunWith;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 @RunWith(AndroidJUnit4.class)
 public class RssParserTest {
@@ -25,7 +28,7 @@ public class RssParserTest {
         }
 
         @Override
-        public void failed(@RssParseResult.FailedReason int reason) {
+        public void failed(@RssParseResult.FailedReason int reason, @NonNull String url) {
         }
     };
 	private DatabaseAdapter adapter;
@@ -265,6 +268,21 @@ public class RssParserTest {
         addNewFeedAndCheckResult("http://b.hatena.ne.jp/hotentry/game",
                 "http://b.hatena.ne.jp/hotentry/game.rss",
                 "http://b.hatena.ne.jp/hotentry/game");
+    }
+
+    @Test
+    public void testFeedPath() {
+        addNewFeedAndCheckResult("https://www.a-kimama.com",
+                "https://www.a-kimama.com/feed",
+                "https://www.a-kimama.com");
+    }
+
+    @Test
+    public void testNotFound() {
+        RssParser parser = new RssParser();
+        String url = "https://www.amazon.co.jp/";
+        RssParseResult result = parser.parseRssXml(UrlUtil.INSTANCE.removeUrlParameter(url), true);
+        assertThat(result.failedReason, is(RssParseResult.NOT_FOUND));
     }
 
 	private void addNewFeedAndCheckResult(String testUrl, String expectedFeedUrl, String expectedSiteUrl) {

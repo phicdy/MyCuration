@@ -148,8 +148,14 @@ public class RssParser {
                 //<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
                 Elements elements = document.getElementsByAttributeValue("type", "application/rss+xml");
                 if (elements.isEmpty()) {
-                    Log.d(LOG_TAG, "RSS URL was not found");
-                    return new RssParseResult(RssParseResult.NOT_FOUND);
+                    String feedPathUrl = new URL((url.getProtocol()), url.getHost(), "feed").toString();
+                    if (url.toString().equals(feedPathUrl)) {
+                        // Already check URL that path is "feed"
+                        Log.d(LOG_TAG, "RSS URL was not found");
+                        return new RssParseResult(RssParseResult.NOT_FOUND);
+                    } else {
+                        return parseRssXml(new URL((url.getProtocol()), url.getHost(), "feed").toString(), false);
+                    }
                 }
                 String feedUrl = elements.get(0).attr("href");
                 if (feedUrl.startsWith("//")) {
