@@ -24,7 +24,7 @@ public class RssParserTest {
 
     private RssParseExecutor.RssParseCallback callback = new RssParseExecutor.RssParseCallback() {
         @Override
-        public void succeeded(@NonNull String url) {
+        public void succeeded(@NonNull String rssUrl) {
         }
 
         @Override
