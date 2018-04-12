@@ -24,8 +24,8 @@ public class FeedSearchPresenter implements Presenter {
     private FeedSearchView view;
     RssParseExecutor.RssParseCallback callback = new RssParseExecutor.RssParseCallback() {
         @Override
-        public void succeeded(@NonNull String url) {
-            onFinishAddFeed(url, RssParseResult.NOT_FAILED);
+        public void succeeded(@NonNull String rssUrl) {
+            onFinishAddFeed(rssUrl, RssParseResult.NOT_FAILED);
         }
 
         @Override

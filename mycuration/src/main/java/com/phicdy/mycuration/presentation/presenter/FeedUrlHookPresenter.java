@@ -21,8 +21,8 @@ public class FeedUrlHookPresenter implements Presenter {
     private final RssParser parser;
     RssParseExecutor.RssParseCallback callback = new RssParseExecutor.RssParseCallback() {
         @Override
-        public void succeeded(@NonNull String url) {
-            Feed newFeed = dbAdapter.getFeedByUrl(url);
+        public void succeeded(@NonNull String rssUrl) {
+            Feed newFeed = dbAdapter.getFeedByUrl(rssUrl);
             unreadCountManager.addFeed(newFeed);
             networkTaskManager.updateFeed(newFeed);
             view.showSuccessToast();
