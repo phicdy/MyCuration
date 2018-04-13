@@ -186,7 +186,6 @@ public class RssParser {
 	}
 
 	public void parseXml(InputStream is, int feedId) {
-		boolean result = true;
 		ArrayList<Article> articles = new ArrayList<>();
 
 		// TODO Get hatena bookmark(?) count
@@ -294,9 +293,6 @@ public class RssParser {
 						Log.d(LOG_TAG, "One item finished:" + (System.currentTimeMillis() - itemTime));
 					}
 					break;
-				}
-				if (!result) {
-					return;
 				}
 				// If article is already saved, stop parse
 				if (isArticleFlag) {
