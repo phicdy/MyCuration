@@ -1,12 +1,11 @@
 package com.phicdy.mycuration.util
 
+import android.util.Log
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-
-import android.util.Log
 
 object DateParser {
 
@@ -42,6 +41,12 @@ object DateParser {
         if (pubDate.contains("Z")) {
             //2014-07-27T14:38:34Z
             replaced = replaced.replace("Z", "+0900")
+        }
+
+        //2014-07-27T14:38:34+09:00 to 2014-07-27T14:38:34+0900
+        val regex = "\\+([0-9][0-9]):([0-9][0-9])".toRegex()
+        if (regex.containsMatchIn(replaced)) {
+            replaced = replaced.replace("\\+([0-9][0-9]):([0-9][0-9])".toRegex(), "+$1$2");
         }
 
         val w3cdtf = SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ",
