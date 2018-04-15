@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.domain.rss;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.phicdy.mycuration.data.rss.Article;
@@ -219,44 +220,11 @@ public class RssParser {
 					}
 					if (itemFlag && tag.equals("link")
 							&& (article.getUrl() == null || article.getUrl().equals(""))) {
+					    // RSS 1.0 & 2.0
 						String articleURL = parser.nextText();
 						if (articleURL == null || articleURL.equals("")) {
-							String attributeName;
-							String attributeValue;
-							boolean isAlternate = false;
-							boolean isTextHtml = false;
-							boolean isHref = false;
-							for (int i = 0; i < parser.getAttributeCount(); i++) {
-								attributeName = parser.getAttributeName(i);
-								attributeValue = parser.getAttributeValue(i);
-								if (attributeName == null
-										|| attributeValue == null) {
-									continue;
-								}
-
-								if (attributeName.equals("rel")
-										&& attributeValue.equals("alternate")) {
-									isAlternate = true;
-									continue;
-								}
-								if (attributeName.equals("type")
-										&& attributeValue.equals("text/html")) {
-									isTextHtml = true;
-									continue;
-								}
-								if (attributeName.equals("href")) {
-									isHref = true;
-								}
-
-								if (isAlternate && isTextHtml && isHref) {
-									articleURL = attributeValue;
-									if (articleURL.startsWith("http://")
-											|| articleURL
-													.startsWith("https://")) {
-										break;
-									}
-								}
-							}
+						    // Atom
+						    articleURL = parseAtomAriticleUrl(parser);
 						}
 						Log.d(LOG_TAG, "set article URL:" + articleURL);
 						article.setUrl(articleURL);
@@ -305,4 +273,47 @@ public class RssParser {
 		}
 		return articles;
 	}
+
+    /**
+     * Parse URL from link tag
+     *
+     * ATOM: <link rel='alternate' type='text/html' href='http://xxxx' title='yyyy'/>
+     *
+     * @param parser Parser that is in <link>
+     * @return URL or empty string
+     */
+	private String parseAtomAriticleUrl(@NonNull XmlPullParser parser) {
+        String attributeName;
+        String attributeValue;
+        boolean isAlternate = false;
+        boolean isTextHtml = false;
+        boolean isHref = false;
+        for (int i = 0; i < parser.getAttributeCount(); i++) {
+            attributeName = parser.getAttributeName(i);
+            attributeValue = parser.getAttributeValue(i);
+            if (attributeName == null || attributeValue == null) {
+                continue;
+            }
+
+            if (attributeName.equals("rel") && attributeValue.equals("alternate")) {
+                isAlternate = true;
+                continue;
+            }
+            if (attributeName.equals("type") && attributeValue.equals("text/html")) {
+                isTextHtml = true;
+                continue;
+            }
+            if (attributeName.equals("href")) {
+                isHref = true;
+            }
+
+            if (isAlternate && isTextHtml && isHref) {
+                if (attributeValue.startsWith("http://") ||
+                        attributeValue.startsWith("https://")) {
+                    return attributeValue;
+                }
+            }
+        }
+        return "";
+    }
 }
