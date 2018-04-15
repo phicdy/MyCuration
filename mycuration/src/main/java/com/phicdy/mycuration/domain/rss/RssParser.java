@@ -1,12 +1,10 @@
 package com.phicdy.mycuration.domain.rss;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
-import android.util.Xml;
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Feed;
-import com.phicdy.mycuration.domain.task.GetHatenaBookmark;
 import com.phicdy.mycuration.util.DateParser;
 import com.phicdy.mycuration.util.TextUtil;
 
@@ -16,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,14 +25,12 @@ import java.util.Date;
 
 public class RssParser {
 
-	private final DatabaseAdapter dbAdapter;
 	private boolean isArticleFlag = false;
     private boolean isCanonical = false;
 
 	private static final String LOG_TAG = "FilFeed.RssParser";
 
 	public RssParser() {
-		dbAdapter = DatabaseAdapter.getInstance();
 	}
 
 	private RssParseResult parse(String canonicalUrl) {
@@ -185,22 +182,19 @@ public class RssParser {
         return new RssParseResult(RssParseResult.NOT_FOUND);
 	}
 
-	public void parseXml(InputStream is, int feedId) {
-		boolean result = true;
+	public ArrayList<Article> parseXml(InputStream is, long latestDate) {
 		ArrayList<Article> articles = new ArrayList<>();
 
 		// TODO Get hatena bookmark(?) count
 		Article article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null, null);
 
-		// Initialize XmlPullParser
-		XmlPullParser parser = Xml.newPullParser();
-
 		// Flag for not getting "Site's" title and url
 		boolean itemFlag = false;
-
-		long latestDate = dbAdapter.getLatestArticleDate(feedId);
 		Log.d(LOG_TAG, "Latest date:" + new Date(latestDate).toString());
 		try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser parser = factory.newPullParser();
 			parser.setInput(is, "UTF-8");
 
 			// Start parse to the END_DOCUMENT
@@ -225,45 +219,12 @@ public class RssParser {
 						article.setTitle(title);
 					}
 					if (itemFlag && tag.equals("link")
-							&& (article.getUrl() == null)) {
+							&& (article.getUrl() == null || article.getUrl().equals(""))) {
+					    // RSS 1.0 & 2.0
 						String articleURL = parser.nextText();
 						if (articleURL == null || articleURL.equals("")) {
-							String attributeName;
-							String attributeValue;
-							boolean isAlternate = false;
-							boolean isTextHtml = false;
-							boolean isHref = false;
-							for (int i = 0; i < parser.getAttributeCount(); i++) {
-								attributeName = parser.getAttributeName(i);
-								attributeValue = parser.getAttributeValue(i);
-								if (attributeName == null
-										|| attributeValue == null) {
-									continue;
-								}
-
-								if (attributeName.equals("rel")
-										&& attributeValue.equals("alternate")) {
-									isAlternate = true;
-									continue;
-								}
-								if (attributeName.equals("type")
-										&& attributeValue.equals("text/html")) {
-									isTextHtml = true;
-									continue;
-								}
-								if (attributeName.equals("href")) {
-									isHref = true;
-								}
-
-								if (isAlternate && isTextHtml && isHref) {
-									articleURL = attributeValue;
-									if (articleURL.startsWith("http://")
-											|| articleURL
-													.startsWith("https://")) {
-										break;
-									}
-								}
-							}
+						    // Atom
+						    articleURL = parseAtomAriticleUrl(parser);
 						}
 						Log.d(LOG_TAG, "set article URL:" + articleURL);
 						article.setUrl(articleURL);
@@ -295,9 +256,6 @@ public class RssParser {
 					}
 					break;
 				}
-				if (!result) {
-					return;
-				}
 				// If article is already saved, stop parse
 				if (isArticleFlag) {
 					 break;
@@ -310,18 +268,52 @@ public class RssParser {
 					break;
 				}
 			}
-			// Save new articles
-			long now = System.currentTimeMillis();
-			dbAdapter.saveNewArticles(articles, feedId);
-			Log.d(LOG_TAG, "Finish save, time:" + (System.currentTimeMillis() - now));
-            GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark(dbAdapter);
-            int delaySec = 0;
-			for (int i = 0; i < articles.size(); i++) {
-				getHatenaBookmark.request(articles.get(i).getUrl(), delaySec);
-                if (i % 10 == 0) delaySec += 2;
-			}
 		} catch (XmlPullParserException | IOException e) {
 			e.printStackTrace();
 		}
+		return articles;
 	}
+
+    /**
+     * Parse URL from link tag
+     *
+     * ATOM: <link rel='alternate' type='text/html' href='http://xxxx' title='yyyy'/>
+     *
+     * @param parser Parser that is in <link>
+     * @return URL or empty string
+     */
+	private String parseAtomAriticleUrl(@NonNull XmlPullParser parser) {
+        String attributeName;
+        String attributeValue;
+        boolean isAlternate = false;
+        boolean isTextHtml = false;
+        boolean isHref = false;
+        for (int i = 0; i < parser.getAttributeCount(); i++) {
+            attributeName = parser.getAttributeName(i);
+            attributeValue = parser.getAttributeValue(i);
+            if (attributeName == null || attributeValue == null) {
+                continue;
+            }
+
+            if (attributeName.equals("rel") && attributeValue.equals("alternate")) {
+                isAlternate = true;
+                continue;
+            }
+            if (attributeName.equals("type") && attributeValue.equals("text/html")) {
+                isTextHtml = true;
+                continue;
+            }
+            if (attributeName.equals("href")) {
+                isHref = true;
+            }
+
+            if (isAlternate && isTextHtml && isHref) {
+                if (attributeValue.startsWith("http://") ||
+                        attributeValue.startsWith("https://")) {
+                    return attributeValue;
+                }
+            }
+        }
+        return "";
+    }
 }

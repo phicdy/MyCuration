@@ -32,6 +32,13 @@ class DateParserTest {
     }
 
     @Test
+    fun testWithTandTimeZoneWithColonAndMillisecond() {
+        //2014-07-27T14:38:34+09:00
+        assertThat(DateParser.changeToJapaneseDate("2018-01-01T01:23:45.000+09:00"),
+                `is`(1514737425000L))
+    }
+
+    @Test
     fun testWithTandZ() {
         assertThat(DateParser.changeToJapaneseDate("2018-01-01T01:23:45Z"),
                 `is`(1514737425000L))

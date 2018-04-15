@@ -2,6 +2,7 @@ package com.phicdy.mycuration.domain.task
 
 import android.support.annotation.IntDef
 import android.util.Log
+import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.domain.rss.RssParser
@@ -65,7 +66,20 @@ object NetworkTaskManager {
             }
             val inputStream = response.body().byteStream()
             val parser = RssParser()
-            parser.parseXml(inputStream, feed.id)
+            val dbAdapter = DatabaseAdapter.getInstance()
+            val latestDate = dbAdapter.getLatestArticleDate(feed.id);
+            val articles = parser.parseXml(inputStream, latestDate)
+
+            if (articles.size > 0) {
+                dbAdapter.saveNewArticles(articles, feed.id)
+                val getHatenaBookmark = GetHatenaBookmark(dbAdapter)
+                var delaySec = 0
+                for ((i, article) in articles.withIndex()) {
+                    getHatenaBookmark.request(article.url, delaySec)
+                    if (i % 10 == 0) delaySec += 2
+                }
+            }
+
             FilterTask().applyFiltering(feed.id)
             try {
                 inputStream.close()
