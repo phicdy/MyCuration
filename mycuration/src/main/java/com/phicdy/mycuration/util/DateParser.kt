@@ -12,8 +12,7 @@ object DateParser {
 	private const val LOG_TAG = "DateParser"
 
 	private fun parseDate(pubDate: String): Date? {
-		val input = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",
-				Locale.US)
+		val input = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
 		var formatWithPubDate: Date? = null
 		try {
 			formatWithPubDate = input.parse(pubDate)
@@ -23,8 +22,7 @@ object DateParser {
 
         //2014-06-25 17:24:07
         // TODO: set device locale
-        val noTimezone = SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                Locale.JAPAN)
+        val noTimezone = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.JAPAN)
         var formatWithNoTimeZone: Date? = null
         try {
             formatWithNoTimeZone = noTimezone.parse(pubDate)
@@ -43,14 +41,19 @@ object DateParser {
             replaced = replaced.replace("Z", "+0900")
         }
 
-        //2014-07-27T14:38:34+09:00 to 2014-07-27T14:38:34+0900
-        val regex = "\\+([0-9][0-9]):([0-9][0-9])".toRegex()
-        if (regex.containsMatchIn(replaced)) {
-            replaced = replaced.replace("\\+([0-9][0-9]):([0-9][0-9])".toRegex(), "+$1$2");
+        // 2018-04-12T22:38:00.000+09:00 to 2018-04-12T22:38:00+09:00
+        val regexMillisecond = "([0-9][0-9]:[0-9][0-9]:[0-9][0-9])\\.[0-9][0-9][0-9]".toRegex()
+        if (regexMillisecond.containsMatchIn(replaced)) {
+            replaced = replaced.replace(regexMillisecond, "$1")
         }
 
-        val w3cdtf = SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ",
-                Locale.US)
+        // 2014-07-27T14:38:34+09:00 to 2014-07-27T14:38:34+0900
+        val regex = "\\+([0-9][0-9]):([0-9][0-9])".toRegex()
+        if (regex.containsMatchIn(replaced)) {
+            replaced = replaced.replace("\\+([0-9][0-9]):([0-9][0-9])".toRegex(), "+$1$2")
+        }
+
+        val w3cdtf = SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ", Locale.US)
         var formatWithW3cdtf: Date? = null
         try {
             formatWithW3cdtf = w3cdtf.parse(replaced)
