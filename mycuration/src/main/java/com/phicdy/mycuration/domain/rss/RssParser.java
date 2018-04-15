@@ -218,7 +218,7 @@ public class RssParser {
 						article.setTitle(title);
 					}
 					if (itemFlag && tag.equals("link")
-							&& (article.getUrl() == null)) {
+							&& (article.getUrl() == null || article.getUrl().equals(""))) {
 						String articleURL = parser.nextText();
 						if (articleURL == null || articleURL.equals("")) {
 							String attributeName;
