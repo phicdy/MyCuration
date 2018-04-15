@@ -2,6 +2,7 @@ package com.phicdy.mycuration.uitest;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.runner.AndroidJUnit4;
@@ -42,10 +43,22 @@ public class AddFeedTest extends UiTest {
 
     @Test
     public void addYahooNews() {
+        // RSS 2.0
+        addAndCheckUrl("http://news.yahoo.co.jp/pickup/rss.xml", "Yahoo!ニュース・トピックス - 主要");
+    }
+
+    @Test
+    public void addYamBlog() {
+        // Atom
+        addAndCheckUrl("http://y-anz-m.blogspot.com/feeds/comments/default", "Y.A.M の 雑記帳");
+    }
+
+    private void addAndCheckUrl(@NonNull String url, @NonNull String title) {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         // Launch MainActivity
         Context context = InstrumentationRegistry.getContext();
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
+        assertNotNull(intent);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
@@ -65,11 +78,11 @@ public class AddFeedTest extends UiTest {
                 By.res(BuildConfig.APPLICATION_ID, "search_button")), 5000);
         if (searchButton != null) searchButton.click();
 
-        // Open yahoo RSS URL
+        // Open RSS URL
         UiObject2 urlEditText = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000);
         if (urlEditText == null) fail("URL edit text was not found");
-        urlEditText.setText("http://news.yahoo.co.jp/pickup/rss.xml");
+        urlEditText.setText(url);
         device.pressEnter();
         try {
             Thread.sleep(5000);
@@ -77,16 +90,16 @@ public class AddFeedTest extends UiTest {
             e.printStackTrace();
         }
 
-        // Assert yahoo RSS was added
+        // Assert RSS was added
         List<UiObject2> feedTitles = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000);
         if (feedTitles == null) fail("Feed was not found");
         // Feed title list includes show/hide option row, the size is 2
         if (feedTitles.size() != 2) fail("Feed was not added");
-        assertThat(feedTitles.get(0).getText(), is("Yahoo!ニュース・トピックス - 主要"));
+        assertThat(feedTitles.get(0).getText(), is(title));
         assertThat(feedTitles.get(1).getText(), is("全てのRSSを表示"));
 
-        // Assert articles of yahoo RSS were added
+        // Assert articles of RSS were added
         List<UiObject2> feedUnreadCountList = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedCount")), 5000);
         if (feedUnreadCountList == null) fail("Feed count was not found");
