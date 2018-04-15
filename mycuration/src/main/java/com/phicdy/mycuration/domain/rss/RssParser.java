@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.domain.rss;
 
 import android.util.Log;
-import android.util.Xml;
 
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Feed;
@@ -14,6 +13,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -187,13 +187,13 @@ public class RssParser {
 		// TODO Get hatena bookmark(?) count
 		Article article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null, null);
 
-		// Initialize XmlPullParser
-		XmlPullParser parser = Xml.newPullParser();
-
 		// Flag for not getting "Site's" title and url
 		boolean itemFlag = false;
 		Log.d(LOG_TAG, "Latest date:" + new Date(latestDate).toString());
 		try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser parser = factory.newPullParser();
 			parser.setInput(is, "UTF-8");
 
 			// Start parse to the END_DOCUMENT
