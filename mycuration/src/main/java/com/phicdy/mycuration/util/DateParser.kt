@@ -41,16 +41,16 @@ object DateParser {
             replaced = replaced.replace("Z", "+0900")
         }
 
-        // 2018-04-12T22:38:00.000+09:00 to 2018-04-12T22:38:00+09:00
+        // Delete millisecond, 2018-04-12T22:38:00.000+09:00 to 2018-04-12T22:38:00+09:00
         val regexMillisecond = "([0-9][0-9]:[0-9][0-9]:[0-9][0-9])\\.[0-9][0-9][0-9]".toRegex()
         if (regexMillisecond.containsMatchIn(replaced)) {
             replaced = replaced.replace(regexMillisecond, "$1")
         }
 
-        // 2014-07-27T14:38:34+09:00 to 2014-07-27T14:38:34+0900
-        val regex = "\\+([0-9][0-9]):([0-9][0-9])".toRegex()
-        if (regex.containsMatchIn(replaced)) {
-            replaced = replaced.replace("\\+([0-9][0-9]):([0-9][0-9])".toRegex(), "+$1$2")
+        // Delete timezone with colon, 2014-07-27T14:38:34+09:00 to 2014-07-27T14:38:34+0900
+        val regexTimezoneWithColon = "\\+([0-9][0-9]):([0-9][0-9])".toRegex()
+        if (regexTimezoneWithColon.containsMatchIn(replaced)) {
+            replaced = replaced.replace(regexTimezoneWithColon, "+$1$2")
         }
 
         val w3cdtf = SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ", Locale.US)
