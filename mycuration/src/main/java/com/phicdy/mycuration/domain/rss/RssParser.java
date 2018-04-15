@@ -3,10 +3,8 @@ package com.phicdy.mycuration.domain.rss;
 import android.util.Log;
 import android.util.Xml;
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Feed;
-import com.phicdy.mycuration.domain.task.GetHatenaBookmark;
 import com.phicdy.mycuration.util.DateParser;
 import com.phicdy.mycuration.util.TextUtil;
 
@@ -26,14 +24,12 @@ import java.util.Date;
 
 public class RssParser {
 
-	private final DatabaseAdapter dbAdapter;
 	private boolean isArticleFlag = false;
     private boolean isCanonical = false;
 
 	private static final String LOG_TAG = "FilFeed.RssParser";
 
 	public RssParser() {
-		dbAdapter = DatabaseAdapter.getInstance();
 	}
 
 	private RssParseResult parse(String canonicalUrl) {
@@ -185,7 +181,7 @@ public class RssParser {
         return new RssParseResult(RssParseResult.NOT_FOUND);
 	}
 
-	public void parseXml(InputStream is, int feedId) {
+	public ArrayList<Article> parseXml(InputStream is, long latestDate) {
 		ArrayList<Article> articles = new ArrayList<>();
 
 		// TODO Get hatena bookmark(?) count
@@ -196,8 +192,6 @@ public class RssParser {
 
 		// Flag for not getting "Site's" title and url
 		boolean itemFlag = false;
-
-		long latestDate = dbAdapter.getLatestArticleDate(feedId);
 		Log.d(LOG_TAG, "Latest date:" + new Date(latestDate).toString());
 		try {
 			parser.setInput(is, "UTF-8");
@@ -306,18 +300,9 @@ public class RssParser {
 					break;
 				}
 			}
-			// Save new articles
-			long now = System.currentTimeMillis();
-			dbAdapter.saveNewArticles(articles, feedId);
-			Log.d(LOG_TAG, "Finish save, time:" + (System.currentTimeMillis() - now));
-            GetHatenaBookmark getHatenaBookmark = new GetHatenaBookmark(dbAdapter);
-            int delaySec = 0;
-			for (int i = 0; i < articles.size(); i++) {
-				getHatenaBookmark.request(articles.get(i).getUrl(), delaySec);
-                if (i % 10 == 0) delaySec += 2;
-			}
 		} catch (XmlPullParserException | IOException e) {
 			e.printStackTrace();
 		}
+		return articles;
 	}
 }
