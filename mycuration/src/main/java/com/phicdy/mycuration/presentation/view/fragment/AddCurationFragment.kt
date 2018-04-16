@@ -53,9 +53,8 @@ class AddCurationFragment : Fragment(), AddCurationView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val adapter = DatabaseAdapter.getInstance()
-        presenter = AddCurationPresenter(adapter)
+        presenter = AddCurationPresenter(this, adapter)
         handler = InsertResultHandler(presenter)
-        presenter.setView(this)
         presenter.create()
     }
 
