@@ -3,6 +3,7 @@ package com.phicdy.mycuration.presentation.presenter;
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.presentation.view.AddCurationView;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -128,7 +129,7 @@ public class AddCurationPresenterTest {
         presenter.resume();
         view.word = "test";
         presenter.onAddWordButtonClicked();
-        assertEquals(view.wordList().get(0), "test");
+        assertEquals(view.words.get(0), "test");
     }
 
     @Test
@@ -139,7 +140,7 @@ public class AddCurationPresenterTest {
         presenter.onAddWordButtonClicked();
         view.word = "test2";
         presenter.onAddWordButtonClicked();
-        assertEquals(view.wordList().size(), 2);
+        assertEquals(view.words.size(), 2);
     }
 
     @Test
@@ -276,7 +277,7 @@ public class AddCurationPresenterTest {
         private String curationName = "";
         private String word = "";
         private String errorToastMessage = "";
-        private final ArrayList<String> words = new ArrayList<>();
+        private ArrayList<String> words = new ArrayList<>();
         private int editCurationId = AddCurationPresenter.NOT_EDIT_CURATION_ID;
         private boolean isSuccessToastShowed = false;
         private boolean isEmptyWordErrorToastShowed = false;
@@ -308,11 +309,6 @@ public class AddCurationPresenterTest {
         }
 
         @Override
-        public ArrayList<String> wordList() {
-            return words;
-        }
-
-        @Override
         public void setCurationName(String name) {
             this.curationName = name;
         }
@@ -320,19 +316,6 @@ public class AddCurationPresenterTest {
         @Override
         public void resetInputWord() {
             word = "";
-        }
-
-        @Override
-        public void refreshList() {
-        }
-
-        @Override
-        public void addWord(String word) {
-            words.add(word);
-        }
-
-        @Override
-        public void setWords(ArrayList<String> words) {
         }
 
         @Override
@@ -401,6 +384,19 @@ public class AddCurationPresenterTest {
         @Override
         public void finish() {
             isFinished = true;
+        }
+
+        @Override
+        public void initView() {
+        }
+
+        @Override
+        public void refreshList(@NotNull ArrayList<String> addedWords) {
+            words = addedWords;
+        }
+
+        @Override
+        public void showDupulicatedWordToast() {
         }
     }
 }

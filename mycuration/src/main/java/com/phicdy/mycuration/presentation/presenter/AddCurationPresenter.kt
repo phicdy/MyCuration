@@ -14,6 +14,7 @@ class AddCurationPresenter(private val view: AddCurationView, private val adapte
     }
 
     private var editCurationid = NOT_EDIT_CURATION_ID
+    private var addedWords = ArrayList<String>()
 
     override fun create() {
         editCurationid = view.editCurationId()
@@ -22,12 +23,18 @@ class AddCurationPresenter(private val view: AddCurationView, private val adapte
         }
     }
 
+    fun activityCreated() {
+        view.initView()
+        view.refreshList(addedWords)
+    }
+
     override fun resume() {
         if (editCurationid != NOT_EDIT_CURATION_ID) {
             view.setCurationName(adapter.getCurationNameById(editCurationid))
-            view.setWords(adapter.getCurationWords(editCurationid))
+            addedWords = adapter.getCurationWords(editCurationid)
+            view.refreshList(addedWords)
         }
-        view.refreshList()
+        view.refreshList(addedWords)
     }
 
     override fun pause() {}
@@ -50,7 +57,12 @@ class AddCurationPresenter(private val view: AddCurationView, private val adapte
             view.showWordEmptyErrorToast()
             return
         }
-        view.addWord(word)
+        if (addedWords.contains(word)) {
+            view.showDupulicatedWordToast()
+            return
+        }
+        addedWords.add(word)
+        view.refreshList(addedWords)
         view.resetInputWord()
     }
 
@@ -60,8 +72,7 @@ class AddCurationPresenter(private val view: AddCurationView, private val adapte
             view.handleEmptyCurationNameError()
             return
         }
-        val wordList = view.wordList()
-        if (wordList.size == 0) {
+        if (addedWords.size == 0) {
             view.handleEmptyWordError()
             return
         }
@@ -72,17 +83,22 @@ class AddCurationPresenter(private val view: AddCurationView, private val adapte
             return
         }
         val result = if (isNew) {
-            adapter.saveNewCuration(curationName, wordList)
+            adapter.saveNewCuration(curationName, addedWords)
         } else {
-            adapter.updateCuration(editCurationid, curationName, wordList)
+            adapter.updateCuration(editCurationid, curationName, addedWords)
         }
         if (result) {
-            adapter.adaptCurationToArticles(curationName, wordList)
+            adapter.adaptCurationToArticles(curationName, addedWords)
             if (isNew) {
                 view.handleAddSuccess()
             } else {
                 view.handleEditSuccess()
             }
         }
+    }
+
+    fun onDeleteButtonClicked(position: Int) {
+        addedWords.removeAt(position)
+        view.refreshList(addedWords)
     }
 }

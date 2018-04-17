@@ -38,13 +38,14 @@ class AddCurationFragment : Fragment(), AddCurationView {
     private lateinit var progressDialog: MyProgressDialogFragment
 
     private lateinit var handler: InsertResultHandler
-    private var addedWords = ArrayList<String>()
 
     private class InsertResultHandler(presenter: AddCurationPresenter) : Handler() {
         val reference = WeakReference<AddCurationPresenter>(presenter)
         override fun handleMessage(msg: Message) {
             val result = msg.obj as Boolean
-            val errorMessage = msg.data.getString(AddCurationPresenter.INSERT_ERROR_MESSAGE)
+            val errorMessage = if (result) { "" } else {
+                msg.data.getString(AddCurationPresenter.INSERT_ERROR_MESSAGE)
+            }
             val presenter = reference.get() ?: return
             presenter.handleInsertResultMessage(result, errorMessage)
         }
@@ -70,41 +71,20 @@ class AddCurationFragment : Fragment(), AddCurationView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        presenter.activityCreated()
+    }
+
+    override fun initView() {
         val btnAdd = activity.findViewById(R.id.btn_add_word) as Button
         btnAdd.setOnClickListener { presenter.onAddWordButtonClicked() }
         etInput = activity.findViewById(R.id.et_curation_word) as EditText
         etName = activity.findViewById(R.id.et_curation_name) as EditText
         curationWordListView = activity.findViewById(R.id.lv_curation_word) as ListView
-
-        refreshList()
     }
 
-    override fun refreshList() {
+    override fun refreshList(addedWords: ArrayList<String>) {
         curationWordListAdapter = CurationWordListAdapter(addedWords, activity)
         curationWordListView.adapter = curationWordListAdapter
-        curationWordListAdapter.notifyDataSetChanged()
-    }
-
-    override fun addWord(word: String) {
-        if (addedWords.contains(word)) {
-            Toast.makeText(activity, getString(R.string.duplicate_word), Toast.LENGTH_SHORT).show()
-            return
-        }
-        addedWords.add(word)
-        curationWordListAdapter.notifyDataSetChanged()
-    }
-
-    override fun wordList(): ArrayList<String> {
-        return addedWords
-    }
-
-    private fun removedWordAtPosition(position: Int) {
-        addedWords.removeAt(position)
-        curationWordListAdapter.notifyDataSetChanged()
-    }
-
-    override fun setWords(words: ArrayList<String>) {
-        addedWords = words
         curationWordListAdapter.notifyDataSetChanged()
     }
 
@@ -188,6 +168,10 @@ class AddCurationFragment : Fragment(), AddCurationView {
         ToastHelper.showToast(activity, getString(R.string.empty_word), Toast.LENGTH_SHORT)
     }
 
+    override fun showDupulicatedWordToast() {
+        Toast.makeText(activity, getString(R.string.duplicate_word), Toast.LENGTH_SHORT).show()
+    }
+
     override fun showToast(text: String) {
         ToastHelper.showToast(activity, text, Toast.LENGTH_SHORT)
     }
@@ -224,7 +208,9 @@ class AddCurationFragment : Fragment(), AddCurationView {
 
             val word = this.getItem(position)
             holder.tvWord!!.text = word
-            holder.btnDelete!!.setOnClickListener { removedWordAtPosition(position) }
+            holder.btnDelete!!.setOnClickListener {
+                presenter.onDeleteButtonClicked(position)
+            }
 
             return row!!
         }
