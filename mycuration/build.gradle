@@ -18,7 +18,15 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    apply from: 'signingConfigs/release.gradle', to: android
+    signingConfigs {
+        release {
+            keyAlias "$RELEASE_KEY_ALIAS"
+            storeFile file("$RELEASE_STORE_FILE_PATH")
+            keyPassword "$RELEASE_KEY_PASSWORD"
+            storePassword "$RELEASE_STORE_PASSWORD"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -130,3 +138,16 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+task copyBuild(type: Copy) {
+    from 'build/outputs/apk/production/debug'
+    into "$COPY_BUILD_DESTINATION"
+    include '**/*.apk'
+}
+
+afterEvaluate { project ->
+    project.tasks.assembleProductionDebug << {
+        println "$COPY_BUILD_DESTINATION"
+        tasks.copyBuild.execute()
+    }
+}
