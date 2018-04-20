@@ -18,7 +18,15 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    apply from: 'signingConfigs/release.gradle', to: android
+    signingConfigs {
+        release {
+            keyAlias "$RELEASE_KEY_ALIAS"
+            storeFile file("$RELEASE_STORE_FILE_PATH")
+            keyPassword "$RELEASE_KEY_PASSWORD"
+            storePassword "$RELEASE_STORE_PASSWORD"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

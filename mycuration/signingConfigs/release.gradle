@@ -1,8 +1,0 @@
-signingConfigs {
-    release {
-        keyAlias 'key'
-        storeFile file('signingConfigs/dummy-release-key')
-        keyPassword 'testtest'
-        storePassword 'testtest'
-    }
-}

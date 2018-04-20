@@ -49,7 +49,7 @@ Set status to read automatically by user settings
 ## Devlopment Environment
 
 * Put your `google-services.json` for Google Analytics
-* Replace your release setting in `mycuration/signingConfigs`
+* Set up your release setting in ~/.gradle/gradle.properties or edit gradle.properties in this project
 * If you want to copy debug build to somewhere, set the destination in ~/.gradle/gradle.properties or edit gradle.properties in this project
 
 ```
