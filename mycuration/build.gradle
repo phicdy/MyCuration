@@ -130,3 +130,16 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+task copyBuild(type: Copy) {
+    from 'build/outputs/apk/production/debug'
+    into "$COPY_BUILD_DESTINATION"
+    include '**/*.apk'
+}
+
+afterEvaluate { project ->
+    project.tasks.assembleProductionDebug << {
+        println "$COPY_BUILD_DESTINATION"
+        tasks.copyBuild.execute()
+    }
+}
