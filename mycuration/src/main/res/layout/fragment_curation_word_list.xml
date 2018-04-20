@@ -9,7 +9,6 @@
         android:text="@string/curation_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:textSize="16sp" />
 
     <EditText
@@ -25,7 +24,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
         android:textSize="16sp"
         android:labelFor="@+id/et_curation_word"/>
 
