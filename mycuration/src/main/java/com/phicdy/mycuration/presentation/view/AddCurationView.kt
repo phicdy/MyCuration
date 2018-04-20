@@ -8,7 +8,6 @@ interface AddCurationView {
     fun setCurationName(name: String)
     fun resetInputWord()
     fun refreshList(addedWords: ArrayList<String>)
-    fun setTitleForEdit()
     fun handleEmptyCurationNameError()
     fun handleEmptyWordError()
     fun handleSameNameCurationError()

@@ -18,9 +18,6 @@ class AddCurationPresenter(private val view: AddCurationView, private val adapte
 
     override fun create() {
         editCurationid = view.editCurationId()
-        if (editCurationid != NOT_EDIT_CURATION_ID) {
-            view.setTitleForEdit()
-        }
     }
 
     fun activityCreated() {

@@ -108,10 +108,6 @@ class AddCurationFragment : Fragment(), AddCurationView {
         etInput.setText("")
     }
 
-    override fun setTitleForEdit() {
-        activity.title = getString(R.string.title_activity_edit_curation)
-    }
-
     override fun handleEmptyCurationNameError() {
         val msg = Message.obtain()
         val bundle = Bundle()

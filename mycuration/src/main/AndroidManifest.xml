@@ -101,7 +101,7 @@
         </activity>
         <activity
             android:name=".presentation.view.activity.AddCurationActivity"
-            android:label="@string/title_activity_add_curation" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
             android:name=".domain.alarm.BootReceiver"

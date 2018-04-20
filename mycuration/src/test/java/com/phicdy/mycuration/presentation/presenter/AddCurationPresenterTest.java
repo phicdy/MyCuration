@@ -21,7 +21,6 @@ public class AddCurationPresenterTest {
     private MockViewAdd view;
 
     private static final String TITLE_FOR_ADD = "titleForAdd";
-    private static final String TITLE_FOR_EDIT = "titleForEdit";
     private static final int TEST_EDIT_CURATION_ID = 10000;
     private static final String TEST_EDIT_CURATION_NAME = "testCurationName";
 
@@ -37,14 +36,6 @@ public class AddCurationPresenterTest {
         // Go to onCreate() in add status
         presenter.create();
         assertEquals(view.title, TITLE_FOR_ADD);
-    }
-
-    @Test
-    public void WhenEditTitleBecomesEdit() {
-        // Go to onCreate() in edit status
-        view.setEditCurationId(TEST_EDIT_CURATION_ID);
-        presenter.create();
-        assertEquals(view.title, TITLE_FOR_EDIT);
     }
 
     @Test
@@ -316,11 +307,6 @@ public class AddCurationPresenterTest {
         @Override
         public void resetInputWord() {
             word = "";
-        }
-
-        @Override
-        public void setTitleForEdit() {
-            title = TITLE_FOR_EDIT;
         }
 
         @Override
