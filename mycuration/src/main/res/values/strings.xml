@@ -117,7 +117,7 @@
     
     <!-- キュレーション -->
     <string name="curation">キュレーション</string>
-    <string name="curation_name">キュレーション名</string>
+    <string name="curation_title">タイトル</string>
     <string name="no_curation_message">キュレーションを登録しましょう！</string>
     <string name="add_word">追加</string>
     <string name="adding_curation">キュレーションを追加しています</string>
