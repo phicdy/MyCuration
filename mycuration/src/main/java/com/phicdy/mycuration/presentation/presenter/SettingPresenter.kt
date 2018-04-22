@@ -159,5 +159,20 @@ class SettingPresenter(private val helper: PreferenceHelper,
                 "https://news.yahoo.co.jp/pickup/world/rss.xml",
                 "RSS2.0",
                 "https://news.yahoo.co.jp")
+        adapter.saveNewFeed(
+                "Yahoo!ニュース・トピックス - エンタメ",
+                "https://news.yahoo.co.jp/pickup/entertainment/rss.xml",
+                "RSS2.0",
+                "https://news.yahoo.co.jp")
+        adapter.saveNewFeed(
+                "Yahoo!ニュース・トピックス - IT",
+                "https://news.yahoo.co.jp/pickup/computer/rss.xml",
+                "RSS2.0",
+                "https://news.yahoo.co.jp")
+        adapter.saveNewFeed(
+                "Yahoo!ニュース・トピックス - 地域",
+                "https://news.yahoo.co.jp/pickup/local/rss.xml",
+                "RSS2.0",
+                "https://news.yahoo.co.jp")
     }
 }
