@@ -420,6 +420,12 @@ class ArticleListPresenterTest {
     }
 
     private inner class MockView : ArticleListView {
+        override val firstVisiblePosition: Int
+            get() = 1
+        override val lastVisiblePosition: Int
+            get() = 1
+        override val isBottomVisible: Boolean
+            get() = false
 
         internal var isOpenedInternalWebView = false
         internal var isOpenedExternalWebView = false
@@ -444,24 +450,12 @@ class ArticleListPresenterTest {
 
         override fun finish() {}
 
-        override fun getFirstVisiblePosition(): Int {
-            return 0
-        }
-
-        override fun getLastVisiblePosition(): Int {
-            return 0
-        }
-
         override fun showShareUi(url: String) {
             shareUrl = url
         }
 
         override fun scrollTo(position: Int) {
 
-        }
-
-        override fun isBottomVisible(): Boolean {
-            return false
         }
 
         override fun showEmptyView() {
