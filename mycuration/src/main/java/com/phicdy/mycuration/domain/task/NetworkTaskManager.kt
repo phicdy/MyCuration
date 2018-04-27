@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.domain.task
 
-import android.support.annotation.IntDef
 import android.util.Log
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
@@ -23,16 +22,12 @@ import java.net.URI
 object NetworkTaskManager {
 
     const val FINISH_UPDATE_ACTION = "FINISH_UPDATE"
-    const val ERROR_INVALID_URL = 1L
-    const val ERROR_NON_RSS_HTML_CONTENT = 2L
-    const val ERROR_UNKNOWN = 3L
+    const val ERROR_INVALID_URL = 1
+    const val ERROR_NON_RSS_HTML_CONTENT = 2
+    const val ERROR_UNKNOWN = 3
     const val REASON_NOT_FOUND = -1
 
     val isUpdatingFeed: Boolean get() = false
-
-    @Retention(AnnotationRetention.SOURCE)
-    @IntDef(ERROR_INVALID_URL, ERROR_NON_RSS_HTML_CONTENT, ERROR_UNKNOWN)
-    annotation class AddFeedUrlError
 
     fun updateAllFeeds(feeds: ArrayList<Feed>): Flowable<Feed> {
         return Flowable.fromIterable<Feed>(feeds)
