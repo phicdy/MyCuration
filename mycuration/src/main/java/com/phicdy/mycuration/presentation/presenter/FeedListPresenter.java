@@ -8,7 +8,7 @@ import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.presentation.view.FeedListView;
-import com.phicdy.mycuration.presentation.view.fragment.FeedListFragment;
+import com.phicdy.mycuration.presentation.view.fragment.RssListFragment;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -247,7 +247,7 @@ public class FeedListPresenter implements Presenter {
         refreshList();
     }
 
-    public void onFeedListClicked(int position, FeedListFragment.OnFeedListFragmentListener mListener) {
+    public void onFeedListClicked(int position, RssListFragment.OnFeedListFragmentListener mListener) {
         int feedId = getFeedIdAtPosition(position);
         if (feedId == Feed.DEFAULT_FEED_ID) {
             changeHideStatus();

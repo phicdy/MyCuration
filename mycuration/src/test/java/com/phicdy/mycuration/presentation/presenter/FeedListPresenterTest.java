@@ -11,7 +11,7 @@ import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.presentation.view.FeedListView;
-import com.phicdy.mycuration.presentation.view.fragment.FeedListFragment;
+import com.phicdy.mycuration.presentation.view.fragment.RssListFragment;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +80,7 @@ public class FeedListPresenterTest {
         presenter.create();
         presenter.resume();
         // Disale hidden option
-        presenter.onFeedListClicked(HIDE_OPTION_POSITION_WHEN_HIDDEN, new FeedListFragment.OnFeedListFragmentListener() {
+        presenter.onFeedListClicked(HIDE_OPTION_POSITION_WHEN_HIDDEN, new RssListFragment.OnFeedListFragmentListener() {
             @Override
             public void onListClicked(int feedId) {
             }

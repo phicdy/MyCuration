@@ -40,7 +40,7 @@ import com.phicdy.mycuration.presentation.view.FeedListView;
 import java.io.File;
 import java.util.ArrayList;
 
-public class FeedListFragment extends Fragment implements FeedListView {
+public class RssListFragment extends Fragment implements FeedListView {
 
     private FeedListPresenter presenter;
     private TextView tvAllUnreadArticleCount;
@@ -64,7 +64,7 @@ public class FeedListFragment extends Fragment implements FeedListView {
 
     private static final String LOG_TAG = "FilFeed.FeedList";
 
-    public FeedListFragment() {
+    public RssListFragment() {
     }
 
     @Override

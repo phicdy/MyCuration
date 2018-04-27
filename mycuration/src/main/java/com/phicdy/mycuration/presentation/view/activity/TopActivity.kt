@@ -30,7 +30,7 @@ import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
-import com.phicdy.mycuration.presentation.view.fragment.FeedListFragment
+import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.tracker.GATrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -39,7 +39,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 
-class TopActivity : AppCompatActivity(), FeedListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener, TopActivityView {
+class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener, TopActivityView {
     companion object {
         private const val POSITION_CURATION_FRAGMENT = 0
         private const val POSITION_FEED_FRAGMENT = 1
@@ -298,7 +298,7 @@ class TopActivity : AppCompatActivity(), FeedListFragment.OnFeedListFragmentList
         override fun getItem(position: Int): Fragment? {
             return when (position) {
                 POSITION_CURATION_FRAGMENT -> curationFragment
-                POSITION_FEED_FRAGMENT -> FeedListFragment()
+                POSITION_FEED_FRAGMENT -> RssListFragment()
                 POSITION_FILTER_FRAGMENT -> FilterListFragment()
                 else -> null
             }
