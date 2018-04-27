@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import com.phicdy.mycuration.R;
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
-import com.phicdy.mycuration.presentation.presenter.FeedListPresenter;
+import com.phicdy.mycuration.presentation.presenter.RssListPresenter;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
@@ -42,7 +42,7 @@ import java.util.ArrayList;
 
 public class RssListFragment extends Fragment implements FeedListView {
 
-    private FeedListPresenter presenter;
+    private RssListPresenter presenter;
     private TextView tvAllUnreadArticleCount;
     private LinearLayout allUnread;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -76,7 +76,7 @@ public class RssListFragment extends Fragment implements FeedListView {
         NetworkTaskManager networkTaskManager = NetworkTaskManager.INSTANCE;
         setRetainInstance(true);
         PreferenceHelper helper = PreferenceHelper.INSTANCE;
-        presenter = new FeedListPresenter(helper, dbAdapter, networkTaskManager, unreadManager);
+        presenter = new RssListPresenter(helper, dbAdapter, networkTaskManager, unreadManager);
         presenter.setView(this);
     }
 

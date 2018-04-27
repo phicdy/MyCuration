@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class FeedListPresenter implements Presenter {
+public class RssListPresenter implements Presenter {
 
     private final PreferenceHelper preferenceHelper;
     private FeedListView view;
@@ -31,8 +31,8 @@ public class FeedListPresenter implements Presenter {
     // Manage hide feed status
     private boolean isHided = true;
 
-    public FeedListPresenter(PreferenceHelper helper, DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
-                             UnreadCountManager unreadCountManager) {
+    public RssListPresenter(PreferenceHelper helper, DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
+                            UnreadCountManager unreadCountManager) {
         this.preferenceHelper = helper;
         this.dbAdapter = dbAdapter;
         this.networkTaskManager = networkTaskManager;

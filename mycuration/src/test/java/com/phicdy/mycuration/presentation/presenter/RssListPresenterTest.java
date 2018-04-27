@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class FeedListPresenterTest {
+public class RssListPresenterTest {
 
-    private FeedListPresenter presenter;
+    private RssListPresenter presenter;
     private DatabaseAdapter adapter;
     private NetworkTaskManager networkTaskManager;
     private UnreadCountManager unreadCountManager;
@@ -61,7 +61,7 @@ public class FeedListPresenterTest {
         Mockito.when(unreadCountManager.getUnreadCount(SECOND_RSS_ID))
                 .thenReturn(1);
         Mockito.when(unreadCountManager.getUnreadCount(Feed.DEFAULT_FEED_ID)).thenReturn(-1);
-        presenter = new FeedListPresenter(preferenceHelper, adapter, networkTaskManager, unreadCountManager);
+        presenter = new RssListPresenter(preferenceHelper, adapter, networkTaskManager, unreadCountManager);
         view = new MockView();
         presenter.setView(view);
     }
