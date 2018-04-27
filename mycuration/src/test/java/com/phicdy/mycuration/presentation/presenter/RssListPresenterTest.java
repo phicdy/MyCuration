@@ -10,7 +10,7 @@ import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.presentation.view.FeedListView;
+import com.phicdy.mycuration.presentation.view.RssListView;
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment;
 
 import org.junit.Before;
@@ -93,7 +93,7 @@ public class RssListPresenterTest {
         assertThat(view.editTitle, is(FIRST_RSS_TITLE));
     }
 
-    private class MockView implements FeedListView {
+    private class MockView implements RssListView {
 
         private String editTitle;
 

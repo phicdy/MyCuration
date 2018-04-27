@@ -4,7 +4,7 @@ import com.phicdy.mycuration.data.rss.Feed
 
 import java.util.ArrayList
 
-interface FeedListView {
+interface RssListView {
     fun showDeleteFeedAlertDialog(position: Int)
     fun showEditTitleDialog(position: Int, feedTitle: String)
     fun setRefreshing(doScroll: Boolean)

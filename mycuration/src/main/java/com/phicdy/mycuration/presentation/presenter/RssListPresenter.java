@@ -7,7 +7,7 @@ import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.presentation.view.FeedListView;
+import com.phicdy.mycuration.presentation.view.RssListView;
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment;
 
 import org.reactivestreams.Subscriber;
@@ -20,7 +20,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class RssListPresenter implements Presenter {
 
     private final PreferenceHelper preferenceHelper;
-    private FeedListView view;
+    private RssListView view;
     private final DatabaseAdapter dbAdapter;
     private final NetworkTaskManager networkTaskManager;
     private final UnreadCountManager unreadCountManager;
@@ -39,7 +39,7 @@ public class RssListPresenter implements Presenter {
         this.unreadCountManager = unreadCountManager;
     }
 
-    public void setView(FeedListView view) {
+    public void setView(RssListView view) {
         this.view = view;
     }
 

@@ -35,12 +35,12 @@ import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.presentation.view.FeedListView;
+import com.phicdy.mycuration.presentation.view.RssListView;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public class RssListFragment extends Fragment implements FeedListView {
+public class RssListFragment extends Fragment implements RssListView {
 
     private RssListPresenter presenter;
     private TextView tvAllUnreadArticleCount;
