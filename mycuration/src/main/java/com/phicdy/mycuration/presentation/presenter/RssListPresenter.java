@@ -7,8 +7,8 @@ import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.presentation.view.FeedListView;
-import com.phicdy.mycuration.presentation.view.fragment.FeedListFragment;
+import com.phicdy.mycuration.presentation.view.RssListView;
+import com.phicdy.mycuration.presentation.view.fragment.RssListFragment;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -17,10 +17,10 @@ import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class FeedListPresenter implements Presenter {
+public class RssListPresenter implements Presenter {
 
     private final PreferenceHelper preferenceHelper;
-    private FeedListView view;
+    private RssListView view;
     private final DatabaseAdapter dbAdapter;
     private final NetworkTaskManager networkTaskManager;
     private final UnreadCountManager unreadCountManager;
@@ -31,15 +31,15 @@ public class FeedListPresenter implements Presenter {
     // Manage hide feed status
     private boolean isHided = true;
 
-    public FeedListPresenter(PreferenceHelper helper, DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
-                             UnreadCountManager unreadCountManager) {
+    public RssListPresenter(PreferenceHelper helper, DatabaseAdapter dbAdapter, NetworkTaskManager networkTaskManager,
+                            UnreadCountManager unreadCountManager) {
         this.preferenceHelper = helper;
         this.dbAdapter = dbAdapter;
         this.networkTaskManager = networkTaskManager;
         this.unreadCountManager = unreadCountManager;
     }
 
-    public void setView(FeedListView view) {
+    public void setView(RssListView view) {
         this.view = view;
     }
 
@@ -247,7 +247,7 @@ public class FeedListPresenter implements Presenter {
         refreshList();
     }
 
-    public void onFeedListClicked(int position, FeedListFragment.OnFeedListFragmentListener mListener) {
+    public void onFeedListClicked(int position, RssListFragment.OnFeedListFragmentListener mListener) {
         int feedId = getFeedIdAtPosition(position);
         if (feedId == Feed.DEFAULT_FEED_ID) {
             changeHideStatus();

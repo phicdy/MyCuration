@@ -10,8 +10,8 @@ import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
 import com.phicdy.mycuration.util.PreferenceHelper;
-import com.phicdy.mycuration.presentation.view.FeedListView;
-import com.phicdy.mycuration.presentation.view.fragment.FeedListFragment;
+import com.phicdy.mycuration.presentation.view.RssListView;
+import com.phicdy.mycuration.presentation.view.fragment.RssListFragment;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class FeedListPresenterTest {
+public class RssListPresenterTest {
 
-    private FeedListPresenter presenter;
+    private RssListPresenter presenter;
     private DatabaseAdapter adapter;
     private NetworkTaskManager networkTaskManager;
     private UnreadCountManager unreadCountManager;
@@ -61,7 +61,7 @@ public class FeedListPresenterTest {
         Mockito.when(unreadCountManager.getUnreadCount(SECOND_RSS_ID))
                 .thenReturn(1);
         Mockito.when(unreadCountManager.getUnreadCount(Feed.DEFAULT_FEED_ID)).thenReturn(-1);
-        presenter = new FeedListPresenter(preferenceHelper, adapter, networkTaskManager, unreadCountManager);
+        presenter = new RssListPresenter(preferenceHelper, adapter, networkTaskManager, unreadCountManager);
         view = new MockView();
         presenter.setView(view);
     }
@@ -80,7 +80,7 @@ public class FeedListPresenterTest {
         presenter.create();
         presenter.resume();
         // Disale hidden option
-        presenter.onFeedListClicked(HIDE_OPTION_POSITION_WHEN_HIDDEN, new FeedListFragment.OnFeedListFragmentListener() {
+        presenter.onFeedListClicked(HIDE_OPTION_POSITION_WHEN_HIDDEN, new RssListFragment.OnFeedListFragmentListener() {
             @Override
             public void onListClicked(int feedId) {
             }
@@ -93,7 +93,7 @@ public class FeedListPresenterTest {
         assertThat(view.editTitle, is(FIRST_RSS_TITLE));
     }
 
-    private class MockView implements FeedListView {
+    private class MockView implements RssListView {
 
         private String editTitle;
 
