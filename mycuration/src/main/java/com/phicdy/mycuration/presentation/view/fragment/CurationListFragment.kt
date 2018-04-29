@@ -83,8 +83,8 @@ class CurationListFragment : Fragment(), CurationListView {
 
     private fun setAllListener() {
         curationListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val curation = curationAt(position)
-            if (mListener != null) {
+            val curation = curationListAdapter.getItem(position)
+            if (mListener != null && curation != null) {
                 mListener!!.onCurationListClicked(curation.id)
             }
         }
@@ -150,10 +150,6 @@ class CurationListFragment : Fragment(), CurationListView {
 
     override fun size(): Int {
         return curationListAdapter.count
-    }
-
-    override fun curationAt(position: Int): Curation {
-        return if (position > curationListAdapter.count) Curation(-1, "") else curationListAdapter.getItem(position)
     }
 
     interface OnCurationListFragmentListener {

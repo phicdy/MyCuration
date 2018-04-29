@@ -12,6 +12,7 @@ public class CurationListPresenter implements Presenter {
 
     private final DatabaseAdapter dbAdapter;
     private CurationListView view;
+    private ArrayList<Curation> allCurations;
 
     public CurationListPresenter(DatabaseAdapter dbAdapter) {
         this.dbAdapter = dbAdapter;
@@ -28,7 +29,7 @@ public class CurationListPresenter implements Presenter {
     @Override
     public void resume() {
         view.registerContextMenu();
-        ArrayList<Curation> allCurations = dbAdapter.getAllCurations();
+        allCurations = dbAdapter.getAllCurations();
         view.initListBy(allCurations);
     }
 
@@ -58,7 +59,7 @@ public class CurationListPresenter implements Presenter {
             return -1;
         }
 
-        Curation curation = view.curationAt(position);
+        Curation curation = allCurations.get(position);
         if (curation == null) return -1;
         return curation.getId();
     }

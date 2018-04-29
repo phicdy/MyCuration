@@ -12,5 +12,4 @@ interface CurationListView {
     fun initListBy(curations: ArrayList<Curation>)
     fun delete(curation: Curation)
     fun size(): Int
-    fun curationAt(position: Int): Curation
 }
