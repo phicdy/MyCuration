@@ -135,7 +135,7 @@ class RssParserTest {
     @Test
     fun testParseFeedInfoATOM() {
         // Publickey
-        val publicKeyFeedUrl = "http://www.publickey1.jp/atom.xml"
+        val publicKeyFeedUrl = "https://www.publickey1.jp/atom.xml"
         val parser = RssParser()
         val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
         executor.start(publicKeyFeedUrl, callback)
@@ -149,7 +149,7 @@ class RssParserTest {
         assertNotNull(publicKeyFeed)
         assertEquals("Publickey", publicKeyFeed.title)
         assertEquals(publicKeyFeedUrl, publicKeyFeed.url)
-        assertEquals("http://www.publickey1.jp/", publicKeyFeed.siteUrl)
+        assertEquals("https://www.publickey1.jp/", publicKeyFeed.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, publicKeyFeed.iconPath)
 
         // Google testing blog

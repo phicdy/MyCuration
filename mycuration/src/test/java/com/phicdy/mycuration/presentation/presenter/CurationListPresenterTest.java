@@ -212,10 +212,5 @@ public class CurationListPresenterTest {
         public int size() {
             return 0;
         }
-
-        @Override
-        public Curation curationAt(int position) {
-            return curations.get(position);
-        }
     }
 }
