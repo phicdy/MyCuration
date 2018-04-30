@@ -300,8 +300,8 @@ public class ArticleListPresenter implements Presenter {
     }
 
     public int onGetItemViewType(int position) {
-        if (position == loadedPosition+1) return ArticlesListFragment.SimpleItemRecyclerViewAdapter.VIEW_TYPE_FOOTER;
-        return ArticlesListFragment.SimpleItemRecyclerViewAdapter.VIEW_TYPE_ARTICLE;
+        if (position == loadedPosition+1) return ArticlesListFragment.VIEW_TYPE_FOOTER;
+        return ArticlesListFragment.VIEW_TYPE_ARTICLE;
     }
 
     boolean isAllUnreadArticle() {
