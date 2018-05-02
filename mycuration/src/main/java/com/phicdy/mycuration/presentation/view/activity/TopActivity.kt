@@ -176,14 +176,23 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchMenuItem = menu.findItem(R.id.search_article_top_activity)
         searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
-        searchView!!.setSearchableInfo(searchManager
-                .getSearchableInfo(componentName))
+        searchView!!.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView!!.setOnQueryTextFocusChangeListener { view, queryTextFocused ->
             if (!queryTextFocused) {
                 searchMenuItem.collapseActionView()
                 searchView!!.setQuery("", false)
             }
         }
+        searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                presenter.queryTextSubmit(query)
+                return false
+            }
+        })
         val searchAutoComplete = searchView!!
                 .findViewById(android.support.v7.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
         searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
@@ -255,6 +264,13 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
 
     override fun goToSetting() {
         startActivity(Intent(applicationContext, SettingActivity::class.java))
+    }
+
+    override fun goToArticleSearchResult(query: String) {
+        val intent = Intent(this@TopActivity, ArticleSearchResultActivity::class.java)
+        intent.action = Intent.ACTION_SEARCH
+        intent.putExtra(SearchManager.QUERY, query)
+        startActivity(intent)
     }
 
     override fun currentTabPosition(): Int {

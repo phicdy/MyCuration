@@ -12,6 +12,7 @@ interface TopActivityView {
     fun goToAddCuration()
     fun goToAddFilter()
     fun goToSetting()
+    fun goToArticleSearchResult(query: String)
     fun changeTab(position: Int)
     fun currentTabPosition(): Int
 }

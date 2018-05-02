@@ -76,4 +76,9 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
         }
         return false
     }
+
+    fun queryTextSubmit(query: String?) {
+        if (query == null) return
+        view.goToArticleSearchResult(query)
+    }
 }
