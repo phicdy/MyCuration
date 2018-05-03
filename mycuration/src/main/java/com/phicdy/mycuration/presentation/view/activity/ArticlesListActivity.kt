@@ -2,6 +2,7 @@ package com.phicdy.mycuration.presentation.view.activity
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AppCompatActivity
@@ -75,6 +76,20 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                 searchView.setQuery("", false)
             }
         }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query == null) return false
+                val intent = Intent(this@ArticlesListActivity, ArticleSearchResultActivity::class.java)
+                intent.action = Intent.ACTION_SEARCH
+                intent.putExtra(SearchManager.QUERY, query)
+                startActivity(intent)
+                return false
+            }
+        })
         return true
     }
 
