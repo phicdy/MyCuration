@@ -4,10 +4,12 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
+import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.phicdy.mycuration.R
@@ -26,6 +28,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
     private lateinit var searchView: SearchView
     private lateinit var gaTitle: String
     private lateinit var fragment: ArticlesListFragment
+    private lateinit var fab: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +63,24 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                 gaTitle = getString(R.string.ga_not_all_title)
             }
         }
+        initToolbar()
+        fab = findViewById(R.id.fab_article_list) as FloatingActionButton
+        fab.setOnClickListener {
+            fragment.onFabButtonClicked()
+            GATrackerHelper.sendEvent(getString(R.string.scroll_article_list))
+        }
+    }
+
+    private fun initToolbar() {
+        val toolbar = findViewById(R.id.toolbar_article_list) as Toolbar
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            // Show back arrow icon
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setDisplayShowHomeEnabled(true)
+            actionBar.title = title
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -71,6 +92,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(componentName))
+        searchView.queryHint = getString(R.string.search_article)
         searchView.setOnQueryTextFocusChangeListener { _, queryTextFocused ->
             if (!queryTextFocused) {
                 searchMenuItem.collapseActionView()
