@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
@@ -90,6 +91,10 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                 return false
             }
         })
+        val searchAutoComplete = searchView
+                .findViewById(android.support.v7.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary))
         return true
     }
 
