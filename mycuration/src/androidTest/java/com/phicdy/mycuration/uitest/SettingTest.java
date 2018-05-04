@@ -235,7 +235,7 @@ public class SettingTest extends UiTest {
 
         // Click fab
         UiObject2 fab = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "fab")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "fab_article_list")), 5000);
         fab.click();
         try {
             Thread.sleep(5000);
@@ -297,7 +297,7 @@ public class SettingTest extends UiTest {
 
         // Click fab
         UiObject2 fab = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "fab")), 5000);
+                By.res(BuildConfig.APPLICATION_ID, "fab_article_list")), 5000);
         fab.click();
         try {
             Thread.sleep(2000);
