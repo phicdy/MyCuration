@@ -4,6 +4,7 @@ package com.phicdy.mycuration.presentation.view
 interface TopActivityView {
     fun initViewPager()
     fun initFab()
+    fun initToolbar()
     fun setAlarmManager()
     fun startFabAnimation()
     fun closeAddFab()

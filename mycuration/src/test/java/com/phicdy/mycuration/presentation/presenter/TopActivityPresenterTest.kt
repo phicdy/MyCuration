@@ -36,6 +36,11 @@ class TopActivityPresenterTest {
         Mockito.verify(mockView, times(1)).initViewPager()
     }
 
+    @Test
+    fun `initToolbar is called when onCreate`() {
+        presenter.create()
+        Mockito.verify(mockView, times(1)).initToolbar()
+    }
 
     @Test
     fun `setAlarmManager is called when onCreate`() {

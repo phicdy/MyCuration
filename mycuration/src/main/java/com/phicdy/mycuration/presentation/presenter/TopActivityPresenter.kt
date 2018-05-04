@@ -13,6 +13,7 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     override fun create() {
         view.initViewPager()
         view.initFab()
+        view.initToolbar()
         view.setAlarmManager()
         view.changeTab(launchTab)
     }
