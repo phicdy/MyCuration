@@ -127,6 +127,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                 GATrackerHelper.sendEvent(getString(R.string.read_all_articles))
                 fragment.handleAllRead()
             }
+            android.R.id.home -> finish()
             else -> {
             }
         }
