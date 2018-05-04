@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 
 import com.phicdy.mycuration.R
@@ -25,10 +26,19 @@ class ArticleSearchResultActivity : AppCompatActivity() {
         fragment = supportFragmentManager
                 .findFragmentById(R.id.fr_article_search_result) as ArticleSearchResultFragment
         fragment.handleIntent(intent)
+        initToolbar()
+    }
 
-        title = getString(R.string.search_result)
+    private fun initToolbar() {
+        val toolbar = findViewById(R.id.toolbar_article_search_result) as Toolbar
+        setSupportActionBar(toolbar)
         val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        if (actionBar != null) {
+            // Show back arrow icon
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setDisplayShowHomeEnabled(true)
+            actionBar.title = getString(R.string.search_result)
+        }
     }
 
     override fun onResume() {
