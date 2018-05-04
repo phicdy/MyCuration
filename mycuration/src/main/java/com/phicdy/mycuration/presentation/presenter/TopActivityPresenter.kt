@@ -60,7 +60,6 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     }
 
     private fun settingMenuClicked() {
-        view.closeAddFab()
         view.goToSetting()
     }
 
