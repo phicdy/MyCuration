@@ -31,7 +31,23 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         private const val LOAD_COUNT = 100
     }
     private lateinit var view: ArticleListView
-    private lateinit var mTask: AsyncTask<Long, Void, Void>
+    private var mTask: AsyncTask<Long, Void, Void> = object : AsyncTask<Long, Void, Void>() {
+
+        override fun doInBackground(params: Array<Long>): Void? {
+            try {
+                Thread.sleep(params[0])
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            return null
+        }
+
+        override fun onPostExecute(result: Void) {
+            loadArticle(LOAD_COUNT)
+            view.notifyListView()
+        }
+    }
 
     private var allArticles: ArrayList<Article> = arrayListOf()
     private var isSwipeRightToLeft = false
@@ -140,23 +156,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             return
         }
 
-        mTask = object : AsyncTask<Long, Void, Void>() {
-
-            override fun doInBackground(params: Array<Long>): Void? {
-                try {
-                    Thread.sleep(params[0])
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-                return null
-            }
-
-            override fun onPostExecute(result: Void) {
-                loadArticle(LOAD_COUNT)
-                view.notifyListView()
-            }
-        }.execute(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
+        mTask.execute(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
     }
 
     private fun setReadStatusToTouchedView(article: Article, status: String, isAllReadBack: Boolean) {
