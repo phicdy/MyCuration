@@ -11,4 +11,5 @@ interface ArticleListView {
     fun showShareUi(url: String)
     fun scrollTo(position: Int)
     fun showEmptyView()
+    fun showNoSearchResult()
 }

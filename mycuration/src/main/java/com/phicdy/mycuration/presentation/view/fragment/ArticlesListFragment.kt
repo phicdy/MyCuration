@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -94,8 +95,9 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         val isOpenInternal = prefMgr.isOpenInternal
         val isAllReadBack = prefMgr.allReadBack
         val isNewestArticleTop = prefMgr.sortNewArticleTop
+        val query = intent.getStringExtra(SearchManager.QUERY) ?: ""
         presenter = ArticleListPresenter(feedId, curationId, dbAdapter, unreadManager,
-                isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption)
+                isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption, query, intent.action ?: "")
         presenter.setView(this)
         presenter.create()
     }
@@ -204,6 +206,13 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     override fun showEmptyView() {
         recyclerView.visibility = View.GONE
         emptyView.visibility = View.VISIBLE
+        emptyView.text = getText(R.string.no_article)
+    }
+
+    override fun showNoSearchResult() {
+        recyclerView.visibility = View.GONE
+        emptyView.visibility = View.VISIBLE
+        emptyView.text = getText(R.string.no_search_result)
     }
 
     inner class SimpleItemRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
+import android.content.Intent
 import android.os.AsyncTask
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
@@ -24,7 +25,8 @@ import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
 class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
                            private val unreadCountManager: UnreadCountManager,
                            private val isOpenInternal: Boolean, private val isAllReadBack: Boolean,
-                           private val isNewArticleTop: Boolean, private val swipeDirection: Int) : Presenter {
+                           private val isNewArticleTop: Boolean, private val swipeDirection: Int,
+                           private val query: String, private val action: String) : Presenter {
 
     companion object {
         const val DEFAULT_CURATION_ID = -1
@@ -67,6 +69,11 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             return isAllRead
         }
 
+    private val isSearchAction: Boolean
+        get() {
+            return Intent.ACTION_SEARCH == action
+        }
+
     internal val isAllUnreadArticle: Boolean
         get() {
             var index = 0
@@ -88,7 +95,11 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         allArticles = loadAllArticles()
         loadArticle(LOAD_COUNT)
         if (allArticles.size == 0) {
-            view.showEmptyView()
+            if (isSearchAction) {
+                view.showNoSearchResult()
+            } else {
+                view.showEmptyView()
+            }
         } else {
             view.notifyListView()
         }
@@ -96,7 +107,9 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
 
     private fun loadAllArticles(): ArrayList<Article> {
         var allArticles: ArrayList<Article>
-        if (curationId != DEFAULT_CURATION_ID) {
+        if (isSearchAction) {
+            allArticles = adapter.searchArticles(query, isNewArticleTop)
+        } else if (curationId != DEFAULT_CURATION_ID) {
             allArticles = adapter.getAllUnreadArticlesOfCuration(curationId, isNewArticleTop)
             if (allArticles.size == 0) {
                 allArticles = adapter.getAllArticlesOfCuration(curationId, isNewArticleTop)

@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/fr_article_search_result"
-        android:name="com.phicdy.mycuration.presentation.view.fragment.ArticleSearchResultFragment"
+        android:name="com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"/>
