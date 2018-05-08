@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
-import android.os.AsyncTask
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Article
@@ -21,6 +20,9 @@ import java.util.Random
 
 import android.support.v7.widget.helper.ItemTouchHelper.LEFT
 import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
                            private val unreadCountManager: UnreadCountManager,
@@ -33,23 +35,6 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         private const val LOAD_COUNT = 100
     }
     private lateinit var view: ArticleListView
-    private var mTask: AsyncTask<Long, Void, Void> = object : AsyncTask<Long, Void, Void>() {
-
-        override fun doInBackground(params: Array<Long>): Void? {
-            try {
-                Thread.sleep(params[0])
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-            return null
-        }
-
-        override fun onPostExecute(result: Void) {
-            loadArticle(LOAD_COUNT)
-            view.notifyListView()
-        }
-    }
 
     private var allArticles: ArrayList<Article> = arrayListOf()
     private var isSwipeRightToLeft = false
@@ -165,11 +150,14 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             return
         }
         if (lastItemPosition < loadedPosition + 1) return
-        if (mTask.status == AsyncTask.Status.RUNNING) {
-            return
-        }
-
-        mTask.execute(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
+        Flowable.just(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
+                .subscribeOn(Schedulers.io())
+                .map { Thread.sleep(it) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    loadArticle(LOAD_COUNT)
+                    view.notifyListView()
+                }
     }
 
     private fun setReadStatusToTouchedView(article: Article, status: String, isAllReadBack: Boolean) {
@@ -202,9 +190,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
     }
 
     fun onFabButtonClicked() {
-        if (allArticles.size == 0 || mTask.status == AsyncTask.Status.RUNNING) {
-            return
-        }
+        if (allArticles.size == 0) return
         val firstPosition = view.firstVisiblePosition
         val lastPosition = view.lastVisiblePosition
         for (i in firstPosition..lastPosition) {
