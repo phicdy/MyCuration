@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -16,7 +17,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 
-import com.melnykov.fab.FloatingActionButton
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
@@ -46,7 +46,6 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: SimpleItemRecyclerViewAdapter
 
-    private lateinit var fab: FloatingActionButton
 
     private lateinit var listener: OnArticlesListFragmentListener
     private lateinit var emptyView: TextView
@@ -96,8 +95,9 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         val isOpenInternal = prefMgr.isOpenInternal
         val isAllReadBack = prefMgr.allReadBack
         val isNewestArticleTop = prefMgr.sortNewArticleTop
+        val query = intent.getStringExtra(SearchManager.QUERY) ?: ""
         presenter = ArticleListPresenter(feedId, curationId, dbAdapter, unreadManager,
-                isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption)
+                isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption, query, intent.action ?: "")
         presenter.setView(this)
         presenter.create()
     }
@@ -120,7 +120,6 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         articlesListAdapter = SimpleItemRecyclerViewAdapter()
         recyclerView.adapter = articlesListAdapter
-        fab = view.findViewById(R.id.fab) as FloatingActionButton
         setAllListener()
         presenter.createView()
         return view
@@ -159,10 +158,10 @@ class ArticlesListFragment : Fragment(), ArticleListView {
             }
         })
 
-        fab.setOnClickListener {
-            presenter.onFabButtonClicked()
-            GATrackerHelper.sendEvent(getString(R.string.scroll_article_list))
-        }
+    }
+
+    fun onFabButtonClicked() {
+        presenter.onFabButtonClicked()
     }
 
     fun handleAllRead() {
@@ -207,6 +206,13 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     override fun showEmptyView() {
         recyclerView.visibility = View.GONE
         emptyView.visibility = View.VISIBLE
+        emptyView.text = getText(R.string.no_article)
+    }
+
+    override fun showNoSearchResult() {
+        recyclerView.visibility = View.GONE
+        emptyView.visibility = View.VISIBLE
+        emptyView.text = getText(R.string.no_search_result)
     }
 
     inner class SimpleItemRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

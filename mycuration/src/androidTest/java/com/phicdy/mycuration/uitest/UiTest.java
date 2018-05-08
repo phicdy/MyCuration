@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 
-abstract class UiTest {
+public abstract class UiTest {
 
     void setup() {
         deleteAllData();

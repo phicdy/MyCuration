@@ -15,6 +15,7 @@ import android.support.v4.view.MenuItemCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
+import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -123,6 +124,12 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
         btnAddFilter.setOnClickListener { presenter.fabFilterClicked() }
     }
 
+    override fun initToolbar() {
+        val toolbar = findViewById(R.id.toolbar_top) as Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+    }
+
     override fun startFabAnimation() {
         back.visibility = View.VISIBLE
 
@@ -159,10 +166,11 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
     }
 
     private fun setActivityTitle(position: Int) {
+        val actionBar = supportActionBar ?: return
         when (position) {
-            POSITION_CURATION_FRAGMENT -> title = getString(R.string.curation)
-            POSITION_FEED_FRAGMENT -> title = getString(R.string.rss)
-            POSITION_FILTER_FRAGMENT -> title = getString(R.string.filter)
+            POSITION_CURATION_FRAGMENT -> actionBar.title = getString(R.string.curation)
+            POSITION_FEED_FRAGMENT -> actionBar.title = getString(R.string.rss)
+            POSITION_FILTER_FRAGMENT -> actionBar.title = getString(R.string.filter)
         }
     }
 
@@ -176,14 +184,24 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchMenuItem = menu.findItem(R.id.search_article_top_activity)
         searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
-        searchView!!.setSearchableInfo(searchManager
-                .getSearchableInfo(componentName))
-        searchView!!.setOnQueryTextFocusChangeListener { view, queryTextFocused ->
+        searchView!!.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        searchView!!.setOnQueryTextFocusChangeListener { _, queryTextFocused ->
             if (!queryTextFocused) {
                 searchMenuItem.collapseActionView()
                 searchView!!.setQuery("", false)
             }
         }
+        searchView!!.queryHint = getString(R.string.search_article)
+        searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                presenter.queryTextSubmit(query)
+                return false
+            }
+        })
         val searchAutoComplete = searchView!!
                 .findViewById(android.support.v7.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
         searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
@@ -255,6 +273,13 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
 
     override fun goToSetting() {
         startActivity(Intent(applicationContext, SettingActivity::class.java))
+    }
+
+    override fun goToArticleSearchResult(query: String) {
+        val intent = Intent(this@TopActivity, ArticleSearchResultActivity::class.java)
+        intent.action = Intent.ACTION_SEARCH
+        intent.putExtra(SearchManager.QUERY, query)
+        startActivity(intent)
     }
 
     override fun currentTabPosition(): Int {

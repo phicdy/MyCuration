@@ -13,6 +13,7 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     override fun create() {
         view.initViewPager()
         view.initFab()
+        view.initToolbar()
         view.setAlarmManager()
         view.changeTab(launchTab)
     }
@@ -59,7 +60,6 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     }
 
     private fun settingMenuClicked() {
-        view.closeAddFab()
         view.goToSetting()
     }
 
@@ -75,5 +75,10 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
             return true
         }
         return false
+    }
+
+    fun queryTextSubmit(query: String?) {
+        if (query == null) return
+        view.goToArticleSearchResult(query)
     }
 }

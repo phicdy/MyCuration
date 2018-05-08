@@ -4,6 +4,7 @@ package com.phicdy.mycuration.presentation.view
 interface TopActivityView {
     fun initViewPager()
     fun initFab()
+    fun initToolbar()
     fun setAlarmManager()
     fun startFabAnimation()
     fun closeAddFab()
@@ -12,6 +13,7 @@ interface TopActivityView {
     fun goToAddCuration()
     fun goToAddFilter()
     fun goToSetting()
+    fun goToArticleSearchResult(query: String)
     fun changeTab(position: Int)
     fun currentTabPosition(): Int
 }

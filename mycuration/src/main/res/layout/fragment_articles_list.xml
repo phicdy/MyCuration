@@ -1,7 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <com.phicdy.mycuration.presentation.view.ArticleRecyclerView
         android:id="@+id/rv_article"
@@ -15,16 +14,4 @@
         android:layout_gravity="center"
         android:text="@string/no_article"
         android:visibility="gone" />
-
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/down"
-        fab:fab_colorNormal="@color/primary"
-        fab:fab_colorPressed="@color/all_pressed"
-        fab:fab_colorRipple="@color/primary_dark" />
-
 </FrameLayout>

@@ -40,7 +40,6 @@ Set status to read automatically by user settings
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [Retrofit](https://github.com/square/retrofit)
 * [Jsoup](https://github.com/jhy/jsoup/)
-* [FloatingActionButton](https://github.com/makovkastar/FloatingActionButton)
 * [Android-ProgressFragment](https://github.com/johnkil/Android-ProgressFragment)
 * [Calligraphy](https://github.com/chrisjenx/Calligraphy)
 * [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
