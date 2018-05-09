@@ -33,25 +33,14 @@ public class FeedUrlHookActivity extends Activity implements FeedUrlHookView {
         UnreadCountManager unreadCountManager = UnreadCountManager.getInstance();
         NetworkTaskManager networkTaskManager = NetworkTaskManager.INSTANCE;
         RssParser parser = new RssParser();
-		presenter = new FeedUrlHookPresenter(dbAdapter, unreadCountManager, networkTaskManager, parser);
+        Intent intent = getIntent();
+        final String action = intent.getAction() == null ? "": intent.getAction();
+        final String dataString = intent.getDataString() == null ? "": intent.getDataString();
+        final CharSequence extrasText = intent.getExtras() == null ? "": intent.getExtras().getCharSequence(Intent.EXTRA_TEXT, "");
+		presenter = new FeedUrlHookPresenter(action, dataString, extrasText,
+                dbAdapter, unreadCountManager, networkTaskManager, parser);
 		presenter.setView(this);
-
-		Intent intent = getIntent();
-		final String action = intent.getAction();
-        String url = null;
-        if (action.equals(Intent.ACTION_VIEW)) {
-            url = intent.getDataString();
-        }else if (action.equals(Intent.ACTION_SEND)) {
-            // For Chrome
-            Bundle extras = getIntent().getExtras();
-            CharSequence urlChar = extras.getCharSequence(Intent.EXTRA_TEXT);
-            if (urlChar != null) {
-                url = urlChar.toString();
-            }
-        }
-        if (url != null) {
-            presenter.handle(action, url);
-        }
+		presenter.create();
         GATrackerHelper.INSTANCE.sendScreen(getString(R.string.add_rss_from_intent));
 	}
 
