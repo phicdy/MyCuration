@@ -32,23 +32,22 @@ public class FeedUrlHookPresenterTest {
         adapter = Mockito.mock(DatabaseAdapter.class);
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
         parser = Mockito.mock(RssParser.class);
-        presenter = new FeedUrlHookPresenter(
+        presenter = new FeedUrlHookPresenter("", "", "",
                 adapter, unreadCountManager, networkTaskManager, parser);
     }
 
     @Test
-    public void testOnCreate() {
-        // For coverage
-        presenter.setView(new MockView());
+    public void finishWhenEmptyAction() {
+        MockView view = new MockView();
+        presenter.setView(view);
         presenter.create();
-        assertTrue(true);
+        assertTrue(view.isFinished);
     }
 
     @Test
     public void testOnResume() {
         // For coverage
         presenter.setView(new MockView());
-        presenter.create();
         presenter.resume();
         assertTrue(true);
     }
@@ -56,40 +55,30 @@ public class FeedUrlHookPresenterTest {
     @Test
     public void finishWhenInvalidActionComes() {
         MockView view = new MockView();
+        presenter = new FeedUrlHookPresenter("hogehoge", "http://www.google.com", "",
+                adapter, unreadCountManager, networkTaskManager, parser);
         presenter.setView(view);
         presenter.create();
-        presenter.resume();
-        presenter.handle("hogehoge", "http://www.google.com");
-        assertTrue(view.isFinished);
-    }
-
-    @Test
-    public void finishWhenEmptyActionComes() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.handle("", "http://www.google.com");
         assertTrue(view.isFinished);
     }
 
     @Test
     public void toastShowsWhenActionViewAndInvalidUrlComes() {
         MockView view = new MockView();
+        presenter = new FeedUrlHookPresenter(Intent.ACTION_VIEW, "hogehoge", "",
+                adapter, unreadCountManager, networkTaskManager, parser);
         presenter.setView(view);
         presenter.create();
-        presenter.resume();
-        presenter.handle(Intent.ACTION_VIEW, "hogehoge");
         assertTrue(view.isInvalidUrlErrorToastShowed);
     }
 
     @Test
     public void toastShowsWhenActionSendAndInvalidUrlComes() {
         MockView view = new MockView();
+        presenter = new FeedUrlHookPresenter(Intent.ACTION_SEND, "", "hogehoge",
+                adapter, unreadCountManager, networkTaskManager, parser);
         presenter.setView(view);
         presenter.create();
-        presenter.resume();
-        presenter.handle(Intent.ACTION_SEND, "hogehoge");
         assertTrue(view.isInvalidUrlErrorToastShowed);
     }
 
@@ -97,8 +86,6 @@ public class FeedUrlHookPresenterTest {
     public void viewFinishesWhenFinishAddFeedActionComes() {
         MockView view = new MockView();
         presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         presenter.callback.failed(RssParseResult.NOT_FOUND, "");
         assertTrue(view.isFinished);
     }
@@ -108,7 +95,6 @@ public class FeedUrlHookPresenterTest {
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
-        presenter.resume();
         presenter.callback.failed(RssParseResult.NON_RSS_HTML, "");
         assertTrue(view.isGenericErrorToastShowed);
     }
@@ -118,7 +104,6 @@ public class FeedUrlHookPresenterTest {
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
-        presenter.resume();
         presenter.callback.failed(RssParseResult.INVALID_URL, "");
         assertTrue(view.isInvalidUrlErrorToastShowed);
     }
@@ -128,7 +113,6 @@ public class FeedUrlHookPresenterTest {
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
-        presenter.resume();
         String failUrl = "http://www.google.com";
         presenter.callback.failed(RssParseResult.INVALID_URL, failUrl);
         assertThat(view.trackedUrl, is(failUrl));

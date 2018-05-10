@@ -10,8 +10,8 @@ import com.phicdy.mycuration.domain.rss.RssParseResult;
 import com.phicdy.mycuration.domain.rss.RssParser;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
-import com.phicdy.mycuration.util.UrlUtil;
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView;
+import com.phicdy.mycuration.util.UrlUtil;
 
 public class FeedUrlHookPresenter implements Presenter {
     private FeedUrlHookView view;
@@ -19,6 +19,10 @@ public class FeedUrlHookPresenter implements Presenter {
     private final UnreadCountManager unreadCountManager;
     private final NetworkTaskManager networkTaskManager;
     private final RssParser parser;
+    private final String action;
+    private final String dataString;
+    private final CharSequence extrasText;
+
     RssParseExecutor.RssParseCallback callback = new RssParseExecutor.RssParseCallback() {
         @Override
         public void succeeded(@NonNull String rssUrl) {
@@ -41,10 +45,16 @@ public class FeedUrlHookPresenter implements Presenter {
         }
     };
 
-    public FeedUrlHookPresenter(@NonNull DatabaseAdapter dbAdapter,
+    public FeedUrlHookPresenter(@NonNull String action,
+                                @NonNull String dataString,
+                                @NonNull CharSequence extrasText,
+                                @NonNull DatabaseAdapter dbAdapter,
                                 @NonNull UnreadCountManager unreadCountManager,
                                 @NonNull NetworkTaskManager networkTaskManager,
                                 @NonNull RssParser parser) {
+        this.action = action;
+        this.dataString = dataString;
+        this.extrasText = extrasText;
         this.dbAdapter = dbAdapter;
         this.unreadCountManager = unreadCountManager;
         this.networkTaskManager = networkTaskManager;
@@ -56,6 +66,20 @@ public class FeedUrlHookPresenter implements Presenter {
 
     @Override
     public void create() {
+        if (!action.equals(Intent.ACTION_VIEW) && !action.equals(Intent.ACTION_SEND)) {
+            view.finishView();
+            return;
+        }
+        String url = null;
+        if (action.equals(Intent.ACTION_VIEW)) {
+            url = dataString;
+        } else if (action.equals(Intent.ACTION_SEND)) {
+            // For Chrome
+            url = extrasText.toString();
+        }
+        if (url != null) {
+            handle(action, url);
+        }
     }
 
     @Override
@@ -66,7 +90,7 @@ public class FeedUrlHookPresenter implements Presenter {
     public void pause() {
     }
 
-    public void handle(@NonNull String action, @NonNull String url) {
+    private void handle(@NonNull String action, @NonNull String url) {
         if (action.equals(Intent.ACTION_VIEW) || action.equals(Intent.ACTION_SEND)) {
             if (UrlUtil.INSTANCE.isCorrectUrl(url)) {
                 RssParseExecutor executor = new RssParseExecutor(parser, dbAdapter);
@@ -75,7 +99,7 @@ public class FeedUrlHookPresenter implements Presenter {
                 view.showInvalidUrlErrorToast();
                 view.trackFailedUrl(url);
             }
-        }else {
+        } else {
             view.finishView();
         }
     }
