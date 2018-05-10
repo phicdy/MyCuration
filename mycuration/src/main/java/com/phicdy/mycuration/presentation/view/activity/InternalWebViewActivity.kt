@@ -18,7 +18,6 @@ import com.phicdy.mycuration.presentation.view.InternalWebViewView
 
 class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
 
-    private var url: String? = null
     private lateinit var webView: WebView
     private lateinit var scrollView: NestedScrollView
     private lateinit var presenter: InternalWebViewPresenter
@@ -30,7 +29,7 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_internal_web_view)
-        url = intent.getStringExtra(KEY_OPEN_URL)
+        val url = intent.getStringExtra(KEY_OPEN_URL) ?: ""
         presenter = InternalWebViewPresenter(this, url)
         presenter.create()
     }
