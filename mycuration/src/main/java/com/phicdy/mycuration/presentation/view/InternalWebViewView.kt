@@ -9,4 +9,6 @@ interface InternalWebViewView {
     fun share(url: String)
     fun goBack()
     fun parentOnKeyDown(keyCode: Int, event: KeyEvent): Boolean
+    fun setPcMode()
+    fun setMobileMode()
 }

@@ -24,6 +24,16 @@ class InternalWebViewPresenter(private val view: InternalWebViewView, private va
         view.share(url)
     }
 
+    fun onPcModeMenuClicked() {
+        view.setPcMode()
+        view.load(url)
+    }
+
+    fun onMobileModeMenuClicked() {
+        view.setMobileMode()
+        view.load(url)
+    }
+
     fun onKeyDown(keyCode: Int, event: KeyEvent, canGoBack: Boolean): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (canGoBack) {

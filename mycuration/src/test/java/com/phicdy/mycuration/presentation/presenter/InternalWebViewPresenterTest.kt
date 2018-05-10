@@ -96,4 +96,34 @@ class InternalWebViewPresenterTest {
         val presenter = InternalWebViewPresenter(mockView, "http://www.google.com")
         presenter.pause()
     }
+
+    @Test
+    fun `Mode changes to PC when PC mode menu is clicked()`() {
+        val presenter = InternalWebViewPresenter(mockView, "http://www.google.com")
+        presenter.onPcModeMenuClicked()
+        Mockito.verify(mockView, times(1)).setPcMode()
+    }
+
+    @Test
+    fun `URL is reloaded when PC mode menu is clicked()`() {
+        val url = "http://www.google.com"
+        val presenter = InternalWebViewPresenter(mockView, url)
+        presenter.onPcModeMenuClicked()
+        Mockito.verify(mockView, times(1)).load(url)
+    }
+
+    @Test
+    fun `Mode changes to Mobile when Mobile mode menu is clicked()`() {
+        val presenter = InternalWebViewPresenter(mockView, "http://www.google.com")
+        presenter.onMobileModeMenuClicked()
+        Mockito.verify(mockView, times(1)).setMobileMode()
+    }
+
+    @Test
+    fun `URL is reloaded when Mobile mode menu is clicked()`() {
+        val url = "http://www.google.com"
+        val presenter = InternalWebViewPresenter(mockView, url)
+        presenter.onMobileModeMenuClicked()
+        Mockito.verify(mockView, times(1)).load(url)
+    }
 }

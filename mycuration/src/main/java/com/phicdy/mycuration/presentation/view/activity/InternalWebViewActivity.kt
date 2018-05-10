@@ -18,12 +18,14 @@ import com.phicdy.mycuration.presentation.view.InternalWebViewView
 
 class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
 
+    private lateinit var mobileUserAgent: String
     private lateinit var webView: WebView
     private lateinit var scrollView: NestedScrollView
     private lateinit var presenter: InternalWebViewPresenter
     companion object {
         const val KEY_OPEN_URL = "openUrl"
         const val KEY_RSS_TITLE = "rssTitle"
+        const val pcUserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36";
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +34,19 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
         val url = intent.getStringExtra(KEY_OPEN_URL) ?: ""
         presenter = InternalWebViewPresenter(this, url)
         presenter.create()
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (menu != null) {
+            if (webView.settings.userAgentString == pcUserAgent) {
+                menu.findItem(R.id.menu_pc_mode).isVisible = false
+                menu.findItem(R.id.menu_mobile_mode).isVisible = true
+            } else {
+                menu.findItem(R.id.menu_pc_mode).isVisible =  true
+                menu.findItem(R.id.menu_mobile_mode).isVisible = false
+            }
+        }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -43,6 +58,8 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_share -> presenter.onShareMenuClicked()
+            R.id.menu_pc_mode -> presenter.onPcModeMenuClicked()
+            R.id.menu_mobile_mode -> presenter.onMobileModeMenuClicked()
             // For arrow button on toolbar
             android.R.id.home -> finish()
         }
@@ -52,8 +69,13 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
     @SuppressLint("SetJavaScriptEnabled")
     override fun initWebView() {
         webView = findViewById(R.id.internal_web_view) as WebView
+        mobileUserAgent = webView.settings.userAgentString
         webView.settings.javaScriptEnabled = true
         webView.settings.builtInZoomControls = true
+        webView.settings.displayZoomControls = true
+        webView.settings.useWideViewPort = true
+        webView.settings.setSupportZoom(true)
+        webView.isFocusableInTouchMode = true
         webView.setWebViewClient(object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 scrollView.scrollY = 0
@@ -104,5 +126,15 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
     override fun goBack() {
         webView.goBack()
         scrollView.scrollY = 0
+    }
+
+    override fun setPcMode() {
+        webView.settings.userAgentString = pcUserAgent
+        invalidateOptionsMenu()
+    }
+
+    override fun setMobileMode() {
+        webView.settings.userAgentString = mobileUserAgent
+        invalidateOptionsMenu()
     }
 }
