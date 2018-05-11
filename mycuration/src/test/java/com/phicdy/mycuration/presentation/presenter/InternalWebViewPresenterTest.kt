@@ -2,8 +2,6 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.view.KeyEvent
 import com.phicdy.mycuration.presentation.view.InternalWebViewView
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -26,13 +24,6 @@ class InternalWebViewPresenterTest {
     }
 
     @Test
-    fun `initWebView is not called when onCreate with null url`() {
-        val presenter = InternalWebViewPresenter(mockView, null)
-        presenter.create()
-        Mockito.verify(mockView, times(0)).initWebView()
-    }
-
-    @Test
     fun `initWebView is not called when onCreate with invalid url`() {
         val presenter = InternalWebViewPresenter(mockView, "gjrhaogiarohjgpai")
         presenter.create()
@@ -45,13 +36,6 @@ class InternalWebViewPresenterTest {
         val presenter = InternalWebViewPresenter(mockView, url)
         presenter.create()
         Mockito.verify(mockView, times(1)).load(url)
-    }
-
-    @Test
-    fun `url is not loaded when onCreate with null url`() {
-        val presenter = InternalWebViewPresenter(mockView, null)
-        presenter.create()
-        Mockito.verify(mockView, times(0)).load(null.toString())
     }
 
     @Test
@@ -68,13 +52,6 @@ class InternalWebViewPresenterTest {
         val presenter = InternalWebViewPresenter(mockView, url)
         presenter.onShareMenuClicked()
         Mockito.verify(mockView, times(1)).share(url)
-    }
-
-    @Test
-    fun `url is not shared when null url`() {
-        val presenter = InternalWebViewPresenter(mockView, null)
-        presenter.onShareMenuClicked()
-        Mockito.verify(mockView, times(0)).share(null.toString())
     }
 
     @Test
@@ -118,5 +95,35 @@ class InternalWebViewPresenterTest {
     fun testOnPause() {
         val presenter = InternalWebViewPresenter(mockView, "http://www.google.com")
         presenter.pause()
+    }
+
+    @Test
+    fun `Mode changes to PC when PC mode menu is clicked()`() {
+        val presenter = InternalWebViewPresenter(mockView, "http://www.google.com")
+        presenter.onPcModeMenuClicked()
+        Mockito.verify(mockView, times(1)).setPcMode()
+    }
+
+    @Test
+    fun `URL is reloaded when PC mode menu is clicked()`() {
+        val url = "http://www.google.com"
+        val presenter = InternalWebViewPresenter(mockView, url)
+        presenter.onPcModeMenuClicked()
+        Mockito.verify(mockView, times(1)).load(url)
+    }
+
+    @Test
+    fun `Mode changes to Mobile when Mobile mode menu is clicked()`() {
+        val presenter = InternalWebViewPresenter(mockView, "http://www.google.com")
+        presenter.onMobileModeMenuClicked()
+        Mockito.verify(mockView, times(1)).setMobileMode()
+    }
+
+    @Test
+    fun `URL is reloaded when Mobile mode menu is clicked()`() {
+        val url = "http://www.google.com"
+        val presenter = InternalWebViewPresenter(mockView, url)
+        presenter.onMobileModeMenuClicked()
+        Mockito.verify(mockView, times(1)).load(url)
     }
 }

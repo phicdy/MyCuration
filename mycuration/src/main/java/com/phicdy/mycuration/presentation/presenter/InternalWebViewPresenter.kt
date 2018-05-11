@@ -4,13 +4,13 @@ import android.view.KeyEvent
 import com.phicdy.mycuration.presentation.view.InternalWebViewView
 import com.phicdy.mycuration.util.UrlUtil
 
-class InternalWebViewPresenter(private val view: InternalWebViewView, private val url: String?) : Presenter {
+class InternalWebViewPresenter(private val view: InternalWebViewView, private val url: String) : Presenter {
 
     override fun create() {
         if (!UrlUtil.isCorrectUrl(url)) return
         view.initWebView()
         view.initToolbar()
-        view.load(url!!)
+        view.load(url)
     }
 
     override fun resume() {
@@ -21,7 +21,17 @@ class InternalWebViewPresenter(private val view: InternalWebViewView, private va
 
     fun onShareMenuClicked() {
         if (!UrlUtil.isCorrectUrl(url)) return
-        view.share(url!!)
+        view.share(url)
+    }
+
+    fun onPcModeMenuClicked() {
+        view.setPcMode()
+        view.load(url)
+    }
+
+    fun onMobileModeMenuClicked() {
+        view.setMobileMode()
+        view.load(url)
     }
 
     fun onKeyDown(keyCode: Int, event: KeyEvent, canGoBack: Boolean): Boolean {
