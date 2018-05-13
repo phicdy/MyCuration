@@ -2,15 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp" >
+    android:background="@drawable/view_selected"
+    android:drawSelectorOnTop="true"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:background="@drawable/view_selected"
-        android:drawSelectorOnTop="true"
         android:orientation="vertical" >
 
         <TextView
