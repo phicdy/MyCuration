@@ -1,10 +1,9 @@
 package com.phicdy.mycuration.uitest;
 
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
@@ -14,9 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.phicdy.mycuration.BuildConfig;
+import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,9 +32,12 @@ import static org.junit.Assert.assertThat;
 @SdkSuppress(minSdkVersion = 18)
 public class FilterListTest extends UiTest {
 
+    @Rule
+    public ActivityTestRule<TopActivity> activityTestRule = new ActivityTestRule<>(TopActivity.class);
+
     @Before
     public void setup() {
-        super.setup();
+        super.setup(activityTestRule.getActivity());
     }
 
     @After
@@ -194,13 +198,6 @@ public class FilterListTest extends UiTest {
     @SuppressWarnings("deprecation")
     private void addTestFeedsAndFilter(String testTitle, String testKeyword, String testUrl) {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        // Launch MainActivity
-        Context context = InstrumentationRegistry.getContext();
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(intent);
-        device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
 
         // Go to feed tab
         List<UiObject2> tabs = device.findObjects(

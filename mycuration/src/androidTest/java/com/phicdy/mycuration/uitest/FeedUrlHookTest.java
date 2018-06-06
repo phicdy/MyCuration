@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
@@ -13,9 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.phicdy.mycuration.BuildConfig;
+import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,9 +33,12 @@ import static org.junit.Assert.assertThat;
 @SdkSuppress(minSdkVersion = 18)
 public class FeedUrlHookTest extends UiTest {
 
+    @Rule
+    public ActivityTestRule<TopActivity> activityTestRule = new ActivityTestRule<>(TopActivity.class);
+
     @Before
     public void setup() {
-        super.setup();
+        super.setup(activityTestRule.getActivity());
     }
 
     @After
