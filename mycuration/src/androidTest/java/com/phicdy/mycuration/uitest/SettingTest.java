@@ -1,9 +1,9 @@
 package com.phicdy.mycuration.uitest;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.StaleObjectException;
@@ -15,9 +15,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.phicdy.mycuration.BuildConfig;
+import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,17 +33,15 @@ import static junit.framework.Assert.fail;
 @SdkSuppress(minSdkVersion = 18)
 public class SettingTest extends UiTest {
 
+    @Rule
+    public ActivityTestRule<TopActivity> activityTestRule = new ActivityTestRule<>(TopActivity.class);
+
     @Before
     public void setup() {
-        super.setup();
+        super.setup(activityTestRule.getActivity());
 
         Context context = InstrumentationRegistry.getTargetContext();
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-
-        // Launch MainActivity
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
         device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
 
         // Go to feed tab

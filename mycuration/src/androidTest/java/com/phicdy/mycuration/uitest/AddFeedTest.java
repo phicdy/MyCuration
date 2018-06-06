@@ -1,10 +1,9 @@
 package com.phicdy.mycuration.uitest;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
@@ -12,9 +11,11 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
 
 import com.phicdy.mycuration.BuildConfig;
+import com.phicdy.mycuration.presentation.view.activity.TopActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,9 +32,12 @@ import static org.junit.Assert.assertThat;
 @SdkSuppress(minSdkVersion = 18)
 public class AddFeedTest extends UiTest {
 
+    @Rule
+    public ActivityTestRule<TopActivity> activityTestRule = new ActivityTestRule<>(TopActivity.class);
+
     @Before
     public void setup() {
-        super.setup();
+        super.setup(activityTestRule.getActivity());
     }
 
     @After
@@ -55,13 +59,6 @@ public class AddFeedTest extends UiTest {
 
     private void addAndCheckUrl(@NonNull String url, @NonNull String title) {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        // Launch MainActivity
-        Context context = InstrumentationRegistry.getContext();
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
-        assertNotNull(intent);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(intent);
 
         // Go to feed tab
         @SuppressWarnings("deprecation")
@@ -118,12 +115,7 @@ public class AddFeedTest extends UiTest {
     public void tryInvalidUrl() {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         takeScreenshot(device, "start_of_tryInvalidUrl_" + System.currentTimeMillis());
-        // Launch MainActivity
-        Context context = InstrumentationRegistry.getContext();
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(intent);
+
         device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "add")), 5000);
         takeScreenshot(device, "after_startActivity_" + System.currentTimeMillis());
 
@@ -169,11 +161,6 @@ public class AddFeedTest extends UiTest {
     @Test
     public void clickFabWithoutUrlOpen() {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        // Launch MainActivity
-        Context context = InstrumentationRegistry.getContext();
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
 
         // Go to feed tab
         @SuppressWarnings("deprecation")
