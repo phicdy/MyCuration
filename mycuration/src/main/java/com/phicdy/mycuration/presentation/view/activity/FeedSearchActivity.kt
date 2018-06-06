@@ -74,7 +74,8 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
                 return false
             }
 
-            override fun onPageStarted(view: WebView, url: String, favicon: Bitmap) {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                if (url == null) return
                 setSearchViewTextFrom(url)
             }
         })
