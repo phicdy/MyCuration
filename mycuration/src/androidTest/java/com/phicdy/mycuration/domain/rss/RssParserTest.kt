@@ -196,7 +196,7 @@ class RssParserTest {
         val addedFeed = adapter.getFeedByUrl("https://gigazine.net/news/rss_2.0/")
         assertNotNull(addedFeed)
         assertEquals("https://gigazine.net/news/rss_2.0/", addedFeed.url)
-        assertEquals("http://gigazine.net/", addedFeed.siteUrl)
+        assertEquals("https://gigazine.net/", addedFeed.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.iconPath)
     }
 
@@ -211,12 +211,12 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val mercariFeed = adapter.getFeedByUrl("http://tech.mercari.com/rss")
+        val mercariFeed = adapter.getFeedByUrl("https://tech.mercari.com/rss")
         //		ArrayList<Feed> allFeeds = adapter.getAllFeedsThatHaveUnreadArticles();
 
         assertNotNull(mercariFeed)
-        assertEquals("http://tech.mercari.com/rss", mercariFeed.url)
-        assertEquals("http://tech.mercari.com/", mercariFeed.siteUrl)
+        assertEquals("https://tech.mercari.com/rss", mercariFeed.url)
+        assertEquals("https://tech.mercari.com/", mercariFeed.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, mercariFeed.iconPath)
     }
 
