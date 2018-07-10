@@ -12,7 +12,6 @@ import android.support.annotation.StringRes
 import android.support.annotation.UiThread
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
@@ -53,7 +52,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_search)
 
-        val toolbar = findViewById(R.id.toolbar_feed_search) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_feed_search)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
         if (actionBar != null) {
@@ -64,8 +63,8 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
         }
 
         // Enable JavaScript for Google Search
-        webView = findViewById(R.id.webview) as WebView
-        webView.setWebViewClient(object : WebViewClient() {
+        webView = findViewById(R.id.webview)
+        webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 return false
             }
@@ -78,7 +77,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
                 if (url == null) return
                 setSearchViewTextFrom(url)
             }
-        })
+        }
         webView.settings.javaScriptEnabled = true
 
         val manager = NetworkTaskManager
@@ -88,7 +87,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
         presenter = FeedSearchPresenter(manager, dbAdapter, unreadCountManager, parser)
         presenter.setView(this)
 
-        fab = findViewById(R.id.fab) as FloatingActionButton
+        fab = findViewById(R.id.fab)
         fab.setOnClickListener(View.OnClickListener {
             val url = webView.url ?: return@OnClickListener
             presenter.onFabClicked(url)
@@ -102,7 +101,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_feed_search, menu)
         val searchMenuItem = menu.findItem(R.id.search_rss)
-        searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
+        searchView = searchMenuItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 // Perform final search
@@ -127,7 +126,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
         // Start tutorial at first time
         if (!BuildConfig.DEBUG) {
             Handler().post {
-                val view = findViewById(R.id.search_rss)
+                val view = findViewById<View>(R.id.search_rss)
                 val config = ShowcaseConfig()
                 config.delay = 500 // half second between each showcase view
 
@@ -204,11 +203,11 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
     }
 
     override fun showProgressBar() {
-        findViewById(R.id.pb_add_url).visibility = View.VISIBLE
+        findViewById<View>(R.id.pb_add_url).visibility = View.VISIBLE
     }
 
     override fun dismissProgressBar() {
-        runOnUiThread { findViewById(R.id.pb_add_url).visibility = View.GONE }
+        runOnUiThread { findViewById<View>(R.id.pb_add_url).visibility = View.GONE }
     }
 
     override fun load(url: String) {

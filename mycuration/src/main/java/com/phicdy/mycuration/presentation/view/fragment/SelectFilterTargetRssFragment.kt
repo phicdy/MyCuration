@@ -20,17 +20,17 @@ class SelectFilterTargetRssFragment : ListFragment() {
 
     private var selectedList: ArrayList<Feed> = ArrayList()
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_select_filter_target_rss, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_select_filter_target_rss, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val context = activity
         val dbAdapter = DatabaseAdapter.getInstance()
-        val adapter = TargetRssListAdapter(dbAdapter.allFeedsWithoutNumOfUnreadArticles, context)
-        listView.adapter = adapter
+        activity?.let {
+            val adapter = TargetRssListAdapter(dbAdapter.allFeedsWithoutNumOfUnreadArticles, it)
+            listView.adapter = adapter
+        }
     }
 
     fun list(): ArrayList<Feed>? {
@@ -44,65 +44,68 @@ class SelectFilterTargetRssFragment : ListFragment() {
     private inner class TargetRssListAdapter internal constructor(feeds: ArrayList<Feed>, context: Context) : ArrayAdapter<Feed>(context, R.layout.filter_target_rss_list, feeds) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            lateinit var holder: ViewHolder
+            activity?.let {
+                lateinit var holder: ViewHolder
 
-            // Use contentView and setup ViewHolder
-            lateinit var row: View
-            if (convertView == null) {
-                val inflater = activity.layoutInflater
-                row = inflater.inflate(R.layout.filter_target_rss_list, parent, false)
-                holder = ViewHolder()
-                holder.cbSelect = row.findViewById(R.id.cb_target) as CheckBox
-                holder.ivIcon = row.findViewById(R.id.iv_rss_icon) as ImageView
-                holder.tvRssTitle = row.findViewById(R.id.tv_rss_title) as TextView
-                row.tag = holder
-            } else {
-                row = convertView
-                holder = row.tag as ViewHolder
-            }
-
-            val feed = this.getItem(position) ?: return row
-            holder.tvRssTitle.text = feed.title
-            val iconPath = feed.iconPath
-            if (iconPath == null || iconPath == Feed.DEDAULT_ICON_PATH) {
-                holder.ivIcon.setImageResource(R.drawable.no_icon)
-            } else {
-                val file = File(iconPath)
-                if (file.exists()) {
-                    val bmp = BitmapFactory.decodeFile(file.path)
-                    holder.ivIcon.setImageBitmap(bmp)
+                // Use contentView and setup ViewHolder
+                lateinit var row: View
+                if (convertView == null) {
+                    val inflater = it.layoutInflater
+                    row = inflater.inflate(R.layout.filter_target_rss_list, parent, false)
+                    holder = ViewHolder()
+                    holder.cbSelect = row.findViewById(R.id.cb_target) as CheckBox
+                    holder.ivIcon = row.findViewById(R.id.iv_rss_icon) as ImageView
+                    holder.tvRssTitle = row.findViewById(R.id.tv_rss_title) as TextView
+                    row.tag = holder
+                } else {
+                    row = convertView
+                    holder = row.tag as ViewHolder
                 }
-            }
 
-            var isChecked = false
-            if (selectedList.size > 0) {
-                for (selectedFeed in selectedList) {
-                    if (feed.id == selectedFeed.id) {
-                        isChecked = true
-                        break
+                val feed = this.getItem(position) ?: return row
+                holder.tvRssTitle.text = feed.title
+                val iconPath = feed.iconPath
+                if (iconPath == null || iconPath == Feed.DEDAULT_ICON_PATH) {
+                    holder.ivIcon.setImageResource(R.drawable.no_icon)
+                } else {
+                    val file = File(iconPath)
+                    if (file.exists()) {
+                        val bmp = BitmapFactory.decodeFile(file.path)
+                        holder.ivIcon.setImageBitmap(bmp)
                     }
                 }
-            }
-            holder.cbSelect.isChecked = isChecked
-            holder.cbSelect.setOnClickListener { v ->
-                val checkBox = v as CheckBox
-                if (checkBox.isChecked) {
-                    checkFeed(position)
-                } else {
-                    uncheckFeed(position)
-                }
-            }
 
-            row.setOnClickListener {
-                val newChecked = !holder.cbSelect.isChecked
-                holder.cbSelect.isChecked = newChecked
-                if (newChecked) {
-                    checkFeed(position)
-                } else {
-                    uncheckFeed(position)
+                var isChecked = false
+                if (selectedList.size > 0) {
+                    for (selectedFeed in selectedList) {
+                        if (feed.id == selectedFeed.id) {
+                            isChecked = true
+                            break
+                        }
+                    }
                 }
+                holder.cbSelect.isChecked = isChecked
+                holder.cbSelect.setOnClickListener { v ->
+                    val checkBox = v as CheckBox
+                    if (checkBox.isChecked) {
+                        checkFeed(position)
+                    } else {
+                        uncheckFeed(position)
+                    }
+                }
+
+                row.setOnClickListener {
+                    val newChecked = !holder.cbSelect.isChecked
+                    holder.cbSelect.isChecked = newChecked
+                    if (newChecked) {
+                        checkFeed(position)
+                    } else {
+                        uncheckFeed(position)
+                    }
+                }
+                return row
             }
-            return row
+            return convertView!!
         }
 
         private fun uncheckFeed(position: Int) {

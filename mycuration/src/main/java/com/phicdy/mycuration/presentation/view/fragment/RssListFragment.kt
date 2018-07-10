@@ -50,12 +50,10 @@ class RssListFragment : Fragment(), RssListView {
         presenter.setView(this)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (outState != null) {
-            outState.putParcelableArrayList(FEEDS_KEY, presenter.feeds)
-            outState.putParcelableArrayList(ALL_FEEDS_KEY, presenter.allFeeds)
-        }
+        outState.putParcelableArrayList(FEEDS_KEY, presenter.feeds)
+        outState.putParcelableArrayList(ALL_FEEDS_KEY, presenter.allFeeds)
     }
 
     override fun onResume() {
@@ -109,8 +107,8 @@ class RssListFragment : Fragment(), RssListView {
     override fun init(feeds: ArrayList<Feed>) {
         if (feeds.size == 0) emptyView.visibility = View.VISIBLE
         emptyView.visibility = View.GONE
-        if (activity != null) {
-            rssFeedListAdapter = RssFeedListAdapter(feeds, activity)
+        activity?.let {
+            rssFeedListAdapter = RssFeedListAdapter(feeds, it)
             feedsListView.adapter = rssFeedListAdapter
             rssFeedListAdapter.notifyDataSetChanged()
         }
@@ -179,7 +177,7 @@ class RssListFragment : Fragment(), RssListView {
         super.onPause()
         presenter.pause()
         if (receiver != null) {
-            activity.unregisterReceiver(receiver)
+            activity?.unregisterReceiver(receiver)
             receiver = null
         }
     }
@@ -213,12 +211,11 @@ class RssListFragment : Fragment(), RssListView {
 
         val filter = IntentFilter()
         filter.addAction(NetworkTaskManager.FINISH_UPDATE_ACTION)
-        activity.registerReceiver(receiver, filter)
+        activity?.registerReceiver(receiver, filter)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_rss_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_rss_list, container, false)
         feedsListView = view.findViewById(R.id.feedList) as ListView
         emptyView = view.findViewById(R.id.emptyView) as TextView
         feedsListView.emptyView = emptyView
@@ -262,60 +259,63 @@ class RssListFragment : Fragment(), RssListView {
     private inner class RssFeedListAdapter internal constructor(feeds: ArrayList<Feed>, context: Context) : ArrayAdapter<Feed>(context, R.layout.feeds_list, feeds) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val holder: ViewHolder
+            activity?.let {
+                val holder: ViewHolder
 
-            // Use contentView and setup ViewHolder
-            lateinit var row: View
-            if (convertView == null) {
-                val inflater = activity.layoutInflater
-                row = inflater.inflate(R.layout.feeds_list, parent, false)
-                holder = ViewHolder()
-                holder.feedIcon = row.findViewById(R.id.feedIcon) as ImageView
-                holder.feedTitle = row.findViewById(R.id.feedTitle) as TextView
-                holder.feedCount = row.findViewById(R.id.feedCount) as TextView
-                row.tag = holder
-            } else {
-                row = convertView
-                holder = row.tag as ViewHolder
-            }
+                // Use contentView and setup ViewHolder
+                lateinit var row: View
+                if (convertView == null) {
+                    val inflater = it.layoutInflater
+                    row = inflater.inflate(R.layout.feeds_list, parent, false)
+                    holder = ViewHolder()
+                    holder.feedIcon = row.findViewById(R.id.feedIcon) as ImageView
+                    holder.feedTitle = row.findViewById(R.id.feedTitle) as TextView
+                    holder.feedCount = row.findViewById(R.id.feedCount) as TextView
+                    row.tag = holder
+                } else {
+                    row = convertView
+                    holder = row.tag as ViewHolder
+                }
 
-            val feed = this.getItem(position)
-            var iconPath: String? = null
-            if (feed != null) {
-                iconPath = feed.iconPath
-            }
-            holder.feedIcon.visibility = View.VISIBLE
-            holder.feedCount.visibility = View.VISIBLE
-            if (presenter.isAllRssShowView(position + 1)) {
-                holder.feedIcon.visibility = View.INVISIBLE
-                holder.feedCount.visibility = View.GONE
-                holder.feedTitle.setText(R.string.show_all_rsses)
-            } else if (presenter.isHideReadRssView(position + 1)) {
-                holder.feedIcon.visibility = View.INVISIBLE
-                holder.feedCount.visibility = View.GONE
-                holder.feedTitle.setText(R.string.hide_rsses)
-            } else if (iconPath == null || iconPath == Feed.DEDAULT_ICON_PATH) {
-                holder.feedIcon.setImageResource(R.drawable.no_icon)
+                val feed = this.getItem(position)
+                var iconPath: String? = null
                 if (feed != null) {
+                    iconPath = feed.iconPath
+                }
+                holder.feedIcon.visibility = View.VISIBLE
+                holder.feedCount.visibility = View.VISIBLE
+                if (presenter.isAllRssShowView(position + 1)) {
+                    holder.feedIcon.visibility = View.INVISIBLE
+                    holder.feedCount.visibility = View.GONE
+                    holder.feedTitle.setText(R.string.show_all_rsses)
+                } else if (presenter.isHideReadRssView(position + 1)) {
+                    holder.feedIcon.visibility = View.INVISIBLE
+                    holder.feedCount.visibility = View.GONE
+                    holder.feedTitle.setText(R.string.hide_rsses)
+                } else if (iconPath == null || iconPath == Feed.DEDAULT_ICON_PATH) {
+                    holder.feedIcon.setImageResource(R.drawable.no_icon)
+                    if (feed != null) {
+                        holder.feedTitle.text = feed.title
+                    }
+                } else {
+                    val file = File(iconPath)
+                    if (file.exists()) {
+                        val bmp = BitmapFactory.decodeFile(file.path)
+                        holder.feedIcon.setImageBitmap(bmp)
+                    } else {
+                        dbAdapter.saveIconPath(feed.siteUrl, Feed.DEDAULT_ICON_PATH)
+                    }
                     holder.feedTitle.text = feed.title
                 }
-            } else {
-                val file = File(iconPath)
-                if (file.exists()) {
-                    val bmp = BitmapFactory.decodeFile(file.path)
-                    holder.feedIcon.setImageBitmap(bmp)
-                } else {
-                    dbAdapter.saveIconPath(feed.siteUrl, Feed.DEDAULT_ICON_PATH)
+
+                // set RSS Feed unread article count
+                if (feed != null) {
+                    holder.feedCount.text = unreadManager.getUnreadCount(feed.id).toString()
                 }
-                holder.feedTitle.text = feed.title
-            }
 
-            // set RSS Feed unread article count
-            if (feed != null) {
-                holder.feedCount.text = unreadManager.getUnreadCount(feed.id).toString()
+                return row
             }
-
-            return row
+            return convertView!!
         }
 
         private inner class ViewHolder {

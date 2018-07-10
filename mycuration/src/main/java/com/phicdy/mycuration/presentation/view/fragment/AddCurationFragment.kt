@@ -64,9 +64,8 @@ class AddCurationFragment : Fragment(), AddCurationView {
         presenter.resume()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_curation_word_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_curation_word_list, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -75,21 +74,25 @@ class AddCurationFragment : Fragment(), AddCurationView {
     }
 
     override fun initView() {
-        val btnAdd = activity.findViewById(R.id.btn_add_word) as Button
-        btnAdd.setOnClickListener { presenter.onAddWordButtonClicked() }
-        etInput = activity.findViewById(R.id.et_curation_word) as EditText
-        etName = activity.findViewById(R.id.et_curation_name) as EditText
-        curationWordListView = activity.findViewById(R.id.lv_curation_word) as ListView
+        activity?.let {
+            val btnAdd = it.findViewById(R.id.btn_add_word) as Button
+            btnAdd.setOnClickListener { presenter.onAddWordButtonClicked() }
+            etInput = it.findViewById(R.id.et_curation_word) as EditText
+            etName = it.findViewById(R.id.et_curation_name) as EditText
+            curationWordListView = it.findViewById(R.id.lv_curation_word) as ListView
+        }
     }
 
     override fun refreshList(addedWords: ArrayList<String>) {
-        curationWordListAdapter = CurationWordListAdapter(addedWords, activity)
-        curationWordListView.adapter = curationWordListAdapter
-        curationWordListAdapter.notifyDataSetChanged()
+        activity?.let {
+            curationWordListAdapter = CurationWordListAdapter(addedWords, it)
+            curationWordListView.adapter = curationWordListAdapter
+            curationWordListAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun editCurationId(): Int {
-        return activity.intent.getIntExtra(EDIT_CURATION_ID, AddCurationPresenter.NOT_EDIT_CURATION_ID)
+        return activity?.intent?.getIntExtra(EDIT_CURATION_ID, AddCurationPresenter.NOT_EDIT_CURATION_ID)?: AddCurationPresenter.NOT_EDIT_CURATION_ID
     }
 
     override fun inputWord(): String {
@@ -174,7 +177,7 @@ class AddCurationFragment : Fragment(), AddCurationView {
 
     override fun showProgressDialog() {
         progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_curation))
-        progressDialog.show(activity.fragmentManager, null)
+        progressDialog.show(activity?.fragmentManager, null)
     }
 
     override fun dismissProgressDialog() {
@@ -182,7 +185,7 @@ class AddCurationFragment : Fragment(), AddCurationView {
     }
 
     override fun finish() {
-        activity.finish()
+        activity?.finish()
     }
 
     internal inner class CurationWordListAdapter(words: ArrayList<String>, context: Context) : ArrayAdapter<String>(context, R.layout.curation_word_list, words) {
@@ -191,24 +194,26 @@ class AddCurationFragment : Fragment(), AddCurationView {
             var holder = ViewHolder()
 
             // Use contentView and setup ViewHolder
-            var row = convertView
-            if (convertView == null) {
-                val inflater = activity.layoutInflater
-                row = inflater.inflate(R.layout.curation_word_list, parent, false)
-                holder.tvWord = row.findViewById(R.id.tv_word) as TextView
-                holder.btnDelete = row.findViewById(R.id.btn_delete) as Button
-                row.tag = holder
-            } else {
-                holder = convertView.tag as ViewHolder
-            }
+            activity?.let {
+                var row = convertView
+                if (convertView == null) {
+                    val inflater = it.layoutInflater
+                    row = inflater.inflate(R.layout.curation_word_list, parent, false)
+                    holder.tvWord = row.findViewById(R.id.tv_word) as TextView
+                    holder.btnDelete = row.findViewById(R.id.btn_delete) as Button
+                    row.tag = holder
+                } else {
+                    holder = convertView.tag as ViewHolder
+                }
 
-            val word = this.getItem(position)
-            holder.tvWord!!.text = word
-            holder.btnDelete!!.setOnClickListener {
-                presenter.onDeleteButtonClicked(position)
+                val word = this.getItem(position)
+                holder.tvWord!!.text = word
+                holder.btnDelete!!.setOnClickListener {
+                    presenter.onDeleteButtonClicked(position)
+                }
+                return row!!
             }
-
-            return row!!
+            return convertView!!
         }
 
         private inner class ViewHolder {

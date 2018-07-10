@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.MenuItemCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
@@ -31,8 +30,8 @@ import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
-import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
+import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.GATrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.view.activity.SettingActivity
@@ -77,7 +76,7 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
     override fun initViewPager() {
         curationFragment = CurationListFragment()
         val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        mViewPager = findViewById(R.id.pager) as ViewPager
+        mViewPager = findViewById(R.id.pager)
         mViewPager.adapter = mSectionsPagerAdapter
         mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
@@ -92,7 +91,7 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
 
             }
         })
-        val tabLayout = findViewById(R.id.tab_layout) as TabLayout
+        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         tabLayout.setupWithViewPager(mViewPager)
 
         // Set icon
@@ -103,29 +102,29 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
     }
 
     override fun initFab() {
-        fab = findViewById(R.id.fab_top) as FloatingActionButton
+        fab = findViewById(R.id.fab_top)
         fab.setOnClickListener { presenter.fabClicked() }
-        back = findViewById(R.id.fl_add_background) as FrameLayout
+        back = findViewById(R.id.fl_add_background)
         back.setOnClickListener {
             presenter.addBackgroundClicked()
         }
-        llAddCuration = findViewById(R.id.ll_add_curation) as LinearLayout
-        llAddRss = findViewById(R.id.ll_add_rss) as LinearLayout
-        llAddFilter = findViewById(R.id.ll_add_filter) as LinearLayout
+        llAddCuration = findViewById(R.id.ll_add_curation)
+        llAddRss = findViewById(R.id.ll_add_rss)
+        llAddFilter = findViewById(R.id.ll_add_filter)
         llAddCuration.setOnClickListener { presenter.fabCurationClicked() }
         llAddRss.setOnClickListener { presenter.fabRssClicked() }
         llAddFilter.setOnClickListener { presenter.fabFilterClicked() }
 
-        btnAddCuration = findViewById(R.id.btn_add_curation) as Button
-        btnAddRss = findViewById(R.id.btn_add_rss) as Button
-        btnAddFilter = findViewById(R.id.btn_add_filter) as Button
+        btnAddCuration = findViewById(R.id.btn_add_curation)
+        btnAddRss = findViewById(R.id.btn_add_rss)
+        btnAddFilter = findViewById(R.id.btn_add_filter)
         btnAddCuration.setOnClickListener { presenter.fabCurationClicked() }
         btnAddRss.setOnClickListener { presenter.fabRssClicked() }
         btnAddFilter.setOnClickListener { presenter.fabFilterClicked() }
     }
 
     override fun initToolbar() {
-        val toolbar = findViewById(R.id.toolbar_top) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_top)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
@@ -183,7 +182,7 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
         menuInflater.inflate(R.menu.main, menu)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchMenuItem = menu.findItem(R.id.search_article_top_activity)
-        searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
+        searchView = searchMenuItem.actionView as SearchView
         searchView!!.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView!!.setOnQueryTextFocusChangeListener { _, queryTextFocused ->
             if (!queryTextFocused) {
@@ -210,7 +209,7 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
         // Start tutorial at first time
         if (!BuildConfig.DEBUG) {
             Handler().post {
-                val view = findViewById(R.id.fab_top)
+                val view = findViewById<View>(R.id.fab_top)
                 MaterialShowcaseView.Builder(this@TopActivity)
                         .setTarget(view)
                         .setContentText(

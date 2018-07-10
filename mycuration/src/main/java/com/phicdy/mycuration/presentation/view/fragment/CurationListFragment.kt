@@ -90,9 +90,8 @@ class CurationListFragment : Fragment(), CurationListView {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_curation_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_curation_list, container, false)
     }
 
     override fun onAttach(context: Context?) {
@@ -107,8 +106,8 @@ class CurationListFragment : Fragment(), CurationListView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        curationListView = activity.findViewById(R.id.lv_curation) as ListView
-        emptyView = activity.findViewById(R.id.emptyView_curation) as TextView
+        curationListView = activity?.findViewById(R.id.lv_curation) as ListView
+        emptyView = activity?.findViewById(R.id.emptyView_curation) as TextView
         setAllListener()
         presenter.activityCreated()
     }
@@ -138,9 +137,11 @@ class CurationListFragment : Fragment(), CurationListView {
     }
 
     override fun initListBy(curations: ArrayList<Curation>) {
-        curationListAdapter = CurationListAdapter(curations, activity)
-        curationListView.adapter = curationListAdapter
-        curationListAdapter.notifyDataSetChanged()
+        activity?.let {
+            curationListAdapter = CurationListAdapter(curations, it)
+            curationListView.adapter = curationListAdapter
+            curationListAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun delete(curation: Curation) {
@@ -159,28 +160,30 @@ class CurationListFragment : Fragment(), CurationListView {
     internal inner class CurationListAdapter(curations: ArrayList<Curation>, context: Context) : ArrayAdapter<Curation>(context, R.layout.curation_list, curations) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val holder: ViewHolder
+            activity?.let {
+                // Use contentView and setup ViewHolder
+                val holder: ViewHolder
+                lateinit var row: View
+                if (convertView == null) {
+                    val inflater = it.layoutInflater
+                    row = inflater.inflate(R.layout.curation_list, parent, false)
+                    holder = ViewHolder()
+                    holder.curationName = row.findViewById(R.id.tv_curation_title) as TextView
+                    holder.curationCount = row.findViewById(R.id.tv_curation_count) as TextView
+                    row.tag = holder
+                } else {
+                    row = convertView
+                    holder = row.tag as ViewHolder
+                }
 
-            // Use contentView and setup ViewHolder
-            lateinit var row: View
-            if (convertView == null) {
-                val inflater = activity.layoutInflater
-                row = inflater.inflate(R.layout.curation_list, parent, false)
-                holder = ViewHolder()
-                holder.curationName = row.findViewById(R.id.tv_curation_title) as TextView
-                holder.curationCount = row.findViewById(R.id.tv_curation_count) as TextView
-                row.tag = holder
-            } else {
-                row = convertView
-                holder = row.tag as ViewHolder
+                val curation = this.getItem(position)
+                if (curation != null) {
+                    holder.curationName.text = curation.name
+                    holder.curationCount.text = unreadManager.getCurationCount(curation.id).toString()
+                }
+                return row
             }
-
-            val curation = this.getItem(position)
-            if (curation != null) {
-                holder.curationName.text = curation.name
-                holder.curationCount.text = unreadManager.getCurationCount(curation.id).toString()
-            }
-            return row
+            return convertView!!
         }
 
         private inner class ViewHolder {
