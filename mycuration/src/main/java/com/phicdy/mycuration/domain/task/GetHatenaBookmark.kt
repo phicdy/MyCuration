@@ -28,7 +28,7 @@ class GetHatenaBookmark(private val adapter: DatabaseAdapter) {
     }
 
     private interface HatenaRequestService {
-        @GET("entry.count/")
+        @GET("entry.count")
         fun bookmark(@Query("url") url: String): Call<ResponseBody>
     }
 
