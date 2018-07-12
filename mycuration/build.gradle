@@ -4,13 +4,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'spoon'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.phicdy.mycuration"
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionName "1.5.6"
         versionCode 36
 
@@ -122,20 +122,23 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    implementation 'com.android.support:support-v4:25.4.0'
+
+    def supportLibVer = '27.1.1'
+    implementation "com.android.support:appcompat-v7:$supportLibVer"
+    implementation "com.android.support:support-v4:$supportLibVer"
+    implementation "com.android.support:design:$supportLibVer"
+    implementation "com.android.support:recyclerview-v7:$supportLibVer"
+
     implementation 'com.squareup.retrofit2:retrofit:2.2.0'
     implementation 'org.jsoup:jsoup:1.10.2'
     implementation 'com.github.johnkil.android-progressfragment:progressfragment:1.4.0'
     implementation 'com.google.android.gms:play-services-analytics:11.8.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.1.0'
-    implementation 'com.android.support:design:25.4.0'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
     implementation 'com.facebook.stetho:stetho:1.4.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
-    implementation 'com.android.support:recyclerview-v7:25.4.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
 

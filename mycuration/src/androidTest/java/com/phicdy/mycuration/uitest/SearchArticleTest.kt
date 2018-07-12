@@ -19,14 +19,14 @@ import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
-import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.assertNull
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
 import org.junit.After
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

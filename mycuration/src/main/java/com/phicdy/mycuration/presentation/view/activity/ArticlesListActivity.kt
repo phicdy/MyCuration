@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.MenuItemCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
@@ -64,7 +63,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
             }
         }
         initToolbar()
-        fab = findViewById(R.id.fab_article_list) as FloatingActionButton
+        fab = findViewById(R.id.fab_article_list)
         fab.setOnClickListener {
             fragment.onFabButtonClicked()
             GATrackerHelper.sendEvent(getString(R.string.scroll_article_list))
@@ -72,7 +71,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
     }
 
     private fun initToolbar() {
-        val toolbar = findViewById(R.id.toolbar_article_list) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_article_list)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
         if (actionBar != null) {
@@ -89,7 +88,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         // Associate searchable configuration with the SearchView
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchMenuItem = menu.findItem(R.id.search_article)
-        searchView = MenuItemCompat.getActionView(searchMenuItem) as SearchView
+        searchView = searchMenuItem.actionView as SearchView
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(componentName))
         searchView.queryHint = getString(R.string.search_article)

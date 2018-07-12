@@ -82,11 +82,11 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         val unreadManager = UnreadCountManager.getInstance()
 
         // Set feed id and url from main activity
-        val intent = activity.intent
-        val feedId = intent.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID)
-        val curationId = intent.getIntExtra(TopActivity.CURATION_ID,
-                ArticleListPresenter.DEFAULT_CURATION_ID)
-        intent.putExtra(TopActivity.FEED_ID, feedId)
+        val intent = activity?.intent
+        val feedId = intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
+        val curationId = intent?.getIntExtra(TopActivity.CURATION_ID,
+                ArticleListPresenter.DEFAULT_CURATION_ID) ?: ArticleListPresenter.DEFAULT_CURATION_ID
+        intent?.putExtra(TopActivity.FEED_ID, feedId)
 
         // Set swipe direction
         val prefMgr = PreferenceHelper
@@ -95,9 +95,9 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         val isOpenInternal = prefMgr.isOpenInternal
         val isAllReadBack = prefMgr.allReadBack
         val isNewestArticleTop = prefMgr.sortNewArticleTop
-        val query = intent.getStringExtra(SearchManager.QUERY) ?: ""
+        val query = intent?.getStringExtra(SearchManager.QUERY) ?: ""
         presenter = ArticleListPresenter(feedId, curationId, dbAdapter, unreadManager,
-                isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption, query, intent.action ?: "")
+                isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption, query, intent?.action ?: "")
         presenter.setView(this)
         presenter.create()
     }
@@ -112,9 +112,8 @@ class ArticlesListFragment : Fragment(), ArticleListView {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_articles_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_articles_list, container, false)
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)

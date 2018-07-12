@@ -44,19 +44,20 @@ class FilterListFragment : Fragment(), FilterListView {
         presenter.setView(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_filter_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_filter_list, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        filtersListView = activity.findViewById(R.id.lv_filter) as ListView
-        val emptyView = activity.findViewById(R.id.filter_emptyView) as TextView
-        if (dbAdapter.numOfFeeds == 0) {
-            emptyView.setText(R.string.no_rss_message)
+        activity?.let {
+            filtersListView = it.findViewById(R.id.lv_filter) as ListView
+            val emptyView = it.findViewById(R.id.filter_emptyView) as TextView
+            if (dbAdapter.numOfFeeds == 0) {
+                emptyView.setText(R.string.no_rss_message)
+            }
+            filtersListView.emptyView = emptyView
         }
-        filtersListView.emptyView = emptyView
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo) {
@@ -122,61 +123,63 @@ class FilterListFragment : Fragment(), FilterListView {
 			 */ : ArrayAdapter<Filter>(activity, R.layout.filters_list, filters) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            lateinit var holder: ViewHolder
+            activity?.let {
+                lateinit var holder: ViewHolder
 
-            //Use contentView
-            lateinit var row: View
-            if (convertView == null) {
-                val inflater = activity.layoutInflater
-                row = inflater.inflate(R.layout.filters_list, parent, false)
-                holder = ViewHolder()
-                holder.filterTitle = row.findViewById(R.id.filterTitle) as TextView
-                holder.feedTitle = row.findViewById(R.id.filterTargetFeed) as TextView
-                holder.filterKeyword = row.findViewById(R.id.filterKeyword) as TextView
-                holder.filterUrl = row.findViewById(R.id.filterUrl) as TextView
-                holder.filterEnabled = row.findViewById(R.id.sw_filter_enable) as Switch
-                row.tag = holder
-            } else {
-                row = convertView
-                holder = row.tag as ViewHolder
-            }
-
-            val filter = this.getItem(position)
-
-            if (filter != null) {
-                //set filter title
-                holder.filterTitle.text = filter.title
-
-                if (filter.feeds() != null && filter.feeds().size <= 1) {
-                    holder.feedTitle.text = filter.feedTitle
+                //Use contentView
+                lateinit var row: View
+                if (convertView == null) {
+                    val inflater = it.layoutInflater
+                    row = inflater.inflate(R.layout.filters_list, parent, false)
+                    holder = ViewHolder()
+                    holder.filterTitle = row.findViewById(R.id.filterTitle) as TextView
+                    holder.feedTitle = row.findViewById(R.id.filterTargetFeed) as TextView
+                    holder.filterKeyword = row.findViewById(R.id.filterKeyword) as TextView
+                    holder.filterUrl = row.findViewById(R.id.filterUrl) as TextView
+                    holder.filterEnabled = row.findViewById(R.id.sw_filter_enable) as Switch
+                    row.tag = holder
                 } else {
-                    holder.feedTitle.text = getString(R.string.multiple_target_rss)
+                    row = convertView
+                    holder = row.tag as ViewHolder
                 }
 
-                val keyword = filter.keyword
-                if (keyword == null || keyword == "") {
-                    holder.filterKeyword.visibility = View.GONE
-                } else {
-                    holder.filterKeyword.text = getString(R.string.keyword) + ": " + keyword
-                }
+                val filter = this.getItem(position)
 
-                val url = filter.url
-                if (url == null || url == "") {
-                    holder.filterUrl.visibility = View.GONE
-                } else {
-                    holder.filterUrl.text = getString(R.string.url, url)
-                }
+                if (filter != null) {
+                    //set filter title
+                    holder.filterTitle.text = filter.title
 
-                val p = position
-                holder.filterEnabled.setOnCheckedChangeListener { buttonView, isChecked ->
-                    val clickedFilter = getItem(p)
-                    if (clickedFilter != null) {
-                        presenter.onFilterCheckClicked(clickedFilter, isChecked)
+                    if (filter.feeds() != null && filter.feeds().size <= 1) {
+                        holder.feedTitle.text = filter.feedTitle
+                    } else {
+                        holder.feedTitle.text = getString(R.string.multiple_target_rss)
                     }
+
+                    val keyword = filter.keyword
+                    if (keyword == null || keyword == "") {
+                        holder.filterKeyword.visibility = View.GONE
+                    } else {
+                        holder.filterKeyword.text = getString(R.string.keyword) + ": " + keyword
+                    }
+
+                    val url = filter.url
+                    if (url == null || url == "") {
+                        holder.filterUrl.visibility = View.GONE
+                    } else {
+                        holder.filterUrl.text = getString(R.string.url, url)
+                    }
+
+                    holder.filterEnabled.setOnCheckedChangeListener { _, isChecked ->
+                        val clickedFilter = getItem(position)
+                        if (clickedFilter != null) {
+                            presenter.onFilterCheckClicked(clickedFilter, isChecked)
+                        }
+                    }
+                    holder.filterEnabled.isChecked = filter.isEnabled
                 }
-                holder.filterEnabled.isChecked = filter.isEnabled
+                return row
             }
-            return row
+            return convertView!!
         }
 
         private inner class ViewHolder {

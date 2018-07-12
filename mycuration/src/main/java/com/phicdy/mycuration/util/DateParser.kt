@@ -13,8 +13,8 @@ object DateParser {
 
 	private fun parseDate(pubDate: String): Date? {
 		val input = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
-		var formatWithPubDate: Date? = null
-		try {
+        val formatWithPubDate: Date?
+        try {
 			formatWithPubDate = input.parse(pubDate)
             return formatWithPubDate
 		} catch (e: ParseException) {
@@ -23,7 +23,7 @@ object DateParser {
         //2014-06-25 17:24:07
         // TODO: set device locale
         val noTimezone = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.JAPAN)
-        var formatWithNoTimeZone: Date? = null
+        val formatWithNoTimeZone: Date?
         try {
             formatWithNoTimeZone = noTimezone.parse(pubDate)
             return formatWithNoTimeZone
@@ -54,7 +54,7 @@ object DateParser {
         }
 
         val w3cdtf = SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ", Locale.US)
-        var formatWithW3cdtf: Date? = null
+        val formatWithW3cdtf: Date?
         try {
             formatWithW3cdtf = w3cdtf.parse(replaced)
             return formatWithW3cdtf
@@ -66,7 +66,7 @@ object DateParser {
 	}
 
 	fun changeToJapaneseDate(dateBeforeChange: String): Long {
-		Log.d(LOG_TAG, "date before change:" + dateBeforeChange)
+		Log.d(LOG_TAG, "date before change:$dateBeforeChange")
 		val cal = Calendar.getInstance()
 		val date = parseDate(dateBeforeChange) ?: return 0
 		Log.d(LOG_TAG, date.toString())

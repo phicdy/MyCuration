@@ -14,10 +14,10 @@ import org.junit.runner.RunWith
 
 import android.support.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.rss.Article
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 
 @RunWith(AndroidJUnit4::class)
 class RssParserTest {
