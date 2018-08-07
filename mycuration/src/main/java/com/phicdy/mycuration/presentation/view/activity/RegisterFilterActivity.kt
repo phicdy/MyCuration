@@ -14,7 +14,7 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 
@@ -114,12 +114,12 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
 
     override fun handleEmptyTitle() {
         Toast.makeText(this@RegisterFilterActivity, R.string.title_empty_error, Toast.LENGTH_SHORT).show()
-        GATrackerHelper.sendButtonEvent(getString(R.string.add_new_filter_no_title))
+        TrackerHelper.sendButtonEvent(getString(R.string.add_new_filter_no_title))
     }
 
     override fun handleEmptyCondition() {
         Toast.makeText(this@RegisterFilterActivity, R.string.both_keyword_and_url_empty_error, Toast.LENGTH_SHORT).show()
-        GATrackerHelper.sendButtonEvent(getString(R.string.add_new_filter_no_keyword_url))
+        TrackerHelper.sendButtonEvent(getString(R.string.add_new_filter_no_keyword_url))
     }
 
     override fun handlePercentOnly() {
@@ -135,11 +135,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
     }
 
     override fun trackEdit() {
-        GATrackerHelper.sendButtonEvent(getString(R.string.update_filter))
+        TrackerHelper.sendButtonEvent(getString(R.string.update_filter))
     }
 
     override fun trackRegister() {
-        GATrackerHelper.sendButtonEvent(getString(R.string.add_new_filter))
+        TrackerHelper.sendButtonEvent(getString(R.string.add_new_filter))
     }
 
     companion object {

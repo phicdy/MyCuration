@@ -32,7 +32,7 @@ import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
-import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.view.activity.SettingActivity
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
@@ -254,20 +254,20 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
     }
 
     override fun goToFeedSearch() {
-        GATrackerHelper.sendButtonEvent(getString(R.string.tap_add_rss))
+        TrackerHelper.sendButtonEvent(getString(R.string.tap_add_rss))
         startActivity(Intent(this@TopActivity, FeedSearchActivity::class.java))
     }
 
     override fun goToAddCuration() {
         val intent = Intent(applicationContext, AddCurationActivity::class.java)
         startActivity(intent)
-        GATrackerHelper.sendButtonEvent(getString(R.string.tap_add_curation))
+        TrackerHelper.sendButtonEvent(getString(R.string.tap_add_curation))
     }
 
     override fun goToAddFilter() {
         val intent = Intent(applicationContext, RegisterFilterActivity::class.java)
         startActivity(intent)
-        GATrackerHelper.sendButtonEvent(getString(R.string.tap_add_filter))
+        TrackerHelper.sendButtonEvent(getString(R.string.tap_add_filter))
     }
 
     override fun goToSetting() {

@@ -18,7 +18,7 @@ import android.widget.Toast
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
-import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import java.lang.ref.WeakReference
@@ -136,21 +136,21 @@ class AddCurationFragment : Fragment(), AddCurationView {
         bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name))
         msg.data = bundle
         handler.sendMessage(msg)
-        GATrackerHelper.sendButtonEvent(getString(R.string.add_same_curation_name))
+        TrackerHelper.sendButtonEvent(getString(R.string.add_same_curation_name))
     }
 
     override fun handleAddSuccess() {
         val msg = Message.obtain()
         msg.obj = true
         handler.sendMessage(msg)
-        GATrackerHelper.sendButtonEvent(getString(R.string.add_new_curation))
+        TrackerHelper.sendButtonEvent(getString(R.string.add_new_curation))
     }
 
     override fun handleEditSuccess() {
         val msg = Message.obtain()
         msg.obj = true
         handler.sendMessage(msg)
-        GATrackerHelper.sendButtonEvent(getString(R.string.update_curation))
+        TrackerHelper.sendButtonEvent(getString(R.string.update_curation))
     }
 
     override fun showSuccessToast() {

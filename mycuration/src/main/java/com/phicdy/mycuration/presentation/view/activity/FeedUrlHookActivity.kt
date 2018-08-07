@@ -14,7 +14,7 @@ import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
-import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
@@ -63,7 +63,7 @@ class FeedUrlHookActivity : Activity(), FeedUrlHookView {
     }
 
     override fun trackFailedUrl(url: String) {
-        GATrackerHelper.sendFailedParseUrl(getString(R.string.add_rss_from_intent_error), url)
+        TrackerHelper.sendFailedParseUrl(getString(R.string.add_rss_from_intent_error), url)
     }
 
     override fun showSuccessToast() {

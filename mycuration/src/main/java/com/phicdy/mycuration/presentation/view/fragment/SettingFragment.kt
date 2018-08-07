@@ -15,7 +15,7 @@ import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
-import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.ToastHelper
 import com.phicdy.mycuration.presentation.view.SettingView
@@ -92,14 +92,14 @@ class SettingFragment : PreferenceFragment(), SettingView {
                     val manager = AlarmManagerTaskManager(activity)
                     presenter.updateUpdateInterval(intervalHour, manager)
                     // GA
-                    GATrackerHelper.sendSettingEvent(getString(R.string.change_auto_update_interval), intervalHour.toLong().toString())
+                    TrackerHelper.sendSettingEvent(getString(R.string.change_auto_update_interval), intervalHour.toLong().toString())
                 }
                 getString(R.string.key_all_read_behavior) -> {
                     val isAllReadBack = Integer.valueOf(prefAllReadBehavior.value) == 1
                     presenter.updateAllReadBehavior(isAllReadBack)
                     // GA
                     val allReadBehaviorStringItems = resources.getStringArray(R.array.all_read_behavior)
-                    GATrackerHelper.sendSettingEvent(getString(R.string.change_all_read_behavior),
+                    TrackerHelper.sendSettingEvent(getString(R.string.change_all_read_behavior),
                             allReadBehaviorStringItems[Integer.valueOf(prefAllReadBehavior.value)])
                 }
                 getString(R.string.key_swipe_direction) -> {
@@ -107,27 +107,27 @@ class SettingFragment : PreferenceFragment(), SettingView {
                     presenter.updateSwipeDirection(swipeDirection)
                     // GA
                     val swipeDirectionStringItems = resources.getStringArray(R.array.swipe_direction_items)
-                    GATrackerHelper.sendSettingEvent(getString(R.string.change_swipe_direction),
+                    TrackerHelper.sendSettingEvent(getString(R.string.change_swipe_direction),
                             swipeDirectionStringItems[Integer.valueOf(prefSwipeDirection.value)])
                 }
                 getString(R.string.key_article_sort) -> {
                     val isNewArticleTop = prefArticleSort.isChecked
                     presenter.updateArticleSort(isNewArticleTop)
                     // GA
-                    GATrackerHelper.sendSettingEvent(getString(R.string.change_aricle_sort),
+                    TrackerHelper.sendSettingEvent(getString(R.string.change_aricle_sort),
                             if (prefArticleSort.isChecked) getString(R.string.article_sort) else getString(R.string.not_article_sort))
                 }
                 getString(R.string.key_internal_browser) -> {
                     val isInternal = prefInternalBrowser.isChecked
                     presenter.updateInternalBrowser(isInternal)
                     // GA
-                    GATrackerHelper.sendSettingEvent(getString(R.string.change_browser_option),
+                    TrackerHelper.sendSettingEvent(getString(R.string.change_browser_option),
                             if (prefInternalBrowser.isChecked) getString(R.string.open_internal) else getString(R.string.not_open_internal))
                 }
                 getString(R.string.key_auto_update_in_main_ui) -> {
                     val isAutoUpdateInMainUi = prefAutoUpdateInMainUi.isChecked
                     presenter.updateAutoUpdateInMainUi(isAutoUpdateInMainUi)
-                    GATrackerHelper.sendSettingEvent(getString(R.string.change_auto_update_in_main_ui_option),
+                    TrackerHelper.sendSettingEvent(getString(R.string.change_auto_update_in_main_ui_option),
                             if (isAutoUpdateInMainUi) getString(R.string.auto_update_in_main_ui) else getString(R.string.not_auto_update_in_main_ui))
                 }
                 getString(R.string.key_launch_tab) -> {

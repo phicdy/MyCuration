@@ -6,7 +6,7 @@ import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
-import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
@@ -29,7 +29,7 @@ class MyApplication : Application() {
         PreferenceHelper.setUp(this)
         DatabaseAdapter.setUp(DatabaseHelper(this))
         FileUtil.setUpIconSaveFolder(this)
-        GATrackerHelper.setTracker(setUp(this))
+        TrackerHelper.setTracker(setUp(this))
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
                 .setFontAttrId(R.attr.fontPath)

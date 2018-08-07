@@ -24,7 +24,7 @@ import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
-import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.ArticleRecyclerView
@@ -168,7 +168,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     }
 
     override fun openInternalWebView(url: String, rssTitle: String) {
-        GATrackerHelper.sendButtonEvent(getString(R.string.tap_article_internal))
+        TrackerHelper.sendButtonEvent(getString(R.string.tap_article_internal))
         val intent = Intent(activity, InternalWebViewActivity::class.java)
         intent.putExtra(InternalWebViewActivity.KEY_OPEN_URL, url)
         intent.putExtra(InternalWebViewActivity.KEY_RSS_TITLE, rssTitle)
@@ -176,7 +176,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     }
 
     override fun openExternalWebView(url: String) {
-        GATrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
+        TrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
@@ -191,7 +191,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     }
 
     override fun showShareUi(url: String) {
-        if (isAdded) GATrackerHelper.sendButtonEvent(getString(R.string.share_article))
+        if (isAdded) TrackerHelper.sendButtonEvent(getString(R.string.share_article))
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
         intent.putExtra(Intent.EXTRA_TEXT, url)

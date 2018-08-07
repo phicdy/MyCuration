@@ -31,7 +31,7 @@ import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.view.FeedSearchView
-import com.phicdy.mycuration.tracker.GATrackerHelper
+import com.phicdy.mycuration.tracker.TrackerHelper
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
@@ -224,7 +224,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
 
     override fun showAddFeedSuccessToast() {
         showToastOnUiThread(R.string.add_rss_success, Toast.LENGTH_SHORT)
-        GATrackerHelper.sendButtonEvent(getString(R.string.add_rss_input_url))
+        TrackerHelper.sendButtonEvent(getString(R.string.add_rss_input_url))
     }
 
     override fun finishView() {
@@ -236,7 +236,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
     }
 
     override fun trackFailedUrl(url: String) {
-        GATrackerHelper.sendFailedParseUrl(getString(R.string.add_rss_input_url_error), url)
+        TrackerHelper.sendFailedParseUrl(getString(R.string.add_rss_input_url_error), url)
     }
 
     @UiThread

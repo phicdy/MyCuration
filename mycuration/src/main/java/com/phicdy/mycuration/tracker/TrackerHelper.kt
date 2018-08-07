@@ -4,7 +4,7 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.BuildConfig
 
-object GATrackerHelper {
+object TrackerHelper {
 
     private lateinit var tracker: FirebaseAnalytics
 
