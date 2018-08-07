@@ -254,20 +254,20 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
     }
 
     override fun goToFeedSearch() {
-        GATrackerHelper.sendEvent(getString(R.string.tap_add_rss))
+        GATrackerHelper.sendButtonEvent(getString(R.string.tap_add_rss))
         startActivity(Intent(this@TopActivity, FeedSearchActivity::class.java))
     }
 
     override fun goToAddCuration() {
         val intent = Intent(applicationContext, AddCurationActivity::class.java)
         startActivity(intent)
-        GATrackerHelper.sendEvent(getString(R.string.tap_add_curation))
+        GATrackerHelper.sendButtonEvent(getString(R.string.tap_add_curation))
     }
 
     override fun goToAddFilter() {
         val intent = Intent(applicationContext, RegisterFilterActivity::class.java)
         startActivity(intent)
-        GATrackerHelper.sendEvent(getString(R.string.tap_add_filter))
+        GATrackerHelper.sendButtonEvent(getString(R.string.tap_add_filter))
     }
 
     override fun goToSetting() {

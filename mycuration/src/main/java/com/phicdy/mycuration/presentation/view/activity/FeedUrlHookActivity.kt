@@ -39,7 +39,6 @@ class FeedUrlHookActivity : Activity(), FeedUrlHookView {
                 dbAdapter, unreadCountManager, networkTaskManager, parser)
         presenter.setView(this)
         presenter.create()
-        GATrackerHelper.sendScreen(getString(R.string.add_rss_from_intent))
     }
 
     override fun onPause() {
@@ -64,7 +63,7 @@ class FeedUrlHookActivity : Activity(), FeedUrlHookView {
     }
 
     override fun trackFailedUrl(url: String) {
-        GATrackerHelper.sendEvent(getString(R.string.add_rss_from_intent_error), url)
+        GATrackerHelper.sendFailedParseUrl(getString(R.string.add_rss_from_intent_error), url)
     }
 
     override fun showSuccessToast() {

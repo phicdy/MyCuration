@@ -66,7 +66,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         fab = findViewById(R.id.fab_article_list)
         fab.setOnClickListener {
             fragment.onFabButtonClicked()
-            GATrackerHelper.sendEvent(getString(R.string.scroll_article_list))
+            GATrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
         }
     }
 
@@ -123,7 +123,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
 
         when (item.itemId) {
             R.id.all_read -> {
-                GATrackerHelper.sendEvent(getString(R.string.read_all_articles))
+                GATrackerHelper.sendButtonEvent(getString(R.string.read_all_articles))
                 fragment.handleAllRead()
             }
             android.R.id.home -> finish()
@@ -133,8 +133,4 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onResume() {
-        super.onResume()
-        GATrackerHelper.sendScreen(gaTitle)
-    }
 }

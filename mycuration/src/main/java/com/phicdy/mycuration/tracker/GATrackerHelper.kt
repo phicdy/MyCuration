@@ -1,42 +1,40 @@
 package com.phicdy.mycuration.tracker
 
-import com.google.android.gms.analytics.HitBuilders
-import com.google.android.gms.analytics.Tracker
+import android.os.Bundle
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.BuildConfig
 
 object GATrackerHelper {
 
-    private lateinit var tracker: Tracker
-    private lateinit var categoryAction: String
+    private lateinit var tracker: FirebaseAnalytics
 
-    fun setTracker(newTracker: Tracker) {
+    fun setTracker(newTracker: FirebaseAnalytics) {
         tracker = newTracker
     }
 
-    fun setCategoryAction(action: String) {
-        categoryAction = action
+    fun sendButtonEvent(itemId: String) {
+        sendEvent(itemId, "button", FirebaseAnalytics.Event.SELECT_CONTENT)
     }
 
-    fun sendScreen(screenName: String) {
-        if (BuildConfig.DEBUG) return
-        tracker.setScreenName(screenName)
-        tracker.send(HitBuilders.ScreenViewBuilder().build())
+    fun sendSettingEvent(setting: String, value: String) {
+        sendEvent(setting, "setting", FirebaseAnalytics.Event.SELECT_CONTENT, value)
     }
 
-    fun sendEvent(action: String) {
-        if (BuildConfig.DEBUG) return
-        tracker.send(HitBuilders.EventBuilder()
-                .setCategory(categoryAction)
-                .setAction(action)
-                .build())
+    fun sendFailedParseUrl(event: String, url: String) {
+        val params = Bundle().apply {
+            putString("failed_url", url)
+        }
+        tracker.logEvent(event, params)
     }
 
-    fun sendEvent(action: String, label: String) {
+    private fun sendEvent(itemId: String, contentType: String, event: String, value: String = "") {
         if (BuildConfig.DEBUG) return
-        tracker.send(HitBuilders.EventBuilder()
-                .setCategory(categoryAction)
-                .setAction(action)
-                .setLabel(label)
-                .build())
+        val params = Bundle().apply {
+            putString(FirebaseAnalytics.Param.ITEM_ID, itemId)
+            putString(FirebaseAnalytics.Param.CONTENT_TYPE, contentType)
+            putString(FirebaseAnalytics.Param.VALUE, value)
+        }
+        tracker.logEvent(event, params)
     }
+
 }

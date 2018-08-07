@@ -168,7 +168,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     }
 
     override fun openInternalWebView(url: String, rssTitle: String) {
-        GATrackerHelper.sendEvent(getString(R.string.tap_article_internal))
+        GATrackerHelper.sendButtonEvent(getString(R.string.tap_article_internal))
         val intent = Intent(activity, InternalWebViewActivity::class.java)
         intent.putExtra(InternalWebViewActivity.KEY_OPEN_URL, url)
         intent.putExtra(InternalWebViewActivity.KEY_RSS_TITLE, rssTitle)
@@ -176,7 +176,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     }
 
     override fun openExternalWebView(url: String) {
-        GATrackerHelper.sendEvent(getString(R.string.tap_article_external))
+        GATrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
@@ -191,7 +191,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     }
 
     override fun showShareUi(url: String) {
-        if (isAdded) GATrackerHelper.sendEvent(getString(R.string.share_article))
+        if (isAdded) GATrackerHelper.sendButtonEvent(getString(R.string.share_article))
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
         intent.putExtra(Intent.EXTRA_TEXT, url)

@@ -37,8 +37,6 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
         val editFilterId = intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID)
         presenter = RegisterFilterPresenter(dbAdapter, editFilterId)
         presenter.setView(this)
-
-        GATrackerHelper.sendScreen(title.toString())
     }
 
     private fun initView() {
@@ -116,12 +114,12 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
 
     override fun handleEmptyTitle() {
         Toast.makeText(this@RegisterFilterActivity, R.string.title_empty_error, Toast.LENGTH_SHORT).show()
-        GATrackerHelper.sendEvent(getString(R.string.add_new_filter_no_title))
+        GATrackerHelper.sendButtonEvent(getString(R.string.add_new_filter_no_title))
     }
 
     override fun handleEmptyCondition() {
         Toast.makeText(this@RegisterFilterActivity, R.string.both_keyword_and_url_empty_error, Toast.LENGTH_SHORT).show()
-        GATrackerHelper.sendEvent(getString(R.string.add_new_filter_no_keyword_url))
+        GATrackerHelper.sendButtonEvent(getString(R.string.add_new_filter_no_keyword_url))
     }
 
     override fun handlePercentOnly() {
@@ -137,11 +135,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
     }
 
     override fun trackEdit() {
-        GATrackerHelper.sendEvent(getString(R.string.update_filter))
+        GATrackerHelper.sendButtonEvent(getString(R.string.update_filter))
     }
 
     override fun trackRegister() {
-        GATrackerHelper.sendEvent(getString(R.string.add_new_filter))
+        GATrackerHelper.sendButtonEvent(getString(R.string.add_new_filter))
     }
 
     companion object {

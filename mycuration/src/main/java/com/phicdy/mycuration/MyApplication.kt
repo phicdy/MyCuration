@@ -3,8 +3,7 @@ package com.phicdy.mycuration
 import android.app.Application
 import android.content.Context
 import com.facebook.stetho.Stetho
-import com.google.android.gms.analytics.GoogleAnalytics
-import com.google.android.gms.analytics.Tracker
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.tracker.GATrackerHelper
@@ -20,18 +19,17 @@ class MyApplication : Application() {
      */
     // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
     companion object DefaultTracker {
-        fun setUp(context: Context): Tracker {
-            val analytics = GoogleAnalytics.getInstance(context)
-            return analytics.newTracker(R.xml.global_tracker)
+        fun setUp(context: Context): FirebaseAnalytics {
+            return FirebaseAnalytics.getInstance(context)
         }
     }
+
     override fun onCreate() {
         super.onCreate()
         PreferenceHelper.setUp(this)
         DatabaseAdapter.setUp(DatabaseHelper(this))
         FileUtil.setUpIconSaveFolder(this)
-        GATrackerHelper.setTracker(DefaultTracker.setUp(this))
-        GATrackerHelper.setCategoryAction(getString(R.string.action))
+        GATrackerHelper.setTracker(setUp(this))
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
                 .setFontAttrId(R.attr.fontPath)

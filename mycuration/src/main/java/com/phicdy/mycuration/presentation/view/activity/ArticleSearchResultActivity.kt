@@ -36,11 +36,6 @@ class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.On
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        GATrackerHelper.sendScreen(getString(R.string.search_result))
-    }
-
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }

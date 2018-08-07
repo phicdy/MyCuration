@@ -224,7 +224,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
 
     override fun showAddFeedSuccessToast() {
         showToastOnUiThread(R.string.add_rss_success, Toast.LENGTH_SHORT)
-        GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url))
+        GATrackerHelper.sendButtonEvent(getString(R.string.add_rss_input_url))
     }
 
     override fun finishView() {
@@ -236,7 +236,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
     }
 
     override fun trackFailedUrl(url: String) {
-        GATrackerHelper.sendEvent(getString(R.string.add_rss_input_url_error), url)
+        GATrackerHelper.sendFailedParseUrl(getString(R.string.add_rss_input_url_error), url)
     }
 
     @UiThread
