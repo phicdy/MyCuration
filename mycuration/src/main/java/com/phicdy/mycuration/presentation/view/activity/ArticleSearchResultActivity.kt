@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
-import com.phicdy.mycuration.tracker.GATrackerHelper
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
@@ -34,11 +33,6 @@ class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.On
             actionBar.setDisplayShowHomeEnabled(true)
             actionBar.title = getString(R.string.search_result)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        GATrackerHelper.sendScreen(getString(R.string.search_result))
     }
 
     override fun attachBaseContext(newBase: Context) {

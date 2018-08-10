@@ -132,7 +132,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.2.0'
     implementation 'org.jsoup:jsoup:1.10.2'
     implementation 'com.github.johnkil.android-progressfragment:progressfragment:1.4.0'
-    implementation 'com.google.android.gms:play-services-analytics:11.8.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.1.0'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
     implementation 'com.facebook.stetho:stetho:1.4.2'
@@ -140,6 +139,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    def firebaseVer = '16.0.1'
+    implementation "com.google.firebase:firebase-core:$firebaseVer"
 }
 
 apply plugin: 'com.google.gms.google-services'

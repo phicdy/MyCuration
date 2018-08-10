@@ -146,7 +146,6 @@
 
     <!-- Google Analytics -->
     <string name="ga_not_all_title">個別RSS</string>
-    <string name="action">アクション</string>
     <string name="tap_add_rss">RSS追加タップ</string>
     <string name="tap_add_curation">キュレーション追加タップ</string>
     <string name="tap_add_filter">フィルター追加タップ</string>
@@ -161,14 +160,11 @@
     <string name="change_aricle_sort">記事並び替え方法変更</string>
     <string name="change_browser_option">記事を開くブラウザ変更</string>
     <string name="change_auto_update_in_main_ui_option">起動時に更新変更</string>
-    <string name="add_empty_curation_title">キュレーション名が空で追加</string>
-    <string name="add_empty_curation_word">キュレーション条件単語が空で追加</string>
     <string name="add_same_curation_name">同じキュレーション名で追加</string>
     <string name="add_new_curation">キュレーション追加</string>
     <string name="update_curation">キュレーション更新</string>
     <string name="add_rss_input_url">URL入力からRSS追加</string>
     <string name="add_rss_input_url_error">URL入力からRSS追加エラー</string>
-    <string name="add_rss_from_intent">共有からRSS追加</string>
     <string name="add_rss_from_intent_error">共有からRSS追加エラー</string>
     <string name="add_new_filter">フィルター追加</string>
     <string name="update_filter">フィルター更新</string>

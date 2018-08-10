@@ -8,8 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
-import com.phicdy.mycuration.tracker.GATrackerHelper
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
@@ -40,11 +38,6 @@ class AddCurationActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        GATrackerHelper.sendScreen(title.toString())
     }
 
     override fun attachBaseContext(newBase: Context) {
