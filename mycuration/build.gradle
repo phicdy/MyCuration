@@ -2,6 +2,7 @@ apply plugin: 'jacoco'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'spoon'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
@@ -139,6 +140,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 
     def firebaseVer = '16.0.1'
     implementation "com.google.firebase:firebase-core:$firebaseVer"
