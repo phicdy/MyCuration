@@ -94,39 +94,39 @@ class RssParserTest {
     fun testParseFeedInfoRSS2() {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
-        executor.start("http://hiroki.jp/feed/", callback)
+        executor.start("https://hiroki.jp/feed/", callback)
         try {
             Thread.sleep(10000)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
 
-        val addedFeed = adapter.getFeedByUrl("http://hiroki.jp/feed/")
+        val addedFeed = adapter.getFeedByUrl("https://hiroki.jp/feed/")
         //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         assertNotNull(addedFeed)
-        assertEquals("http://hiroki.jp/feed/", addedFeed.url)
+        assertEquals("https://hiroki.jp/feed/", addedFeed.url)
         assertEquals("https://hiroki.jp", addedFeed.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.iconPath)
 
-        executor.start("http://www.infoq.com/jp/feed", callback)
+        executor.start("https://www.infoq.com/jp/feed", callback)
         try {
             Thread.sleep(10000)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
 
-        val infoqFeed = adapter.getFeedByUrl("http://www.infoq.com/jp/feed")
+        val infoqFeed = adapter.getFeedByUrl("https://www.infoq.com/jp/feed")
         //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         assertNotNull(infoqFeed)
-        assertEquals("http://www.infoq.com/jp/feed", infoqFeed.url)
-        assertEquals("http://www.infoq.com/jp/", infoqFeed.siteUrl)
+        assertEquals("https://www.infoq.com/jp/feed", infoqFeed.url)
+        assertEquals("https://www.infoq.com/jp", infoqFeed.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, infoqFeed.iconPath)
 
         //http://blog.riywo.com/feed
         //http://dev.classmethod.jp/feed/
         //http://ggsoku.com/feed
         //http://labs.gree.jp/blog/feed
-        //http://htcsoku.info/feed/
+        //http://htcsok.info/feed/
         //http://developer.hatenastaff.com/rss
         //http://rss.rssad.jp/rss/itmtop/2.0/itmedia_all.xml
         //http://developers.linecorp.com/blog/ja/?feed=rss2
