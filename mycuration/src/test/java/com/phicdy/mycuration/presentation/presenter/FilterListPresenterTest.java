@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.filter.Filter;
+import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.presentation.view.FilterListView;
 
 import org.junit.Test;
@@ -41,8 +42,8 @@ public class FilterListPresenterTest {
     @Test
     public void listItemSizeEqualsSizeInDatabaseAfterOnResume() {
         ArrayList<Filter> testFilters = new ArrayList<>();
-        testFilters.add(new Filter(1, "test1", "testKeyword1", "http://test1.com", 1));
-        testFilters.add(new Filter(2, "test2", "testKeyword2", "http://test2.com", 0));
+        testFilters.add(new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE));
+        testFilters.add(new Filter(2, "test2", "testKeyword2", "http://test2.com", new ArrayList<Feed>(), -1, Filter.FALSE));
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         Mockito.when(adapter.getAllFilters()).thenReturn(testFilters);
         FilterListPresenter presenter = new FilterListPresenter(adapter);
@@ -67,9 +68,9 @@ public class FilterListPresenterTest {
     @Test
     public void invalidPositionDeleteDoesNotDeleteFilter() {
         ArrayList<Filter> testFilters = new ArrayList<>();
-        Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", 1);
+        Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         testFilters.add(testFilter1);
-        testFilters.add(new Filter(2, "test2", "testKeyword2", "http://test2.com", 0));
+        testFilters.add(new Filter(2, "test2", "testKeyword2", "http://test2.com", new ArrayList<Feed>(), -1, Filter.FALSE));
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         Mockito.when(adapter.getAllFilters()).thenReturn(testFilters);
         FilterListPresenter presenter = new FilterListPresenter(adapter);
@@ -84,8 +85,8 @@ public class FilterListPresenterTest {
     @Test
     public void sizeIsDecreasedAfterDeleteFirstFilter() {
         ArrayList<Filter> testFilters = new ArrayList<>();
-        Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", 1);
-        Filter testFilter2 = new Filter(2, "test2", "testKeyword2", "http://test2.com", 0);
+        Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
+        Filter testFilter2 = new Filter(2, "test2", "testKeyword2", "http://test2.com", new ArrayList<Feed>(), -1, Filter.FALSE);
         testFilters.add(testFilter1);
         testFilters.add(testFilter2);
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
@@ -102,8 +103,8 @@ public class FilterListPresenterTest {
     @Test
     public void firstItemIsSecondFilterAfterDeleteFirstFilter() {
         ArrayList<Filter> testFilters = new ArrayList<>();
-        Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", 1);
-        Filter testFilter2 = new Filter(2, "test2", "testKeyword2", "http://test2.com", 0);
+        Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
+        Filter testFilter2 = new Filter(2, "test2", "testKeyword2", "http://test2.com", new ArrayList<Feed>(), -1, Filter.FALSE);
         testFilters.add(testFilter1);
         testFilters.add(testFilter2);
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
@@ -125,7 +126,7 @@ public class FilterListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        Filter invalidFilter = new Filter(0, "test1", "testKeyword1", "http://test1.com", 1);
+        Filter invalidFilter = new Filter(0, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onEditMenuClicked(invalidFilter);
         assertFalse(view.isStartEditActivity);
     }
@@ -138,7 +139,7 @@ public class FilterListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", 1);
+        Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onEditMenuClicked(validFilter);
         assertTrue(view.isStartEditActivity);
     }
@@ -151,7 +152,7 @@ public class FilterListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        Filter validFilter = new Filter(2, "test1", "testKeyword1", "http://test1.com", 1);
+        Filter validFilter = new Filter(2, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onEditMenuClicked(validFilter);
         assertThat(view.startEditActivityId, is(2));
     }
@@ -164,7 +165,7 @@ public class FilterListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", 1);
+        Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onFilterCheckClicked(validFilter, true);
         assertTrue(validFilter.isEnabled());
     }
@@ -177,7 +178,7 @@ public class FilterListPresenterTest {
         presenter.setView(view);
         presenter.create();
         presenter.resume();
-        Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", 1);
+        Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onFilterCheckClicked(validFilter, false);
         assertFalse(validFilter.isEnabled());
     }

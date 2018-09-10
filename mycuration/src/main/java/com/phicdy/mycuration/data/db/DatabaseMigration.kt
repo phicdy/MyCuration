@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 
 import java.util.ArrayList
 
-internal class DatabaseMigration(private val oldVersion: Int, newVersion: Int) {
+class DatabaseMigration(private val oldVersion: Int, newVersion: Int) {
 
     private val tasks = ArrayList<DatabaseMigrationTask>()
 

@@ -35,7 +35,7 @@ public class RegisterFilterPresenter implements Presenter {
                 view.setFilterTitle(editFilter.getTitle());
                 view.setFilterUrl(editFilter.getUrl());
                 view.setFilterKeyword(editFilter.getKeyword());
-                setSelectedFeedList(editFilter.feeds());
+                setSelectedFeedList(editFilter.getFeeds());
             }
         }
     }

@@ -68,7 +68,7 @@ public class FilterListTest extends UiTest {
         UiObject2 target = filters.get(0).findObject(
                 By.res(BuildConfig.APPLICATION_ID, "filterTargetFeed"));
         assertNotNull(target);
-        assertThat(target.getText(), is("Yahoo!ニュース・トピックス - 主要 "));
+        assertThat(target.getText(), is("Yahoo!ニュース・トピックス - 主要"));
         UiObject2 keyword = filters.get(0).findObject(
                 By.res(BuildConfig.APPLICATION_ID, "filterKeyword"));
         assertNotNull(keyword);
@@ -184,7 +184,7 @@ public class FilterListTest extends UiTest {
         UiObject2 target = filters.get(0).findObject(
                 By.res(BuildConfig.APPLICATION_ID, "filterTargetFeed"));
         assertNotNull(target);
-        assertThat(target.getText(), is("Yahoo!ニュース・トピックス - 国際 "));
+        assertThat(target.getText(), is("Yahoo!ニュース・トピックス - 国際"));
         UiObject2 keyword = filters.get(0).findObject(
                 By.res(BuildConfig.APPLICATION_ID, "filterKeyword"));
         assertNotNull(keyword);

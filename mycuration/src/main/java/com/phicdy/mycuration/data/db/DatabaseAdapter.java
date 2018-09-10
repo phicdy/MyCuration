@@ -416,8 +416,8 @@ public class DatabaseAdapter {
 
             db.beginTransaction();
             for (Filter filter : filters) {
-                ArrayList<Feed> feeds = filter.feeds();
-                if (feeds != null && feeds.size() == 1 && feeds.get(0).getId() == feedId) {
+                ArrayList<Feed> feeds = filter.getFeeds();
+                if (feeds.size() == 1 && feeds.get(0).getId() == feedId) {
                     // This filter had relation with this feed only
                     db.delete(Filter.TABLE_NAME, Filter.ID + " = " + filter.getId(), null);
                 }
@@ -785,7 +785,7 @@ public class DatabaseAdapter {
 			String condition =
                     FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FEED_ID + " = " + feedId + " and " +
                     FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FILTER_ID + " = " + Filter.TABLE_NAME + "." + Filter.ID + " and " +
-                    Filter.TABLE_NAME + "." + Filter.ENABLED + " = " + Filter.TRUE;
+							Filter.TABLE_NAME + "." + Filter.ENABLED + " = " + Filter.TRUE;
 			Cursor cur = db.query(Filter.TABLE_NAME + " inner join " + FilterFeedRegistration.TABLE_NAME, columns, condition, null, null,
 					null, null);
 			// Change to ArrayList
@@ -795,7 +795,7 @@ public class DatabaseAdapter {
 				String keyword = cur.getString(2);
 				String url = cur.getString(3);
 				int enabled = cur.getInt(4);
-				filterList.add(new Filter(id, title, keyword, url, enabled));
+				filterList.add(new Filter(id, title, keyword, url, new ArrayList<Feed>(), -1, enabled));
 			}
 			cur.close();
 			db.setTransactionSuccessful();
@@ -830,11 +830,13 @@ public class DatabaseAdapter {
                     FilterFeedRegistration.TABLE_NAME + " inner join " +
                     Feed.TABLE_NAME;
 			Cursor cur = db.query(table, columns, condition, null, null, null, null);
+			if (cur == null || cur.getCount() < 1) return null;
+
             ArrayList<Feed> feeds = new ArrayList<>();
             int id = 0;
-            String keyword = null;
-            String url = null;
-            String title = null;
+            String keyword = "";
+            String url = "";
+            String title = "";
             int enabled = 0;
             while (cur.moveToNext()) {
                 id = cur.getInt(0);
@@ -849,7 +851,7 @@ public class DatabaseAdapter {
             }
 			cur.close();
 			db.setTransactionSuccessful();
-			filter = new Filter(id, title, keyword, url, feeds, enabled);
+			filter = new Filter(id, title, keyword, url, feeds, -1, enabled);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -957,11 +959,11 @@ public class DatabaseAdapter {
 		try {
 			// Check same filter exists in DB
             String[] columns = {
-                    Filter.ID,
+					Filter.ID,
             };
             String condition = Filter.TITLE + " = '" + title + "' and " +
-                    Filter.KEYWORD + " = '" + keyword + "' and " +
-                    Filter.URL + " = '" + filterUrl + "'";
+					Filter.KEYWORD + " = '" + keyword + "' and " +
+					Filter.URL + " = '" + filterUrl + "'";
             String table = Filter.TABLE_NAME;
             cur = db.query(table, columns, condition, null, null, null, null);
 			if (cur.getCount() != 0) {
@@ -1258,7 +1260,7 @@ public class DatabaseAdapter {
 				while (cursor.moveToNext()) {
                     int cursorFilterId = cursor.getInt(0);
                     if (filterId != cursorFilterId) {
-                        filter = new Filter(filterId, title, keyword, url, feeds, enabled);
+                        filter = new Filter(filterId, title, keyword, url, feeds, -1, enabled);
                         filters.add(filter);
                         filterId = cursorFilterId;
                         feeds = new ArrayList<>();
@@ -1271,7 +1273,7 @@ public class DatabaseAdapter {
                     feedTitle = cursor.getString(6);
                     feeds.add(new Feed(feedId, feedTitle));
 				}
-                filter = new Filter(filterId, title, keyword, url, feeds, enabled);
+                filter = new Filter(filterId, title, keyword, url, feeds, -1, enabled);
                 filters.add(filter);
 				cursor.close();
 			}

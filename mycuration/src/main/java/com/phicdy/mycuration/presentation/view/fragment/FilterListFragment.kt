@@ -149,21 +149,21 @@ class FilterListFragment : Fragment(), FilterListView {
                     //set filter title
                     holder.filterTitle.text = filter.title
 
-                    if (filter.feeds() != null && filter.feeds().size <= 1) {
+                    if (filter.feeds.size <= 1) {
                         holder.feedTitle.text = filter.feedTitle
                     } else {
                         holder.feedTitle.text = getString(R.string.multiple_target_rss)
                     }
 
                     val keyword = filter.keyword
-                    if (keyword == null || keyword == "") {
+                    if (keyword == "") {
                         holder.filterKeyword.visibility = View.GONE
                     } else {
                         holder.filterKeyword.text = getString(R.string.keyword) + ": " + keyword
                     }
 
                     val url = filter.url
-                    if (url == null || url == "") {
+                    if (url == "") {
                         holder.filterUrl.visibility = View.GONE
                     } else {
                         holder.filterUrl.text = getString(R.string.url, url)

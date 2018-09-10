@@ -96,7 +96,13 @@ internal class AddFilterFeedRegistrationTask : DatabaseMigrationTask {
                         } else {
                             Filter.TRUE
                         }
-                        val filter = Filter(filterId, title, keyword, url, feedId, enabled)
+                        val filter = Filter(
+                                id = filterId,
+                                title = title,
+                                keyword = keyword,
+                                url = url,
+                                feedId = feedId,
+                                enabled = enabled)
                         filters.add(filter)
                     }
                 }
