@@ -186,7 +186,7 @@ public class RssParser {
 		ArrayList<Article> articles = new ArrayList<>();
 
 		// TODO Get hatena bookmark(?) count
-		Article article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null, null);
+		Article article = new Article(0, "", "", Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, "", "");
 
 		// Flag for not getting "Site's" title and url
 		boolean itemFlag = false;
@@ -206,20 +206,19 @@ public class RssParser {
 				case XmlPullParser.START_TAG:
 					// when new Item found, initialize currentItem
 					if (tag.equals("item") || tag.equals("entry")) {
-						article = new Article(0, null, null, Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, null, null);
+						article = new Article(0, "", "", Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, "", "");
 						itemFlag = true;
 						itemTime = System.currentTimeMillis();
 					}
 
 					// add Title and Link to currentItem
-					if (itemFlag && tag.equals("title")
-							&& (article.getTitle() == null)) {
+					if (itemFlag && tag.equals("title") && (article.getTitle().equals(""))) {
 						String title = TextUtil.INSTANCE.removeLineFeed(parser.nextText());
 						Log.d(LOG_TAG, "set article title:" + title);
 						article.setTitle(title);
 					}
 					if (itemFlag && tag.equals("link")
-							&& (article.getUrl() == null || article.getUrl().equals(""))) {
+							&& (article.getUrl().equals("") || article.getUrl().equals(""))) {
 					    // RSS 1.0 & 2.0
 						String articleURL = parser.nextText();
 						if (articleURL == null || articleURL.equals("")) {

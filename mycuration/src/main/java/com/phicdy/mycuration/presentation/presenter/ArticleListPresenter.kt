@@ -240,8 +240,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         // Set article posted date
         val format = SimpleDateFormat(
                 "yyyy/MM/dd HH:mm:ss", Locale.US)
-        val dateString = format.format(Date(article
-                .postedDate))
+        val dateString = format.format(Date(article.postedDate))
         holder.setArticlePostedTime(dateString)
 
         // Set RSS Feed unread article count
@@ -253,7 +252,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         }
 
         val feedTitle = article.feedTitle
-        if (feedTitle == null) {
+        if (feedTitle == "") {
             holder.hideRssInfo()
         } else {
             holder.setRssTitle(article.feedTitle)

@@ -702,7 +702,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(3);
 				long dateLong = cursor.getLong(4);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null, null);
+						dateLong, feedId, "", "");
 				articles.add(article);
 			}
 			cursor.close();
@@ -738,7 +738,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null, null);
+						dateLong, feedId, "", "");
 				articles.add(article);
 			}
 			cursor.close();

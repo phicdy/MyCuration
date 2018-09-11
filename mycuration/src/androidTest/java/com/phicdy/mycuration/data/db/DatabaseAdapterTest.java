@@ -113,13 +113,13 @@ public class DatabaseAdapterTest {
 		
 		long now = new Date().getTime();
 		Article article = new Article(1, TEST_ARTICLE1_TITLE, "http://www.google.com",
-				Article.UNREAD, "", now, testFeed.getId(), "", null);
+				Article.UNREAD, "", now, testFeed.getId(), "", "");
 		Article quotationTitle = new Article(1, TEST_ARTICLE2_TITLE,
-				"http://www.google.com", Article.UNREAD, "", now + 1, testFeed.getId(), "", null);
+				"http://www.google.com", Article.UNREAD, "", now + 1, testFeed.getId(), "", "");
 		Article doubleQuotationTitle = new Article(1, TEST_ARTICLE3_TITLE,
-				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "", null);
+				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "", "");
 		Article japaneseTitle = new Article(1, "記事1abdｄｆｇ",
-				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "", null);
+				"http://www.google.com", Article.UNREAD, "", now + 2, testFeed.getId(), "", "");
 
 		testUnreadArticles.clear();
 		testUnreadArticles.add(article);
@@ -130,7 +130,7 @@ public class DatabaseAdapterTest {
 		adapter.updateUnreadArticleCount(testFeed.getId(), testUnreadArticles.size());
 
 		Article readArticle = new Article(1, "readArticle", "http://www.google.com/read",
-				Article.READ, "", now, testFeed.getId(), "", null);
+				Article.READ, "", now, testFeed.getId(), "", "");
 		testReadArticles.clear();
 		testReadArticles.add(readArticle);
 		adapter.saveNewArticles(testReadArticles, testFeed.getId());
@@ -143,9 +143,9 @@ public class DatabaseAdapterTest {
         ArrayList<Article> articles = new ArrayList<>();
         long now = System.currentTimeMillis();
         Article toReadArticle = new Article(1, "toread_article",
-                "http://www.google.com", Article.TOREAD, "", now + 1, testFeed.getId(), "", null);
+                "http://www.google.com", Article.TOREAD, "", now + 1, testFeed.getId(), "", "");
         Article toReadArticle2 = new Article(1, "toread_article2",
-                "http://www.google.com/hogehoge", Article.TOREAD, "", now + 2, testFeed.getId(), "", null);
+                "http://www.google.com/hogehoge", Article.TOREAD, "", now + 2, testFeed.getId(), "", "");
         articles.add(toReadArticle);
         articles.add(toReadArticle2);
         adapter.saveNewArticles(articles, testFeed.getId());

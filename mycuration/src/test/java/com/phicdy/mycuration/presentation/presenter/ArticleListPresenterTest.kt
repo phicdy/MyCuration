@@ -448,7 +448,7 @@ class ArticleListPresenterTest {
         `when`(adapter.isExistArticle(testId)).thenReturn(true)
         val mockFeed = Mockito.mock(Feed::class.java)
         `when`(mockFeed.title).thenReturn("feed")
-        `when`(adapter.getFeedById(testId)).thenReturn(mockFeed);
+        `when`(adapter.getFeedById(testId)).thenReturn(mockFeed)
         return adapter
     }
 
