@@ -65,7 +65,7 @@ class SelectFilterTargetRssFragment : ListFragment() {
                 val feed = this.getItem(position) ?: return row
                 holder.tvRssTitle.text = feed.title
                 val iconPath = feed.iconPath
-                if (iconPath == null || iconPath == Feed.DEDAULT_ICON_PATH) {
+                if (iconPath == Feed.DEDAULT_ICON_PATH) {
                     holder.ivIcon.setImageResource(R.drawable.no_icon)
                 } else {
                     val file = File(iconPath)

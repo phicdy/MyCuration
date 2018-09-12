@@ -14,7 +14,7 @@ class FilterTest {
                 keyword = "aaa",
                 title = "bbb",
                 url = "http://www.google.com",
-                feeds = arrayListOf(Feed("title", "aaaa", "aaaa", "aaaa"))
+                feeds = arrayListOf(Feed(title = "title"))
         )
         assertThat(filter.feedTitle, `is`("title"))
     }
@@ -28,8 +28,8 @@ class FilterTest {
                 title = "bbb",
                 url = "http://www.google.com",
                 feeds = arrayListOf(
-                        Feed("title", "aaaa", "aaaa", "aaaa"),
-                        Feed("title2", "aaaa", "aaaa", "aaaa")
+                        Feed(title = "title"),
+                        Feed(title = "title2")
                 )
         )
         assertThat(filter.feedTitle, `is`("title, title2"))

@@ -44,8 +44,8 @@ public class RssListPresenterTest {
     public void setup() {
         adapter = Mockito.mock(DatabaseAdapter.class);
         ArrayList<Feed> allFeeds = new ArrayList<>();
-        allFeeds.add(new Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0));
-        allFeeds.add(new Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 1));
+        allFeeds.add(new Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0, ""));
+        allFeeds.add(new Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 1, ""));
         Mockito.when(adapter.getAllFeedsWithNumOfUnreadArticles()).thenReturn(allFeeds);
         networkTaskManager = NetworkTaskManager.INSTANCE;
         unreadCountManager = Mockito.mock(UnreadCountManager.class);

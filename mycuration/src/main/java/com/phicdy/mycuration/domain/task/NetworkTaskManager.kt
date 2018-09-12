@@ -62,7 +62,7 @@ object NetworkTaskManager {
             val inputStream = response.body().byteStream()
             val parser = RssParser()
             val dbAdapter = DatabaseAdapter.getInstance()
-            val latestDate = dbAdapter.getLatestArticleDate(feed.id);
+            val latestDate = dbAdapter.getLatestArticleDate(feed.id)
             val articles = parser.parseXml(inputStream, latestDate)
 
             if (articles.size > 0) {
@@ -81,7 +81,7 @@ object NetworkTaskManager {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            if (feed.iconPath == null || feed.iconPath == Feed.DEDAULT_ICON_PATH) {
+            if (feed.iconPath == Feed.DEDAULT_ICON_PATH) {
                 val iconSaveFolderStr = FileUtil.iconSaveFolder()
                 val task = GetFeedIconTask(iconSaveFolderStr)
                 task.execute(feed.siteUrl)

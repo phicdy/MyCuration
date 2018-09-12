@@ -94,7 +94,7 @@ public class RssListPresenter implements Presenter {
     }
 
     private void addShowHideLine(ArrayList<Feed> feeds) {
-        feeds.add(new Feed());
+        feeds.add(new Feed(Feed.DEFAULT_FEED_ID, "", "", Feed.DEDAULT_ICON_PATH, "", 0, ""));
     }
 
     private void generateHidedFeedList() {

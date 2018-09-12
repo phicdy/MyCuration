@@ -31,7 +31,7 @@ public class RegisterFilterPresenterTest {
     @Test
     public void setOneSelectedFeedList() {
         ArrayList<Feed> testFeeds = new ArrayList<>();
-        testFeeds.add(new Feed(1, "testFeed"));
+        testFeeds.add(new Feed(1, "testFeed", "", Feed.DEDAULT_ICON_PATH, "", 0, ""));
         presenter.setSelectedFeedList(testFeeds);
         assertEquals(mockView.filterTarget, "testFeed");
     }
@@ -39,8 +39,8 @@ public class RegisterFilterPresenterTest {
     @Test
     public void setMultipleSelectedFeedList() {
         ArrayList<Feed> testFeeds = new ArrayList<>();
-        testFeeds.add(new Feed(1, "testFeed"));
-        testFeeds.add(new Feed(2, "testFeed2"));
+        testFeeds.add(new Feed(1, "testFeed", "", Feed.DEDAULT_ICON_PATH, "", 0, ""));
+        testFeeds.add(new Feed(2, "testFeed2", "", Feed.DEDAULT_ICON_PATH, "", 0, ""));
         presenter.setSelectedFeedList(testFeeds);
         assertEquals(mockView.filterTarget, MockView.MULTIPLE_FILTER_TARGET);
     }

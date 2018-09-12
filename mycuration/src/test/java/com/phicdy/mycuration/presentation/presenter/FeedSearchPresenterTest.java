@@ -24,7 +24,6 @@ import static org.junit.Assert.assertThat;
 public class FeedSearchPresenterTest {
 
     private NetworkTaskManager networkTaskManager;
-    private DatabaseAdapter adapter;
     private UnreadCountManager unreadCountManager;
     private RssParser parser;
     private FeedSearchPresenter presenter;
@@ -33,7 +32,7 @@ public class FeedSearchPresenterTest {
     public void setup() {
         networkTaskManager = NetworkTaskManager.INSTANCE;
         DatabaseAdapter.setUp(Mockito.mock(DatabaseHelper.class));
-        adapter = Mockito.mock(DatabaseAdapter.class);
+        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
         parser = Mockito.mock(RssParser.class);
         presenter = new FeedSearchPresenter(
@@ -176,7 +175,7 @@ public class FeedSearchPresenterTest {
     public void successToastShowsWhenNewFeedIsAdded() {
         // Mock test feed returns
         String testUrl = "http://www.google.com";
-        Feed testFeed = new Feed(1, "hoge", testUrl, "", "", 0);
+        Feed testFeed = new Feed(1, "hoge", testUrl, "", "", 0, "");
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed);
         FeedSearchPresenter presenter = new FeedSearchPresenter(
@@ -194,7 +193,7 @@ public class FeedSearchPresenterTest {
     public void progressDialogDismissesWhenNewFeedIsAdded() {
         // Mock test feed returns
         String testUrl = "http://www.google.com";
-        Feed testFeed = new Feed(1, "hoge", testUrl, "", "", 0);
+        Feed testFeed = new Feed(1, "hoge", testUrl, "", "", 0, "");
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed);
         FeedSearchPresenter presenter = new FeedSearchPresenter(
@@ -212,7 +211,7 @@ public class FeedSearchPresenterTest {
     public void viewFinishesWhenNewFeedIsAdded() {
         // Mock test feed returns
         String testUrl = "http://www.google.com";
-        Feed testFeed = new Feed(1, "hoge", testUrl, "", "", 0);
+        Feed testFeed = new Feed(1, "hoge", testUrl, "", "", 0, "");
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed);
         FeedSearchPresenter presenter = new FeedSearchPresenter(

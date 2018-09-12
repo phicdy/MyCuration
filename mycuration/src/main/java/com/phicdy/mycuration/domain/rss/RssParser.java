@@ -77,7 +77,7 @@ public class RssParser {
                     siteUrl = url.getProtocol() + "://" + url.getHost();
                 }
                 String title = document.title();
-                Feed feed = new Feed(title, baseUrl, Feed.RSS_1, siteUrl);
+                Feed feed = new Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.RSS_1, 0, siteUrl);
                 return new RssParseResult(feed);
             }else if (!document.getElementsByTag("rss").isEmpty()) {
                 Log.d(LOG_TAG, "RSS 2.0");
@@ -94,7 +94,7 @@ public class RssParser {
                     siteUrl = url.getProtocol() + "://" + url.getHost();
                 }
                 String title = document.title();
-                Feed feed = new Feed(title, baseUrl, Feed.RSS_2, siteUrl);
+                Feed feed = new Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.RSS_2, 0, siteUrl);
                 return new RssParseResult(feed);
             }else if (!document.getElementsByTag("feed").isEmpty()) {
                 Log.d(LOG_TAG, "ATOM");
@@ -124,7 +124,7 @@ public class RssParser {
                     siteUrl = links.get(0).attr("href");
                 }
                 String title = document.title();
-                Feed feed = new Feed(title, baseUrl, Feed.ATOM, siteUrl);
+                Feed feed = new Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.ATOM, 0, siteUrl);
                 return new RssParseResult(feed);
             }else if (!document.getElementsByTag("html").isEmpty()) {
                 Log.d(LOG_TAG, "html, try to get RSS URL");
