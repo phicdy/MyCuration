@@ -159,7 +159,7 @@ public class DatabaseAdapter {
      *
      * @return Feed array with unread count of articles
      */
-	public ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
+	public @NonNull ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
 		ArrayList<Feed> feedList = new ArrayList<>();
 		db.beginTransaction();
         Cursor cursor = null;
@@ -681,7 +681,7 @@ public class DatabaseAdapter {
 		return articles;
 	}
 
-	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
+	public @NonNull ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
