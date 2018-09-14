@@ -770,7 +770,7 @@ public class DatabaseAdapter {
         return latestDate;
 	}
 
-	public ArrayList<Filter> getEnabledFiltersOfFeed(int feedId) {
+	public @NonNull ArrayList<Filter> getEnabledFiltersOfFeed(int feedId) {
 		ArrayList<Filter> filterList = new ArrayList<>();
 		db.beginTransaction();
 		try {
