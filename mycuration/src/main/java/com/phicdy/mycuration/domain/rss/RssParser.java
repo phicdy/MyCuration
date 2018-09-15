@@ -51,7 +51,7 @@ public class RssParser {
      * <link rel="canonical" href="http://xxxxxxxx">
      * @return RssParseResult. If not found or error occurs, feed instance in the result is null.
      */
-	RssParseResult parseRssXml(final String baseUrl, final boolean checkCanonical) {
+	@NonNull RssParseResult parseRssXml(final String baseUrl, final boolean checkCanonical) {
 		Log.d(LOG_TAG, "Start to parse RSS XML, url:" + baseUrl);
         try {
             final URL url = new URL(baseUrl);

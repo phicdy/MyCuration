@@ -2,6 +2,7 @@ package com.phicdy.mycuration.domain.rss;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.phicdy.mycuration.data.rss.Feed;
 
@@ -9,7 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class RssParseResult {
-    public final Feed feed;
+    @Nullable public final Feed feed;
     final int failedReason;
     public static final int NOT_FAILED = 0;
     public static final int INVALID_URL = 1;

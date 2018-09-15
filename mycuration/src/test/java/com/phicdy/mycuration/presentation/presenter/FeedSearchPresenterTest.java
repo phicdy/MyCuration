@@ -30,7 +30,7 @@ public class FeedSearchPresenterTest {
 
     @Before
     public void setup() {
-        networkTaskManager = NetworkTaskManager.INSTANCE;
+        networkTaskManager = Mockito.mock(NetworkTaskManager.class);
         DatabaseAdapter.setUp(Mockito.mock(DatabaseHelper.class));
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         unreadCountManager = Mockito.mock(UnreadCountManager.class);
@@ -183,8 +183,6 @@ public class FeedSearchPresenterTest {
 
         MockView view = new MockView();
         presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         presenter.callback.succeeded(testUrl);
         assertTrue(view.isSuccessToastShowed);
     }
