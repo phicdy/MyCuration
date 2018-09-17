@@ -1,5 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter;
 
+import android.support.annotation.NonNull;
+
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.rss.Curation;
 import com.phicdy.mycuration.presentation.view.CurationListView;
@@ -20,8 +22,7 @@ public class CurationListPresenterTest {
     public void testOnCreate() {
         // For coverage
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
-        presenter.setView(new MockView());
+        CurationListPresenter presenter = new CurationListPresenter(new MockView(), adapter);
         presenter.create();
     }
 
@@ -32,9 +33,8 @@ public class CurationListPresenterTest {
         String testName = "testCuration";
         curations.add(new Curation(1, testName));
         when(adapter.getAllCurations()).thenReturn(curations);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         assertThat(view.curations.get(0).getName(), is(testName));
@@ -44,8 +44,7 @@ public class CurationListPresenterTest {
     public void testOnPause() {
         // For coverage
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
-        presenter.setView(new MockView());
+        CurationListPresenter presenter = new CurationListPresenter(new MockView(), adapter);
         presenter.create();
         presenter.resume();
         presenter.pause();
@@ -54,9 +53,8 @@ public class CurationListPresenterTest {
     @Test
     public void EditActivityStartsWhenEditIsClicked() {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         presenter.onCurationEditClicked(1);
@@ -66,9 +64,8 @@ public class CurationListPresenterTest {
     @Test
     public void InvalidCurationDoesNotAffectWhenEditIsClicked() {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         presenter.onCurationEditClicked(-1);
@@ -79,9 +76,8 @@ public class CurationListPresenterTest {
     public void EmptyViewIsSetIfEmptyRss() {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         when(adapter.getNumOfFeeds()).thenReturn(0);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         presenter.activityCreated();
@@ -95,9 +91,8 @@ public class CurationListPresenterTest {
         Curation curation = new Curation(1, "test");
         curations.add(curation);
         when(adapter.getAllCurations()).thenReturn(curations);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         presenter.onCurationDeleteClicked(curation);
@@ -108,9 +103,8 @@ public class CurationListPresenterTest {
     public void NoRssViewIsSetWhenRssIsEmpty() {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         when(adapter.getNumOfFeeds()).thenReturn(0);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         presenter.activityCreated();
@@ -121,9 +115,8 @@ public class CurationListPresenterTest {
     public void EmptyViewIsSetWhenRssIsEmpty() {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         when(adapter.getNumOfFeeds()).thenReturn(0);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         presenter.activityCreated();
@@ -133,9 +126,8 @@ public class CurationListPresenterTest {
     @Test
     public void Under0PositionReturnsMinusOneWhenGetCurationId() {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         assertThat(presenter.getCurationIdAt(-1), is(-1));
@@ -148,9 +140,8 @@ public class CurationListPresenterTest {
         String testName = "testCuration";
         curations.add(new Curation(1, testName));
         when(adapter.getAllCurations()).thenReturn(curations);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         assertThat(presenter.getCurationIdAt(curations.size()), is(-1));
@@ -163,9 +154,8 @@ public class CurationListPresenterTest {
         int testId = 1;
         curations.add(new Curation(testId, "testName"));
         when(adapter.getAllCurations()).thenReturn(curations);
-        CurationListPresenter presenter = new CurationListPresenter(adapter);
         MockView view = new MockView();
-        presenter.setView(view);
+        CurationListPresenter presenter = new CurationListPresenter(view, adapter);
         presenter.create();
         presenter.resume();
         assertThat(presenter.getCurationIdAt(0), is(testId));
@@ -199,12 +189,12 @@ public class CurationListPresenterTest {
         }
 
         @Override
-        public void initListBy(ArrayList<Curation> curations) {
+        public void initListBy(@NonNull ArrayList<Curation> curations) {
             this.curations = curations;
         }
 
         @Override
-        public void delete(Curation curation) {
+        public void delete(@NonNull Curation curation) {
             curations.remove(curation);
         }
 

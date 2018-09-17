@@ -41,8 +41,7 @@ class CurationListFragment : Fragment(), CurationListView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val dbAdapter = DatabaseAdapter.getInstance()
-        presenter = CurationListPresenter(dbAdapter)
-        presenter.setView(this)
+        presenter = CurationListPresenter(this, dbAdapter)
     }
 
     override fun onResume() {
