@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -51,7 +52,12 @@ public class DatabaseAdapter {
 			}
 		}
 	}
-	
+
+	@VisibleForTesting
+	public static void inject(@NonNull DatabaseAdapter adapter) {
+	    sharedDbAdapter = adapter;
+    }
+
 	public static DatabaseAdapter getInstance() {
 		if (sharedDbAdapter == null) {
 		    throw new IllegalStateException("Not setup yet");

@@ -38,14 +38,11 @@ class CurationListFragment : Fragment(), CurationListView {
     private lateinit var curationListView: ListView
     private lateinit var emptyView: TextView
 
-    private lateinit var unreadManager: UnreadCountManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val dbAdapter = DatabaseAdapter.getInstance()
         presenter = CurationListPresenter(dbAdapter)
         presenter.setView(this)
-        unreadManager = UnreadCountManager.getInstance()
     }
 
     override fun onResume() {
@@ -179,7 +176,7 @@ class CurationListFragment : Fragment(), CurationListView {
                 val curation = this.getItem(position)
                 if (curation != null) {
                     holder.curationName.text = curation.name
-                    holder.curationCount.text = unreadManager.getCurationCount(curation.id).toString()
+                    holder.curationCount.text = UnreadCountManager.getCurationCount(curation.id).toString()
                 }
                 return row
             }

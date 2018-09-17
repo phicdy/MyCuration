@@ -79,7 +79,6 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val dbAdapter = DatabaseAdapter.getInstance()
-        val unreadManager = UnreadCountManager.getInstance()
 
         // Set feed id and url from main activity
         val intent = activity?.intent
@@ -96,7 +95,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         val isAllReadBack = prefMgr.allReadBack
         val isNewestArticleTop = prefMgr.sortNewArticleTop
         val query = intent?.getStringExtra(SearchManager.QUERY) ?: ""
-        presenter = ArticleListPresenter(feedId, curationId, dbAdapter, unreadManager,
+        presenter = ArticleListPresenter(feedId, curationId, dbAdapter, UnreadCountManager,
                 isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption, query, intent?.action ?: "")
         presenter.setView(this)
         presenter.create()

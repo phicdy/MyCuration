@@ -35,18 +35,16 @@ class RssListFragment : Fragment(), RssListView {
     private var mListener: OnFeedListFragmentListener? = null
 
     private lateinit var dbAdapter: DatabaseAdapter
-    private lateinit var unreadManager: UnreadCountManager
     private var receiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        unreadManager = UnreadCountManager.getInstance()
         dbAdapter = DatabaseAdapter.getInstance()
         val networkTaskManager = NetworkTaskManager
         retainInstance = true
         val helper = PreferenceHelper
-        presenter = RssListPresenter(helper, dbAdapter, networkTaskManager, unreadManager)
+        presenter = RssListPresenter(helper, dbAdapter, networkTaskManager, UnreadCountManager)
         presenter.setView(this)
     }
 
@@ -310,7 +308,7 @@ class RssListFragment : Fragment(), RssListView {
 
                 // set RSS Feed unread article count
                 if (feed != null) {
-                    holder.feedCount.text = unreadManager.getUnreadCount(feed.id).toString()
+                    holder.feedCount.text = UnreadCountManager.getUnreadCount(feed.id).toString()
                 }
 
                 return row

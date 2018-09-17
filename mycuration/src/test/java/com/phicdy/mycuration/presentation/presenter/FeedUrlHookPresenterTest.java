@@ -22,7 +22,6 @@ public class FeedUrlHookPresenterTest {
 
     private NetworkTaskManager networkTaskManager;
     private DatabaseAdapter adapter;
-    private UnreadCountManager unreadCountManager;
     private FeedUrlHookPresenter presenter;
     private RssParser parser;
 
@@ -30,10 +29,10 @@ public class FeedUrlHookPresenterTest {
     public void setup() {
         networkTaskManager = NetworkTaskManager.INSTANCE;
         adapter = Mockito.mock(DatabaseAdapter.class);
-        unreadCountManager = Mockito.mock(UnreadCountManager.class);
+        DatabaseAdapter.inject(Mockito.mock(DatabaseAdapter.class));
         parser = Mockito.mock(RssParser.class);
         presenter = new FeedUrlHookPresenter("", "", "",
-                adapter, unreadCountManager, networkTaskManager, parser);
+                adapter, UnreadCountManager.INSTANCE, networkTaskManager, parser);
     }
 
     @Test
@@ -56,7 +55,7 @@ public class FeedUrlHookPresenterTest {
     public void finishWhenInvalidActionComes() {
         MockView view = new MockView();
         presenter = new FeedUrlHookPresenter("hogehoge", "http://www.google.com", "",
-                adapter, unreadCountManager, networkTaskManager, parser);
+                adapter, UnreadCountManager.INSTANCE, networkTaskManager, parser);
         presenter.setView(view);
         presenter.create();
         assertTrue(view.isFinished);
@@ -66,7 +65,7 @@ public class FeedUrlHookPresenterTest {
     public void toastShowsWhenActionViewAndInvalidUrlComes() {
         MockView view = new MockView();
         presenter = new FeedUrlHookPresenter(Intent.ACTION_VIEW, "hogehoge", "",
-                adapter, unreadCountManager, networkTaskManager, parser);
+                adapter, UnreadCountManager.INSTANCE, networkTaskManager, parser);
         presenter.setView(view);
         presenter.create();
         assertTrue(view.isInvalidUrlErrorToastShowed);
@@ -76,7 +75,7 @@ public class FeedUrlHookPresenterTest {
     public void toastShowsWhenActionSendAndInvalidUrlComes() {
         MockView view = new MockView();
         presenter = new FeedUrlHookPresenter(Intent.ACTION_SEND, "", "hogehoge",
-                adapter, unreadCountManager, networkTaskManager, parser);
+                adapter, UnreadCountManager.INSTANCE, networkTaskManager, parser);
         presenter.setView(view);
         presenter.create();
         assertTrue(view.isInvalidUrlErrorToastShowed);

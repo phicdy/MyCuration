@@ -53,7 +53,7 @@ public abstract class UiTest {
         DatabaseAdapter.setUp(new DatabaseHelper(getTargetContext()));
         DatabaseAdapter adapter = DatabaseAdapter.getInstance();
         ArrayList<Feed> feeds = adapter.getAllFeedsWithoutNumOfUnreadArticles();
-        UnreadCountManager manager = UnreadCountManager.getInstance();
+        UnreadCountManager manager = UnreadCountManager.INSTANCE;
         for (Feed feed : feeds) {
             manager.deleteFeed(feed.getId());
         }

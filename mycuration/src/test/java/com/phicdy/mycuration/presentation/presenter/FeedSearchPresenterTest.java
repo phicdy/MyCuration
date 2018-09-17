@@ -3,7 +3,6 @@ package com.phicdy.mycuration.presentation.presenter;
 import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
-import com.phicdy.mycuration.data.db.DatabaseHelper;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.rss.RssParseResult;
 import com.phicdy.mycuration.domain.rss.RssParser;
@@ -27,19 +26,17 @@ import static org.mockito.Mockito.verify;
 public class FeedSearchPresenterTest {
 
     private NetworkTaskManager networkTaskManager;
-    private UnreadCountManager unreadCountManager;
     private RssParser parser;
     private FeedSearchPresenter presenter;
 
     @Before
     public void setup() {
         networkTaskManager = Mockito.mock(NetworkTaskManager.class);
-        DatabaseAdapter.setUp(Mockito.mock(DatabaseHelper.class));
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        unreadCountManager = Mockito.mock(UnreadCountManager.class);
+        DatabaseAdapter.inject(adapter);
         parser = Mockito.mock(RssParser.class);
         presenter = new FeedSearchPresenter(
-                networkTaskManager, adapter, unreadCountManager, parser);
+                networkTaskManager, adapter, UnreadCountManager.INSTANCE, parser);
 
     }
 
@@ -182,7 +179,7 @@ public class FeedSearchPresenterTest {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed);
         FeedSearchPresenter presenter = new FeedSearchPresenter(
-                networkTaskManager, adapter, unreadCountManager, parser);
+                networkTaskManager, adapter, UnreadCountManager.INSTANCE, parser);
 
         MockView view = new MockView();
         presenter.setView(view);
@@ -198,7 +195,7 @@ public class FeedSearchPresenterTest {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed);
         FeedSearchPresenter presenter = new FeedSearchPresenter(
-                networkTaskManager, adapter, unreadCountManager, parser);
+                networkTaskManager, adapter, UnreadCountManager.INSTANCE, parser);
 
         FeedSearchView view = Mockito.mock(FeedSearchView.class);
         presenter.setView(view);
@@ -214,7 +211,7 @@ public class FeedSearchPresenterTest {
         DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
         Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed);
         FeedSearchPresenter presenter = new FeedSearchPresenter(
-                networkTaskManager, adapter, unreadCountManager, parser);
+                networkTaskManager, adapter, UnreadCountManager.INSTANCE, parser);
 
         FeedSearchView view = Mockito.mock(FeedSearchView.class);
         presenter.setView(view);
@@ -257,9 +254,8 @@ public class FeedSearchPresenterTest {
         // Mock null returns
         String testUrl = "http://www.google.com";
         Mockito.when(adapter.getFeedByUrl(testUrl)).thenReturn(null);
-        UnreadCountManager unreadCountManager = Mockito.mock(UnreadCountManager.class);
         FeedSearchPresenter presenter = new FeedSearchPresenter(
-                networkTaskManager, adapter, unreadCountManager, parser);
+                networkTaskManager, adapter, UnreadCountManager.INSTANCE, parser);
 
         FeedSearchView view = Mockito.mock(FeedSearchView.class);
         presenter.setView(view);

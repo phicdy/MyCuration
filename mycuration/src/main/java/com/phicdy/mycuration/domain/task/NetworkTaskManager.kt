@@ -82,7 +82,7 @@ object NetworkTaskManager {
                 val task = GetFeedIconTask(iconSaveFolderStr)
                 task.execute(feed.siteUrl)
             }
-            UnreadCountManager.getInstance().refreshConut(feed.id)
+            UnreadCountManager.refreshConut(feed.id)
         } catch (e: IOException) {
 
         } catch (e: RuntimeException) {

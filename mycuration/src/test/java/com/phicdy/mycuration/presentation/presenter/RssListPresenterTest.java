@@ -9,10 +9,11 @@ import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
-import com.phicdy.mycuration.util.PreferenceHelper;
 import com.phicdy.mycuration.presentation.view.RssListView;
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment;
+import com.phicdy.mycuration.util.PreferenceHelper;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -25,10 +26,6 @@ import static org.junit.Assert.assertThat;
 public class RssListPresenterTest {
 
     private RssListPresenter presenter;
-    private DatabaseAdapter adapter;
-    private NetworkTaskManager networkTaskManager;
-    private UnreadCountManager unreadCountManager;
-    private PreferenceHelper preferenceHelper;
     private MockView view;
 
     private static final String FIRST_RSS_TITLE = "rss1";
@@ -37,33 +34,36 @@ public class RssListPresenterTest {
     private static final int SECOND_RSS_ID = 1;
 
     private static final int FIRST_RSS_POSITION = 0;
-    private static final int SECOND_RSS_POSITION = 1;
     private static final int HIDE_OPTION_POSITION_WHEN_HIDDEN = 1;
 
     @Before
     public void setup() {
-        adapter = Mockito.mock(DatabaseAdapter.class);
+        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
+        DatabaseAdapter.inject(adapter);
         ArrayList<Feed> allFeeds = new ArrayList<>();
-        allFeeds.add(new Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0, ""));
-        allFeeds.add(new Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 1, ""));
+        Feed firstRss = new Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0, "");
+        Feed secondRss = new Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 1, "");
+        allFeeds.add(firstRss);
+        allFeeds.add(secondRss);
         Mockito.when(adapter.getAllFeedsWithNumOfUnreadArticles()).thenReturn(allFeeds);
-        networkTaskManager = NetworkTaskManager.INSTANCE;
-        unreadCountManager = Mockito.mock(UnreadCountManager.class);
+        NetworkTaskManager networkTaskManager = NetworkTaskManager.INSTANCE;
 
         Context mockContext = Mockito.mock(Context.class);
         Mockito.when(mockContext.getSharedPreferences("FilterPref", Context.MODE_PRIVATE))
                 .thenReturn(Mockito.mock(SharedPreferences.class));
         PreferenceHelper.INSTANCE.setUp(mockContext);
-        preferenceHelper = PreferenceHelper.INSTANCE;
+        PreferenceHelper preferenceHelper = PreferenceHelper.INSTANCE;
 
-        Mockito.when(unreadCountManager.getUnreadCount(FIRST_RSS_ID))
-                .thenReturn(0);
-        Mockito.when(unreadCountManager.getUnreadCount(SECOND_RSS_ID))
-                .thenReturn(1);
-        Mockito.when(unreadCountManager.getUnreadCount(Feed.DEFAULT_FEED_ID)).thenReturn(-1);
-        presenter = new RssListPresenter(preferenceHelper, adapter, networkTaskManager, unreadCountManager);
+        UnreadCountManager.INSTANCE.addFeed(firstRss);
+        UnreadCountManager.INSTANCE.addFeed(secondRss);
+        presenter = new RssListPresenter(preferenceHelper, adapter, networkTaskManager, UnreadCountManager.INSTANCE);
         view = new MockView();
         presenter.setView(view);
+    }
+
+    @After
+    public void tearDown() {
+        UnreadCountManager.INSTANCE.clear();
     }
 
     @Test
