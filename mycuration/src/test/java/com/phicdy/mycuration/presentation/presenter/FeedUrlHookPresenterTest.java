@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.domain.rss.RssParseResult;
@@ -15,8 +14,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class FeedUrlHookPresenterTest {
 
@@ -24,6 +23,7 @@ public class FeedUrlHookPresenterTest {
     private DatabaseAdapter adapter;
     private FeedUrlHookPresenter presenter;
     private RssParser parser;
+    private FeedUrlHookView view;
 
     @Before
     public void setup() {
@@ -31,122 +31,73 @@ public class FeedUrlHookPresenterTest {
         adapter = Mockito.mock(DatabaseAdapter.class);
         DatabaseAdapter.inject(Mockito.mock(DatabaseAdapter.class));
         parser = Mockito.mock(RssParser.class);
-        presenter = new FeedUrlHookPresenter("", "", "",
+        view = Mockito.mock(FeedUrlHookView.class);
+        presenter = new FeedUrlHookPresenter(view, "", "", "",
                 adapter, UnreadCountManager.INSTANCE, networkTaskManager, parser);
     }
 
     @Test
     public void finishWhenEmptyAction() {
-        MockView view = new MockView();
-        presenter.setView(view);
         presenter.create();
-        assertTrue(view.isFinished);
+        verify(view, times(1)).finishView();
     }
 
     @Test
     public void testOnResume() {
         // For coverage
-        presenter.setView(new MockView());
         presenter.resume();
         assertTrue(true);
     }
 
     @Test
     public void finishWhenInvalidActionComes() {
-        MockView view = new MockView();
-        presenter = new FeedUrlHookPresenter("hogehoge", "http://www.google.com", "",
+        presenter = new FeedUrlHookPresenter(view, "hogehoge", "http://www.google.com", "",
                 adapter, UnreadCountManager.INSTANCE, networkTaskManager, parser);
-        presenter.setView(view);
         presenter.create();
-        assertTrue(view.isFinished);
+        verify(view, times(1)).finishView();
     }
 
     @Test
     public void toastShowsWhenActionViewAndInvalidUrlComes() {
-        MockView view = new MockView();
-        presenter = new FeedUrlHookPresenter(Intent.ACTION_VIEW, "hogehoge", "",
+        presenter = new FeedUrlHookPresenter(view, Intent.ACTION_VIEW, "hogehoge", "",
                 adapter, UnreadCountManager.INSTANCE, networkTaskManager, parser);
-        presenter.setView(view);
         presenter.create();
-        assertTrue(view.isInvalidUrlErrorToastShowed);
+        verify(view, times(1)).showInvalidUrlErrorToast();
     }
 
     @Test
     public void toastShowsWhenActionSendAndInvalidUrlComes() {
-        MockView view = new MockView();
-        presenter = new FeedUrlHookPresenter(Intent.ACTION_SEND, "", "hogehoge",
+        presenter = new FeedUrlHookPresenter(view, Intent.ACTION_SEND, "", "hogehoge",
                 adapter, UnreadCountManager.INSTANCE, networkTaskManager, parser);
-        presenter.setView(view);
         presenter.create();
-        assertTrue(view.isInvalidUrlErrorToastShowed);
+        verify(view, times(1)).showInvalidUrlErrorToast();
     }
 
     @Test
     public void viewFinishesWhenFinishAddFeedActionComes() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.callback.failed(RssParseResult.FailedReason.NOT_FOUND, "");
-        assertTrue(view.isFinished);
+        presenter.getCallback().failed(RssParseResult.FailedReason.NOT_FOUND, "");
+        verify(view, times(1)).finishView();
     }
 
     @Test
     public void toastShowsWhenFinishAddFeedActionComesWithNotRssHtmlError() {
-        MockView view = new MockView();
-        presenter.setView(view);
         presenter.create();
-        presenter.callback.failed(RssParseResult.FailedReason.NON_RSS_HTML, "");
-        assertTrue(view.isGenericErrorToastShowed);
+        presenter.getCallback().failed(RssParseResult.FailedReason.NON_RSS_HTML, "");
+        verify(view, times(1)).showGenericErrorToast();
     }
 
     @Test
     public void toastShowsWhenFinishAddFeedActionComesWithInvalidUrlError() {
-        MockView view = new MockView();
-        presenter.setView(view);
         presenter.create();
-        presenter.callback.failed(RssParseResult.FailedReason.INVALID_URL, "");
-        assertTrue(view.isInvalidUrlErrorToastShowed);
+        presenter.getCallback().failed(RssParseResult.FailedReason.INVALID_URL, "");
+        verify(view, times(1)).showInvalidUrlErrorToast();
     }
 
     @Test
     public void failedUrlWillBeTracked() {
-        MockView view = new MockView();
-        presenter.setView(view);
         presenter.create();
         String failUrl = "http://www.google.com";
-        presenter.callback.failed(RssParseResult.FailedReason.INVALID_URL, failUrl);
-        assertThat(view.trackedUrl, is(failUrl));
-    }
-
-    private class MockView implements FeedUrlHookView {
-        private boolean isSuccessToastShowed = false;
-        private boolean isInvalidUrlErrorToastShowed = false;
-        private boolean isGenericErrorToastShowed = false;
-        private boolean isFinished = false;
-        private String trackedUrl = "";
-
-        @Override
-        public void showSuccessToast() {
-            isSuccessToastShowed = true;
-        }
-
-        @Override
-        public void showInvalidUrlErrorToast() {
-            isInvalidUrlErrorToastShowed = true;
-        }
-
-        @Override
-        public void showGenericErrorToast() {
-            isGenericErrorToastShowed = true;
-        }
-
-        @Override
-        public void finishView() {
-            isFinished = true;
-        }
-
-        @Override
-        public void trackFailedUrl(@NonNull String url) {
-            trackedUrl = url;
-        }
+        presenter.getCallback().failed(RssParseResult.FailedReason.INVALID_URL, failUrl);
+        verify(view, times(1)).trackFailedUrl(failUrl);
     }
 }
