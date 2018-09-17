@@ -23,9 +23,8 @@ public class RegisterFilterPresenterTest {
     @Before
     public void setup() {
         mockAdapter = Mockito.mock(DatabaseAdapter.class);
-        presenter = new RegisterFilterPresenter(mockAdapter, 1);
         mockView = new MockView();
-        presenter.setView(mockView);
+        presenter = new RegisterFilterPresenter(mockView, mockAdapter, 1);
     }
 
     @Test
@@ -49,12 +48,6 @@ public class RegisterFilterPresenterTest {
     public void setEmptySelectedFeedList() {
         ArrayList<Feed> testFeeds = new ArrayList<>();
         presenter.setSelectedFeedList(testFeeds);
-        assertEquals(mockView.filterTarget, MockView.DEFAULT_FILTER_TARGET);
-    }
-
-    @Test
-    public void setNullSelectedFeedList() {
-        presenter.setSelectedFeedList(null);
         assertEquals(mockView.filterTarget, MockView.DEFAULT_FILTER_TARGET);
     }
 

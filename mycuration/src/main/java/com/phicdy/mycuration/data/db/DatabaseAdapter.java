@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import android.util.SparseArray;
@@ -814,7 +815,7 @@ public class DatabaseAdapter {
 		return filterList;
 	}
 
-	public Filter getFilterById(int filterId) {
+	public @Nullable Filter getFilterById(int filterId) {
 		Filter filter = null;
 		db.beginTransaction();
 		try {
