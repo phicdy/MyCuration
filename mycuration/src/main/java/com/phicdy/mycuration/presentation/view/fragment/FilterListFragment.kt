@@ -40,8 +40,7 @@ class FilterListFragment : Fragment(), FilterListView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dbAdapter = DatabaseAdapter.getInstance()
-        presenter = FilterListPresenter(dbAdapter)
-        presenter.setView(this)
+        presenter = FilterListPresenter(this, dbAdapter)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

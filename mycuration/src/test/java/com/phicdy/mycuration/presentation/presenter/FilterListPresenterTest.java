@@ -1,12 +1,11 @@
 package com.phicdy.mycuration.presentation.presenter;
 
-import android.support.annotation.NonNull;
-
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.filter.Filter;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.presentation.view.FilterListView;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -14,157 +13,69 @@ import java.util.ArrayList;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class FilterListPresenterTest {
+
+    private DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
+    private FilterListPresenter presenter;
+    private FilterListView view;
+
+    @Before
+    public void setup() {
+        view = Mockito.mock(FilterListView.class);
+        presenter = new FilterListPresenter(view, adapter);
+    }
 
     @Test
     public void testOnCreate() {
         // For coverage
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        presenter.setView(new MockView());
         presenter.create();
     }
 
     @Test
-    public void listIsInitializedAfterOnResume() {
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
+    public void testOnResume() {
+        // For coverage
         presenter.resume();
-        assertTrue(view.isListInited);
-    }
-
-    @Test
-    public void listItemSizeEqualsSizeInDatabaseAfterOnResume() {
-        ArrayList<Filter> testFilters = new ArrayList<>();
-        testFilters.add(new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE));
-        testFilters.add(new Filter(2, "test2", "testKeyword2", "http://test2.com", new ArrayList<Feed>(), -1, Filter.FALSE));
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        Mockito.when(adapter.getAllFilters()).thenReturn(testFilters);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        assertThat(view.filters.size(), is(testFilters.size()));
     }
 
     @Test
     public void testOnPause() {
         // For coverage
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        presenter.setView(new MockView());
-        presenter.create();
-        presenter.resume();
         presenter.pause();
     }
 
     @Test
     public void invalidPositionDeleteDoesNotDeleteFilter() {
-        ArrayList<Filter> testFilters = new ArrayList<>();
         Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
-        testFilters.add(testFilter1);
-        testFilters.add(new Filter(2, "test2", "testKeyword2", "http://test2.com", new ArrayList<Feed>(), -1, Filter.FALSE));
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        Mockito.when(adapter.getAllFilters()).thenReturn(testFilters);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         presenter.onDeleteMenuClicked(-1, testFilter1);
-        assertThat(view.filters.size(), is(testFilters.size()));
+        verify(view, times(0)).remove(-1);
     }
 
     @Test
     public void sizeIsDecreasedAfterDeleteFirstFilter() {
-        ArrayList<Filter> testFilters = new ArrayList<>();
         Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
-        Filter testFilter2 = new Filter(2, "test2", "testKeyword2", "http://test2.com", new ArrayList<Feed>(), -1, Filter.FALSE);
-        testFilters.add(testFilter1);
-        testFilters.add(testFilter2);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        Mockito.when(adapter.getAllFilters()).thenReturn(testFilters);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         presenter.onDeleteMenuClicked(0, testFilter1);
-        assertThat(view.filters.size(), is(1));
-    }
-
-    @Test
-    public void firstItemIsSecondFilterAfterDeleteFirstFilter() {
-        ArrayList<Filter> testFilters = new ArrayList<>();
-        Filter testFilter1 = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
-        Filter testFilter2 = new Filter(2, "test2", "testKeyword2", "http://test2.com", new ArrayList<Feed>(), -1, Filter.FALSE);
-        testFilters.add(testFilter1);
-        testFilters.add(testFilter2);
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        Mockito.when(adapter.getAllFilters()).thenReturn(testFilters);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.onDeleteMenuClicked(0, testFilter1);
-        assertThat(view.filters.get(0).getTitle(), is("test2"));
+        verify(view, times(1)).remove(0);
     }
 
     @Test
     public void editActivityDoesNotStartWhenEditInvalidIdFilter() {
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         Filter invalidFilter = new Filter(0, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onEditMenuClicked(invalidFilter);
-        assertFalse(view.isStartEditActivity);
+        verify(view, times(0)).startEditActivity(invalidFilter.getId());
     }
 
     @Test
     public void editActivityStartsWhenEditValidIdFilter() {
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onEditMenuClicked(validFilter);
-        assertTrue(view.isStartEditActivity);
-    }
-
-    @Test
-    public void editIdEqualsClickedFilter() {
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        Filter validFilter = new Filter(2, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
-        presenter.onEditMenuClicked(validFilter);
-        assertThat(view.startEditActivityId, is(2));
+        verify(view, times(1)).startEditActivity(validFilter.getId());
     }
 
     @Test
     public void filterIsEnabledWhenChecked() {
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onFilterCheckClicked(validFilter, true);
         assertTrue(validFilter.isEnabled());
@@ -172,43 +83,8 @@ public class FilterListPresenterTest {
 
     @Test
     public void filterIsDisabledWhenUnchecked() {
-        DatabaseAdapter adapter = Mockito.mock(DatabaseAdapter.class);
-        FilterListPresenter presenter = new FilterListPresenter(adapter);
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         Filter validFilter = new Filter(1, "test1", "testKeyword1", "http://test1.com", new ArrayList<Feed>(), -1, Filter.TRUE);
         presenter.onFilterCheckClicked(validFilter, false);
         assertFalse(validFilter.isEnabled());
-    }
-
-    private class MockView implements FilterListView {
-
-        private boolean isListInited = false;
-        private boolean isStartEditActivity = false;
-        private int startEditActivityId;
-        private ArrayList<Filter> filters;
-
-        @Override
-        public void remove(int position) {
-            filters.remove(position);
-        }
-
-        @Override
-        public void notifyListChanged() {
-        }
-
-        @Override
-        public void startEditActivity(int filterId) {
-            isStartEditActivity = true;
-            startEditActivityId = filterId;
-        }
-
-        @Override
-        public void initList(@NonNull ArrayList<Filter> filters) {
-            isListInited = true;
-            this.filters = filters;
-        }
     }
 }
