@@ -22,9 +22,6 @@ import java.net.URI
 object NetworkTaskManager {
 
     const val FINISH_UPDATE_ACTION = "FINISH_UPDATE"
-    const val ERROR_NON_RSS_HTML_CONTENT = 2
-    const val ERROR_UNKNOWN = 3
-    const val REASON_NOT_FOUND = -1
 
     val isUpdatingFeed: Boolean get() = false
 
