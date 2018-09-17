@@ -9,8 +9,8 @@ import com.phicdy.mycuration.domain.rss.RssParseResult;
 import com.phicdy.mycuration.domain.rss.RssParser;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
-import com.phicdy.mycuration.util.UrlUtil;
 import com.phicdy.mycuration.presentation.view.FeedSearchView;
+import com.phicdy.mycuration.util.UrlUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -25,11 +25,11 @@ public class FeedSearchPresenter implements Presenter {
     RssParseExecutor.RssParseCallback callback = new RssParseExecutor.RssParseCallback() {
         @Override
         public void succeeded(@NonNull String rssUrl) {
-            onFinishAddFeed(rssUrl, RssParseResult.NOT_FAILED);
+            onFinishAddFeed(rssUrl, RssParseResult.FailedReason.NOT_FAILED);
         }
 
         @Override
-        public void failed(@RssParseResult.FailedReason int reason, @NonNull String url) {
+        public void failed(@NonNull RssParseResult.FailedReason reason, @NonNull String url) {
             onFinishAddFeed(url, reason);
         }
     };
@@ -82,14 +82,14 @@ public class FeedSearchPresenter implements Presenter {
         }
     }
 
-    void onFinishAddFeed(@NonNull String url, long reason) {
+    void onFinishAddFeed(@NonNull String url, RssParseResult.FailedReason reason) {
         Feed newFeed = adapter.getFeedByUrl(url);
-        if (reason == RssParseResult.NOT_FAILED && newFeed != null) {
+        if (reason == RssParseResult.FailedReason.NOT_FAILED && newFeed != null) {
             unreadManager.addFeed(newFeed);
             networkTaskManager.updateFeed(newFeed);
             view.showAddFeedSuccessToast();
         } else {
-            if (reason == NetworkTaskManager.ERROR_INVALID_URL) {
+            if (reason == RssParseResult.FailedReason.INVALID_URL) {
                 view.showInvalidUrlErrorToast();
             } else {
                 view.showGenericErrorToast();

@@ -86,7 +86,7 @@ public class FeedUrlHookPresenterTest {
     public void viewFinishesWhenFinishAddFeedActionComes() {
         MockView view = new MockView();
         presenter.setView(view);
-        presenter.callback.failed(RssParseResult.NOT_FOUND, "");
+        presenter.callback.failed(RssParseResult.FailedReason.NOT_FOUND, "");
         assertTrue(view.isFinished);
     }
 
@@ -95,7 +95,7 @@ public class FeedUrlHookPresenterTest {
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
-        presenter.callback.failed(RssParseResult.NON_RSS_HTML, "");
+        presenter.callback.failed(RssParseResult.FailedReason.NON_RSS_HTML, "");
         assertTrue(view.isGenericErrorToastShowed);
     }
 
@@ -104,7 +104,7 @@ public class FeedUrlHookPresenterTest {
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
-        presenter.callback.failed(RssParseResult.INVALID_URL, "");
+        presenter.callback.failed(RssParseResult.FailedReason.INVALID_URL, "");
         assertTrue(view.isInvalidUrlErrorToastShowed);
     }
 
@@ -114,7 +114,7 @@ public class FeedUrlHookPresenterTest {
         presenter.setView(view);
         presenter.create();
         String failUrl = "http://www.google.com";
-        presenter.callback.failed(RssParseResult.INVALID_URL, failUrl);
+        presenter.callback.failed(RssParseResult.FailedReason.INVALID_URL, failUrl);
         assertThat(view.trackedUrl, is(failUrl));
     }
 

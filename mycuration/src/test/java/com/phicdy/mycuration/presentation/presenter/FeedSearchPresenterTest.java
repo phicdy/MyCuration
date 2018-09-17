@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.phicdy.mycuration.data.db.DatabaseAdapter;
 import com.phicdy.mycuration.data.db.DatabaseHelper;
 import com.phicdy.mycuration.data.rss.Feed;
+import com.phicdy.mycuration.domain.rss.RssParseResult;
 import com.phicdy.mycuration.domain.rss.RssParser;
 import com.phicdy.mycuration.domain.rss.UnreadCountManager;
 import com.phicdy.mycuration.domain.task.NetworkTaskManager;
@@ -20,6 +21,8 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class FeedSearchPresenterTest {
 
@@ -197,12 +200,10 @@ public class FeedSearchPresenterTest {
         FeedSearchPresenter presenter = new FeedSearchPresenter(
                 networkTaskManager, adapter, unreadCountManager, parser);
 
-        MockView view = new MockView();
+        FeedSearchView view = Mockito.mock(FeedSearchView.class);
         presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.onFinishAddFeed(testUrl, NetworkTaskManager.REASON_NOT_FOUND);
-        assertFalse(view.isProgressDialogForeground);
+        presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FAILED);
+        verify(view, times(1)).dismissProgressBar();
     }
 
     @Test
@@ -215,55 +216,38 @@ public class FeedSearchPresenterTest {
         FeedSearchPresenter presenter = new FeedSearchPresenter(
                 networkTaskManager, adapter, unreadCountManager, parser);
 
-        MockView view = new MockView();
+        FeedSearchView view = Mockito.mock(FeedSearchView.class);
         presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.onFinishAddFeed(testUrl, NetworkTaskManager.REASON_NOT_FOUND);
-        assertTrue(view.isFinished);
+        presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FAILED);
+        verify(view, times(1)).finishView();
     }
 
     @Test
     public void toastShowsWhenInvalidUrlComes() {
-        MockView view = new MockView();
+        FeedSearchView view = Mockito.mock(FeedSearchView.class);
         presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         String testUrl = "http://hogeagj.com";
-        presenter.onFinishAddFeed(testUrl, NetworkTaskManager.ERROR_INVALID_URL);
-        assertTrue(view.isInvalidUrlErrorToastShowed);
+        presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.INVALID_URL);
+        verify(view, times(1)).showInvalidUrlErrorToast();
     }
 
     @Test
     public void toastShowsWhenNotHtmlErrorOccurs() {
-        MockView view = new MockView();
+        FeedSearchView view = Mockito.mock(FeedSearchView.class);
         presenter.setView(view);
-        presenter.create();
-        presenter.resume();
         String testUrl = "http://hogeagj.com";
-        presenter.onFinishAddFeed(testUrl, NetworkTaskManager.ERROR_NON_RSS_HTML_CONTENT);
-        assertTrue(view.isGenericErrorToastShowed);
+        presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NON_RSS_HTML);
+        verify(view, times(1)).showGenericErrorToast();
     }
 
     @Test
-    public void toastShowsWhenUnknownErrorOccurs() {
+    public void toastShowsWhenNotFoundErrorOccurs() {
         MockView view = new MockView();
         presenter.setView(view);
         presenter.create();
         presenter.resume();
         String testUrl = "http://hogeagj.com";
-        presenter.onFinishAddFeed(testUrl, NetworkTaskManager.ERROR_UNKNOWN);
-        assertTrue(view.isGenericErrorToastShowed);
-    }
-
-    @Test
-    public void toastShowsWhenNotDefinedErrorOccurs() {
-        MockView view = new MockView();
-        presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        String testUrl = "http://hogeagj.com";
-        presenter.onFinishAddFeed(testUrl, 999999);
+        presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FOUND);
         assertTrue(view.isGenericErrorToastShowed);
     }
 
@@ -277,12 +261,10 @@ public class FeedSearchPresenterTest {
         FeedSearchPresenter presenter = new FeedSearchPresenter(
                 networkTaskManager, adapter, unreadCountManager, parser);
 
-        MockView view = new MockView();
+        FeedSearchView view = Mockito.mock(FeedSearchView.class);
         presenter.setView(view);
-        presenter.create();
-        presenter.resume();
-        presenter.onFinishAddFeed(testUrl, NetworkTaskManager.REASON_NOT_FOUND);
-        assertTrue(view.isGenericErrorToastShowed);
+        presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FOUND);
+        verify(view, times(1)).showGenericErrorToast();
     }
 
     @Test
@@ -300,7 +282,7 @@ public class FeedSearchPresenterTest {
         presenter.create();
         presenter.resume();
         String testUrl = "http://hogeagj.com";
-        presenter.onFinishAddFeed(testUrl, 999999);
+        presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.INVALID_URL);
         assertThat(view.trackedUrl, is(testUrl));
     }
 
@@ -309,9 +291,7 @@ public class FeedSearchPresenterTest {
         private boolean isFeedHookActivityForeground = false;
         private boolean isProgressDialogForeground = false;
         private boolean isSuccessToastShowed = false;
-        private boolean isInvalidUrlErrorToastShowed = false;
         private boolean isGenericErrorToastShowed = false;
-        private boolean isFinished = false;
         private String feedHookUrl;
         private String loadedUrl;
         private String searchViewUrl;
@@ -340,7 +320,6 @@ public class FeedSearchPresenterTest {
 
         @Override
         public void showInvalidUrlErrorToast() {
-            isInvalidUrlErrorToastShowed = true;
         }
 
         @Override
@@ -355,7 +334,6 @@ public class FeedSearchPresenterTest {
 
         @Override
         public void finishView() {
-            isFinished = true;
         }
 
         @Override

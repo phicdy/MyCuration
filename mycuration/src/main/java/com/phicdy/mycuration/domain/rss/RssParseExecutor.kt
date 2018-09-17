@@ -8,13 +8,13 @@ class RssParseExecutor(private val parser: RssParser, private val adapter: Datab
 
     interface RssParseCallback {
         fun succeeded(rssUrl: String)
-        fun failed(@RssParseResult.FailedReason reason: Int, url: String)
+        fun failed(reason: RssParseResult.FailedReason, url: String)
     }
 
     fun start(parseTargetUrl: String, callback: RssParseCallback) {
         executorService.execute {
             parser.parseRssXml(UrlUtil.removeUrlParameter(parseTargetUrl), true).let { result ->
-                if (result.failedReason == RssParseResult.NOT_FAILED && result.feed != null) {
+                if (result.failedReason == RssParseResult.FailedReason.NOT_FAILED && result.feed != null) {
                     result.feed.run {
                         adapter.saveNewFeed(title, url, format, siteUrl)
                         callback.succeeded(url)

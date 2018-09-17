@@ -23,7 +23,7 @@ class RssParser {
 
     private fun parse(canonicalUrl: String): RssParseResult {
         if (isCanonical) {
-            return RssParseResult(RssParseResult.NOT_FOUND)
+            return RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
         }
         isCanonical = true
         return parseRssXml(canonicalUrl, false)
@@ -45,7 +45,7 @@ class RssParser {
             val url = URL(baseUrl)
             if (!"http".equals(url.protocol, ignoreCase = true) && !"https".equals(url.protocol, ignoreCase = true)) {
                 Log.d(LOG_TAG, "URL does not start with http or https")
-                return RssParseResult(RssParseResult.INVALID_URL)
+                return RssParseResult(failedReason = RssParseResult.FailedReason.INVALID_URL)
             }
             val pcUserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36"
             val document = Jsoup.connect(baseUrl).userAgent(pcUserAgent).get()
@@ -135,7 +135,7 @@ class RssParser {
                     return if (url.toString() == feedPathUrl) {
                         // Already check URL that path is "feed"
                         Log.d(LOG_TAG, "RSS URL was not found")
-                        RssParseResult(RssParseResult.NOT_FOUND)
+                        RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
                     } else {
                         parseRssXml(URL(url.protocol, url.host, "feed").toString(), false)
                     }
@@ -166,7 +166,7 @@ class RssParser {
             e.printStackTrace()
         }
 
-        return RssParseResult(RssParseResult.NOT_FOUND)
+        return RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
     }
 
     fun parseXml(`is`: InputStream, latestDate: Long): ArrayList<Article> {

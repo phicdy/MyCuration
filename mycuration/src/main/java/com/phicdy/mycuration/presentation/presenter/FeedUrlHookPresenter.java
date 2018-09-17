@@ -34,8 +34,8 @@ public class FeedUrlHookPresenter implements Presenter {
         }
 
         @Override
-        public void failed(@RssParseResult.FailedReason int reason, @NonNull String url) {
-            if (reason == RssParseResult.INVALID_URL) {
+        public void failed(@NonNull RssParseResult.FailedReason reason, @NonNull String url) {
+            if (reason == RssParseResult.FailedReason.INVALID_URL) {
                 view.showInvalidUrlErrorToast();
             } else {
                 view.showGenericErrorToast();
