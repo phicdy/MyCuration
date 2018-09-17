@@ -56,9 +56,8 @@ public class RssListPresenterTest {
 
         UnreadCountManager.INSTANCE.addFeed(firstRss);
         UnreadCountManager.INSTANCE.addFeed(secondRss);
-        presenter = new RssListPresenter(preferenceHelper, adapter, networkTaskManager, UnreadCountManager.INSTANCE);
         view = new MockView();
-        presenter.setView(view);
+        presenter = new RssListPresenter(view, preferenceHelper, adapter, networkTaskManager, UnreadCountManager.INSTANCE);
     }
 
     @After

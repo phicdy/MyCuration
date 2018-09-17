@@ -44,8 +44,7 @@ class RssListFragment : Fragment(), RssListView {
         val networkTaskManager = NetworkTaskManager
         retainInstance = true
         val helper = PreferenceHelper
-        presenter = RssListPresenter(helper, dbAdapter, networkTaskManager, UnreadCountManager)
-        presenter.setView(this)
+        presenter = RssListPresenter(this, helper, dbAdapter, networkTaskManager, UnreadCountManager)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
