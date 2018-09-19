@@ -55,11 +55,11 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver() {
             val getHatenaBookmark = GetHatenaBookmark(dbAdapter)
             var delaySec = 0
             var totalNum = 0
-            feeds.forEach { feed ->
+            for (feed in feeds) {
                 val unreadArticles = dbAdapter.getUnreadArticlesInAFeed(feed.id, true)
-                if (unreadArticles.isEmpty()) return@forEach
-                unreadArticles.forEach articleLoop@ { unreadArticle ->
-                    if (unreadArticle.point != Article.DEDAULT_HATENA_POINT && !isWifiConnected) return@articleLoop
+                if (unreadArticles.isEmpty()) continue
+                for (unreadArticle in unreadArticles) {
+                    if (unreadArticle.point != Article.DEDAULT_HATENA_POINT && !isWifiConnected) continue
                     totalNum++
                     getHatenaBookmark.request(unreadArticle.url, delaySec)
                     if (totalNum % 10 == 0) delaySec += 2
