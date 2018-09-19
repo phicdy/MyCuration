@@ -28,7 +28,8 @@ class GetFeedIconTask internal constructor(private val iconSaveDir: String) : As
 
     private fun getFeedIcon(siteUrl: String) {
         val parser = IconParser()
-        val iconUrlStr = parser.parseHtml(siteUrl) ?: return
+        val iconUrlStr = parser.parseHtml(siteUrl)
+        if (iconUrlStr.isBlank()) return
 
         var dataInStream: DataInputStream? = null
         var dataOutStream: DataOutputStream? = null

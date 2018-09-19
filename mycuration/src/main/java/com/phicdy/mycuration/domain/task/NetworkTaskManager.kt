@@ -22,10 +22,6 @@ import java.net.URI
 object NetworkTaskManager {
 
     const val FINISH_UPDATE_ACTION = "FINISH_UPDATE"
-    const val ERROR_INVALID_URL = 1
-    const val ERROR_NON_RSS_HTML_CONTENT = 2
-    const val ERROR_UNKNOWN = 3
-    const val REASON_NOT_FOUND = -1
 
     val isUpdatingFeed: Boolean get() = false
 
@@ -62,7 +58,7 @@ object NetworkTaskManager {
             val inputStream = response.body().byteStream()
             val parser = RssParser()
             val dbAdapter = DatabaseAdapter.getInstance()
-            val latestDate = dbAdapter.getLatestArticleDate(feed.id);
+            val latestDate = dbAdapter.getLatestArticleDate(feed.id)
             val articles = parser.parseXml(inputStream, latestDate)
 
             if (articles.size > 0) {
@@ -81,12 +77,12 @@ object NetworkTaskManager {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            if (feed.iconPath == null || feed.iconPath == Feed.DEDAULT_ICON_PATH) {
+            if (feed.iconPath == Feed.DEDAULT_ICON_PATH) {
                 val iconSaveFolderStr = FileUtil.iconSaveFolder()
                 val task = GetFeedIconTask(iconSaveFolderStr)
                 task.execute(feed.siteUrl)
             }
-            UnreadCountManager.getInstance().refreshConut(feed.id)
+            UnreadCountManager.refreshConut(feed.id)
         } catch (e: IOException) {
 
         } catch (e: RuntimeException) {

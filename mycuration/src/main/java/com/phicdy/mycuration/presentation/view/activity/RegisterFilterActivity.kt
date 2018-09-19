@@ -35,8 +35,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
         initView()
         val dbAdapter = DatabaseAdapter.getInstance()
         val editFilterId = intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID)
-        presenter = RegisterFilterPresenter(dbAdapter, editFilterId)
-        presenter.setView(this)
+        presenter = RegisterFilterPresenter(this, dbAdapter, editFilterId)
     }
 
     private fun initView() {

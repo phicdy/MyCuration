@@ -25,7 +25,7 @@ class RssParserTest {
     private val callback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {}
 
-        override fun failed(@RssParseResult.FailedReason reason: Int, url: String) {}
+        override fun failed(reason: RssParseResult.FailedReason, url: String) {}
     }
     private lateinit var adapter: DatabaseAdapter
     private lateinit var parser: RssParser
@@ -278,7 +278,7 @@ class RssParserTest {
         val parser = RssParser()
         val url = "https://www.amazon.co.jp/"
         val result = parser.parseRssXml(UrlUtil.removeUrlParameter(url), true)
-        assertThat(result.failedReason, `is`(RssParseResult.NOT_FOUND))
+        assertThat(result.failedReason, `is`(RssParseResult.FailedReason.NOT_FOUND))
     }
 
     @Test

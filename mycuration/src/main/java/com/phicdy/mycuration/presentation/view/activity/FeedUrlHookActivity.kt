@@ -28,16 +28,14 @@ class FeedUrlHookActivity : Activity(), FeedUrlHookView {
         setContentView(R.layout.activity_feed_url_hook)
 
         val dbAdapter = DatabaseAdapter.getInstance()
-        val unreadCountManager = UnreadCountManager.getInstance()
         val networkTaskManager = NetworkTaskManager
         val parser = RssParser()
         val intent = intent
         val action = if (intent.action == null) "" else intent.action
         val dataString = if (intent.dataString == null) "" else intent.dataString
         val extrasText = if (intent.extras == null) "" else intent.extras.getCharSequence(Intent.EXTRA_TEXT, "")
-        presenter = FeedUrlHookPresenter(action, dataString, extrasText,
-                dbAdapter, unreadCountManager, networkTaskManager, parser)
-        presenter.setView(this)
+        presenter = FeedUrlHookPresenter(this, action, dataString, extrasText,
+                dbAdapter, UnreadCountManager, networkTaskManager, parser)
         presenter.create()
     }
 

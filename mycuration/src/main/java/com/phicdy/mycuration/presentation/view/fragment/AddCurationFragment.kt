@@ -224,6 +224,7 @@ class AddCurationFragment : Fragment(), AddCurationView {
         showProgressDialog()
         object : Thread() {
             override fun run() {
+                Thread.sleep(5000)
                 presenter.onAddMenuClicked()
             }
         }.start()

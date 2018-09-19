@@ -12,7 +12,7 @@ object UrlUtil {
         return m.find()
     }
 
-    fun removeUrlParameter(url: String): String? {
+    fun removeUrlParameter(url: String): String {
         if (!isCorrectUrl(url)) {
             return url
         }

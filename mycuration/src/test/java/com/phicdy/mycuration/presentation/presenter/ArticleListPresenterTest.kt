@@ -1,34 +1,36 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
+import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.util.PreferenceHelper
-
-import org.junit.Test
-import org.mockito.Mockito
-
-import java.util.ArrayList
-
 import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
+import org.junit.Before
+import org.junit.Test
+import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.times
+import java.util.ArrayList
 
 class ArticleListPresenterTest {
+
+    @Before
+    fun setup() {
+        DatabaseAdapter.inject(Mockito.mock(DatabaseAdapter::class.java))
+    }
 
     @Test
     fun testOnCreate() {
         // For coverage
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val presenter = ArticleListPresenter(
                 1, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -37,11 +39,10 @@ class ArticleListPresenterTest {
     @Test
     fun `No articles are loaded after onCreateView with empty DB for feed`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mockEmptyDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -52,11 +53,10 @@ class ArticleListPresenterTest {
     @Test
     fun `No Articles are loaded after onCreateView with empty DB for all feed`() {
         val testFeedId = Feed.ALL_FEED_ID
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mockEmptyDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -67,11 +67,10 @@ class ArticleListPresenterTest {
     @Test
     fun `No Articles are loaded after onCreateView with empty DB for curation`() {
         val testCurationId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mockEmptyDatabase(testCurationId)
         val presenter = ArticleListPresenter(
                 Feed.DEFAULT_FEED_ID, testCurationId, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -82,11 +81,10 @@ class ArticleListPresenterTest {
     @Test
     fun `All artciles of feed are loaded after onCreateView if already read`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock1ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -97,11 +95,10 @@ class ArticleListPresenterTest {
     @Test
     fun `All artciles are loaded after onCreateView if already read`() {
         val testFeedId = Feed.ALL_FEED_ID
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock1ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -112,11 +109,10 @@ class ArticleListPresenterTest {
     @Test
     fun `All artciles OfCurationare loaded after onCreateView if already read`() {
         val testCurationId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock1ReadArticleDatabase(testCurationId)
         val presenter = ArticleListPresenter(
                 Feed.DEFAULT_FEED_ID, testCurationId, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -127,11 +123,10 @@ class ArticleListPresenterTest {
     @Test
     fun `All unread articles of feed are only loaded after onCreateView`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock2Unread2ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -142,11 +137,10 @@ class ArticleListPresenterTest {
     @Test
     fun `All unread articles are only loaded after onCreateView`() {
         val testFeedId = Feed.ALL_FEED_ID
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock2Unread2ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -157,11 +151,10 @@ class ArticleListPresenterTest {
     @Test
     fun `All unread articles of curation are only loaded after onCreateView`() {
         val testCurationId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mock2Unread2ReadArticleDatabase(testCurationId)
         val presenter = ArticleListPresenter(
                 Feed.DEFAULT_FEED_ID, testCurationId, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -173,10 +166,9 @@ class ArticleListPresenterTest {
     fun testOnPause() {
         // For coverage
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val presenter = ArticleListPresenter(
                 1, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.pause()
@@ -185,13 +177,12 @@ class ArticleListPresenterTest {
     @Test
     fun `unread article status becomes to read when clicked`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -203,13 +194,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Toread article status is still to read when clicked`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.TOREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -221,13 +211,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Read article status is still read when clicked`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.READ, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -239,13 +228,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Article is opened with internal option when clicked`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -257,13 +245,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Article is opened with external option when clicked`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, false, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, false, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -275,13 +262,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Intenal web view is opened with internal option when clicked`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -293,13 +279,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Title of intenal web view is opended article's RSS's title`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -311,13 +296,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Title of intenal web view is opened article's RSS's title for all RSS`() {
         val testFeedId = Feed.ALL_FEED_ID
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -329,13 +313,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Extenal web view is opened with external option when clicked`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, false, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, false, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -347,13 +330,12 @@ class ArticleListPresenterTest {
     @Test
     fun `Share UI shows when long clicked`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val longClickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(longClickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -365,13 +347,12 @@ class ArticleListPresenterTest {
     @Test
     fun `No search result view shows when search action and no result`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val article = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(article)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT,
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT,
                 "ghaeogha", Intent.ACTION_SEARCH)
         val view = MockView()
         presenter.setView(view)
@@ -382,11 +363,10 @@ class ArticleListPresenterTest {
     @Test
     fun `No article view shows when no search action and no result`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val adapter = mockEmptyDatabase(1)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT,
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT,
                 "", "")
         val view = MockView()
         presenter.setView(view)
@@ -397,14 +377,13 @@ class ArticleListPresenterTest {
     @Test
     fun `Search article when search action`() {
         val testFeedId = 1
-        val manager = Mockito.mock(UnreadCountManager::class.java)
         val article = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(article)
         val query = "query"
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter,
-                manager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT,
+                UnreadCountManager, true, true, true, PreferenceHelper.SWIPE_LEFT_TO_RIGHT,
                 query, Intent.ACTION_SEARCH)
         val view = MockView()
         presenter.setView(view)
@@ -448,7 +427,7 @@ class ArticleListPresenterTest {
         `when`(adapter.isExistArticle(testId)).thenReturn(true)
         val mockFeed = Mockito.mock(Feed::class.java)
         `when`(mockFeed.title).thenReturn("feed")
-        `when`(adapter.getFeedById(testId)).thenReturn(mockFeed);
+        `when`(adapter.getFeedById(testId)).thenReturn(mockFeed)
         return adapter
     }
 

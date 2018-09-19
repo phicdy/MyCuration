@@ -25,11 +25,10 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_filter_target_rss)
         title = getString(R.string.title_select_filter_rss)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        presenter = SelectFilterTargetRssPresenter()
-        presenter.setView(this)
+        presenter = SelectFilterTargetRssPresenter(this)
         presenter.create()
     }
 

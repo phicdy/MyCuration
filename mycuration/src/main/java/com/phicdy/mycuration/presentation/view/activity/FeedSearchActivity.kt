@@ -82,10 +82,8 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
 
         val manager = NetworkTaskManager
         val dbAdapter = DatabaseAdapter.getInstance()
-        val unreadCountManager = UnreadCountManager.getInstance()
         val parser = RssParser()
-        presenter = FeedSearchPresenter(manager, dbAdapter, unreadCountManager, parser)
-        presenter.setView(this)
+        presenter = FeedSearchPresenter(this, manager, dbAdapter, UnreadCountManager, parser)
 
         fab = findViewById(R.id.fab)
         fab.setOnClickListener(View.OnClickListener {

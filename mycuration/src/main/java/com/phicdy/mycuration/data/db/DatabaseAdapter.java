@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -51,7 +53,12 @@ public class DatabaseAdapter {
 			}
 		}
 	}
-	
+
+	@VisibleForTesting
+	public static void inject(@NonNull DatabaseAdapter adapter) {
+	    sharedDbAdapter = adapter;
+    }
+
 	public static DatabaseAdapter getInstance() {
 		if (sharedDbAdapter == null) {
 		    throw new IllegalStateException("Not setup yet");
@@ -159,7 +166,7 @@ public class DatabaseAdapter {
      *
      * @return Feed array with unread count of articles
      */
-	public ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
+	public @NonNull ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
 		ArrayList<Feed> feedList = new ArrayList<>();
 		db.beginTransaction();
         Cursor cursor = null;
@@ -175,7 +182,7 @@ public class DatabaseAdapter {
 					String iconPath = cursor.getString(3);
 					String siteUrl = cursor.getString(4);
 					int unreadAriticlesCount = cursor.getInt(5);
-					feedList.add(new Feed(id, title, url, iconPath, siteUrl, unreadAriticlesCount));
+					feedList.add(new Feed(id, title, url, iconPath, "", unreadAriticlesCount, siteUrl));
 				}
 			}
 			db.setTransactionSuccessful();
@@ -214,7 +221,7 @@ public class DatabaseAdapter {
 					String url = cursor.getString(2);
 					String iconPath = cursor.getString(3);
 					String siteUrl = cursor.getString(4);
-					feedList.add(new Feed(id, title, url, iconPath, siteUrl, 0));
+					feedList.add(new Feed(id, title, url, iconPath, "", 0, siteUrl));
 				}
 			}
 			db.setTransactionSuccessful();
@@ -416,8 +423,8 @@ public class DatabaseAdapter {
 
             db.beginTransaction();
             for (Filter filter : filters) {
-                ArrayList<Feed> feeds = filter.feeds();
-                if (feeds != null && feeds.size() == 1 && feeds.get(0).getId() == feedId) {
+                ArrayList<Feed> feeds = filter.getFeeds();
+                if (feeds.size() == 1 && feeds.get(0).getId() == feedId) {
                     // This filter had relation with this feed only
                     db.delete(Filter.TABLE_NAME, Filter.ID + " = " + filter.getId(), null);
                 }
@@ -453,7 +460,7 @@ public class DatabaseAdapter {
 				String iconPath = cur.getString(2);
 				String siteUrl = cur.getString(3);
 
-				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, siteUrl, 0);
+				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, "", 0, siteUrl);
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
@@ -483,7 +490,7 @@ public class DatabaseAdapter {
 				String iconPath = cur.getString(2);
 				String siteUrl = cur.getString(3);
 
-				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, siteUrl, 0);
+				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, "", 0, siteUrl);
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
@@ -677,11 +684,11 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
+
 		return articles;
 	}
-	
-	public ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
+
+	public @NonNull ArrayList<Article> getUnreadArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {
@@ -702,7 +709,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(3);
 				long dateLong = cursor.getLong(4);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null, null);
+						dateLong, feedId, "", "");
 				articles.add(article);
 			}
 			cursor.close();
@@ -712,10 +719,10 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
+
 		return articles;
 	}
-	
+
 	public ArrayList<Article> getAllArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
@@ -738,7 +745,7 @@ public class DatabaseAdapter {
 				String point = cursor.getString(4);
 				long dateLong = cursor.getLong(5);
 				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, null, null);
+						dateLong, feedId, "", "");
 				articles.add(article);
 			}
 			cursor.close();
@@ -748,7 +755,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
+
 		return articles;
 	}
 
@@ -770,7 +777,7 @@ public class DatabaseAdapter {
         return latestDate;
 	}
 
-	public ArrayList<Filter> getEnabledFiltersOfFeed(int feedId) {
+	public @NonNull ArrayList<Filter> getEnabledFiltersOfFeed(int feedId) {
 		ArrayList<Filter> filterList = new ArrayList<>();
 		db.beginTransaction();
 		try {
@@ -785,7 +792,7 @@ public class DatabaseAdapter {
 			String condition =
                     FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FEED_ID + " = " + feedId + " and " +
                     FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FILTER_ID + " = " + Filter.TABLE_NAME + "." + Filter.ID + " and " +
-                    Filter.TABLE_NAME + "." + Filter.ENABLED + " = " + Filter.TRUE;
+							Filter.TABLE_NAME + "." + Filter.ENABLED + " = " + Filter.TRUE;
 			Cursor cur = db.query(Filter.TABLE_NAME + " inner join " + FilterFeedRegistration.TABLE_NAME, columns, condition, null, null,
 					null, null);
 			// Change to ArrayList
@@ -795,7 +802,7 @@ public class DatabaseAdapter {
 				String keyword = cur.getString(2);
 				String url = cur.getString(3);
 				int enabled = cur.getInt(4);
-				filterList.add(new Filter(id, title, keyword, url, enabled));
+				filterList.add(new Filter(id, title, keyword, url, new ArrayList<Feed>(), -1, enabled));
 			}
 			cur.close();
 			db.setTransactionSuccessful();
@@ -804,11 +811,11 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
+
 		return filterList;
 	}
 
-	public Filter getFilterById(int filterId) {
+	public @Nullable Filter getFilterById(int filterId) {
 		Filter filter = null;
 		db.beginTransaction();
 		try {
@@ -830,11 +837,13 @@ public class DatabaseAdapter {
                     FilterFeedRegistration.TABLE_NAME + " inner join " +
                     Feed.TABLE_NAME;
 			Cursor cur = db.query(table, columns, condition, null, null, null, null);
+			if (cur == null || cur.getCount() < 1) return null;
+
             ArrayList<Feed> feeds = new ArrayList<>();
             int id = 0;
-            String keyword = null;
-            String url = null;
-            String title = null;
+            String keyword = "";
+            String url = "";
+            String title = "";
             int enabled = 0;
             while (cur.moveToNext()) {
                 id = cur.getInt(0);
@@ -844,12 +853,12 @@ public class DatabaseAdapter {
                 enabled = cur.getInt(4);
                 int feedId = cur.getInt(5);
                 String feedTitle = cur.getString(6);
-                Feed feed = new Feed(feedId, feedTitle);
+                Feed feed = new Feed(feedId, feedTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, "");
                 feeds.add(feed);
             }
 			cur.close();
 			db.setTransactionSuccessful();
-			filter = new Filter(id, title, keyword, url, feeds, enabled);
+			filter = new Filter(id, title, keyword, url, feeds, -1, enabled);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -895,7 +904,7 @@ public class DatabaseAdapter {
 			} finally {
 				db.endTransaction();
 			}
-			
+
 		}
 	}
 
@@ -934,7 +943,7 @@ public class DatabaseAdapter {
 		} finally {
 			db.endTransaction();
 		}
-		
+
 		return num;
 	}
 
@@ -957,11 +966,11 @@ public class DatabaseAdapter {
 		try {
 			// Check same filter exists in DB
             String[] columns = {
-                    Filter.ID,
+					Filter.ID,
             };
             String condition = Filter.TITLE + " = '" + title + "' and " +
-                    Filter.KEYWORD + " = '" + keyword + "' and " +
-                    Filter.URL + " = '" + filterUrl + "'";
+					Filter.KEYWORD + " = '" + keyword + "' and " +
+					Filter.URL + " = '" + filterUrl + "'";
             String table = Filter.TABLE_NAME;
             cur = db.query(table, columns, condition, null, null, null, null);
 			if (cur.getCount() != 0) {
@@ -1087,43 +1096,43 @@ public class DatabaseAdapter {
 //		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
 //				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
 		feeds.add(new Feed(0, "IT速報",
-				"http://blog.livedoor.jp/itsoku/index.rdf","", "http://blog.livedoor.jp/itsoku/", 0));
+				"http://blog.livedoor.jp/itsoku/index.rdf","", "http://blog.livedoor.jp/itsoku/", 0, ""));
 		feeds.add(new Feed(0, "あじゃじゃしたー",
-				"http://blog.livedoor.jp/chihhylove/index.rdf","", "http://blog.livedoor.jp/chihhylove/", 0));
+				"http://blog.livedoor.jp/chihhylove/index.rdf","", "http://blog.livedoor.jp/chihhylove/", 0, ""));
 		feeds.add(new Feed(0, "はてなブログ人気エントリー",
-				"http://b.hatena.ne.jp/hotentry.rss","", "http://b.hatena.ne.jp", 0));
+				"http://b.hatena.ne.jp/hotentry.rss","", "http://b.hatena.ne.jp", 0, ""));
 		feeds.add(new Feed(0, "はてなブックマーク - 人気エントリー - テクノロジー",
-				"http://b.hatena.ne.jp/hotentry/it.rss","", "http://b.hatena.ne.jp/hotentry", 0));
+				"http://b.hatena.ne.jp/hotentry/it.rss","", "http://b.hatena.ne.jp/hotentry", 0, ""));
 		feeds.add(new Feed(0, "暇人速報",
-				"http://himasoku.com/index.rdf","", "http://himasoku.com", 0));
+				"http://himasoku.com/index.rdf","", "http://himasoku.com", 0, ""));
 		feeds.add(new Feed(0, "ドメサカブログ",
-				"http://blog.livedoor.jp/domesoccer/index.rdf","", "http://blog.livedoor.jp/domesoccer/", 0));
+				"http://blog.livedoor.jp/domesoccer/index.rdf","", "http://blog.livedoor.jp/domesoccer/", 0, ""));
 		feeds.add(new Feed(0, "きんどう",
-				"http://kindou.info/feed","", "http://kindou.info", 0));
+				"http://kindou.info/feed","", "http://kindou.info", 0, ""));
 		feeds.add(new Feed(0, "GGSOKU - ガジェット速報",
-				"http://ggsoku.com/feed","", "http://ggsoku.com", 0));
+				"http://ggsoku.com/feed","", "http://ggsoku.com", 0, ""));
 		feeds.add(new Feed(0, "Act as Professional",
-				"http://hiroki.jp/feed/","", "http://hiroki.jp", 0));
+				"http://hiroki.jp/feed/","", "http://hiroki.jp", 0, ""));
 		feeds.add(new Feed(0, "Developers.IO",
-				"http://dev.classmethod.jp/feed/","", "http://dev.classmethod.jp", 0));
+				"http://dev.classmethod.jp/feed/","", "http://dev.classmethod.jp", 0, ""));
 		feeds.add(new Feed(0, "GREE Engineers' Blog",
-				"http://labs.gree.jp/blog/feed","", "http://labs.gree.jp/blog", 0));
+				"http://labs.gree.jp/blog/feed","", "http://labs.gree.jp/blog", 0, ""));
 		feeds.add(new Feed(0, "HTC速報",
-				"http://htcsoku.info/feed/","", "http://htcsoku.info", 0));
+				"http://htcsoku.info/feed/","", "http://htcsoku.info", 0, ""));
 		feeds.add(new Feed(0, "Hatena Developer Blog",
-				"http://developer.hatenastaff.com/rss","", "http://developer.hatenastaff.com/", 0));
+				"http://developer.hatenastaff.com/rss","", "http://developer.hatenastaff.com/", 0, ""));
 		feeds.add(new Feed(0, "ITmedia 総合記事一覧",
-				"http://rss.rssad.jp/rss/itmtop/2.0/itmedia_all.xml","", "http://www.itmedia.co.jp/", 0));
+				"http://rss.rssad.jp/rss/itmtop/2.0/itmedia_all.xml","", "http://www.itmedia.co.jp/", 0, ""));
 		feeds.add(new Feed(0, "Publickey",
-				"http://www.publickey1.jp/atom.xml","", "http://www.publickey1.jp/", 0));
+				"http://www.publickey1.jp/atom.xml","", "http://www.publickey1.jp/", 0, ""));
 		feeds.add(new Feed(0, "Tech Booster",
-				"http://techbooster.jpn.org/feed/","", "http://techbooster.jpn.org", 0));
+				"http://techbooster.jpn.org/feed/","", "http://techbooster.jpn.org", 0, ""));
 		feeds.add(new Feed(0, "TechCrunch Japan",
-				"http://jp.techcrunch.com/feed/","", "http://jp.techcrunch.com", 0));
+				"http://jp.techcrunch.com/feed/","", "http://jp.techcrunch.com", 0, ""));
 		feeds.add(new Feed(0, "あんどろいど速報",
-				"http://androidken.blog119.fc2.com/?xml","", "http://androidken.blog119.fc2.com/", 0));
+				"http://androidken.blog119.fc2.com/?xml","", "http://androidken.blog119.fc2.com/", 0, ""));
 		feeds.add(new Feed(0, "＠IT 全フォーラム 最新記事一覧",
-				"http://www.atmarkit.co.jp/","", "http://rss.rssad.jp/rss/itmatmarkit/rss.xml", 0));
+				"http://www.atmarkit.co.jp/","", "http://rss.rssad.jp/rss/itmatmarkit/rss.xml", 0, ""));
 		//atom
 //		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
 //				"http://feeds.feedburner.com/tb-hotentry"));
@@ -1254,11 +1263,11 @@ public class DatabaseAdapter {
                 int enabled = cursor.getInt(4);
                 int feedId = cursor.getInt(5);
                 String feedTitle = cursor.getString(6);
-                feeds.add(new Feed(feedId, feedTitle));
+                feeds.add(new Feed(feedId, feedTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""));
 				while (cursor.moveToNext()) {
                     int cursorFilterId = cursor.getInt(0);
                     if (filterId != cursorFilterId) {
-                        filter = new Filter(filterId, title, keyword, url, feeds, enabled);
+                        filter = new Filter(filterId, title, keyword, url, feeds, -1, enabled);
                         filters.add(filter);
                         filterId = cursorFilterId;
                         feeds = new ArrayList<>();
@@ -1269,9 +1278,9 @@ public class DatabaseAdapter {
                     enabled = cursor.getInt(4);
                     feedId = cursor.getInt(5);
                     feedTitle = cursor.getString(6);
-                    feeds.add(new Feed(feedId, feedTitle));
+                    feeds.add(new Feed(feedId, feedTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""));
 				}
-                filter = new Filter(filterId, title, keyword, url, feeds, enabled);
+                filter = new Filter(filterId, title, keyword, url, feeds, -1, enabled);
                 filters.add(filter);
 				cursor.close();
 			}
