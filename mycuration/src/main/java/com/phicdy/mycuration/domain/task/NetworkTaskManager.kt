@@ -16,7 +16,6 @@ import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Url
 import java.io.IOException
-import java.io.InputStream
 import java.net.URI
 
 object NetworkTaskManager {
@@ -42,8 +41,8 @@ object NetworkTaskManager {
         fun feeds(@Url url: String): Call<ResponseBody>
     }
 
-    fun updateFeed(feed: Feed): InputStream? {
-        if (TextUtil.isEmpty(feed.url)) return null
+    fun updateFeed(feed: Feed) {
+        if (TextUtil.isEmpty(feed.url)) return
         val uri = URI.create(feed.url)
         val retrofit = Retrofit.Builder()
                 .baseUrl(uri.scheme + "://" + uri.host)
@@ -53,9 +52,9 @@ object NetworkTaskManager {
         try {
             val response = call.execute()
             if (response.body() == null) {
-                return null
+                return
             }
-            val inputStream = response.body().byteStream()
+            val inputStream = response.body()?.byteStream() ?: return
             val parser = RssParser()
             val dbAdapter = DatabaseAdapter.getInstance()
             val latestDate = dbAdapter.getLatestArticleDate(feed.id)
@@ -88,6 +87,6 @@ object NetworkTaskManager {
         } catch (e: RuntimeException) {
 
         }
-        return null
+        return
     }
 }
