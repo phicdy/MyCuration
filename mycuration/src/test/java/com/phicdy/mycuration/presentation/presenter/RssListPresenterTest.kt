@@ -16,16 +16,17 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import java.util.ArrayList
 
 class RssListPresenterTest {
 
     private lateinit var presenter: RssListPresenter
     private lateinit var view: MockView
+    private val adapter = Mockito.mock(DatabaseAdapter::class.java)
 
     @Before
     fun setup() {
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
         DatabaseAdapter.inject(adapter)
         val firstRss = Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0, "")
         val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 1, "")
@@ -56,7 +57,7 @@ class RssListPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.onEditFeedMenuClicked(FIRST_RSS_POSITION)
-        assertThat<String>(view.editTitle, `is`(SECOND_RSS_TITLE))
+        assertThat(view.editTitle, `is`(SECOND_RSS_TITLE))
     }
 
     @Test
@@ -70,7 +71,26 @@ class RssListPresenterTest {
             override fun onAllUnreadClicked() {}
         })
         presenter.onEditFeedMenuClicked(FIRST_RSS_POSITION)
-        assertThat<String>(view.editTitle, `is`(FIRST_RSS_TITLE))
+        assertThat(view.editTitle, `is`(FIRST_RSS_TITLE))
+    }
+
+    @Test
+    fun `when first RSS is hidden then first RSS title will be second RSS`() {
+        presenter.resume()
+        assertThat(presenter.feeds.size, `is`(2)) // including hide line
+        assertThat(presenter.feeds[0].title, `is`(SECOND_RSS_TITLE))
+    }
+
+    @Test
+    fun `when all of articles were read then show all of RSS`() {
+        val firstRss = Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0, "")
+        val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 0, "")
+        val alreadyReadRss = arrayListOf(firstRss, secondRss)
+        `when`(adapter.allFeedsWithNumOfUnreadArticles).thenReturn(alreadyReadRss)
+        presenter.resume()
+        assertThat(presenter.feeds.size, `is`(3)) // including hide line
+        assertThat(presenter.feeds[0].title, `is`(FIRST_RSS_TITLE))
+        assertThat(presenter.feeds[1].title, `is`(SECOND_RSS_TITLE))
     }
 
     private class MockView : RssListView {
