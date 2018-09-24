@@ -74,7 +74,11 @@ class RssListPresenter(private val view: RssListView,
     private fun generateHidedFeedList() {
         if (allFeeds.isEmpty()) return
         feeds = allFeeds.filter { it.unreadAriticlesCount > 0 } as ArrayList<Feed>
-        addShowHideLine(feeds)
+        if (feeds.isEmpty()) {
+            feeds = allFeeds
+        } else {
+            addShowHideLine(feeds)
+        }
     }
 
     private fun refreshList() {
