@@ -130,19 +130,19 @@ dependencies {
     implementation "com.android.support:design:$supportLibVer"
     implementation "com.android.support:recyclerview-v7:$supportLibVer"
 
-    implementation 'com.squareup.retrofit2:retrofit:2.2.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'org.jsoup:jsoup:1.10.2'
     implementation 'com.github.johnkil.android-progressfragment:progressfragment:1.4.0'
-    implementation 'uk.co.chrisjenx:calligraphy:2.1.0'
+    implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
     implementation 'com.facebook.stetho:stetho:1.4.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
-    def firebaseVer = '16.0.1'
+    def firebaseVer = '16.0.3'
     implementation "com.google.firebase:firebase-core:$firebaseVer"
 }
 
