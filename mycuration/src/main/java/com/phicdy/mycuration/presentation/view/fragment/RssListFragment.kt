@@ -47,15 +47,8 @@ class RssListFragment : Fragment(), RssListView {
         super.onCreate(savedInstanceState)
 
         dbAdapter = DatabaseAdapter.getInstance()
-        retainInstance = true
         presenter = RssListPresenter(this, PreferenceHelper, dbAdapter, NetworkTaskManager, UnreadCountManager)
         presenter.create()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(FEEDS_KEY, presenter.feeds)
-        outState.putParcelableArrayList(ALL_FEEDS_KEY, presenter.allFeeds)
     }
 
     override fun onResume() {
@@ -307,8 +300,6 @@ class RssListFragment : Fragment(), RssListView {
 
         private const val DELETE_FEED_MENU_ID = 1000
         private const val EDIT_FEED_TITLE_MENU_ID = 1001
-        private const val FEEDS_KEY = "feedsKey"
-        private const val ALL_FEEDS_KEY = "allFeedsKey"
     }
 
 }
