@@ -77,8 +77,8 @@ class RssListPresenterTest {
     @Test
     fun `when first RSS is hidden then first RSS title will be second RSS`() {
         presenter.resume()
-        assertThat(presenter.feeds.size, `is`(2)) // including hide line
-        assertThat(presenter.feeds[0].title, `is`(SECOND_RSS_TITLE))
+        assertThat(presenter.unreadOnlyFeeds.size, `is`(2)) // including hide line
+        assertThat(presenter.unreadOnlyFeeds[0].title, `is`(SECOND_RSS_TITLE))
     }
 
     @Test
@@ -88,9 +88,9 @@ class RssListPresenterTest {
         val alreadyReadRss = arrayListOf(firstRss, secondRss)
         `when`(adapter.allFeedsWithNumOfUnreadArticles).thenReturn(alreadyReadRss)
         presenter.resume()
-        assertThat(presenter.feeds.size, `is`(3)) // including hide line
-        assertThat(presenter.feeds[0].title, `is`(FIRST_RSS_TITLE))
-        assertThat(presenter.feeds[1].title, `is`(SECOND_RSS_TITLE))
+        assertThat(presenter.unreadOnlyFeeds.size, `is`(3)) // including hide line
+        assertThat(presenter.unreadOnlyFeeds[0].title, `is`(FIRST_RSS_TITLE))
+        assertThat(presenter.unreadOnlyFeeds[1].title, `is`(SECOND_RSS_TITLE))
     }
 
     private class MockView : RssListView {

@@ -18,9 +18,9 @@ class RssListPresenter(private val view: RssListView,
                        private val networkTaskManager: NetworkTaskManager,
                        private val unreadCountManager: UnreadCountManager) : Presenter {
 
-    var feeds: ArrayList<Feed> = ArrayList()
+    var unreadOnlyFeeds = arrayListOf<Feed>()
         private set
-    var allFeeds: ArrayList<Feed> = ArrayList()
+    var allFeeds = arrayListOf<Feed>()
         private set
 
     // Manage hide feed status
@@ -70,18 +70,18 @@ class RssListPresenter(private val view: RssListView,
 
     private fun generateHidedFeedList() {
         if (allFeeds.isEmpty()) return
-        feeds = allFeeds.filter { it.unreadAriticlesCount > 0 } as ArrayList<Feed>
-        if (feeds.isEmpty()) {
-            feeds = allFeeds
+        unreadOnlyFeeds = allFeeds.filter { it.unreadAriticlesCount > 0 } as ArrayList<Feed>
+        if (unreadOnlyFeeds.isEmpty()) {
+            unreadOnlyFeeds = allFeeds
         } else {
-            addShowHideLine(feeds)
+            addShowHideLine(unreadOnlyFeeds)
         }
     }
 
     private fun refreshList() {
         generateHidedFeedList()
         if (isHided) {
-            view.init(feeds)
+            view.init(unreadOnlyFeeds)
         } else {
             view.init(allFeeds)
         }
@@ -107,11 +107,11 @@ class RssListPresenter(private val view: RssListView,
     }
 
     private fun getFeedTitleAtPosition(position: Int): String {
-        if (position < 0 || position > feeds.size - 1) {
+        if (position < 0 || position > unreadOnlyFeeds.size - 1) {
             return ""
         }
         return if (isHided) {
-            feeds[position].title
+            unreadOnlyFeeds[position].title
         } else {
             allFeeds[position].title
         }
@@ -139,7 +139,7 @@ class RssListPresenter(private val view: RssListView,
                 break
             }
         }
-        for (feed in feeds) {
+        for (feed in unreadOnlyFeeds) {
             if (feed.id == feedId) {
                 feed.title = newTitle
                 break
@@ -161,9 +161,9 @@ class RssListPresenter(private val view: RssListView,
         if (position < 0) return -1
 
         if (isHided) {
-            return if (position > feeds.size - 1) {
+            return if (position > unreadOnlyFeeds.size - 1) {
                 -1
-            } else feeds[position].id
+            } else unreadOnlyFeeds[position].id
         } else {
             if (position > allFeeds.size - 1) {
                 return -1
@@ -174,10 +174,10 @@ class RssListPresenter(private val view: RssListView,
 
     private fun removeFeedAtPosition(position: Int) {
         if (isHided) {
-            val (id) = feeds[position]
+            val (id) = unreadOnlyFeeds[position]
             dbAdapter.deleteFeed(id)
             unreadCountManager.deleteFeed(id)
-            feeds.removeAt(position)
+            unreadOnlyFeeds.removeAt(position)
             for (i in allFeeds.indices) {
                 if (allFeeds[i].id == id) {
                     allFeeds.removeAt(i)
@@ -188,9 +188,9 @@ class RssListPresenter(private val view: RssListView,
             dbAdapter.deleteFeed(id)
             unreadCountManager.deleteFeed(id)
             allFeeds.removeAt(position)
-            for (i in feeds.indices) {
-                if (feeds[i].id == id) {
-                    feeds.removeAt(i)
+            for (i in unreadOnlyFeeds.indices) {
+                if (unreadOnlyFeeds[i].id == id) {
+                    unreadOnlyFeeds.removeAt(i)
                 }
             }
         }
@@ -213,7 +213,7 @@ class RssListPresenter(private val view: RssListView,
             view.init(allFeeds)
         } else {
             isHided = true
-            view.init(feeds)
+            view.init(unreadOnlyFeeds)
         }
     }
 
@@ -269,11 +269,11 @@ class RssListPresenter(private val view: RssListView,
         } else {
             updateAllUnreadArticlesCount()
         }
-        view.init(feeds)
+        view.init(unreadOnlyFeeds)
     }
 
     fun isAllRssShowView(position: Int): Boolean {
-        return isHided && position == feeds.size
+        return isHided && position == unreadOnlyFeeds.size
     }
 
     fun isHideReadRssView(position: Int): Boolean {
