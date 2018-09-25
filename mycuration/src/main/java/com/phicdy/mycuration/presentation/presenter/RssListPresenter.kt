@@ -38,7 +38,6 @@ class RssListPresenter(private val view: RssListView,
             addShowHideLine(allFeeds)
             view.showAllUnreadView()
         }
-        generateHidedFeedList()
         refreshList()
         if (networkTaskManager.isUpdatingFeed) {
             view.setRefreshing(true)
