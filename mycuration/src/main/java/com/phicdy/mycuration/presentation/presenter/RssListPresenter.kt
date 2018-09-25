@@ -207,6 +207,7 @@ class RssListPresenter(private val view: RssListView,
     }
 
     private fun changeHideStatus() {
+        generateHidedFeedList()
         if (isHided) {
             isHided = false
             view.init(allFeeds)
