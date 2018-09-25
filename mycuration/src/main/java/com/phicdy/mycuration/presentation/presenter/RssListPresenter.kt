@@ -32,10 +32,8 @@ class RssListPresenter(private val view: RssListView,
     override fun create() {}
 
     override fun resume() {
-        allFeeds = dbAdapter.allFeedsWithNumOfUnreadArticles
-        // For show/hide
+        fetchAllRss()
         if (allFeeds.isNotEmpty()) {
-            addShowHideLine(allFeeds)
             view.showAllUnreadView()
         }
         refreshList()
@@ -249,8 +247,17 @@ class RssListPresenter(private val view: RssListView,
 
     fun onFinishUpdate() {
         onRefreshComplete()
+        fetchAllRss()
         refreshList()
         preferenceHelper.lastUpdateDate = System.currentTimeMillis()
+    }
+
+    private fun fetchAllRss() {
+        allFeeds = dbAdapter.allFeedsWithNumOfUnreadArticles
+        // For show/hide
+        if (allFeeds.isNotEmpty()) {
+            addShowHideLine(allFeeds)
+        }
     }
 
     fun activityCreated() {
