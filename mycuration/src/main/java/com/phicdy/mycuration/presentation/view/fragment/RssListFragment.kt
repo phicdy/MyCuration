@@ -1,17 +1,24 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.util.Log
-import android.view.*
-import android.widget.*
+import android.view.ContextMenu
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
@@ -35,16 +42,14 @@ class RssListFragment : Fragment(), RssListView {
     private var mListener: OnFeedListFragmentListener? = null
 
     private lateinit var dbAdapter: DatabaseAdapter
-    private var receiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         dbAdapter = DatabaseAdapter.getInstance()
-        val networkTaskManager = NetworkTaskManager
         retainInstance = true
-        val helper = PreferenceHelper
-        presenter = RssListPresenter(this, helper, dbAdapter, networkTaskManager, UnreadCountManager)
+        presenter = RssListPresenter(this, PreferenceHelper, dbAdapter, NetworkTaskManager, UnreadCountManager)
+        presenter.create()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -55,7 +60,6 @@ class RssListFragment : Fragment(), RssListView {
 
     override fun onResume() {
         super.onResume()
-        setBroadCastReceiver()
         presenter.resume()
     }
 
@@ -173,10 +177,6 @@ class RssListFragment : Fragment(), RssListView {
     override fun onPause() {
         super.onPause()
         presenter.pause()
-        if (receiver != null) {
-            activity?.unregisterReceiver(receiver)
-            receiver = null
-        }
     }
 
     private fun setAllListener() {
@@ -190,25 +190,6 @@ class RssListFragment : Fragment(), RssListView {
                 mListener!!.onAllUnreadClicked()
             }
         }
-    }
-
-    private fun setBroadCastReceiver() {
-        // receive num of unread articles from Update Task
-        receiver = object : BroadcastReceiver() {
-
-            override fun onReceive(context: Context, intent: Intent) {
-                // Set num of unread articles and update UI
-                val action = intent.action
-                if (action == NetworkTaskManager.FINISH_UPDATE_ACTION) {
-                    Log.d(LOG_TAG, "onReceive")
-                    presenter.onFinishUpdate()
-                }
-            }
-        }
-
-        val filter = IntentFilter()
-        filter.addAction(NetworkTaskManager.FINISH_UPDATE_ACTION)
-        activity?.registerReceiver(receiver, filter)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -328,7 +309,6 @@ class RssListFragment : Fragment(), RssListView {
         private const val EDIT_FEED_TITLE_MENU_ID = 1001
         private const val FEEDS_KEY = "feedsKey"
         private const val ALL_FEEDS_KEY = "allFeedsKey"
-        private const val LOG_TAG = "FilFeed.FeedList"
     }
 
 }
