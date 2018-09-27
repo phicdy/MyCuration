@@ -80,10 +80,11 @@ class EditFeedTitleTest : UiTest() {
         var feedTitles = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000)
         assertNotNull("Feed was not found", feedTitles )
-        // Feed title list includes show/hide option row, the size is 2
-        if (feedTitles.size != 2) fail("Feed was not added")
+        if (feedTitles.size != 1) fail("Feed was not added")
         assertThat(feedTitles[0].text, `is`("Yahoo!ニュース・トピックス - 主要"))
-        assertThat(feedTitles[1].text, `is`("全てのRSSを表示"))
+        val footerTitle = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "tv_rss_footer_title")), 5000)
+        assertThat(footerTitle.text, `is`("全てのRSSを表示"))
 
         // Edit title
         val filterRect = feedTitles[0].visibleBounds
@@ -105,7 +106,7 @@ class EditFeedTitleTest : UiTest() {
         feedTitles = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000)
         assertNotNull("Feed was not found", feedTitles)
-        if (feedTitles.size != 2) fail("Feed was not added")
+        if (feedTitles.size != 1) fail("Feed was not added")
         assertThat(feedTitles[0].text, `is`("test"))
     }
 }

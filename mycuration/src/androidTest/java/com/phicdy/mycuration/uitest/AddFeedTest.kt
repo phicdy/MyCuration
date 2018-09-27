@@ -85,10 +85,11 @@ class AddFeedTest : UiTest() {
         val feedTitles = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000)
         assertNotNull("Feed was not found", feedTitles)
-        // Feed title list includes show/hide option row, the size is 2
-        if (feedTitles.size != 2) fail("Feed was not added")
+        if (feedTitles.size != 1) fail("Feed was not added")
         assertThat(feedTitles[0].text, `is`(title))
-        assertThat(feedTitles[1].text, `is`("全てのRSSを表示"))
+        val footerTitle = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "tv_rss_footer_title")), 5000)
+        assertThat(footerTitle.text, `is`("全てのRSSを表示"))
 
         // Assert articles of RSS were added
         val feedUnreadCountList = device.wait(Until.findObjects(
@@ -122,7 +123,7 @@ class AddFeedTest : UiTest() {
         tabs[1].click()
 
         // Get current RSS size
-        var rssList: UiObject2? = device.findObject(By.res(BuildConfig.APPLICATION_ID, "feedList"))
+        var rssList: UiObject2? = device.findObject(By.res(BuildConfig.APPLICATION_ID, "rv_rss"))
         var numOfRss = 0
         if (rssList != null) {
             numOfRss = rssList.childCount
@@ -143,7 +144,7 @@ class AddFeedTest : UiTest() {
         device.pressEnter()
 
         rssList = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "feedList")), 5000)
+                By.res(BuildConfig.APPLICATION_ID, "rv_rss")), 5000)
         if (numOfRss == 0) {
             assertNull(rssList)
         } else {
