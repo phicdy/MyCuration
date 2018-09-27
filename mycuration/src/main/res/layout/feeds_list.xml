@@ -1,30 +1,36 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:orientation="horizontal" >
+    xmlns:apps="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/feedIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="12dp"
         android:layout_marginTop="12dp"
         android:contentDescription="@string/icon"
+        apps:layout_constraintStart_toStartOf="parent"
+        apps:layout_constraintTop_toTopOf="parent"
+        apps:layout_constraintBottom_toBottomOf="parent"
         android:src="@drawable/no_icon" />
 
     <TextView
         android:id="@+id/feedTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginBottom="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="12dp"
-        android:gravity="center_vertical"
-        android:textSize="18sp" />
+        apps:layout_constraintStart_toEndOf="@id/feedIcon"
+        apps:layout_constraintEnd_toStartOf="@id/feedCount"
+        apps:layout_constraintTop_toTopOf="parent"
+        apps:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="18sp"
+        tools:text="RSS Title"/>
 
     <TextView
         android:id="@+id/feedCount"
@@ -35,7 +41,10 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="12dp"
         android:textSize="14sp"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical|end" />
+        apps:layout_constraintEnd_toEndOf="parent"
+        apps:layout_constraintTop_toTopOf="parent"
+        apps:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center_vertical|end"
+        tools:text="100"/>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
