@@ -1,26 +1,32 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.util.Log
-import android.view.*
-import android.widget.*
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
+import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.util.PreferenceHelper
 import java.io.File
+import java.security.InvalidParameterException
 
 class RssListFragment : Fragment(), RssListView {
 
@@ -28,58 +34,25 @@ class RssListFragment : Fragment(), RssListView {
     private lateinit var tvAllUnreadArticleCount: TextView
     private lateinit var allUnread: LinearLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var feedsListView: ListView
+    private lateinit var recyclerView: RecyclerView
     private lateinit var emptyView: TextView
 
     private lateinit var rssFeedListAdapter: RssFeedListAdapter
     private var mListener: OnFeedListFragmentListener? = null
 
     private lateinit var dbAdapter: DatabaseAdapter
-    private var receiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         dbAdapter = DatabaseAdapter.getInstance()
-        val networkTaskManager = NetworkTaskManager
-        retainInstance = true
-        val helper = PreferenceHelper
-        presenter = RssListPresenter(this, helper, dbAdapter, networkTaskManager, UnreadCountManager)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(FEEDS_KEY, presenter.feeds)
-        outState.putParcelableArrayList(ALL_FEEDS_KEY, presenter.allFeeds)
+        presenter = RssListPresenter(this, PreferenceHelper, dbAdapter, NetworkTaskManager, UnreadCountManager)
+        presenter.create()
     }
 
     override fun onResume() {
         super.onResume()
-        setBroadCastReceiver()
         presenter.resume()
-    }
-
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        menu.add(0, DELETE_FEED_MENU_ID, 0, R.string.delete_rss)
-        menu.add(0, EDIT_FEED_TITLE_MENU_ID, 1, R.string.edit_rss_title)
-    }
-
-    override fun onContextItemSelected(item: MenuItem?): Boolean {
-        if (item == null) return super.onContextItemSelected(item)
-        val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
-
-        return when (item.itemId) {
-            DELETE_FEED_MENU_ID -> {
-                presenter.onDeleteFeedMenuClicked(info.position)
-                true
-            }
-            EDIT_FEED_TITLE_MENU_ID -> {
-                presenter.onEditFeedMenuClicked(info.position)
-                true
-            }
-            else -> super.onContextItemSelected(item)
-        }
     }
 
     override fun showEditTitleDialog(position: Int, feedTitle: String) {
@@ -90,8 +63,7 @@ class RssListFragment : Fragment(), RssListView {
         AlertDialog.Builder(activity)
                 .setTitle(R.string.edit_rss_title)
                 .setView(addView)
-                .setPositiveButton(R.string.save
-                ) { _, _ ->
+                .setPositiveButton(R.string.save) { _, _ ->
                     val newTitle = editTitleView.text.toString()
                     presenter.onEditFeedOkButtonClicked(newTitle, position)
                 }.setNegativeButton(R.string.cancel, null).show()
@@ -102,13 +74,10 @@ class RssListFragment : Fragment(), RssListView {
     }
 
     override fun init(feeds: ArrayList<Feed>) {
-        if (feeds.size == 0) emptyView.visibility = View.VISIBLE
-        emptyView.visibility = View.GONE
-        activity?.let {
-            rssFeedListAdapter = RssFeedListAdapter(feeds, it)
-            feedsListView.adapter = rssFeedListAdapter
-            rssFeedListAdapter.notifyDataSetChanged()
-        }
+        rssFeedListAdapter = RssFeedListAdapter()
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.adapter = rssFeedListAdapter
+        rssFeedListAdapter.notifyDataSetChanged()
     }
 
     override fun setTotalUnreadCount(count: Int) {
@@ -163,63 +132,49 @@ class RssListFragment : Fragment(), RssListView {
         allUnread.visibility = View.GONE
     }
 
+    override fun showRecyclerView() {
+        recyclerView.visibility = View.VISIBLE
+    }
+
+    override fun hideRecyclerView() {
+        recyclerView.visibility = View.GONE
+    }
+
+    override fun showEmptyView() {
+        emptyView.visibility = View.VISIBLE
+    }
+
+    override fun hideEmptyView() {
+        emptyView.visibility = View.GONE
+    }
+
     override fun showDeleteFeedAlertDialog(position: Int) {
         AlertDialog.Builder(activity)
                 .setTitle(R.string.delete_rss_alert)
-                .setPositiveButton(R.string.delete
-                ) { _, _ -> presenter.onDeleteOkButtonClicked(position) }.setNegativeButton(R.string.cancel, null).show()
+                .setPositiveButton(R.string.delete) { _, _ -> presenter.onDeleteOkButtonClicked(position) }
+                .setNegativeButton(R.string.cancel, null).show()
     }
 
     override fun onPause() {
         super.onPause()
         presenter.pause()
-        if (receiver != null) {
-            activity?.unregisterReceiver(receiver)
-            receiver = null
-        }
     }
 
     private fun setAllListener() {
-        // When an feed selected, display unread articles in the feed
-        feedsListView.onItemClickListener = AdapterView.OnItemClickListener {
-            _, _, position, _ -> presenter.onFeedListClicked(position, mListener)
-        }
         swipeRefreshLayout.setOnRefreshListener { presenter.onRefresh() }
         allUnread.setOnClickListener {
-            if (mListener != null) {
-                mListener!!.onAllUnreadClicked()
-            }
+            mListener?.onAllUnreadClicked()
         }
-    }
-
-    private fun setBroadCastReceiver() {
-        // receive num of unread articles from Update Task
-        receiver = object : BroadcastReceiver() {
-
-            override fun onReceive(context: Context, intent: Intent) {
-                // Set num of unread articles and update UI
-                val action = intent.action
-                if (action == NetworkTaskManager.FINISH_UPDATE_ACTION) {
-                    Log.d(LOG_TAG, "onReceive")
-                    presenter.onFinishUpdate()
-                }
-            }
-        }
-
-        val filter = IntentFilter()
-        filter.addAction(NetworkTaskManager.FINISH_UPDATE_ACTION)
-        activity?.registerReceiver(receiver, filter)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_rss_list, container, false)
-        feedsListView = view.findViewById(R.id.feedList) as ListView
+        recyclerView = view.findViewById(R.id.rv_rss)
         emptyView = view.findViewById(R.id.emptyView) as TextView
-        feedsListView.emptyView = emptyView
         swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
         tvAllUnreadArticleCount = view.findViewById(R.id.allUnreadCount) as TextView
         allUnread = view.findViewById(R.id.ll_all_unread) as LinearLayout
-        registerForContextMenu(feedsListView)
+        registerForContextMenu(recyclerView)
         setAllListener()
         return view
     }
@@ -234,11 +189,6 @@ class RssListFragment : Fragment(), RssListView {
 
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        presenter.activityCreated()
-    }
-
     override fun onDetach() {
         super.onDetach()
         mListener = null
@@ -249,76 +199,97 @@ class RssListFragment : Fragment(), RssListView {
         fun onAllUnreadClicked()
     }
 
-    /**
-     *
-     * @author phicdy Display RSS Feeds List
-     */
-    private inner class RssFeedListAdapter internal constructor(feeds: ArrayList<Feed>, context: Context) : ArrayAdapter<Feed>(context, R.layout.feeds_list, feeds) {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            activity?.let {
-                val holder: ViewHolder
-
-                // Use contentView and setup ViewHolder
-                lateinit var row: View
-                if (convertView == null) {
-                    val inflater = it.layoutInflater
-                    row = inflater.inflate(R.layout.feeds_list, parent, false)
-                    holder = ViewHolder()
-                    holder.feedIcon = row.findViewById(R.id.feedIcon) as ImageView
-                    holder.feedTitle = row.findViewById(R.id.feedTitle) as TextView
-                    holder.feedCount = row.findViewById(R.id.feedCount) as TextView
-                    row.tag = holder
-                } else {
-                    row = convertView
-                    holder = row.tag as ViewHolder
+    private inner class RssFeedListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            return when(viewType) {
+                VIEW_TYPE_RSS -> {
+                    val view = LayoutInflater.from(parent.context)
+                            .inflate(R.layout.feeds_list, parent, false)
+                    RssViewHolder(view)
                 }
-
-                val feed = this.getItem(position)
-                var iconPath: String? = null
-                if (feed != null) {
-                    iconPath = feed.iconPath
+                VIEW_TYPE_FOOTER -> {
+                    val view = LayoutInflater.from(parent.context)
+                            .inflate(R.layout.list_item_rss_footer, parent, false)
+                    RssFooterView(view)
                 }
-                holder.feedIcon.visibility = View.VISIBLE
-                holder.feedCount.visibility = View.VISIBLE
-                if (presenter.isAllRssShowView(position + 1)) {
-                    holder.feedIcon.visibility = View.INVISIBLE
-                    holder.feedCount.visibility = View.GONE
-                    holder.feedTitle.setText(R.string.show_all_rsses)
-                } else if (presenter.isHideReadRssView(position + 1)) {
-                    holder.feedIcon.visibility = View.INVISIBLE
-                    holder.feedCount.visibility = View.GONE
-                    holder.feedTitle.setText(R.string.hide_rsses)
-                } else if (iconPath == null || iconPath == Feed.DEDAULT_ICON_PATH) {
-                    holder.feedIcon.setImageResource(R.drawable.no_icon)
-                    if (feed != null) {
-                        holder.feedTitle.text = feed.title
-                    }
-                } else {
-                    val file = File(iconPath)
-                    if (file.exists()) {
-                        val bmp = BitmapFactory.decodeFile(file.path)
-                        holder.feedIcon.setImageBitmap(bmp)
-                    } else {
-                        dbAdapter.saveIconPath(feed.siteUrl, Feed.DEDAULT_ICON_PATH)
-                    }
-                    holder.feedTitle.text = feed.title
-                }
-
-                // set RSS Feed unread article count
-                if (feed != null) {
-                    holder.feedCount.text = UnreadCountManager.getUnreadCount(feed.id).toString()
-                }
-
-                return row
+                else -> throw InvalidParameterException("Invalid view type")
             }
-            return convertView!!
         }
 
-        private inner class ViewHolder {
-            internal lateinit var feedIcon: ImageView
-            internal lateinit var feedTitle: TextView
-            internal lateinit var feedCount: TextView
+        override fun getItemCount(): Int {
+            return presenter.getItemCount()
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            return presenter.onGetItemViewType(position)
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (holder is RssViewHolder) {
+                holder.itemView.setOnClickListener {
+                    presenter.onRssItemClicked(position, mListener)
+                }
+                holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
+                    menu.add(0, EDIT_FEED_TITLE_MENU_ID, 0, R.string.edit_rss_title).setOnMenuItemClickListener {
+                        presenter.onEditFeedMenuClicked(position)
+                        true
+                    }
+                    menu.add(0, DELETE_FEED_MENU_ID, 1, R.string.delete_rss).setOnMenuItemClickListener {
+                        presenter.onDeleteFeedMenuClicked(position)
+                        true
+                    }
+                }
+                presenter.onBindRssViewHolder(position, holder)
+            } else if (holder is RssFooterView) {
+                holder.itemView.setOnClickListener {
+                    presenter.onRssFooterClicked()
+                }
+                presenter.onBindRssFooterViewHolder(holder)
+            }
+        }
+
+        private inner class RssViewHolder(
+                itemView: View
+        ): RecyclerView.ViewHolder(itemView), RssItemView.Content {
+            private val feedIcon = itemView.findViewById(R.id.feedIcon) as ImageView
+            private val feedTitle = itemView.findViewById(R.id.feedTitle) as TextView
+            private val feedCount = itemView.findViewById(R.id.feedCount) as TextView
+
+            override fun showDefaultIcon() {
+                feedIcon.setImageResource(R.drawable.no_icon)
+            }
+
+            override fun showIcon(iconPath: String): Boolean {
+                val file = File(iconPath)
+                return if (file.exists()) {
+                    val bmp = BitmapFactory.decodeFile(file.path)
+                    feedIcon.setImageBitmap(bmp)
+                    true
+                } else {
+                    false
+                }
+            }
+
+            override fun updateTitle(title: String) {
+                feedTitle.text = title
+            }
+
+            override fun updateUnreadCount(count: String) {
+                feedCount.text = count
+            }
+        }
+
+        private inner class RssFooterView(
+                itemView: View
+        ): RecyclerView.ViewHolder(itemView), RssItemView.Footer {
+            internal val title = itemView.findViewById<TextView>(R.id.tv_rss_footer_title)
+            override fun showAllView() {
+                title.setText(R.string.show_all_rsses)
+            }
+
+            override fun showHideView() {
+                title.setText(R.string.hide_rsses)
+            }
         }
     }
 
@@ -326,9 +297,8 @@ class RssListFragment : Fragment(), RssListView {
 
         private const val DELETE_FEED_MENU_ID = 1000
         private const val EDIT_FEED_TITLE_MENU_ID = 1001
-        private const val FEEDS_KEY = "feedsKey"
-        private const val ALL_FEEDS_KEY = "allFeedsKey"
-        private const val LOG_TAG = "FilFeed.FeedList"
-    }
 
+        const val VIEW_TYPE_RSS = 0
+        const val VIEW_TYPE_FOOTER = 1
+    }
 }

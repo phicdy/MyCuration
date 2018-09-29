@@ -22,4 +22,8 @@ interface RssListView {
     fun notifyDataSetChanged()
     fun showAllUnreadView()
     fun hideAllUnreadView()
+    fun showRecyclerView()
+    fun hideRecyclerView()
+    fun showEmptyView()
+    fun hideEmptyView()
 }

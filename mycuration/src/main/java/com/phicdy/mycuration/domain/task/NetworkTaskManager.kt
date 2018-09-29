@@ -20,8 +20,6 @@ import java.net.URI
 
 object NetworkTaskManager {
 
-    const val FINISH_UPDATE_ACTION = "FINISH_UPDATE"
-
     val isUpdatingFeed: Boolean get() = false
 
     fun updateAllFeeds(feeds: ArrayList<Feed>): Flowable<Feed> {

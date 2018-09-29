@@ -4,6 +4,7 @@ import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
+import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -18,9 +19,9 @@ class RssListPresenter(private val view: RssListView,
                        private val networkTaskManager: NetworkTaskManager,
                        private val unreadCountManager: UnreadCountManager) : Presenter {
 
-    var feeds: ArrayList<Feed> = ArrayList()
+    var unreadOnlyFeeds = arrayListOf<Feed>()
         private set
-    var allFeeds: ArrayList<Feed> = ArrayList()
+    var allFeeds = arrayListOf<Feed>()
         private set
 
     // Manage hide feed status
@@ -32,59 +33,33 @@ class RssListPresenter(private val view: RssListView,
     override fun create() {}
 
     override fun resume() {
-        allFeeds = dbAdapter.allFeedsWithNumOfUnreadArticles
-        // For show/hide
-        if (allFeeds.isNotEmpty()) {
-            addShowHideLine(allFeeds)
+        if (dbAdapter.numOfFeeds == 0) {
+            updateViewForEmpty()
+        } else {
             view.showAllUnreadView()
+            view.showRecyclerView()
+            view.hideEmptyView()
+            fetchAllRss()
+            refreshList()
+            if (preferenceHelper.autoUpdateInMainUi && isAfterInterval) {
+                view.setRefreshing(true)
+                updateAllRss()
+            }
         }
-        generateHidedFeedList()
-        refreshList()
-        if (networkTaskManager.isUpdatingFeed) {
-            view.setRefreshing(true)
-        }
-        if (allFeeds.isNotEmpty() && preferenceHelper.autoUpdateInMainUi &&
-                isAfterInterval && !networkTaskManager.isUpdatingFeed) {
-            view.setRefreshing(true)
-            networkTaskManager.updateAllFeeds(allFeeds)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(object : Subscriber<Feed> {
-                        override fun onSubscribe(s: Subscription) {
-                            // Skip hide line
-                            s.request((allFeeds.size - 1).toLong())
-                        }
-
-                        override fun onNext(feed: Feed) {}
-
-                        override fun onError(t: Throwable) {
-
-                        }
-
-                        override fun onComplete() {
-                            onFinishUpdate()
-                        }
-                    })
-        }
-    }
-
-    private fun addShowHideLine(feeds: ArrayList<Feed>) {
-        feeds.add(Feed(Feed.DEFAULT_FEED_ID, "", "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
     }
 
     private fun generateHidedFeedList() {
         if (allFeeds.isEmpty()) return
-        feeds = allFeeds.filter { it.unreadAriticlesCount > 0 } as ArrayList<Feed>
-        if (feeds.isEmpty()) {
-            feeds = allFeeds
-        } else {
-            addShowHideLine(feeds)
+        unreadOnlyFeeds = allFeeds.filter { it.unreadAriticlesCount > 0 } as ArrayList<Feed>
+        if (unreadOnlyFeeds.isEmpty()) {
+            unreadOnlyFeeds = allFeeds
         }
     }
 
     private fun refreshList() {
         generateHidedFeedList()
         if (isHided) {
-            view.init(feeds)
+            view.init(unreadOnlyFeeds)
         } else {
             view.init(allFeeds)
         }
@@ -95,11 +70,7 @@ class RssListPresenter(private val view: RssListView,
         view.setTotalUnreadCount(unreadCountManager.total)
     }
 
-    override fun pause() {
-        if (networkTaskManager.isUpdatingFeed) {
-            view.onRefreshCompleted()
-        }
-    }
+    override fun pause() {}
 
     fun onDeleteFeedMenuClicked(position: Int) {
         view.showDeleteFeedAlertDialog(position)
@@ -110,12 +81,12 @@ class RssListPresenter(private val view: RssListView,
     }
 
     private fun getFeedTitleAtPosition(position: Int): String {
-        if (position < 0 || position > feeds.size - 1) {
-            return ""
-        }
+        if (position < 0) return ""
         return if (isHided) {
-            feeds[position].title
+            if (position > unreadOnlyFeeds.size - 1) return ""
+            unreadOnlyFeeds[position].title
         } else {
+            if (position > allFeeds.size - 1) return ""
             allFeeds[position].title
         }
     }
@@ -142,7 +113,7 @@ class RssListPresenter(private val view: RssListView,
                 break
             }
         }
-        for (feed in feeds) {
+        for (feed in unreadOnlyFeeds) {
             if (feed.id == feedId) {
                 feed.title = newTitle
                 break
@@ -153,7 +124,7 @@ class RssListPresenter(private val view: RssListView,
 
     fun onDeleteOkButtonClicked(position: Int) {
         if (dbAdapter.deleteFeed(getFeedIdAtPosition(position))) {
-            removeFeedAtPosition(position)
+            deleteFeedAtPosition(position)
             view.showDeleteSuccessToast()
         } else {
             view.showDeleteFailToast()
@@ -164,9 +135,9 @@ class RssListPresenter(private val view: RssListView,
         if (position < 0) return -1
 
         if (isHided) {
-            return if (position > feeds.size - 1) {
+            return if (position > unreadOnlyFeeds.size - 1) {
                 -1
-            } else feeds[position].id
+            } else unreadOnlyFeeds[position].id
         } else {
             if (position > allFeeds.size - 1) {
                 return -1
@@ -175,47 +146,52 @@ class RssListPresenter(private val view: RssListView,
         return allFeeds[position].id
     }
 
-    private fun removeFeedAtPosition(position: Int) {
+    private fun deleteFeedAtPosition(position: Int) {
+        fun deleteAtPosition(currentList: ArrayList<Feed>, oppositeList: ArrayList<Feed>) {
+            if (currentList.size <= position) return
+            val (id) = currentList[position]
+            dbAdapter.deleteFeed(id)
+            unreadCountManager.deleteFeed(id)
+            currentList.removeAt(position)
+            for (i in oppositeList.indices) {
+                if (oppositeList[i].id == id) {
+                    oppositeList.removeAt(i)
+                }
+            }
+        }
+
         if (isHided) {
-            val (id) = feeds[position]
-            dbAdapter.deleteFeed(id)
-            unreadCountManager.deleteFeed(id)
-            feeds.removeAt(position)
-            for (i in allFeeds.indices) {
-                if (allFeeds[i].id == id) {
-                    allFeeds.removeAt(i)
-                }
-            }
+            deleteAtPosition(unreadOnlyFeeds, allFeeds)
         } else {
-            val (id) = allFeeds[position]
-            dbAdapter.deleteFeed(id)
-            unreadCountManager.deleteFeed(id)
-            allFeeds.removeAt(position)
-            for (i in feeds.indices) {
-                if (feeds[i].id == id) {
-                    feeds.removeAt(i)
-                }
-            }
+            deleteAtPosition(allFeeds, unreadOnlyFeeds)
         }
         refreshList()
+        if (allFeeds.isEmpty()) updateViewForEmpty()
     }
 
-    fun onFeedListClicked(position: Int, mListener: RssListFragment.OnFeedListFragmentListener?) {
+    private fun updateViewForEmpty() {
+        view.hideAllUnreadView()
+        view.hideRecyclerView()
+        view.showEmptyView()
+    }
+
+    fun onRssItemClicked(position: Int, mListener: RssListFragment.OnFeedListFragmentListener?) {
         val feedId = getFeedIdAtPosition(position)
-        if (feedId == Feed.DEFAULT_FEED_ID) {
-            changeHideStatus()
-            return
-        }
-        mListener?.onListClicked(feedId)
+        if (feedId != -1) mListener?.onListClicked(feedId)
+    }
+
+    fun onRssFooterClicked() {
+        changeHideStatus()
     }
 
     private fun changeHideStatus() {
+        generateHidedFeedList()
         if (isHided) {
             isHided = false
             view.init(allFeeds)
         } else {
             isHided = true
-            view.init(feeds)
+            view.init(unreadOnlyFeeds)
         }
     }
 
@@ -224,19 +200,20 @@ class RssListPresenter(private val view: RssListView,
             onRefreshComplete()
             return
         }
+        updateAllRss()
+    }
 
+    private fun updateAllRss() {
         networkTaskManager.updateAllFeeds(allFeeds)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Subscriber<Feed> {
                     override fun onSubscribe(s: Subscription) {
-                        s.request((allFeeds.size - 1).toLong())
+                        s.request((allFeeds.size).toLong())
                     }
 
                     override fun onNext(feed: Feed) {}
 
-                    override fun onError(t: Throwable) {
-
-                    }
+                    override fun onError(t: Throwable) {}
 
                     override fun onComplete() {
                         onFinishUpdate()
@@ -250,26 +227,58 @@ class RssListPresenter(private val view: RssListView,
 
     fun onFinishUpdate() {
         onRefreshComplete()
+        fetchAllRss()
         refreshList()
         preferenceHelper.lastUpdateDate = System.currentTimeMillis()
     }
 
-    fun activityCreated() {
-        refreshList()
-        val numOfAllFeeds = dbAdapter.numOfFeeds
-        if (numOfAllFeeds == 0) {
-            view.hideAllUnreadView()
+    private fun fetchAllRss() {
+        allFeeds = dbAdapter.allFeedsWithNumOfUnreadArticles
+    }
+
+    fun getItemCount(): Int {
+        // Add +1 for the footer
+        if (isHided) return unreadOnlyFeeds.size + 1
+        return allFeeds.size + 1
+    }
+
+    fun onBindRssViewHolder(position: Int, view: RssItemView.Content) {
+        val feed = if (isHided) unreadOnlyFeeds[position] else allFeeds[position]
+        if (feed.iconPath == Feed.DEDAULT_ICON_PATH) {
+            view.showDefaultIcon()
         } else {
-            updateAllUnreadArticlesCount()
+            if (!view.showIcon(feed.iconPath)) {
+                dbAdapter.saveIconPath(feed.siteUrl, Feed.DEDAULT_ICON_PATH)
+            }
         }
-        view.init(feeds)
+        view.updateTitle(feed.title)
+        view.updateUnreadCount(
+                if (isHided) unreadOnlyFeeds[position].unreadAriticlesCount.toString()
+                else allFeeds[position].unreadAriticlesCount.toString()
+        )
     }
 
-    fun isAllRssShowView(position: Int): Boolean {
-        return isHided && position == feeds.size
+    fun onBindRssFooterViewHolder(view: RssItemView.Footer) {
+        if (isHided) {
+            view.showAllView()
+        } else {
+            view.showHideView()
+        }
     }
 
-    fun isHideReadRssView(position: Int): Boolean {
-        return !isHided && position == allFeeds.size
+    fun onGetItemViewType(position: Int): Int {
+        return if (isHided) {
+            if (position == unreadOnlyFeeds.size) {
+                RssListFragment.VIEW_TYPE_FOOTER
+            } else {
+                RssListFragment.VIEW_TYPE_RSS
+            }
+        } else {
+            if (position == allFeeds.size) {
+                RssListFragment.VIEW_TYPE_FOOTER
+            } else {
+                RssListFragment.VIEW_TYPE_RSS
+            }
+        }
     }
 }
