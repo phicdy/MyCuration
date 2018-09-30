@@ -8,7 +8,9 @@
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navigation">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -18,25 +20,25 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_top"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="?android:attr/actionBarSize"
                 style="@style/BaseToolbar"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
+        <FrameLayout
+            android:id="@+id/fr_content"
+            android:layout_marginTop="?android:attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
+            android:layout_height="match_parent" />
     </android.support.design.widget.CoordinatorLayout>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_insetEdge="bottom"
+        app:menu="@menu/menu_top_bottom_navigation"/>
 
     <FrameLayout
         android:id="@+id/fl_add_background"
@@ -147,7 +149,7 @@
         android:layout_gravity="right|bottom"
         android:layout_margin="16dp"
         app:backgroundTint="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_action_new" />
 </android.support.constraint.ConstraintLayout>

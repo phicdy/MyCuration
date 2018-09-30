@@ -5,13 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
@@ -41,16 +37,12 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 
 class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener, TopActivityView {
     companion object {
-        private const val POSITION_CURATION_FRAGMENT = 0
-        private const val POSITION_FEED_FRAGMENT = 1
-        private const val POSITION_FILTER_FRAGMENT = 2
         const val FEED_ID = "FEED_ID"
         const val CURATION_ID = "CURATION_ID"
         private const val SHOWCASE_ID = "tutorialAddRss"
     }
 
     private lateinit var presenter: TopActivityPresenter
-    private lateinit var mViewPager: ViewPager
     private lateinit var fab: FloatingActionButton
     private lateinit var llAddCuration: LinearLayout
     private lateinit var llAddRss: LinearLayout
@@ -59,9 +51,14 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
     private lateinit var btnAddRss: Button
     private lateinit var btnAddFilter: Button
     private lateinit var back: FrameLayout
+    private lateinit var navigationView: BottomNavigationView
 
-    private lateinit var curationFragment: CurationListFragment
     private var searchView: SearchView? = null
+
+    private val bottomNavigationListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        replaceFragmentWith(item.itemId)
+        true
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,30 +71,30 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
     }
 
     override fun initViewPager() {
-        curationFragment = CurationListFragment()
-        val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        mViewPager = findViewById(R.id.pager)
-        mViewPager.adapter = mSectionsPagerAdapter
-        mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                setActivityTitle(position)
+        navigationView = findViewById(R.id.navigation)
+        navigationView.setOnNavigationItemSelectedListener(bottomNavigationListener)
+    }
+
+    private fun replaceFragmentWith(menuId: Int) {
+        when (menuId) {
+            R.id.navigation_curation -> {
+                supportActionBar?.title = getString(R.string.curation)
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.fr_content, CurationListFragment())
+                        .commit()
             }
-
-            override fun onPageSelected(position: Int) {
-                setActivityTitle(position)
+            R.id.navigation_rss -> {
+                supportActionBar?.title = getString(R.string.rss)
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.fr_content, RssListFragment())
+                        .commit()
             }
-
-            override fun onPageScrollStateChanged(state: Int) {
-
+            R.id.navigation_filter -> {
+                supportActionBar?.title = getString(R.string.filter)
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.fr_content, FilterListFragment())
+                        .commit()
             }
-        })
-        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
-        tabLayout.setupWithViewPager(mViewPager)
-
-        // Set icon
-        for (i in 0 until tabLayout.tabCount) {
-            val tab = tabLayout.getTabAt(i)
-            tab?.setIcon(mSectionsPagerAdapter.getImageResource(i))
         }
     }
 
@@ -162,15 +159,6 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
 
         val fadeOutFilter = AnimationUtils.loadAnimation(this, R.anim.fab_fadeout_filter)
         llAddFilter.startAnimation(fadeOutFilter)
-    }
-
-    private fun setActivityTitle(position: Int) {
-        val actionBar = supportActionBar ?: return
-        when (position) {
-            POSITION_CURATION_FRAGMENT -> actionBar.title = getString(R.string.curation)
-            POSITION_FEED_FRAGMENT -> actionBar.title = getString(R.string.rss)
-            POSITION_FILTER_FRAGMENT -> actionBar.title = getString(R.string.filter)
-        }
     }
 
     override fun onResume() {
@@ -281,10 +269,6 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
         startActivity(intent)
     }
 
-    override fun currentTabPosition(): Int {
-        return mViewPager.currentItem
-    }
-
     override fun onListClicked(feedId: Int) {
         val intent = Intent(applicationContext, ArticlesListActivity::class.java)
         intent.putExtra(FEED_ID, feedId)
@@ -311,36 +295,10 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
     }
 
     override fun changeTab(position: Int) {
-        if (position != POSITION_CURATION_FRAGMENT && position != POSITION_FEED_FRAGMENT &&
-                position != POSITION_FILTER_FRAGMENT)
-            return
-        mViewPager.currentItem = position
-    }
-
-    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-
-        override fun getItem(position: Int): Fragment? {
-            return when (position) {
-                POSITION_CURATION_FRAGMENT -> curationFragment
-                POSITION_FEED_FRAGMENT -> RssListFragment()
-                POSITION_FILTER_FRAGMENT -> FilterListFragment()
-                else -> null
-            }
-        }
-
-        override fun getCount(): Int {
-            return 3
-        }
-
-        internal fun getImageResource(position: Int): Int {
-            when (position) {
-                POSITION_CURATION_FRAGMENT -> return R.drawable.tab_curation
-                POSITION_FEED_FRAGMENT -> return R.drawable.tab_feed
-                POSITION_FILTER_FRAGMENT -> return R.drawable.tab_filter
-            }
-            return -1
+        when(position) {
+            PreferenceHelper.LAUNCH_CURATION -> navigationView.selectedItemId = R.id.navigation_curation
+            PreferenceHelper.LAUNCH_RSS -> navigationView.selectedItemId = R.id.navigation_rss
         }
     }
-
 }
 

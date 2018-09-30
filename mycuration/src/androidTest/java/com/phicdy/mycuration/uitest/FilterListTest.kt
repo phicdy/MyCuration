@@ -13,7 +13,6 @@ import android.widget.ListView
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.fail
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat
@@ -183,15 +182,7 @@ class FilterListTest : UiTest() {
 
     private fun addTestFeedsAndFilter(testTitle: String, testKeyword: String, testUrl: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-        // Go to feed tab
-        var tabs = device.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java))
-        assertNotNull("Tab was not found", tabs)
-        if (tabs.size != 3) fail("Tab size was invalid, size: " + tabs.size)
-        takeScreenshot(device, "before_click_RSS_tab" + System.currentTimeMillis())
-        tabs[1].click()
-
+        TopActivityControl.goToRssTab()
         TopActivityControl.clickAddRssButton()
 
         // Show edit text for URL if needed
@@ -220,13 +211,7 @@ class FilterListTest : UiTest() {
         urlEditText.text = "http://news.yahoo.co.jp/pickup/world/rss.xml"
         device.pressEnter()
 
-        // Go to filter tab
-        tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java)), 5000)
-        assertNotNull("Tab was not found", tabs)
-        if (tabs.size != 3) fail("Tab size was invalid, size: " + tabs.size)
-        tabs[2].click()
-
+        TopActivityControl.goToFilterTab()
         TopActivityControl.clickAddFilterButton()
 
         // Input filter title

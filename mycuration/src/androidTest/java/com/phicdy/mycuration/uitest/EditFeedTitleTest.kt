@@ -5,9 +5,7 @@ import android.support.test.filters.SdkSuppress
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.By
-import android.support.test.uiautomator.StaleObjectException
 import android.support.test.uiautomator.UiDevice
-import android.support.test.uiautomator.UiObject2
 import android.support.test.uiautomator.Until
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
@@ -41,25 +39,8 @@ class EditFeedTitleTest : UiTest() {
 
     @Test
     fun editYahooNewsTitle() {
-        fun assertTabs(tabs: MutableList<UiObject2>) {
-            assertNotNull("Tab was not found", tabs)
-            if (tabs.size != 3) fail("Tab size was invalid, size: " + tabs.size)
-        }
-
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-        // Go to feed tab
-        var tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java)), 15000)
-        assertTabs(tabs)
-        try {
-            tabs[1].click()
-        } catch (e: StaleObjectException) {
-            tabs = device.findObjects(By.clazz(android.support.v7.app.ActionBar.Tab::class.java))
-            assertTabs(tabs)
-            tabs[1].click()
-        }
-
+        TopActivityControl.goToRssTab()
         TopActivityControl.clickAddRssButton()
 
         // Show edit text for URL if needed
