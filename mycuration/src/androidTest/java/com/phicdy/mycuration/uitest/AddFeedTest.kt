@@ -58,13 +58,7 @@ class AddFeedTest : UiTest() {
     private fun addAndCheckUrl(url: String, title: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        // Go to feed tab
-        val tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java)), 15000)
-        assertNotNull("Tab was not found", tabs)
-        if (tabs.size != 3) fail("Tab size was invalid, size: $tabs.size")
-        tabs[1].click()
-
+        TopActivityControl.goToRssTab()
         TopActivityControl.clickAddRssButton()
 
         // Show edit text for URL if needed
@@ -114,13 +108,7 @@ class AddFeedTest : UiTest() {
         device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "add")), 5000)
         takeScreenshot(device, "after_startActivity_" + System.currentTimeMillis())
 
-        // Go to feed tab
-        val tabs = device.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java))
-        takeScreenshot(device, "main_ui_before_click_feed_tab_" + System.currentTimeMillis())
-        assertNotNull("Tab was not found", tabs)
-        if (tabs.size != 3) fail("Tab size was invalid, size: " + tabs.size)
-        tabs[1].click()
+        TopActivityControl.goToRssTab()
 
         // Get current RSS size
         var rssList: UiObject2? = device.findObject(By.res(BuildConfig.APPLICATION_ID, "rv_rss"))
@@ -156,13 +144,7 @@ class AddFeedTest : UiTest() {
     fun clickFabWithoutUrlOpen() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        // Go to feed tab
-        val tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java)), 15000)
-        assertNotNull("Tab was not found", tabs)
-        if (tabs.size != 3) fail("Tab size was invalid, size: " + tabs.size)
-        tabs[1].click()
-
+        TopActivityControl.goToRssTab()
         TopActivityControl.clickAddRssButton()
 
         // Open invalid RSS URL
@@ -176,5 +158,4 @@ class AddFeedTest : UiTest() {
                 By.res(BuildConfig.APPLICATION_ID, "fab")), 5000)
         assertNotNull(fab)
     }
-
 }

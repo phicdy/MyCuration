@@ -7,4 +7,6 @@
 
     <dimen name="small_fab_width">48dp</dimen>
     <dimen name="small_fab_height">48dp</dimen>
+
+    <dimen name="elevation_bottom_navigation">8dp</dimen>
 </resources>

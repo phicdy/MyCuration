@@ -32,4 +32,18 @@ internal object TopActivityControl {
         assertNotNull("Fab RSS was not found", fabAddFilter)
         fabAddFilter.click()
     }
+
+    fun goToRssTab() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        val tab = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "navigation_rss")), 15000)
+        tab.click()
+    }
+
+    fun goToFilterTab() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        val tab = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "navigation_filter")), 15000)
+        tab.click()
+    }
 }

@@ -38,14 +38,7 @@ class SettingTest : UiTest() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "add")), 5000)
 
-        // Go to feed tab
-        val tabs = device.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java))
-        assertNotNull("Tab was not found", tabs)
-        if (tabs.size != 3) fail("Tab size was invalid, size: " + tabs.size)
-        takeScreenshot(device)
-        tabs[1].click()
-
+        TopActivityControl.goToRssTab()
         TopActivityControl.clickAddRssButton()
 
         // Show edit text for URL if needed
@@ -216,9 +209,9 @@ class SettingTest : UiTest() {
         fab.click()
 
         // Assert top activity is foreground
-        val tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java)), 5000)
-        assertNotNull(tabs)
+        val fabTop = device.wait(Until.findObjects(
+                By.res(BuildConfig.APPLICATION_ID, "fab_top")), 5000)
+        assertNotNull(fabTop)
     }
 
     @Test
