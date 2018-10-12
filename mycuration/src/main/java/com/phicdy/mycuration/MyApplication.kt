@@ -2,6 +2,7 @@ package com.phicdy.mycuration
 
 import android.app.Application
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.data.db.DatabaseAdapter
@@ -18,11 +19,13 @@ class MyApplication : Application() {
      * @return tracker
      */
     // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-    companion object DefaultTracker {
+    companion object {
         fun setUp(context: Context): FirebaseAnalytics {
             return FirebaseAnalytics.getInstance(context)
         }
     }
+
+    val db: SQLiteDatabase by lazy { DatabaseHelper(this).writableDatabase }
 
     override fun onCreate() {
         super.onCreate()

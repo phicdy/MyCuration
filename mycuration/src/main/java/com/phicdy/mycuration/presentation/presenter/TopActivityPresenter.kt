@@ -2,15 +2,18 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.view.KeyEvent
 import android.view.MenuItem
-
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.presentation.view.TopActivityView
 
-class TopActivityPresenter(private val launchTab: Int, private val view: TopActivityView,
-                           private val dbAdapter: DatabaseAdapter) : Presenter {
+class TopActivityPresenter(private val launchTab: Int,
+                           private val view: TopActivityView,
+                           private val dbAdapter: DatabaseAdapter,
+                           private val articleRepository: ArticleRepository
+) {
 
-    override fun create() {
+    fun create() {
         view.initViewPager()
         view.initFab()
         view.initToolbar()
@@ -19,13 +22,9 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
     }
 
     override fun resume() {
-        Thread(Runnable { dbAdapter.saveAllStatusToReadFromToRead() }).start()
+        Thread(Runnable { articleRepository.saveAllStatusToReadFromToRead() }).start()
 
         view.closeSearchView()
-    }
-
-    override fun pause() {
-
     }
 
     fun fabClicked() {
