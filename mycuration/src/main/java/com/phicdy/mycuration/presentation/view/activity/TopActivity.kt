@@ -20,8 +20,10 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
+import com.phicdy.mycuration.MyApplication
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
@@ -31,16 +33,32 @@ import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.view.activity.SettingActivity
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.launch
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
+import kotlin.coroutines.experimental.CoroutineContext
 
-class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener, TopActivityView {
+class TopActivity :
+        AppCompatActivity(),
+        RssListFragment.OnFeedListFragmentListener,
+        CurationListFragment.OnCurationListFragmentListener,
+        TopActivityView,
+        CoroutineScope
+{
     companion object {
         const val FEED_ID = "FEED_ID"
         const val CURATION_ID = "CURATION_ID"
         private const val SHOWCASE_ID = "tutorialAddRss"
     }
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     private lateinit var presenter: TopActivityPresenter
     private lateinit var fab: FloatingActionButton
@@ -66,7 +84,7 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
 
         val helper = PreferenceHelper
         val dbAdapter = DatabaseAdapter.getInstance()
-        presenter = TopActivityPresenter(helper.launchTab, this, dbAdapter)
+        presenter = TopActivityPresenter(helper.launchTab, this, dbAdapter, ArticleRepository((application as MyApplication).db))
         presenter.create()
     }
 
@@ -163,7 +181,14 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
+        launch(context = coroutineContext) {
+            presenter.resume()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        job.cancel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

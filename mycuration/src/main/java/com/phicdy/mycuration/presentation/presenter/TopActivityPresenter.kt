@@ -6,6 +6,7 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.presentation.view.TopActivityView
+import kotlinx.coroutines.experimental.coroutineScope
 
 class TopActivityPresenter(private val launchTab: Int,
                            private val view: TopActivityView,
@@ -21,9 +22,8 @@ class TopActivityPresenter(private val launchTab: Int,
         view.changeTab(launchTab)
     }
 
-    override fun resume() {
-        Thread(Runnable { articleRepository.saveAllStatusToReadFromToRead() }).start()
-
+    suspend fun resume() = coroutineScope {
+        articleRepository.saveAllStatusToReadFromToRead()
         view.closeSearchView()
     }
 
