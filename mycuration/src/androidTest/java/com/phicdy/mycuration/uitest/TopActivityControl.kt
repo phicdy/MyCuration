@@ -18,7 +18,7 @@ internal object TopActivityControl {
                 By.res(BuildConfig.APPLICATION_ID, "fab_top")), 5000)
         assertNotNull("Plus button was not found", plusButton)
         plusButton.click()
-        val fabAddRss = device.findObject(By.res(BuildConfig.APPLICATION_ID, "ll_add_rss"))
+        val fabAddRss = device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "ll_add_rss")), 3000)
         assertNotNull("Fab RSS was not found", fabAddRss)
         fabAddRss.click()
     }
@@ -28,7 +28,7 @@ internal object TopActivityControl {
         val plusButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "fab_top"))
         assertNotNull("Plus button was not found", plusButton)
         plusButton.click()
-        val fabAddFilter = device.findObject(By.res(BuildConfig.APPLICATION_ID, "ll_add_filter"))
+        val fabAddFilter = device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "ll_add_filter")), 3000)
         assertNotNull("Fab RSS was not found", fabAddFilter)
         fabAddFilter.click()
     }
