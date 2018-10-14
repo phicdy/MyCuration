@@ -13,6 +13,7 @@ android {
         targetSdkVersion 28
         versionName "1.5.9"
         versionCode 39
+        multiDexEnabled true
 
         testApplicationId "com.phicdy.mycuration.test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
