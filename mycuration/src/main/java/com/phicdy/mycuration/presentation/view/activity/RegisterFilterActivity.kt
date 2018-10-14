@@ -56,12 +56,13 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
         if (requestCode == TARGET_FEED_SELECT_REQUEST) {
-            val bundle = data.extras
-            val list = bundle.getParcelableArrayList<Feed>(KEY_SELECTED_FEED)
-            presenter.setSelectedFeedList(list)
+            data?.extras?.let {
+                val list = it.getParcelableArrayList<Feed>(KEY_SELECTED_FEED) ?: arrayListOf()
+                presenter.setSelectedFeedList(list)
+            }
         }
     }
 
