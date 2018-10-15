@@ -5,14 +5,15 @@ apply plugin: 'spoon'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.phicdy.mycuration"
-        minSdkVersion 14
-        targetSdkVersion 27
+        minSdkVersion 21
+        targetSdkVersion 28
         versionName "1.5.9"
         versionCode 39
+        multiDexEnabled true
 
         testApplicationId "com.phicdy.mycuration.test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -39,18 +40,6 @@ android {
         disable 'MissingTranslation'
         disable "RtlHardcoded"
         abortOnError true
-    }
-
-    flavorDimensions "mode"
-    productFlavors {
-        production {
-            dimension "mode"
-            minSdkVersion 14
-        }
-        uiTest {
-            dimension "mode"
-            minSdkVersion 18
-        }
     }
 
     testOptions {
@@ -81,7 +70,7 @@ def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*
                             '**/com/phicdy/mycuration/domain/task/GetFeedIconTask*',
                             '**/com/phicdy/mycuration/domain/task/GetHatenaBookmark*',
                             '**/com/phicdy/mycuration/tracker/*.*']
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testUiTestDebugUnitTest']) {
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
     reports {
@@ -91,13 +80,13 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testUiTestDebugUnitTest']
         xml.destination new File("${buildDir}/reports/jacoco/jacocoTestReport.xml")
         html.destination new File("${buildDir}/reports/jacoco/html")
         classDirectories =
-                fileTree(dir: "${buildDir}/intermediates/classes/uiTest/debug",
+                fileTree(dir: "${buildDir}/intermediates/classes/debug",
                         exclude: coverageExcludeFiles) +
-                fileTree(dir: "$buildDir/tmp/kotlin-classes/uiTestDebug",
+                fileTree(dir: "$buildDir/tmp/kotlin-classes/debug",
                         excludes: coverageExcludeFiles)
     }
     sourceDirectories = files(coverageSourceDirs)
-    executionData = files "${buildDir}/jacoco/testUiTestDebugUnitTest.exec"
+    executionData = files "${buildDir}/jacoco/testDebugUnitTest.exec"
 
     doLast {
         println "jacoco xml report has been generated to file://${buildDir}/reports/jacoco/jacocoTestReport.xml"
@@ -115,15 +104,15 @@ spoon {
 dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.21.0'
-    uiTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
-    uiTestImplementation 'com.android.support.test:runner:1.0.2'
-    uiTestImplementation 'com.android.support.test:rules:1.0.2'
-    uiTestImplementation 'com.squareup.spoon:spoon-client:1.6.4'
+    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.squareup.spoon:spoon-client:1.6.4'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
-    def supportLibVer = '27.1.1'
+    def supportLibVer = '28.0.0'
     implementation "com.android.support:appcompat-v7:$supportLibVer"
     implementation "com.android.support:support-v4:$supportLibVer"
     implementation "com.android.support:design:$supportLibVer"
@@ -136,7 +125,7 @@ dependencies {
     implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
     implementation 'com.facebook.stetho:stetho:1.4.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
@@ -148,13 +137,13 @@ dependencies {
 apply plugin: 'com.google.gms.google-services'
 
 task copyBuild(type: Copy) {
-    from 'build/outputs/apk/production/debug'
+    from 'build/outputs/apk/debug'
     into "$COPY_BUILD_DESTINATION"
     include '**/*.apk'
 }
 
 afterEvaluate { project ->
-    project.tasks.assembleProductionDebug << {
+    project.tasks.assembleDebug << {
         println "$COPY_BUILD_DESTINATION"
         tasks.copyBuild.execute()
     }

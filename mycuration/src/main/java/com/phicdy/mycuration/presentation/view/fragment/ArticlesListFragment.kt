@@ -64,7 +64,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
 
     override val isBottomVisible: Boolean
         get() {
-            val isLastItemVisible = lastVisiblePosition == recyclerView.adapter.itemCount - 1
+            val isLastItemVisible = recyclerView.adapter?.let { lastVisiblePosition == it.itemCount - 1 } ?: false
             val chilidCount = recyclerView.childCount
             if (chilidCount < 1) return false
             val lastItem = recyclerView.getChildAt(chilidCount - 1) ?: return false
@@ -147,9 +147,8 @@ class ArticlesListFragment : Fragment(), ArticleListView {
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (recyclerView == null) return
                 val manager = recyclerView.layoutManager as LinearLayoutManager
                 val lastItemPosition = manager.findLastVisibleItemPosition()
                 presenter.onScrolled(lastItemPosition)
