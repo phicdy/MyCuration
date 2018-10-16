@@ -3,6 +3,7 @@ package com.phicdy.mycuration.data.db
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
@@ -10,6 +11,7 @@ import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
 import junit.framework.Assert.assertTrue
+import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat
@@ -118,7 +120,7 @@ class DatabaseAdapterTest {
     }
 
     @Test
-    fun testSaveAllStatusToReadFromToRead() {
+    fun testSaveAllStatusToReadFromToRead() = runBlocking {
         val id = adapter.getFeedByUrl(TEST_FEED_URL).id
 
         val articles = ArrayList<Article>()
@@ -131,7 +133,9 @@ class DatabaseAdapterTest {
         articles.add(toReadArticle2)
         adapter.saveNewArticles(articles, id)
 
-        adapter.saveAllStatusToReadFromToRead()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val repository = ArticleRepository(db)
+        repository.saveAllStatusToReadFromToRead()
         val changedArticles = adapter.getTop300Articles(true)
         var existToReadArticle = false
         for ((_, _, _, status) in changedArticles) {
