@@ -3,15 +3,15 @@ package com.phicdy.mycuration.presentation.presenter
 import android.view.KeyEvent
 import android.view.MenuItem
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.experimental.coroutineScope
 
 class TopActivityPresenter(private val launchTab: Int,
                            private val view: TopActivityView,
-                           private val dbAdapter: DatabaseAdapter,
-                           private val articleRepository: ArticleRepository
+                           private val articleRepository: ArticleRepository,
+                           private val rssRepository: RssRepository
 ) {
 
     fun create() {
@@ -31,11 +31,11 @@ class TopActivityPresenter(private val launchTab: Int,
         view.startFabAnimation()
     }
 
-    fun fabCurationClicked() {
+    suspend fun fabCurationClicked() = coroutineScope {
         view.closeAddFab()
-        if (dbAdapter.numOfFeeds == 0) {
+        if (rssRepository.getNumOfRss() == 0) {
             view.goToFeedSearch()
-            return
+            return@coroutineScope
         }
         view.goToAddCuration()
     }
@@ -45,11 +45,11 @@ class TopActivityPresenter(private val launchTab: Int,
         view.goToFeedSearch()
     }
 
-    fun fabFilterClicked() {
+    suspend fun fabFilterClicked() = coroutineScope {
         view.closeAddFab()
-        if (dbAdapter.numOfFeeds == 0) {
+        if (rssRepository.getNumOfRss() == 0) {
             view.goToFeedSearch()
-            return
+            return@coroutineScope
         }
         view.goToAddFilter()
     }

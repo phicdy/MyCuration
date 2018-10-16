@@ -22,8 +22,8 @@ import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.MyApplication
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
@@ -36,7 +36,6 @@ import com.phicdy.mycuration.view.activity.SettingActivity
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
@@ -83,8 +82,8 @@ class TopActivity :
         setContentView(R.layout.activity_top)
 
         val helper = PreferenceHelper
-        val dbAdapter = DatabaseAdapter.getInstance()
-        presenter = TopActivityPresenter(helper.launchTab, this, dbAdapter, ArticleRepository((application as MyApplication).db))
+        val db = (application as MyApplication).db
+        presenter = TopActivityPresenter(helper.launchTab, this, ArticleRepository(db), RssRepository(db))
         presenter.create()
     }
 
@@ -126,16 +125,32 @@ class TopActivity :
         llAddCuration = findViewById(R.id.ll_add_curation)
         llAddRss = findViewById(R.id.ll_add_rss)
         llAddFilter = findViewById(R.id.ll_add_filter)
-        llAddCuration.setOnClickListener { presenter.fabCurationClicked() }
+        llAddCuration.setOnClickListener {
+            launch(context = coroutineContext) {
+                presenter.fabCurationClicked()
+            }
+        }
         llAddRss.setOnClickListener { presenter.fabRssClicked() }
-        llAddFilter.setOnClickListener { presenter.fabFilterClicked() }
+        llAddFilter.setOnClickListener {
+            launch(context = coroutineContext) {
+                presenter.fabFilterClicked()
+            }
+        }
 
         btnAddCuration = findViewById(R.id.btn_add_curation)
         btnAddRss = findViewById(R.id.btn_add_rss)
         btnAddFilter = findViewById(R.id.btn_add_filter)
-        btnAddCuration.setOnClickListener { presenter.fabCurationClicked() }
+        btnAddCuration.setOnClickListener {
+            launch(context = coroutineContext) {
+                presenter.fabCurationClicked()
+            }
+        }
         btnAddRss.setOnClickListener { presenter.fabRssClicked() }
-        btnAddFilter.setOnClickListener { presenter.fabFilterClicked() }
+        btnAddFilter.setOnClickListener {
+            launch(context = coroutineContext) {
+                presenter.fabFilterClicked()
+            }
+        }
     }
 
     override fun initToolbar() {
