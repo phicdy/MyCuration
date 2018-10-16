@@ -186,8 +186,8 @@ class TopActivity :
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         job.cancel()
     }
 
