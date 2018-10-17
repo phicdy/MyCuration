@@ -65,6 +65,8 @@ def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*
                             '**/*Fragment*.class', '**/*Receiver.class',
                             '**/*Manifest*.class', '**/*Application*.class',
                             '**/com/phicdy/mycuration/data/db/*.*',
+                            '**/com/phicdy/mycuration/data/repository/*.*',
+                            '**/com/phicdy/mycuration/di/*.*',
                             '**/com/phicdy/mycuration/domain/alarm/*.*',
                             '**/com/phicdy/mycuration/data/filter/Filter.class',
                             '**/com/phicdy/mycuration/data/filter/FilterFeedRegistration.class',
