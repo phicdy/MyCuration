@@ -20,10 +20,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
-import com.phicdy.mycuration.MyApplication
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.repository.ArticleRepository
-import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
@@ -37,6 +34,10 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
@@ -59,7 +60,7 @@ class TopActivity :
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private lateinit var presenter: TopActivityPresenter
+    private val presenter: TopActivityPresenter by inject { parametersOf(this) }
     private lateinit var fab: FloatingActionButton
     private lateinit var llAddCuration: LinearLayout
     private lateinit var llAddRss: LinearLayout
@@ -81,9 +82,7 @@ class TopActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
 
-        val helper = PreferenceHelper
-        val db = (application as MyApplication).db
-        presenter = TopActivityPresenter(helper.launchTab, this, ArticleRepository(db), RssRepository(db))
+        bindScope(getOrCreateScope("top"))
         presenter.create()
     }
 
