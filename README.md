@@ -35,6 +35,8 @@ Set status to read automatically by user settings
 
 ## Credits
 
+* [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
+* [KOIN](https://github.com/InsertKoinIO/koin)
 * [RecyclerView](https://dl.google.com/dl/android/maven2/index.html)
 * [RxJava](https://github.com/ReactiveX/RxJava)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)

@@ -6,9 +6,11 @@ import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.di.appModule
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
+import org.koin.android.ext.android.startKoin
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
 class MyApplication : Application() {
@@ -18,7 +20,7 @@ class MyApplication : Application() {
      * @return tracker
      */
     // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-    companion object DefaultTracker {
+    companion object {
         fun setUp(context: Context): FirebaseAnalytics {
             return FirebaseAnalytics.getInstance(context)
         }
@@ -26,6 +28,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        startKoin(this, listOf(appModule))
         PreferenceHelper.setUp(this)
         DatabaseAdapter.setUp(DatabaseHelper(this))
         FileUtil.setUpIconSaveFolder(this)

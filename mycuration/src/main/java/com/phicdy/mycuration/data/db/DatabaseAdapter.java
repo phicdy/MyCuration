@@ -277,24 +277,6 @@ public class DatabaseAdapter {
 	}
 
     /**
-     * Update method from "to read" to "read" for all of the articles.
-     */
-    public void saveAllStatusToReadFromToRead() {
-        db.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-            values.put(Article.STATUS, Article.READ);
-            String condition = Article.STATUS + " = '" + Article.TOREAD + "'";
-            db.update(Article.TABLE_NAME, values, condition, null);
-            db.setTransactionSuccessful();
-        } catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-            db.endTransaction();
-        }
-    }
-
-    /**
      * Update method for article read/unread status.
      *
      * @param articleId Artilce ID to change status

@@ -21,7 +21,6 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
@@ -31,18 +30,37 @@ import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.view.activity.SettingActivity
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
+import kotlin.coroutines.experimental.CoroutineContext
 
-class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListener, CurationListFragment.OnCurationListFragmentListener, TopActivityView {
+class TopActivity :
+        AppCompatActivity(),
+        RssListFragment.OnFeedListFragmentListener,
+        CurationListFragment.OnCurationListFragmentListener,
+        TopActivityView,
+        CoroutineScope
+{
     companion object {
         const val FEED_ID = "FEED_ID"
         const val CURATION_ID = "CURATION_ID"
         private const val SHOWCASE_ID = "tutorialAddRss"
     }
 
-    private lateinit var presenter: TopActivityPresenter
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
+    private val presenter: TopActivityPresenter by inject { parametersOf(this) }
     private lateinit var fab: FloatingActionButton
     private lateinit var llAddCuration: LinearLayout
     private lateinit var llAddRss: LinearLayout
@@ -64,9 +82,7 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
 
-        val helper = PreferenceHelper
-        val dbAdapter = DatabaseAdapter.getInstance()
-        presenter = TopActivityPresenter(helper.launchTab, this, dbAdapter)
+        bindScope(getOrCreateScope("top"))
         presenter.create()
     }
 
@@ -108,16 +124,32 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
         llAddCuration = findViewById(R.id.ll_add_curation)
         llAddRss = findViewById(R.id.ll_add_rss)
         llAddFilter = findViewById(R.id.ll_add_filter)
-        llAddCuration.setOnClickListener { presenter.fabCurationClicked() }
+        llAddCuration.setOnClickListener {
+            launch(context = coroutineContext) {
+                presenter.fabCurationClicked()
+            }
+        }
         llAddRss.setOnClickListener { presenter.fabRssClicked() }
-        llAddFilter.setOnClickListener { presenter.fabFilterClicked() }
+        llAddFilter.setOnClickListener {
+            launch(context = coroutineContext) {
+                presenter.fabFilterClicked()
+            }
+        }
 
         btnAddCuration = findViewById(R.id.btn_add_curation)
         btnAddRss = findViewById(R.id.btn_add_rss)
         btnAddFilter = findViewById(R.id.btn_add_filter)
-        btnAddCuration.setOnClickListener { presenter.fabCurationClicked() }
+        btnAddCuration.setOnClickListener {
+            launch(context = coroutineContext) {
+                presenter.fabCurationClicked()
+            }
+        }
         btnAddRss.setOnClickListener { presenter.fabRssClicked() }
-        btnAddFilter.setOnClickListener { presenter.fabFilterClicked() }
+        btnAddFilter.setOnClickListener {
+            launch(context = coroutineContext) {
+                presenter.fabFilterClicked()
+            }
+        }
     }
 
     override fun initToolbar() {
@@ -163,7 +195,14 @@ class TopActivity : AppCompatActivity(), RssListFragment.OnFeedListFragmentListe
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
+        launch(context = coroutineContext) {
+            presenter.resume()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

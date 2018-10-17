@@ -2,15 +2,19 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.view.KeyEvent
 import android.view.MenuItem
-
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.TopActivityView
+import kotlinx.coroutines.experimental.coroutineScope
 
-class TopActivityPresenter(private val launchTab: Int, private val view: TopActivityView,
-                           private val dbAdapter: DatabaseAdapter) : Presenter {
+class TopActivityPresenter(private val launchTab: Int,
+                           private val view: TopActivityView,
+                           private val articleRepository: ArticleRepository,
+                           private val rssRepository: RssRepository
+) {
 
-    override fun create() {
+    fun create() {
         view.initViewPager()
         view.initFab()
         view.initToolbar()
@@ -18,25 +22,20 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
         view.changeTab(launchTab)
     }
 
-    override fun resume() {
-        Thread(Runnable { dbAdapter.saveAllStatusToReadFromToRead() }).start()
-
+    suspend fun resume() = coroutineScope {
+        articleRepository.saveAllStatusToReadFromToRead()
         view.closeSearchView()
-    }
-
-    override fun pause() {
-
     }
 
     fun fabClicked() {
         view.startFabAnimation()
     }
 
-    fun fabCurationClicked() {
+    suspend fun fabCurationClicked() = coroutineScope {
         view.closeAddFab()
-        if (dbAdapter.numOfFeeds == 0) {
+        if (rssRepository.getNumOfRss() == 0) {
             view.goToFeedSearch()
-            return
+            return@coroutineScope
         }
         view.goToAddCuration()
     }
@@ -46,11 +45,11 @@ class TopActivityPresenter(private val launchTab: Int, private val view: TopActi
         view.goToFeedSearch()
     }
 
-    fun fabFilterClicked() {
+    suspend fun fabFilterClicked() = coroutineScope {
         view.closeAddFab()
-        if (dbAdapter.numOfFeeds == 0) {
+        if (rssRepository.getNumOfRss() == 0) {
             view.goToFeedSearch()
-            return
+            return@coroutineScope
         }
         view.goToAddFilter()
     }
