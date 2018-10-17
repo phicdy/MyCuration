@@ -142,6 +142,9 @@ dependencies {
 
     def firebaseVer = '16.0.3'
     implementation "com.google.firebase:firebase-core:$firebaseVer"
+
+    def koinVer = '1.0.1'
+    implementation "org.koin:koin-android-scope:$koinVer"
 }
 
 apply plugin: 'com.google.gms.google-services'
