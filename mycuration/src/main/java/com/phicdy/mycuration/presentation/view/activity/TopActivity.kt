@@ -15,6 +15,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.FrameLayout
@@ -184,12 +185,48 @@ class TopActivity :
         fab.startAnimation(animation)
 
         val fadeOutCuration = AnimationUtils.loadAnimation(this, R.anim.fab_fadeout_curation)
+        fadeOutCuration.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+
+            override fun onAnimationStart(p0: Animation?) {
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                llAddCuration.visibility = View.GONE
+            }
+
+        })
         llAddCuration.startAnimation(fadeOutCuration)
 
         val fadeOutRss = AnimationUtils.loadAnimation(this, R.anim.fab_fadeout_rss)
+        fadeOutRss.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+
+            override fun onAnimationStart(p0: Animation?) {
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                llAddRss.visibility = View.GONE
+            }
+
+        })
         llAddRss.startAnimation(fadeOutRss)
 
         val fadeOutFilter = AnimationUtils.loadAnimation(this, R.anim.fab_fadeout_filter)
+        fadeOutFilter.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+
+            override fun onAnimationStart(p0: Animation?) {
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                llAddFilter.visibility = View.GONE
+            }
+
+        })
         llAddFilter.startAnimation(fadeOutFilter)
     }
 
