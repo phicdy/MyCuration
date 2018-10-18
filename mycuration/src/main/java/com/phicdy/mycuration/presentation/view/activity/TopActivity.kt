@@ -63,6 +63,9 @@ class TopActivity :
 
     private val presenter: TopActivityPresenter by inject { parametersOf(this) }
     private lateinit var fab: FloatingActionButton
+    private lateinit var fabAddCuration: FloatingActionButton
+    private lateinit var fabAddRss: FloatingActionButton
+    private lateinit var fabAddFilter: FloatingActionButton
     private lateinit var llAddCuration: LinearLayout
     private lateinit var llAddRss: LinearLayout
     private lateinit var llAddFilter: LinearLayout
@@ -116,40 +119,58 @@ class TopActivity :
     }
 
     override fun initFab() {
-        fab = findViewById(R.id.fab_top)
-        fab.setOnClickListener { presenter.fabClicked() }
-        back = findViewById(R.id.fl_add_background)
-        back.setOnClickListener {
-            presenter.addBackgroundClicked()
-        }
-        llAddCuration = findViewById(R.id.ll_add_curation)
-        llAddRss = findViewById(R.id.ll_add_rss)
-        llAddFilter = findViewById(R.id.ll_add_filter)
-        llAddCuration.setOnClickListener {
+        fun onAddCurationClicked() {
             launch(context = coroutineContext) {
                 presenter.fabCurationClicked()
             }
         }
-        llAddRss.setOnClickListener { presenter.fabRssClicked() }
-        llAddFilter.setOnClickListener {
+
+        fun onAddRssClicked() {
+            presenter.fabRssClicked()
+        }
+
+        fun onAddFilterClicked() {
             launch(context = coroutineContext) {
                 presenter.fabFilterClicked()
             }
         }
 
+        fab = findViewById(R.id.fab_top)
+        fab.setOnClickListener { presenter.fabClicked() }
+
+        back = findViewById(R.id.fl_add_background)
+        back.setOnClickListener {
+            presenter.addBackgroundClicked()
+        }
+
+        llAddCuration = findViewById(R.id.ll_add_curation)
+        llAddRss = findViewById(R.id.ll_add_rss)
+        llAddFilter = findViewById(R.id.ll_add_filter)
+
         btnAddCuration = findViewById(R.id.btn_add_curation)
         btnAddRss = findViewById(R.id.btn_add_rss)
         btnAddFilter = findViewById(R.id.btn_add_filter)
         btnAddCuration.setOnClickListener {
-            launch(context = coroutineContext) {
-                presenter.fabCurationClicked()
-            }
+            onAddCurationClicked()
         }
-        btnAddRss.setOnClickListener { presenter.fabRssClicked() }
+        btnAddRss.setOnClickListener {
+            onAddRssClicked()
+        }
         btnAddFilter.setOnClickListener {
-            launch(context = coroutineContext) {
-                presenter.fabFilterClicked()
-            }
+            onAddFilterClicked()
+        }
+
+        fabAddCuration = findViewById(R.id.fab_add_curation)
+        fabAddRss = findViewById(R.id.fab_add_rss)
+        fabAddFilter = findViewById(R.id.fab_add_filter)
+        fabAddCuration.setOnClickListener {
+            onAddCurationClicked()
+        }
+        fabAddRss.setOnClickListener {
+            onAddRssClicked()
+        }
+        fabAddFilter.setOnClickListener {
+            onAddFilterClicked()
         }
     }
 
@@ -166,14 +187,20 @@ class TopActivity :
         fab.startAnimation(animation)
 
         llAddCuration.visibility = View.VISIBLE
+        btnAddCuration.visibility = View.VISIBLE
+        fabAddCuration.show()
         val fadeInCuration = AnimationUtils.loadAnimation(this, R.anim.fab_fadein_curation)
         llAddCuration.startAnimation(fadeInCuration)
 
         llAddRss.visibility = View.VISIBLE
+        btnAddRss.visibility = View.VISIBLE
+        fabAddRss.show()
         val fadeInRss = AnimationUtils.loadAnimation(this, R.anim.fab_fadein_rss)
         llAddRss.startAnimation(fadeInRss)
 
         llAddFilter.visibility = View.VISIBLE
+        btnAddFilter.visibility = View.VISIBLE
+        fabAddFilter.show()
         val fadeInFilter = AnimationUtils.loadAnimation(this, R.anim.fab_fadein_filter)
         llAddFilter.startAnimation(fadeInFilter)
     }
@@ -194,6 +221,8 @@ class TopActivity :
 
             override fun onAnimationEnd(p0: Animation?) {
                 llAddCuration.visibility = View.GONE
+                btnAddCuration.visibility = View.GONE
+                fabAddCuration.hide()
             }
 
         })
@@ -209,6 +238,8 @@ class TopActivity :
 
             override fun onAnimationEnd(p0: Animation?) {
                 llAddRss.visibility = View.GONE
+                btnAddRss.visibility = View.GONE
+                fabAddRss.hide()
             }
 
         })
@@ -224,6 +255,8 @@ class TopActivity :
 
             override fun onAnimationEnd(p0: Animation?) {
                 llAddFilter.visibility = View.GONE
+                btnAddFilter.visibility = View.GONE
+                fabAddFilter.hide()
             }
 
         })
