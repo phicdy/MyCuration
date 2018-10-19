@@ -25,10 +25,18 @@ import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.util.PreferenceHelper
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
 import java.io.File
 import java.security.InvalidParameterException
+import kotlin.coroutines.experimental.CoroutineContext
 
-class RssListFragment : Fragment(), RssListView {
+class RssListFragment : Fragment(), RssListView, CoroutineScope {
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     private lateinit var presenter: RssListPresenter
     private lateinit var tvAllUnreadArticleCount: TextView
@@ -52,7 +60,9 @@ class RssListFragment : Fragment(), RssListView {
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
+        launch(context = coroutineContext) {
+            presenter.resume()
+        }
     }
 
     override fun showEditTitleDialog(position: Int, feedTitle: String) {
@@ -158,6 +168,11 @@ class RssListFragment : Fragment(), RssListView {
     override fun onPause() {
         super.onPause()
         presenter.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     private fun setAllListener() {

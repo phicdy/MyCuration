@@ -9,6 +9,7 @@ import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.coroutines.experimental.coroutineScope
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import java.util.ArrayList
@@ -17,7 +18,7 @@ class RssListPresenter(private val view: RssListView,
                        private val preferenceHelper: PreferenceHelper,
                        private val dbAdapter: DatabaseAdapter,
                        private val networkTaskManager: NetworkTaskManager,
-                       private val unreadCountManager: UnreadCountManager) : Presenter {
+                       private val unreadCountManager: UnreadCountManager) {
 
     var unreadOnlyFeeds = arrayListOf<Feed>()
         private set
@@ -30,9 +31,9 @@ class RssListPresenter(private val view: RssListView,
     private val isAfterInterval: Boolean
         get() = System.currentTimeMillis() - preferenceHelper.lastUpdateDate >= 1000 * 60
 
-    override fun create() {}
+    fun create() {}
 
-    override fun resume() {
+    suspend fun resume() = coroutineScope {
         if (dbAdapter.numOfFeeds == 0) {
             updateViewForEmpty()
         } else {
@@ -70,7 +71,7 @@ class RssListPresenter(private val view: RssListView,
         view.setTotalUnreadCount(unreadCountManager.total)
     }
 
-    override fun pause() {}
+    fun pause() {}
 
     fun onDeleteFeedMenuClicked(position: Int) {
         view.showDeleteFeedAlertDialog(position)
