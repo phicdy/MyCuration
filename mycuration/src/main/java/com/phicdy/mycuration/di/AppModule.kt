@@ -39,6 +39,7 @@ val appModule = module {
                 view = view,
                 preferenceHelper = get(),
                 dbAdapter = DatabaseAdapter.getInstance(),
+                rssRepository = get(),
                 networkTaskManager = get(),
                 unreadCountManager = get()
         )

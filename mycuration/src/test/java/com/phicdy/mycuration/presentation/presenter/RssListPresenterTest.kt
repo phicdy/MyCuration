@@ -4,6 +4,7 @@ package com.phicdy.mycuration.presentation.presenter
 import android.content.Context
 import android.content.SharedPreferences
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -13,6 +14,7 @@ import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat
@@ -36,6 +38,7 @@ class RssListPresenterTest {
     private val view = Mockito.mock(RssListView::class.java)
     private val adapter = Mockito.mock(DatabaseAdapter::class.java)
     private val mockPref = Mockito.mock(SharedPreferences::class.java)
+    private val mockRssRepository = Mockito.mock(RssRepository::class.java)
 
     @Before
     fun setup() {
@@ -46,7 +49,9 @@ class RssListPresenterTest {
         val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", SECOND_RSS_ICON_PATH, "", SECOND_RSS_UNREAD_COUNT, "")
         val allFeeds = arrayListOf(firstRss, secondRss)
         `when`(adapter.allFeedsWithNumOfUnreadArticles).thenReturn(allFeeds)
-        `when`(adapter.numOfFeeds).thenReturn(2)
+        runBlocking {
+            `when`(mockRssRepository.getNumOfRss()).thenReturn(2)
+        }
 
         // Set up mock PreferenceHelper
         val mockContext = Mockito.mock(Context::class.java)
@@ -58,7 +63,7 @@ class RssListPresenterTest {
 
         UnreadCountManager.addFeed(firstRss)
         UnreadCountManager.addFeed(secondRss)
-        presenter = RssListPresenter(view, PreferenceHelper, adapter, NetworkTaskManager, UnreadCountManager)
+        presenter = RssListPresenter(view, PreferenceHelper, adapter, mockRssRepository, NetworkTaskManager, UnreadCountManager)
 
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }
@@ -76,64 +81,64 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when onResume and RSS doesn't exist then hide all unread view`() {
-        `when`(adapter.numOfFeeds).thenReturn(0)
+    fun `when onResume and RSS doesn't exist then hide all unread view`() = runBlocking {
+        `when`(mockRssRepository.getNumOfRss()).thenReturn(0)
         presenter.resume()
         verify(view, times(1)).hideAllUnreadView()
     }
 
     @Test
-    fun `when onResume and RSS doesn't exist then hide recyclerview`() {
-        `when`(adapter.numOfFeeds).thenReturn(0)
+    fun `when onResume and RSS doesn't exist then hide recyclerview`() = runBlocking {
+        `when`(mockRssRepository.getNumOfRss()).thenReturn(0)
         presenter.resume()
         verify(view, times(1)).hideRecyclerView()
     }
 
     @Test
-    fun `when onResume and RSS doesn't exist then show empty view`() {
-        `when`(adapter.numOfFeeds).thenReturn(0)
+    fun `when onResume and RSS doesn't exist then show empty view`() = runBlocking {
+        `when`(mockRssRepository.getNumOfRss()).thenReturn(0)
         presenter.resume()
         verify(view, times(1)).showEmptyView()
     }
 
     @Test
-    fun `when onResume and RSS exist then show all unread view`() {
+    fun `when onResume and RSS exist then show all unread view`() = runBlocking {
         presenter.resume()
         verify(view, times(1)).showAllUnreadView()
     }
 
     @Test
-    fun `when onResume and RSS exist then show recyclerview`() {
+    fun `when onResume and RSS exist then show recyclerview`() = runBlocking {
         presenter.resume()
         verify(view, times(1)).showRecyclerView()
     }
 
     @Test
-    fun `when onResume and RSS exist then hide empty view`() {
+    fun `when onResume and RSS exist then hide empty view`() = runBlocking {
         presenter.resume()
         verify(view, times(1)).hideEmptyView()
     }
 
     @Test
-    fun `when onResume and RSS exist then set num of unread count`() {
+    fun `when onResume and RSS exist then set num of unread count`() = runBlocking {
         presenter.resume()
         verify(view, times(1)).setTotalUnreadCount(1)
     }
 
     @Test
     fun `when onResume and RSS exist then fetch RSS from database`() {
-        presenter.resume()
+        runBlocking { presenter.resume() }
         verify(adapter, times(1)).allFeedsWithNumOfUnreadArticles
     }
 
     @Test
-    fun `when onResume and RSS exist then init with hidden list`() {
+    fun `when onResume and RSS exist then init with hidden list`() = runBlocking {
         presenter.resume()
         verify(view, times(1)).init(presenter.unreadOnlyFeeds)
     }
 
     @Test
-    fun `when onResume and show all RSS and onResume then init with all list`() {
+    fun `when onResume and show all RSS and onResume then init with all list`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked() // call init(allFeeds)
         presenter.pause()
@@ -142,7 +147,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when onResume and RSS exist and auto update in main UI is enabled and after interval then show refreshing view`() {
+    fun `when onResume and RSS exist and auto update in main UI is enabled and after interval then show refreshing view`() = runBlocking {
         `when`(mockPref.getBoolean(anyString(), anyBoolean())).thenReturn(true)
         `when`(mockPref.getLong(anyString(), anyLong())).thenReturn(System.currentTimeMillis()-1000*60)
         presenter.resume()
@@ -150,7 +155,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when onResume and RSS exist and auto update in main UI is enabled and before interval then show refreshing view`() {
+    fun `when onResume and RSS exist and auto update in main UI is enabled and before interval then show refreshing view`() = runBlocking {
         `when`(mockPref.getBoolean(anyString(), anyBoolean())).thenReturn(true)
         `when`(mockPref.getLong(anyString(), anyLong())).thenReturn(System.currentTimeMillis())
         presenter.resume()
@@ -158,21 +163,21 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when onResume and RSS exist and auto update in main UI is disabled then not show refreshing view`() {
+    fun `when onResume and RSS exist and auto update in main UI is disabled then not show refreshing view`() = runBlocking {
         `when`(mockPref.getBoolean(anyString(), anyBoolean())).thenReturn(false)
         presenter.resume()
         verify(view, times(0)).setRefreshing(true)
     }
 
     @Test
-    fun `when first RSS is hidden then first RSS title will be second RSS`() {
+    fun `when first RSS is hidden then first RSS title will be second RSS`() = runBlocking {
         presenter.resume()
         assertThat(presenter.unreadOnlyFeeds.size, `is`(1))
         assertThat(presenter.unreadOnlyFeeds[0].title, `is`(SECOND_RSS_TITLE))
     }
 
     @Test
-    fun `when all of articles were read then show all of RSS`() {
+    fun `when all of articles were read then show all of RSS`() = runBlocking {
         val firstRss = Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0, "")
         val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 0, "")
         val alreadyReadRss = arrayListOf(firstRss, secondRss)
@@ -190,7 +195,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when first RSS is hidden then first edit title will be second RSS`() {
+    fun `when first RSS is hidden then first edit title will be second RSS`() = runBlocking {
         // Default hidden option is enaled
         presenter.resume()
         presenter.onEditFeedMenuClicked(FIRST_RSS_POSITION)
@@ -198,7 +203,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when RSS is not hidden then first edit title will be first RSS`() {
+    fun `when RSS is not hidden then first edit title will be first RSS`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         presenter.onEditFeedMenuClicked(FIRST_RSS_POSITION)
@@ -232,7 +237,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when edit ok button is clicked and succeeds then the title will be updated`() {
+    fun `when edit ok button is clicked and succeeds then the title will be updated`() = runBlocking {
         `when`(adapter.saveNewTitle(anyInt(), anyString())).thenReturn(1)
         presenter.resume() // init list
         presenter.onEditFeedOkButtonClicked("newTitle", 0)
@@ -256,7 +261,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when delete ok button is clicked and succeeds then show success toast`() {
+    fun `when delete ok button is clicked and succeeds then show success toast`() = runBlocking {
         `when`(adapter.deleteFeed(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onDeleteOkButtonClicked(0)
@@ -264,7 +269,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when delete ok button is clicked in hidden status and succeeds then delete the RSS`() {
+    fun `when delete ok button is clicked in hidden status and succeeds then delete the RSS`() = runBlocking {
         `when`(adapter.deleteFeed(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onDeleteOkButtonClicked(0)
@@ -276,7 +281,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when delete ok button is clicked in all of RSS and succeeds then delete the RSS`() {
+    fun `when delete ok button is clicked in all of RSS and succeeds then delete the RSS`() = runBlocking {
         `when`(adapter.deleteFeed(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onRssFooterClicked() // Change to all RSS
@@ -289,7 +294,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when delete all of RSS then show empty view`() {
+    fun `when delete all of RSS then show empty view`() = runBlocking {
         `when`(adapter.deleteFeed(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onRssFooterClicked() // Change to all RSS
@@ -299,7 +304,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when RSS is clicked then callback is called`() {
+    fun `when RSS is clicked then callback is called`() = runBlocking {
         val listner = mock(RssListFragment.OnFeedListFragmentListener::class.java)
         presenter.resume() // init list
         presenter.onRssItemClicked(0, listner)
@@ -307,7 +312,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when invalid RSS is clicked then callback is not called`() {
+    fun `when invalid RSS is clicked then callback is not called`() = runBlocking {
         val listner = mock(RssListFragment.OnFeedListFragmentListener::class.java)
         presenter.resume() // init list
         presenter.onRssItemClicked(9999, listner)
@@ -315,14 +320,14 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when RSS is clicked and listener is null then not crashed`() {
+    fun `when RSS is clicked and listener is null then not crashed`() = runBlocking {
         presenter.resume() // init list
         presenter.onRssItemClicked(0, null)
         assertTrue(true)
     }
 
     @Test
-    fun `when refresh and RSS is empty then finish refresh`() {
+    fun `when refresh and RSS is empty then finish refresh`() = runBlocking {
         `when`(adapter.allFeedsWithNumOfUnreadArticles).thenReturn(arrayListOf())
         presenter.resume()
         presenter.onRefresh()
@@ -330,7 +335,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when refresh and RSS exist then start to update`() {
+    fun `when refresh and RSS exist then start to update`() = runBlocking {
         presenter.resume()
         presenter.onRefresh()
         verify(view, times(0)).onRefreshCompleted()
@@ -361,20 +366,20 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when get item count in RecyclerView in hide status then return num of unread RSS + 1 for footer`() {
+    fun `when get item count in RecyclerView in hide status then return num of unread RSS + 1 for footer`() = runBlocking {
         presenter.resume()
         assertThat(presenter.getItemCount(), `is`(2))
     }
 
     @Test
-    fun `when get item count in RecyclerView in all status then return num of unread RSS + 1 for footer`() {
+    fun `when get item count in RecyclerView in all status then return num of unread RSS + 1 for footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         assertThat(presenter.getItemCount(), `is`(3))
     }
 
     @Test
-    fun `when bind default icon RSS then show default icon`() {
+    fun `when bind default icon RSS then show default icon`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         val mockRssItemView = mock(RssItemView.Content::class.java)
@@ -385,16 +390,15 @@ class RssListPresenterTest {
 
     @Test
     fun `when bind not default icon RSS then show the icon`() {
-        presenter.resume()
+        runBlocking { presenter.resume() }
         presenter.onRssFooterClicked()
         val mockRssItemView = mock(RssItemView.Content::class.java)
         presenter.onBindRssViewHolder(1, mockRssItemView)
         verify(mockRssItemView, times(1)).showIcon(SECOND_RSS_ICON_PATH)
-
     }
 
     @Test
-    fun `when bind not default icon RSS and fails to show the icon then update the path to default`() {
+    fun `when bind not default icon RSS and fails to show the icon then update the path to default`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         val mockRssItemView = mock(RssItemView.Content::class.java)
@@ -405,7 +409,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when bind RSS then update the title`() {
+    fun `when bind RSS then update the title`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         val mockRssItemView = mock(RssItemView.Content::class.java)
@@ -415,7 +419,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when bind RSS in all status then update unread count`() {
+    fun `when bind RSS in all status then update unread count`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         val mockRssItemView = mock(RssItemView.Content::class.java)
@@ -425,7 +429,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when bind RSS in hidden status then update unread count`() {
+    fun `when bind RSS in hidden status then update unread count`() = runBlocking {
         presenter.resume()
         val mockRssItemView = mock(RssItemView.Content::class.java)
         presenter.onBindRssViewHolder(0, mockRssItemView)
@@ -434,7 +438,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when bind footer in all status then show hide view`() {
+    fun `when bind footer in all status then show hide view`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         val mockRssFooterView = mock(RssItemView.Footer::class.java)
@@ -444,7 +448,7 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when bind footer in hidden status then show all view`() {
+    fun `when bind footer in hidden status then show all view`() = runBlocking {
         presenter.resume()
         val mockRssFooterView = mock(RssItemView.Footer::class.java)
         presenter.onBindRssFooterViewHolder(mockRssFooterView)
@@ -452,33 +456,33 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when get item view type in hide status and position is same with size then rturn footer`() {
+    fun `when get item view type in hide status and position is same with size then rturn footer`() = runBlocking {
         presenter.resume()
         assertThat(presenter.onGetItemViewType(1), `is`(RssListFragment.VIEW_TYPE_FOOTER))
     }
 
     @Test
-    fun `when get item view type in hide status and position is not same with size then rturn footer`() {
+    fun `when get item view type in hide status and position is not same with size then rturn footer`() = runBlocking {
         presenter.resume()
         assertThat(presenter.onGetItemViewType(0), `is`(RssListFragment.VIEW_TYPE_RSS))
     }
 
     @Test
-    fun `when get item view type in all status and position is same with size then rturn footer`() {
+    fun `when get item view type in all status and position is same with size then rturn footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         assertThat(presenter.onGetItemViewType(2), `is`(RssListFragment.VIEW_TYPE_FOOTER))
     }
 
     @Test
-    fun `when get item view type in all status and position is not same with size then rturn footer`() {
+    fun `when get item view type in all status and position is not same with size then rturn footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         assertThat(presenter.onGetItemViewType(0), `is`(RssListFragment.VIEW_TYPE_RSS))
     }
 
     @Test
-    fun `when click footer twice then go back to hidden status`() {
+    fun `when click footer twice then go back to hidden status`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         presenter.onRssFooterClicked()
