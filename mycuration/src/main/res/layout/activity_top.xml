@@ -73,13 +73,13 @@
             android:text="@string/curation" />
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_add_curation"
-            android:layout_width="@dimen/small_fab_width"
-            android:layout_height="@dimen/small_fab_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             app:backgroundTint="@android:color/black"
             app:srcCompat="@drawable/tab_curation"
             app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/ll_add_rss" />
+            app:layout_constraintRight_toLeftOf="@id/ll_add_rss" />
     </LinearLayout>
 
     <LinearLayout
@@ -105,8 +105,8 @@
             android:text="@string/rss" />
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_add_rss"
-            android:layout_width="@dimen/small_fab_width"
-            android:layout_height="@dimen/small_fab_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             app:backgroundTint="@android:color/black"
             app:srcCompat="@drawable/tab_feed"
@@ -137,8 +137,8 @@
             android:text="@string/filter" />
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_add_filter"
-            android:layout_width="@dimen/small_fab_width"
-            android:layout_height="@dimen/small_fab_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             app:backgroundTint="@android:color/black"
             app:srcCompat="@drawable/tab_filter" />
