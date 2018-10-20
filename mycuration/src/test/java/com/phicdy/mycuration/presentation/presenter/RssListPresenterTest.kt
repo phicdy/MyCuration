@@ -254,15 +254,15 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when delete ok button is clicked and fails then show error toast`() {
-        `when`(adapter.deleteFeed(anyInt())).thenReturn(false)
+    fun `when delete ok button is clicked and fails then show error toast`() = runBlocking {
+        `when`(mockRssRepository.deleteRss(anyInt())).thenReturn(false)
         presenter.onDeleteOkButtonClicked(0)
         verify(view, times(1)).showDeleteFailToast()
     }
 
     @Test
     fun `when delete ok button is clicked and succeeds then show success toast`() = runBlocking {
-        `when`(adapter.deleteFeed(anyInt())).thenReturn(true)
+        `when`(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onDeleteOkButtonClicked(0)
         verify(view, times(1)).showDeleteSuccessToast()
@@ -270,7 +270,7 @@ class RssListPresenterTest {
 
     @Test
     fun `when delete ok button is clicked in hidden status and succeeds then delete the RSS`() = runBlocking {
-        `when`(adapter.deleteFeed(anyInt())).thenReturn(true)
+        `when`(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onDeleteOkButtonClicked(0)
         // Current status is hidden and size is 1, so hidden list becomes all RSS list after refresh
@@ -282,7 +282,7 @@ class RssListPresenterTest {
 
     @Test
     fun `when delete ok button is clicked in all of RSS and succeeds then delete the RSS`() = runBlocking {
-        `when`(adapter.deleteFeed(anyInt())).thenReturn(true)
+        `when`(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onRssFooterClicked() // Change to all RSS
         presenter.onDeleteOkButtonClicked(0)
@@ -295,7 +295,7 @@ class RssListPresenterTest {
 
     @Test
     fun `when delete all of RSS then show empty view`() = runBlocking {
-        `when`(adapter.deleteFeed(anyInt())).thenReturn(true)
+        `when`(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onRssFooterClicked() // Change to all RSS
         presenter.onDeleteOkButtonClicked(0)

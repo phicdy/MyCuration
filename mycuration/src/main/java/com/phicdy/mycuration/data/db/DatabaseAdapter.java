@@ -356,53 +356,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-    /**
-     * Delete method for feed and related data.
-     *
-     * @param feedId Feed ID to delete
-     * @return result of delete
-     */
-    public boolean deleteFeed(int feedId) {
-		int numOfDeleted = 0;
-		ArrayList<Article> allArticles = getAllArticlesInAFeed(feedId, true);
-		try {
-            db.beginTransaction();
-			for (Article article : allArticles) {
-				db.delete(CurationSelection.TABLE_NAME, CurationSelection.ARTICLE_ID + " = " + article.getId(), null);
-			}
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            // Delete related filter
-            ArrayList<Filter> filters = getAllFilters();
-            db.beginTransaction();
-            db.delete(FilterFeedRegistration.TABLE_NAME, FilterFeedRegistration.FEED_ID + " = " + feedId, null);
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-            for (Filter filter : filters) {
-                ArrayList<Feed> feeds = filter.getFeeds();
-                if (feeds.size() == 1 && feeds.get(0).getId() == feedId) {
-                    // This filter had relation with this feed only
-                    db.delete(Filter.TABLE_NAME, Filter.ID + " = " + filter.getId(), null);
-                }
-            }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-			db.delete(Article.TABLE_NAME, Article.FEEDID + " = " + feedId, null);
-			numOfDeleted = db.delete(Feed.TABLE_NAME, Feed.ID + " = " + feedId, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-        return numOfDeleted == 1;
-    }
-
 	public Feed getFeedByUrl(String feedUrl) {
 		Feed feed = null;
 		db.beginTransaction();

@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
@@ -125,8 +126,9 @@ class RssListPresenter(private val view: RssListView,
         view.notifyDataSetChanged()
     }
 
-    fun onDeleteOkButtonClicked(position: Int) {
-        if (dbAdapter.deleteFeed(getFeedIdAtPosition(position))) {
+    suspend fun onDeleteOkButtonClicked(position: Int) = coroutineScope {
+        val feedId = getFeedIdAtPosition(position)
+        if (rssRepository.deleteRss(feedId)) {
             deleteFeedAtPosition(position)
             view.showDeleteSuccessToast()
         } else {
@@ -153,7 +155,6 @@ class RssListPresenter(private val view: RssListView,
         fun deleteAtPosition(currentList: ArrayList<Feed>, oppositeList: ArrayList<Feed>) {
             if (currentList.size <= position) return
             val (id) = currentList[position]
-            dbAdapter.deleteFeed(id)
             unreadCountManager.deleteFeed(id)
             currentList.removeAt(position)
             for (i in oppositeList.indices) {

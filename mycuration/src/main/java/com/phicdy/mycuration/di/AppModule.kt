@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -19,8 +20,9 @@ import org.koin.dsl.module.module
 val appModule = module {
 
     single<SQLiteDatabase> { DatabaseHelper(androidApplication()).writableDatabase }
-    single { RssRepository(get()) }
+    single { RssRepository(get(), get(), get()) }
     single { ArticleRepository(get()) }
+    single { FilterRepository(get()) }
     single { PreferenceHelper }
     single { NetworkTaskManager }
     single { UnreadCountManager }

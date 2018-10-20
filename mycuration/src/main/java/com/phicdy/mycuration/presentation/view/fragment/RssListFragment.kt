@@ -160,7 +160,11 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
     override fun showDeleteFeedAlertDialog(position: Int) {
         AlertDialog.Builder(activity)
                 .setTitle(R.string.delete_rss_alert)
-                .setPositiveButton(R.string.delete) { _, _ -> presenter.onDeleteOkButtonClicked(position) }
+                .setPositiveButton(R.string.delete) { _, _ ->
+                    launch(context = coroutineContext) {
+                        presenter.onDeleteOkButtonClicked(position)
+                    }
+                }
                 .setNegativeButton(R.string.cancel, null).show()
     }
 
