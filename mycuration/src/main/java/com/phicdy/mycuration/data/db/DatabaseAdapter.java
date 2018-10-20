@@ -357,29 +357,6 @@ public class DatabaseAdapter {
 	}
 
     /**
-     * Update method for feed title.
-     *
-     * @param feedId Feed ID to update
-     * @param newTitle New feed title
-     * @return Num of updated feeds
-     */
-	public int saveNewTitle(int feedId, String newTitle) {
-		int numOfUpdated = 0;
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Feed.TITLE, newTitle);
-			numOfUpdated = db.update(Feed.TABLE_NAME, values, Feed.ID + " = " + feedId, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		return numOfUpdated;
-	}
-
-    /**
      * Delete method for feed and related data.
      *
      * @param feedId Feed ID to delete

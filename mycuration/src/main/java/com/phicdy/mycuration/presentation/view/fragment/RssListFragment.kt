@@ -72,7 +72,9 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
                 .setView(addView)
                 .setPositiveButton(R.string.save) { _, _ ->
                     val newTitle = editTitleView.text.toString()
-                    presenter.onEditFeedOkButtonClicked(newTitle, position)
+                    launch(context = coroutineContext) {
+                        presenter.onEditFeedOkButtonClicked(newTitle, position)
+                    }
                 }.setNegativeButton(R.string.cancel, null).show()
     }
 

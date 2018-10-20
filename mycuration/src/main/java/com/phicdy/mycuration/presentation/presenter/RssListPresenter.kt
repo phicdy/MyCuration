@@ -94,12 +94,12 @@ class RssListPresenter(private val view: RssListView,
         }
     }
 
-    fun onEditFeedOkButtonClicked(newTitle: String, position: Int) {
+    suspend fun onEditFeedOkButtonClicked(newTitle: String, position: Int) = coroutineScope {
         if (newTitle.isBlank()) {
             view.showEditFeedTitleEmptyErrorToast()
         } else {
             val updatedFeedId = getFeedIdAtPosition(position)
-            val numOfUpdate = dbAdapter.saveNewTitle(updatedFeedId, newTitle)
+            val numOfUpdate = rssRepository.saveNewTitle(updatedFeedId, newTitle)
             if (numOfUpdate == 1) {
                 view.showEditFeedSuccessToast()
                 updateFeedTitle(updatedFeedId, newTitle)

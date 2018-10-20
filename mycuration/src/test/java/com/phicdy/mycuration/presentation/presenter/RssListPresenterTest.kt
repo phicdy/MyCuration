@@ -211,34 +211,34 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when edit ok button is clicked and new title is empty then show error toast`() {
+    fun `when edit ok button is clicked and new title is empty then show error toast`() = runBlocking {
         presenter.onEditFeedOkButtonClicked("", 0)
         verify(view, times(1)).showEditFeedTitleEmptyErrorToast()
     }
 
     @Test
-    fun `when edit ok button is clicked and new title is blank then show error toast`() {
+    fun `when edit ok button is clicked and new title is blank then show error toast`() = runBlocking {
         presenter.onEditFeedOkButtonClicked("   ", 0)
         verify(view, times(1)).showEditFeedTitleEmptyErrorToast()
     }
 
     @Test
-    fun `when edit ok button is clicked and succeeds then show success toast`() {
-        `when`(adapter.saveNewTitle(anyInt(), anyString())).thenReturn(1)
+    fun `when edit ok button is clicked and succeeds then show success toast`() = runBlocking {
+        `when`(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(1)
         presenter.onEditFeedOkButtonClicked("newTitle", 0)
         verify(view, times(1)).showEditFeedSuccessToast()
     }
 
     @Test
-    fun `when edit ok button is clicked and succeeds then refresh the list`() {
-        `when`(adapter.saveNewTitle(anyInt(), anyString())).thenReturn(1)
+    fun `when edit ok button is clicked and succeeds then refresh the list`() = runBlocking {
+        `when`(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(1)
         presenter.onEditFeedOkButtonClicked("newTitle", 0)
         verify(view, times(1)).notifyDataSetChanged()
     }
 
     @Test
     fun `when edit ok button is clicked and succeeds then the title will be updated`() = runBlocking {
-        `when`(adapter.saveNewTitle(anyInt(), anyString())).thenReturn(1)
+        `when`(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(1)
         presenter.resume() // init list
         presenter.onEditFeedOkButtonClicked("newTitle", 0)
         // Current status is hidden, first position RSS is first one in hidden RSS list and second one in all RSS list
@@ -247,8 +247,8 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when edit ok button is clicked and fails then show error toast`() {
-        `when`(adapter.saveNewTitle(anyInt(), anyString())).thenReturn(0)
+    fun `when edit ok button is clicked and fails then show error toast`() = runBlocking {
+        `when`(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(0)
         presenter.onEditFeedOkButtonClicked("newTitle", 0)
         verify(view, times(1)).showEditFeedFailToast()
     }
