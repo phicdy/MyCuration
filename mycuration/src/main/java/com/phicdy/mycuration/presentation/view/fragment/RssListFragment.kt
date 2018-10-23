@@ -179,7 +179,11 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
     }
 
     private fun setAllListener() {
-        swipeRefreshLayout.setOnRefreshListener { presenter.onRefresh() }
+        swipeRefreshLayout.setOnRefreshListener {
+            launch(context = coroutineContext) {
+                presenter.onRefresh()
+            }
+        }
         allUnread.setOnClickListener {
             mListener?.onAllUnreadClicked()
         }

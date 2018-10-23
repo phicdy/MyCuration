@@ -48,8 +48,8 @@ class RssListPresenterTest {
         val firstRss = Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", Feed.DEDAULT_ICON_PATH, "", FIRST_RSS_UNREAD_COUNT, "")
         val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", SECOND_RSS_ICON_PATH, "", SECOND_RSS_UNREAD_COUNT, "")
         val allFeeds = arrayListOf(firstRss, secondRss)
-        `when`(adapter.allFeedsWithNumOfUnreadArticles).thenReturn(allFeeds)
         runBlocking {
+            `when`(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(allFeeds)
             `when`(mockRssRepository.getNumOfRss()).thenReturn(2)
         }
 
@@ -127,8 +127,10 @@ class RssListPresenterTest {
 
     @Test
     fun `when onResume and RSS exist then fetch RSS from database`() {
-        runBlocking { presenter.resume() }
-        verify(adapter, times(1)).allFeedsWithNumOfUnreadArticles
+        runBlocking {
+            presenter.resume()
+            verify(mockRssRepository, times(1)).getAllFeedsWithNumOfUnreadArticles()
+        }
     }
 
     @Test
@@ -181,7 +183,7 @@ class RssListPresenterTest {
         val firstRss = Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", "", "", 0, "")
         val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 0, "")
         val alreadyReadRss = arrayListOf(firstRss, secondRss)
-        `when`(adapter.allFeedsWithNumOfUnreadArticles).thenReturn(alreadyReadRss)
+        `when`(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(alreadyReadRss)
         presenter.resume()
         assertThat(presenter.unreadOnlyFeeds.size, `is`(2))
         assertThat(presenter.unreadOnlyFeeds[0].title, `is`(FIRST_RSS_TITLE))
@@ -328,40 +330,35 @@ class RssListPresenterTest {
 
     @Test
     fun `when refresh and RSS is empty then finish refresh`() = runBlocking {
-        `when`(adapter.allFeedsWithNumOfUnreadArticles).thenReturn(arrayListOf())
+        `when`(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(arrayListOf())
         presenter.resume()
         presenter.onRefresh()
         verify(view, times(1)).onRefreshCompleted()
     }
 
     @Test
-    fun `when refresh and RSS exist then start to update`() = runBlocking {
-        presenter.resume()
-        presenter.onRefresh()
-        verify(view, times(0)).onRefreshCompleted()
-    }
-
-    @Test
-    fun `when finish refresh then hide refresh view`() {
+    fun `when finish refresh then hide refresh view`() = runBlocking {
         presenter.onFinishUpdate()
         verify(view, times(1)).onRefreshCompleted()
     }
 
     @Test
     fun `when finish refresh then fetch RSS`() {
-        presenter.onFinishUpdate()
-        verify(adapter, times(1)).allFeedsWithNumOfUnreadArticles
+        runBlocking {
+            presenter.onFinishUpdate()
+            verify(mockRssRepository, times(1)).getAllFeedsWithNumOfUnreadArticles()
+        }
     }
 
     @Test
     fun `when finish refresh then reload RSS list`() {
-        presenter.onFinishUpdate()
+        runBlocking { presenter.onFinishUpdate() }
         verify(view, times(1)).init(presenter.unreadOnlyFeeds)
     }
 
     @Test
     fun `when finish refresh then last update time will be updated`() {
-        presenter.onFinishUpdate()
+        runBlocking { presenter.onFinishUpdate() }
         verify(mockPref.edit(), times(1)).putLong(anyString(), anyLong())
     }
 

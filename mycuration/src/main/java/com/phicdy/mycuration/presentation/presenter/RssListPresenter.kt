@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
@@ -12,6 +11,7 @@ import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.experimental.coroutineScope
+import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import java.util.ArrayList
@@ -48,6 +48,7 @@ class RssListPresenter(private val view: RssListView,
             if (preferenceHelper.autoUpdateInMainUi && isAfterInterval) {
                 view.setRefreshing(true)
                 updateAllRss()
+                onFinishUpdate()
             }
         }
     }
@@ -199,45 +200,53 @@ class RssListPresenter(private val view: RssListView,
         }
     }
 
-    fun onRefresh() {
+    suspend fun onRefresh() = coroutineScope {
         if (allFeeds.isEmpty()) {
             onRefreshComplete()
-            return
+            return@coroutineScope
         }
         updateAllRss()
+        onFinishUpdate()
     }
 
-    private fun updateAllRss() {
-        networkTaskManager.updateAllFeeds(allFeeds)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Subscriber<Feed> {
-                    override fun onSubscribe(s: Subscription) {
-                        s.request((allFeeds.size).toLong())
-                    }
+    private suspend fun updateAllRss() = coroutineScope {
+        suspendCancellableCoroutine<Unit> {
+            networkTaskManager.updateAllFeeds(allFeeds)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : Subscriber<Feed> {
+                        override fun onSubscribe(s: Subscription) {
+                            if (it.isCancelled) return
+                            s.request((allFeeds.size).toLong())
+                        }
 
-                    override fun onNext(feed: Feed) {}
+                        override fun onNext(feed: Feed) {}
 
-                    override fun onError(t: Throwable) {}
+                        override fun onError(t: Throwable) {
+                            if (it.isCancelled) return
+                            it.resumeWithException(t)
+                        }
 
-                    override fun onComplete() {
-                        onFinishUpdate()
-                    }
-                })
+                        override fun onComplete() {
+                            if (it.isCancelled) return
+                            it.resume(Unit)
+                        }
+                    })
+        }
     }
 
     private fun onRefreshComplete() {
         view.onRefreshCompleted()
     }
 
-    fun onFinishUpdate() {
+    suspend fun onFinishUpdate() = coroutineScope {
         onRefreshComplete()
         fetchAllRss()
         refreshList()
         preferenceHelper.lastUpdateDate = System.currentTimeMillis()
     }
 
-    private fun fetchAllRss() {
-        allFeeds = dbAdapter.allFeedsWithNumOfUnreadArticles
+    private suspend fun fetchAllRss() = coroutineScope {
+        allFeeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
     }
 
     fun getItemCount(): Int {

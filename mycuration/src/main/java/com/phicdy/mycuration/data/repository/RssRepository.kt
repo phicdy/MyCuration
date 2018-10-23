@@ -12,6 +12,7 @@ import com.phicdy.mycuration.data.rss.Feed
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.coroutineScope
 import kotlinx.coroutines.experimental.withContext
+import java.util.ArrayList
 
 class RssRepository(private val db: SQLiteDatabase,
                     private val articleRepository: ArticleRepository,
@@ -103,4 +104,79 @@ class RssRepository(private val db: SQLiteDatabase,
         }
     }
 
+    /**
+     * Get method to feed array with unread count of articles.
+     *
+     * @return Feed array with unread count of articles
+     */
+    suspend fun getAllFeedsWithNumOfUnreadArticles(): ArrayList<Feed> = coroutineScope {
+        return@coroutineScope withContext(Dispatchers.IO) {
+            var feedList = ArrayList<Feed>()
+            db.beginTransaction()
+            var cursor: Cursor? = null
+            try {
+                val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
+                val orderBy = Feed.TITLE
+                cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy)
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        val id = cursor.getInt(0)
+                        val title = cursor.getString(1)
+                        val url = cursor.getString(2)
+                        val iconPath = cursor.getString(3)
+                        val siteUrl = cursor.getString(4)
+                        val unreadAriticlesCount = cursor.getInt(5)
+                        feedList.add(Feed(id, title, url, iconPath, "", unreadAriticlesCount, siteUrl))
+                    }
+                }
+                db.setTransactionSuccessful()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                cursor?.close()
+                db.endTransaction()
+            }
+
+            if (feedList.size == 0) {
+                feedList = getAllFeedsWithoutNumOfUnreadArticles()
+            }
+            return@withContext feedList
+        }
+    }
+
+    /**
+     * Get method to feed array without unread count of articles.
+     *
+     * @return Feed array without unread count of articles
+     */
+    suspend fun getAllFeedsWithoutNumOfUnreadArticles(): ArrayList<Feed> = coroutineScope {
+        return@coroutineScope withContext(Dispatchers.IO) {
+            val feedList = ArrayList<Feed>()
+            val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL)
+            val orderBy = Feed.TITLE
+            var cursor: Cursor? = null
+            try {
+                db.beginTransaction()
+                cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy)
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        val id = cursor.getInt(0)
+                        val title = cursor.getString(1)
+                        val url = cursor.getString(2)
+                        val iconPath = cursor.getString(3)
+                        val siteUrl = cursor.getString(4)
+                        feedList.add(Feed(id, title, url, iconPath, "", 0, siteUrl))
+                    }
+                }
+                db.setTransactionSuccessful()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                cursor?.close()
+                db.endTransaction()
+            }
+
+            return@withContext feedList
+        }
+    }
 }
