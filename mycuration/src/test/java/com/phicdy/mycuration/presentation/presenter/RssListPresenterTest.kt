@@ -395,13 +395,13 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when bind not default icon RSS and fails to show the icon then update the path to default`() = runBlocking {
+    fun `when bind not default icon RSS and fails to show the icon then show default icon`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         val mockRssItemView = mock(RssItemView.Content::class.java)
         `when`(mockRssItemView.showIcon(SECOND_RSS_ICON_PATH)).thenReturn(false)
         presenter.onBindRssViewHolder(1, mockRssItemView)
-        verify(adapter, times(1)).saveIconPath(anyString(), eq(Feed.DEDAULT_ICON_PATH))
+        verify(mockRssItemView, times(1)).showDefaultIcon()
 
     }
 

@@ -261,7 +261,7 @@ class RssListPresenter(private val view: RssListView,
             view.showDefaultIcon()
         } else {
             if (!view.showIcon(feed.iconPath)) {
-                dbAdapter.saveIconPath(feed.siteUrl, Feed.DEDAULT_ICON_PATH)
+                view.showDefaultIcon()
             }
         }
         view.updateTitle(feed.title)
