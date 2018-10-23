@@ -22,7 +22,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.anyBoolean
@@ -42,8 +41,6 @@ class RssListPresenterTest {
 
     @Before
     fun setup() {
-        DatabaseAdapter.inject(adapter)
-
         // Mock two RSS returns
         val firstRss = Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", Feed.DEDAULT_ICON_PATH, "", FIRST_RSS_UNREAD_COUNT, "")
         val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", SECOND_RSS_ICON_PATH, "", SECOND_RSS_UNREAD_COUNT, "")
@@ -61,9 +58,10 @@ class RssListPresenterTest {
         `when`(mockPref.edit()).thenReturn(mockEdit)
         `when`(mockEdit.putLong(anyString(), anyLong())).thenReturn(mockEdit)
 
+        DatabaseAdapter.inject(adapter)
         UnreadCountManager.addFeed(firstRss)
         UnreadCountManager.addFeed(secondRss)
-        presenter = RssListPresenter(view, PreferenceHelper, adapter, mockRssRepository, NetworkTaskManager, UnreadCountManager)
+        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, NetworkTaskManager, UnreadCountManager)
 
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }

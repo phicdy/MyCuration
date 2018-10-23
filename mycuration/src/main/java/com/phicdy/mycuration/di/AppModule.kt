@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.di
 
 import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
@@ -40,7 +39,6 @@ val appModule = module {
         RssListPresenter(
                 view = view,
                 preferenceHelper = get(),
-                dbAdapter = DatabaseAdapter.getInstance(),
                 rssRepository = get(),
                 networkTaskManager = get(),
                 unreadCountManager = get()

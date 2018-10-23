@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
@@ -18,7 +17,6 @@ import java.util.ArrayList
 
 class RssListPresenter(private val view: RssListView,
                        private val preferenceHelper: PreferenceHelper,
-                       private val dbAdapter: DatabaseAdapter,
                        private val rssRepository: RssRepository,
                        private val networkTaskManager: NetworkTaskManager,
                        private val unreadCountManager: UnreadCountManager) {
