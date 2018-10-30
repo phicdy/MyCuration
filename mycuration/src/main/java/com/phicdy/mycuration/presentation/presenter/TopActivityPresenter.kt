@@ -8,8 +8,7 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.experimental.coroutineScope
 
-class TopActivityPresenter(private val launchTab: Int,
-                           private val view: TopActivityView,
+class TopActivityPresenter(private val view: TopActivityView,
                            private val articleRepository: ArticleRepository,
                            private val rssRepository: RssRepository
 ) {
@@ -19,7 +18,6 @@ class TopActivityPresenter(private val launchTab: Int,
         view.initFab()
         view.initToolbar()
         view.setAlarmManager()
-        view.changeTab(launchTab)
     }
 
     suspend fun resume() = coroutineScope {

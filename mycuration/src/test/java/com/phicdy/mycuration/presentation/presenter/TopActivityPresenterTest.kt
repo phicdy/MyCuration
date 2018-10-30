@@ -27,13 +27,7 @@ class TopActivityPresenterTest {
         mockView = mock(TopActivityView::class.java)
         mockArticleRepository = mock(ArticleRepository::class.java)
         mockRssRepository = mock(RssRepository::class.java)
-        presenter = TopActivityPresenter(0, mockView, mockArticleRepository, mockRssRepository)
-    }
-
-    @Test
-    fun `changeTab is called when onCreate`() {
-        presenter.create()
-        verify(mockView, times(1)).changeTab(0)
+        presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository)
     }
 
     @Test

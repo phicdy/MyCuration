@@ -28,7 +28,6 @@ val appModule = module {
 
     scope("top") { (view: TopActivityView) ->
         TopActivityPresenter(
-                launchTab = get<PreferenceHelper>().launchTab,
                 view = view,
                 articleRepository = get(),
                 rssRepository = get()
