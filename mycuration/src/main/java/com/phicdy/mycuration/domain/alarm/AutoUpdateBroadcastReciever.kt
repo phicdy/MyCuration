@@ -23,6 +23,7 @@ import org.reactivestreams.Subscription
 class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
 
     private val rssRepository: RssRepository by inject()
+    private val networkTaskManager: NetworkTaskManager by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
         GlobalScope.launch {
@@ -36,9 +37,8 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
     }
 
     private suspend fun handleAutoUpdate(context: Context) = coroutineScope {
-        val updateTask = NetworkTaskManager
         val feeds = rssRepository.getAllFeedsWithoutNumOfUnreadArticles()
-        updateTask.updateAllFeeds(feeds)
+        networkTaskManager.updateAllFeeds(feeds)
                 .observeOn(Schedulers.io())
                 .subscribe(object : Subscriber<Feed> {
                     override fun onSubscribe(s: Subscription) {
@@ -65,7 +65,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
         if (feeds.isEmpty()) return
 
         // Update has higher priority
-        if (NetworkTaskManager.isUpdatingFeed) {
+        if (networkTaskManager.isUpdatingFeed) {
             AlarmManagerTaskManager(context).setNewHatenaUpdateAlarmAfterFeedUpdate(context)
             return
         }

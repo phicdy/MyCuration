@@ -16,19 +16,20 @@ import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
+import org.koin.android.ext.android.inject
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class FeedUrlHookActivity : Activity(), FeedUrlHookView {
 
     private lateinit var presenter: FeedUrlHookPresenter
+    private val networkTaskManager: NetworkTaskManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_url_hook)
 
         val dbAdapter = DatabaseAdapter.getInstance()
-        val networkTaskManager = NetworkTaskManager
         val parser = RssParser()
         val intent = intent
         val action = if (intent.action == null) "" else intent.action

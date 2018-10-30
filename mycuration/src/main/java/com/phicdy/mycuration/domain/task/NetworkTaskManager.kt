@@ -18,7 +18,7 @@ import retrofit2.http.Url
 import java.io.IOException
 import java.net.URI
 
-object NetworkTaskManager {
+class NetworkTaskManager {
 
     val isUpdatingFeed: Boolean get() = false
 

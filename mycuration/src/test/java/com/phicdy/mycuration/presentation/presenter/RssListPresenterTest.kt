@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -61,7 +62,7 @@ class RssListPresenterTest {
         DatabaseAdapter.inject(adapter)
         UnreadCountManager.addFeed(firstRss)
         UnreadCountManager.addFeed(secondRss)
-        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, NetworkTaskManager, UnreadCountManager)
+        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, NetworkTaskManager(), UnreadCountRepository(adapter, mockRssRepository))
 
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }

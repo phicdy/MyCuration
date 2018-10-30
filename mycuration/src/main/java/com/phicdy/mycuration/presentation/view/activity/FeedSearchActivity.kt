@@ -32,6 +32,7 @@ import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.tracker.TrackerHelper
+import org.koin.android.ext.android.inject
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
@@ -46,6 +47,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
     private lateinit var searchView: SearchView
     private lateinit var webView: WebView
     private lateinit var fab: FloatingActionButton
+    private val networkTaskManager: NetworkTaskManager by inject()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,10 +82,9 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
         }
         webView.settings.javaScriptEnabled = true
 
-        val manager = NetworkTaskManager
         val dbAdapter = DatabaseAdapter.getInstance()
         val parser = RssParser()
-        presenter = FeedSearchPresenter(this, manager, dbAdapter, UnreadCountManager, parser)
+        presenter = FeedSearchPresenter(this, networkTaskManager, dbAdapter, UnreadCountManager, parser)
 
         fab = findViewById(R.id.fab)
         fab.setOnClickListener(View.OnClickListener {

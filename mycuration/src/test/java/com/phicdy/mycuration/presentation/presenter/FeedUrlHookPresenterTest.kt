@@ -27,7 +27,7 @@ class FeedUrlHookPresenterTest {
 
     @Before
     fun setup() {
-        networkTaskManager = NetworkTaskManager
+        networkTaskManager = NetworkTaskManager()
         adapter = Mockito.mock(DatabaseAdapter::class.java)
         DatabaseAdapter.inject(Mockito.mock(DatabaseAdapter::class.java))
         parser = Mockito.mock(RssParser::class.java)

@@ -23,7 +23,7 @@ class TopActivityPresenterTest {
 
     @Before
     fun setup() {
-        networkTaskManager = NetworkTaskManager
+        networkTaskManager = NetworkTaskManager()
         mockView = mock(TopActivityView::class.java)
         mockArticleRepository = mock(ArticleRepository::class.java)
         mockRssRepository = mock(RssRepository::class.java)
