@@ -1,6 +1,8 @@
-package com.phicdy.mycuration.data.db
+package com.phicdy.mycuration.data.repository
 
 import android.support.test.InstrumentationRegistry.getTargetContext
+import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
