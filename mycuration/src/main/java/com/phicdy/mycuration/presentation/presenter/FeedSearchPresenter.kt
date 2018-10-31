@@ -3,7 +3,6 @@ package com.phicdy.mycuration.presentation.presenter
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
-import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedSearchView
@@ -15,7 +14,7 @@ class FeedSearchPresenter(private val view: FeedSearchView,
                           private val networkTaskManager: NetworkTaskManager,
                           private val adapter: DatabaseAdapter,
                           private val unreadManager: UnreadCountManager,
-                          private val parser: RssParser) : Presenter {
+                          private val executor: RssParseExecutor) : Presenter {
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {
             onFinishAddFeed(rssUrl, RssParseResult.FailedReason.NOT_FAILED)
@@ -40,7 +39,6 @@ class FeedSearchPresenter(private val view: FeedSearchView,
     fun handle(query: String) {
         if (UrlUtil.isCorrectUrl(query)) {
             view.showProgressBar()
-            val executor = RssParseExecutor(parser, adapter)
             executor.start(query, callback)
             return
         }

@@ -26,6 +26,7 @@ import android.widget.Toast
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -83,8 +84,8 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
         webView.settings.javaScriptEnabled = true
 
         val dbAdapter = DatabaseAdapter.getInstance()
-        val parser = RssParser()
-        presenter = FeedSearchPresenter(this, networkTaskManager, dbAdapter, UnreadCountManager, parser)
+        val executor = RssParseExecutor(RssParser(), dbAdapter)
+        presenter = FeedSearchPresenter(this, networkTaskManager, dbAdapter, UnreadCountManager, executor)
 
         fab = findViewById(R.id.fab)
         fab.setOnClickListener(View.OnClickListener {
