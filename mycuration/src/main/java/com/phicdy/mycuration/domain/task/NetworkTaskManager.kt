@@ -2,6 +2,7 @@ package com.phicdy.mycuration.domain.task
 
 import android.util.Log
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.domain.rss.RssParser
@@ -18,7 +19,7 @@ import retrofit2.http.Url
 import java.io.IOException
 import java.net.URI
 
-class NetworkTaskManager {
+class NetworkTaskManager(private val rssRepository: RssRepository) {
 
     val isUpdatingFeed: Boolean get() = false
 

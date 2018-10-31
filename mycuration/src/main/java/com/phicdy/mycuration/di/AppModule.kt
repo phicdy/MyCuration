@@ -23,7 +23,7 @@ val appModule = module {
     single { ArticleRepository(get()) }
     single { FilterRepository(get()) }
     single { PreferenceHelper }
-    single { NetworkTaskManager() }
+    single { NetworkTaskManager(get()) }
     single { UnreadCountManager }
 
     scope("top") { (view: TopActivityView) ->
