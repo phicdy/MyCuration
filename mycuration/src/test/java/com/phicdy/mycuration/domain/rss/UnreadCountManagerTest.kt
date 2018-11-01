@@ -139,32 +139,6 @@ class UnreadCountManagerTest {
     }
 
     @Test
-    fun totalRefreshesWhenRefreshRss() {
-        val newUnreadCount = 10
-        Mockito.`when`(mockAdapter.getNumOfUnreadArtilces(feed.id)).thenReturn(newUnreadCount)
-        feed.unreadAriticlesCount = testUnreadCount
-        UnreadCountManager.refreshConut(feed.id)
-        assertThat(UnreadCountManager.total, `is`(newUnreadCount))
-    }
-
-    @Test
-    fun countRefreshesWhenRefreshRss() {
-        val newUnreadCount = 10
-        Mockito.`when`(mockAdapter.getNumOfUnreadArtilces(feed.id)).thenReturn(newUnreadCount)
-        feed.unreadAriticlesCount = testUnreadCount
-        UnreadCountManager.addFeed(feed)
-        UnreadCountManager.refreshConut(feed.id)
-        assertThat(UnreadCountManager.getUnreadCount(feed.id), `is`(newUnreadCount))
-    }
-
-    @Test
-    fun totalDoesNotChangeWhenRefreshInvalidRss() {
-        val total = UnreadCountManager.total
-        UnreadCountManager.refreshConut(-9999)
-        assertThat(UnreadCountManager.total, `is`(total))
-    }
-
-    @Test
     fun curationCountReturnsWhenGet() {
         val testCurationId = 1
         val testCount = 10
