@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
+import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.rss.Article
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.coroutineScope
@@ -62,6 +64,39 @@ class ArticleRepository(val db: SQLiteDatabase) {
             }
 
             return@withContext articles
+        }
+    }
+
+    suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int) = coroutineScope {
+        return@coroutineScope withContext(Dispatchers.IO) {
+            // If articles are hit in condition, Set articles status to "read"
+            val value = ContentValues().apply {
+                put(Article.STATUS, Article.READ)
+            }
+            for ((id, _, keyword, url) in filterList) {
+                try {
+                    // If keyword or url exists, add condition
+                    if (keyword.isBlank() && url.isBlank()) {
+                        Log.w("Set filtering conditon",
+                                "keyword and url don't exist fileter ID =$id")
+                        continue
+                    }
+
+                    db.beginTransaction()
+                    // Initialize condition
+                    var condition = Article.FEEDID + " = $rssId"
+                    if (keyword.isNotBlank()) { condition = "$condition and title like '%$keyword%'" }
+                    if (url.isNotBlank()) { condition = "$condition and url like '%$url%'" }
+                    db.update(Article.TABLE_NAME, value, condition, null)
+                    db.setTransactionSuccessful()
+                } catch (e: Exception) {
+                    Log.e("Apply Filtering", "Article can't be updated.Feed ID = $rssId")
+                    db.endTransaction()
+                    return@withContext
+                } finally {
+                    db.endTransaction()
+                }
+            }
         }
     }
 

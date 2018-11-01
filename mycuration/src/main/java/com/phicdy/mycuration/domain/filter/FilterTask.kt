@@ -1,14 +1,16 @@
 package com.phicdy.mycuration.domain.filter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
+import kotlinx.coroutines.experimental.coroutineScope
 
-class FilterTask {
+class FilterTask(private val articleRepository: ArticleRepository) {
 
-    fun applyFiltering(feedId: Int) {
+    suspend fun applyFiltering(feedId: Int) = coroutineScope {
         val dbAdapter = DatabaseAdapter.getInstance()
         dbAdapter.getEnabledFiltersOfFeed(feedId).let {
-            if (it.size == 0) return
-            dbAdapter.applyFiltersOfFeed(it, feedId)
+            if (it.size == 0) return@coroutineScope
+            articleRepository.applyFiltersOfRss(it, feedId)
         }
     }
 }

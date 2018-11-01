@@ -1,11 +1,13 @@
 package com.phicdy.mycuration.di
 
 import android.database.sqlite.SQLiteDatabase
+import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
@@ -23,8 +25,9 @@ val appModule = module {
     single { ArticleRepository(get()) }
     single { FilterRepository(get()) }
     single { PreferenceHelper }
-    single { NetworkTaskManager(get()) }
+    single { NetworkTaskManager(get(), get()) }
     single { UnreadCountManager }
+    single { UnreadCountRepository(DatabaseAdapter.getInstance(), get()) }
 
     scope("top") { (view: TopActivityView) ->
         TopActivityPresenter(
@@ -40,7 +43,7 @@ val appModule = module {
                 preferenceHelper = get(),
                 rssRepository = get(),
                 networkTaskManager = get(),
-                unreadCountManager = get()
+                unreadCountRepository = get()
         )
     }
 }

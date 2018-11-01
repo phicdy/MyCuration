@@ -2,6 +2,7 @@ package com.phicdy.mycuration.domain.task
 
 import android.util.Log
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.filter.FilterTask
@@ -21,7 +22,8 @@ import retrofit2.http.Url
 import java.io.IOException
 import java.net.URI
 
-class NetworkTaskManager(private val rssRepository: RssRepository) {
+class NetworkTaskManager(private val rssRepository: RssRepository,
+                         private val articleRepository: ArticleRepository) {
 
     val isUpdatingFeed: Boolean get() = false
 
@@ -74,7 +76,7 @@ class NetworkTaskManager(private val rssRepository: RssRepository) {
                 rssRepository.appendUnreadArticleCount(feed.id, articles.size)
             }
 
-            FilterTask().applyFiltering(feed.id)
+            FilterTask(articleRepository).applyFiltering(feed.id)
             try {
                 inputStream.close()
             } catch (e: IOException) {

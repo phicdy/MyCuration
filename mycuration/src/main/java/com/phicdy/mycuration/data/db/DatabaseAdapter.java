@@ -781,46 +781,6 @@ public class DatabaseAdapter {
 		return filter;
 	}
 
-	public void applyFiltersOfFeed(ArrayList<Filter> filterList, int feedId) {
-		// If articles are hit in condition, Set articles status to "read"
-		ContentValues value = new ContentValues();
-		value.put(Article.STATUS, "read");
-		for (Filter filter : filterList) {
-			db.beginTransaction();
-			try {
-				// Initialize condition
-				String condition = "feedId = " + feedId;
-
-				// If keyword or url exists, add condition
-				String keyword = filter.getKeyword();
-				String url = filter.getUrl();
-				if (keyword.equals("") && url.equals("")) {
-					Log.w("Set filtering conditon",
-							"keyword and url don't exist fileter ID ="
-									+ filter.getId());
-					continue;
-				}
-				if (!keyword.equals("")) {
-					condition = condition + " and title like '%" + keyword
-							+ "%'";
-				}
-				if (!url.equals("")) {
-					condition = condition + " and url like '%" + url + "%'";
-				}
-				db.update(Article.TABLE_NAME, value, condition, null);
-				db.setTransactionSuccessful();
-			} catch (Exception e) {
-				Log.e("Apply Filtering", "Article can't be updated.Feed ID = "
-						+ feedId);
-				db.endTransaction();
-				return;
-			} finally {
-				db.endTransaction();
-			}
-
-		}
-	}
-
     /**
      * Delete method for specified filter
      *
