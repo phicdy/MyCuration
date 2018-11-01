@@ -1,28 +1,26 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
-
+import android.support.v7.widget.helper.ItemTouchHelper.LEFT
+import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
-import com.phicdy.mycuration.util.PreferenceHelper
-import com.phicdy.mycuration.util.TextUtil
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
-
+import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.TextUtil
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
 import java.util.Random
-
-import android.support.v7.widget.helper.ItemTouchHelper.LEFT
-import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
                            private val unreadCountManager: UnreadCountManager,
@@ -40,6 +38,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
     private var isSwipeRightToLeft = false
     private var isSwipeLeftToRight = false
     private var loadedPosition = -1
+    private var disposable: Disposable? = null
 
     private val isAllRead: Boolean
         get() {
@@ -121,7 +120,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
 
     override fun resume() {}
 
-    override fun pause() {}
+    override fun pause() { disposable?.dispose() }
 
     fun onListItemClicked(position: Int) {
         if (position < 0) return
@@ -150,7 +149,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             return
         }
         if (lastItemPosition < loadedPosition + 1) return
-        Flowable.just(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
+        disposable = Flowable.just(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
                 .subscribeOn(Schedulers.io())
                 .map { Thread.sleep(it) }
                 .observeOn(AndroidSchedulers.mainThread())
