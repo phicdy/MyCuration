@@ -37,12 +37,6 @@ class FeedUrlHookActivity : Activity(), FeedUrlHookView {
         val extrasText = if (intent.extras == null) "" else intent.extras.getCharSequence(Intent.EXTRA_TEXT, "")
         presenter = FeedUrlHookPresenter(this, action, dataString, extrasText,
                 dbAdapter, UnreadCountManager, networkTaskManager, parser)
-        presenter.create()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        presenter.pause()
     }
 
     override fun attachBaseContext(newBase: Context) {

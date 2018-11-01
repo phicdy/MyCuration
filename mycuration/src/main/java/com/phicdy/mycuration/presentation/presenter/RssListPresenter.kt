@@ -10,6 +10,7 @@ import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.experimental.coroutineScope
+import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -204,32 +205,25 @@ class RssListPresenter(private val view: RssListView,
             return@coroutineScope
         }
         updateAllRss()
-        onFinishUpdate()
     }
 
     private suspend fun updateAllRss() = coroutineScope {
-        suspendCancellableCoroutine<Unit> {
-            networkTaskManager.updateAllFeeds(allFeeds)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(object : Subscriber<Feed> {
-                        override fun onSubscribe(s: Subscription) {
-                            if (it.isCancelled) return
-                            s.request((allFeeds.size).toLong())
-                        }
+        networkTaskManager.updateAllFeeds(allFeeds)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Subscriber<Feed> {
+                    override fun onSubscribe(s: Subscription) {
+                        s.request((allFeeds.size).toLong())
+                    }
 
-                        override fun onNext(feed: Feed) {}
+                    override fun onNext(feed: Feed) {}
 
-                        override fun onError(t: Throwable) {
-                            if (it.isCancelled) return
-                            it.resumeWithException(t)
-                        }
+                    override fun onError(t: Throwable) {
+                    }
 
-                        override fun onComplete() {
-                            if (it.isCancelled) return
-                            it.resume(Unit)
-                        }
-                    })
-        }
+                    override fun onComplete() = runBlocking {
+                        onFinishUpdate()
+                    }
+                })
     }
 
     private fun onRefreshComplete() {

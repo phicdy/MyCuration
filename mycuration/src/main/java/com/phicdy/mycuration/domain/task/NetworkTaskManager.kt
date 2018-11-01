@@ -11,6 +11,9 @@ import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.coroutineScope
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -30,7 +33,9 @@ class NetworkTaskManager(private val rssRepository: RssRepository) {
                 .flatMap({ data -> Flowable.just(data).subscribeOn(Schedulers.io()) })
                 { _, newData ->
                     Log.d("NetworkTask", "BiFunction, Thread:" + Thread.currentThread().name + ", feed:" + newData.title)
-                    updateFeed(newData)
+                    runBlocking {
+                        updateFeed(newData)
+                    }
                     newData
                 }
     }
@@ -40,8 +45,8 @@ class NetworkTaskManager(private val rssRepository: RssRepository) {
         fun feeds(@Url url: String): Call<ResponseBody>
     }
 
-    fun updateFeed(feed: Feed) {
-        if (TextUtil.isEmpty(feed.url)) return
+    suspend fun updateFeed(feed: Feed) = coroutineScope {
+        if (TextUtil.isEmpty(feed.url)) return@coroutineScope
         val uri = URI.create(feed.url)
         val retrofit = Retrofit.Builder()
                 .baseUrl(uri.scheme + "://" + uri.host)
@@ -51,9 +56,9 @@ class NetworkTaskManager(private val rssRepository: RssRepository) {
         try {
             val response = call.execute()
             if (response.body() == null) {
-                return
+                return@coroutineScope
             }
-            val inputStream = response.body()?.byteStream() ?: return
+            val inputStream = response.body()?.byteStream() ?: return@coroutineScope
             val parser = RssParser()
             val dbAdapter = DatabaseAdapter.getInstance()
             val latestDate = dbAdapter.getLatestArticleDate(feed.id)
