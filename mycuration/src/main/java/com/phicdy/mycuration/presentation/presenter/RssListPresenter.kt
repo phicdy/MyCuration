@@ -42,6 +42,7 @@ class RssListPresenter(private val view: RssListView,
             view.showAllUnreadView()
             view.showRecyclerView()
             view.hideEmptyView()
+            unreadCountManager.retrieve()
             fetchAllRss()
             refreshList()
             if (preferenceHelper.autoUpdateInMainUi && isAfterInterval) {
@@ -231,9 +232,10 @@ class RssListPresenter(private val view: RssListView,
     }
 
     suspend fun onFinishUpdate() = coroutineScope {
-        onRefreshComplete()
+        unreadCountManager.retrieve()
         fetchAllRss()
         refreshList()
+        onRefreshComplete()
         preferenceHelper.lastUpdateDate = System.currentTimeMillis()
     }
 

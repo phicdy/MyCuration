@@ -6,7 +6,6 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable
@@ -72,6 +71,7 @@ class NetworkTaskManager(private val rssRepository: RssRepository) {
                     getHatenaBookmark.request(article.url, delaySec)
                     if (i % 10 == 0) delaySec += 2
                 }
+                rssRepository.appendUnreadArticleCount(feed.id, articles.size)
             }
 
             FilterTask().applyFiltering(feed.id)
@@ -85,12 +85,10 @@ class NetworkTaskManager(private val rssRepository: RssRepository) {
                 val task = GetFeedIconTask(iconSaveFolderStr)
                 task.execute(feed.siteUrl)
             }
-            UnreadCountManager.refreshConut(feed.id)
         } catch (e: IOException) {
 
         } catch (e: RuntimeException) {
 
         }
-        return
     }
 }

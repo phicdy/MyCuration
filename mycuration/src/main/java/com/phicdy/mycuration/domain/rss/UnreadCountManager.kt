@@ -28,6 +28,16 @@ object UnreadCountManager {
         }
     }
 
+    fun retrieve() {
+        val allFeeds = adapter.allFeedsWithNumOfUnreadArticles
+        total = 0
+        unreadCountMap.clear()
+        allFeeds.forEach { feed ->
+            unreadCountMap[feed.id] = feed.unreadAriticlesCount
+            total += feed.unreadAriticlesCount
+        }
+    }
+
     fun clear() {
         total = 0
         unreadCountMap.clear()
@@ -103,21 +113,6 @@ object UnreadCountManager {
                 unreadCountMap[id] = 0
                 updateDatbase(id)
             }
-        }
-    }
-
-    fun refreshConut(feedId: Int) {
-        synchronized(unreadCountMap) {
-            // Decrease original unread count
-            if (!unreadCountMap.containsKey(feedId)) return
-            val oldCount = unreadCountMap[feedId]!!
-            total -= oldCount
-
-            // Calc unread count from database
-            val count = adapter.getNumOfUnreadArtilces(feedId)
-            adapter.updateUnreadArticleCount(feedId, count)
-            unreadCountMap[feedId] = count
-            total += count
         }
     }
 
