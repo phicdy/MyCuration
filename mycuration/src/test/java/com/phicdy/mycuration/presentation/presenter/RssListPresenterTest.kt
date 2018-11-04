@@ -4,6 +4,7 @@ package com.phicdy.mycuration.presentation.presenter
 import android.content.Context
 import android.content.SharedPreferences
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Feed
@@ -23,7 +24,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.anyBoolean
 import org.mockito.Mockito.anyLong
@@ -35,10 +35,11 @@ import org.mockito.Mockito.verify
 class RssListPresenterTest {
 
     private lateinit var presenter: RssListPresenter
-    private val view = Mockito.mock(RssListView::class.java)
-    private val adapter = Mockito.mock(DatabaseAdapter::class.java)
-    private val mockPref = Mockito.mock(SharedPreferences::class.java)
-    private val mockRssRepository = Mockito.mock(RssRepository::class.java)
+    private val view = mock(RssListView::class.java)
+    private val adapter = mock(DatabaseAdapter::class.java)
+    private val mockPref = mock(SharedPreferences::class.java)
+    private val mockRssRepository = mock(RssRepository::class.java)
+    private val mockArticleRepository = mock(ArticleRepository::class.java)
 
     @Before
     fun setup() {
@@ -52,7 +53,7 @@ class RssListPresenterTest {
         }
 
         // Set up mock PreferenceHelper
-        val mockContext = Mockito.mock(Context::class.java)
+        val mockContext = mock(Context::class.java)
         `when`(mockContext.getSharedPreferences("FilterPref", Context.MODE_PRIVATE)).thenReturn(mockPref)
         PreferenceHelper.setUp(mockContext)
         val mockEdit = mock(SharedPreferences.Editor::class.java)
@@ -62,7 +63,7 @@ class RssListPresenterTest {
         DatabaseAdapter.inject(adapter)
         UnreadCountManager.addFeed(firstRss)
         UnreadCountManager.addFeed(secondRss)
-        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, NetworkTaskManager(mockRssRepository), UnreadCountRepository(adapter, mockRssRepository))
+        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, NetworkTaskManager(mockRssRepository, mockArticleRepository), UnreadCountRepository(adapter, mockRssRepository))
 
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }
