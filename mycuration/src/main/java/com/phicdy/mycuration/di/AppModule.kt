@@ -9,6 +9,7 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
+import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.RssListView
@@ -44,6 +45,18 @@ val appModule = module {
                 rssRepository = get(),
                 networkTaskManager = get(),
                 unreadCountRepository = get()
+        )
+    }
+
+    scope("article_list") { (feedId: Int, curationId: Int, query: String, action: String) ->
+        ArticleListPresenter(
+                feedId = feedId,
+                curationId = curationId,
+                adapter = DatabaseAdapter.getInstance(),
+                preferenceHelper = get(),
+                unreadCountManager = get(),
+                query = query,
+                action = action
         )
     }
 }
