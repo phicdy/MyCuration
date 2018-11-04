@@ -23,9 +23,8 @@ import java.util.Locale
 import java.util.Random
 
 class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
+                           private val preferenceHelper: PreferenceHelper,
                            private val unreadCountManager: UnreadCountManager,
-                           private val isOpenInternal: Boolean, private val isAllReadBack: Boolean,
-                           private val isNewArticleTop: Boolean, private val swipeDirection: Int,
                            private val query: String, private val action: String) : Presenter {
 
     companion object {
@@ -92,21 +91,21 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
     private fun loadAllArticles(): ArrayList<Article> {
         var allArticles: ArrayList<Article>
         if (isSearchAction) {
-            allArticles = adapter.searchArticles(query, isNewArticleTop)
+            allArticles = adapter.searchArticles(query, preferenceHelper.sortNewArticleTop)
         } else if (curationId != DEFAULT_CURATION_ID) {
-            allArticles = adapter.getAllUnreadArticlesOfCuration(curationId, isNewArticleTop)
+            allArticles = adapter.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0) {
-                allArticles = adapter.getAllArticlesOfCuration(curationId, isNewArticleTop)
+                allArticles = adapter.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             }
         } else if (feedId == Feed.ALL_FEED_ID) {
-            allArticles = adapter.getAllUnreadArticles(isNewArticleTop)
+            allArticles = adapter.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0 && adapter.isExistArticle) {
-                allArticles = adapter.getTop300Articles(isNewArticleTop)
+                allArticles = adapter.getTop300Articles(preferenceHelper.sortNewArticleTop)
             }
         } else {
-            allArticles = adapter.getUnreadArticlesInAFeed(feedId, isNewArticleTop)
+            allArticles = adapter.getUnreadArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0 && adapter.isExistArticle(feedId)) {
-                allArticles = adapter.getAllArticlesInAFeed(feedId, isNewArticleTop)
+                allArticles = adapter.getAllArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
             }
         }
         return allArticles
@@ -127,7 +126,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         val article = allArticles[position]
         if (!isSwipeLeftToRight && !isSwipeRightToLeft) {
             setReadStatusToTouchedView(article, Article.TOREAD, false)
-            if (isOpenInternal) {
+            if (preferenceHelper.isOpenInternal) {
                 val feedTitle = if (feedId == Feed.ALL_FEED_ID) {
                     article.feedTitle
                 } else {
@@ -206,7 +205,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         var positionAfterScroll = lastPosition + visibleNum
         if (positionAfterScroll >= loadedPosition) positionAfterScroll = loadedPosition
         view.scrollTo(positionAfterScroll)
-        if (isAllReadBack && view.isBottomVisible) {
+        if (preferenceHelper.allReadBack && view.isBottomVisible) {
             if (isAllRead) {
                 view.finish()
             }
@@ -221,7 +220,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             adapter.saveStatusToRead(feedId)
             unreadCountManager.readAll(feedId)
         }
-        if (isAllReadBack) {
+        if (preferenceHelper.allReadBack) {
             view.finish()
         } else {
             for (i in allArticles.indices) {
@@ -287,9 +286,9 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         when (direction) {
             LEFT -> {
                 isSwipeRightToLeft = true
-                when (swipeDirection) {
-                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack)
-                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack)
+                when (preferenceHelper.swipeDirection) {
+                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, preferenceHelper.allReadBack)
+                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, preferenceHelper.allReadBack)
                     else -> {
                     }
                 }
@@ -297,9 +296,9 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             }
             RIGHT -> {
                 isSwipeLeftToRight = true
-                when (swipeDirection) {
-                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack)
-                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack)
+                when (preferenceHelper.swipeDirection) {
+                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, preferenceHelper.allReadBack)
+                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, preferenceHelper.allReadBack)
                     else -> {
                     }
                 }

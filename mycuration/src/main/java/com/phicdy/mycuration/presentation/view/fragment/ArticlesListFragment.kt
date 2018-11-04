@@ -90,13 +90,9 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         // Set swipe direction
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(feedId)
-        val swipeDirectionOption = prefMgr.swipeDirection
-        val isOpenInternal = prefMgr.isOpenInternal
-        val isAllReadBack = prefMgr.allReadBack
-        val isNewestArticleTop = prefMgr.sortNewArticleTop
         val query = intent?.getStringExtra(SearchManager.QUERY) ?: ""
-        presenter = ArticleListPresenter(feedId, curationId, dbAdapter, UnreadCountManager,
-                isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption, query, intent?.action ?: "")
+        presenter = ArticleListPresenter(feedId, curationId, dbAdapter, PreferenceHelper,
+                UnreadCountManager, query, intent?.action ?: "")
         presenter.setView(this)
         presenter.create()
     }
