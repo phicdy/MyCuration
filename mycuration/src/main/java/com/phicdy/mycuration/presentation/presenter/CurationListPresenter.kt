@@ -2,8 +2,9 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Curation
+import com.phicdy.mycuration.domain.rss.UnreadCountManager
+import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
-
 import java.util.ArrayList
 
 class CurationListPresenter(private val view: CurationListView,
@@ -43,5 +44,12 @@ class CurationListPresenter(private val view: CurationListView,
         }
 
         return allCurations[position].id
+    }
+
+    fun getView(curation: Curation?, item: CurationItem) {
+        curation?.let {
+            item.setName(it.name)
+            item.setCount(UnreadCountManager.getCurationCount(it.id).toString())
+        }
     }
 }

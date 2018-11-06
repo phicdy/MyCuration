@@ -13,15 +13,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
-
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.data.rss.Curation
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
+import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
+import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.activity.AddCurationActivity
-
 import java.util.ArrayList
 
 
@@ -153,7 +151,7 @@ class CurationListFragment : Fragment(), CurationListView {
         fun onCurationListClicked(curationId: Int)
     }
 
-    internal inner class CurationListAdapter(curations: ArrayList<Curation>, context: Context) : ArrayAdapter<Curation>(context, R.layout.curation_list, curations) {
+    inner class CurationListAdapter(curations: ArrayList<Curation>, context: Context) : ArrayAdapter<Curation>(context, R.layout.curation_list, curations) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             activity?.let {
@@ -173,18 +171,23 @@ class CurationListFragment : Fragment(), CurationListView {
                 }
 
                 val curation = this.getItem(position)
-                if (curation != null) {
-                    holder.curationName.text = curation.name
-                    holder.curationCount.text = UnreadCountManager.getCurationCount(curation.id).toString()
-                }
+                presenter.getView(curation, holder)
                 return row
             }
             return convertView!!
         }
 
-        private inner class ViewHolder {
-            internal lateinit var curationName: TextView
-            internal lateinit var curationCount: TextView
+        inner class ViewHolder: CurationItem {
+            lateinit var curationName: TextView
+            lateinit var curationCount: TextView
+
+            override fun setName(name: String) {
+                curationName.text = name
+            }
+
+            override fun setCount(count: String) {
+                curationCount.text = count
+            }
         }
     }
 }
