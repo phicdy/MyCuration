@@ -28,7 +28,6 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.view.FeedSearchView
@@ -85,7 +84,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
 
         val dbAdapter = DatabaseAdapter.getInstance()
         val executor = RssParseExecutor(RssParser(), dbAdapter)
-        presenter = FeedSearchPresenter(this, networkTaskManager, dbAdapter, UnreadCountManager, executor)
+        presenter = FeedSearchPresenter(this, networkTaskManager, dbAdapter, executor)
 
         fab = findViewById(R.id.fab)
         fab.setOnClickListener(View.OnClickListener {
