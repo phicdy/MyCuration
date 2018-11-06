@@ -21,8 +21,14 @@ class CurationListPresenterTest {
 
     private val adapter = mock(DatabaseAdapter::class.java)
     private val view = MockView()
-    private val presenter = CurationListPresenter(view, adapter)
+    private lateinit var presenter: CurationListPresenter
     private val item = mock(CurationItem::class.java)
+
+    @Before
+    fun setUp() {
+        DatabaseAdapter.inject(adapter)
+        presenter = CurationListPresenter(view, adapter, UnreadCountManager)
+    }
 
     @Test
     fun testOnCreate() {
@@ -140,8 +146,8 @@ class CurationListPresenterTest {
 
     @Test
     fun `when curation is not null then not set name and count`() {
-        DatabaseAdapter.inject(adapter)
         `when`(adapter.calcNumOfAllUnreadArticlesOfCuration(1)).thenReturn(10)
+        UnreadCountManager.inject(adapter)
         presenter.getView(Curation(1, "name"), item)
         verify(item, times(1)).setName("name")
         verify(item, times(1)).setCount("10")

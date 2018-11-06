@@ -16,6 +16,7 @@ import android.widget.TextView
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Curation
+import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
@@ -39,7 +40,7 @@ class CurationListFragment : Fragment(), CurationListView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val dbAdapter = DatabaseAdapter.getInstance()
-        presenter = CurationListPresenter(this, dbAdapter)
+        presenter = CurationListPresenter(this, dbAdapter, UnreadCountManager)
     }
 
     override fun onResume() {

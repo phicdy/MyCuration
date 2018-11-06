@@ -8,7 +8,8 @@ import com.phicdy.mycuration.presentation.view.CurationListView
 import java.util.ArrayList
 
 class CurationListPresenter(private val view: CurationListView,
-                            private val dbAdapter: DatabaseAdapter) : Presenter {
+                            private val dbAdapter: DatabaseAdapter,
+                            private val unreadCountManager: UnreadCountManager) : Presenter {
     private var allCurations: ArrayList<Curation> = arrayListOf()
 
     override fun create() {}
@@ -49,7 +50,7 @@ class CurationListPresenter(private val view: CurationListView,
     fun getView(curation: Curation?, item: CurationItem) {
         curation?.let {
             item.setName(it.name)
-            item.setCount(UnreadCountManager.getCurationCount(it.id).toString())
+            item.setCount(unreadCountManager.getCurationCount(it.id).toString())
         }
     }
 }
