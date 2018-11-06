@@ -21,6 +21,10 @@ import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.activity.AddCurationActivity
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
 
 
@@ -31,7 +35,7 @@ class CurationListFragment : Fragment(), CurationListView {
         private const val DELETE_CURATION_MENU_ID = 2
     }
 
-    private lateinit var presenter: CurationListPresenter
+    private val presenter: CurationListPresenter by inject { parametersOf(this) }
     private lateinit var curationListAdapter: CurationListAdapter
     private var mListener: OnCurationListFragmentListener? = null
     private lateinit var curationListView: ListView
@@ -39,8 +43,7 @@ class CurationListFragment : Fragment(), CurationListView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dbAdapter = DatabaseAdapter.getInstance()
-        presenter = CurationListPresenter(this, dbAdapter, UnreadCountManager)
+        bindScope(getOrCreateScope("curation_list"))
     }
 
     override fun onResume() {
