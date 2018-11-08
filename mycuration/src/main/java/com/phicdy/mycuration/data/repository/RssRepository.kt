@@ -211,4 +211,25 @@ class RssRepository(private val db: SQLiteDatabase,
             }
         }
     }
+
+    /**
+     * Update method for unread article count of the feed.
+     *
+     * @param feedId Feed ID to change
+     * @param unreadCount New article unread count
+     */
+    suspend fun updateUnreadArticleCount(feedId: Int, unreadCount: Int) = withContext(Dispatchers.IO) {
+        try {
+            db.beginTransaction()
+            val values = ContentValues().apply {
+                put(Feed.UNREAD_ARTICLE, unreadCount)
+            }
+            db.update(Feed.TABLE_NAME, values, Feed.ID + " = $feedId", null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            db.endTransaction()
+        }
+    }
 }

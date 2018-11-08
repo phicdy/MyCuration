@@ -2,28 +2,28 @@ package com.phicdy.mycuration.data.db
 
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThat
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import java.util.ArrayList
 import java.util.Date
 
-@RunWith(AndroidJUnit4::class)
 class DatabaseAdapterTest {
 
     private lateinit var adapter: DatabaseAdapter
+    private lateinit var rssRepository: RssRepository
     private val testUnreadArticles = ArrayList<Article>()
     private val testReadArticles = ArrayList<Article>()
 
@@ -33,8 +33,14 @@ class DatabaseAdapterTest {
 
     @Before
     fun setUp() {
-        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
+        val helper = DatabaseHelper(getTargetContext())
+        DatabaseAdapter.setUp(helper)
         adapter = DatabaseAdapter.getInstance()
+        rssRepository = RssRepository(
+                helper.writableDatabase,
+                ArticleRepository(helper.writableDatabase),
+                FilterRepository(helper.writableDatabase)
+        )
         insertTestData()
     }
 
@@ -86,7 +92,7 @@ class DatabaseAdapterTest {
         assertEquals("記事1abdｄｆｇ", list[0].title)
     }
 
-    private fun insertTestData() {
+    private fun insertTestData() = runBlocking {
         adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         val id = adapter.getFeedByUrl(TEST_FEED_URL).id
 
@@ -108,7 +114,7 @@ class DatabaseAdapterTest {
             add(japaneseTitle)
         }
         adapter.saveNewArticles(testUnreadArticles, id)
-        adapter.updateUnreadArticleCount(id, testUnreadArticles.size)
+        rssRepository.updateUnreadArticleCount(id, testUnreadArticles.size)
 
         val readArticle = Article(1, "readArticle", "http://www.google.com/read",
                 Article.READ, "", now, id, "", "")

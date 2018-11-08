@@ -296,25 +296,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-    /**
-     * Update method for unread article count of the feed.
-     *
-     * @param feedId Feed ID to change
-     * @param unreadCount New article unread count
-     */
-	public void updateUnreadArticleCount(int feedId, int unreadCount) {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Feed.UNREAD_ARTICLE, unreadCount);
-			db.update(Feed.TABLE_NAME, values, "_id = " + feedId, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
 
     /**
      * Update method for feed icon path.

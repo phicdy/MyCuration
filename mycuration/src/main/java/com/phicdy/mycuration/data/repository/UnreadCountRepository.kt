@@ -1,12 +1,9 @@
 package com.phicdy.mycuration.data.repository
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.data.rss.Feed
 import kotlinx.coroutines.experimental.coroutineScope
 import kotlinx.coroutines.experimental.launch
 
-class UnreadCountRepository(private val adapter: DatabaseAdapter,
-                            private val rssRepository: RssRepository,
+class UnreadCountRepository(private val rssRepository: RssRepository,
                             private val curationRepository: CurationRepository) {
     companion object {
         private const val INIT_TOTAL = -1
@@ -34,7 +31,7 @@ class UnreadCountRepository(private val adapter: DatabaseAdapter,
 
     suspend fun conutUpUnreadCount(feedId: Int) = coroutineScope {
         unreadCountMap[feedId]?.let {
-            unreadCountMap.put(feedId, it + 1)
+            unreadCountMap[feedId] = it + 1
             total++
             updateDatbase(feedId)
         }
@@ -56,7 +53,7 @@ class UnreadCountRepository(private val adapter: DatabaseAdapter,
     private suspend fun updateDatbase(feedId: Int) = coroutineScope {
         unreadCountMap[feedId]?.let {
             launch {
-                adapter.updateUnreadArticleCount(feedId, it)
+                rssRepository.updateUnreadArticleCount(feedId, it)
             }
         }
     }
@@ -64,7 +61,7 @@ class UnreadCountRepository(private val adapter: DatabaseAdapter,
     suspend fun readAll(feedId: Int) {
         unreadCountMap[feedId]?.let {
             total -= it
-            unreadCountMap.put(feedId, 0)
+            unreadCountMap[feedId] = 0
             updateDatbase(feedId)
         }
     }

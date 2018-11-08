@@ -30,7 +30,7 @@ val appModule = module {
     single { FilterRepository(get()) }
     single { PreferenceHelper }
     single { NetworkTaskManager(get(), get()) }
-    single { UnreadCountRepository(DatabaseAdapter.getInstance(), get(), get()) }
+    single { UnreadCountRepository(get(), get()) }
 
     scope("top") { (view: TopActivityView) ->
         TopActivityPresenter(
