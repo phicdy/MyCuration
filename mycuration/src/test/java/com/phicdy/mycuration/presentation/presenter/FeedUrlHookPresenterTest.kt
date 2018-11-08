@@ -6,7 +6,6 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import kotlinx.coroutines.experimental.runBlocking
@@ -33,7 +32,7 @@ class FeedUrlHookPresenterTest {
         parser = Mockito.mock(RssParser::class.java)
         view = Mockito.mock(FeedUrlHookView::class.java)
         presenter = FeedUrlHookPresenter(view, "", "", "",
-                adapter, UnreadCountManager, networkTaskManager, parser)
+                adapter, networkTaskManager, parser)
     }
 
     @Test
@@ -45,7 +44,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when invalid action comes then finish`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, "hogehoge", "http://www.google.com", "",
-                adapter, UnreadCountManager, networkTaskManager, parser)
+                adapter, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).finishView()
     }
@@ -53,7 +52,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when action view and invalid url comes then toast shows`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, Intent.ACTION_VIEW, "hogehoge", "",
-                adapter, UnreadCountManager, networkTaskManager, parser)
+                adapter, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).showInvalidUrlErrorToast()
     }
@@ -61,7 +60,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when action send and invalid url comes then toast shows`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, Intent.ACTION_SEND, "", "hogehoge",
-                adapter, UnreadCountManager, networkTaskManager, parser)
+                adapter, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).showInvalidUrlErrorToast()
     }

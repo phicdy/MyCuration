@@ -7,17 +7,14 @@ import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.annotation.UiThread
 import android.widget.Toast
-
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
-import com.phicdy.mycuration.tracker.TrackerHelper
+import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
+import com.phicdy.mycuration.tracker.TrackerHelper
 import org.koin.android.ext.android.inject
-
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class FeedUrlHookActivity : Activity(), FeedUrlHookView {
@@ -36,7 +33,7 @@ class FeedUrlHookActivity : Activity(), FeedUrlHookView {
         val dataString = if (intent.dataString == null) "" else intent.dataString
         val extrasText = if (intent.extras == null) "" else intent.extras.getCharSequence(Intent.EXTRA_TEXT, "")
         presenter = FeedUrlHookPresenter(this, action, dataString, extrasText,
-                dbAdapter, UnreadCountManager, networkTaskManager, parser)
+                dbAdapter, networkTaskManager, parser)
         presenter.create()
     }
 

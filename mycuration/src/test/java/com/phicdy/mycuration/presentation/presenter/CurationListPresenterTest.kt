@@ -1,10 +1,11 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Curation
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
+import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
@@ -23,11 +24,12 @@ class CurationListPresenterTest {
     private val view = MockView()
     private lateinit var presenter: CurationListPresenter
     private val item = mock(CurationItem::class.java)
+    private val repository = mock(UnreadCountRepository::class.java)
 
     @Before
     fun setUp() {
         DatabaseAdapter.inject(adapter)
-        presenter = CurationListPresenter(view, adapter, UnreadCountManager)
+        presenter = CurationListPresenter(view, adapter, repository)
     }
 
     @Test
@@ -138,16 +140,15 @@ class CurationListPresenterTest {
     }
 
     @Test
-    fun `when curation is null then not set name and count`() {
+    fun `when curation is null then not set name and count`() = runBlocking {
         presenter.getView(null, item)
         verify(item, never()).setName("")
         verify(item, never()).setCount("")
     }
 
     @Test
-    fun `when curation is not null then not set name and count`() {
-        `when`(adapter.calcNumOfAllUnreadArticlesOfCuration(1)).thenReturn(10)
-        UnreadCountManager.inject(adapter)
+    fun `when curation is not null then not set name and count`() = runBlocking {
+        `when`(repository.getCurationCount(1)).thenReturn(10)
         presenter.getView(Curation(1, "name"), item)
         verify(item, times(1)).setName("name")
         verify(item, times(1)).setCount("10")

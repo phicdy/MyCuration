@@ -4,9 +4,9 @@ import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
@@ -26,11 +26,11 @@ val appModule = module {
     single<SQLiteDatabase> { DatabaseHelper(androidApplication()).writableDatabase }
     single { RssRepository(get(), get(), get()) }
     single { ArticleRepository(get()) }
+    single { CurationRepository(get()) }
     single { FilterRepository(get()) }
     single { PreferenceHelper }
     single { NetworkTaskManager(get(), get()) }
-    single { UnreadCountManager }
-    single { UnreadCountRepository(DatabaseAdapter.getInstance(), get()) }
+    single { UnreadCountRepository(DatabaseAdapter.getInstance(), get(), get()) }
 
     scope("top") { (view: TopActivityView) ->
         TopActivityPresenter(
@@ -56,7 +56,7 @@ val appModule = module {
                 curationId = curationId,
                 adapter = DatabaseAdapter.getInstance(),
                 preferenceHelper = get(),
-                unreadCountManager = get(),
+                unreadCountRepository = get(),
                 query = query,
                 action = action
         )
@@ -66,7 +66,7 @@ val appModule = module {
         CurationListPresenter(
                 view = view,
                 dbAdapter = DatabaseAdapter.getInstance(),
-                unreadCountManager = get()
+                unreadCountRepository = get()
         )
     }
 

@@ -28,18 +28,28 @@ import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
 import org.koin.android.scope.ext.android.getOrCreateScope
 import org.koin.core.parameter.parametersOf
 import java.security.InvalidParameterException
+import kotlin.coroutines.experimental.CoroutineContext
 
-class ArticlesListFragment : Fragment(), ArticleListView {
+class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
     companion object {
         const val VIEW_TYPE_ARTICLE = 0
         const val VIEW_TYPE_FOOTER = 1
     }
+
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
     private val presenter: ArticleListPresenter by inject {
         val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
         val curationId = activity?.intent?.getIntExtra(TopActivity.CURATION_ID,
@@ -89,6 +99,7 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindScope(getOrCreateScope("article_list"))
+        job = Job()
 
         // Set swipe direction
         val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
@@ -126,6 +137,11 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         presenter.resume()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
     private fun setAllListener() {
         val helper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
             override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
@@ -137,7 +153,9 @@ class ArticlesListFragment : Fragment(), ArticleListView {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                presenter.onSwiped(direction, viewHolder.adapterPosition)
+                launch {
+                    presenter.onSwiped(direction, viewHolder.adapterPosition)
+                }
             }
         })
         helper.attachToRecyclerView(recyclerView)
@@ -156,11 +174,15 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     }
 
     fun onFabButtonClicked() {
-        presenter.onFabButtonClicked()
+        launch {
+            presenter.onFabButtonClicked()
+        }
     }
 
     fun handleAllRead() {
-        presenter.handleAllRead()
+        launch {
+            presenter.handleAllRead()
+        }
     }
 
     override fun openInternalWebView(url: String, rssTitle: String) {
@@ -231,7 +253,11 @@ class ArticlesListFragment : Fragment(), ArticleListView {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is ArticleViewHolder) {
-                holder.mView.setOnClickListener { presenter.onListItemClicked(holder.getAdapterPosition()) }
+                holder.mView.setOnClickListener {
+                    launch {
+                        presenter.onListItemClicked(holder.getAdapterPosition())
+                    }
+                }
                 holder.mView.setOnLongClickListener {
                     presenter.onListItemLongClicked(holder.getAdapterPosition())
                     true

@@ -5,10 +5,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
@@ -61,16 +61,15 @@ class RssListPresenterTest {
         `when`(mockEdit.putLong(anyString(), anyLong())).thenReturn(mockEdit)
 
         DatabaseAdapter.inject(adapter)
-        UnreadCountManager.addFeed(firstRss)
-        UnreadCountManager.addFeed(secondRss)
-        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, NetworkTaskManager(mockRssRepository, mockArticleRepository), UnreadCountRepository(adapter, mockRssRepository))
+        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository,
+                NetworkTaskManager(mockRssRepository, mockArticleRepository),
+                UnreadCountRepository(adapter, mockRssRepository, mock(CurationRepository::class.java)))
 
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }
 
     @After
     fun tearDown() {
-        UnreadCountManager.clear()
         RxAndroidPlugins.reset()
     }
 
@@ -129,7 +128,8 @@ class RssListPresenterTest {
     fun `when onResume and RSS exist then fetch RSS from database`() {
         runBlocking {
             presenter.resume()
-            verify(mockRssRepository, times(1)).getAllFeedsWithNumOfUnreadArticles()
+            // Also called in UnreadCountRepository
+            verify(mockRssRepository, times(2)).getAllFeedsWithNumOfUnreadArticles()
         }
     }
 
@@ -346,7 +346,8 @@ class RssListPresenterTest {
     fun `when finish refresh then fetch RSS`() {
         runBlocking {
             presenter.onFinishUpdate()
-            verify(mockRssRepository, times(1)).getAllFeedsWithNumOfUnreadArticles()
+            // Also called in UnreadCountRepository
+            verify(mockRssRepository, times(2)).getAllFeedsWithNumOfUnreadArticles()
         }
     }
 

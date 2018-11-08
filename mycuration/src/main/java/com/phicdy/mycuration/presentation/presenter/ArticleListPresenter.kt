@@ -4,9 +4,9 @@ import android.content.Intent
 import android.support.v7.widget.helper.ItemTouchHelper.LEFT
 import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -15,6 +15,7 @@ import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.coroutineScope
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.ArrayList
@@ -24,7 +25,7 @@ import java.util.Random
 
 class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
                            private val preferenceHelper: PreferenceHelper,
-                           private val unreadCountManager: UnreadCountManager,
+                           private val unreadCountRepository: UnreadCountRepository,
                            private val query: String, private val action: String) : Presenter {
 
     companion object {
@@ -121,8 +122,8 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
 
     override fun pause() { disposable?.dispose() }
 
-    fun onListItemClicked(position: Int) {
-        if (position < 0) return
+    suspend fun onListItemClicked(position: Int) = coroutineScope {
+        if (position < 0) return@coroutineScope
         val article = allArticles[position]
         if (!isSwipeLeftToRight && !isSwipeRightToLeft) {
             setReadStatusToTouchedView(article, Article.TOREAD, false)
@@ -158,17 +159,17 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
                 }
     }
 
-    private fun setReadStatusToTouchedView(article: Article, status: String, isAllReadBack: Boolean) {
+    private suspend fun setReadStatusToTouchedView(article: Article, status: String, isAllReadBack: Boolean) = coroutineScope {
         val oldStatus = article.status
         if (oldStatus == status || oldStatus == Article.READ && status == Article.TOREAD) {
             view.notifyListView()
-            return
+            return@coroutineScope
         }
         adapter.saveStatus(article.id, status)
         if (status == Article.TOREAD) {
-            unreadCountManager.countDownUnreadCount(article.feedId)
+            unreadCountRepository.countDownUnreadCount(article.feedId)
         } else if (status == Article.UNREAD) {
-            unreadCountManager.conutUpUnreadCount(article.feedId)
+            unreadCountRepository.conutUpUnreadCount(article.feedId)
         }
         article.status = status
 
@@ -187,8 +188,8 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         view.showShareUi(article.url)
     }
 
-    fun onFabButtonClicked() {
-        if (allArticles.size == 0) return
+    suspend fun onFabButtonClicked() = coroutineScope {
+        if (allArticles.size == 0) return@coroutineScope
         val firstPosition = view.firstVisiblePosition
         val lastPosition = view.lastVisiblePosition
         for (i in firstPosition..lastPosition) {
@@ -196,7 +197,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             val targetArticle = allArticles[i]
             if (targetArticle.status == Article.UNREAD) {
                 targetArticle.status = Article.TOREAD
-                unreadCountManager.countDownUnreadCount(targetArticle.feedId)
+                unreadCountRepository.countDownUnreadCount(targetArticle.feedId)
                 adapter.saveStatus(targetArticle.id, Article.TOREAD)
             }
         }
@@ -212,13 +213,13 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         }
     }
 
-    fun handleAllRead() {
+    suspend fun handleAllRead() = coroutineScope {
         if (feedId == Feed.ALL_FEED_ID) {
             adapter.saveAllStatusToRead()
-            unreadCountManager.readAll()
+            unreadCountRepository.readAll()
         } else {
             adapter.saveStatusToRead(feedId)
-            unreadCountManager.readAll(feedId)
+            unreadCountRepository.readAll(feedId)
         }
         if (preferenceHelper.allReadBack) {
             view.finish()
@@ -281,7 +282,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         return if (position == loadedPosition + 1) ArticlesListFragment.VIEW_TYPE_FOOTER else ArticlesListFragment.VIEW_TYPE_ARTICLE
     }
 
-    fun onSwiped(direction: Int, touchedPosition: Int) {
+    suspend fun onSwiped(direction: Int, touchedPosition: Int) = coroutineScope {
         val touchedArticle = allArticles[touchedPosition]
         when (direction) {
             LEFT -> {

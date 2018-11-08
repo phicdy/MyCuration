@@ -2,11 +2,12 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.util.PreferenceHelper
+import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
@@ -22,6 +23,7 @@ import java.util.ArrayList
 class ArticleListPresenterTest {
 
     private val preferenceHelper = mock(PreferenceHelper::class.java)
+    private val unreadCountRepository = mock(UnreadCountRepository::class.java)
 
     @Before
     fun setup() {
@@ -38,7 +40,7 @@ class ArticleListPresenterTest {
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
         val presenter = ArticleListPresenter(
                 1, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager, "", "")
+                unreadCountRepository, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -50,7 +52,7 @@ class ArticleListPresenterTest {
         val adapter = mockEmptyDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager, "", "")
+                unreadCountRepository, "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -64,7 +66,7 @@ class ArticleListPresenterTest {
         val adapter = mockEmptyDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -78,7 +80,7 @@ class ArticleListPresenterTest {
         val adapter = mockEmptyDatabase(testCurationId)
         val presenter = ArticleListPresenter(
                 Feed.DEFAULT_FEED_ID, testCurationId, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -92,7 +94,7 @@ class ArticleListPresenterTest {
         val adapter = mock1ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -106,7 +108,7 @@ class ArticleListPresenterTest {
         val adapter = mock1ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -120,7 +122,7 @@ class ArticleListPresenterTest {
         val adapter = mock1ReadArticleDatabase(testCurationId)
         val presenter = ArticleListPresenter(
                 Feed.DEFAULT_FEED_ID, testCurationId, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -134,7 +136,7 @@ class ArticleListPresenterTest {
         val adapter = mock2Unread2ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -148,7 +150,7 @@ class ArticleListPresenterTest {
         val adapter = mock2Unread2ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -162,7 +164,7 @@ class ArticleListPresenterTest {
         val adapter = mock2Unread2ReadArticleDatabase(testCurationId)
         val presenter = ArticleListPresenter(
                 Feed.DEFAULT_FEED_ID, testCurationId, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -176,21 +178,21 @@ class ArticleListPresenterTest {
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
         val presenter = ArticleListPresenter(
                 1, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.pause()
     }
 
     @Test
-    fun `unread article status becomes to read when clicked`() {
+    fun `unread article status becomes to read when clicked`() = runBlocking {
         val testFeedId = 1
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -200,14 +202,14 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Toread article status is still to read when clicked`() {
+    fun `Toread article status is still to read when clicked`() = runBlocking {
         val testFeedId = 1
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.TOREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -217,14 +219,14 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Read article status is still read when clicked`() {
+    fun `Read article status is still read when clicked`() = runBlocking {
         val testFeedId = 1
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.READ, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -234,14 +236,14 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Article is opened with internal option when clicked`() {
+    fun `Article is opened with internal option when clicked`() = runBlocking {
         val testFeedId = 1
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -251,14 +253,14 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Article is opened with external option when clicked`() {
+    fun `Article is opened with external option when clicked`() = runBlocking {
         val testFeedId = 1
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager, "", "")
+                unreadCountRepository, "", "")
         `when`(preferenceHelper.isOpenInternal).thenReturn(false)
         val view = MockView()
         presenter.setView(view)
@@ -269,14 +271,14 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Intenal web view is opened with internal option when clicked`() {
+    fun `Intenal web view is opened with internal option when clicked`() = runBlocking {
         val testFeedId = 1
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -286,14 +288,14 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Title of intenal web view is opended article's RSS's title`() {
+    fun `Title of intenal web view is opended article's RSS's title`() = runBlocking {
         val testFeedId = 1
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -303,14 +305,14 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Title of intenal web view is opened article's RSS's title for all RSS`() {
+    fun `Title of intenal web view is opened article's RSS's title for all RSS`() = runBlocking {
         val testFeedId = Feed.ALL_FEED_ID
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -320,14 +322,14 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Extenal web view is opened with external option when clicked`() {
+    fun `Extenal web view is opened with external option when clicked`() = runBlocking {
         val testFeedId = 1
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         val adapter = mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager, "", "")
+                unreadCountRepository, "", "")
         `when`(preferenceHelper.isOpenInternal).thenReturn(false)
         val view = MockView()
         presenter.setView(view)
@@ -345,7 +347,7 @@ class ArticleListPresenterTest {
         val adapter = mock1ArticleDatabase(longClickedArticle)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,  "", "")
+                unreadCountRepository,  "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -362,7 +364,7 @@ class ArticleListPresenterTest {
         val adapter = mock1ArticleDatabase(article)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,
+                unreadCountRepository,
                 "ghaeogha", Intent.ACTION_SEARCH)
         val view = MockView()
         presenter.setView(view)
@@ -376,7 +378,7 @@ class ArticleListPresenterTest {
         val adapter = mockEmptyDatabase(1)
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,
+                unreadCountRepository,
                 "", "")
         val view = MockView()
         presenter.setView(view)
@@ -393,8 +395,7 @@ class ArticleListPresenterTest {
         val query = "query"
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, preferenceHelper,
-                UnreadCountManager,
-                query, Intent.ACTION_SEARCH)
+                unreadCountRepository, query, Intent.ACTION_SEARCH)
         val view = MockView()
         presenter.setView(view)
         presenter.createView()
