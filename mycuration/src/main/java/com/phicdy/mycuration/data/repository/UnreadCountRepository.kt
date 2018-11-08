@@ -49,7 +49,7 @@ class UnreadCountRepository(private val adapter: DatabaseAdapter,
         }
     }
 
-    suspend fun getUnreadCount(feedId: Int): Int {
+    fun getUnreadCount(feedId: Int): Int {
         return unreadCountMap[feedId] ?: -1
     }
 

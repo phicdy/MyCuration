@@ -258,8 +258,9 @@ class RssListPresenter(private val view: RssListView,
         }
         view.updateTitle(feed.title)
         view.updateUnreadCount(
-                if (isHided) unreadOnlyFeeds[position].unreadAriticlesCount.toString()
-                else allFeeds[position].unreadAriticlesCount.toString()
+                unreadCountRepository.getUnreadCount(
+                        if (isHided) unreadOnlyFeeds[position].id else allFeeds[position].id
+                ).toString()
         )
     }
 
