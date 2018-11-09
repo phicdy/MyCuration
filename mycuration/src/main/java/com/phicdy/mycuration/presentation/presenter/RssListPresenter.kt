@@ -48,9 +48,7 @@ class RssListPresenter(private val view: RssListView,
             refreshList()
             if (preferenceHelper.autoUpdateInMainUi && isAfterInterval) {
                 view.setRefreshing(true)
-                yield()
                 updateAllRss()
-                onFinishUpdate()
             }
         }
     }
