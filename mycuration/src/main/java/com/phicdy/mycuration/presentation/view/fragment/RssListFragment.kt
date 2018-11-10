@@ -17,20 +17,28 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
-import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
-import com.phicdy.mycuration.util.PreferenceHelper
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.security.InvalidParameterException
+import kotlin.coroutines.experimental.CoroutineContext
 
-class RssListFragment : Fragment(), RssListView {
+class RssListFragment : Fragment(), RssListView, CoroutineScope {
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
-    private lateinit var presenter: RssListPresenter
+    private val presenter: RssListPresenter by inject { parametersOf(this) }
     private lateinit var tvAllUnreadArticleCount: TextView
     private lateinit var allUnread: LinearLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -40,19 +48,18 @@ class RssListFragment : Fragment(), RssListView {
     private lateinit var rssFeedListAdapter: RssFeedListAdapter
     private var mListener: OnFeedListFragmentListener? = null
 
-    private lateinit var dbAdapter: DatabaseAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        dbAdapter = DatabaseAdapter.getInstance()
-        presenter = RssListPresenter(this, PreferenceHelper, dbAdapter, NetworkTaskManager, UnreadCountManager)
+        bindScope(getOrCreateScope("rss_list"))
         presenter.create()
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
+        launch(context = coroutineContext) {
+            presenter.resume()
+        }
     }
 
     override fun showEditTitleDialog(position: Int, feedTitle: String) {
@@ -65,7 +72,9 @@ class RssListFragment : Fragment(), RssListView {
                 .setView(addView)
                 .setPositiveButton(R.string.save) { _, _ ->
                     val newTitle = editTitleView.text.toString()
-                    presenter.onEditFeedOkButtonClicked(newTitle, position)
+                    launch(context = coroutineContext) {
+                        presenter.onEditFeedOkButtonClicked(newTitle, position)
+                    }
                 }.setNegativeButton(R.string.cancel, null).show()
     }
 
@@ -151,7 +160,11 @@ class RssListFragment : Fragment(), RssListView {
     override fun showDeleteFeedAlertDialog(position: Int) {
         AlertDialog.Builder(activity)
                 .setTitle(R.string.delete_rss_alert)
-                .setPositiveButton(R.string.delete) { _, _ -> presenter.onDeleteOkButtonClicked(position) }
+                .setPositiveButton(R.string.delete) { _, _ ->
+                    launch(context = coroutineContext) {
+                        presenter.onDeleteOkButtonClicked(position)
+                    }
+                }
                 .setNegativeButton(R.string.cancel, null).show()
     }
 
@@ -160,8 +173,17 @@ class RssListFragment : Fragment(), RssListView {
         presenter.pause()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
     private fun setAllListener() {
-        swipeRefreshLayout.setOnRefreshListener { presenter.onRefresh() }
+        swipeRefreshLayout.setOnRefreshListener {
+            launch(context = coroutineContext) {
+                presenter.onRefresh()
+            }
+        }
         allUnread.setOnClickListener {
             mListener?.onAllUnreadClicked()
         }

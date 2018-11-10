@@ -2,17 +2,16 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedSearchView
-
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-
-import junit.framework.Assert.assertTrue
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 
@@ -20,17 +19,19 @@ class FeedSearchPresenterTest {
 
     private lateinit var networkTaskManager: NetworkTaskManager
     private lateinit var parser: RssParser
+    private lateinit var executor: RssParseExecutor
     private lateinit var presenter: FeedSearchPresenter
     private lateinit var view: FeedSearchView
 
     @Before
     fun setup() {
-        networkTaskManager = Mockito.mock(NetworkTaskManager::class.java)
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
+        networkTaskManager = mock(NetworkTaskManager::class.java)
+        val adapter = mock(DatabaseAdapter::class.java)
         DatabaseAdapter.inject(adapter)
-        parser = Mockito.mock(RssParser::class.java)
-        view = Mockito.mock(FeedSearchView::class.java)
-        presenter = FeedSearchPresenter(view, networkTaskManager, adapter, UnreadCountManager, parser)
+        parser = mock(RssParser::class.java)
+        executor = mock(RssParseExecutor::class.java)
+        view = mock(FeedSearchView::class.java)
+        presenter = FeedSearchPresenter(view, networkTaskManager, adapter, executor)
 
     }
 
@@ -107,7 +108,7 @@ class FeedSearchPresenterTest {
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
         Mockito.`when`(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed)
         val presenter = FeedSearchPresenter(view,
-                networkTaskManager, adapter, UnreadCountManager, parser)
+                networkTaskManager, adapter, executor)
 
         presenter.callback.succeeded(testUrl)
         verify(view, times(1)).showAddFeedSuccessToast()
@@ -121,7 +122,7 @@ class FeedSearchPresenterTest {
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
         Mockito.`when`(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed)
         val view = Mockito.mock(FeedSearchView::class.java)
-        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, UnreadCountManager, parser)
+        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, executor)
 
         presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FAILED)
         verify(view, times(1)).dismissProgressBar()
@@ -134,7 +135,7 @@ class FeedSearchPresenterTest {
         val testFeed = Feed(1, "hoge", testUrl, "", "", 0, "")
         val adapter = Mockito.mock(DatabaseAdapter::class.java)
         Mockito.`when`(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed)
-        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, UnreadCountManager, parser)
+        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, executor)
 
         presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FAILED)
         verify(view, times(1)).finishView()
@@ -169,7 +170,7 @@ class FeedSearchPresenterTest {
         // Mock null returns
         val testUrl = "http://www.google.com"
         Mockito.`when`(adapter.getFeedByUrl(testUrl)).thenReturn(null)
-        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, UnreadCountManager, parser)
+        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, executor)
 
         presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FOUND)
         verify(view, times(1)).showGenericErrorToast()

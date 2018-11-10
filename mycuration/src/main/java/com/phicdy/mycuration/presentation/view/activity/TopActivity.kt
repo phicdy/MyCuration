@@ -55,6 +55,7 @@ class TopActivity :
         const val FEED_ID = "FEED_ID"
         const val CURATION_ID = "CURATION_ID"
         private const val SHOWCASE_ID = "tutorialAddRss"
+        private const val FRAGMENT_TAG = "FRAGMENT_TAG"
     }
 
     private val job = Job()
@@ -77,22 +78,32 @@ class TopActivity :
 
     private var searchView: SearchView? = null
 
-    private val bottomNavigationListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        replaceFragmentWith(item.itemId)
-        true
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
 
         bindScope(getOrCreateScope("top"))
         presenter.create()
+        if (savedInstanceState == null) {
+            changeTab(PreferenceHelper.launchTab)
+        } else {
+            val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
+            when (fragment) {
+                is CurationListFragment -> supportActionBar?.title = getString(R.string.curation)
+                is RssListFragment -> supportActionBar?.title = getString(R.string.rss)
+                is FilterListFragment -> supportActionBar?.title = getString(R.string.filter)
+            }
+
+        }
     }
 
     override fun initViewPager() {
         navigationView = findViewById(R.id.navigation)
-        navigationView.setOnNavigationItemSelectedListener(bottomNavigationListener)
+        navigationView.setOnNavigationItemSelectedListener { item ->
+            replaceFragmentWith(item.itemId)
+            true
+        }
+        navigationView.setOnNavigationItemReselectedListener { }
     }
 
     private fun replaceFragmentWith(menuId: Int) {
@@ -100,19 +111,19 @@ class TopActivity :
             R.id.navigation_curation -> {
                 supportActionBar?.title = getString(R.string.curation)
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.fr_content, CurationListFragment())
+                        .replace(R.id.fr_content, CurationListFragment(), FRAGMENT_TAG)
                         .commit()
             }
             R.id.navigation_rss -> {
                 supportActionBar?.title = getString(R.string.rss)
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.fr_content, RssListFragment())
+                        .replace(R.id.fr_content, RssListFragment(), FRAGMENT_TAG)
                         .commit()
             }
             R.id.navigation_filter -> {
                 supportActionBar?.title = getString(R.string.filter)
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.fr_content, FilterListFragment())
+                        .replace(R.id.fr_content, FilterListFragment(), FRAGMENT_TAG)
                         .commit()
             }
         }
@@ -403,7 +414,7 @@ class TopActivity :
         }
     }
 
-    override fun changeTab(position: Int) {
+    private fun changeTab(position: Int) {
         when(position) {
             PreferenceHelper.LAUNCH_CURATION -> navigationView.selectedItemId = R.id.navigation_curation
             PreferenceHelper.LAUNCH_RSS -> navigationView.selectedItemId = R.id.navigation_rss

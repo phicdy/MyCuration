@@ -13,26 +13,36 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
-
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.data.rss.Curation
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
+import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
+import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.activity.AddCurationActivity
-
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
+import kotlin.coroutines.experimental.CoroutineContext
 
 
-class CurationListFragment : Fragment(), CurationListView {
+class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
     companion object {
         private const val EDIT_CURATION_MENU_ID = 1
         private const val DELETE_CURATION_MENU_ID = 2
     }
 
-    private lateinit var presenter: CurationListPresenter
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
+    private val presenter: CurationListPresenter by inject { parametersOf(this) }
     private lateinit var curationListAdapter: CurationListAdapter
     private var mListener: OnCurationListFragmentListener? = null
     private lateinit var curationListView: ListView
@@ -40,8 +50,8 @@ class CurationListFragment : Fragment(), CurationListView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dbAdapter = DatabaseAdapter.getInstance()
-        presenter = CurationListPresenter(this, dbAdapter)
+        bindScope(getOrCreateScope("curation_list"))
+        job = Job()
     }
 
     override fun onResume() {
@@ -113,6 +123,11 @@ class CurationListFragment : Fragment(), CurationListView {
         mListener = null
     }
 
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
+    }
+
     override fun startEditCurationActivity(editCurationId: Int) {
         val intent = Intent()
         intent.setClass(activity, AddCurationActivity::class.java)
@@ -153,7 +168,7 @@ class CurationListFragment : Fragment(), CurationListView {
         fun onCurationListClicked(curationId: Int)
     }
 
-    internal inner class CurationListAdapter(curations: ArrayList<Curation>, context: Context) : ArrayAdapter<Curation>(context, R.layout.curation_list, curations) {
+    inner class CurationListAdapter(curations: ArrayList<Curation>, context: Context) : ArrayAdapter<Curation>(context, R.layout.curation_list, curations) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             activity?.let {
@@ -173,18 +188,25 @@ class CurationListFragment : Fragment(), CurationListView {
                 }
 
                 val curation = this.getItem(position)
-                if (curation != null) {
-                    holder.curationName.text = curation.name
-                    holder.curationCount.text = UnreadCountManager.getCurationCount(curation.id).toString()
+                launch {
+                    presenter.getView(curation, holder)
                 }
                 return row
             }
             return convertView!!
         }
 
-        private inner class ViewHolder {
-            internal lateinit var curationName: TextView
-            internal lateinit var curationCount: TextView
+        inner class ViewHolder: CurationItem {
+            lateinit var curationName: TextView
+            lateinit var curationCount: TextView
+
+            override fun setName(name: String) {
+                curationName.text = name
+            }
+
+            override fun setCount(count: String) {
+                curationCount.text = count
+            }
         }
     }
 }

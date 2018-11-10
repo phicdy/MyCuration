@@ -7,41 +7,34 @@ import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.annotation.UiThread
 import android.widget.Toast
-
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
-import com.phicdy.mycuration.tracker.TrackerHelper
+import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
-
+import com.phicdy.mycuration.tracker.TrackerHelper
+import org.koin.android.ext.android.inject
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class FeedUrlHookActivity : Activity(), FeedUrlHookView {
 
     private lateinit var presenter: FeedUrlHookPresenter
+    private val networkTaskManager: NetworkTaskManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_url_hook)
 
         val dbAdapter = DatabaseAdapter.getInstance()
-        val networkTaskManager = NetworkTaskManager
         val parser = RssParser()
         val intent = intent
         val action = if (intent.action == null) "" else intent.action
         val dataString = if (intent.dataString == null) "" else intent.dataString
         val extrasText = if (intent.extras == null) "" else intent.extras.getCharSequence(Intent.EXTRA_TEXT, "")
         presenter = FeedUrlHookPresenter(this, action, dataString, extrasText,
-                dbAdapter, UnreadCountManager, networkTaskManager, parser)
+                dbAdapter, networkTaskManager, parser)
         presenter.create()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        presenter.pause()
     }
 
     override fun attachBaseContext(newBase: Context) {

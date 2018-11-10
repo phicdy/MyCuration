@@ -12,9 +12,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.PermissionChecker
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.squareup.spoon.Spoon
-import junit.framework.Assert.assertNotNull
+import org.junit.Assert.assertNotNull
 import java.io.File
 
 abstract class UiTest {
@@ -41,12 +40,6 @@ abstract class UiTest {
     private fun deleteAllData() {
         DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
         val adapter = DatabaseAdapter.getInstance()
-        val feeds = adapter.allFeedsWithoutNumOfUnreadArticles
-        val manager = UnreadCountManager
-        for (feed in feeds) {
-            manager.deleteFeed(feed.id)
-        }
-        manager.readAll()
         adapter.deleteAll()
     }
 

@@ -296,25 +296,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-    /**
-     * Update method for unread article count of the feed.
-     *
-     * @param feedId Feed ID to change
-     * @param unreadCount New article unread count
-     */
-	public void updateUnreadArticleCount(int feedId, int unreadCount) {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Feed.UNREAD_ARTICLE, unreadCount);
-			db.update(Feed.TABLE_NAME, values, "_id = " + feedId, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
 
     /**
      * Update method for feed icon path.
@@ -356,76 +337,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-    /**
-     * Update method for feed title.
-     *
-     * @param feedId Feed ID to update
-     * @param newTitle New feed title
-     * @return Num of updated feeds
-     */
-	public int saveNewTitle(int feedId, String newTitle) {
-		int numOfUpdated = 0;
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Feed.TITLE, newTitle);
-			numOfUpdated = db.update(Feed.TABLE_NAME, values, Feed.ID + " = " + feedId, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		return numOfUpdated;
-	}
-
-    /**
-     * Delete method for feed and related data.
-     *
-     * @param feedId Feed ID to delete
-     * @return result of delete
-     */
-    public boolean deleteFeed(int feedId) {
-		int numOfDeleted = 0;
-		ArrayList<Article> allArticles = getAllArticlesInAFeed(feedId, true);
-		try {
-            db.beginTransaction();
-			for (Article article : allArticles) {
-				db.delete(CurationSelection.TABLE_NAME, CurationSelection.ARTICLE_ID + " = " + article.getId(), null);
-			}
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            // Delete related filter
-            ArrayList<Filter> filters = getAllFilters();
-            db.beginTransaction();
-            db.delete(FilterFeedRegistration.TABLE_NAME, FilterFeedRegistration.FEED_ID + " = " + feedId, null);
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-            for (Filter filter : filters) {
-                ArrayList<Feed> feeds = filter.getFeeds();
-                if (feeds.size() == 1 && feeds.get(0).getId() == feedId) {
-                    // This filter had relation with this feed only
-                    db.delete(Filter.TABLE_NAME, Filter.ID + " = " + filter.getId(), null);
-                }
-            }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-			db.delete(Article.TABLE_NAME, Article.FEEDID + " = " + feedId, null);
-			numOfDeleted = db.delete(Feed.TABLE_NAME, Feed.ID + " = " + feedId, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-        return numOfDeleted == 1;
-    }
-
 	public Feed getFeedByUrl(String feedUrl) {
 		Feed feed = null;
 		db.beginTransaction();
@@ -462,7 +373,7 @@ public class DatabaseAdapter {
         Cursor cur = null;
 		try {
 			// Get feed
-			String[] culumn = {Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL};
+			String[] culumn = {Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE};
 			String selection = Feed.ID + " = " + feedId;
 			cur = db.query(Feed.TABLE_NAME, culumn, selection, null, null, null, null);
 			if (cur.getCount() != 0) {
@@ -471,8 +382,9 @@ public class DatabaseAdapter {
 				String feedUrl = cur.getString(1);
 				String iconPath = cur.getString(2);
 				String siteUrl = cur.getString(3);
+				int count = cur.getInt(4);
 
-				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, "", 0, siteUrl);
+				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, "", count, siteUrl);
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
@@ -848,46 +760,6 @@ public class DatabaseAdapter {
 		}
 
 		return filter;
-	}
-
-	public void applyFiltersOfFeed(ArrayList<Filter> filterList, int feedId) {
-		// If articles are hit in condition, Set articles status to "read"
-		ContentValues value = new ContentValues();
-		value.put(Article.STATUS, "read");
-		for (Filter filter : filterList) {
-			db.beginTransaction();
-			try {
-				// Initialize condition
-				String condition = "feedId = " + feedId;
-
-				// If keyword or url exists, add condition
-				String keyword = filter.getKeyword();
-				String url = filter.getUrl();
-				if (keyword.equals("") && url.equals("")) {
-					Log.w("Set filtering conditon",
-							"keyword and url don't exist fileter ID ="
-									+ filter.getId());
-					continue;
-				}
-				if (!keyword.equals("")) {
-					condition = condition + " and title like '%" + keyword
-							+ "%'";
-				}
-				if (!url.equals("")) {
-					condition = condition + " and url like '%" + url + "%'";
-				}
-				db.update(Article.TABLE_NAME, value, condition, null);
-				db.setTransactionSuccessful();
-			} catch (Exception e) {
-				Log.e("Apply Filtering", "Article can't be updated.Feed ID = "
-						+ feedId);
-				db.endTransaction();
-				return;
-			} finally {
-				db.endTransaction();
-			}
-
-		}
 	}
 
     /**

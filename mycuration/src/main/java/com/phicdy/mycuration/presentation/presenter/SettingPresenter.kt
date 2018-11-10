@@ -1,10 +1,9 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
-import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.view.SettingView
+import com.phicdy.mycuration.util.PreferenceHelper
 
 class SettingPresenter(private val helper: PreferenceHelper,
                        private val updateIntervalHourItems: Array<String>,
@@ -150,35 +149,35 @@ class SettingPresenter(private val helper: PreferenceHelper,
     }
 
     fun onDebugAddRssClicked(adapter: DatabaseAdapter) {
-        UnreadCountManager.addFeed(adapter.saveNewFeed(
+        adapter.saveNewFeed(
                 "Yahoo!ニュース・トピックス - 主要",
                 "https://news.yahoo.co.jp/pickup/rss.xml",
                 "RSS2.0",
-                "https://news.yahoo.co.jp")
+                "https://news.yahoo.co.jp"
         )
-        UnreadCountManager.addFeed(adapter.saveNewFeed(
+        adapter.saveNewFeed(
                 "Yahoo!ニュース・トピックス - 国際",
                 "https://news.yahoo.co.jp/pickup/world/rss.xml",
                 "RSS2.0",
-                "https://news.yahoo.co.jp")
+                "https://news.yahoo.co.jp"
         )
-        UnreadCountManager.addFeed(adapter.saveNewFeed(
+        adapter.saveNewFeed(
                 "Yahoo!ニュース・トピックス - エンタメ",
                 "https://news.yahoo.co.jp/pickup/entertainment/rss.xml",
                 "RSS2.0",
-                "https://news.yahoo.co.jp")
+                "https://news.yahoo.co.jp"
         )
-        UnreadCountManager.addFeed(adapter.saveNewFeed(
+        adapter.saveNewFeed(
                 "Yahoo!ニュース・トピックス - IT",
                 "https://news.yahoo.co.jp/pickup/computer/rss.xml",
                 "RSS2.0",
-                "https://news.yahoo.co.jp")
+                "https://news.yahoo.co.jp"
         )
-        UnreadCountManager.addFeed(adapter.saveNewFeed(
+        adapter.saveNewFeed(
                 "Yahoo!ニュース・トピックス - 地域",
                 "https://news.yahoo.co.jp/pickup/local/rss.xml",
                 "RSS2.0",
-                "https://news.yahoo.co.jp")
+                "https://news.yahoo.co.jp"
         )
     }
 }

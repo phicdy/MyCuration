@@ -1,16 +1,21 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
-
+import android.support.v7.widget.helper.ItemTouchHelper.LEFT
+import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
-import com.phicdy.mycuration.util.PreferenceHelper
-import com.phicdy.mycuration.util.TextUtil
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
-
+import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.TextUtil
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.coroutineScope
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.ArrayList
@@ -18,16 +23,9 @@ import java.util.Date
 import java.util.Locale
 import java.util.Random
 
-import android.support.v7.widget.helper.ItemTouchHelper.LEFT
-import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-
 class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
-                           private val unreadCountManager: UnreadCountManager,
-                           private val isOpenInternal: Boolean, private val isAllReadBack: Boolean,
-                           private val isNewArticleTop: Boolean, private val swipeDirection: Int,
+                           private val preferenceHelper: PreferenceHelper,
+                           private val unreadCountRepository: UnreadCountRepository,
                            private val query: String, private val action: String) : Presenter {
 
     companion object {
@@ -40,6 +38,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
     private var isSwipeRightToLeft = false
     private var isSwipeLeftToRight = false
     private var loadedPosition = -1
+    private var disposable: Disposable? = null
 
     private val isAllRead: Boolean
         get() {
@@ -93,21 +92,21 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
     private fun loadAllArticles(): ArrayList<Article> {
         var allArticles: ArrayList<Article>
         if (isSearchAction) {
-            allArticles = adapter.searchArticles(query, isNewArticleTop)
+            allArticles = adapter.searchArticles(query, preferenceHelper.sortNewArticleTop)
         } else if (curationId != DEFAULT_CURATION_ID) {
-            allArticles = adapter.getAllUnreadArticlesOfCuration(curationId, isNewArticleTop)
+            allArticles = adapter.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0) {
-                allArticles = adapter.getAllArticlesOfCuration(curationId, isNewArticleTop)
+                allArticles = adapter.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             }
         } else if (feedId == Feed.ALL_FEED_ID) {
-            allArticles = adapter.getAllUnreadArticles(isNewArticleTop)
+            allArticles = adapter.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0 && adapter.isExistArticle) {
-                allArticles = adapter.getTop300Articles(isNewArticleTop)
+                allArticles = adapter.getTop300Articles(preferenceHelper.sortNewArticleTop)
             }
         } else {
-            allArticles = adapter.getUnreadArticlesInAFeed(feedId, isNewArticleTop)
+            allArticles = adapter.getUnreadArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0 && adapter.isExistArticle(feedId)) {
-                allArticles = adapter.getAllArticlesInAFeed(feedId, isNewArticleTop)
+                allArticles = adapter.getAllArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
             }
         }
         return allArticles
@@ -121,14 +120,14 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
 
     override fun resume() {}
 
-    override fun pause() {}
+    override fun pause() { disposable?.dispose() }
 
-    fun onListItemClicked(position: Int) {
-        if (position < 0) return
+    suspend fun onListItemClicked(position: Int) = coroutineScope {
+        if (position < 0) return@coroutineScope
         val article = allArticles[position]
         if (!isSwipeLeftToRight && !isSwipeRightToLeft) {
             setReadStatusToTouchedView(article, Article.TOREAD, false)
-            if (isOpenInternal) {
+            if (preferenceHelper.isOpenInternal) {
                 val feedTitle = if (feedId == Feed.ALL_FEED_ID) {
                     article.feedTitle
                 } else {
@@ -150,7 +149,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             return
         }
         if (lastItemPosition < loadedPosition + 1) return
-        Flowable.just(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
+        disposable = Flowable.just(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
                 .subscribeOn(Schedulers.io())
                 .map { Thread.sleep(it) }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -160,17 +159,17 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
                 }
     }
 
-    private fun setReadStatusToTouchedView(article: Article, status: String, isAllReadBack: Boolean) {
+    private suspend fun setReadStatusToTouchedView(article: Article, status: String, isAllReadBack: Boolean) = coroutineScope {
         val oldStatus = article.status
         if (oldStatus == status || oldStatus == Article.READ && status == Article.TOREAD) {
             view.notifyListView()
-            return
+            return@coroutineScope
         }
         adapter.saveStatus(article.id, status)
         if (status == Article.TOREAD) {
-            unreadCountManager.countDownUnreadCount(article.feedId)
+            unreadCountRepository.countDownUnreadCount(article.feedId)
         } else if (status == Article.UNREAD) {
-            unreadCountManager.conutUpUnreadCount(article.feedId)
+            unreadCountRepository.conutUpUnreadCount(article.feedId)
         }
         article.status = status
 
@@ -189,8 +188,8 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         view.showShareUi(article.url)
     }
 
-    fun onFabButtonClicked() {
-        if (allArticles.size == 0) return
+    suspend fun onFabButtonClicked() = coroutineScope {
+        if (allArticles.size == 0) return@coroutineScope
         val firstPosition = view.firstVisiblePosition
         val lastPosition = view.lastVisiblePosition
         for (i in firstPosition..lastPosition) {
@@ -198,7 +197,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             val targetArticle = allArticles[i]
             if (targetArticle.status == Article.UNREAD) {
                 targetArticle.status = Article.TOREAD
-                unreadCountManager.countDownUnreadCount(targetArticle.feedId)
+                unreadCountRepository.countDownUnreadCount(targetArticle.feedId)
                 adapter.saveStatus(targetArticle.id, Article.TOREAD)
             }
         }
@@ -207,22 +206,22 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         var positionAfterScroll = lastPosition + visibleNum
         if (positionAfterScroll >= loadedPosition) positionAfterScroll = loadedPosition
         view.scrollTo(positionAfterScroll)
-        if (isAllReadBack && view.isBottomVisible) {
+        if (preferenceHelper.allReadBack && view.isBottomVisible) {
             if (isAllRead) {
                 view.finish()
             }
         }
     }
 
-    fun handleAllRead() {
+    suspend fun handleAllRead() = coroutineScope {
         if (feedId == Feed.ALL_FEED_ID) {
             adapter.saveAllStatusToRead()
-            unreadCountManager.readAll()
+            unreadCountRepository.readAll()
         } else {
             adapter.saveStatusToRead(feedId)
-            unreadCountManager.readAll(feedId)
+            unreadCountRepository.readAll(feedId)
         }
-        if (isAllReadBack) {
+        if (preferenceHelper.allReadBack) {
             view.finish()
         } else {
             for (i in allArticles.indices) {
@@ -283,14 +282,14 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         return if (position == loadedPosition + 1) ArticlesListFragment.VIEW_TYPE_FOOTER else ArticlesListFragment.VIEW_TYPE_ARTICLE
     }
 
-    fun onSwiped(direction: Int, touchedPosition: Int) {
+    suspend fun onSwiped(direction: Int, touchedPosition: Int) = coroutineScope {
         val touchedArticle = allArticles[touchedPosition]
         when (direction) {
             LEFT -> {
                 isSwipeRightToLeft = true
-                when (swipeDirection) {
-                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack)
-                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack)
+                when (preferenceHelper.swipeDirection) {
+                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, preferenceHelper.allReadBack)
+                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, preferenceHelper.allReadBack)
                     else -> {
                     }
                 }
@@ -298,9 +297,9 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             }
             RIGHT -> {
                 isSwipeLeftToRight = true
-                when (swipeDirection) {
-                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, isAllReadBack)
-                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, isAllReadBack)
+                when (preferenceHelper.swipeDirection) {
+                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, preferenceHelper.allReadBack)
+                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, preferenceHelper.allReadBack)
                     else -> {
                     }
                 }

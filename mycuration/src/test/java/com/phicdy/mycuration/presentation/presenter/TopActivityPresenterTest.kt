@@ -2,6 +2,7 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.experimental.runBlocking
@@ -23,17 +24,11 @@ class TopActivityPresenterTest {
 
     @Before
     fun setup() {
-        networkTaskManager = NetworkTaskManager
         mockView = mock(TopActivityView::class.java)
         mockArticleRepository = mock(ArticleRepository::class.java)
         mockRssRepository = mock(RssRepository::class.java)
-        presenter = TopActivityPresenter(0, mockView, mockArticleRepository, mockRssRepository)
-    }
-
-    @Test
-    fun `changeTab is called when onCreate`() {
-        presenter.create()
-        verify(mockView, times(1)).changeTab(0)
+        networkTaskManager = NetworkTaskManager(mockArticleRepository, mock(UnreadCountRepository::class.java))
+        presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository)
     }
 
     @Test

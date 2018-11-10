@@ -2,14 +2,17 @@ package com.phicdy.mycuration.domain.task
 
 import android.util.Log
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.coroutineScope
+import kotlinx.coroutines.experimental.runBlocking
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -18,7 +21,8 @@ import retrofit2.http.Url
 import java.io.IOException
 import java.net.URI
 
-object NetworkTaskManager {
+class NetworkTaskManager(private val articleRepository: ArticleRepository,
+                         private val unreadCountRepository: UnreadCountRepository) {
 
     val isUpdatingFeed: Boolean get() = false
 
@@ -29,7 +33,9 @@ object NetworkTaskManager {
                 .flatMap({ data -> Flowable.just(data).subscribeOn(Schedulers.io()) })
                 { _, newData ->
                     Log.d("NetworkTask", "BiFunction, Thread:" + Thread.currentThread().name + ", feed:" + newData.title)
-                    updateFeed(newData)
+                    runBlocking {
+                        updateFeed(newData)
+                    }
                     newData
                 }
     }
@@ -39,8 +45,8 @@ object NetworkTaskManager {
         fun feeds(@Url url: String): Call<ResponseBody>
     }
 
-    fun updateFeed(feed: Feed) {
-        if (TextUtil.isEmpty(feed.url)) return
+    suspend fun updateFeed(feed: Feed) = coroutineScope {
+        if (TextUtil.isEmpty(feed.url)) return@coroutineScope
         val uri = URI.create(feed.url)
         val retrofit = Retrofit.Builder()
                 .baseUrl(uri.scheme + "://" + uri.host)
@@ -50,9 +56,9 @@ object NetworkTaskManager {
         try {
             val response = call.execute()
             if (response.body() == null) {
-                return
+                return@coroutineScope
             }
-            val inputStream = response.body()?.byteStream() ?: return
+            val inputStream = response.body()?.byteStream() ?: return@coroutineScope
             val parser = RssParser()
             val dbAdapter = DatabaseAdapter.getInstance()
             val latestDate = dbAdapter.getLatestArticleDate(feed.id)
@@ -66,9 +72,10 @@ object NetworkTaskManager {
                     getHatenaBookmark.request(article.url, delaySec)
                     if (i % 10 == 0) delaySec += 2
                 }
+                unreadCountRepository.appendUnreadArticleCount(feed.id, articles.size)
             }
 
-            FilterTask().applyFiltering(feed.id)
+            FilterTask(articleRepository).applyFiltering(feed.id)
             try {
                 inputStream.close()
             } catch (e: IOException) {
@@ -79,12 +86,10 @@ object NetworkTaskManager {
                 val task = GetFeedIconTask(iconSaveFolderStr)
                 task.execute(feed.siteUrl)
             }
-            UnreadCountManager.refreshConut(feed.id)
         } catch (e: IOException) {
 
         } catch (e: RuntimeException) {
 
         }
-        return
     }
 }

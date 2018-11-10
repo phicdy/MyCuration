@@ -1,13 +1,15 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Curation
+import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
-
 import java.util.ArrayList
 
 class CurationListPresenter(private val view: CurationListView,
-                            private val dbAdapter: DatabaseAdapter) : Presenter {
+                            private val dbAdapter: DatabaseAdapter,
+                            private val unreadCountRepository: UnreadCountRepository) : Presenter {
     private var allCurations: ArrayList<Curation> = arrayListOf()
 
     override fun create() {}
@@ -43,5 +45,12 @@ class CurationListPresenter(private val view: CurationListView,
         }
 
         return allCurations[position].id
+    }
+
+    suspend fun getView(curation: Curation?, item: CurationItem) {
+        curation?.let {
+            item.setName(it.name)
+            item.setCount(unreadCountRepository.getCurationCount(it.id).toString())
+        }
     }
 }

@@ -11,37 +11,57 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE
+import android.support.v7.widget.helper.ItemTouchHelper.LEFT
+import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
-import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity
-import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.domain.rss.UnreadCountManager
-import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.ArticleRecyclerView
-
+import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity
+import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import com.phicdy.mycuration.tracker.TrackerHelper
+import com.phicdy.mycuration.util.PreferenceHelper
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import java.security.InvalidParameterException
+import kotlin.coroutines.experimental.CoroutineContext
 
-import android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE
-import android.support.v7.widget.helper.ItemTouchHelper.LEFT
-import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
-
-class ArticlesListFragment : Fragment(), ArticleListView {
+class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
     companion object {
         const val VIEW_TYPE_ARTICLE = 0
         const val VIEW_TYPE_FOOTER = 1
     }
-    private lateinit var presenter: ArticleListPresenter
+
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
+    private val presenter: ArticleListPresenter by inject {
+        val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
+        val curationId = activity?.intent?.getIntExtra(TopActivity.CURATION_ID,
+                ArticleListPresenter.DEFAULT_CURATION_ID) ?: ArticleListPresenter.DEFAULT_CURATION_ID
+        val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
+        parametersOf(
+                feedId,
+                curationId,
+                query,
+                activity?.intent?.action ?: ""
+        )
+    }
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: SimpleItemRecyclerViewAdapter
@@ -78,25 +98,14 @@ class ArticlesListFragment : Fragment(), ArticleListView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dbAdapter = DatabaseAdapter.getInstance()
-
-        // Set feed id and url from main activity
-        val intent = activity?.intent
-        val feedId = intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
-        val curationId = intent?.getIntExtra(TopActivity.CURATION_ID,
-                ArticleListPresenter.DEFAULT_CURATION_ID) ?: ArticleListPresenter.DEFAULT_CURATION_ID
-        intent?.putExtra(TopActivity.FEED_ID, feedId)
+        bindScope(getOrCreateScope("article_list"))
+        job = Job()
 
         // Set swipe direction
+        val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(feedId)
-        val swipeDirectionOption = prefMgr.swipeDirection
-        val isOpenInternal = prefMgr.isOpenInternal
-        val isAllReadBack = prefMgr.allReadBack
-        val isNewestArticleTop = prefMgr.sortNewArticleTop
-        val query = intent?.getStringExtra(SearchManager.QUERY) ?: ""
-        presenter = ArticleListPresenter(feedId, curationId, dbAdapter, UnreadCountManager,
-                isOpenInternal, isAllReadBack, isNewestArticleTop, swipeDirectionOption, query, intent?.action ?: "")
+
         presenter.setView(this)
         presenter.create()
     }
@@ -128,6 +137,11 @@ class ArticlesListFragment : Fragment(), ArticleListView {
         presenter.resume()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
     private fun setAllListener() {
         val helper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
             override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
@@ -139,7 +153,9 @@ class ArticlesListFragment : Fragment(), ArticleListView {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                presenter.onSwiped(direction, viewHolder.adapterPosition)
+                launch {
+                    presenter.onSwiped(direction, viewHolder.adapterPosition)
+                }
             }
         })
         helper.attachToRecyclerView(recyclerView)
@@ -158,11 +174,15 @@ class ArticlesListFragment : Fragment(), ArticleListView {
     }
 
     fun onFabButtonClicked() {
-        presenter.onFabButtonClicked()
+        launch {
+            presenter.onFabButtonClicked()
+        }
     }
 
     fun handleAllRead() {
-        presenter.handleAllRead()
+        launch {
+            presenter.handleAllRead()
+        }
     }
 
     override fun openInternalWebView(url: String, rssTitle: String) {
@@ -233,7 +253,11 @@ class ArticlesListFragment : Fragment(), ArticleListView {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is ArticleViewHolder) {
-                holder.mView.setOnClickListener { presenter.onListItemClicked(holder.getAdapterPosition()) }
+                holder.mView.setOnClickListener {
+                    launch {
+                        presenter.onListItemClicked(holder.getAdapterPosition())
+                    }
+                }
                 holder.mView.setOnLongClickListener {
                     presenter.onListItemLongClicked(holder.getAdapterPosition())
                     true
