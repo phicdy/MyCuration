@@ -11,8 +11,6 @@ import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.experimental.coroutineScope
 import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
-import kotlinx.coroutines.experimental.yield
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import java.util.ArrayList

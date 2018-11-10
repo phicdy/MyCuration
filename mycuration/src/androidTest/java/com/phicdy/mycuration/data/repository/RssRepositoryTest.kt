@@ -3,9 +3,6 @@ package com.phicdy.mycuration.data.repository
 import android.support.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
-import com.phicdy.mycuration.data.repository.ArticleRepository
-import com.phicdy.mycuration.data.repository.FilterRepository
-import com.phicdy.mycuration.data.repository.RssRepository
 import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -72,16 +69,7 @@ class RssRepositoryTest {
         assertThat(keyword, `is`(NOT_DELETED_FILTER_KEYWORD))
     }
 
-    @Test
-    fun whenAppendUnreadCountThenUnreadCountIncreases() = runBlocking {
-        val rss = adapter.saveNewFeed("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
-        rssRepository.updateUnreadArticleCount(rss.id, 1)
-        rssRepository.appendUnreadArticleCount(rss.id, 10)
-        val updatedRss = adapter.getFeedById(rss.id)
-        assertThat(updatedRss.unreadAriticlesCount, `is`(11))
-    }
-
-    companion object {
+   companion object {
         private const val NOT_DELETED_FILTER_TITLE = "notDeletedFilterTitle"
         private const val NOT_DELETED_FILTER_KEYWORD = "notDeletedFilterKeyword"
     }

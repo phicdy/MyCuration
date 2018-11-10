@@ -3,7 +3,7 @@ package com.phicdy.mycuration.domain.task
 import android.util.Log
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
-import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.domain.rss.RssParser
@@ -12,7 +12,6 @@ import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.coroutineScope
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -22,8 +21,8 @@ import retrofit2.http.Url
 import java.io.IOException
 import java.net.URI
 
-class NetworkTaskManager(private val rssRepository: RssRepository,
-                         private val articleRepository: ArticleRepository) {
+class NetworkTaskManager(private val articleRepository: ArticleRepository,
+                         private val unreadCountRepository: UnreadCountRepository) {
 
     val isUpdatingFeed: Boolean get() = false
 
@@ -73,7 +72,7 @@ class NetworkTaskManager(private val rssRepository: RssRepository,
                     getHatenaBookmark.request(article.url, delaySec)
                     if (i % 10 == 0) delaySec += 2
                 }
-                rssRepository.appendUnreadArticleCount(feed.id, articles.size)
+                unreadCountRepository.appendUnreadArticleCount(feed.id, articles.size)
             }
 
             FilterTask(articleRepository).applyFiltering(feed.id)

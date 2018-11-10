@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.presenter
 import android.content.Intent
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
-import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -26,7 +26,7 @@ class FeedUrlHookPresenterTest {
 
     @Before
     fun setup() {
-        networkTaskManager = NetworkTaskManager(mock(RssRepository::class.java), mock(ArticleRepository::class.java))
+        networkTaskManager = NetworkTaskManager(mock(ArticleRepository::class.java), mock(UnreadCountRepository::class.java))
         adapter = Mockito.mock(DatabaseAdapter::class.java)
         DatabaseAdapter.inject(Mockito.mock(DatabaseAdapter::class.java))
         parser = Mockito.mock(RssParser::class.java)

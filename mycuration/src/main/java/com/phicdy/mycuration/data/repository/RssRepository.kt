@@ -181,38 +181,6 @@ class RssRepository(private val db: SQLiteDatabase,
     }
 
     /**
-     * Fetch current unread count and append the count
-     *
-     * @param rssId RSS ID to change
-     * @param appendCount appended article unread count
-     */
-    suspend fun appendUnreadArticleCount(rssId: Int, appendCount: Int) = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
-            var cursor: Cursor? = null
-            try {
-                db.beginTransaction()
-                cursor = db.query(Feed.TABLE_NAME, arrayOf(Feed.UNREAD_ARTICLE), Feed.ID + " = ?", arrayOf(rssId.toString()), null, null, null, null)
-                cursor?.let {
-                    if (cursor.count > 0) {
-                        cursor.moveToFirst()
-                        val currentNum = cursor.getInt(0)
-                        val values = ContentValues().apply {
-                            put(Feed.UNREAD_ARTICLE, currentNum + appendCount)
-                        }
-                        db.update(Feed.TABLE_NAME, values, Feed.ID + " = ?", arrayOf(rssId.toString()))
-                    }
-                }
-                db.setTransactionSuccessful()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                cursor?.close()
-                db.endTransaction()
-            }
-        }
-    }
-
-    /**
      * Update method for unread article count of the feed.
      *
      * @param feedId Feed ID to change

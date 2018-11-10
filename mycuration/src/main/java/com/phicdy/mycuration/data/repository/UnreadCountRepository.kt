@@ -77,4 +77,14 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
     suspend fun getCurationCount(curationId: Int): Int {
         return curationRepository.calcNumOfAllUnreadArticlesOfCuration(curationId)
     }
+
+    suspend fun appendUnreadArticleCount(rssId: Int, count: Int) {
+        if (unreadCountMap.containsKey(rssId)) {
+            unreadCountMap[rssId] = unreadCountMap[rssId]!! + count
+        } else {
+            unreadCountMap[rssId] = count
+        }
+        total += count
+        updateDatbase(rssId)
+    }
 }

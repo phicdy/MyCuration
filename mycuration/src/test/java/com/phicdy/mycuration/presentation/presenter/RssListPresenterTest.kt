@@ -62,7 +62,7 @@ class RssListPresenterTest {
 
         DatabaseAdapter.inject(adapter)
         presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository,
-                NetworkTaskManager(mockRssRepository, mockArticleRepository),
+                NetworkTaskManager(mockArticleRepository, mock(UnreadCountRepository::class.java)),
                 UnreadCountRepository(mockRssRepository, mock(CurationRepository::class.java)))
 
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
