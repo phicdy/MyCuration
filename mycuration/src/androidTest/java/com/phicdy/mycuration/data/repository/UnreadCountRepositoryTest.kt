@@ -40,6 +40,7 @@ class UnreadCountRepositoryTest {
     fun whenAppendUnreadCountThenUnreadCountIncreases() = runBlocking {
         val rss = adapter.saveNewFeed("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
         rssRepository.updateUnreadArticleCount(rss.id, 1)
+        unreadCountRepository.retrieve()
         unreadCountRepository.appendUnreadArticleCount(rss.id, 10)
         val updatedRss = adapter.getFeedById(rss.id)
         assertThat(updatedRss.unreadAriticlesCount, `is`(11))
