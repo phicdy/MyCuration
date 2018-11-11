@@ -31,10 +31,10 @@ import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.view.activity.SettingActivity
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
 import org.koin.android.scope.ext.android.getOrCreateScope
@@ -42,7 +42,7 @@ import org.koin.core.parameter.parametersOf
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 class TopActivity :
         AppCompatActivity(),

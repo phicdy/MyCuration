@@ -51,12 +51,6 @@ jacoco {
     toolVersion = "0.7.7.201606060606"
 }
 
-kotlin {
-    experimental {
-        coroutines "enable"
-    }
-}
-
 // A list of directories which should be included in coverage report
 def coverageSourceDirs = ['src/main/java', 'src/main/kotlin']
 // A list of files which should be excluded from coverage report since they are generated and/or framework code
@@ -138,7 +132,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
-    def coroutineVer = '0.30.2'
+    def coroutineVer = '1.0.0'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVer"
 

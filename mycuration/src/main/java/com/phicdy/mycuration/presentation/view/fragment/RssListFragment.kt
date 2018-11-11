@@ -21,17 +21,17 @@ import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
 import org.koin.android.scope.ext.android.getOrCreateScope
 import org.koin.core.parameter.parametersOf
 import java.io.File
 import java.security.InvalidParameterException
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 class RssListFragment : Fragment(), RssListView, CoroutineScope {
     private val job = Job()

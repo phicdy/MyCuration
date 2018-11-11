@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.rss.Article
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.coroutineScope
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
 class ArticleRepository(val db: SQLiteDatabase) {
 

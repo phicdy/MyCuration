@@ -6,7 +6,7 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.TopActivityView
-import kotlinx.coroutines.experimental.coroutineScope
+import kotlinx.coroutines.coroutineScope
 
 class TopActivityPresenter(private val view: TopActivityView,
                            private val articleRepository: ArticleRepository,

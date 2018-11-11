@@ -9,9 +9,9 @@ import com.phicdy.mycuration.data.filter.FilterFeedRegistration
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.CurationSelection
 import com.phicdy.mycuration.data.rss.Feed
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.coroutineScope
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import java.util.ArrayList
 
 class RssRepository(private val db: SQLiteDatabase,

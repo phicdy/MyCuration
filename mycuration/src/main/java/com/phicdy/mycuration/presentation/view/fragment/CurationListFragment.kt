@@ -19,16 +19,16 @@ import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.activity.AddCurationActivity
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
 import org.koin.android.scope.ext.android.getOrCreateScope
 import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 
 class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
