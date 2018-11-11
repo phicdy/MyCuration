@@ -72,6 +72,7 @@ internal class AddFilterFeedRegistrationTask : DatabaseMigrationTask {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun getOldAllFilters(db: SQLiteDatabase, oldVersion: Int): ArrayList<Filter> {
         var cursor: Cursor? = null
         val filters = ArrayList<Filter>()

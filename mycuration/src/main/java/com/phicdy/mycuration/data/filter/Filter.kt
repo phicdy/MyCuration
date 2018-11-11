@@ -53,7 +53,7 @@ data class Filter(
                 TITLE + " text," +
                 ENABLED + " integer)"
 
-        @Deprecated("")
+        @Suppress("DEPRECATION")
         const val CREATE_TABLE_SQL_VER2 = "create table " + TABLE_NAME + "(" +
                 ID + " integer primary key autoincrement," +
                 FEED_ID + " integer," +
@@ -63,7 +63,7 @@ data class Filter(
                 ENABLED + " integer, " +
                 "foreign key(" + FEED_ID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))"
 
-        @Deprecated("")
+        @Suppress("DEPRECATION")
         const val CREATE_TABLE_SQL_VER1 = "create table " + TABLE_NAME + "(" +
                 ID + " integer primary key autoincrement," +
                 FEED_ID + " integer," +
