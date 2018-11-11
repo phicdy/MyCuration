@@ -31,7 +31,7 @@ class FeedUrlHookActivity : Activity(), FeedUrlHookView {
         val intent = intent
         val action = if (intent.action == null) "" else intent.action
         val dataString = if (intent.dataString == null) "" else intent.dataString
-        val extrasText = if (intent.extras == null) "" else intent.extras.getCharSequence(Intent.EXTRA_TEXT, "")
+        val extrasText = if (intent.extras == null) "" else intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "") ?: ""
         presenter = FeedUrlHookPresenter(this, action, dataString, extrasText,
                 dbAdapter, networkTaskManager, parser)
         presenter.create()

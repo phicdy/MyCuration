@@ -79,8 +79,9 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
                 true
             }
             DELETE_CURATION_MENU_ID -> {
-                val curation = curationListAdapter.getItem(info.position)
-                presenter.onCurationDeleteClicked(curation)
+                curationListAdapter.getItem(info.position)?.let {
+                    presenter.onCurationDeleteClicked(it)
+                }
                 true
             }
             else -> super.onContextItemSelected(item)

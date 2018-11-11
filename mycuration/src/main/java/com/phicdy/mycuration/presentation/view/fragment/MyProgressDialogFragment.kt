@@ -10,7 +10,7 @@ class MyProgressDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (progressDialog != null) return progressDialog as ProgressDialog
 
-        val message = arguments.getString(MESSAGE)
+        val message = arguments?.getString(MESSAGE) ?: ""
         return ProgressDialog(activity).apply {
             setMessage(message)
             setProgressStyle(ProgressDialog.STYLE_SPINNER)
