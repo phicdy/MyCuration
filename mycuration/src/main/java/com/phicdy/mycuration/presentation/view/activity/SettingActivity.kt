@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.view.activity
+package com.phicdy.mycuration.presentation.view.activity
 
 import android.content.Context
 import android.os.Bundle
