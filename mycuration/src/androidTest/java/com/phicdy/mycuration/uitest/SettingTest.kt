@@ -63,11 +63,7 @@ class SettingTest : UiTest() {
     fun openWithInternalBrowser() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        // Click setting button
-        val settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000)
-        if (settingButton == null) fail("Setting button was not found")
-        settingButton.clickAndWait(Until.newWindow(), 5000)
+        TopActivityControl.goToSetting()
 
         // Enable internal browser
         val settingsList = device.findObject(By.clazz(ListView::class.java))
@@ -111,11 +107,7 @@ class SettingTest : UiTest() {
     fun openWithExternalBrowser() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        // Click setting button
-        val settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000)
-        assertNotNull("Setting button was not found", settingButton)
-        settingButton.clickAndWait(Until.newWindow(), 5000)
+        TopActivityControl.goToSetting()
 
         // Disable internal browser
         val settingsList = device.findObject(By.clazz(ListView::class.java))
@@ -164,11 +156,7 @@ class SettingTest : UiTest() {
     fun goBackToTopWhenFinishAllOfTheArticles() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        // Click setting button
-        val settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000)
-        assertNotNull("Setting button was not found", settingButton)
-        settingButton.clickAndWait(Until.newWindow(), 5000)
+        TopActivityControl.goToSetting()
 
         // Enable option to go back to top
         val settingsList = device.findObject(By.clazz(ListView::class.java))
@@ -218,14 +206,7 @@ class SettingTest : UiTest() {
     fun notGoBackToTopWhenFinishAllOfTheArticles() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        // Click setting button
-        val settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000)
-        if (settingButton == null) {
-            takeScreenshot(device)
-            fail("Setting button was not found")
-        }
-        settingButton.clickAndWait(Until.newWindow(), 5000)
+        TopActivityControl.goToSetting()
 
         // Disable option to go back to top
         val settingsList = device.findObject(By.clazz(ListView::class.java))
@@ -270,11 +251,7 @@ class SettingTest : UiTest() {
     fun goLicenseActivity() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        // Click setting button
-        val settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000)
-        assertNotNull("Setting button was not found", settingButton)
-        settingButton.clickAndWait(Until.newWindow(), 5000)
+        TopActivityControl.goToSetting()
 
         // Click license info
         val settingsList = device.findObject(By.clazz(ListView::class.java))
