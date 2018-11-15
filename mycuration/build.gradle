@@ -119,6 +119,7 @@ dependencies {
     implementation "com.android.support:support-v4:$supportLibVer"
     implementation "com.android.support:design:$supportLibVer"
     implementation "com.android.support:recyclerview-v7:$supportLibVer"
+    implementation "com.android.support:preference-v7:$supportLibVer"
 
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'org.jsoup:jsoup:1.10.2'
