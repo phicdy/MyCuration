@@ -38,20 +38,6 @@ class SettingTest : UiTest() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "add")), 5000)
 
-        TopActivityControl.goToRssTab()
-        TopActivityControl.clickAddRssButton()
-
-        // Show edit text for URL if needed
-        val searchButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "search_button")), 5000)
-        searchButton?.click()
-
-        // Open yahoo RSS URL
-        val urlEditText = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000)
-        assertNotNull("URL edit text was not found", urlEditText)
-        urlEditText.text = "http://news.yahoo.co.jp/pickup/rss.xml"
-        device.pressEnter()
     }
 
     @After
@@ -61,6 +47,7 @@ class SettingTest : UiTest() {
 
     @Test
     fun openWithInternalBrowser() {
+        addYahoo()
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         TopActivityControl.goToSetting()
@@ -105,6 +92,7 @@ class SettingTest : UiTest() {
 
     @Test
     fun openWithExternalBrowser() {
+        addYahoo()
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         TopActivityControl.goToSetting()
@@ -154,6 +142,7 @@ class SettingTest : UiTest() {
 
     @Test
     fun goBackToTopWhenFinishAllOfTheArticles() {
+        addYahoo()
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         TopActivityControl.goToSetting()
@@ -204,6 +193,7 @@ class SettingTest : UiTest() {
 
     @Test
     fun notGoBackToTopWhenFinishAllOfTheArticles() {
+        addYahoo()
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         TopActivityControl.goToSetting()
@@ -268,5 +258,23 @@ class SettingTest : UiTest() {
         val title = device.wait(Until.findObject(
                 By.clazz(TextView::class.java).text("ライセンス")), 5000)
         assertNotNull(title)
+    }
+
+    private fun addYahoo() {
+        TopActivityControl.goToRssTab()
+        TopActivityControl.clickAddRssButton()
+
+        // Show edit text for URL if needed
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        val searchButton = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "search_button")), 5000)
+        searchButton?.click()
+
+        // Open yahoo RSS URL
+        val urlEditText = device.wait(Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000)
+        assertNotNull("URL edit text was not found", urlEditText)
+        urlEditText.text = "http://news.yahoo.co.jp/pickup/rss.xml"
+        device.pressEnter()
     }
 }
