@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.ContextMenu
@@ -18,7 +17,6 @@ import com.phicdy.mycuration.data.rss.Curation
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
-import com.phicdy.mycuration.presentation.view.activity.AddCurationActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -130,10 +128,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     }
 
     override fun startEditCurationActivity(editCurationId: Int) {
-        val intent = Intent()
-        intent.setClass(activity, AddCurationActivity::class.java)
-        intent.putExtra(AddCurationFragment.EDIT_CURATION_ID, editCurationId)
-        startActivity(intent)
+        mListener?.startEditCurationActivity(editCurationId)
     }
 
     override fun setNoRssTextToEmptyView() {
@@ -167,6 +162,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
     interface OnCurationListFragmentListener {
         fun onCurationListClicked(curationId: Int)
+        fun startEditCurationActivity(editCurationId: Int)
     }
 
     inner class CurationListAdapter(curations: ArrayList<Curation>, context: Context) : ArrayAdapter<Curation>(context, R.layout.curation_list, curations) {

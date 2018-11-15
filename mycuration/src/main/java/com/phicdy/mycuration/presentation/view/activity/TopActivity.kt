@@ -25,6 +25,7 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
+import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
@@ -403,6 +404,13 @@ class TopActivity :
         val intent = Intent()
         intent.setClass(applicationContext, ArticlesListActivity::class.java)
         intent.putExtra(CURATION_ID, curationId)
+        startActivity(intent)
+    }
+
+    override fun startEditCurationActivity(editCurationId: Int) {
+        val intent = Intent()
+        intent.setClass(this, AddCurationActivity::class.java)
+        intent.putExtra(AddCurationFragment.EDIT_CURATION_ID, editCurationId)
         startActivity(intent)
     }
 
