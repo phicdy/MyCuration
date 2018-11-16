@@ -10,7 +10,6 @@ import android.support.test.uiautomator.UiObject2
 import android.support.test.uiautomator.Until
 import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
-import android.widget.ListView
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import org.hamcrest.CoreMatchers.`is`
@@ -145,7 +144,7 @@ class FilterListTest : UiTest() {
 
         // Delete first RSS and add second RSS
         targetRss.click()
-        val targetList = device.wait(Until.findObject(By.clazz(ListView::class.java)), 5000)
+        val targetList = device.wait(Until.findObject(By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Target list was not found", targetList)
         val listItems = targetList.findObjects(By.clazz(LinearLayout::class.java))
         assertNotNull("Target RSS item was not found", listItems)
@@ -227,8 +226,7 @@ class FilterListTest : UiTest() {
         targetRss.click()
 
         // Select first item
-        val targetList = device.wait(Until.findObject(
-                By.clazz(ListView::class.java)), 5000)
+        val targetList = device.wait(Until.findObject(By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Target list was not found", targetList)
         val listItems = targetList.findObjects(
                 By.clazz(LinearLayout::class.java))

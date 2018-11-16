@@ -1,13 +1,13 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
-import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.support.v4.app.ListFragment
+import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,9 +16,10 @@ import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
 import java.io.File
 
-class SelectFilterTargetRssFragment : ListFragment() {
+class SelectFilterTargetRssFragment : Fragment() {
 
     private var selectedList: ArrayList<Feed> = ArrayList()
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_select_filter_target_rss, container, false)
@@ -28,8 +29,10 @@ class SelectFilterTargetRssFragment : ListFragment() {
         super.onActivityCreated(savedInstanceState)
         val dbAdapter = DatabaseAdapter.getInstance()
         activity?.let {
-            val adapter = TargetRssListAdapter(dbAdapter.allFeedsWithoutNumOfUnreadArticles, it)
-            listView.adapter = adapter
+            val adapter = TargetRssListAdapter(dbAdapter.allFeedsWithoutNumOfUnreadArticles)
+            recyclerView = it.findViewById(R.id.rv_fiter_target) as RecyclerView
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(activity)
         }
     }
 
@@ -41,28 +44,20 @@ class SelectFilterTargetRssFragment : ListFragment() {
         this.selectedList = selectedList
     }
 
-    private inner class TargetRssListAdapter internal constructor(feeds: ArrayList<Feed>, context: Context) : ArrayAdapter<Feed>(context, R.layout.filter_target_rss_list, feeds) {
+    private inner class TargetRssListAdapter(private val feeds: ArrayList<Feed>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            val itemView = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.filter_target_rss_list, parent, false)
+            return ViewHolder(itemView)
+        }
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            activity?.let {
-                lateinit var holder: ViewHolder
+        override fun getItemCount(): Int {
+            return feeds.size
+        }
 
-                // Use contentView and setup ViewHolder
-                lateinit var row: View
-                if (convertView == null) {
-                    val inflater = it.layoutInflater
-                    row = inflater.inflate(R.layout.filter_target_rss_list, parent, false)
-                    holder = ViewHolder()
-                    holder.cbSelect = row.findViewById(R.id.cb_target) as CheckBox
-                    holder.ivIcon = row.findViewById(R.id.iv_rss_icon) as ImageView
-                    holder.tvRssTitle = row.findViewById(R.id.tv_rss_title) as TextView
-                    row.tag = holder
-                } else {
-                    row = convertView
-                    holder = row.tag as ViewHolder
-                }
-
-                val feed = this.getItem(position) ?: return row
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            val feed = feeds[position]
+            if (holder is ViewHolder) {
                 holder.tvRssTitle.text = feed.title
                 val iconPath = feed.iconPath
                 if (iconPath == Feed.DEDAULT_ICON_PATH) {
@@ -94,7 +89,7 @@ class SelectFilterTargetRssFragment : ListFragment() {
                     }
                 }
 
-                row.setOnClickListener {
+                holder.itemView.setOnClickListener {
                     val newChecked = !holder.cbSelect.isChecked
                     holder.cbSelect.isChecked = newChecked
                     if (newChecked) {
@@ -103,13 +98,11 @@ class SelectFilterTargetRssFragment : ListFragment() {
                         uncheckFeed(position)
                     }
                 }
-                return row
             }
-            return convertView!!
         }
 
         private fun uncheckFeed(position: Int) {
-            val selected = getItem(position) ?: return
+            val selected = feeds[position]
             val iterator = selectedList.iterator()
             while (iterator.hasNext()) {
                 val feed = iterator.next()
@@ -121,7 +114,7 @@ class SelectFilterTargetRssFragment : ListFragment() {
         }
 
         private fun checkFeed(position: Int) {
-            val selected = getItem(position) ?: return
+            val selected = feeds[position]
             val iterator = selectedList.iterator()
             var isExist = false
             while (iterator.hasNext()) {
@@ -136,10 +129,10 @@ class SelectFilterTargetRssFragment : ListFragment() {
             }
         }
 
-        private inner class ViewHolder {
-            internal lateinit var cbSelect: CheckBox
-            internal lateinit var ivIcon: ImageView
-            internal lateinit var tvRssTitle: TextView
+        private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val cbSelect = itemView.findViewById(R.id.cb_target) as CheckBox
+            val ivIcon = itemView.findViewById(R.id.iv_rss_icon) as ImageView
+            val tvRssTitle = itemView.findViewById(R.id.tv_rss_title) as TextView
         }
     }
 }

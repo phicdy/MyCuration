@@ -11,8 +11,8 @@
     tools:context="com.phicdy.mycuration.presentation.view.fragment.SelectFilterTargetRssFragment"
     tools:showIn="@layout/activity_select_filter_target_rss">
 
-    <ListView
-        android:id="@android:id/list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_fiter_target"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
