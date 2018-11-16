@@ -175,7 +175,7 @@ class AddCurationFragment : Fragment(), AddCurationView {
 
     override fun showProgressDialog() {
         progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_curation))
-        progressDialog.show(activity?.fragmentManager, null)
+        progressDialog.show(activity?.supportFragmentManager, null)
     }
 
     override fun dismissProgressDialog() {

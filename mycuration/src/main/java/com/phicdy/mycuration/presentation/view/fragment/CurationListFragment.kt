@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.ContextMenu
@@ -18,17 +17,16 @@ import com.phicdy.mycuration.data.rss.Curation
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
-import com.phicdy.mycuration.presentation.view.activity.AddCurationActivity
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
 import org.koin.android.scope.ext.android.getOrCreateScope
 import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 
 class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
@@ -79,8 +77,9 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
                 true
             }
             DELETE_CURATION_MENU_ID -> {
-                val curation = curationListAdapter.getItem(info.position)
-                presenter.onCurationDeleteClicked(curation)
+                curationListAdapter.getItem(info.position)?.let {
+                    presenter.onCurationDeleteClicked(it)
+                }
                 true
             }
             else -> super.onContextItemSelected(item)
@@ -129,10 +128,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     }
 
     override fun startEditCurationActivity(editCurationId: Int) {
-        val intent = Intent()
-        intent.setClass(activity, AddCurationActivity::class.java)
-        intent.putExtra(AddCurationFragment.EDIT_CURATION_ID, editCurationId)
-        startActivity(intent)
+        mListener?.startEditCurationActivity(editCurationId)
     }
 
     override fun setNoRssTextToEmptyView() {
@@ -166,6 +162,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
     interface OnCurationListFragmentListener {
         fun onCurationListClicked(curationId: Int)
+        fun startEditCurationActivity(editCurationId: Int)
     }
 
     inner class CurationListAdapter(curations: ArrayList<Curation>, context: Context) : ArrayAdapter<Curation>(context, R.layout.curation_list, curations) {

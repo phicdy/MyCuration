@@ -7,7 +7,7 @@ import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.util.PreferenceHelper
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue

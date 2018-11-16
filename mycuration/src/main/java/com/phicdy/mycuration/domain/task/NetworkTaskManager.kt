@@ -11,8 +11,8 @@ import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.coroutineScope
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit

@@ -8,7 +8,7 @@ import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito

@@ -25,16 +25,16 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
+import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
-import com.phicdy.mycuration.view.activity.SettingActivity
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
 import org.koin.android.scope.ext.android.getOrCreateScope
@@ -42,7 +42,7 @@ import org.koin.core.parameter.parametersOf
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 class TopActivity :
         AppCompatActivity(),
@@ -404,6 +404,13 @@ class TopActivity :
         val intent = Intent()
         intent.setClass(applicationContext, ArticlesListActivity::class.java)
         intent.putExtra(CURATION_ID, curationId)
+        startActivity(intent)
+    }
+
+    override fun startEditCurationActivity(editCurationId: Int) {
+        val intent = Intent()
+        intent.setClass(this, AddCurationActivity::class.java)
+        intent.putExtra(AddCurationFragment.EDIT_CURATION_ID, editCurationId)
         startActivity(intent)
     }
 

@@ -58,14 +58,14 @@ data class Feed(
         @Suppress("unused")
         @JvmField
         val CREATOR: Parcelable.Creator<Feed> = object : Parcelable.Creator<Feed> {
-            override fun createFromParcel(`in`: Parcel): Feed {
+            override fun createFromParcel(parcel: Parcel): Feed {
                 return Feed(
-                        id = `in`.readInt(),
-                        title = `in`.readString(),
-                        url = `in`.readString(),
-                        iconPath = `in`.readString(),
-                        siteUrl = `in`.readString(),
-                        unreadAriticlesCount = `in`.readInt()
+                        id = parcel.readInt(),
+                        title = parcel.readString() ?: "",
+                        url = parcel.readString() ?: "",
+                        iconPath = parcel.readString() ?: "",
+                        siteUrl = parcel.readString() ?: "",
+                        unreadAriticlesCount = parcel.readInt()
                 )
             }
 

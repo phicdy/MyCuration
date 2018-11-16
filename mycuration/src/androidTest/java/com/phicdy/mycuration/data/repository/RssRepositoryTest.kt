@@ -3,7 +3,7 @@ package com.phicdy.mycuration.data.repository
 import android.support.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertNotNull

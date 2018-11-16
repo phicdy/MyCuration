@@ -1,27 +1,29 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.SwitchPreference
+import android.support.v14.preference.SwitchPreference
+import android.support.v7.preference.ListPreference
+import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceFragmentCompat
 import android.widget.Toast
-
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
+import com.phicdy.mycuration.presentation.view.SettingView
+import com.phicdy.mycuration.presentation.view.activity.LicenseActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.ToastHelper
-import com.phicdy.mycuration.presentation.view.SettingView
 
 
-class SettingFragment : PreferenceFragment(), SettingView {
+class SettingFragment : PreferenceFragmentCompat(), SettingView {
+
     private lateinit var presenter: SettingPresenter
 
     private lateinit var prefUpdateInterval: ListPreference
@@ -35,8 +37,7 @@ class SettingFragment : PreferenceFragment(), SettingView {
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         if (BuildConfig.DEBUG) {
             addPreferencesFromResource(R.xml.setting_fragment_debug)
         } else {
@@ -89,7 +90,7 @@ class SettingFragment : PreferenceFragment(), SettingView {
             when (key) {
                 getString(R.string.key_update_interval) -> {
                     val intervalHour = Integer.valueOf(prefUpdateInterval.value)
-                    val manager = AlarmManagerTaskManager(activity)
+                    val manager = AlarmManagerTaskManager(activity as Context)
                     presenter.updateUpdateInterval(intervalHour, manager)
                     // GA
                     TrackerHelper.sendSettingEvent(getString(R.string.change_auto_update_interval), intervalHour.toLong().toString())
@@ -139,25 +140,27 @@ class SettingFragment : PreferenceFragment(), SettingView {
 
         if (BuildConfig.DEBUG) {
             val prefImport = findPreference(getString(R.string.key_import_db))
-            prefImport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                val currentDB = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
-                DatabaseAdapter.getInstance().importDB(currentDB)
-                ToastHelper.showToast(activity, getString(R.string.import_db), Toast.LENGTH_SHORT)
-                true
+            activity?.let { activity ->
+                prefImport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                    val currentDB = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
+                    DatabaseAdapter.getInstance().importDB(currentDB)
+                    ToastHelper.showToast(activity, getString(R.string.import_db), Toast.LENGTH_SHORT)
+                    true
+                }
+                val prefExport = findPreference(getString(R.string.key_export_db))
+                prefExport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                    val currentDB = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
+                    DatabaseAdapter.getInstance().exportDb(currentDB)
+                    ToastHelper.showToast(activity, getString(R.string.export_db), Toast.LENGTH_SHORT)
+                    true
+                }
+                val prefAddRss = findPreference(getString(R.string.key_add_rss))
+                prefAddRss.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                    presenter.onDebugAddRssClicked(DatabaseAdapter.getInstance())
+                    true
+                }
             }
-            val prefExport = findPreference(getString(R.string.key_export_db))
-            prefExport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                val currentDB = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
-                DatabaseAdapter.getInstance().exportDb(currentDB)
-                ToastHelper.showToast(activity, getString(R.string.export_db), Toast.LENGTH_SHORT)
-                true
             }
-            val prefAddRss = findPreference(getString(R.string.key_add_rss))
-            prefAddRss.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                presenter.onDebugAddRssClicked(DatabaseAdapter.getInstance())
-                true
-            }
-        }
 
         prefLicense.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             presenter.onLicenseClicked()
@@ -198,6 +201,6 @@ class SettingFragment : PreferenceFragment(), SettingView {
     }
 
     override fun startLicenseActivity() {
-        startActivity(Intent(activity, com.phicdy.mycuration.presentation.view.activity.LicenseActivity::class.java))
+        startActivity(Intent(activity, LicenseActivity::class.java))
     }
 }

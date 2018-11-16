@@ -4,8 +4,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.CurationSelection
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class CurationRepository(private val db: SQLiteDatabase) {
 

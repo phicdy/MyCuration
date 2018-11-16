@@ -12,9 +12,9 @@ import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.util.NetworkUtil
 import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.coroutineScope
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import org.reactivestreams.Subscriber

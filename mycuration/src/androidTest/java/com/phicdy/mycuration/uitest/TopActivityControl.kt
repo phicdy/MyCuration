@@ -3,13 +3,9 @@ package com.phicdy.mycuration.uitest
 import android.support.test.InstrumentationRegistry
 import android.support.test.uiautomator.By
 import android.support.test.uiautomator.UiDevice
-import android.support.test.uiautomator.UiObject2
 import android.support.test.uiautomator.Until
-
 import com.phicdy.mycuration.BuildConfig
 import junit.framework.Assert.assertNotNull
-
-import junit.framework.Assert.fail
 
 internal object TopActivityControl {
     fun clickAddRssButton() {
@@ -45,5 +41,13 @@ internal object TopActivityControl {
         val tab = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "navigation_filter")), 15000)
         tab.click()
+    }
+
+    fun goToSetting() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        val settingButton = device.wait(
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000)
+        assertNotNull("Setting button was not found", settingButton)
+        settingButton.clickAndWait(Until.newWindow(), 5000)
     }
 }

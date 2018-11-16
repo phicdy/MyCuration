@@ -16,7 +16,7 @@ import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat

@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.data.repository
 
-import kotlinx.coroutines.experimental.coroutineScope
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class UnreadCountRepository(private val rssRepository: RssRepository,
                             private val curationRepository: CurationRepository) {

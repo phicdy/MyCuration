@@ -8,7 +8,7 @@ import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.util.UrlUtil
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 
 class FeedUrlHookPresenter(private val view: FeedUrlHookView,
                            private val action: String,
