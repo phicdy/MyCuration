@@ -103,7 +103,6 @@ class TopActivity :
             replaceFragmentWith(item.itemId)
             true
         }
-        navigationView.setOnNavigationItemReselectedListener { }
     }
 
     private fun replaceFragmentWith(menuId: Int) {
@@ -279,6 +278,7 @@ class TopActivity :
         launch(context = coroutineContext) {
             presenter.resume()
         }
+        navigationView.setOnNavigationItemReselectedListener { }
     }
 
     override fun onDestroy() {
