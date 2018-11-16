@@ -8,5 +8,8 @@ interface FilterListView {
     fun remove(position: Int)
     fun notifyListChanged()
     fun startEditActivity(filterId: Int)
-    fun initList(filters: ArrayList<Filter>)
+    fun showFilterList(filters: ArrayList<Filter>)
+    fun hideFilterList()
+    fun showEmptyView()
+    fun hideEmptyView()
 }

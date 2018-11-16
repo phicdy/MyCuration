@@ -3,25 +3,19 @@ package com.phicdy.mycuration.presentation.view.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.ContextMenu
-import android.view.ContextMenu.ContextMenuInfo
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.AdapterContextMenuInfo
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.Switch
 import android.widget.TextView
-
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.view.FilterListView
 import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity
-
 import java.util.ArrayList
 
 class FilterListFragment : Fragment(), FilterListView {
@@ -35,7 +29,8 @@ class FilterListFragment : Fragment(), FilterListView {
     private lateinit var presenter: FilterListPresenter
     private lateinit var dbAdapter: DatabaseAdapter
     private lateinit var filtersListAdapter: FiltersListAdapter
-    private lateinit var filtersListView: ListView
+    private lateinit var filtersRecyclerView: RecyclerView
+    private lateinit var emptyView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,37 +45,11 @@ class FilterListFragment : Fragment(), FilterListView {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         activity?.let {
-            filtersListView = it.findViewById(R.id.lv_filter) as ListView
-            val emptyView = it.findViewById(R.id.filter_emptyView) as TextView
+            filtersRecyclerView = it.findViewById(R.id.rv_filter) as RecyclerView
+            emptyView = it.findViewById(R.id.filter_emptyView) as TextView
             if (dbAdapter.numOfFeeds == 0) {
                 emptyView.setText(R.string.no_rss_message)
             }
-            filtersListView.emptyView = emptyView
-        }
-    }
-
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        menu.add(0, EDIT_FILTER_MENU_ID, 0, R.string.edit_filter)
-        menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter)
-    }
-
-    override fun onContextItemSelected(item: MenuItem?): Boolean {
-        if (item == null) return super.onContextItemSelected(item)
-        val info = item.menuInfo as AdapterContextMenuInfo
-        if (info.position > filtersListAdapter.count - 1) return false
-        val selectedFilter = filtersListAdapter.getItem(info.position) ?: return false
-        return when (item.itemId) {
-            DELETE_FILTER_MENU_ID -> {
-                //Delte selected filter from DB and ListView
-                presenter.onDeleteMenuClicked(info.position, selectedFilter)
-                true
-            }
-            EDIT_FILTER_MENU_ID -> {
-                presenter.onEditMenuClicked(selectedFilter)
-                true
-            }
-            else -> super.onContextItemSelected(item)
         }
     }
 
@@ -89,15 +58,28 @@ class FilterListFragment : Fragment(), FilterListView {
         presenter.resume()
     }
 
-    override fun initList(filters: ArrayList<Filter>) {
-        //Set ListView
+    override fun showFilterList(filters: ArrayList<Filter>) {
+        filtersRecyclerView.visibility = View.VISIBLE
         filtersListAdapter = FiltersListAdapter(filters)
-        filtersListView.adapter = filtersListAdapter
-        registerForContextMenu(filtersListView)
+        filtersRecyclerView.layoutManager = LinearLayoutManager(activity)
+        filtersRecyclerView.adapter = filtersListAdapter
+        filtersListAdapter.notifyDataSetChanged()
+    }
+
+    override fun hideFilterList() {
+        filtersRecyclerView.visibility = View.GONE
+    }
+
+    override fun showEmptyView() {
+        emptyView.visibility = View.VISIBLE
+    }
+
+    override fun hideEmptyView() {
+        emptyView.visibility = View.GONE
     }
 
     override fun remove(position: Int) {
-        filtersListAdapter.remove(filtersListAdapter.getItem(position))
+        filtersListAdapter.notifyItemRemoved(position)
     }
 
     override fun notifyListChanged() {
@@ -110,83 +92,69 @@ class FilterListFragment : Fragment(), FilterListView {
         startActivity(intent)
     }
 
-    /**
-     *
-     * @author phicdy
-     * Display filters list
-     */
-    private inner class FiltersListAdapter internal constructor(filters: ArrayList<Filter>)/*
-			 * @param cotext
-			 * @param int : Resource ID
-			 * @param T[] objects : data list
-			 */ : ArrayAdapter<Filter>(activity, R.layout.filters_list, filters) {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            activity?.let {
-                lateinit var holder: ViewHolder
-
-                //Use contentView
-                lateinit var row: View
-                if (convertView == null) {
-                    val inflater = it.layoutInflater
-                    row = inflater.inflate(R.layout.filters_list, parent, false)
-                    holder = ViewHolder()
-                    holder.filterTitle = row.findViewById(R.id.filterTitle) as TextView
-                    holder.feedTitle = row.findViewById(R.id.filterTargetFeed) as TextView
-                    holder.filterKeyword = row.findViewById(R.id.filterKeyword) as TextView
-                    holder.filterUrl = row.findViewById(R.id.filterUrl) as TextView
-                    holder.filterEnabled = row.findViewById(R.id.sw_filter_enable) as Switch
-                    row.tag = holder
-                } else {
-                    row = convertView
-                    holder = row.tag as ViewHolder
-                }
-
-                val filter = this.getItem(position)
-
-                if (filter != null) {
-                    //set filter title
-                    holder.filterTitle.text = filter.title
-
-                    if (filter.feeds.size <= 1) {
-                        holder.feedTitle.text = filter.feedTitle
-                    } else {
-                        holder.feedTitle.text = getString(R.string.multiple_target_rss)
-                    }
-
-                    val keyword = filter.keyword
-                    if (keyword == "") {
-                        holder.filterKeyword.visibility = View.GONE
-                    } else {
-                        holder.filterKeyword.text = getString(R.string.keyword) + ": " + keyword
-                    }
-
-                    val url = filter.url
-                    if (url == "") {
-                        holder.filterUrl.visibility = View.GONE
-                    } else {
-                        holder.filterUrl.text = getString(R.string.url, url)
-                    }
-
-                    holder.filterEnabled.setOnCheckedChangeListener { _, isChecked ->
-                        val clickedFilter = getItem(position)
-                        if (clickedFilter != null) {
-                            presenter.onFilterCheckClicked(clickedFilter, isChecked)
-                        }
-                    }
-                    holder.filterEnabled.isChecked = filter.isEnabled
-                }
-                return row
-            }
-            return convertView!!
+    private inner class FiltersListAdapter(private val filters: ArrayList<Filter>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.filters_list, parent, false)
+            return ViewHolder(itemView)
         }
 
-        private inner class ViewHolder {
-            internal lateinit var filterTitle: TextView
-            internal lateinit var feedTitle: TextView
-            internal lateinit var filterKeyword: TextView
-            internal lateinit var filterUrl: TextView
-            internal lateinit var filterEnabled: Switch
+        override fun getItemCount(): Int {
+            return filters.size
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            val filter = filters[position]
+
+            if (holder is ViewHolder) {
+                //set filter title
+                holder.filterTitle.text = filter.title
+
+                if (filter.feeds.size <= 1) {
+                    holder.feedTitle.text = filter.feedTitle
+                } else {
+                    holder.feedTitle.text = getString(R.string.multiple_target_rss)
+                }
+
+                val keyword = filter.keyword
+                if (keyword == "") {
+                    holder.filterKeyword.visibility = View.GONE
+                } else {
+                    holder.filterKeyword.text = getString(R.string.filter_keyword, keyword)
+                }
+
+                val url = filter.url
+                if (url == "") {
+                    holder.filterUrl.visibility = View.GONE
+                } else {
+                    holder.filterUrl.text = getString(R.string.url, url)
+                }
+
+                holder.filterEnabled.setOnCheckedChangeListener { _, isChecked ->
+                    val clickedFilter = filters[position]
+                    presenter.onFilterCheckClicked(clickedFilter, isChecked)
+                }
+                holder.filterEnabled.isChecked = filter.isEnabled
+
+                holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
+                    menu.add(0, EDIT_FILTER_MENU_ID, 0, R.string.edit_filter).setOnMenuItemClickListener {
+                        presenter.onEditMenuClicked(filters[position])
+                        true
+                    }
+                    menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter).setOnMenuItemClickListener {
+                        presenter.onDeleteMenuClicked(position, filters[position], filters.size)
+                        filters.removeAt(position)
+                        true
+                    }
+                }
+            }
+        }
+
+        private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            internal val filterTitle = itemView.findViewById(R.id.filterTitle) as TextView
+            internal val feedTitle = itemView.findViewById(R.id.filterTargetFeed) as TextView
+            internal val filterKeyword = itemView.findViewById(R.id.filterKeyword) as TextView
+            internal val filterUrl = itemView.findViewById(R.id.filterUrl) as TextView
+            internal val filterEnabled = itemView.findViewById(R.id.sw_filter_enable) as Switch
         }
     }
 }
