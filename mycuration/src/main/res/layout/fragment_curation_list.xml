@@ -7,9 +7,7 @@
         android:id="@+id/rv_curation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:listSelector="@drawable/view_selected"
-        android:drawSelectorOnTop="true"/>
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/emptyView_curation"
