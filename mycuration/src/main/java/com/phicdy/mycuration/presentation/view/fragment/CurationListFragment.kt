@@ -3,14 +3,11 @@ package com.phicdy.mycuration.presentation.view.fragment
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.ContextMenu
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.TextView
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.rss.Curation
@@ -20,6 +17,7 @@ import com.phicdy.mycuration.presentation.view.CurationListView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
@@ -43,7 +41,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     private val presenter: CurationListPresenter by inject { parametersOf(this) }
     private lateinit var curationListAdapter: CurationListAdapter
     private var mListener: OnCurationListFragmentListener? = null
-    private lateinit var curationListView: ListView
+    private lateinit var curationRecyclerView: RecyclerView
     private lateinit var emptyView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,44 +53,6 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     override fun onResume() {
         super.onResume()
         presenter.resume()
-    }
-
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        menu.clear()
-        menu.add(0, EDIT_CURATION_MENU_ID, 0, R.string.edit_curation)
-        menu.add(0, DELETE_CURATION_MENU_ID, 0, R.string.delete_curation)
-    }
-
-    override fun onContextItemSelected(item: MenuItem?): Boolean {
-        if (item == null) return super.onContextItemSelected(item)
-        val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
-
-        return when (item.itemId) {
-            EDIT_CURATION_MENU_ID -> {
-                val editCuration = curationListAdapter.getItem(info.position)
-                if (editCuration != null) {
-                    presenter.onCurationEditClicked(editCuration.id)
-                }
-                true
-            }
-            DELETE_CURATION_MENU_ID -> {
-                curationListAdapter.getItem(info.position)?.let {
-                    presenter.onCurationDeleteClicked(it)
-                }
-                true
-            }
-            else -> super.onContextItemSelected(item)
-        }
-    }
-
-    private fun setAllListener() {
-        curationListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val curation = curationListAdapter.getItem(position)
-            if (mListener != null && curation != null) {
-                mListener!!.onCurationListClicked(curation.id)
-            }
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -111,9 +71,8 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        curationListView = activity?.findViewById(R.id.lv_curation) as ListView
+        curationRecyclerView = activity?.findViewById(R.id.rv_curation) as RecyclerView
         emptyView = activity?.findViewById(R.id.emptyView_curation) as TextView
-        setAllListener()
         presenter.activityCreated()
     }
 
@@ -135,29 +94,31 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
         emptyView.setText(R.string.no_rss_message)
     }
 
-    override fun setEmptyViewToList() {
-        curationListView.emptyView = emptyView
-    }
-
     override fun registerContextMenu() {
-        registerForContextMenu(curationListView)
+        registerForContextMenu(curationRecyclerView)
     }
 
     override fun initListBy(curations: ArrayList<Curation>) {
-        activity?.let {
-            curationListAdapter = CurationListAdapter(curations, it)
-            curationListView.adapter = curationListAdapter
-            curationListAdapter.notifyDataSetChanged()
-        }
-    }
-
-    override fun delete(curation: Curation) {
-        curationListAdapter.remove(curation)
+        curationListAdapter = CurationListAdapter(curations)
+        curationRecyclerView.adapter = curationListAdapter
+        curationRecyclerView.layoutManager = LinearLayoutManager(activity)
         curationListAdapter.notifyDataSetChanged()
     }
 
-    override fun size(): Int {
-        return curationListAdapter.count
+    override fun showRecyclerView() {
+        curationRecyclerView.visibility = View.VISIBLE
+    }
+
+    override fun hideRecyclerView() {
+        curationRecyclerView.visibility = View.GONE
+    }
+
+    override fun showEmptyView() {
+        emptyView.visibility = View.VISIBLE
+    }
+
+    override fun hideEmptyView() {
+        emptyView.visibility = View.GONE
     }
 
     interface OnCurationListFragmentListener {
@@ -165,37 +126,49 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
         fun startEditCurationActivity(editCurationId: Int)
     }
 
-    inner class CurationListAdapter(curations: ArrayList<Curation>, context: Context) : ArrayAdapter<Curation>(context, R.layout.curation_list, curations) {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            activity?.let {
-                // Use contentView and setup ViewHolder
-                val holder: ViewHolder
-                lateinit var row: View
-                if (convertView == null) {
-                    val inflater = it.layoutInflater
-                    row = inflater.inflate(R.layout.curation_list, parent, false)
-                    holder = ViewHolder()
-                    holder.curationName = row.findViewById(R.id.tv_curation_title) as TextView
-                    holder.curationCount = row.findViewById(R.id.tv_curation_count) as TextView
-                    row.tag = holder
-                } else {
-                    row = convertView
-                    holder = row.tag as ViewHolder
-                }
-
-                val curation = this.getItem(position)
-                launch {
-                    presenter.getView(curation, holder)
-                }
-                return row
-            }
-            return convertView!!
+    inner class CurationListAdapter(private val curations: ArrayList<Curation>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.curation_list, parent, false)
+            return ViewHolder(itemView)
         }
 
-        inner class ViewHolder: CurationItem {
-            lateinit var curationName: TextView
-            lateinit var curationCount: TextView
+        override fun getItemCount(): Int {
+            return curations.size
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            holder.itemView.setOnClickListener {
+                val curation = curations[position]
+                mListener?.onCurationListClicked(curation.id)
+            }
+
+            holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
+                menu.add(0, EDIT_CURATION_MENU_ID, 0, R.string.edit_curation).setOnMenuItemClickListener {
+                    val editCuration = curations[position]
+                    presenter.onCurationEditClicked(editCuration.id)
+                    true
+                }
+                menu.add(0, DELETE_CURATION_MENU_ID, 0, R.string.delete_curation).setOnMenuItemClickListener {
+                    launch {
+                        presenter.onCurationDeleteClicked(curations[position], curations.size)
+                        curations.removeAt(position)
+                        notifyItemRemoved(position)
+                        delay(500) // Wait for delete animation
+                        notifyDataSetChanged()
+                    }
+                    true
+                }
+            }
+            val curation = curations[position]
+            launch {
+                presenter.getView(curation, holder as CurationItem)
+            }
+
+        }
+
+        inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), CurationItem {
+            val curationName = itemView.findViewById(R.id.tv_curation_title) as TextView
+            val curationCount = itemView.findViewById(R.id.tv_curation_count) as TextView
 
             override fun setName(name: String) {
                 curationName.text = name

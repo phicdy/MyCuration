@@ -17,7 +17,14 @@ class CurationListPresenter(private val view: CurationListView,
     override fun resume() {
         view.registerContextMenu()
         allCurations = dbAdapter.allCurations
-        view.initListBy(allCurations)
+        if (allCurations.isEmpty()) {
+            view.hideRecyclerView()
+            view.showEmptyView()
+        } else {
+            view.hideEmptyView()
+            view.showRecyclerView()
+            view.initListBy(allCurations)
+        }
     }
 
     override fun pause() {}
@@ -27,24 +34,18 @@ class CurationListPresenter(private val view: CurationListView,
         view.startEditCurationActivity(curationId)
     }
 
-    fun onCurationDeleteClicked(curation: Curation) {
+    fun onCurationDeleteClicked(curation: Curation, size: Int) {
         dbAdapter.deleteCuration(curation.id)
-        view.delete(curation)
+        if (size == 1) {
+            view.hideRecyclerView()
+            view.showEmptyView()
+        }
     }
 
     fun activityCreated() {
         if (dbAdapter.numOfFeeds == 0) {
             view.setNoRssTextToEmptyView()
         }
-        view.setEmptyViewToList()
-    }
-
-    fun getCurationIdAt(position: Int): Int {
-        if (position < 0 || position > view.size()) {
-            return -1
-        }
-
-        return allCurations[position].id
     }
 
     suspend fun getView(curation: Curation?, item: CurationItem) {

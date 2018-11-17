@@ -3,8 +3,8 @@
     android:orientation="vertical" 
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListView
-        android:id="@+id/lv_curation"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_curation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -16,5 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:visibility="gone"
         android:text="@string/no_curation_message" />
 </LinearLayout>

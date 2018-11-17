@@ -7,9 +7,10 @@ import java.util.ArrayList
 interface CurationListView {
     fun startEditCurationActivity(editCurationId: Int)
     fun setNoRssTextToEmptyView()
-    fun setEmptyViewToList()
     fun registerContextMenu()
     fun initListBy(curations: ArrayList<Curation>)
-    fun delete(curation: Curation)
-    fun size(): Int
+    fun showRecyclerView()
+    fun hideRecyclerView()
+    fun showEmptyView()
+    fun hideEmptyView()
 }
