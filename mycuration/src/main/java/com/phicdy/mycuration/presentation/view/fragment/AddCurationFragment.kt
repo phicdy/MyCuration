@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.support.design.widget.TextInputEditText
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +34,7 @@ class AddCurationFragment : Fragment(), AddCurationView {
     private lateinit var presenter: AddCurationPresenter
     private lateinit var curationWordListView: ListView
     private lateinit var etInput: EditText
-    private lateinit var etName: EditText
+    private lateinit var etName: TextInputEditText
     private lateinit var curationWordListAdapter: CurationWordListAdapter
     private lateinit var progressDialog: MyProgressDialogFragment
 
@@ -78,7 +79,7 @@ class AddCurationFragment : Fragment(), AddCurationView {
             val btnAdd = it.findViewById(R.id.btn_add_word) as Button
             btnAdd.setOnClickListener { presenter.onAddWordButtonClicked() }
             etInput = it.findViewById(R.id.et_curation_word) as EditText
-            etName = it.findViewById(R.id.et_curation_name) as EditText
+            etName = it.findViewById(R.id.et_curation_name) as TextInputEditText
             curationWordListView = it.findViewById(R.id.lv_curation_word) as ListView
         }
     }

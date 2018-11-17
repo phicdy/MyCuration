@@ -122,7 +122,7 @@
     <string name="no_curation_message">キュレーションを登録しましょう！</string>
     <string name="add_word">追加</string>
     <string name="adding_curation">キュレーションを追加しています</string>
-    <string name="word_setting">単語の設定</string>
+    <string name="word_setting">単語</string>
     <string name="delete_curation">キュレーションの削除</string>
     <string name="edit_curation">キュレーションの編集</string>
     <string name="title_activity_add_curation">キュレーションを追加</string>
