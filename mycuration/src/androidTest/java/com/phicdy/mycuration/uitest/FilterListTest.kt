@@ -8,13 +8,13 @@ import android.support.test.uiautomator.By
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiObject2
 import android.support.test.uiautomator.Until
+import android.support.v7.widget.RecyclerView
 import android.widget.LinearLayout
-import android.widget.ListView
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
-import junit.framework.Assert.assertNotNull
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -49,7 +49,7 @@ class FilterListTest : UiTest() {
 
         // Assert first item
         val filterList = device.wait(Until.findObject(
-                By.clazz(ListView::class.java)), 5000)
+                By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Filter list was not found", filterList)
         val filters = filterList.findObjects(
                 By.clazz(LinearLayout::class.java).depth(2))
@@ -144,7 +144,7 @@ class FilterListTest : UiTest() {
 
         // Delete first RSS and add second RSS
         targetRss.click()
-        val targetList = device.wait(Until.findObject(By.clazz(ListView::class.java)), 5000)
+        val targetList = device.wait(Until.findObject(By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Target list was not found", targetList)
         val listItems = targetList.findObjects(By.clazz(LinearLayout::class.java))
         assertNotNull("Target RSS item was not found", listItems)
@@ -160,7 +160,7 @@ class FilterListTest : UiTest() {
         addButton.click()
 
         // Assert first item
-        val filterList = device.wait(Until.findObject(By.clazz(ListView::class.java)), 5000)
+        val filterList = device.wait(Until.findObject(By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Filter list was not found", filterList)
         val filters = filterList.findObjects(By.clazz(LinearLayout::class.java).depth(2))
         assertNotNull("Filter item was not found", filters)
@@ -226,8 +226,7 @@ class FilterListTest : UiTest() {
         targetRss.click()
 
         // Select first item
-        val targetList = device.wait(Until.findObject(
-                By.clazz(ListView::class.java)), 5000)
+        val targetList = device.wait(Until.findObject(By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Target list was not found", targetList)
         val listItems = targetList.findObjects(
                 By.clazz(LinearLayout::class.java))
@@ -261,7 +260,7 @@ class FilterListTest : UiTest() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         // Long click first filter
         val filterList = device.wait(Until.findObject(
-                By.clazz(ListView::class.java)), 5000)
+                By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Filter list was not found", filterList)
         val filters = filterList.findObjects(
                 By.clazz(LinearLayout::class.java).depth(2))

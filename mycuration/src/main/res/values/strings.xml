@@ -13,6 +13,7 @@
     <string name="hide_rsses">既読のRSSを隠す</string>
 
     <string name="keyword">キーワード</string>
+    <string name="filter_keyword">キーワード: %1$s</string>
     <string name="keyword_description">記事タイトルに指定したキーワードが含まれていると自動的に既読になります</string>
     <string name="article_url">記事URL</string>
     <string name="article_url_description">記事URLに指定したURLが含まれていると自動的に既読になります。はてなブックマークなど1つのRSSに複数のURLが含まれている場合に便利です</string>
@@ -121,7 +122,7 @@
     <string name="no_curation_message">キュレーションを登録しましょう！</string>
     <string name="add_word">追加</string>
     <string name="adding_curation">キュレーションを追加しています</string>
-    <string name="word_setting">単語の設定</string>
+    <string name="word_setting">単語</string>
     <string name="delete_curation">キュレーションの削除</string>
     <string name="edit_curation">キュレーションの編集</string>
     <string name="title_activity_add_curation">キュレーションを追加</string>

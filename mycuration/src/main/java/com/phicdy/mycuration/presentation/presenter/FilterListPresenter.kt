@@ -10,16 +10,29 @@ class FilterListPresenter(private val view: FilterListView,
     override fun create() {}
 
     override fun resume() {
-        view.initList(dbAdapter.allFilters)
+        dbAdapter.allFilters.let {
+            if (it.isEmpty()) {
+                view.hideFilterList()
+                view.showEmptyView()
+            } else {
+                view.hideEmptyView()
+                view.showFilterList(it)
+            }
+        }
+
     }
 
     override fun pause() {}
 
-    fun onDeleteMenuClicked(position: Int, selectedFilter: Filter) {
+    fun onDeleteMenuClicked(position: Int, selectedFilter: Filter, currentSize: Int) {
         if (position < 0) return
         dbAdapter.deleteFilter(selectedFilter.id)
         view.remove(position)
         view.notifyListChanged()
+        if (currentSize == 1) {
+            view.hideFilterList()
+            view.showEmptyView()
+        }
     }
 
     fun onEditMenuClicked(selectedFilter: Filter) {
