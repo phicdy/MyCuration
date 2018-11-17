@@ -1,29 +1,26 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.support.design.widget.TextInputEditText
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
-
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
+import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
-import com.phicdy.mycuration.presentation.view.AddCurationView
 import java.lang.ref.WeakReference
-
 import java.util.ArrayList
 
 class AddCurationFragment : Fragment(), AddCurationView {
@@ -32,7 +29,7 @@ class AddCurationFragment : Fragment(), AddCurationView {
         const val EDIT_CURATION_ID = "editCurationId"
     }
     private lateinit var presenter: AddCurationPresenter
-    private lateinit var curationWordListView: ListView
+    private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
     private lateinit var etName: TextInputEditText
     private lateinit var curationWordListAdapter: CurationWordListAdapter
@@ -80,16 +77,15 @@ class AddCurationFragment : Fragment(), AddCurationView {
             btnAdd.setOnClickListener { presenter.onAddWordButtonClicked() }
             etInput = it.findViewById(R.id.et_curation_word) as EditText
             etName = it.findViewById(R.id.et_curation_name) as TextInputEditText
-            curationWordListView = it.findViewById(R.id.lv_curation_word) as ListView
+            curationWordRecyclerView = it.findViewById(R.id.rv_curation_word) as RecyclerView
         }
     }
 
     override fun refreshList(addedWords: ArrayList<String>) {
-        activity?.let {
-            curationWordListAdapter = CurationWordListAdapter(addedWords, it)
-            curationWordListView.adapter = curationWordListAdapter
-            curationWordListAdapter.notifyDataSetChanged()
-        }
+        curationWordListAdapter = CurationWordListAdapter(addedWords)
+        curationWordRecyclerView.adapter = curationWordListAdapter
+        curationWordRecyclerView.layoutManager = LinearLayoutManager(activity)
+        curationWordListAdapter.notifyDataSetChanged()
     }
 
     override fun editCurationId(): Int {
@@ -187,37 +183,29 @@ class AddCurationFragment : Fragment(), AddCurationView {
         activity?.finish()
     }
 
-    internal inner class CurationWordListAdapter(words: ArrayList<String>, context: Context) : ArrayAdapter<String>(context, R.layout.curation_word_list, words) {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            var holder = ViewHolder()
-
-            // Use contentView and setup ViewHolder
-            activity?.let {
-                var row = convertView
-                if (convertView == null) {
-                    val inflater = it.layoutInflater
-                    row = inflater.inflate(R.layout.curation_word_list, parent, false)
-                    holder.tvWord = row.findViewById(R.id.tv_word) as TextView
-                    holder.btnDelete = row.findViewById(R.id.btn_delete) as Button
-                    row.tag = holder
-                } else {
-                    holder = convertView.tag as ViewHolder
-                }
-
-                val word = this.getItem(position)
-                holder.tvWord!!.text = word
-                holder.btnDelete!!.setOnClickListener {
-                    presenter.onDeleteButtonClicked(position)
-                }
-                return row!!
-            }
-            return convertView!!
+    private inner class CurationWordListAdapter(private val words: ArrayList<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.curation_word_list, parent, false)
+            return ViewHolder(itemView)
         }
 
-        private inner class ViewHolder {
-            internal var tvWord: TextView? = null
-            internal var btnDelete: Button? = null
+        override fun getItemCount(): Int {
+            return words.size
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            val word = words[position]
+            if (holder is ViewHolder) {
+                holder.tvWord.text = word
+                holder.btnDelete.setOnClickListener {
+                    presenter.onDeleteButtonClicked(position)
+                }
+            }
+        }
+
+        private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            internal val tvWord = itemView.findViewById(R.id.tv_word) as TextView
+            internal val btnDelete = itemView.findViewById(R.id.btn_delete) as Button
         }
     }
 

@@ -43,8 +43,8 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lv_curation_word"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_curation_word"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
