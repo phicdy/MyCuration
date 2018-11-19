@@ -20,6 +20,10 @@ object TrackerHelper {
         sendEvent(setting, "setting", FirebaseAnalytics.Event.SELECT_CONTENT, value)
     }
 
+    fun sendUiEvent(itemId: String) {
+        sendEvent(itemId, "ui", FirebaseAnalytics.Event.SELECT_CONTENT)
+    }
+
     fun sendFailedParseUrl(event: String, url: String) {
         val params = Bundle().apply {
             putString("failed_url", url)
