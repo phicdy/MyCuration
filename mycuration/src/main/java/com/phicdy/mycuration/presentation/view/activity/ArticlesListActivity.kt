@@ -25,7 +25,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
     }
 
     private lateinit var searchView: SearchView
-    private lateinit var gaTitle: String
+    private lateinit var fbTitle: String
     private lateinit var fragment: ArticlesListFragment
     private lateinit var fab: FloatingActionButton
 
@@ -46,12 +46,12 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
             curationId != DEFAULT_CURATION_ID -> {
                 // Curation
                 title = dbAdapter.getCurationNameById(curationId)
-                gaTitle = getString(R.string.curation)
+                fbTitle = getString(R.string.curation)
             }
             feedId == Feed.ALL_FEED_ID -> {
                 // All article
                 title = getString(R.string.all)
-                gaTitle = getString(R.string.all)
+                fbTitle = getString(R.string.all)
             }
             else -> {
                 // Select a feed
@@ -59,9 +59,10 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                 prefMgr.setSearchFeedId(feedId)
                 val selectedFeed = dbAdapter.getFeedById(feedId)
                 title = selectedFeed.title
-                gaTitle = getString(R.string.ga_not_all_title)
+                fbTitle = getString(R.string.ga_not_all_title)
             }
         }
+        TrackerHelper.sendUiEvent(fbTitle)
         initToolbar()
         fab = findViewById(R.id.fab_article_list)
         fab.setOnClickListener {
