@@ -7,4 +7,6 @@
 	<color name="text_primary">#ffffff</color>
 
 	<color name="black">#000000</color>
+	<color name="black_transparent_12">#0F000000</color>
+	<color name="black_transparent_87">#DE000000</color>
 </resources>

@@ -3,29 +3,28 @@ package com.phicdy.mycuration.presentation.view.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
+import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
+import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
+import com.phicdy.mycuration.tracker.TrackerHelper
 
 
 class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
 
     private lateinit var presenter: RegisterFilterPresenter
 
-    private lateinit var etTitle: EditText
-    private lateinit var etKeyword: EditText
-    private lateinit var etFilterUrl: EditText
+    private lateinit var etTitle: TextInputEditText
+    private lateinit var etKeyword: TextInputEditText
+    private lateinit var etFilterUrl: TextInputEditText
     private lateinit var tvTargetRss: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +40,12 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
     private fun initView() {
         setTitle(R.string.add_filter)
 
-        etKeyword = findViewById(R.id.filterKeyword) as EditText
-        etFilterUrl = findViewById(R.id.filterUrl) as EditText
-        etTitle = findViewById(R.id.filterTitle) as EditText
+        etKeyword = findViewById(R.id.filterKeyword)
+        etFilterUrl = findViewById(R.id.filterUrl)
+        etTitle = findViewById(R.id.filterTitle)
 
         //Set spinner
-        tvTargetRss = findViewById(R.id.tv_target_rss) as TextView
+        tvTargetRss = findViewById(R.id.tv_target_rss)
         tvTargetRss.setOnClickListener {
             val intent = Intent(this@RegisterFilterActivity, SelectFilterTargetRssActivity::class.java)
             val bundle = Bundle()
