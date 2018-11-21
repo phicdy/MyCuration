@@ -2,6 +2,8 @@ package com.phicdy.mycuration
 
 import android.app.Application
 import android.content.Context
+import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.data.db.DatabaseAdapter
@@ -10,6 +12,7 @@ import com.phicdy.mycuration.di.appModule
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
+import io.fabric.sdk.android.Fabric
 import org.koin.android.ext.android.startKoin
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.io.File
@@ -46,6 +49,11 @@ class MyApplication : Application() {
                             .build()
             )
         }
+
+        val crashlyticsKit = Crashlytics.Builder()
+                .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build()
+        Fabric.with(this, crashlyticsKit)
 
         // For old version under 1.6.0
         FileUtil.setUpIconSaveFolder(this)
