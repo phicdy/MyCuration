@@ -437,26 +437,6 @@ public class DatabaseAdapter {
 		return getFeedByUrl(feedUrl);
 	}
 
-    public int getNumOfUnreadArtilces(int feedId) {
-		int num = 0;
-		db.beginTransaction();
-		try {
-			// Get unread articles and set num of unread articles
-			String sql = "select _id from articles where status = \"unread\" and feedId = "
-					+ feedId;
-			Cursor cursor = db.rawQuery(sql, null);
-			num = cursor.getCount();
-			cursor.close();
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			num = -1;
-		} finally {
-			db.endTransaction();
-		}
-		
-		return num;
-	}
-
 	public ArrayList<Article> getAllUnreadArticles(boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
@@ -1489,29 +1469,6 @@ public class DatabaseAdapter {
 			e.printStackTrace();
 		}
         return articles;
-	}
-	public int calcNumOfAllUnreadArticlesOfCuration(int curationId) {
-		int num = 0;
-		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
-				Article.TABLE_NAME + "." + Article.TITLE + "," +
-				Article.TABLE_NAME + "." + Article.URL + "," +
-				Article.TABLE_NAME + "." + Article.STATUS + "," +
-				Article.TABLE_NAME + "." + Article.POINT + "," +
-				Article.TABLE_NAME + "." + Article.DATE + "," +
-				Article.TABLE_NAME + "." + Article.FEEDID +
-				" from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-				" where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
-				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
-				" order by " + Article.DATE;
-		try {
-			Cursor cursor = db.rawQuery(sql, null);
-			num = cursor.getCount();
-			cursor.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return num;
 	}
 
 	public ArrayList<String> getCurationWords(int curationId) {
