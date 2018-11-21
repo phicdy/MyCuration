@@ -37,7 +37,7 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/no_icon"
+                android:src="@drawable/ic_rss"
                 android:contentDescription="@string/icon" />
 
             <TextView

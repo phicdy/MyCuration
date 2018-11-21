@@ -200,4 +200,19 @@ class RssRepository(private val db: SQLiteDatabase,
             db.endTransaction()
         }
     }
+
+    fun resetIconPath() {
+        try {
+            db.beginTransaction()
+            val values = ContentValues().apply {
+                put(Feed.ICON_PATH, Feed.DEDAULT_ICON_PATH)
+            }
+            db.update(Feed.TABLE_NAME, values, null, null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            db.endTransaction()
+        }
+    }
 }

@@ -21,12 +21,12 @@ import org.junit.runner.RunWith
 import java.util.ArrayList
 
 import android.support.test.InstrumentationRegistry.getTargetContext
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
-import junit.framework.Assert.fail
 import org.hamcrest.CoreMatchers.`is`
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertThat
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseMigrationTest {
@@ -140,6 +140,19 @@ class DatabaseMigrationTest {
         val target = ArrayList<Feed>()
         target.add(testFeed)
         assertTrue(adapter.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
+    }
+
+    @Test
+    fun migrationFrom3To4() {
+        val rss = adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, Feed.ATOM, TEST_FEED_URL)
+        adapter.saveIconPath(TEST_FEED_URL, "$TEST_FEED_URL/icon")
+        val migration = DatabaseMigration(
+                oldVersion = DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION,
+                newVersion = DatabaseMigration.DATABASE_VERSION_FETCH_ICON
+        )
+        migration.migrate(db)
+        val migratedRss = adapter.getFeedById(rss.id)
+        assertThat(migratedRss.iconPath, `is`(Feed.DEDAULT_ICON_PATH))
     }
 
     companion object {

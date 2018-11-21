@@ -2,54 +2,49 @@ package com.phicdy.mycuration.domain.task
 
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.runner.AndroidJUnit4
-import com.phicdy.mycuration.util.FileUtil
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
+import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.rss.Feed
+import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 class GetFeedIconTaskTest {
 
     @Before
     fun setup() {
-        FileUtil.setUpIconSaveFolder(getTargetContext())
+        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
     }
 
     @After
     fun tearDown() {
-        val file = File(FileUtil.iconSaveFolder() + "/kindou.info.png")
-        if (file.exists()) file.delete()
-        val greeBlogIcon = File(FileUtil.iconSaveFolder() + "/labs.gree.jp.png")
-        if (greeBlogIcon.exists()) greeBlogIcon.delete()
     }
 
     @Test
     fun iconExistsWhenGetKindouIcon() {
-        var file = File(FileUtil.iconSaveFolder() + "/kindou.info.png")
-        if (file.exists()) assertTrue(file.delete())
-        val iconSaveFolderStr = FileUtil.iconSaveFolder()
-        val task = GetFeedIconTask(iconSaveFolderStr)
-        task.execute("http://kindou.info")
+        val kindou = "http://kindou.info"
+        DatabaseAdapter.getInstance().saveNewFeed("kindou", kindou, Feed.ATOM, kindou)
+        val task = GetFeedIconTask()
+        task.execute(kindou)
         Thread.sleep(3000)
 
-        file = File(FileUtil.iconSaveFolder() + "/kindou.info.png")
-        assertTrue(file.exists())
+        val rss = DatabaseAdapter.getInstance().getFeedByUrl(kindou)
+        assertThat(rss.iconPath, `is`("https://kindou.info/img/favicon.ico"))
     }
 
     @Test
     fun iconDoesNotExistWhenGetGreeBlogIcon() {
-        var greeBlogIcon = File(FileUtil.iconSaveFolder() + "/labs.gree.jp.png")
-        if (greeBlogIcon.exists()) assertTrue(greeBlogIcon.delete())
-        val iconSaveFolderStr = FileUtil.iconSaveFolder()
-        val greeBlogIconTask = GetFeedIconTask(iconSaveFolderStr)
-        greeBlogIconTask.execute("http://labs.gree.jp/blog")
+        val gree = "http://labs.gree.jp/blog"
+        DatabaseAdapter.getInstance().saveNewFeed("gree", gree, Feed.ATOM, gree)
+        val greeBlogIconTask = GetFeedIconTask()
+        greeBlogIconTask.execute(gree)
         Thread.sleep(3000)
 
-        greeBlogIcon = File(FileUtil.iconSaveFolder() + "/labs.gree.jp.png")
-        assertFalse(greeBlogIcon.exists())
+        val rss = DatabaseAdapter.getInstance().getFeedByUrl(gree)
+        assertThat(rss.iconPath, `is`(Feed.DEDAULT_ICON_PATH))
     }
 }

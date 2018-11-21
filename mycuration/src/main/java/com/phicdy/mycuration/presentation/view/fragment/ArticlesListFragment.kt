@@ -3,7 +3,6 @@ package com.phicdy.mycuration.presentation.view.fragment
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -21,6 +20,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.di.GlideApp
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.ArticleRecyclerView
@@ -314,12 +314,16 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
             }
 
             fun setRssIcon(path: String) {
-                val bmp = BitmapFactory.decodeFile(path)
-                feedIconView.setImageBitmap(bmp)
+                GlideApp.with(this@ArticlesListFragment)
+                        .load(path)
+                        .placeholder(R.drawable.ic_rss)
+                        .circleCrop()
+                        .error(R.drawable.ic_rss)
+                        .into(feedIconView)
             }
 
             fun setDefaultRssIcon() {
-                feedIconView.setImageResource(R.drawable.no_icon)
+                feedIconView.setImageResource(R.drawable.ic_rss)
             }
 
             fun changeColorToRead() {

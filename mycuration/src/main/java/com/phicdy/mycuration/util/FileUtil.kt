@@ -1,16 +1,12 @@
 package com.phicdy.mycuration.util
 
+import android.content.Context
+import android.content.pm.PackageManager.NameNotFoundException
+import android.os.Environment
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
-import java.net.MalformedURLException
-import java.net.URL
 import java.util.Scanner
-
-import android.content.Context
-import android.content.pm.PackageManager
-import android.content.pm.PackageManager.NameNotFoundException
-import android.os.Environment
 
 object FileUtil {
 
@@ -36,9 +32,7 @@ object FileUtil {
 			} catch (e: FileNotFoundException) {
 				throw RuntimeException(e)
 			} finally {
-				if (scanner != null) {
-					scanner.close()
-				}
+				scanner?.close()
 			}
 
 			return sdCardRootPath
@@ -62,9 +56,7 @@ object FileUtil {
 		} catch (e: FileNotFoundException) {
 			throw RuntimeException(e)
 		} finally {
-			if (scanner != null) {
-				scanner.close()
-			}
+			scanner?.close()
 		}
 		return isMounted
 	}
@@ -76,7 +68,7 @@ object FileUtil {
 			return if (path.endsWith("/")) {
 				path
 			} else {
-				path + "/"
+				"$path/"
 			}
 		} catch (e: NameNotFoundException) {
 			e.printStackTrace()
@@ -95,27 +87,4 @@ object FileUtil {
 		return iconSaveFolder
 	}
 
-	fun generateIconFilePath(folder: String, urlStr: String): String? {
-		val host: String
-		try {
-			host = URL(urlStr).host
-			if (!File(folder + host + ".png").exists()) {
-				return folder + host + ".png"
-			}
-
-			var i = 0
-			while (true) {
-				val path = folder + host + i.toString() + ".png"
-				if (!File(path).exists()) {
-					return path
-				}
-				i++
-			}
-		} catch (e: MalformedURLException) {
-			// TODO Auto-generated catch block
-			e.printStackTrace()
-		}
-
-		return null
-	}
 }

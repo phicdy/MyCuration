@@ -9,6 +9,7 @@ import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiObject2
 import android.support.test.uiautomator.Until
 import android.support.v7.widget.RecyclerView
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
@@ -146,10 +147,10 @@ class FilterListTest : UiTest() {
         targetRss.click()
         val targetList = device.wait(Until.findObject(By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Target list was not found", targetList)
-        val listItems = targetList.findObjects(By.clazz(LinearLayout::class.java))
-        assertNotNull("Target RSS item was not found", listItems)
-        listItems[0].click()
-        listItems[1].click()
+        val checkboxes = targetList.findObjects(By.clazz(CheckBox::class.java))
+        assertNotNull("Target RSS checkbox was not found", checkboxes)
+        checkboxes[0].click()
+        checkboxes[1].click()
         val doneButton = device.findObject(By.res(BuildConfig.APPLICATION_ID, "done_select_target_rss"))
         assertNotNull("Done button was not found", doneButton)
         doneButton.click()
@@ -228,10 +229,9 @@ class FilterListTest : UiTest() {
         // Select first item
         val targetList = device.wait(Until.findObject(By.clazz(RecyclerView::class.java)), 5000)
         assertNotNull("Target list was not found", targetList)
-        val listItems = targetList.findObjects(
-                By.clazz(LinearLayout::class.java))
-        assertNotNull("Target RSS item was not found", listItems)
-        listItems[0].click()
+        val checkboxes = targetList.findObjects(By.clazz(CheckBox::class.java))
+        assertNotNull("Target RSS checkbox was not found", checkboxes)
+        checkboxes[0].click()
         val doneButton = device.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "done_select_target_rss"))
         assertNotNull("Done button was not found", doneButton)

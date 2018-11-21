@@ -245,12 +245,10 @@ class RssListPresenter(private val view: RssListView,
 
     fun onBindRssViewHolder(position: Int, view: RssItemView.Content) {
         val feed = if (isHided) unreadOnlyFeeds[position] else allFeeds[position]
-        if (feed.iconPath == Feed.DEDAULT_ICON_PATH) {
+        if (feed.iconPath.isBlank() || feed.iconPath == Feed.DEDAULT_ICON_PATH) {
             view.showDefaultIcon()
         } else {
-            if (!view.showIcon(feed.iconPath)) {
-                view.showDefaultIcon()
-            }
+            view.showIcon(feed.iconPath)
         }
         view.updateTitle(feed.title)
         view.updateUnreadCount(

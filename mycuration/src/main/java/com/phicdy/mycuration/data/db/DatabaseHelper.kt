@@ -11,8 +11,9 @@ import com.phicdy.mycuration.data.rss.Curation
 import com.phicdy.mycuration.data.rss.CurationCondition
 import com.phicdy.mycuration.data.rss.CurationSelection
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.util.FileUtil
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     //onCreate() is called when database is created
     override fun onCreate(db: SQLiteDatabase) {
@@ -42,6 +43,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         const val DATABASE_NAME = "rss_manage"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 4
     }
 }

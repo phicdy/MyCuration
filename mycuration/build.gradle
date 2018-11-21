@@ -1,6 +1,7 @@
 apply plugin: 'jacoco'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'spoon'
 apply plugin: 'io.fabric'
 
@@ -142,6 +143,12 @@ dependencies {
 
     def koinVer = '1.0.1'
     implementation "org.koin:koin-android-scope:$koinVer"
+
+    def glideVer = '4.8.0'
+    implementation ("com.github.bumptech.glide:glide:$glideVer") {
+        exclude group: "com.android.support"
+    }
+    kapt "com.github.bumptech.glide:compiler:$glideVer"
 }
 
 apply plugin: 'com.google.gms.google-services'

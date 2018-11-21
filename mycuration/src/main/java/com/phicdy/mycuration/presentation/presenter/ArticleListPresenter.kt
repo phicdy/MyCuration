@@ -10,13 +10,11 @@ import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
-import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.coroutineScope
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.ArrayList
 import java.util.Date
@@ -257,7 +255,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             holder.setRssTitle(article.feedTitle)
 
             val iconPath = article.feedIconPath
-            if (!TextUtil.isEmpty(iconPath) && File(iconPath).exists()) {
+            if (iconPath.isNotBlank() && iconPath != Feed.DEDAULT_ICON_PATH) {
                 holder.setRssIcon(article.feedIconPath)
             } else {
                 holder.setDefaultRssIcon()
