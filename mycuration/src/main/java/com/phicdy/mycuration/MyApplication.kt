@@ -12,6 +12,7 @@ import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
 import org.koin.android.ext.android.startKoin
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
+import java.io.File
 
 class MyApplication : Application() {
 
@@ -31,7 +32,6 @@ class MyApplication : Application() {
         startKoin(this, listOf(appModule))
         PreferenceHelper.setUp(this)
         DatabaseAdapter.setUp(DatabaseHelper(this))
-        FileUtil.setUpIconSaveFolder(this)
         TrackerHelper.setTracker(setUp(this))
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
@@ -45,6 +45,17 @@ class MyApplication : Application() {
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build()
             )
+        }
+
+        // For old version under 1.6.0
+        FileUtil.setUpIconSaveFolder(this)
+        File(FileUtil.iconSaveFolder()).let { dir ->
+            if (dir.exists() && dir.isDirectory) {
+                dir.listFiles().forEach { icon ->
+                    icon.delete()
+                }
+                dir.delete()
+            }
         }
     }
 

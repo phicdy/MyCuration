@@ -5,8 +5,8 @@
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:id="@+id/ll_all_unread"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_all_unread"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/view_selected"
@@ -14,52 +14,51 @@
 
         <ImageView
             android:id="@+id/allIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center_vertical|center"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginTop="12dp"
-            android:src="@drawable/ic_action_view_as_list"
-            android:contentDescription="@string/all" />
+            style="@style/AppTheme.IconListItem.Icon"
+            android:src="@drawable/ic_view_headline_black_24dp"
+            android:contentDescription="@string/all"
+            apps:layout_constraintStart_toStartOf="parent"
+            apps:layout_constraintTop_toTopOf="parent"
+            apps:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/allUnreadFeed"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="8dp"
+            style="@style/AppTheme.IconListItem.Title"
             android:textSize="18sp"
-            android:text="@string/all"/>
+            android:text="@string/all"
+            apps:layout_constraintStart_toEndOf="@id/allIcon"
+            apps:layout_constraintTop_toTopOf="parent"
+            apps:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/allUnreadCount"
-            android:layout_width="64dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="8dp"
-            android:textSize="14sp"
+            style="@style/AppTheme.IconListItem.EndText"
             android:layout_gravity="center_vertical"
-            android:gravity="center_vertical|end" />
+            apps:layout_constraintEnd_toEndOf="parent"
+            apps:layout_constraintTop_toTopOf="parent"
+            apps:layout_constraintBottom_toBottomOf="parent"
+            tools:text="100"/>
 
-    </LinearLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            style="@style/divider"
+            apps:layout_constraintStart_toStartOf="@id/allUnreadFeed"
+            apps:layout_constraintEnd_toEndOf="parent"
+            apps:layout_constraintBottom_toBottomOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        style="@style/divider"
-        android:layout_marginLeft="44dp"
-        apps:layout_constraintStart_toStartOf="parent"
-        apps:layout_constraintEnd_toEndOf="parent"
-        apps:layout_constraintTop_toBottomOf="@id/ll_all_unread" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/srl_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        apps:layout_constraintTop_toBottomOf="@id/ll_all_unread"
+        apps:layout_constraintTop_toBottomOf="@id/cl_all_unread"
         apps:layout_constraintBottom_toBottomOf="parent">
 
         <android.support.v7.widget.RecyclerView
@@ -75,7 +74,7 @@
         android:gravity="center"
         android:visibility="gone"
         android:text="@string/no_rss_message"
-        apps:layout_constraintTop_toBottomOf="@id/ll_all_unread"
+        apps:layout_constraintTop_toBottomOf="@id/cl_all_unread"
         apps:layout_constraintBottom_toBottomOf="parent"
         tools:visibility="visible" />
 </android.support.constraint.ConstraintLayout>

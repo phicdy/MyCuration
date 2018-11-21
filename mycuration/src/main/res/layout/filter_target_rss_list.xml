@@ -12,7 +12,7 @@
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/icon"
-        android:src="@drawable/no_icon"
+        android:src="@drawable/ic_rss"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

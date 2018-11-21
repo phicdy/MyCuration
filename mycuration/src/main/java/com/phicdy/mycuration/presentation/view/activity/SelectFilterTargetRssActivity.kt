@@ -34,9 +34,9 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
 
     override fun onAttachFragment(fragment: Fragment?) {
         super.onAttachFragment(fragment)
-        val rssFragment = fragment as SelectFilterTargetRssFragment
+        val rssFragment = fragment as? SelectFilterTargetRssFragment // maybe Glide's fragment
         val selectedList = intent.getParcelableArrayListExtra<Feed>(TARGET_RSS)
-        rssFragment.updateSelected(selectedList)
+        rssFragment?.updateSelected(selectedList)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

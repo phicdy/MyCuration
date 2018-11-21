@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import android.support.test.InstrumentationRegistry.getTargetContext
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 
 @RunWith(AndroidJUnit4::class)
 class FileUtilTest {
@@ -22,14 +22,5 @@ class FileUtilTest {
     @Test
     fun testGetIconSavePath() {
         assertEquals(FileUtil.getAppPath(getTargetContext()) + "icons/", FileUtil.iconSaveFolder())
-    }
-
-    @Test
-    fun testGenerateIconFileName() {
-        val iconSaveFolderStr = FileUtil.iconSaveFolder()
-        assertEquals(
-                FileUtil.getAppPath(getTargetContext()) + "icons/gigazine.net.png",
-                FileUtil.generateIconFilePath(iconSaveFolderStr, "http://gigazine.net/")
-        )
     }
 }

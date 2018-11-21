@@ -54,4 +54,26 @@
     </style>
 
     <style name="AppTheme.TextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense" />
+
+    <style name="AppTheme.IconListItem" />
+
+    <style name="AppTheme.IconListItem.Icon">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="AppTheme.IconListItem.Title">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.IconListItem.EndText">
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>

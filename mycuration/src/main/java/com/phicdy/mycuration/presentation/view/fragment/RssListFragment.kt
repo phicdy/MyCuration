@@ -2,8 +2,8 @@ package com.phicdy.mycuration.presentation.view.fragment
 
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -13,11 +13,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.di.GlideApp
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
@@ -29,7 +29,6 @@ import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
 import org.koin.android.scope.ext.android.getOrCreateScope
 import org.koin.core.parameter.parametersOf
-import java.io.File
 import java.security.InvalidParameterException
 import kotlin.coroutines.CoroutineContext
 
@@ -40,7 +39,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
 
     private val presenter: RssListPresenter by inject { parametersOf(this) }
     private lateinit var tvAllUnreadArticleCount: TextView
-    private lateinit var allUnread: LinearLayout
+    private lateinit var allUnread: ConstraintLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyView: TextView
@@ -195,7 +194,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         emptyView = view.findViewById(R.id.emptyView) as TextView
         swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
         tvAllUnreadArticleCount = view.findViewById(R.id.allUnreadCount) as TextView
-        allUnread = view.findViewById(R.id.ll_all_unread) as LinearLayout
+        allUnread = view.findViewById(R.id.cl_all_unread) as ConstraintLayout
         registerForContextMenu(recyclerView)
         setAllListener()
         return view
@@ -278,18 +277,16 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
             private val feedCount = itemView.findViewById(R.id.feedCount) as TextView
 
             override fun showDefaultIcon() {
-                feedIcon.setImageResource(R.drawable.no_icon)
+                feedIcon.setImageResource(R.drawable.ic_rss)
             }
 
-            override fun showIcon(iconPath: String): Boolean {
-                val file = File(iconPath)
-                return if (file.exists()) {
-                    val bmp = BitmapFactory.decodeFile(file.path)
-                    feedIcon.setImageBitmap(bmp)
-                    true
-                } else {
-                    false
-                }
+            override fun showIcon(iconPath: String) {
+                GlideApp.with(this@RssListFragment)
+                        .load(iconPath)
+                        .placeholder(R.drawable.ic_rss)
+                        .circleCrop()
+                        .error(R.drawable.ic_rss)
+                        .into(feedIcon)
             }
 
             override fun updateTitle(title: String) {

@@ -7,40 +7,29 @@
 
     <ImageView
         android:id="@+id/feedIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="12dp"
+        style="@style/AppTheme.IconListItem.Icon"
         android:contentDescription="@string/icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/no_icon" />
+        android:src="@drawable/ic_rss" />
 
     <TextView
         android:id="@+id/feedTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="12dp"
+        style="@style/AppTheme.IconListItem.Title"
         app:layout_constraintStart_toEndOf="@id/feedIcon"
         app:layout_constraintEnd_toStartOf="@id/feedCount"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:textSize="18sp"
         tools:text="RSS Title"/>
 
     <TextView
         android:id="@+id/feedCount"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="12dp"
-        android:textSize="14sp"
+        style="@style/AppTheme.IconListItem.EndText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

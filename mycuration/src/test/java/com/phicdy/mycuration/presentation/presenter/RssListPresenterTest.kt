@@ -387,21 +387,11 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when bind not default icon RSS then show the icon`() {
-        runBlocking { presenter.resume() }
-        presenter.onRssFooterClicked()
-        val mockRssItemView = mock(RssItemView.Content::class.java)
-        presenter.onBindRssViewHolder(1, mockRssItemView)
-        verify(mockRssItemView, times(1)).showIcon(SECOND_RSS_ICON_PATH)
-    }
-
-    @Test
-    fun `when bind not default icon RSS and fails to show the icon then show default icon`() = runBlocking {
+    fun `when bind default icon RSS and fails to show the icon then show default icon`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
         val mockRssItemView = mock(RssItemView.Content::class.java)
-        `when`(mockRssItemView.showIcon(SECOND_RSS_ICON_PATH)).thenReturn(false)
-        presenter.onBindRssViewHolder(1, mockRssItemView)
+        presenter.onBindRssViewHolder(0, mockRssItemView)
         verify(mockRssItemView, times(1)).showDefaultIcon()
 
     }
@@ -494,7 +484,7 @@ class RssListPresenterTest {
         private const val FIRST_RSS_ID = 0
         private const val SECOND_RSS_ID = 1
         private const val FIRST_RSS_POSITION = 0
-        private const val SECOND_RSS_ICON_PATH = "/data/data/com.phicdy.mycuration/somewhere"
+        private const val SECOND_RSS_ICON_PATH = "https://www.google.com/icon"
         private const val FIRST_RSS_UNREAD_COUNT = 0
         private const val SECOND_RSS_UNREAD_COUNT = 1
     }

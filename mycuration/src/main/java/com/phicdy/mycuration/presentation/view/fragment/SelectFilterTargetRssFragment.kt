@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -14,7 +13,7 @@ import android.widget.TextView
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
-import java.io.File
+import com.phicdy.mycuration.di.GlideApp
 
 class SelectFilterTargetRssFragment : Fragment() {
 
@@ -61,13 +60,14 @@ class SelectFilterTargetRssFragment : Fragment() {
                 holder.tvRssTitle.text = feed.title
                 val iconPath = feed.iconPath
                 if (iconPath == Feed.DEDAULT_ICON_PATH) {
-                    holder.ivIcon.setImageResource(R.drawable.no_icon)
+                    holder.ivIcon.setImageResource(R.drawable.ic_rss)
                 } else {
-                    val file = File(iconPath)
-                    if (file.exists()) {
-                        val bmp = BitmapFactory.decodeFile(file.path)
-                        holder.ivIcon.setImageBitmap(bmp)
-                    }
+                    GlideApp.with(this@SelectFilterTargetRssFragment)
+                            .load(iconPath)
+                            .placeholder(R.drawable.ic_rss)
+                            .circleCrop()
+                            .error(R.drawable.ic_rss)
+                            .into(holder.ivIcon)
                 }
 
                 var isChecked = false
