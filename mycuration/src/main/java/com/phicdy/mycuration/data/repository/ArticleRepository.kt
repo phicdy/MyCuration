@@ -4,12 +4,12 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.rss.Article
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class ArticleRepository(val db: SQLiteDatabase) {
 
@@ -77,8 +77,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
                 try {
                     // If keyword or url exists, add condition
                     if (keyword.isBlank() && url.isBlank()) {
-                        Log.w("Set filtering conditon",
-                                "keyword and url don't exist fileter ID =$id")
+                        Timber.w("Set filtering conditon, keyword and url don't exist fileter ID =$id")
                         continue
                     }
 
@@ -90,7 +89,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
                     db.update(Article.TABLE_NAME, value, condition, null)
                     db.setTransactionSuccessful()
                 } catch (e: Exception) {
-                    Log.e("Apply Filtering", "Article can't be updated.Feed ID = $rssId")
+                    Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
                     db.endTransaction()
                     return@withContext
                 } finally {

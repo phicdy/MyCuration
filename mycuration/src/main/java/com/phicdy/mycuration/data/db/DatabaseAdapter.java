@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.phicdy.mycuration.data.filter.Filter;
@@ -27,6 +26,8 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 public class DatabaseAdapter {
 	
     private static DatabaseAdapter sharedDbAdapter;
@@ -36,9 +37,6 @@ public class DatabaseAdapter {
 	public static final int NOT_FOUND_ID = -1;
     private static final int INSERT_ERROR_ID = -1;
     private static final int MIN_TABLE_ID = 1;
-
-	private static final String LOG_TAG = "MyCuration."
-			+ DatabaseAdapter.class.getSimpleName();
 
 	private DatabaseAdapter() {
 	}
@@ -89,7 +87,7 @@ public class DatabaseAdapter {
 				insertArticleSt.bindString(2, article.getUrl());
 				insertArticleSt.bindString(3, article.getStatus());
 				insertArticleSt.bindString(4, article.getPoint());
-				Log.d(LOG_TAG, "insert date:" + article.getPostedDate());
+				Timber.d("insert date:%s", article.getPostedDate());
 				insertArticleSt.bindLong(5, article.getPostedDate());
 				insertArticleSt.bindString(6, String.valueOf(feedId));
 
@@ -417,7 +415,7 @@ public class DatabaseAdapter {
 				values.put(Feed.ICON_PATH, Feed.DEDAULT_ICON_PATH);
 				values.put("siteUrl", siteUrl);
 				if (db.insert(Feed.TABLE_NAME, null, values) == -1) {
-					Log.v("insert error", "error occurred");
+					Timber.v("insert error occurred");
 				}
 			} else {
 				// Same feed already exists
@@ -808,7 +806,7 @@ public class DatabaseAdapter {
             String table = Filter.TABLE_NAME;
             cur = db.query(table, columns, condition, null, null, null, null);
 			if (cur.getCount() != 0) {
-				Log.i("Register Filter", "Same Filter Exist");
+				Timber.i("Same Filter Exist");
 			} else {
 				// Register filter
 				ContentValues filterVal = new ContentValues();
@@ -824,7 +822,7 @@ public class DatabaseAdapter {
                 }
 			}
 		} catch (Exception e) {
-			Log.e("insert error", "error occurred");
+			Timber.e("Failed to save new filter %s", e.getMessage());
             e.printStackTrace();
             result = false;
 		} finally {
@@ -1145,30 +1143,30 @@ public class DatabaseAdapter {
 		try {
 			File backupStrage;
 			String sdcardRootPath = FileUtil.INSTANCE.getSdCardRootPath();
-            Log.d(LOG_TAG, "SD Card path: " + sdcardRootPath);
+            Timber.d("SD Card path: %s", sdcardRootPath);
 			if (FileUtil.INSTANCE.isSDCardMouted(sdcardRootPath)) {
-				Log.d(LOG_TAG, "SD card is mounted");
+				Timber.d("SD card is mounted");
 				backupStrage = new File(FileUtil.INSTANCE.getSdCardRootPath());
 			}else {
-				Log.d(LOG_TAG, "not mounted");
+				Timber.d("not mounted");
 				backupStrage = Environment.getExternalStorageDirectory();
 			}
 			if (backupStrage.canWrite()) {
-				Log.d(LOG_TAG, "Backup storage is writable");
+				Timber.d("Backup storage is writable");
 
 				String backupDBFolderPath = BACKUP_FOLDER + "/";
 				File backupDBFolder = new File(backupStrage, backupDBFolderPath);
                 if (backupDBFolder.exists()) {
                     if (backupDBFolder.delete()) {
-                        Log.d(LOG_TAG, "Succeeded to delete backup directory");
+                        Timber.d("Succeeded to delete backup directory");
                     } else {
-                        Log.d(LOG_TAG, "Failed to delete backup directory");
+                        Timber.d("Failed to delete backup directory");
                     }
                 }
                 if (backupDBFolder.mkdir()) {
-                    Log.d(LOG_TAG, "Succeeded to make directory");
+                    Timber.d("Succeeded to make directory");
                 } else {
-                    Log.d(LOG_TAG, "Failed to make directory");
+                    Timber.d("Failed to make directory");
                 }
 				File backupDB = new File(backupStrage, backupDBFolderPath + DatabaseHelper.DATABASE_NAME);
 
@@ -1180,7 +1178,7 @@ public class DatabaseAdapter {
 				dst.close();
 			} else {
                 // TODO Runtime Permission
-                Log.d(LOG_TAG, "SD Card is not writabble, enable storage permission in Android setting");
+                Timber.d("SD Card is not writabble, enable storage permission in Android setting");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1192,15 +1190,15 @@ public class DatabaseAdapter {
 			File backupStrage;
 			String sdcardRootPath = FileUtil.INSTANCE.getSdCardRootPath();
 			if (FileUtil.INSTANCE.isSDCardMouted(sdcardRootPath)) {
-				Log.d(LOG_TAG, "SD card is mounted");
+				Timber.d("SD card is mounted");
 				backupStrage = new File(FileUtil.INSTANCE.getSdCardRootPath());
 			}else {
-				Log.d(LOG_TAG, "not mounted");
+				Timber.d("not mounted");
 				backupStrage = Environment.getExternalStorageDirectory();
-				Log.d(LOG_TAG, "path:" + backupStrage.getAbsolutePath());
+				Timber.d("path:%s", backupStrage.getAbsolutePath());
 			}
 			if (backupStrage.canRead()) {
-				Log.d(LOG_TAG, "Backup storage is readable");
+				Timber.d("Backup storage is readable");
 
 				String backupDBPath = BACKUP_FOLDER + "/" + DatabaseHelper.DATABASE_NAME;
 				File newDB  = new File(backupStrage, backupDBPath);
@@ -1215,7 +1213,7 @@ public class DatabaseAdapter {
 				dst.close();
 			} else {
                 // TODO Runtime Permission
-                Log.d(LOG_TAG, "SD Card is not readabble, enable storage permission in Android setting");
+                Timber.d("SD Card is not readabble, enable storage permission in Android setting");
             }
 		} catch (Exception e) {
 			e.printStackTrace();

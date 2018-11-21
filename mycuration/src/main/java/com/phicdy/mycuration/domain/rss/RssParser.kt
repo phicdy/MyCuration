@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.domain.rss
 
-import android.util.Log
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.util.DateParser
@@ -9,6 +8,7 @@ import org.jsoup.Jsoup
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
@@ -40,17 +40,17 @@ class RssParser {
      * @return RssParseResult. If not found or error occurs, feed instance in the result is null.
      */
     internal fun parseRssXml(baseUrl: String, checkCanonical: Boolean): RssParseResult {
-        Log.d(LOG_TAG, "Start to parse RSS XML, url:$baseUrl")
+        Timber.d("Start to parse RSS XML, url:$baseUrl")
         try {
             val url = URL(baseUrl)
             if (!"http".equals(url.protocol, ignoreCase = true) && !"https".equals(url.protocol, ignoreCase = true)) {
-                Log.d(LOG_TAG, "URL does not start with http or https")
+                Timber.d("URL does not start with http or https")
                 return RssParseResult(failedReason = RssParseResult.FailedReason.INVALID_URL)
             }
             val pcUserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36"
             val document = Jsoup.connect(baseUrl).userAgent(pcUserAgent).get()
             if (!document.getElementsByTag("rdf").isEmpty() || !document.getElementsByTag("rdf:rdf").isEmpty()) {
-                Log.d(LOG_TAG, "RSS 1.0")
+                Timber.d("RSS 1.0")
                 // RSS 1.0
                 val links = document.getElementsByTag("link")
                 var siteUrl = ""
@@ -67,7 +67,7 @@ class RssParser {
                 val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.RSS_1, 0, siteUrl)
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("rss").isEmpty()) {
-                Log.d(LOG_TAG, "RSS 2.0")
+                Timber.d("RSS 2.0")
                 // RSS 2.0
                 val links = document.getElementsByTag("link")
                 var siteUrl = ""
@@ -84,7 +84,7 @@ class RssParser {
                 val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.RSS_2, 0, siteUrl)
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("feed").isEmpty()) {
-                Log.d(LOG_TAG, "ATOM")
+                Timber.d("ATOM")
                 // ATOM:
                 //<?xml version="1.0" encoding="utf-8"?>
                 //<feed xmlns="http://www.w3.org/2005/Atom">
@@ -113,7 +113,7 @@ class RssParser {
                 val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.ATOM, 0, siteUrl)
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("html").isEmpty()) {
-                Log.d(LOG_TAG, "html, try to get RSS URL")
+                Timber.d("html, try to get RSS URL")
                 if (checkCanonical) {
                     // <link rel="canonical" href="http://xxxxxxxx">
                     document.getElementsByAttributeValue("rel", "canonical").run {
@@ -124,7 +124,7 @@ class RssParser {
                             // Path only, add protocol and host
                             pcUrl = URL(url.protocol, url.host, pcUrl).toString()
                         }
-                        Log.d(LOG_TAG, "canonical setting is found, try to parse $pcUrl")
+                        Timber.d("canonical setting is found, try to parse $pcUrl")
                         return parse(pcUrl)
                     }
                 }
@@ -134,7 +134,7 @@ class RssParser {
                     val feedPathUrl = URL(url.protocol, url.host, "feed").toString()
                     return if (url.toString() == feedPathUrl) {
                         // Already check URL that path is "feed"
-                        Log.d(LOG_TAG, "RSS URL was not found")
+                        Timber.d("RSS URL was not found")
                         RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
                     } else {
                         parseRssXml(URL(url.protocol, url.host, "feed").toString(), false)
@@ -150,19 +150,19 @@ class RssParser {
                     // Path only, add protocol and host
                     feedUrl = URL(url.protocol, url.host, feedUrl).toString()
                 }
-                Log.d(LOG_TAG, "RSS URL was found, $feedUrl")
+                Timber.d("RSS URL was found, $feedUrl")
                 return parseRssXml(feedUrl, false)
             } else {
-                Log.d(LOG_TAG, "Fail, not RSS")
+                Timber.d("Fail, not RSS")
             }
         } catch (e: MalformedURLException) {
-            Log.d(LOG_TAG, "Fail, MalformedURLException")
+            Timber.d("Fail, MalformedURLException")
             e.printStackTrace()
         } catch (e: IOException) {
-            Log.d(LOG_TAG, "Fail, IOException")
+            Timber.d("Fail, IOException")
             e.printStackTrace()
         } catch (e: Exception) {
-            Log.d(LOG_TAG, "Fail, Exception")
+            Timber.d("Fail, Exception")
             e.printStackTrace()
         }
 
@@ -177,7 +177,7 @@ class RssParser {
 
         // Flag for not getting "Site's" title and url
         var itemFlag = false
-        Log.d(LOG_TAG, "Latest date:" + Date(latestDate).toString())
+        Timber.d("Latest date: %s", Date(latestDate).toString())
         try {
             val factory = XmlPullParserFactory.newInstance()
             factory.isNamespaceAware = true
@@ -201,7 +201,7 @@ class RssParser {
                         // add Title and Link to currentItem
                         if (itemFlag && tag == "title" && article.title == "") {
                             val title = TextUtil.removeLineFeed(parser.nextText())
-                            Log.d(LOG_TAG, "set article title:$title")
+                            Timber.d("set article title:$title")
                             article.title = title
                         }
                         if (itemFlag && tag == "link"
@@ -212,14 +212,14 @@ class RssParser {
                                 // Atom
                                 articleURL = parseAtomAriticleUrl(parser)
                             }
-                            Log.d(LOG_TAG, "set article URL:$articleURL")
+                            Timber.d("set article URL:$articleURL")
                             article.url = articleURL
                         }
                         if (itemFlag
                                 && (tag == "date" || tag == "pubDate" || tag == "published")
                                 && article.postedDate == 0L) {
                             val date = parser.nextText()
-                            Log.d(LOG_TAG, "set article date:$date")
+                            Timber.d("set article date:$date")
                             article.postedDate = DateParser.changeToJapaneseDate(date)
                         }
                     }
@@ -237,7 +237,7 @@ class RssParser {
                                 articles.add(article)
                             }
                             itemFlag = false
-                            Log.d(LOG_TAG, "One item finished:" + (System.currentTimeMillis() - itemTime))
+                            Timber.d("One item finished:%s", (System.currentTimeMillis() - itemTime))
                         }
                     }
                 }
@@ -300,10 +300,5 @@ class RssParser {
             }
         }
         return ""
-    }
-
-    companion object {
-
-        private const val LOG_TAG = "FilFeed.RssParser"
     }
 }

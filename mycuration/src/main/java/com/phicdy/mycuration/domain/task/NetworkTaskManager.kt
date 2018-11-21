@@ -1,13 +1,11 @@
 package com.phicdy.mycuration.domain.task
 
-import android.util.Log
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.filter.FilterTask
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
@@ -32,7 +30,6 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                 .filter { feed -> feed.id > 0 }
                 .flatMap({ data -> Flowable.just(data).subscribeOn(Schedulers.io()) })
                 { _, newData ->
-                    Log.d("NetworkTask", "BiFunction, Thread:" + Thread.currentThread().name + ", feed:" + newData.title)
                     runBlocking {
                         updateFeed(newData)
                     }

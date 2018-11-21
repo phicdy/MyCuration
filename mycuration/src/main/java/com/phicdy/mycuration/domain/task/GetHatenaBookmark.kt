@@ -1,15 +1,8 @@
 package com.phicdy.mycuration.domain.task
 
-import android.util.Log
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.util.TextUtil
-
-import java.io.IOException
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
-
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,15 +10,16 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Query
+import timber.log.Timber
+import java.io.IOException
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 class GetHatenaBookmark(private val adapter: DatabaseAdapter) {
 
     private val executorService: ScheduledExecutorService = Executors.newScheduledThreadPool(8)
     private val hatenaRequestService: HatenaRequestService
-
-    companion object {
-        private val LOG_TAG = GetHatenaBookmark::class.java.toString()
-    }
 
     private interface HatenaRequestService {
         @GET("entry.count")
@@ -64,11 +58,11 @@ class GetHatenaBookmark(private val adapter: DatabaseAdapter) {
                         e.printStackTrace()
                     }
 
-                    Log.d(LOG_TAG, "Hatena request done, $url: $point")
+                    Timber.d("Hatena request done, $url: $point")
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, throwable: Throwable) {
-                    Log.d(LOG_TAG, "Request error:" + throwable.toString())
+                    Timber.d("Request error:%s", throwable.toString())
                 }
             })
         }, delaySec.toLong(), TimeUnit.SECONDS)

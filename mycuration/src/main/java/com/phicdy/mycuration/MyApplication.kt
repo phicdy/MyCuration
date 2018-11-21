@@ -14,8 +14,10 @@ import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
 import io.fabric.sdk.android.Fabric
 import org.koin.android.ext.android.startKoin
+import timber.log.Timber
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.io.File
+
 
 class MyApplication : Application() {
 
@@ -32,16 +34,8 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        startKoin(this, listOf(appModule))
-        PreferenceHelper.setUp(this)
-        DatabaseAdapter.setUp(DatabaseHelper(this))
-        TrackerHelper.setTracker(setUp(this))
-        CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        )
         if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -50,11 +44,21 @@ class MyApplication : Application() {
             )
         }
 
+        startKoin(this, listOf(appModule))
+
         val crashlyticsKit = Crashlytics.Builder()
                 .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                 .build()
         Fabric.with(this, crashlyticsKit)
 
+        PreferenceHelper.setUp(this)
+        DatabaseAdapter.setUp(DatabaseHelper(this))
+        TrackerHelper.setTracker(setUp(this))
+        CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        )
         // For old version under 1.6.0
         FileUtil.setUpIconSaveFolder(this)
         File(FileUtil.iconSaveFolder()).let { dir ->
