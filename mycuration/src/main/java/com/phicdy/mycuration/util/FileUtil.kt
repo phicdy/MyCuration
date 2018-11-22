@@ -77,14 +77,13 @@ object FileUtil {
 		return ""
 	}
 
-	private lateinit var iconSaveFolder: String
-	fun setUpIconSaveFolder(context: Context) {
-		val appPath = getAppPath(context)
-		iconSaveFolder = appPath + "icons/"
+	lateinit var appPath: String
+	fun setUpAppPath(context: Context) {
+		appPath = getAppPath(context)
 	}
 
 	fun iconSaveFolder(): String {
-		return iconSaveFolder
+		return appPath + "icons/"
 	}
 
 }

@@ -63,7 +63,7 @@ class MyApplication : Application() {
                 .build()
         )
         // For old version under 1.6.0
-        FileUtil.setUpIconSaveFolder(this)
+        FileUtil.setUpAppPath(this)
         File(FileUtil.iconSaveFolder()).let { dir ->
             if (dir.exists() && dir.isDirectory) {
                 dir.listFiles().forEach { icon ->
