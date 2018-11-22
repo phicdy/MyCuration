@@ -160,46 +160,6 @@ public class DatabaseAdapter {
 	}
 
     /**
-     * Get method to feed array with unread count of articles.
-     *
-     * @return Feed array with unread count of articles
-     */
-	public @NonNull ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
-		ArrayList<Feed> feedList = new ArrayList<>();
-		db.beginTransaction();
-        Cursor cursor = null;
-		try {
-			String[] columns = {Feed.ID,Feed.TITLE,Feed.URL,Feed.ICON_PATH,Feed.SITE_URL,Feed.UNREAD_ARTICLE};
-			String orderBy = Feed.TITLE;
-			cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy);
-			if (cursor != null) {
-				while (cursor.moveToNext()) {
-					int id = cursor.getInt(0);
-					String title = cursor.getString(1);
-					String url = cursor.getString(2);
-					String iconPath = cursor.getString(3);
-					String siteUrl = cursor.getString(4);
-					int unreadAriticlesCount = cursor.getInt(5);
-					feedList.add(new Feed(id, title, url, iconPath, "", unreadAriticlesCount, siteUrl));
-				}
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-			db.endTransaction();
-		}
-		
-		if (feedList.size() == 0) {
-			feedList = getAllFeedsWithoutNumOfUnreadArticles();
-		}
-		return feedList;
-	}
-
-    /**
      * Get method to feed array without unread count of articles.
      *
      * @return Feed array without unread count of articles
