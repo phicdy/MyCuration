@@ -14,6 +14,7 @@ import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.log.TimberTree
 import io.fabric.sdk.android.Fabric
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.startKoin
 import timber.log.Timber
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
@@ -35,8 +36,11 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        startKoin(this, listOf(appModule))
+
         if (BuildConfig.DEBUG) {
-            Timber.plant(TimberTree())
+            Timber.plant(get<TimberTree>())
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -44,8 +48,6 @@ class MyApplication : Application() {
                             .build()
             )
         }
-
-        startKoin(this, listOf(appModule))
 
         val crashlyticsKit = Crashlytics.Builder()
                 .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
