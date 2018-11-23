@@ -331,7 +331,7 @@ public class DatabaseAdapter {
         Cursor cur = null;
 		try {
 			// Get feed
-			String[] culumn = {Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE};
+			String[] culumn = {Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL};
 			String selection = Feed.ID + " = " + feedId;
 			cur = db.query(Feed.TABLE_NAME, culumn, selection, null, null, null, null);
 			if (cur.getCount() != 0) {
@@ -340,9 +340,8 @@ public class DatabaseAdapter {
 				String feedUrl = cur.getString(1);
 				String iconPath = cur.getString(2);
 				String siteUrl = cur.getString(3);
-				int count = cur.getInt(4);
 
-				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, "", count, siteUrl);
+				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, "", 0, siteUrl);
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
