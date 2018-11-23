@@ -64,10 +64,8 @@ object DateParser {
 	}
 
 	fun changeToJapaneseDate(dateBeforeChange: String): Long {
-		Timber.d("date before change:$dateBeforeChange")
 		val cal = Calendar.getInstance()
 		val date = parseDate(dateBeforeChange) ?: return 0
-		Timber.d(date.toString())
 		cal.time = date
 
 		return cal.timeInMillis

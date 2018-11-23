@@ -87,7 +87,6 @@ public class DatabaseAdapter {
 				insertArticleSt.bindString(2, article.getUrl());
 				insertArticleSt.bindString(3, article.getStatus());
 				insertArticleSt.bindString(4, article.getPoint());
-				Timber.d("insert date:%s", article.getPostedDate());
 				insertArticleSt.bindLong(5, article.getPostedDate());
 				insertArticleSt.bindString(6, String.valueOf(feedId));
 

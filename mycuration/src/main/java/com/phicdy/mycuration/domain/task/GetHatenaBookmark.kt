@@ -57,8 +57,6 @@ class GetHatenaBookmark(private val adapter: DatabaseAdapter) {
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-
-                    Timber.d("Hatena request done, $url: $point")
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, throwable: Throwable) {
