@@ -36,13 +36,15 @@ Set status to read automatically by user settings
 ## Credits
 
 * [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
-* [KOIN](https://github.com/InsertKoinIO/koin)
+* [Koin](https://github.com/InsertKoinIO/koin)
 * [RecyclerView](https://dl.google.com/dl/android/maven2/index.html)
 * [RxJava](https://github.com/ReactiveX/RxJava)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [Retrofit](https://github.com/square/retrofit)
+* [Glide](https://github.com/bumptech/glide)
+* [Firebase Analytics](https://firebase.google.com/docs/analytics/)
+* [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics/)
 * [Jsoup](https://github.com/jhy/jsoup/)
-* [Android-ProgressFragment](https://github.com/johnkil/Android-ProgressFragment)
 * [Calligraphy](https://github.com/chrisjenx/Calligraphy)
 * [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
 * [stetho](https://github.com/facebook/stetho)
