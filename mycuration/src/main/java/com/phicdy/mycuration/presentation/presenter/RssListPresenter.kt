@@ -53,7 +53,7 @@ class RssListPresenter(private val view: RssListView,
 
     private fun generateHidedFeedList() {
         if (allFeeds.isEmpty()) return
-        unreadOnlyFeeds = allFeeds.filter { it.unreadAriticlesCount > 0 } as ArrayList<Feed>
+        unreadOnlyFeeds = allFeeds.filter { unreadCountRepository.getUnreadCount(it.id) > 0 } as ArrayList<Feed>
         if (unreadOnlyFeeds.isEmpty()) {
             unreadOnlyFeeds = allFeeds
         }
