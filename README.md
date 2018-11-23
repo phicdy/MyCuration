@@ -45,7 +45,6 @@ Set status to read automatically by user settings
 * [Firebase Analytics](https://firebase.google.com/docs/analytics/)
 * [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics/)
 * [Jsoup](https://github.com/jhy/jsoup/)
-* [Android-ProgressFragment](https://github.com/johnkil/Android-ProgressFragment)
 * [Calligraphy](https://github.com/chrisjenx/Calligraphy)
 * [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
 * [stetho](https://github.com/facebook/stetho)
