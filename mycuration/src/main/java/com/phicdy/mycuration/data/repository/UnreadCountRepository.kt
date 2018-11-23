@@ -2,6 +2,7 @@ package com.phicdy.mycuration.data.repository
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class UnreadCountRepository(private val rssRepository: RssRepository,
                             private val curationRepository: CurationRepository) {
@@ -20,6 +21,7 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
             unreadCountMap[feed.id] = feed.unreadAriticlesCount
             total += feed.unreadAriticlesCount
         }
+        Timber.d("Retrieve unread count map, %s", unreadCountMap.toString())
     }
 
     fun deleteFeed(feedId: Int) {
@@ -31,6 +33,7 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
 
     suspend fun conutUpUnreadCount(feedId: Int) = coroutineScope {
         unreadCountMap[feedId]?.let {
+            Timber.d("Start count up unread count. Current unread count is %s. RSS ID is %s", it, feedId)
             unreadCountMap[feedId] = it + 1
             total++
             updateDatbase(feedId)
@@ -39,6 +42,7 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
 
     suspend fun countDownUnreadCount(feedId: Int) = coroutineScope {
         unreadCountMap[feedId]?.let {
+            Timber.d("Start count down unread count. Current unread count is %s. RSS ID is %s", it, feedId)
             if (it == 0) return@coroutineScope
             unreadCountMap[feedId] = it - 1
             total--
@@ -53,6 +57,7 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
     private suspend fun updateDatbase(feedId: Int) = coroutineScope {
         unreadCountMap[feedId]?.let {
             launch {
+                Timber.d("Before update, %s", unreadCountMap.toString())
                 rssRepository.updateUnreadArticleCount(feedId, it)
             }
         }
@@ -60,6 +65,7 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
 
     suspend fun readAll(feedId: Int) {
         unreadCountMap[feedId]?.let {
+            Timber.d("Start read all. RSS ID is %s", feedId)
             total -= it
             unreadCountMap[feedId] = 0
             updateDatbase(feedId)
@@ -68,7 +74,9 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
 
     suspend fun readAll() = coroutineScope {
         total = 0
+        Timber.d("Start read all. RSS ID is all")
         for (id in unreadCountMap.keys) {
+            Timber.d("In read all loop. RSS ID is %s", id)
             unreadCountMap[id] = 0
             updateDatbase(id)
         }
@@ -80,8 +88,10 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
 
     suspend fun appendUnreadArticleCount(rssId: Int, count: Int) {
         if (unreadCountMap.containsKey(rssId)) {
+            Timber.d("Append unread article count %s to %s. RSS ID is %s", count, unreadCountMap[rssId], rssId)
             unreadCountMap[rssId] = unreadCountMap[rssId]!! + count
         } else {
+            Timber.d("Append unread article count %s to 0. RSS ID is %s", count, rssId)
             unreadCountMap[rssId] = count
         }
         total += count

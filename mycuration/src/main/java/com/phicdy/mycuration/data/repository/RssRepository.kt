@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
+import android.support.annotation.VisibleForTesting
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.filter.FilterFeedRegistration
 import com.phicdy.mycuration.data.rss.Article
@@ -12,6 +13,7 @@ import com.phicdy.mycuration.data.rss.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.ArrayList
 
 class RssRepository(private val db: SQLiteDatabase,
@@ -194,6 +196,7 @@ class RssRepository(private val db: SQLiteDatabase,
             }
             db.update(Feed.TABLE_NAME, values, Feed.ID + " = $feedId", null)
             db.setTransactionSuccessful()
+            Timber.d("Finished to update unread article count to $unreadCount in DB. RSS ID is $feedId")
         } catch (e: SQLException) {
             e.printStackTrace()
         } finally {
