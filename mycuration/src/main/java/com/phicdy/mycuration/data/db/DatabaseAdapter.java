@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.phicdy.mycuration.data.filter.Filter;
@@ -27,6 +26,8 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 public class DatabaseAdapter {
 	
     private static DatabaseAdapter sharedDbAdapter;
@@ -36,9 +37,6 @@ public class DatabaseAdapter {
 	public static final int NOT_FOUND_ID = -1;
     private static final int INSERT_ERROR_ID = -1;
     private static final int MIN_TABLE_ID = 1;
-
-	private static final String LOG_TAG = "MyCuration."
-			+ DatabaseAdapter.class.getSimpleName();
 
 	private DatabaseAdapter() {
 	}
@@ -89,7 +87,6 @@ public class DatabaseAdapter {
 				insertArticleSt.bindString(2, article.getUrl());
 				insertArticleSt.bindString(3, article.getStatus());
 				insertArticleSt.bindString(4, article.getPoint());
-				Log.d(LOG_TAG, "insert date:" + article.getPostedDate());
 				insertArticleSt.bindLong(5, article.getPostedDate());
 				insertArticleSt.bindString(6, String.valueOf(feedId));
 
@@ -159,46 +156,6 @@ public class DatabaseAdapter {
 			db.endTransaction();
 		}
 		return isExist;
-	}
-
-    /**
-     * Get method to feed array with unread count of articles.
-     *
-     * @return Feed array with unread count of articles
-     */
-	public @NonNull ArrayList<Feed> getAllFeedsWithNumOfUnreadArticles() {
-		ArrayList<Feed> feedList = new ArrayList<>();
-		db.beginTransaction();
-        Cursor cursor = null;
-		try {
-			String[] columns = {Feed.ID,Feed.TITLE,Feed.URL,Feed.ICON_PATH,Feed.SITE_URL,Feed.UNREAD_ARTICLE};
-			String orderBy = Feed.TITLE;
-			cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy);
-			if (cursor != null) {
-				while (cursor.moveToNext()) {
-					int id = cursor.getInt(0);
-					String title = cursor.getString(1);
-					String url = cursor.getString(2);
-					String iconPath = cursor.getString(3);
-					String siteUrl = cursor.getString(4);
-					int unreadAriticlesCount = cursor.getInt(5);
-					feedList.add(new Feed(id, title, url, iconPath, "", unreadAriticlesCount, siteUrl));
-				}
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-			db.endTransaction();
-		}
-		
-		if (feedList.size() == 0) {
-			feedList = getAllFeedsWithoutNumOfUnreadArticles();
-		}
-		return feedList;
 	}
 
     /**
@@ -373,7 +330,7 @@ public class DatabaseAdapter {
         Cursor cur = null;
 		try {
 			// Get feed
-			String[] culumn = {Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE};
+			String[] culumn = {Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL};
 			String selection = Feed.ID + " = " + feedId;
 			cur = db.query(Feed.TABLE_NAME, culumn, selection, null, null, null, null);
 			if (cur.getCount() != 0) {
@@ -382,9 +339,8 @@ public class DatabaseAdapter {
 				String feedUrl = cur.getString(1);
 				String iconPath = cur.getString(2);
 				String siteUrl = cur.getString(3);
-				int count = cur.getInt(4);
 
-				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, "", count, siteUrl);
+				feed = new Feed(feedId, feedTitle, feedUrl, iconPath, "", 0, siteUrl);
 			}
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
@@ -417,7 +373,7 @@ public class DatabaseAdapter {
 				values.put(Feed.ICON_PATH, Feed.DEDAULT_ICON_PATH);
 				values.put("siteUrl", siteUrl);
 				if (db.insert(Feed.TABLE_NAME, null, values) == -1) {
-					Log.v("insert error", "error occurred");
+					Timber.v("insert error occurred");
 				}
 			} else {
 				// Same feed already exists
@@ -435,26 +391,6 @@ public class DatabaseAdapter {
 			return null;
 		}
 		return getFeedByUrl(feedUrl);
-	}
-
-    public int getNumOfUnreadArtilces(int feedId) {
-		int num = 0;
-		db.beginTransaction();
-		try {
-			// Get unread articles and set num of unread articles
-			String sql = "select _id from articles where status = \"unread\" and feedId = "
-					+ feedId;
-			Cursor cursor = db.rawQuery(sql, null);
-			num = cursor.getCount();
-			cursor.close();
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			num = -1;
-		} finally {
-			db.endTransaction();
-		}
-		
-		return num;
 	}
 
 	public ArrayList<Article> getAllUnreadArticles(boolean isNewestArticleTop) {
@@ -828,7 +764,7 @@ public class DatabaseAdapter {
             String table = Filter.TABLE_NAME;
             cur = db.query(table, columns, condition, null, null, null, null);
 			if (cur.getCount() != 0) {
-				Log.i("Register Filter", "Same Filter Exist");
+				Timber.i("Same Filter Exist");
 			} else {
 				// Register filter
 				ContentValues filterVal = new ContentValues();
@@ -844,7 +780,7 @@ public class DatabaseAdapter {
                 }
 			}
 		} catch (Exception e) {
-			Log.e("insert error", "error occurred");
+			Timber.e("Failed to save new filter %s", e.getMessage());
             e.printStackTrace();
             result = false;
 		} finally {
@@ -1165,30 +1101,30 @@ public class DatabaseAdapter {
 		try {
 			File backupStrage;
 			String sdcardRootPath = FileUtil.INSTANCE.getSdCardRootPath();
-            Log.d(LOG_TAG, "SD Card path: " + sdcardRootPath);
+            Timber.d("SD Card path: %s", sdcardRootPath);
 			if (FileUtil.INSTANCE.isSDCardMouted(sdcardRootPath)) {
-				Log.d(LOG_TAG, "SD card is mounted");
+				Timber.d("SD card is mounted");
 				backupStrage = new File(FileUtil.INSTANCE.getSdCardRootPath());
 			}else {
-				Log.d(LOG_TAG, "not mounted");
+				Timber.d("not mounted");
 				backupStrage = Environment.getExternalStorageDirectory();
 			}
 			if (backupStrage.canWrite()) {
-				Log.d(LOG_TAG, "Backup storage is writable");
+				Timber.d("Backup storage is writable");
 
 				String backupDBFolderPath = BACKUP_FOLDER + "/";
 				File backupDBFolder = new File(backupStrage, backupDBFolderPath);
                 if (backupDBFolder.exists()) {
                     if (backupDBFolder.delete()) {
-                        Log.d(LOG_TAG, "Succeeded to delete backup directory");
+                        Timber.d("Succeeded to delete backup directory");
                     } else {
-                        Log.d(LOG_TAG, "Failed to delete backup directory");
+                        Timber.d("Failed to delete backup directory");
                     }
                 }
                 if (backupDBFolder.mkdir()) {
-                    Log.d(LOG_TAG, "Succeeded to make directory");
+                    Timber.d("Succeeded to make directory");
                 } else {
-                    Log.d(LOG_TAG, "Failed to make directory");
+                    Timber.d("Failed to make directory");
                 }
 				File backupDB = new File(backupStrage, backupDBFolderPath + DatabaseHelper.DATABASE_NAME);
 
@@ -1200,7 +1136,7 @@ public class DatabaseAdapter {
 				dst.close();
 			} else {
                 // TODO Runtime Permission
-                Log.d(LOG_TAG, "SD Card is not writabble, enable storage permission in Android setting");
+                Timber.d("SD Card is not writabble, enable storage permission in Android setting");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1212,15 +1148,15 @@ public class DatabaseAdapter {
 			File backupStrage;
 			String sdcardRootPath = FileUtil.INSTANCE.getSdCardRootPath();
 			if (FileUtil.INSTANCE.isSDCardMouted(sdcardRootPath)) {
-				Log.d(LOG_TAG, "SD card is mounted");
+				Timber.d("SD card is mounted");
 				backupStrage = new File(FileUtil.INSTANCE.getSdCardRootPath());
 			}else {
-				Log.d(LOG_TAG, "not mounted");
+				Timber.d("not mounted");
 				backupStrage = Environment.getExternalStorageDirectory();
-				Log.d(LOG_TAG, "path:" + backupStrage.getAbsolutePath());
+				Timber.d("path:%s", backupStrage.getAbsolutePath());
 			}
 			if (backupStrage.canRead()) {
-				Log.d(LOG_TAG, "Backup storage is readable");
+				Timber.d("Backup storage is readable");
 
 				String backupDBPath = BACKUP_FOLDER + "/" + DatabaseHelper.DATABASE_NAME;
 				File newDB  = new File(backupStrage, backupDBPath);
@@ -1235,7 +1171,7 @@ public class DatabaseAdapter {
 				dst.close();
 			} else {
                 // TODO Runtime Permission
-                Log.d(LOG_TAG, "SD Card is not readabble, enable storage permission in Android setting");
+                Timber.d("SD Card is not readabble, enable storage permission in Android setting");
             }
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1489,29 +1425,6 @@ public class DatabaseAdapter {
 			e.printStackTrace();
 		}
         return articles;
-	}
-	public int calcNumOfAllUnreadArticlesOfCuration(int curationId) {
-		int num = 0;
-		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
-				Article.TABLE_NAME + "." + Article.TITLE + "," +
-				Article.TABLE_NAME + "." + Article.URL + "," +
-				Article.TABLE_NAME + "." + Article.STATUS + "," +
-				Article.TABLE_NAME + "." + Article.POINT + "," +
-				Article.TABLE_NAME + "." + Article.DATE + "," +
-				Article.TABLE_NAME + "." + Article.FEEDID +
-				" from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-				" where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
-				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
-				" order by " + Article.DATE;
-		try {
-			Cursor cursor = db.rawQuery(sql, null);
-			num = cursor.getCount();
-			cursor.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return num;
 	}
 
 	public ArrayList<String> getCurationWords(int curationId) {

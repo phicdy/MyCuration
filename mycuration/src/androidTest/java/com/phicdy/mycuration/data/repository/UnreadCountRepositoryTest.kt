@@ -6,6 +6,7 @@ import com.phicdy.mycuration.data.db.DatabaseHelper
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -42,7 +43,8 @@ class UnreadCountRepositoryTest {
         rssRepository.updateUnreadArticleCount(rss.id, 1)
         unreadCountRepository.retrieve()
         unreadCountRepository.appendUnreadArticleCount(rss.id, 10)
-        val updatedRss = adapter.getFeedById(rss.id)
-        assertThat(updatedRss.unreadAriticlesCount, `is`(11))
+        val updatedRss = rssRepository.getFeedWithUnreadCountBy(rss.id)
+        assertNotNull(updatedRss)
+        assertThat(updatedRss?.unreadAriticlesCount, `is`(11))
     }
 }

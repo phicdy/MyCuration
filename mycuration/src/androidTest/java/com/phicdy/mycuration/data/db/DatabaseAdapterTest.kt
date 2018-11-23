@@ -151,17 +151,6 @@ class DatabaseAdapterTest {
     }
 
     @Test
-    fun testGetAllFeedsWithNumOfUnreadArticles() {
-        val feeds = adapter.allFeedsWithNumOfUnreadArticles
-        assertNotNull(feeds)
-        assertEquals(1, feeds.size)
-        val (_, title, url, _, _, unreadAriticlesCount) = feeds[0]
-        assertEquals(TEST_FEED_TITLE, title)
-        assertEquals(TEST_FEED_URL, url)
-        assertEquals(testUnreadArticles.size, unreadAriticlesCount)
-    }
-
-    @Test
     fun testSaveNewCuration() {
         insertTestCuration()
 

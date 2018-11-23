@@ -16,7 +16,7 @@ class FileUtilTest {
 
     @Before
     fun setup() {
-        FileUtil.setUpIconSaveFolder(getTargetContext())
+        FileUtil.setUpAppPath(getTargetContext())
     }
 
     @Test

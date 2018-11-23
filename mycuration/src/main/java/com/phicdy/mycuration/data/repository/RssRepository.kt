@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
+import android.support.annotation.VisibleForTesting
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.filter.FilterFeedRegistration
 import com.phicdy.mycuration.data.rss.Article
@@ -12,6 +13,7 @@ import com.phicdy.mycuration.data.rss.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.ArrayList
 
 class RssRepository(private val db: SQLiteDatabase,
@@ -194,6 +196,7 @@ class RssRepository(private val db: SQLiteDatabase,
             }
             db.update(Feed.TABLE_NAME, values, Feed.ID + " = $feedId", null)
             db.setTransactionSuccessful()
+            Timber.d("Finished to update unread article count to $unreadCount in DB. RSS ID is $feedId")
         } catch (e: SQLException) {
             e.printStackTrace()
         } finally {
@@ -214,5 +217,33 @@ class RssRepository(private val db: SQLiteDatabase,
         } finally {
             db.endTransaction()
         }
+    }
+
+    @VisibleForTesting
+    fun getFeedWithUnreadCountBy(rssId: Int): Feed? {
+        var feed: Feed? = null
+        db.beginTransaction()
+        var cur: Cursor? = null
+        try {
+            val culumn = arrayOf(Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
+            val selection = Feed.ID + " = " + rssId
+            cur = db.query(Feed.TABLE_NAME, culumn, selection, null, null, null, null)
+            if (cur.count != 0) {
+                cur.moveToNext()
+                val feedTitle = cur.getString(0)
+                val feedUrl = cur.getString(1)
+                val iconPath = cur.getString(2)
+                val siteUrl = cur.getString(3)
+                val count = cur.getInt(4)
+                feed = Feed(rssId, feedTitle, feedUrl, iconPath, "", count, siteUrl)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            cur?.close()
+            db.endTransaction()
+        }
+        return feed
     }
 }

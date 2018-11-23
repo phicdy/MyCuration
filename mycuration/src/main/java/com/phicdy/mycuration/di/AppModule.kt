@@ -17,6 +17,7 @@ import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.log.TimberTree
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module.module
 
@@ -31,6 +32,8 @@ val appModule = module {
     single { PreferenceHelper }
     single { NetworkTaskManager(get(), get()) }
     single { UnreadCountRepository(get(), get()) }
+
+    single { TimberTree() }
 
     scope("top") { (view: TopActivityView) ->
         TopActivityPresenter(

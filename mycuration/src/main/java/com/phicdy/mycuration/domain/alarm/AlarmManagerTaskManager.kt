@@ -4,8 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-
+import timber.log.Timber
 import java.util.Calendar
 
 class AlarmManagerTaskManager(private val context: Context) {
@@ -33,7 +32,7 @@ class AlarmManagerTaskManager(private val context: Context) {
             timeInMillis = System.currentTimeMillis()
             add(Calendar.SECOND, intervalSec)
         }
-        Log.d("AlarmManagerTaskManager", "Set alarm : " + calendar.time.toString())
+        Timber.d( "Set alarm : %s", calendar.time.toString())
 
         val alm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alm.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pi)

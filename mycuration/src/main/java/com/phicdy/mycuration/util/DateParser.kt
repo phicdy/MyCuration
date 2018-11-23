@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.util
 
-import android.util.Log
+import timber.log.Timber
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -8,8 +8,6 @@ import java.util.Date
 import java.util.Locale
 
 object DateParser {
-
-	private const val LOG_TAG = "DateParser"
 
 	private fun parseDate(pubDate: String): Date? {
 		val input = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
@@ -32,7 +30,7 @@ object DateParser {
 
         //2014-07-27T14:38:34+0900
         if (!pubDate.contains("T")) {
-            Log.d(LOG_TAG, "Invalid format, return null")
+            Timber.d("Invalid format, return null")
             return null
         }
         var replaced = pubDate.replace("T", " ")
@@ -61,15 +59,13 @@ object DateParser {
         } catch (e: ParseException) {
         }
 
-        Log.d(LOG_TAG, "Contains T, but failed to parse")
+        Timber.d("Contains T, but failed to parse")
         return null
 	}
 
 	fun changeToJapaneseDate(dateBeforeChange: String): Long {
-		Log.d(LOG_TAG, "date before change:$dateBeforeChange")
 		val cal = Calendar.getInstance()
 		val date = parseDate(dateBeforeChange) ?: return 0
-		Log.d(LOG_TAG, date.toString())
 		cal.time = date
 
 		return cal.timeInMillis
