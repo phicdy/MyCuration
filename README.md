@@ -46,6 +46,7 @@ Set status to read automatically by user settings
 * [Calligraphy](https://github.com/chrisjenx/Calligraphy)
 * [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
 * [stetho](https://github.com/facebook/stetho)
+* [Timber](https://github.com/JakeWharton/timber)
 
 ## Devlopment Environment
 
