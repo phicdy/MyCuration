@@ -9,8 +9,8 @@ import android.view.MenuItem
 
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class AddCurationActivity : AppCompatActivity() {
 
@@ -41,7 +41,7 @@ class AddCurationActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     private fun initView() {

@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
 
@@ -36,7 +36,7 @@ class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.On
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
