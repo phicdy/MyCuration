@@ -72,7 +72,8 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                 unreadCountRepository.appendUnreadArticleCount(feed.id, articles.size)
             }
 
-            FilterTask(articleRepository).applyFiltering(feed.id)
+            val updatedCount = FilterTask(articleRepository).applyFiltering(feed.id)
+            unreadCountRepository.decreaseCount(feed.id, updatedCount)
             try {
                 inputStream.close()
             } catch (e: IOException) {
