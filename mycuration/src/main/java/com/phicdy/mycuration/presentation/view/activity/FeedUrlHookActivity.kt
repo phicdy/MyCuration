@@ -14,8 +14,8 @@ import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import org.koin.android.ext.android.inject
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class FeedUrlHookActivity : Activity(), FeedUrlHookView {
 
@@ -38,7 +38,7 @@ class FeedUrlHookActivity : Activity(), FeedUrlHookView {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun showInvalidUrlErrorToast() {

@@ -14,10 +14,12 @@ import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.log.TimberTree
 import io.fabric.sdk.android.Fabric
+import io.github.inflationx.calligraphy3.CalligraphyConfig
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor
+import io.github.inflationx.viewpump.ViewPump
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.startKoin
 import timber.log.Timber
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.io.File
 
 
@@ -57,11 +59,16 @@ class MyApplication : Application() {
         PreferenceHelper.setUp(this)
         DatabaseAdapter.setUp(DatabaseHelper(this))
         TrackerHelper.setTracker(setUp(this))
-        CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        )
+
+        // Font
+        ViewPump.init(ViewPump.builder()
+                .addInterceptor(CalligraphyInterceptor(
+                        CalligraphyConfig.Builder()
+                                .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
+                                .setFontAttrId(R.attr.fontPath)
+                                .build()))
+                .build())
+
         // For old version under 1.6.0
         FileUtil.setUpAppPath(this)
         File(FileUtil.iconSaveFolder()).let { dir ->
