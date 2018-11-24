@@ -67,12 +67,13 @@ class ArticleRepository(val db: SQLiteDatabase) {
         }
     }
 
-    suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int) = coroutineScope {
+    suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int): Int = coroutineScope {
         return@coroutineScope withContext(Dispatchers.IO) {
             // If articles are hit in condition, Set articles status to "read"
             val value = ContentValues().apply {
                 put(Article.STATUS, Article.READ)
             }
+            var updatedCount = 0
             for ((id, _, keyword, url) in filterList) {
                 try {
                     // If keyword or url exists, add condition
@@ -83,20 +84,19 @@ class ArticleRepository(val db: SQLiteDatabase) {
 
                     db.beginTransaction()
                     // Initialize condition
-                    var condition = Article.FEEDID + " = $rssId"
+                    var condition = Article.FEEDID + " = $rssId and " + Article.STATUS + " != " + Article.UNREAD
                     if (keyword.isNotBlank()) { condition = "$condition and title like '%$keyword%'" }
                     if (url.isNotBlank()) { condition = "$condition and url like '%$url%'" }
-                    db.update(Article.TABLE_NAME, value, condition, null)
+                    updatedCount += db.update(Article.TABLE_NAME, value, condition, null)
                     db.setTransactionSuccessful()
                 } catch (e: Exception) {
                     Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
                     db.endTransaction()
-                    return@withContext
                 } finally {
                     db.endTransaction()
                 }
             }
+            return@withContext updatedCount
         }
     }
-
 }

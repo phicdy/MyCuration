@@ -91,10 +91,33 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
             Timber.d("Append unread article count %s to %s. RSS ID is %s", count, unreadCountMap[rssId], rssId)
             unreadCountMap[rssId] = unreadCountMap[rssId]!! + count
         } else {
+            Timber.d("Not contained RSS ID: %s", rssId)
             Timber.d("Append unread article count %s to 0. RSS ID is %s", count, rssId)
             unreadCountMap[rssId] = count
         }
         total += count
+        updateDatbase(rssId)
+    }
+
+    suspend fun decreaseCount(rssId: Int, count: Int){
+        if (!unreadCountMap.containsKey(rssId)) {
+            Timber.d("RSS doesn't exist in the map, skip. RSS ID is %s", rssId)
+            return
+        }
+        if (count <= 0) {
+            Timber.d("Decrease count is 0 or less, skip. RSS ID is %s", rssId)
+            return
+        }
+        Timber.d("Decrease unread article count %s. Current count is %s. RSS ID is %s", count, unreadCountMap[rssId], rssId)
+        if (unreadCountMap[rssId]!! - count < 0) {
+            Timber.d("As the result, count is under 0, set 0")
+            total -= unreadCountMap[rssId]!!
+            unreadCountMap[rssId] = 0
+        } else {
+            Timber.d("As the result, count is %s", unreadCountMap[rssId]!! - count)
+            total -= count
+            unreadCountMap[rssId] = unreadCountMap[rssId]!! - count
+        }
         updateDatbase(rssId)
     }
 }

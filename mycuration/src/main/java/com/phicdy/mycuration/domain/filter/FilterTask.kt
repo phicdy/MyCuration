@@ -6,11 +6,10 @@ import kotlinx.coroutines.coroutineScope
 
 class FilterTask(private val articleRepository: ArticleRepository) {
 
-    suspend fun applyFiltering(feedId: Int) = coroutineScope {
+    suspend fun applyFiltering(feedId: Int): Int = coroutineScope {
         val dbAdapter = DatabaseAdapter.getInstance()
-        dbAdapter.getEnabledFiltersOfFeed(feedId).let {
-            if (it.size == 0) return@coroutineScope
-            articleRepository.applyFiltersOfRss(it, feedId)
-        }
+        val filters = dbAdapter.getEnabledFiltersOfFeed(feedId)
+        if (filters.size == 0) return@coroutineScope 0
+        return@coroutineScope articleRepository.applyFiltersOfRss(filters, feedId)
     }
 }
