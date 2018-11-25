@@ -27,6 +27,8 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         title = getString(R.string.title_select_filter_rss)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         presenter = SelectFilterTargetRssPresenter(this)
         presenter.create()
@@ -45,7 +47,11 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        presenter.optionItemSelected(item)
+        when (item.itemId) {
+            // For arrow button on toolbar
+            android.R.id.home -> finish()
+            else -> presenter.optionItemSelected(item)
+        }
         return super.onOptionsItemSelected(item)
     }
 
