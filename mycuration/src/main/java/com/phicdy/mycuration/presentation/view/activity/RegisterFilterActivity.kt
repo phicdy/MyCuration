@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -38,8 +39,6 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
     }
 
     private fun initView() {
-        setTitle(R.string.add_filter)
-
         etKeyword = findViewById(R.id.filterKeyword)
         etFilterUrl = findViewById(R.id.filterUrl)
         etTitle = findViewById(R.id.filterTitle)
@@ -53,6 +52,12 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
             intent.putExtras(bundle)
             startActivityForResult(intent, TARGET_FEED_SELECT_REQUEST)
         }
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_register_filter)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = getString(R.string.add_filter)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -71,7 +76,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        presenter.optionItemClicked(item)
+        when (item.itemId) {
+            // For arrow button on toolbar
+            android.R.id.home -> finish()
+            else -> presenter.optionItemClicked(item)
+        }
         return super.onOptionsItemSelected(item)
     }
 
