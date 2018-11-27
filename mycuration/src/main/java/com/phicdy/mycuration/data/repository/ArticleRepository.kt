@@ -145,4 +145,28 @@ class ArticleRepository(val db: SQLiteDatabase) {
             return@withContext result
         }
     }
+
+    /**
+     * Check method of article existence of specified RSS ID.
+     *
+     * @param rssId RSS ID to check
+     * @return `true` if exists.
+     */
+    suspend fun isExistArticleOf(rssId: Int): Boolean = withContext(Dispatchers.IO) {
+        var isExist = false
+        db.beginTransaction()
+        var cursor: Cursor? = null
+        try {
+            val selection = Article.FEEDID + " = " + rssId
+            cursor= db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
+            isExist = cursor.count > 0
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+        return@withContext isExist
+    }
 }

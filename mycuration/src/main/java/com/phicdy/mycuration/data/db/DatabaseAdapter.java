@@ -64,30 +64,6 @@ public class DatabaseAdapter {
 	}
 
 	/**
-     * Check method of article existence of specified ID.
-     *
-     * @param feedId Feed ID to check
-     * @return {@code true} if exists.
-     */
-    public boolean isExistArticle(int feedId) {
-		boolean isExist = false;
-		db.beginTransaction();
-		try {
-			String getArticlesCountsql = "select _id from articles where feedId = "
-					+ feedId + " limit 1";
-			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
-			isExist = (countCursor.getCount() > 0);
-			countCursor.close();
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		return isExist;
-	}
-
-    /**
      * Check method of article existence.
      *
      * @return {@code true} if there is an article or more.

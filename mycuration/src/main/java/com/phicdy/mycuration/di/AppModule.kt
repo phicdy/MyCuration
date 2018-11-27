@@ -59,6 +59,7 @@ val appModule = module {
                 curationId = curationId,
                 adapter = DatabaseAdapter.getInstance(),
                 preferenceHelper = get(),
+                articleRepository = get(),
                 unreadCountRepository = get(),
                 query = query,
                 action = action

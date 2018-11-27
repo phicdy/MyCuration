@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.widget.helper.ItemTouchHelper.LEFT
 import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
@@ -23,6 +24,7 @@ import java.util.Random
 
 class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
                            private val preferenceHelper: PreferenceHelper,
+                           private val articleRepository: ArticleRepository,
                            private val unreadCountRepository: UnreadCountRepository,
                            private val query: String, private val action: String) : Presenter {
 
@@ -73,7 +75,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
 
     override fun create() {}
 
-    fun createView() {
+    suspend fun createView() = coroutineScope {
         allArticles = loadAllArticles()
         loadArticle(LOAD_COUNT)
         if (allArticles.size == 0) {
@@ -87,7 +89,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         }
     }
 
-    private fun loadAllArticles(): ArrayList<Article> {
+    private suspend fun loadAllArticles(): ArrayList<Article> = coroutineScope {
         var allArticles: ArrayList<Article>
         if (isSearchAction) {
             allArticles = adapter.searchArticles(query, preferenceHelper.sortNewArticleTop)
@@ -103,11 +105,11 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             }
         } else {
             allArticles = adapter.getUnreadArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
-            if (allArticles.size == 0 && adapter.isExistArticle(feedId)) {
+            if (allArticles.size == 0 && articleRepository.isExistArticleOf(feedId)) {
                 allArticles = adapter.getAllArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
             }
         }
-        return allArticles
+        return@coroutineScope allArticles
     }
 
     private fun loadArticle(num: Int) {
