@@ -30,7 +30,7 @@ val appModule = module {
     single { CurationRepository(get()) }
     single { FilterRepository(get()) }
     single { PreferenceHelper }
-    single { NetworkTaskManager(get(), get()) }
+    single { NetworkTaskManager(get(), get(), get()) }
     single { UnreadCountRepository(get(), get()) }
 
     single { TimberTree() }

@@ -2,6 +2,7 @@ package com.phicdy.mycuration.uitest
 
 
 import android.support.test.InstrumentationRegistry
+import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.*
 import android.support.test.espresso.assertion.ViewAssertions.matches
@@ -17,8 +18,10 @@ import android.view.ViewGroup
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -27,6 +30,7 @@ import org.hamcrest.core.IsInstanceOf
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,6 +51,17 @@ class SearchArticleTest : UiTest() {
     @JvmField
     @Rule
     var mActivityTestRule = ActivityTestRule(TopActivity::class.java)
+
+    private lateinit var articleRepository: ArticleRepository
+
+    @Before
+    fun setup() {
+        val helper = DatabaseHelper(getTargetContext())
+        DatabaseAdapter.setUp(helper)
+        val adapter = DatabaseAdapter.getInstance()
+        articleRepository = ArticleRepository(helper.writableDatabase)
+        adapter.deleteAll()
+    }
 
     @After
     public override fun tearDown() {
@@ -169,15 +184,13 @@ class SearchArticleTest : UiTest() {
         searchAutoComplete2.perform(pressImeActionButton())
     }
 
-    private fun addTestRss() {
-        val context = InstrumentationRegistry.getContext()
-        DatabaseAdapter.setUp(DatabaseHelper(context))
+    private fun addTestRss() = runBlocking {
         val adapter = DatabaseAdapter.getInstance()
         val feed = adapter.saveNewFeed(testRssTitle, testRssUrl, "RSS1.0", "http://hoge,com")
         // postDate: 2018-01-01 12:34:56
         val articles = arrayListOf(Article(1, testArticleTitle, testArticleUrl, Article.UNREAD,
                 testArticlePoint, testArticleDateLong, feed.id, feed.title, ""))
-        adapter.saveNewArticles(articles, feed.id)
+        articleRepository.saveNewArticles(articles, feed.id)
     }
 
     private fun childAtPosition(

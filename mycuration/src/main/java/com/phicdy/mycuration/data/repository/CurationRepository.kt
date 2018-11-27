@@ -1,11 +1,17 @@
 package com.phicdy.mycuration.data.repository
 
 import android.database.Cursor
+import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.rss.Article
+import com.phicdy.mycuration.data.rss.Curation
+import com.phicdy.mycuration.data.rss.CurationCondition
 import com.phicdy.mycuration.data.rss.CurationSelection
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import timber.log.Timber
+import java.util.ArrayList
 
 class CurationRepository(private val db: SQLiteDatabase) {
 
@@ -27,7 +33,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         try {
             db.beginTransaction()
             cursor = db.rawQuery(sql, null)
-            num = cursor.getCount()
+            num = cursor.count
             db.setTransactionSuccessful()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -37,5 +43,77 @@ class CurationRepository(private val db: SQLiteDatabase) {
         }
 
         return@withContext num
+    }
+
+    suspend fun getAllCurationWords(): HashMap<Int, ArrayList<String>> = withContext(Dispatchers.IO) {
+        val curationWordsMap = hashMapOf<Int, ArrayList<String>>()
+        val sql = "select " + Curation.TABLE_NAME + "." + Curation.ID + "," +
+                CurationCondition.TABLE_NAME + "." + CurationCondition.WORD +
+                " from " + Curation.TABLE_NAME + " inner join " + CurationCondition.TABLE_NAME +
+                " where " + Curation.TABLE_NAME + "." + Curation.ID + " = " + CurationCondition.TABLE_NAME + "." + CurationCondition.CURATION_ID +
+                " order by " + Curation.TABLE_NAME + "." + Curation.ID
+        var cursor: Cursor? = null
+        try {
+            cursor = db.rawQuery(sql, null)
+            val defaultCurationId = -1
+            var curationId = defaultCurationId
+            var words = ArrayList<String>()
+            while (cursor.moveToNext()) {
+                val newCurationId = cursor.getInt(0)
+                if (curationId == defaultCurationId) {
+                    curationId = newCurationId
+                }
+                // Add words of curation to map when curation ID changes
+                if (curationId != newCurationId) {
+                    curationWordsMap[curationId] = words
+                    curationId = newCurationId
+                    words = ArrayList()
+                }
+                val word = cursor.getString(1)
+                words.add(word)
+            }
+            // Add last words of curation
+            if (curationId != defaultCurationId) {
+                curationWordsMap[curationId] = words
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+        }
+        return@withContext curationWordsMap
+    }
+
+    suspend fun saveCurationsOf(articles: List<Article>) = coroutineScope {
+        withContext(Dispatchers.IO) {
+            val curationWordMap = getAllCurationWords()
+            val insertCurationSelectionSt = db.compileStatement(
+                    "insert into " + CurationSelection.TABLE_NAME +
+                            "(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?,?);")
+            for (curationId in curationWordMap.keys) {
+                val words = curationWordMap[curationId]
+                words?.forEach { word ->
+                    for (article in articles) {
+                        if (article.title.contains(word)) {
+                            try {
+                                db.beginTransaction()
+                                insertCurationSelectionSt.bindString(1, article.id.toString())
+                                insertCurationSelectionSt.bindString(2, curationId.toString())
+                                insertCurationSelectionSt.executeInsert()
+                                db.setTransactionSuccessful()
+                            } catch (e: SQLException) {
+                                Timber.e(e.toString())
+                                Timber.e("article ID: %s, curatation ID: %s", article.id, curationId)
+                                Timber.e(curationWordMap.toString())
+                                Timber.e(article.toString())
+                            } finally {
+                                db.endTransaction()
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+        }
     }
 }

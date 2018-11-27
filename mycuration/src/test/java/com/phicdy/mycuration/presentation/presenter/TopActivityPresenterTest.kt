@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -27,7 +28,7 @@ class TopActivityPresenterTest {
         mockView = mock(TopActivityView::class.java)
         mockArticleRepository = mock(ArticleRepository::class.java)
         mockRssRepository = mock(RssRepository::class.java)
-        networkTaskManager = NetworkTaskManager(mockArticleRepository, mock(UnreadCountRepository::class.java))
+        networkTaskManager = NetworkTaskManager(mockArticleRepository, mock(CurationRepository::class.java), mock(UnreadCountRepository::class.java))
         presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository)
     }
 

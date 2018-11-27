@@ -155,6 +155,7 @@ class RssListPresenter(private val view: RssListView,
             for (i in oppositeList.indices) {
                 if (oppositeList[i].id == id) {
                     oppositeList.removeAt(i)
+                    break
                 }
             }
         }

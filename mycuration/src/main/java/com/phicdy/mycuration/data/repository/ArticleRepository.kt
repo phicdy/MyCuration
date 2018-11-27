@@ -99,4 +99,50 @@ class ArticleRepository(val db: SQLiteDatabase) {
             return@withContext updatedCount
         }
     }
+
+    /**
+     * Save method for new articles
+     *
+     * @param articles Article array to save
+     * @param feedId Feed ID of the articles
+     */
+    suspend fun saveNewArticles(articles: ArrayList<Article>, feedId: Int): List<Article> = coroutineScope {
+        return@coroutineScope withContext(Dispatchers.IO) {
+            if (articles.isEmpty()) {
+                return@withContext emptyList<Article>()
+            }
+            val insertArticleSt = db.compileStatement(
+                    "insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);")
+            val result = arrayListOf<Article>()
+            try {
+                db.beginTransaction()
+                articles.forEach { article ->
+                    insertArticleSt.bindString(1, article.title)
+                    insertArticleSt.bindString(2, article.url)
+                    insertArticleSt.bindString(3, article.status)
+                    insertArticleSt.bindString(4, article.point)
+                    insertArticleSt.bindLong(5, article.postedDate)
+                    insertArticleSt.bindString(6, feedId.toString())
+                    val id = insertArticleSt.executeInsert().toInt()
+                    result.add(Article(
+                            id = id,
+                            title = article.title,
+                            url = article.url,
+                            status = article.status,
+                            point = article.point,
+                            feedIconPath = article.feedIconPath,
+                            postedDate = article.postedDate,
+                            feedId = article.feedId,
+                            feedTitle = article.feedTitle)
+                    )
+                }
+                db.setTransactionSuccessful()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                db.endTransaction()
+            }
+            return@withContext result
+        }
+    }
 }

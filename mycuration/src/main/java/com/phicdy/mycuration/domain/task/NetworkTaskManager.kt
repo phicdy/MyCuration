@@ -2,6 +2,7 @@ package com.phicdy.mycuration.domain.task
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.filter.FilterTask
@@ -20,6 +21,7 @@ import java.io.IOException
 import java.net.URI
 
 class NetworkTaskManager(private val articleRepository: ArticleRepository,
+                         private val curationRepository: CurationRepository,
                          private val unreadCountRepository: UnreadCountRepository) {
 
     val isUpdatingFeed: Boolean get() = false
@@ -62,7 +64,8 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
             val articles = parser.parseXml(inputStream, latestDate)
 
             if (articles.size > 0) {
-                dbAdapter.saveNewArticles(articles, feed.id)
+                val savedArtices = articleRepository.saveNewArticles(articles, feed.id)
+                curationRepository.saveCurationsOf(savedArtices)
                 val getHatenaBookmark = GetHatenaBookmark(dbAdapter)
                 var delaySec = 0
                 for ((i, article) in articles.withIndex()) {

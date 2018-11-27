@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import android.util.SparseArray;
 
 import com.phicdy.mycuration.data.filter.Filter;
 import com.phicdy.mycuration.data.filter.FilterFeedRegistration;
@@ -64,55 +63,7 @@ public class DatabaseAdapter {
 		return sharedDbAdapter;
 	}
 
-    /**
-     * Save method for new articles
-     *
-     * @param articles Article array to save
-     * @param feedId Feed ID of the articles
-     */
-	public void saveNewArticles(ArrayList<Article> articles, int feedId) {
-		if(articles.isEmpty()) {
-			return;
-		}
-		SparseArray<ArrayList<String>> curationWordMap = getAllCurationWords();
-		SQLiteStatement insertArticleSt = db.compileStatement(
-				"insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);");
-		SQLiteStatement insertCurationSelectionSt = db.compileStatement(
-				"insert into " + CurationSelection.TABLE_NAME +
-				"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?,?);");
-		db.beginTransaction();
-		try {
-			for (Article article : articles) {
-				insertArticleSt.bindString(1, article.getTitle());
-				insertArticleSt.bindString(2, article.getUrl());
-				insertArticleSt.bindString(3, article.getStatus());
-				insertArticleSt.bindString(4, article.getPoint());
-				insertArticleSt.bindLong(5, article.getPostedDate());
-				insertArticleSt.bindString(6, String.valueOf(feedId));
-
-				long articleId = insertArticleSt.executeInsert();
-                for (int i = 0; i < curationWordMap.size(); i++) {
-                    int curationId = curationWordMap.keyAt(i);
-                    ArrayList<String> words = curationWordMap.valueAt(i);
-					for (String word : words) {
-						if (article.getTitle().contains(word)) {
-							insertCurationSelectionSt.bindString(1, String.valueOf(articleId));
-							insertCurationSelectionSt.bindString(2, String.valueOf(curationId));
-							insertCurationSelectionSt.executeInsert();
-							break;
-						}
-					}
-				}
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-    /**
+	/**
      * Check method of article existence of specified ID.
      *
      * @param feedId Feed ID to check
@@ -1489,46 +1440,4 @@ public class DatabaseAdapter {
         return articles;
 	}
 
-    public SparseArray<ArrayList<String>> getAllCurationWords() {
-//	public Map<Integer, ArrayList<String>> getAllCurationWords() {
-//		Map<Integer, ArrayList<String>> curationWordsMap = new HashMap<>();
-        SparseArray<ArrayList<String>> curationWordsMap = new SparseArray<>();
-		String sql = "select " + Curation.TABLE_NAME + "." + Curation.ID + "," +
-				CurationCondition.TABLE_NAME + "." + CurationCondition.WORD +
-				" from " + Curation.TABLE_NAME + " inner join " + CurationCondition.TABLE_NAME +
-				" where " + Curation.TABLE_NAME + "." + Curation.ID + " = " + CurationCondition.TABLE_NAME + "." + CurationCondition.CURATION_ID +
-				" order by " + Curation.TABLE_NAME + "." + Curation.ID;
-		Cursor cursor = null;
-		try {
-			cursor = db.rawQuery(sql, null);
-			final int defaultCurationId = -1;
-			int curationId = defaultCurationId;
-			ArrayList<String> words = new ArrayList<>();
-			while (cursor.moveToNext()) {
-				int newCurationId = cursor.getInt(0);
-				if (curationId == defaultCurationId) {
-					curationId = newCurationId;
-				}
-				// Add words of curation to map when curation ID changes
-				if (curationId != newCurationId) {
-					curationWordsMap.put(curationId, words);
-					curationId = newCurationId;
-					words = new ArrayList<>();
-				}
-				String word = cursor.getString(1);
-				words.add(word);
-			}
-			// Add last words of curation
-			if (curationId != defaultCurationId) {
-				curationWordsMap.put(curationId, words);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
-		}
-		return curationWordsMap;
-	}
 }

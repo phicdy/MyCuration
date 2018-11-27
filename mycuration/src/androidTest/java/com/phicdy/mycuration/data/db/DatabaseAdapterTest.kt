@@ -3,16 +3,15 @@ package com.phicdy.mycuration.data.db
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.rule.ActivityTestRule
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -24,6 +23,8 @@ class DatabaseAdapterTest {
 
     private lateinit var adapter: DatabaseAdapter
     private lateinit var rssRepository: RssRepository
+    private lateinit var articleRepository: ArticleRepository
+    private lateinit var curationRepository: CurationRepository
     private val testUnreadArticles = ArrayList<Article>()
     private val testReadArticles = ArrayList<Article>()
 
@@ -41,6 +42,8 @@ class DatabaseAdapterTest {
                 ArticleRepository(helper.writableDatabase),
                 FilterRepository(helper.writableDatabase)
         )
+        articleRepository = ArticleRepository(helper.writableDatabase)
+        curationRepository = CurationRepository(helper.writableDatabase)
         insertTestData()
     }
 
@@ -113,14 +116,16 @@ class DatabaseAdapterTest {
             add(doubleQuotationTitle)
             add(japaneseTitle)
         }
-        adapter.saveNewArticles(testUnreadArticles, id)
+        val savedArticles = articleRepository.saveNewArticles(testUnreadArticles, id)
+        curationRepository.saveCurationsOf(savedArticles)
         rssRepository.updateUnreadArticleCount(id, testUnreadArticles.size)
 
         val readArticle = Article(1, "readArticle", "http://www.google.com/read",
                 Article.READ, "", now, id, "", "")
         testReadArticles.clear()
         testReadArticles.add(readArticle)
-        adapter.saveNewArticles(testReadArticles, id)
+        val savedArtices = articleRepository.saveNewArticles(testReadArticles, id)
+        curationRepository.saveCurationsOf(savedArtices)
     }
 
     @Test
@@ -135,7 +140,7 @@ class DatabaseAdapterTest {
                 "http://www.google.com/hogehoge", Article.TOREAD, "", now + 2, id, "", "")
         articles.add(toReadArticle)
         articles.add(toReadArticle2)
-        adapter.saveNewArticles(articles, id)
+        articleRepository.saveNewArticles(articles, id)
 
         val db = DatabaseHelper(getTargetContext()).writableDatabase
         val repository = ArticleRepository(db)
@@ -150,68 +155,6 @@ class DatabaseAdapterTest {
         assertEquals(false, existToReadArticle)
     }
 
-    @Test
-    fun testSaveNewCuration() {
-        insertTestCuration()
-
-        val curationId = adapter.getCurationIdByName(TEST_CURATION_NAME)
-        val map = adapter.allCurationWords
-        assertThat(map.indexOfKey(curationId), `is`(0))
-        assertThat(map.size(), `is`(1))
-        val addedWords = map.get(curationId)
-        val TEST_WORDS_SIZE = 3
-        assertEquals(TEST_WORDS_SIZE, addedWords.size)
-        assertEquals(TEST_WORD1, addedWords[0])
-        assertEquals(TEST_WORD2, addedWords[1])
-        assertEquals(TEST_WORD3, addedWords[2])
-    }
-
-    @Test
-    fun testGetAllCurationWords() {
-        // No data
-        var map = adapter.allCurationWords
-        assertEquals(0, map.size())
-
-        // 1 curation
-        insertTestCuration()
-        val curationId1 = adapter.getCurationIdByName(TEST_CURATION_NAME)
-
-        map = adapter.allCurationWords
-        assertEquals(1, map.size())
-        assertThat(map.indexOfKey(curationId1), `is`(0))
-        var addedWords1 = map.get(curationId1)
-        assertEquals(TEST_WORD1, addedWords1[0])
-        assertEquals(TEST_WORD2, addedWords1[1])
-        assertEquals(TEST_WORD3, addedWords1[2])
-
-        // 2 curations
-        val curationName2 = "test2"
-        val testWord4 = "word4"
-        val testWord5 = "word5"
-        val testWord6 = "word6"
-        val words2 = ArrayList<String>().apply {
-            add(testWord4)
-            add(testWord5)
-            add(testWord6)
-        }
-        assertTrue(adapter.saveNewCuration(curationName2, words2))
-        val curationId2 = adapter.getCurationIdByName(curationName2)
-
-        map = adapter.allCurationWords
-        assertEquals(2, map.size())
-
-        assertThat(map.indexOfKey(curationId1), `is`(0))
-        addedWords1 = map.get(curationId1)
-        assertEquals(TEST_WORD1, addedWords1[0])
-        assertEquals(TEST_WORD2, addedWords1[1])
-        assertEquals(TEST_WORD3, addedWords1[2])
-
-        assertThat(map.indexOfKey(curationId2), `is`(1))
-        val addedWords2 = map.get(curationId2)
-        assertEquals(testWord4, addedWords2[0])
-        assertEquals(testWord5, addedWords2[1])
-        assertEquals(testWord6, addedWords2[2])
-    }
 
     @Test
     fun testDeleteCuration() {
@@ -222,11 +165,11 @@ class DatabaseAdapterTest {
     }
 
     @Test
-    fun testDeleteAllCuration() {
+    fun testDeleteAllCuration() = runBlocking {
         insertTestCuration()
         assertTrue(adapter.deleteAllCuration())
-        val map = adapter.allCurationWords
-        assertEquals(0, map.size())
+        val map = curationRepository.getAllCurationWords()
+        assertEquals(0, map.size)
     }
 
     @Test
