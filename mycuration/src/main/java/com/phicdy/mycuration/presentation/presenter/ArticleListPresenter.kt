@@ -100,7 +100,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             }
         } else if (feedId == Feed.ALL_FEED_ID) {
             allArticles = adapter.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
-            if (allArticles.size == 0 && adapter.isExistArticle) {
+            if (allArticles.size == 0 && articleRepository.isExistArticle()) {
                 allArticles = adapter.getTop300Articles(preferenceHelper.sortNewArticleTop)
             }
         } else {

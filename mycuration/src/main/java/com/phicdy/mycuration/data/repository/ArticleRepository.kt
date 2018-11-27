@@ -152,12 +152,12 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param rssId RSS ID to check
      * @return `true` if exists.
      */
-    suspend fun isExistArticleOf(rssId: Int): Boolean = withContext(Dispatchers.IO) {
+    suspend fun isExistArticleOf(rssId: Int? = null): Boolean = withContext(Dispatchers.IO) {
         var isExist = false
         db.beginTransaction()
         var cursor: Cursor? = null
         try {
-            val selection = Article.FEEDID + " = " + rssId
+            val selection = if (rssId == null) null else Article.FEEDID + " = " + rssId
             cursor= db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
             isExist = cursor.count > 0
             db.setTransactionSuccessful()
@@ -168,5 +168,14 @@ class ArticleRepository(val db: SQLiteDatabase) {
             db.endTransaction()
         }
         return@withContext isExist
+    }
+
+    /**
+     * Check method of article existence.
+     *
+     * @return `true` if there is an article or more.
+     */
+    suspend fun isExistArticle(): Boolean = coroutineScope {
+        return@coroutineScope isExistArticleOf(null)
     }
 }

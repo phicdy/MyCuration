@@ -64,28 +64,6 @@ public class DatabaseAdapter {
 	}
 
 	/**
-     * Check method of article existence.
-     *
-     * @return {@code true} if there is an article or more.
-     */
-	public boolean isExistArticle() {
-		boolean isExist = false;
-		db.beginTransaction();
-		try {
-			String getArticlesCountsql = "select _id from articles limit 1";
-			Cursor countCursor = db.rawQuery(getArticlesCountsql, null);
-			isExist = (countCursor.getCount() > 0);
-			countCursor.close();
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		return isExist;
-	}
-
-    /**
      * Get method to feed array without unread count of articles.
      *
      * @return Feed array without unread count of articles

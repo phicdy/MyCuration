@@ -145,7 +145,6 @@ class ArticleListPresenterTest {
         mock2Unread2ReadArticleDatabase(testFeedId)
         val view = MockView()
         presenter.setView(view)
-        presenter.create()
         presenter.createView()
         assertTrue(presenter.isAllUnreadArticle)
     }
@@ -353,6 +352,7 @@ class ArticleListPresenterTest {
     private fun mockEmptyDatabase(testId: Int) = runBlocking {
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(ArrayList())
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(false)
+        `when`(articleRepository.isExistArticle()).thenReturn(false)
         `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
         `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(ArrayList())
     }
@@ -361,7 +361,7 @@ class ArticleListPresenterTest {
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(ArrayList())
         `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
-        `when`(adapter.isExistArticle).thenReturn(true)
+        `when`(articleRepository.isExistArticle()).thenReturn(true)
         val articles = ArrayList<Article>()
         articles.add(Article(1, "hoge", "http://www.google.com",
                 Article.READ, "1", 1, 1, "feed", ""))
@@ -392,6 +392,7 @@ class ArticleListPresenterTest {
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(unreadArticles)
         `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(unreadArticles)
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
+        `when`(articleRepository.isExistArticle()).thenReturn(true)
         val readArticles = ArrayList<Article>()
         readArticles.add(Article(3, "read", "http://www.google.com",
                 Article.READ, "1", 1, 3, "feed", ""))
