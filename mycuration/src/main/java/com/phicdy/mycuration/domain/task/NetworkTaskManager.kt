@@ -83,8 +83,8 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                 e.printStackTrace()
             }
             if (feed.iconPath == Feed.DEDAULT_ICON_PATH) {
-                val task = GetFeedIconTask()
-                task.execute(feed.siteUrl)
+                val iconUrl = GetFeedIconTask().execute(feed.siteUrl)
+                dbAdapter.saveIconPath(feed.siteUrl, iconUrl)
             }
         } catch (e: IOException) {
 
