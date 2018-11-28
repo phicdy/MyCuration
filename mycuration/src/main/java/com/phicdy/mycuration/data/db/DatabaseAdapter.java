@@ -65,26 +65,6 @@ public class DatabaseAdapter {
 
 
 	/**
-     * Update method for feed icon path.
-     *
-     * @param siteUrl Site URL of the feed to change
-     * @param iconPath New icon path
-     */
-	public void saveIconPath(String siteUrl, String iconPath) {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Feed.ICON_PATH, iconPath);
-			db.update(Feed.TABLE_NAME, values, Feed.SITE_URL + " = '" + siteUrl + "'", null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-    /**
      * Update method for hatena point of the article.
      *
      * @param url Article URL to update

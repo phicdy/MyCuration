@@ -21,6 +21,10 @@ import org.junit.runner.RunWith
 import java.util.ArrayList
 
 import android.support.test.InstrumentationRegistry.getTargetContext
+import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -33,6 +37,7 @@ class DatabaseMigrationTest {
 
     private lateinit var db: SQLiteDatabase
     private lateinit var adapter: DatabaseAdapter
+    private lateinit var rssRepository: RssRepository
 
     @JvmField
     @Rule
@@ -44,6 +49,7 @@ class DatabaseMigrationTest {
         adapter = DatabaseAdapter.getInstance()
         val helper = DatabaseHelper(getTargetContext())
         db = helper.writableDatabase
+        rssRepository = RssRepository(db, ArticleRepository(db), FilterRepository(db))
     }
 
     @After
@@ -143,9 +149,9 @@ class DatabaseMigrationTest {
     }
 
     @Test
-    fun migrationFrom3To4() {
+    fun migrationFrom3To4() = runBlocking {
         val rss = adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, Feed.ATOM, TEST_FEED_URL)
-        adapter.saveIconPath(TEST_FEED_URL, "$TEST_FEED_URL/icon")
+        rssRepository.saveIconPath(TEST_FEED_URL, "$TEST_FEED_URL/icon")
         val migration = DatabaseMigration(
                 oldVersion = DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION,
                 newVersion = DatabaseMigration.DATABASE_VERSION_FETCH_ICON

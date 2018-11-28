@@ -28,7 +28,12 @@ class TopActivityPresenterTest {
         mockView = mock(TopActivityView::class.java)
         mockArticleRepository = mock(ArticleRepository::class.java)
         mockRssRepository = mock(RssRepository::class.java)
-        networkTaskManager = NetworkTaskManager(mockArticleRepository, mock(CurationRepository::class.java), mock(UnreadCountRepository::class.java))
+        networkTaskManager = NetworkTaskManager(
+                mockArticleRepository,
+                mock(RssRepository::class.java),
+                mock(CurationRepository::class.java),
+                mock(UnreadCountRepository::class.java)
+        )
         presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository)
     }
 
