@@ -215,7 +215,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
 
     suspend fun handleAllRead() = coroutineScope {
         if (feedId == Feed.ALL_FEED_ID) {
-            adapter.saveAllStatusToRead()
+            articleRepository.saveAllStatusToRead()
             unreadCountRepository.readAll()
         } else {
             articleRepository.saveStatusToRead(feedId)

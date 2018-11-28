@@ -198,6 +198,24 @@ class ArticleRepository(val db: SQLiteDatabase) {
         } finally {
             db.endTransaction()
         }
+    }
+
+    /**
+     * Update method for all of the articles to read status.
+     */
+    suspend fun saveAllStatusToRead() = withContext(Dispatchers.IO) {
+        try {
+            db.beginTransaction()
+            val values = ContentValues().apply {
+                put(Article.STATUS, Article.READ)
+            }
+            db.update(Article.TABLE_NAME, values, null, null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            db.endTransaction()
+        }
 
     }
 }

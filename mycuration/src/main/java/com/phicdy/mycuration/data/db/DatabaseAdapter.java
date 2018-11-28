@@ -64,24 +64,6 @@ public class DatabaseAdapter {
 	}
 
 	/**
-     * Update method for all of the articles to read status.
-     */
-	public void saveAllStatusToRead() {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Article.STATUS, Article.READ);
-			db.update(Article.TABLE_NAME, values, null, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		
-	}
-
-    /**
      * Update method for article read/unread status.
      *
      * @param articleId Artilce ID to change status
