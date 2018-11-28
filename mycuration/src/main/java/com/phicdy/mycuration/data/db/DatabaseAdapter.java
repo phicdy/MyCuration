@@ -64,27 +64,6 @@ public class DatabaseAdapter {
 	}
 
 	/**
-     * Update method for all of the articles of feed ID to read status.
-     *
-     * @param feedId Feed ID for articles to change status to read
-     */
-    public void saveStatusToRead(int feedId) {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Article.STATUS, Article.READ);
-			String whereClause = Article.FEEDID + " = " + feedId;
-			db.update(Article.TABLE_NAME, values, whereClause, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		
-	}
-
-    /**
      * Update method for all of the articles to read status.
      */
 	public void saveAllStatusToRead() {

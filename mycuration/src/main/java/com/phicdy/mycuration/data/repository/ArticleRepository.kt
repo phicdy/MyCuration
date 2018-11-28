@@ -178,4 +178,26 @@ class ArticleRepository(val db: SQLiteDatabase) {
     suspend fun isExistArticle(): Boolean = coroutineScope {
         return@coroutineScope isExistArticleOf(null)
     }
+
+    /**
+     * Update method for all of the articles of RSS ID to read status.
+     *
+     * @param rssId RSS ID for articles to change status to read
+     */
+    suspend fun saveStatusToRead(rssId: Int) = withContext(Dispatchers.IO) {
+        try {
+            db.beginTransaction()
+            val values = ContentValues().apply {
+                put(Article.STATUS, Article.READ)
+            }
+            val whereClause = Article.FEEDID + " = " + rssId
+            db.update(Article.TABLE_NAME, values, whereClause, null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            db.endTransaction()
+        }
+
+    }
 }

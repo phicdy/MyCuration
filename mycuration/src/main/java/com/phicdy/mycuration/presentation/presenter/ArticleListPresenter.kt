@@ -218,7 +218,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             adapter.saveAllStatusToRead()
             unreadCountRepository.readAll()
         } else {
-            adapter.saveStatusToRead(feedId)
+            articleRepository.saveStatusToRead(feedId)
             unreadCountRepository.readAll(feedId)
         }
         if (preferenceHelper.allReadBack) {
