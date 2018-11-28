@@ -63,28 +63,8 @@ public class DatabaseAdapter {
 		return sharedDbAdapter;
 	}
 
+
 	/**
-     * Update method for article read/unread status.
-     *
-     * @param articleId Artilce ID to change status
-     * @param status New status
-     */
-	public void saveStatus(int articleId, String status) {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Article.STATUS, status);
-			db.update(Article.TABLE_NAME, values, Article.ID + " = " + articleId, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-
-    /**
      * Update method for feed icon path.
      *
      * @param siteUrl Site URL of the feed to change

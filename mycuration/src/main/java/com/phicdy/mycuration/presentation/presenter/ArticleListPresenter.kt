@@ -165,7 +165,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             view.notifyListView()
             return@coroutineScope
         }
-        adapter.saveStatus(article.id, status)
+        articleRepository.saveStatus(article.id, status)
         if (status == Article.TOREAD) {
             unreadCountRepository.countDownUnreadCount(article.feedId)
         } else if (status == Article.UNREAD) {
@@ -198,7 +198,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             if (targetArticle.status == Article.UNREAD) {
                 targetArticle.status = Article.TOREAD
                 unreadCountRepository.countDownUnreadCount(targetArticle.feedId)
-                adapter.saveStatus(targetArticle.id, Article.TOREAD)
+                articleRepository.saveStatus(targetArticle.id, Article.TOREAD)
             }
         }
         view.notifyListView()

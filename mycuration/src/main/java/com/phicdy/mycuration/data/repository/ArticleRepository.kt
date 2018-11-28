@@ -216,6 +216,27 @@ class ArticleRepository(val db: SQLiteDatabase) {
         } finally {
             db.endTransaction()
         }
-
     }
+
+    /**
+     * Update method for article read/unread status.
+     *
+     * @param articleId Artilce ID to change status
+     * @param status New status
+     */
+    suspend fun saveStatus(articleId: Int, status: String) = withContext(Dispatchers.IO) {
+        try {
+            db.beginTransaction()
+            val values = ContentValues().apply {
+                put(Article.STATUS, status)
+            }
+            db.update(Article.TABLE_NAME, values, Article.ID + " = " + articleId, null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            db.endTransaction()
+        }
+    }
+
 }
