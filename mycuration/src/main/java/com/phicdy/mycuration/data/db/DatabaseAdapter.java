@@ -64,42 +64,6 @@ public class DatabaseAdapter {
 	}
 
 	/**
-     * Get method to feed array without unread count of articles.
-     *
-     * @return Feed array without unread count of articles
-     */
-	public ArrayList<Feed> getAllFeedsWithoutNumOfUnreadArticles() {
-		ArrayList<Feed> feedList = new ArrayList<>();
-		String[] columns = {Feed.ID,Feed.TITLE,Feed.URL,Feed.ICON_PATH,Feed.SITE_URL};
-		String orderBy = Feed.TITLE;
-		db.beginTransaction();
-        Cursor cursor = null;
-		try {
-			cursor = db.query(Feed.TABLE_NAME, columns, null, null, null, null, orderBy);
-			if (cursor != null) {
-				while (cursor.moveToNext()) {
-					int id = cursor.getInt(0);
-					String title = cursor.getString(1);
-					String url = cursor.getString(2);
-					String iconPath = cursor.getString(3);
-					String siteUrl = cursor.getString(4);
-					feedList.add(new Feed(id, title, url, iconPath, "", 0, siteUrl));
-				}
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-			db.endTransaction();
-		}
-		
-		return feedList;
-	}
-
-    /**
      * Update method for all of the articles of feed ID to read status.
      *
      * @param feedId Feed ID for articles to change status to read

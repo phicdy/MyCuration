@@ -11,14 +11,26 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.di.GlideApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import kotlin.coroutines.CoroutineContext
 
-class SelectFilterTargetRssFragment : Fragment() {
+class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
 
     private var selectedList: ArrayList<Feed> = ArrayList()
     private lateinit var recyclerView: RecyclerView
+
+    private val rssRepository: RssRepository by inject()
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_select_filter_target_rss, container, false)
@@ -26,13 +38,19 @@ class SelectFilterTargetRssFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val dbAdapter = DatabaseAdapter.getInstance()
         activity?.let {
-            val adapter = TargetRssListAdapter(dbAdapter.allFeedsWithoutNumOfUnreadArticles)
-            recyclerView = it.findViewById(R.id.rv_fiter_target) as RecyclerView
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(activity)
+            launch {
+                val adapter = TargetRssListAdapter(rssRepository.getAllFeedsWithoutNumOfUnreadArticles())
+                recyclerView = it.findViewById(R.id.rv_fiter_target) as RecyclerView
+                recyclerView.adapter = adapter
+                recyclerView.layoutManager = LinearLayoutManager(activity)
+            }
         }
+    }
+
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
     }
 
     fun list(): ArrayList<Feed>? {
