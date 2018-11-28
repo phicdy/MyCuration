@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.domain.task
+package com.phicdy.mycuration.data.network
 
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
@@ -16,7 +16,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-class GetHatenaBookmark(private val adapter: DatabaseAdapter) {
+class HatenaBookmarkApi(private val adapter: DatabaseAdapter) {
 
     private val executorService: ScheduledExecutorService = Executors.newScheduledThreadPool(8)
     private val hatenaRequestService: HatenaRequestService

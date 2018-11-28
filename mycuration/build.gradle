@@ -71,7 +71,7 @@ def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*
                             '**/com/phicdy/mycuration/data/rss/CurationSelection.class',
                             '**/com/phicdy/mycuration/data/rss/Feed*',
                             '**/com/phicdy/mycuration/domain/task/GetFeedIconTask*',
-                            '**/com/phicdy/mycuration/domain/task/GetHatenaBookmark*',
+                            '**/com/phicdy/mycuration/domain/task/HatenaBookmarkApi*',
                             '**/com/phicdy/mycuration/tracker/*.*']
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     group = "Reporting"

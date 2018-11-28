@@ -7,7 +7,7 @@ import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.domain.task.GetHatenaBookmark
+import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.util.NetworkUtil
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -71,7 +71,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
         }
 
         val isWifiConnected = NetworkUtil.isWifiConnected(context)
-        val getHatenaBookmark = GetHatenaBookmark(dbAdapter)
+        val hatenaBookmarkApi = HatenaBookmarkApi(dbAdapter)
         var delaySec = 0
         var totalNum = 0
         for (feed in feeds) {
@@ -80,7 +80,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
             for (unreadArticle in unreadArticles) {
                 if (unreadArticle.point != Article.DEDAULT_HATENA_POINT && !isWifiConnected) continue
                 totalNum++
-                getHatenaBookmark.request(unreadArticle.url, delaySec)
+                hatenaBookmarkApi.request(unreadArticle.url, delaySec)
                 if (totalNum % 10 == 0) delaySec += 2
             }
         }

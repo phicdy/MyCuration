@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.domain.task
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -68,10 +69,10 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
             if (articles.size > 0) {
                 val savedArtices = articleRepository.saveNewArticles(articles, feed.id)
                 curationRepository.saveCurationsOf(savedArtices)
-                val getHatenaBookmark = GetHatenaBookmark(dbAdapter)
+                val hatenaBookmarkApi = HatenaBookmarkApi(dbAdapter)
                 var delaySec = 0
                 for ((i, article) in articles.withIndex()) {
-                    getHatenaBookmark.request(article.url, delaySec)
+                    hatenaBookmarkApi.request(article.url, delaySec)
                     if (i % 10 == 0) delaySec += 2
                 }
                 unreadCountRepository.appendUnreadArticleCount(feed.id, articles.size)

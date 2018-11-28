@@ -3,6 +3,7 @@ package com.phicdy.mycuration.domain.task
 import android.support.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.rss.Article
 import kotlinx.coroutines.runBlocking
@@ -13,7 +14,7 @@ import org.junit.Before
 import org.junit.Test
 import java.util.ArrayList
 
-class GetHatenaBookmarkTest {
+class HatenaBookmarkApiTest {
 
     private lateinit var articleRepository: ArticleRepository
 
@@ -41,8 +42,8 @@ class GetHatenaBookmarkTest {
         articles.add(Article(1, "hoge", testUrl, Article.UNREAD, "", 1, testFeed!!.id, "", ""))
         articleRepository.saveNewArticles(articles, testFeed.id)
 
-        val getHatenaBookmark = GetHatenaBookmark(adapter)
-        getHatenaBookmark.request(testUrl, 0)
+        val hatenaBookmarkApi = HatenaBookmarkApi(adapter)
+        hatenaBookmarkApi.request(testUrl, 0)
         Thread.sleep(2000)
 
         assertThat(adapter.getAllUnreadArticles(true)[0].point, `is`("0"))
@@ -60,8 +61,8 @@ class GetHatenaBookmarkTest {
         articleRepository.saveNewArticles(articles, testFeed.id)
 
         // Start request
-        val getHatenaBookmark = GetHatenaBookmark(adapter)
-        getHatenaBookmark.request(testUrl, 0)
+        val hatenaBookmarkApi = HatenaBookmarkApi(adapter)
+        hatenaBookmarkApi.request(testUrl, 0)
         Thread.sleep(3000)
 
         assertThat(adapter.getAllUnreadArticles(true)[0].point, `is`("1"))
