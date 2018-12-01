@@ -12,8 +12,8 @@ android {
         applicationId "com.phicdy.mycuration"
         minSdkVersion 21
         targetSdkVersion 28
-        versionName "1.6.0"
-        versionCode 40
+        versionName "1.6.1"
+        versionCode 41
         multiDexEnabled true
 
         testApplicationId "com.phicdy.mycuration.test"
