@@ -1,34 +1,30 @@
 package com.phicdy.mycuration.data.network
 
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.util.TextUtil
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Query
 import timber.log.Timber
-import java.io.IOException
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 
-class HatenaBookmarkApi(private val adapter: DatabaseAdapter) {
+class HatenaBookmarkApi {
 
-    private val executorService: ScheduledExecutorService = Executors.newScheduledThreadPool(8)
     private val hatenaRequestService: HatenaRequestService
 
     private interface HatenaRequestService {
         @GET("entry.count")
-        fun bookmark(@Query("url") url: String): Call<ResponseBody>
+        fun bookmark(@Query("url") url: String): Deferred<Response<ResponseBody>>
     }
 
     init {
         val retrofit = Retrofit.Builder()
                 .baseUrl("http://api.b.st-hatena.com")
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .build()
         hatenaRequestService = retrofit.create(HatenaRequestService::class.java)
     }
@@ -39,30 +35,13 @@ class HatenaBookmarkApi(private val adapter: DatabaseAdapter) {
      *
      * @param url URL to get Hatena bookmark
      */
-    fun request(url: String, delaySec: Int) {
-        executorService.schedule({
-            val call = hatenaRequestService.bookmark(url)
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    var point = "0"
-                    try {
-                        val body = response.body()
-                        point = if (body == null) {
-                            "0"
-                        } else {
-                            body.string()
-                        }
-                        if (TextUtil.isEmpty(point)) point = "0"
-                        adapter.saveHatenaPoint(url, point)
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, throwable: Throwable) {
-                    Timber.d("Request error:%s", throwable.toString())
-                }
-            })
-        }, delaySec.toLong(), TimeUnit.SECONDS)
+    suspend fun request(url: String): String = withContext(Dispatchers.IO) {
+        try {
+            val response = hatenaRequestService.bookmark(url).await()
+            return@withContext response.body()?.string() ?: "0"
+        } catch (t: Throwable) {
+            Timber.d("Request error:%s", t.toString())
+        }
+        return@withContext "0"
     }
 }

@@ -69,11 +69,10 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
             if (articles.size > 0) {
                 val savedArtices = articleRepository.saveNewArticles(articles, feed.id)
                 curationRepository.saveCurationsOf(savedArtices)
-                val hatenaBookmarkApi = HatenaBookmarkApi(dbAdapter)
-                var delaySec = 0
-                for ((i, article) in articles.withIndex()) {
-                    hatenaBookmarkApi.request(article.url, delaySec)
-                    if (i % 10 == 0) delaySec += 2
+                val hatenaBookmarkApi = HatenaBookmarkApi()
+                for (article in articles) {
+                    val point = hatenaBookmarkApi.request(article.url)
+                    dbAdapter.saveHatenaPoint(article.url, point)
                 }
                 unreadCountRepository.appendUnreadArticleCount(feed.id, articles.size)
             }

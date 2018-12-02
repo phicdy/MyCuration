@@ -42,11 +42,9 @@ class HatenaBookmarkApiTest {
         articles.add(Article(1, "hoge", testUrl, Article.UNREAD, "", 1, testFeed!!.id, "", ""))
         articleRepository.saveNewArticles(articles, testFeed.id)
 
-        val hatenaBookmarkApi = HatenaBookmarkApi(adapter)
-        hatenaBookmarkApi.request(testUrl, 0)
-        Thread.sleep(2000)
-
-        assertThat(adapter.getAllUnreadArticles(true)[0].point, `is`("0"))
+        val hatenaBookmarkApi = HatenaBookmarkApi()
+        val point = hatenaBookmarkApi.request(testUrl)
+        assertThat(point, `is`("0"))
     }
 
     @Test
@@ -61,10 +59,8 @@ class HatenaBookmarkApiTest {
         articleRepository.saveNewArticles(articles, testFeed.id)
 
         // Start request
-        val hatenaBookmarkApi = HatenaBookmarkApi(adapter)
-        hatenaBookmarkApi.request(testUrl, 0)
-        Thread.sleep(3000)
-
-        assertThat(adapter.getAllUnreadArticles(true)[0].point, `is`("1"))
+        val hatenaBookmarkApi = HatenaBookmarkApi()
+        val point = hatenaBookmarkApi.request(testUrl)
+        assertThat(point, `is`("1"))
     }
 }

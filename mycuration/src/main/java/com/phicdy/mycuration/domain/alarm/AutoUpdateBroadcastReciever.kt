@@ -71,7 +71,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
         }
 
         val isWifiConnected = NetworkUtil.isWifiConnected(context)
-        val hatenaBookmarkApi = HatenaBookmarkApi(dbAdapter)
+        val hatenaBookmarkApi = HatenaBookmarkApi()
         var delaySec = 0
         var totalNum = 0
         for (feed in feeds) {
@@ -80,7 +80,8 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
             for (unreadArticle in unreadArticles) {
                 if (unreadArticle.point != Article.DEDAULT_HATENA_POINT && !isWifiConnected) continue
                 totalNum++
-                hatenaBookmarkApi.request(unreadArticle.url, delaySec)
+                val point = hatenaBookmarkApi.request(unreadArticle.url)
+                dbAdapter.saveHatenaPoint(unreadArticle.url, point)
                 if (totalNum % 10 == 0) delaySec += 2
             }
         }
