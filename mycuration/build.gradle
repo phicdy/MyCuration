@@ -123,6 +123,8 @@ dependencies {
     implementation "com.android.support:preference-v7:$supportLibVer"
 
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
+
     implementation 'org.jsoup:jsoup:1.10.2'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
     implementation 'com.facebook.stetho:stetho:1.4.2'
