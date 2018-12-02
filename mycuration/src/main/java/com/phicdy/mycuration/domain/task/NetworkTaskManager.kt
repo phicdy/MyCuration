@@ -72,7 +72,7 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                 val hatenaBookmarkApi = HatenaBookmarkApi()
                 for (article in articles) {
                     val point = hatenaBookmarkApi.request(article.url)
-                    dbAdapter.saveHatenaPoint(article.url, point)
+                    articleRepository.saveHatenaPoint(article.url, point)
                 }
                 unreadCountRepository.appendUnreadArticleCount(feed.id, articles.size)
             }

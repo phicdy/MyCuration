@@ -239,4 +239,24 @@ class ArticleRepository(val db: SQLiteDatabase) {
         }
     }
 
+    /**
+     * Update method for hatena point of the article.
+     *
+     * @param url Article URL to update
+     * @param point New hatena point
+     */
+    suspend fun saveHatenaPoint(url: String, point: String) = withContext(Dispatchers.IO) {
+        try {
+            db.beginTransaction()
+            val values = ContentValues().apply {
+                put(Article.POINT, point)
+            }
+            db.update(Article.TABLE_NAME, values, Article.URL + " = '" + url + "'", null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            db.endTransaction()
+        }
+    }
 }

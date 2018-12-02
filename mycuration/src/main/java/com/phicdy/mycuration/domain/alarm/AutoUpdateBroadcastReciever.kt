@@ -8,6 +8,7 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.util.NetworkUtil
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -23,6 +24,7 @@ import org.reactivestreams.Subscription
 class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
 
     private val rssRepository: RssRepository by inject()
+    private val articleRepository: ArticleRepository by inject()
     private val networkTaskManager: NetworkTaskManager by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
@@ -81,7 +83,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
                 if (unreadArticle.point != Article.DEDAULT_HATENA_POINT && !isWifiConnected) continue
                 totalNum++
                 val point = hatenaBookmarkApi.request(unreadArticle.url)
-                dbAdapter.saveHatenaPoint(unreadArticle.url, point)
+                articleRepository.saveHatenaPoint(unreadArticle.url, point)
                 if (totalNum % 10 == 0) delaySec += 2
             }
         }

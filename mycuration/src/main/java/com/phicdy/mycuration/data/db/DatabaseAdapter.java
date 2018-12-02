@@ -64,26 +64,6 @@ public class DatabaseAdapter {
 	}
 
 
-	/**
-     * Update method for hatena point of the article.
-     *
-     * @param url Article URL to update
-     * @param point New hatena point
-     */
-	public void saveHatenaPoint(String url, String point) {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Article.POINT, point);
-			db.update(Article.TABLE_NAME, values, Article.URL + " = '" + url + "'", null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
 	public Feed getFeedByUrl(String feedUrl) {
 		Feed feed = null;
 		db.beginTransaction();
