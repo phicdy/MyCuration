@@ -52,7 +52,7 @@ class RssRepositoryTest {
         assertTrue(rssRepository.deleteRss(rssId))
 
         // Check the rss and related data was deleted
-        assertNull(adapter.getFeedById(rssId))
+        assertNull(rssRepository.getFeedById(rssId))
         val articles = articleRepository.getAllArticlesInRss(rssId, true)
         assertNotNull(articles)
         assertThat(articles.size, `is`(0))

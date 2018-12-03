@@ -157,8 +157,8 @@ class DatabaseMigrationTest {
                 newVersion = DatabaseMigration.DATABASE_VERSION_FETCH_ICON
         )
         migration.migrate(db)
-        val migratedRss = adapter.getFeedById(rss.id)
-        assertThat(migratedRss.iconPath, `is`(Feed.DEDAULT_ICON_PATH))
+        val migratedRss = rssRepository.getFeedById(rss.id)
+        assertThat(migratedRss?.iconPath, `is`(Feed.DEDAULT_ICON_PATH))
     }
 
     companion object {

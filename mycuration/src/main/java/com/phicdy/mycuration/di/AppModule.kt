@@ -64,6 +64,7 @@ val appModule = module {
                 feedId = feedId,
                 curationId = curationId,
                 adapter = DatabaseAdapter.getInstance(),
+                rssRepository = get(),
                 preferenceHelper = get(),
                 articleRepository = get(),
                 unreadCountRepository = get(),

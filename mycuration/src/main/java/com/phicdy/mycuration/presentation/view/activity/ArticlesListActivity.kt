@@ -13,21 +13,34 @@ import android.view.Menu
 import android.view.MenuItem
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import kotlin.coroutines.CoroutineContext
 
-class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
+class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener, CoroutineScope {
 
     companion object {
         private const val DEFAULT_CURATION_ID = -1
     }
 
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
     private lateinit var searchView: SearchView
     private lateinit var fbTitle: String
     private lateinit var fragment: ArticlesListFragment
     private lateinit var fab: FloatingActionButton
+
+    private val rssRepository: RssRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +70,10 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                 // Select a feed
                 val prefMgr = PreferenceHelper
                 prefMgr.setSearchFeedId(feedId)
-                val selectedFeed = dbAdapter.getFeedById(feedId)
-                title = selectedFeed.title
+                launch {
+                    val selectedFeed = rssRepository.getFeedById(feedId)
+                    title = selectedFeed?.title
+                }
                 fbTitle = getString(R.string.ga_not_all_title)
             }
         }
@@ -134,4 +149,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
+    }
 }

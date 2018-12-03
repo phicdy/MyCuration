@@ -274,6 +274,12 @@ class RssRepository(private val db: SQLiteDatabase,
         return@withContext query(columns, selection)
     }
 
+    suspend fun getFeedById(feedId: Int): Feed? = withContext(Dispatchers.IO) {
+        val columns = arrayOf(Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL)
+        val selection = Feed.ID + " = " + feedId
+        return@withContext query(columns, selection)
+    }
+
     private suspend fun query(columns: Array<String>, selection: String? = null): Feed? = coroutineScope {
         var feed: Feed? = null
         var cur: Cursor? = null

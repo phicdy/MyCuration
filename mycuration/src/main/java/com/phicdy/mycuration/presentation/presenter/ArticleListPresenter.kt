@@ -5,6 +5,7 @@ import android.support.v7.widget.helper.ItemTouchHelper.LEFT
 import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
@@ -22,7 +23,10 @@ import java.util.Date
 import java.util.Locale
 import java.util.Random
 
-class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
+class ArticleListPresenter(private val feedId: Int,
+                           private val curationId: Int,
+                           private val adapter: DatabaseAdapter,
+                           private val rssRepository: RssRepository,
                            private val preferenceHelper: PreferenceHelper,
                            private val articleRepository: ArticleRepository,
                            private val unreadCountRepository: UnreadCountRepository,
@@ -128,13 +132,14 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         if (!isSwipeLeftToRight && !isSwipeRightToLeft) {
             setReadStatusToTouchedView(article, Article.TOREAD, false)
             if (preferenceHelper.isOpenInternal) {
-                val feedTitle = if (feedId == Feed.ALL_FEED_ID) {
+                if (feedId == Feed.ALL_FEED_ID) {
                     article.feedTitle
                 } else {
-                    val feed = adapter.getFeedById(feedId)
-                    feed.title
+                    val feed = rssRepository.getFeedById(feedId)
+                    feed?.title
+                }?.let {
+                    view.openInternalWebView(article.url, it)
                 }
-                view.openInternalWebView(article.url, feedTitle)
             } else {
                 view.openExternalWebView(article.url)
             }
