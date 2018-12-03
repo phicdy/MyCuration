@@ -8,12 +8,18 @@ import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
+import com.phicdy.mycuration.domain.rss.RssParseExecutor
+import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
+import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
+import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.CurationListView
+import com.phicdy.mycuration.presentation.view.FeedSearchView
+import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -71,6 +77,28 @@ val appModule = module {
                 view = view,
                 dbAdapter = DatabaseAdapter.getInstance(),
                 unreadCountRepository = get()
+        )
+    }
+
+    scope("rss_search") { (view: FeedSearchView) ->
+        FeedSearchPresenter(
+                view = view,
+                rssRepository = get(),
+                networkTaskManager = get(),
+                executor = RssParseExecutor(RssParser(), DatabaseAdapter.getInstance())
+        )
+    }
+
+    scope("rss_url_hook") { (view: FeedUrlHookView, action: String, dataString: String, extrasText: String) ->
+        FeedUrlHookPresenter(
+                view = view,
+                rssRepository = get(),
+                networkTaskManager = get(),
+                action = action,
+                dataString = dataString,
+                extrasText = extrasText,
+                dbAdapter = DatabaseAdapter.getInstance(),
+                parser = RssParser()
         )
     }
 

@@ -267,4 +267,47 @@ class RssRepository(private val db: SQLiteDatabase,
             db.endTransaction()
         }
     }
+
+    suspend fun getFeedByUrl(feedUrl: String): Feed? = withContext(Dispatchers.IO) {
+        val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
+        val selection = Feed.URL + " = \"" + feedUrl + "\""
+        return@withContext query(columns, selection)
+    }
+
+    private suspend fun query(columns: Array<String>, selection: String? = null): Feed? = coroutineScope {
+        var feed: Feed? = null
+        var cur: Cursor? = null
+        try {
+            db.beginTransaction()
+            cur = db.query(Feed.TABLE_NAME, columns, selection, null, null, null, null)
+            if (cur.count != 0) {
+                cur.moveToNext()
+                var id = 0
+                var title = ""
+                var url = ""
+                var iconPath = ""
+                var siteUrl = ""
+                var count = 0
+                for ((i, column) in columns.withIndex()) {
+                    when (column) {
+                        Feed.ID -> id = cur.getInt(i)
+                        Feed.TITLE -> title = cur.getString(i)
+                        Feed.URL -> url = cur.getString(i)
+                        Feed.ICON_PATH -> iconPath = cur.getString(i)
+                        Feed.SITE_URL -> siteUrl = cur.getString(i)
+                        Feed.UNREAD_ARTICLE -> count = cur.getInt(i)
+                    }
+                }
+                feed = Feed(id, title, url, iconPath, "", count, siteUrl)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            cur?.close()
+            db.endTransaction()
+        }
+        return@coroutineScope feed
+    }
+
 }

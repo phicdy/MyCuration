@@ -64,7 +64,7 @@ public class DatabaseAdapter {
 	}
 
 
-	public Feed getFeedByUrl(String feedUrl) {
+	private Feed getFeedByUrl(String feedUrl) {
 		Feed feed = null;
 		db.beginTransaction();
         Cursor cur = null;

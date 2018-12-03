@@ -1,16 +1,18 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedSearchView
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -21,17 +23,16 @@ class FeedSearchPresenterTest {
     private lateinit var parser: RssParser
     private lateinit var executor: RssParseExecutor
     private lateinit var presenter: FeedSearchPresenter
+    private val rssRepository = mock(RssRepository::class.java)
     private lateinit var view: FeedSearchView
 
     @Before
     fun setup() {
         networkTaskManager = mock(NetworkTaskManager::class.java)
-        val adapter = mock(DatabaseAdapter::class.java)
-        DatabaseAdapter.inject(adapter)
         parser = mock(RssParser::class.java)
         executor = mock(RssParseExecutor::class.java)
         view = mock(FeedSearchView::class.java)
-        presenter = FeedSearchPresenter(view, networkTaskManager, adapter, executor)
+        presenter = FeedSearchPresenter(view, networkTaskManager, rssRepository, executor)
 
     }
 
@@ -101,41 +102,38 @@ class FeedSearchPresenterTest {
     }
 
     @Test
-    fun `when new feed is added then success toast shows`() {
+    fun `when new feed is added then success toast shows`() = runBlocking {
         // Mock test feed returns
         val testUrl = "http://www.google.com"
         val testFeed = Feed(1, "hoge", testUrl, "", "", 0, "")
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        Mockito.`when`(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed)
+        `when`(rssRepository.getFeedByUrl(testUrl)).thenReturn(testFeed)
         val presenter = FeedSearchPresenter(view,
-                networkTaskManager, adapter, executor)
+                networkTaskManager, rssRepository, executor)
 
         presenter.callback.succeeded(testUrl)
         verify(view, times(1)).showAddFeedSuccessToast()
     }
 
     @Test
-    fun `when new feed is added then progress dialog dismisses`() {
+    fun `when new feed is added then progress dialog dismisses`() = runBlocking {
         // Mock test feed returns
         val testUrl = "http://www.google.com"
         val testFeed = Feed(1, "hoge", testUrl, "", "", 0, "")
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        Mockito.`when`(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed)
+        `when`(rssRepository.getFeedByUrl(testUrl)).thenReturn(testFeed)
         val view = Mockito.mock(FeedSearchView::class.java)
-        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, executor)
+        val presenter = FeedSearchPresenter(view, networkTaskManager, rssRepository, executor)
 
         presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FAILED)
         verify(view, times(1)).dismissProgressBar()
     }
 
     @Test
-    fun `when new feed is added then view finishes`() {
+    fun `when new feed is added then view finishes`() = runBlocking {
         // Mock test feed returns
         val testUrl = "http://www.google.com"
         val testFeed = Feed(1, "hoge", testUrl, "", "", 0, "")
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
-        Mockito.`when`(adapter.getFeedByUrl(testUrl)).thenReturn(testFeed)
-        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, executor)
+        `when`(rssRepository.getFeedByUrl(testUrl)).thenReturn(testFeed)
+        val presenter = FeedSearchPresenter(view, networkTaskManager, rssRepository, executor)
 
         presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FAILED)
         verify(view, times(1)).finishView()
@@ -165,12 +163,11 @@ class FeedSearchPresenterTest {
     }
 
     @Test
-    fun `when new feed is not saved then toast shows`() {
-        val adapter = Mockito.mock(DatabaseAdapter::class.java)
+    fun `when new feed is not saved then toast shows`() = runBlocking {
         // Mock null returns
         val testUrl = "http://www.google.com"
-        Mockito.`when`(adapter.getFeedByUrl(testUrl)).thenReturn(null)
-        val presenter = FeedSearchPresenter(view, networkTaskManager, adapter, executor)
+        `when`(rssRepository.getFeedByUrl(testUrl)).thenReturn(null)
+        val presenter = FeedSearchPresenter(view, networkTaskManager, rssRepository, executor)
 
         presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FOUND)
         verify(view, times(1)).showGenericErrorToast()

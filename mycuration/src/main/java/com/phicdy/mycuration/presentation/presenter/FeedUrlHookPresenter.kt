@@ -2,6 +2,7 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
@@ -14,14 +15,17 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
                            private val action: String,
                            private val dataString: String,
                            private val extrasText: CharSequence,
+                           private val rssRepository: RssRepository,
                            private val dbAdapter: DatabaseAdapter,
                            private val networkTaskManager: NetworkTaskManager,
                            private val parser: RssParser) {
 
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) = runBlocking {
-            val newFeed = dbAdapter.getFeedByUrl(rssUrl)
-            networkTaskManager.updateFeed(newFeed)
+            val newFeed = rssRepository.getFeedByUrl(rssUrl)
+            newFeed?.let {
+                networkTaskManager.updateFeed(newFeed)
+            }
             view.showSuccessToast()
             view.finishView()
         }

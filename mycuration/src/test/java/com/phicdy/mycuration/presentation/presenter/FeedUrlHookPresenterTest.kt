@@ -22,6 +22,7 @@ class FeedUrlHookPresenterTest {
 
     private lateinit var networkTaskManager: NetworkTaskManager
     private lateinit var adapter: DatabaseAdapter
+    private val rssRepository = mock(RssRepository::class.java)
     private lateinit var presenter: FeedUrlHookPresenter
     private lateinit var parser: RssParser
     private lateinit var view: FeedUrlHookView
@@ -38,7 +39,7 @@ class FeedUrlHookPresenterTest {
         DatabaseAdapter.inject(Mockito.mock(DatabaseAdapter::class.java))
         parser = Mockito.mock(RssParser::class.java)
         view = Mockito.mock(FeedUrlHookView::class.java)
-        presenter = FeedUrlHookPresenter(view, "", "", "",
+        presenter = FeedUrlHookPresenter(view, "", "", "", rssRepository,
                 adapter, networkTaskManager, parser)
     }
 
@@ -51,7 +52,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when invalid action comes then finish`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, "hogehoge", "http://www.google.com", "",
-                adapter, networkTaskManager, parser)
+                rssRepository, adapter, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).finishView()
     }
@@ -59,7 +60,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when action view and invalid url comes then toast shows`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, Intent.ACTION_VIEW, "hogehoge", "",
-                adapter, networkTaskManager, parser)
+                rssRepository, adapter, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).showInvalidUrlErrorToast()
     }
@@ -67,7 +68,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when action send and invalid url comes then toast shows`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, Intent.ACTION_SEND, "", "hogehoge",
-                adapter, networkTaskManager, parser)
+                rssRepository, adapter, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).showInvalidUrlErrorToast()
     }

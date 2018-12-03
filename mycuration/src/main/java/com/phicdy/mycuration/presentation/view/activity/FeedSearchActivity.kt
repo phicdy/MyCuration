@@ -25,14 +25,13 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.domain.rss.RssParseExecutor
-import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
@@ -43,16 +42,17 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
         private const val SHOWCASE_ID = "searchRssTutorial"
     }
 
-    private lateinit var presenter: FeedSearchPresenter
+    private val presenter: FeedSearchPresenter by inject { parametersOf(this) }
     private lateinit var searchView: SearchView
     private lateinit var webView: WebView
     private lateinit var fab: FloatingActionButton
-    private val networkTaskManager: NetworkTaskManager by inject()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_search)
+
+        bindScope(getOrCreateScope("rss_search"))
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_feed_search)
         setSupportActionBar(toolbar)
@@ -81,10 +81,6 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView {
             }
         }
         webView.settings.javaScriptEnabled = true
-
-        val dbAdapter = DatabaseAdapter.getInstance()
-        val executor = RssParseExecutor(RssParser(), dbAdapter)
-        presenter = FeedSearchPresenter(this, networkTaskManager, dbAdapter, executor)
 
         fab = findViewById(R.id.fab)
         fab.setOnClickListener(View.OnClickListener {

@@ -1,39 +1,36 @@
 package com.phicdy.mycuration.presentation.view.activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.annotation.UiThread
+import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 
-class FeedUrlHookActivity : Activity(), FeedUrlHookView {
+class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView {
 
-    private lateinit var presenter: FeedUrlHookPresenter
-    private val networkTaskManager: NetworkTaskManager by inject()
+    private val presenter: FeedUrlHookPresenter by inject { parametersOf(
+            this,
+            if (intent.action == null) "" else intent.action,
+            if (intent.dataString == null) "" else intent.dataString,
+            if (intent.extras == null) "" else intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "") ?: ""
+            )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_url_hook)
-
-        val dbAdapter = DatabaseAdapter.getInstance()
-        val parser = RssParser()
-        val intent = intent
-        val action = if (intent.action == null) "" else intent.action
-        val dataString = if (intent.dataString == null) "" else intent.dataString
-        val extrasText = if (intent.extras == null) "" else intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "") ?: ""
-        presenter = FeedUrlHookPresenter(this, action, dataString, extrasText,
-                dbAdapter, networkTaskManager, parser)
+        bindScope(getOrCreateScope("rss_url_hook"))
         presenter.create()
     }
 

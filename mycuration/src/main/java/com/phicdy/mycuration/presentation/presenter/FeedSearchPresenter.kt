@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -12,7 +12,7 @@ import java.net.URLEncoder
 
 class FeedSearchPresenter(private val view: FeedSearchView,
                           private val networkTaskManager: NetworkTaskManager,
-                          private val adapter: DatabaseAdapter,
+                          private val rssRepository: RssRepository,
                           private val executor: RssParseExecutor) : Presenter {
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {
@@ -52,7 +52,7 @@ class FeedSearchPresenter(private val view: FeedSearchView,
     }
 
     fun onFinishAddFeed(url: String, reason: RssParseResult.FailedReason) = runBlocking {
-        val newFeed = adapter.getFeedByUrl(url)
+        val newFeed = rssRepository.getFeedByUrl(url)
         if (reason === RssParseResult.FailedReason.NOT_FAILED && newFeed != null) {
             networkTaskManager.updateFeed(newFeed)
             view.showAddFeedSuccessToast()
