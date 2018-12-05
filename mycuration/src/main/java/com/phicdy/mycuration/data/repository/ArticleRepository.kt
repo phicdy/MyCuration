@@ -300,4 +300,45 @@ class ArticleRepository(val db: SQLiteDatabase) {
 
         return@withContext articles
     }
+
+    suspend fun getTop300Articles(isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+        val articles = arrayListOf<Article>()
+        var cursor: Cursor? = null
+        try {
+            // Get unread articles
+            var sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
+                    "from articles inner join feeds " +
+                    "where articles.feedId = feeds._id " +
+                    "order by articles._id "
+            sql += if (isNewestArticleTop) {
+                "desc"
+            } else {
+                "asc"
+            }
+            sql += " limit 300"
+            db.beginTransaction()
+            cursor = db.rawQuery(sql, null)
+            while (cursor.moveToNext()) {
+                val id = cursor.getInt(0)
+                val title = cursor.getString(1)
+                val url = cursor.getString(2)
+                val status = cursor.getString(3)
+                val point = cursor.getString(4)
+                val dateLong = cursor.getLong(5)
+                val feedId = cursor.getInt(6)
+                val feedTitle = cursor.getString(7)
+                val feedIconPath = cursor.getString(8)
+                val article = Article(id, title, url, status, point,
+                        dateLong, feedId, feedTitle, feedIconPath)
+                articles.add(article)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Timber.e(e)
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+        return@withContext articles
+    }
 }

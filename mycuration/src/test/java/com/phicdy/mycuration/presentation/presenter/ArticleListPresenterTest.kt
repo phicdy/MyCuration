@@ -371,7 +371,7 @@ class ArticleListPresenterTest {
         articles.add(Article(1, "hoge", "http://www.google.com",
                 Article.READ, "1", 1, 1, "feed", ""))
         `when`(adapter.getAllArticlesInAFeed(testId, true)).thenReturn(articles)
-        `when`(adapter.getTop300Articles(true)).thenReturn(articles)
+        `when`(articleRepository.getTop300Articles(true)).thenReturn(articles)
         `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(articles)
     }
 
@@ -380,7 +380,7 @@ class ArticleListPresenterTest {
         val articles = ArrayList<Article>()
         articles.add(article)
         `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(articles)
-        `when`(adapter.getTop300Articles(true)).thenReturn(articles)
+        `when`(articleRepository.getTop300Articles(true)).thenReturn(articles)
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(articles)
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
         val mockFeed = Mockito.mock(Feed::class.java)

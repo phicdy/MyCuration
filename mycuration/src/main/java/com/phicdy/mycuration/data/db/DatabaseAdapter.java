@@ -64,47 +64,7 @@ public class DatabaseAdapter {
 	}
 
 
-	public ArrayList<Article> getTop300Articles(boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<>();
-		db.beginTransaction();
-		try {
-			// Get unread articles
-			String sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
-					"from articles inner join feeds " +
-					"where articles.feedId = feeds._id " +
-					"order by articles._id ";
-			if(isNewestArticleTop) {
-				sql += "desc";
-			}else {
-				sql += "asc";
-			}
-			sql += " limit 300";
-			Cursor cursor = db.rawQuery(sql, null);
-			while (cursor.moveToNext()) {
-				int id = cursor.getInt(0);
-				String title = cursor.getString(1);
-				String url = cursor.getString(2);
-				String status = cursor.getString(3);
-				String point = cursor.getString(4);
-				long dateLong = cursor.getLong(5);
-				int feedId = cursor.getInt(6);
-				String feedTitle = cursor.getString(7);
-				String feedIconPath = cursor.getString(8);
-				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle, feedIconPath);
-				articles.add(article);
-			}
-			cursor.close();
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		return articles;
-	}
-	
-	public ArrayList<Article> searchArticles(String keyword, boolean isNewestArticleTop) {
+    public ArrayList<Article> searchArticles(String keyword, boolean isNewestArticleTop) {
 		ArrayList<Article> articles = new ArrayList<>();
 		db.beginTransaction();
 		try {

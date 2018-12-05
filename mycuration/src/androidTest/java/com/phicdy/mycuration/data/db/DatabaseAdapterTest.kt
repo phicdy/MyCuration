@@ -60,13 +60,13 @@ class DatabaseAdapterTest {
     }
 
     @Test
-    fun testSaveNewArticles() {
+    fun testSaveNewArticles() = runBlocking {
         // Reset data and insert curation at first
         adapter.deleteAll()
         insertTestCurationForArticle1()
         insertTestData()
 
-        val savedArticles = adapter.getTop300Articles(false)
+        val savedArticles = articleRepository.getTop300Articles(false)
         if (savedArticles.size != 0) {
             val (_, title, _, status) = savedArticles[0]
             assertEquals(TEST_ARTICLE1_TITLE, title)
@@ -145,7 +145,7 @@ class DatabaseAdapterTest {
         val db = DatabaseHelper(getTargetContext()).writableDatabase
         val repository = ArticleRepository(db)
         repository.saveAllStatusToReadFromToRead()
-        val changedArticles = adapter.getTop300Articles(true)
+        val changedArticles = articleRepository.getTop300Articles(true)
         var existToReadArticle = false
         for ((_, _, _, status) in changedArticles) {
             if (status == Article.TOREAD) {
