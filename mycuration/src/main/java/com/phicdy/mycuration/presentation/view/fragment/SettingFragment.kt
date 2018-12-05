@@ -13,6 +13,7 @@ import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.SettingView
@@ -20,9 +21,19 @@ import com.phicdy.mycuration.presentation.view.activity.LicenseActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.ToastHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import kotlin.coroutines.CoroutineContext
 
 
-class SettingFragment : PreferenceFragmentCompat(), SettingView {
+class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope {
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     private lateinit var presenter: SettingPresenter
 
@@ -35,6 +46,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView {
     private lateinit var prefInternalBrowser: SwitchPreference
     private lateinit var prefLicense: Preference
 
+    private val rssRepository: RssRepository by inject()
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -52,7 +64,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView {
         val launchTabStringItems = resources.getStringArray(R.array.launch_tab_items)
         val swipeDirectionItems = resources.getStringArray(R.array.swipe_direction_items_values)
         val swipeDirectionStringItems = resources.getStringArray(R.array.swipe_direction_items)
-        presenter = SettingPresenter(helper, updateIntervalHourItems,
+        presenter = SettingPresenter(helper, rssRepository, updateIntervalHourItems,
                 updateIntervalStringItems, allReadBehaviorItems, allReadBehaviorStringItems,
                 launchTabItems, launchTabStringItems,
                 swipeDirectionItems, swipeDirectionStringItems)
@@ -156,7 +168,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView {
                 }
                 val prefAddRss = findPreference(getString(R.string.key_add_rss))
                 prefAddRss.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                    presenter.onDebugAddRssClicked(DatabaseAdapter.getInstance())
+                    launch { presenter.onDebugAddRssClicked() }
                     true
                 }
             }

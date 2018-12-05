@@ -19,6 +19,8 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import kotlinx.coroutines.runBlocking
@@ -53,6 +55,7 @@ class SearchArticleTest : UiTest() {
     var mActivityTestRule = ActivityTestRule(TopActivity::class.java)
 
     private lateinit var articleRepository: ArticleRepository
+    private lateinit var rssRepository: RssRepository
 
     @Before
     fun setup() {
@@ -60,6 +63,7 @@ class SearchArticleTest : UiTest() {
         DatabaseAdapter.setUp(helper)
         val adapter = DatabaseAdapter.getInstance()
         articleRepository = ArticleRepository(helper.writableDatabase)
+        rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase))
         adapter.deleteAll()
     }
 
@@ -185,11 +189,11 @@ class SearchArticleTest : UiTest() {
     }
 
     private fun addTestRss() = runBlocking {
-        val adapter = DatabaseAdapter.getInstance()
-        val feed = adapter.saveNewFeed(testRssTitle, testRssUrl, "RSS1.0", "http://hoge,com")
+        val feed = rssRepository.store(testRssTitle, testRssUrl, "RSS1.0", "http://hoge,com")
+        assertNotNull(feed)
         // postDate: 2018-01-01 12:34:56
         val articles = arrayListOf(Article(1, testArticleTitle, testArticleUrl, Article.UNREAD,
-                testArticlePoint, testArticleDateLong, feed.id, feed.title, ""))
+                testArticlePoint, testArticleDateLong, feed!!.id, feed.title, ""))
         articleRepository.saveNewArticles(articles, feed.id)
     }
 

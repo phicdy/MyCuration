@@ -20,7 +20,7 @@ class UnreadCountRepositoryTest {
     private lateinit var curationRepository: CurationRepository
     private lateinit var unreadCountRepository: UnreadCountRepository
     private lateinit var adapter: DatabaseAdapter
-    private lateinit var rss: Feed
+    private var rss: Feed? = null
 
     @Before
     fun setUp() = runBlocking {
@@ -33,8 +33,9 @@ class UnreadCountRepositoryTest {
         adapter = DatabaseAdapter.getInstance()
         adapter.deleteAll()
 
-        rss = adapter.saveNewFeed("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
-        rssRepository.updateUnreadArticleCount(rss.id, TEST_RSS_DEFAULT_UNREAD_COUNT)
+        rss = rssRepository.store("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
+        assertNotNull(rss)
+        rssRepository.updateUnreadArticleCount(rss!!.id, TEST_RSS_DEFAULT_UNREAD_COUNT)
         unreadCountRepository.retrieve()
     }
 
@@ -45,16 +46,16 @@ class UnreadCountRepositoryTest {
 
     @Test
     fun whenAppendUnreadCount_ThenUnreadCountIncreases() = runBlocking {
-        unreadCountRepository.appendUnreadArticleCount(rss.id, 10)
-        val updatedRss = rssRepository.getFeedWithUnreadCountBy(rss.id)
+        unreadCountRepository.appendUnreadArticleCount(rss!!.id, 10)
+        val updatedRss = rssRepository.getFeedWithUnreadCountBy(rss!!.id)
         assertNotNull(updatedRss)
         assertThat(updatedRss?.unreadAriticlesCount, `is`(TEST_RSS_DEFAULT_UNREAD_COUNT + 10))
     }
 
     @Test
     fun whenDecreaseCount_ThenUnreadCountDecreases() = runBlocking {
-        unreadCountRepository.decreaseCount(rss.id, 4)
-        val updatedRss = rssRepository.getFeedWithUnreadCountBy(rss.id)
+        unreadCountRepository.decreaseCount(rss!!.id, 4)
+        val updatedRss = rssRepository.getFeedWithUnreadCountBy(rss!!.id)
         assertNotNull(updatedRss)
         assertThat(updatedRss?.unreadAriticlesCount, `is`(1))
         assertThat(unreadCountRepository.total, `is`(TEST_RSS_DEFAULT_UNREAD_COUNT - 4))
@@ -62,8 +63,8 @@ class UnreadCountRepositoryTest {
 
     @Test
     fun whenTooBigDecreaseCount_ThenUnreadCountWillBe0() = runBlocking {
-        unreadCountRepository.decreaseCount(rss.id, TEST_RSS_DEFAULT_UNREAD_COUNT + 1)
-        val updatedRss = rssRepository.getFeedWithUnreadCountBy(rss.id)
+        unreadCountRepository.decreaseCount(rss!!.id, TEST_RSS_DEFAULT_UNREAD_COUNT + 1)
+        val updatedRss = rssRepository.getFeedWithUnreadCountBy(rss!!.id)
         assertNotNull(updatedRss)
         assertThat(updatedRss?.unreadAriticlesCount, `is`(0))
         assertThat(unreadCountRepository.total, `is`(0))

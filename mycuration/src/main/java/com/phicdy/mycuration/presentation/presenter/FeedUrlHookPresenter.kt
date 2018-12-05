@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
@@ -16,7 +15,6 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
                            private val dataString: String,
                            private val extrasText: CharSequence,
                            private val rssRepository: RssRepository,
-                           private val dbAdapter: DatabaseAdapter,
                            private val networkTaskManager: NetworkTaskManager,
                            private val parser: RssParser) {
 
@@ -41,7 +39,7 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
         }
     }
 
-    fun create() {
+    suspend fun create() {
         if (action != Intent.ACTION_VIEW && action != Intent.ACTION_SEND) {
             view.finishView()
             return
@@ -58,10 +56,10 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
         }
     }
 
-    private fun handle(action: String, url: String) {
+    private suspend fun handle(action: String, url: String) {
         if (action == Intent.ACTION_VIEW || action == Intent.ACTION_SEND) {
             if (UrlUtil.isCorrectUrl(url)) {
-                val executor = RssParseExecutor(parser, dbAdapter)
+                val executor = RssParseExecutor(parser, rssRepository)
                 executor.start(url, callback)
             } else {
                 view.showInvalidUrlErrorToast()

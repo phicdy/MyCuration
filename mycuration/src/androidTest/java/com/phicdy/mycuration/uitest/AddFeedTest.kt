@@ -8,22 +8,19 @@ import android.support.test.uiautomator.By
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.UiObject2
 import android.support.test.uiautomator.Until
-
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
-
+import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertThat
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.assertNull
-import junit.framework.Assert.assertTrue
-import junit.framework.Assert.fail
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
 
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = 18)

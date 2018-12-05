@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -21,7 +20,6 @@ import org.mockito.Mockito.verify
 class FeedUrlHookPresenterTest {
 
     private lateinit var networkTaskManager: NetworkTaskManager
-    private lateinit var adapter: DatabaseAdapter
     private val rssRepository = mock(RssRepository::class.java)
     private lateinit var presenter: FeedUrlHookPresenter
     private lateinit var parser: RssParser
@@ -35,12 +33,10 @@ class FeedUrlHookPresenterTest {
                 mock(CurationRepository::class.java),
                 mock(UnreadCountRepository::class.java)
         )
-        adapter = Mockito.mock(DatabaseAdapter::class.java)
-        DatabaseAdapter.inject(Mockito.mock(DatabaseAdapter::class.java))
         parser = Mockito.mock(RssParser::class.java)
         view = Mockito.mock(FeedUrlHookView::class.java)
         presenter = FeedUrlHookPresenter(view, "", "", "", rssRepository,
-                adapter, networkTaskManager, parser)
+                networkTaskManager, parser)
     }
 
     @Test
@@ -52,7 +48,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when invalid action comes then finish`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, "hogehoge", "http://www.google.com", "",
-                rssRepository, adapter, networkTaskManager, parser)
+                rssRepository, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).finishView()
     }
@@ -60,7 +56,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when action view and invalid url comes then toast shows`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, Intent.ACTION_VIEW, "hogehoge", "",
-                rssRepository, adapter, networkTaskManager, parser)
+                rssRepository, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).showInvalidUrlErrorToast()
     }
@@ -68,7 +64,7 @@ class FeedUrlHookPresenterTest {
     @Test
     fun `when action send and invalid url comes then toast shows`() = runBlocking {
         presenter = FeedUrlHookPresenter(view, Intent.ACTION_SEND, "", "hogehoge",
-                rssRepository, adapter, networkTaskManager, parser)
+                rssRepository, networkTaskManager, parser)
         presenter.create()
         verify(view, times(1)).showInvalidUrlErrorToast()
     }

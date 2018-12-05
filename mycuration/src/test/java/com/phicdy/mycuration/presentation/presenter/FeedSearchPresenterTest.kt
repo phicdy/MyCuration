@@ -63,40 +63,40 @@ class FeedSearchPresenterTest {
     }
 
     @Test
-    fun `when handle url then progress dialog shows`() {
+    fun `when handle url then progress dialog shows`() = runBlocking {
         presenter.handle("http://www.google.com")
         verify(view, times(1)).showProgressBar()
     }
 
     @Test
-    fun `when handle url then the url is not Loaded in web view`() {
+    fun `when handle url then the url is not Loaded in web view`() = runBlocking {
         presenter.handle("http://www.google.com")
         verify(view, times(0)).load("http://www.google.com")
     }
 
     @Test
-    fun `when handle not url then google search is executed in web view`() {
+    fun `when handle not url then google search is executed in web view`() = runBlocking {
         presenter.handle("abc")
         val url = "https://www.google.co.jp/search?q=abc"
         verify(view, times(1)).load(url)
     }
 
     @Test
-    fun `when handle not url Japanese then google search is executed in web view`() {
+    fun `when handle not url Japanese then google search is executed in web view`() = runBlocking {
         presenter.handle("あいうえお")
         val url = "https://www.google.co.jp/search?q=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A"
         verify(view, times(1)).load(url)
     }
 
     @Test
-    fun `when handle empty google search is executed in web view`() {
+    fun `when handle empty google search is executed in web view`() = runBlocking {
         presenter.handle("")
         val url = "https://www.google.co.jp/search?q="
         verify(view, times(1)).load(url)
     }
 
     @Test
-    fun `when handle not url then progress dialog does not show`() {
+    fun `when handle not url then progress dialog does not show`() = runBlocking {
         presenter.handle("abc")
         verify(view, times(0)).showProgressBar()
     }
@@ -174,7 +174,7 @@ class FeedSearchPresenterTest {
     }
 
     @Test
-    fun `when search Google then search url is set`() {
+    fun `when search Google then search url is set`() = runBlocking {
         presenter.handle("hoge")
         verify(view, times(1)).setSearchViewTextFrom("https://www.google.co.jp/search?q=hoge")
     }

@@ -61,7 +61,7 @@ class RssParserTest {
     @Test
     fun testParseFeedInfoRSS1() = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://news.yahoo.co.jp/pickup/rss.xml", callback)
         try {
             Thread.sleep(10000)
@@ -86,7 +86,7 @@ class RssParserTest {
     fun testParseFeedInfoRSS1_rdf() = runBlocking {
         val testUrl = "http://b.hatena.ne.jp/hotentry/it.rss"
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)
         try {
             Thread.sleep(10000)
@@ -104,7 +104,7 @@ class RssParserTest {
     @Test
     fun testParseFeedInfoRSS2() = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://hiroki.jp/feed/", callback)
         try {
             Thread.sleep(10000)
@@ -148,7 +148,7 @@ class RssParserTest {
         // Publickey
         val publicKeyFeedUrl = "https://www.publickey1.jp/atom.xml"
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start(publicKeyFeedUrl, callback)
         try {
             Thread.sleep(10000)
@@ -196,7 +196,7 @@ class RssParserTest {
     fun testParseFeedInfoTopHtml() = runBlocking {
         // Test top URL
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://gigazine.net", callback)
         try {
             Thread.sleep(10000)
@@ -214,7 +214,7 @@ class RssParserTest {
     @Test
     fun testParseFeedInfoTopHtml2() = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://tech.mercari.com/", callback)
         try {
             Thread.sleep(10000)
@@ -235,7 +235,7 @@ class RssParserTest {
     fun testParseFeedInfoTopHtmlFeedURLStartWithSlash() = runBlocking {
         // //smhn.info/feed is returned
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://smhn.info", callback)
         try {
             Thread.sleep(10000)
@@ -254,7 +254,7 @@ class RssParserTest {
     @Test
     fun testParseFeedInfoGzip() = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://ground-sesame.hatenablog.jp", callback)
         try {
             Thread.sleep(10000)
@@ -426,7 +426,7 @@ class RssParserTest {
 
     private fun addNewFeedAndCheckResult(testUrl: String, expectedFeedUrl: String, expectedSiteUrl: String) = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)
         try {
             Thread.sleep(10000)

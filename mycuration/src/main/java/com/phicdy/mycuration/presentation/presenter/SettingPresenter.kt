@@ -1,11 +1,12 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.util.PreferenceHelper
 
 class SettingPresenter(private val helper: PreferenceHelper,
+                       private val rssRepository: RssRepository,
                        private val updateIntervalHourItems: Array<String>,
                        private val updateIntervalStringItems: Array<String>,
                        private val allReadBehaviorItems: Array<String>,
@@ -148,32 +149,32 @@ class SettingPresenter(private val helper: PreferenceHelper,
         view.startLicenseActivity()
     }
 
-    fun onDebugAddRssClicked(adapter: DatabaseAdapter) {
-        adapter.saveNewFeed(
+    suspend fun onDebugAddRssClicked() {
+        rssRepository.store(
                 "Yahoo!ニュース・トピックス - 主要",
                 "https://news.yahoo.co.jp/pickup/rss.xml",
                 "RSS2.0",
                 "https://news.yahoo.co.jp"
         )
-        adapter.saveNewFeed(
+        rssRepository.store(
                 "Yahoo!ニュース・トピックス - 国際",
                 "https://news.yahoo.co.jp/pickup/world/rss.xml",
                 "RSS2.0",
                 "https://news.yahoo.co.jp"
         )
-        adapter.saveNewFeed(
+        rssRepository.store(
                 "Yahoo!ニュース・トピックス - エンタメ",
                 "https://news.yahoo.co.jp/pickup/entertainment/rss.xml",
                 "RSS2.0",
                 "https://news.yahoo.co.jp"
         )
-        adapter.saveNewFeed(
+        rssRepository.store(
                 "Yahoo!ニュース・トピックス - IT",
                 "https://news.yahoo.co.jp/pickup/computer/rss.xml",
                 "RSS2.0",
                 "https://news.yahoo.co.jp"
         )
-        adapter.saveNewFeed(
+        rssRepository.store(
                 "Yahoo!ニュース・トピックス - 地域",
                 "https://news.yahoo.co.jp/pickup/local/rss.xml",
                 "RSS2.0",

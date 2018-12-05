@@ -268,6 +268,47 @@ class RssRepository(private val db: SQLiteDatabase,
         }
     }
 
+    /**
+     * @return Stored RSS or null if failed or same RSS exist
+     */
+    suspend fun store(feedTitle: String, feedUrl: String, format: String, siteUrl: String): Feed? = withContext(Dispatchers.IO) {
+        var rss: Feed? = null
+        var isBeginTransaction = false
+        try {
+            // Get same feeds from DB
+            val selection = Feed.TITLE + "=\"$feedTitle\" and " + Feed.URL + "=\"$feedUrl\" and "+
+                    Feed.FORMAT + "=\"$format\""
+            val stored = query(arrayOf(Feed.ID), selection)
+            if (stored != null) return@withContext null
+
+            // If there aren't same feeds in DB,Insert into DB
+            db.beginTransaction()
+            isBeginTransaction = true
+            val values = ContentValues()
+            values.put(Feed.TITLE, feedTitle)
+            values.put(Feed.URL, feedUrl)
+            values.put(Feed.FORMAT, format)
+            values.put(Feed.ICON_PATH, Feed.DEDAULT_ICON_PATH)
+            values.put(Feed.SITE_URL, siteUrl)
+            values.put(Feed.UNREAD_ARTICLE, 0)
+            val id = db.insert(Feed.TABLE_NAME, null, values)
+            rss = Feed(
+                    id = id.toInt(),
+                    title = feedTitle,
+                    url = feedUrl,
+                    format = format,
+                    siteUrl = siteUrl
+            )
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            if (isBeginTransaction) db.endTransaction()
+        }
+
+        return@withContext rss
+    }
+
     suspend fun getFeedByUrl(feedUrl: String): Feed? = withContext(Dispatchers.IO) {
         val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
         val selection = Feed.URL + " = \"" + feedUrl + "\""
@@ -316,4 +357,66 @@ class RssRepository(private val db: SQLiteDatabase,
         return@coroutineScope feed
     }
 
+    suspend fun addManyFeeds() {
+        val feeds = ArrayList<Feed>()
+        //RSS 2.0
+        //		feeds.add(new Feed(0, "スポーツナビ - ピックアップ　ゲーム",
+        //				"http://sports.yahoo.co.jp/rss/pickup_game/pc"));
+        //		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - トップ",
+        //				"http://rss.dailynews.yahoo.co.jp/fc/rss.xml"));
+        //		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 海外",
+        //				"http://rss.dailynews.yahoo.co.jp/fc/world/rss.xml"));
+        //		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - 経済",
+        //				"http://rss.dailynews.yahoo.co.jp/fc/economy/rss.xml"));
+        //		feeds.add(new Feed(0, "Yahoo!ニュース・トピックス - エンターテインメント",
+        //				"http://rss.dailynews.yahoo.co.jp/fc/entertainment/rss.xml"));
+        feeds.add(Feed(0, "IT速報",
+                "http://blog.livedoor.jp/itsoku/index.rdf", "", "http://blog.livedoor.jp/itsoku/", 0, ""))
+        feeds.add(Feed(0, "あじゃじゃしたー",
+                "http://blog.livedoor.jp/chihhylove/index.rdf", "", "http://blog.livedoor.jp/chihhylove/", 0, ""))
+        feeds.add(Feed(0, "はてなブログ人気エントリー",
+                "http://b.hatena.ne.jp/hotentry.rss", "", "http://b.hatena.ne.jp", 0, ""))
+        feeds.add(Feed(0, "はてなブックマーク - 人気エントリー - テクノロジー",
+                "http://b.hatena.ne.jp/hotentry/it.rss", "", "http://b.hatena.ne.jp/hotentry", 0, ""))
+        feeds.add(Feed(0, "暇人速報",
+                "http://himasoku.com/index.rdf", "", "http://himasoku.com", 0, ""))
+        feeds.add(Feed(0, "ドメサカブログ",
+                "http://blog.livedoor.jp/domesoccer/index.rdf", "", "http://blog.livedoor.jp/domesoccer/", 0, ""))
+        feeds.add(Feed(0, "きんどう",
+                "http://kindou.info/feed", "", "http://kindou.info", 0, ""))
+        feeds.add(Feed(0, "GGSOKU - ガジェット速報",
+                "http://ggsoku.com/feed", "", "http://ggsoku.com", 0, ""))
+        feeds.add(Feed(0, "Act as Professional",
+                "http://hiroki.jp/feed/", "", "http://hiroki.jp", 0, ""))
+        feeds.add(Feed(0, "Developers.IO",
+                "http://dev.classmethod.jp/feed/", "", "http://dev.classmethod.jp", 0, ""))
+        feeds.add(Feed(0, "GREE Engineers' Blog",
+                "http://labs.gree.jp/blog/feed", "", "http://labs.gree.jp/blog", 0, ""))
+        feeds.add(Feed(0, "HTC速報",
+                "http://htcsoku.info/feed/", "", "http://htcsoku.info", 0, ""))
+        feeds.add(Feed(0, "Hatena Developer Blog",
+                "http://developer.hatenastaff.com/rss", "", "http://developer.hatenastaff.com/", 0, ""))
+        feeds.add(Feed(0, "ITmedia 総合記事一覧",
+                "http://rss.rssad.jp/rss/itmtop/2.0/itmedia_all.xml", "", "http://www.itmedia.co.jp/", 0, ""))
+        feeds.add(Feed(0, "Publickey",
+                "http://www.publickey1.jp/atom.xml", "", "http://www.publickey1.jp/", 0, ""))
+        feeds.add(Feed(0, "Tech Booster",
+                "http://techbooster.jpn.org/feed/", "", "http://techbooster.jpn.org", 0, ""))
+        feeds.add(Feed(0, "TechCrunch Japan",
+                "http://jp.techcrunch.com/feed/", "", "http://jp.techcrunch.com", 0, ""))
+        feeds.add(Feed(0, "あんどろいど速報",
+                "http://androidken.blog119.fc2.com/?xml", "", "http://androidken.blog119.fc2.com/", 0, ""))
+        feeds.add(Feed(0, "＠IT 全フォーラム 最新記事一覧",
+                "http://www.atmarkit.co.jp/", "", "http://rss.rssad.jp/rss/itmatmarkit/rss.xml", 0, ""))
+        //atom
+        //		feeds.add(new Feed(0, "TweetBuzz - 注目エントリー",
+        //				"http://feeds.feedburner.com/tb-hotentry"));
+        //RDF
+        //		feeds.add(new Feed(0, "二十歳街道まっしぐら",
+        //				"http://20kaido.com/index.rdf"));
+
+        for ((_, title, url, _, _, _, siteUrl) in feeds) {
+            store(title, url, "RSS2.0", siteUrl)
+        }
+    }
 }

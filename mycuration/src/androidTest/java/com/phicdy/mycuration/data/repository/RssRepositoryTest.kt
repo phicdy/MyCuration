@@ -38,17 +38,18 @@ class RssRepositoryTest {
 
     @Test
     fun whenDeleteRSSThenTheRSSAndRelatedArticlesAndFiltersAreDeleted() = runBlocking {
-        val rss = adapter.saveNewFeed("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
+        val rss = rssRepository.store("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
+        assertNotNull(rss)
         val rssList = arrayListOf(rss)
         adapter.saveNewFilter("hoge", rssList, "keyword", "")
 
         // Store filter that relates two RSS, means not deleted by deleting one of the RSS
-        val rss2 = adapter.saveNewFeed("testrss2", "http://www.hoge.com", "RSS", "http://www.hoge.com")
+        val rss2 = rssRepository.store("testrss2", "http://www.hoge.com", "RSS", "http://www.hoge.com")
         rssList += rss2
         adapter.saveNewFilter(NOT_DELETED_FILTER_TITLE, rssList, NOT_DELETED_FILTER_KEYWORD, "")
 
         // Delete rss
-        val rssId = rss.id
+        val rssId = rss!!.id
         assertTrue(rssRepository.deleteRss(rssId))
 
         // Check the rss and related data was deleted

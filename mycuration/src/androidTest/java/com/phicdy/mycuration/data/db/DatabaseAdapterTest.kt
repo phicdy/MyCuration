@@ -96,7 +96,7 @@ class DatabaseAdapterTest {
     }
 
     private fun insertTestData() = runBlocking {
-        adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
+        rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         val id = rssRepository.getFeedByUrl(TEST_FEED_URL)?.id ?: -1
 
         val now = Date().time

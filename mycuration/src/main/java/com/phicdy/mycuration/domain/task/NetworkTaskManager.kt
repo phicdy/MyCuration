@@ -12,13 +12,16 @@ import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.util.TextUtil
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Url
+import timber.log.Timber
 import java.io.IOException
 import java.net.URI
 
@@ -56,7 +59,7 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
         val service = retrofit.create(FeedRequestService::class.java)
         val call = service.feeds(uri.path)
         try {
-            val response = call.execute()
+            val response = withContext(Dispatchers.IO) { call.execute() }
             if (response.body() == null) {
                 return@coroutineScope
             }
@@ -89,9 +92,9 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                 rssRepository.saveIconPath(feed.siteUrl, iconUrl)
             }
         } catch (e: IOException) {
-
+            Timber.e(e)
         } catch (e: RuntimeException) {
-
+            Timber.e(e)
         }
     }
 }

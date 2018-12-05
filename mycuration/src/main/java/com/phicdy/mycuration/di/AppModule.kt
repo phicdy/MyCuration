@@ -86,7 +86,7 @@ val appModule = module {
                 view = view,
                 rssRepository = get(),
                 networkTaskManager = get(),
-                executor = RssParseExecutor(RssParser(), DatabaseAdapter.getInstance())
+                executor = RssParseExecutor(RssParser(), get())
         )
     }
 
@@ -98,7 +98,6 @@ val appModule = module {
                 action = action,
                 dataString = dataString,
                 extrasText = extrasText,
-                dbAdapter = DatabaseAdapter.getInstance(),
                 parser = RssParser()
         )
     }

@@ -35,7 +35,7 @@ class FeedSearchPresenter(private val view: FeedSearchView,
         view.startFeedUrlHookActivity(url)
     }
 
-    fun handle(query: String) {
+    suspend fun handle(query: String) {
         if (UrlUtil.isCorrectUrl(query)) {
             view.showProgressBar()
             executor.start(query, callback)

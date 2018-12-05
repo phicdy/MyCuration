@@ -12,12 +12,21 @@ import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
 import org.koin.android.scope.ext.android.getOrCreateScope
 import org.koin.core.parameter.parametersOf
+import kotlin.coroutines.CoroutineContext
 
-class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView {
+class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope {
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     private val presenter: FeedUrlHookPresenter by inject { parametersOf(
             this,
@@ -31,7 +40,7 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_url_hook)
         bindScope(getOrCreateScope("rss_url_hook"))
-        presenter.create()
+        launch { presenter.create() }
     }
 
     override fun attachBaseContext(newBase: Context) {
