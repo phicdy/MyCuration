@@ -259,4 +259,45 @@ class ArticleRepository(val db: SQLiteDatabase) {
             db.endTransaction()
         }
     }
+
+    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+        val articles = arrayListOf<Article>()
+        var cursor: Cursor? = null
+        try {
+            // Get unread articles
+            var sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
+                    "from articles inner join feeds " +
+                    "where articles.status = \"unread\" and articles.feedId = feeds._id " +
+                    "order by date "
+            sql += if (isNewestArticleTop) {
+                "desc"
+            } else {
+                "asc"
+            }
+            db.beginTransaction()
+            cursor = db.rawQuery(sql, null)
+            while (cursor.moveToNext()) {
+                val id = cursor.getInt(0)
+                val title = cursor.getString(1)
+                val url = cursor.getString(2)
+                val status = Article.UNREAD
+                val point = cursor.getString(3)
+                val dateLong = cursor.getLong(4)
+                val feedId = cursor.getInt(5)
+                val feedTitle = cursor.getString(6)
+                val feedIconPath = cursor.getString(7)
+                val article = Article(id, title, url, status, point,
+                        dateLong, feedId, feedTitle, feedIconPath)
+                articles.add(article)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Timber.e(e)
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+
+        return@withContext articles
+    }
 }

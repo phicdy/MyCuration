@@ -354,6 +354,7 @@ class ArticleListPresenterTest {
 
     private fun mockEmptyDatabase(testId: Int) = runBlocking {
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(ArrayList())
+        `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(arrayListOf())
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(false)
         `when`(articleRepository.isExistArticle()).thenReturn(false)
         `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
@@ -363,6 +364,7 @@ class ArticleListPresenterTest {
     private fun mock1ReadArticleDatabase(testId: Int) = runBlocking {
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(ArrayList())
         `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
+        `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(arrayListOf())
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
         `when`(articleRepository.isExistArticle()).thenReturn(true)
         val articles = ArrayList<Article>()
@@ -377,7 +379,7 @@ class ArticleListPresenterTest {
         val testId = 1
         val articles = ArrayList<Article>()
         articles.add(article)
-        `when`(adapter.getAllUnreadArticles(true)).thenReturn(articles)
+        `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(articles)
         `when`(adapter.getTop300Articles(true)).thenReturn(articles)
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(articles)
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
@@ -394,6 +396,7 @@ class ArticleListPresenterTest {
                 Article.UNREAD, "1", 1, 2, "feed", ""))
         `when`(adapter.getUnreadArticlesInAFeed(testId, true)).thenReturn(unreadArticles)
         `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(unreadArticles)
+        `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(unreadArticles)
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
         `when`(articleRepository.isExistArticle()).thenReturn(true)
         val readArticles = ArrayList<Article>()
