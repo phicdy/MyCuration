@@ -6,6 +6,7 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.rss.Article
+import com.phicdy.mycuration.data.rss.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -339,6 +340,60 @@ class ArticleRepository(val db: SQLiteDatabase) {
             cursor?.close()
             db.endTransaction()
         }
+        return@withContext articles
+    }
+
+    suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+        var searchKeyWord = keyword
+        val articles = arrayListOf<Article>()
+        if (searchKeyWord.contains("%")) {
+            searchKeyWord = searchKeyWord.replace("%", "$%")
+        }
+        if (searchKeyWord.contains("_")) {
+            searchKeyWord = searchKeyWord.replace("_", "$" + "_")
+        }
+        var columns =  arrayOf(
+                Article.ID, Article.TITLE, Article.URL, Article.STATUS, Article.POINT, Article.DATE
+        ).joinToString(postfix = ", ") {
+            Article.TABLE_NAME + "." + it
+        }
+        columns += arrayOf(Feed.TITLE, Feed.ICON_PATH).joinToString { Feed.TABLE_NAME + "." + it }
+        var sql = "select " + columns +
+                " from " + Article.TABLE_NAME + " inner join " + Feed.TABLE_NAME +
+                " where " + Article.TABLE_NAME + "." + Article.TITLE + " like '%" + searchKeyWord + "%' escape '$' and " +
+                Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
+                " order by " + Article.DATE
+        sql += if (isNewestArticleTop) {
+            " desc"
+        } else {
+            " asc"
+        }
+
+        var cursor: Cursor? = null
+        try {
+            db.beginTransaction()
+            cursor = db.rawQuery(sql, null)
+            while (cursor.moveToNext()) {
+                val id = cursor.getInt(0)
+                val title = cursor.getString(1)
+                val url = cursor.getString(2)
+                val status = cursor.getString(3)
+                val point = cursor.getString(4)
+                val dateLong = cursor.getLong(5)
+                val feedTitle = cursor.getString(6)
+                val feedIconPath = cursor.getString(7)
+                val article = Article(id, title, url, status, point,
+                        dateLong, 0, feedTitle, feedIconPath)
+                articles.add(article)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+
         return@withContext articles
     }
 }

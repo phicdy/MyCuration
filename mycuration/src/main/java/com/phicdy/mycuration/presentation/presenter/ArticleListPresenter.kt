@@ -96,7 +96,7 @@ class ArticleListPresenter(private val feedId: Int,
     private suspend fun loadAllArticles(): ArrayList<Article> = coroutineScope {
         var allArticles: ArrayList<Article>
         if (isSearchAction) {
-            allArticles = adapter.searchArticles(query, preferenceHelper.sortNewArticleTop)
+            allArticles = articleRepository.searchArticles(query, preferenceHelper.sortNewArticleTop)
         } else if (curationId != DEFAULT_CURATION_ID) {
             allArticles = adapter.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0) {

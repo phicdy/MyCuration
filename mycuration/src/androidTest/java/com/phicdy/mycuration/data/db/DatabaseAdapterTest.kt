@@ -88,13 +88,6 @@ class DatabaseAdapterTest {
         assertEquals(TEST_ARTICLE1_TITLE, articles[0].title)
     }
 
-    @Test
-    fun testSearchArticles() {
-        val list = adapter.searchArticles("記事1abdｄｆｇ", true)
-        assertEquals(1, list.size)
-        assertEquals("記事1abdｄｆｇ", list[0].title)
-    }
-
     private fun insertTestData() = runBlocking {
         rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         val id = rssRepository.getFeedByUrl(TEST_FEED_URL)?.id ?: -1

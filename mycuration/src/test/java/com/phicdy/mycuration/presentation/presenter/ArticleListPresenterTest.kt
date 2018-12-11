@@ -319,6 +319,7 @@ class ArticleListPresenterTest {
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository, preferenceHelper,
                 articleRepository, unreadCountRepository,
                 "ghaeogha", Intent.ACTION_SEARCH)
+        `when`(articleRepository.searchArticles( "ghaeogha", true)).thenReturn(arrayListOf())
         val view = MockView()
         presenter.setView(view)
         presenter.createView()
@@ -335,21 +336,21 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Search article when search action`() {
+    fun `Search article when search action`() = runBlocking {
         val article = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         mock1ArticleDatabase(article)
         val query = "query"
+        `when`(articleRepository.searchArticles(query, true)).thenReturn(arrayListOf(article))
+
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository, preferenceHelper, articleRepository,
                 unreadCountRepository, query, Intent.ACTION_SEARCH)
         val view = MockView()
         presenter.setView(view)
-        runBlocking {
-            presenter.createView()
-        }
-        verify(adapter, times(1)).searchArticles(query, true)
-
+        presenter.createView()
+        verify(articleRepository, times(1)).searchArticles(query, true)
+        return@runBlocking
     }
 
     private fun mockEmptyDatabase(testId: Int) = runBlocking {
