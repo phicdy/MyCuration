@@ -397,15 +397,15 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun getAllArticlesInAFeed(feedId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
-        return getArticlesInAFeed(feedId, null, isNewestArticleTop)
+    suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
+        return getArticlesOfRss(rssId, null, isNewestArticleTop)
     }
 
-    suspend fun getUnreadArticlesInAFeed(feedId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
-        return getArticlesInAFeed(feedId, Article.UNREAD, isNewestArticleTop)
+    suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
+        return getArticlesOfRss(rssId, Article.UNREAD, isNewestArticleTop)
     }
 
-    private suspend fun getArticlesInAFeed(feedId: Int, searchStatus: String?, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+    private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
         val articles = arrayListOf<Article>()
         var cursor: Cursor? = null
         val columns = arrayOf(
@@ -416,7 +416,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
                 Article.POINT,
                 Article.DATE
         )
-        val selection = Article.FEEDID + " = " + feedId +
+        val selection = Article.FEEDID + " = " + rssId +
                 if (searchStatus == null) "" else " and " + Article.STATUS + " = '" + searchStatus + "'"
         val orderBy = Article.DATE + if (isNewestArticleTop) " desc" else " asc"
         try {
@@ -430,7 +430,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
                 val point = cursor.getString(4)
                 val dateLong = cursor.getLong(5)
                 val article = Article(id, title, url, status, point,
-                        dateLong, feedId, "", "")
+                        dateLong, rssId, "", "")
                 articles.add(article)
             }
             db.setTransactionSuccessful()

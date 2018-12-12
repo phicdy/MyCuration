@@ -108,9 +108,9 @@ class ArticleListPresenter(private val feedId: Int,
                 allArticles = articleRepository.getTop300Articles(preferenceHelper.sortNewArticleTop)
             }
         } else {
-            allArticles = articleRepository.getUnreadArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
+            allArticles = articleRepository.getUnreadArticlesOfRss(feedId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0 && articleRepository.isExistArticleOf(feedId)) {
-                allArticles = articleRepository.getAllArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
+                allArticles = articleRepository.getAllArticlesOfRss(feedId, preferenceHelper.sortNewArticleTop)
             }
         }
         return@coroutineScope allArticles
