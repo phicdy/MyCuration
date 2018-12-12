@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.domain.task
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
@@ -65,8 +64,7 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
             }
             val inputStream = response.body()?.byteStream() ?: return@coroutineScope
             val parser = RssParser()
-            val dbAdapter = DatabaseAdapter.getInstance()
-            val latestDate = dbAdapter.getLatestArticleDate(feed.id)
+            val latestDate = articleRepository.getLatestArticleDate(feed.id)
             val articles = parser.parseXml(inputStream, latestDate)
 
             if (articles.size > 0) {

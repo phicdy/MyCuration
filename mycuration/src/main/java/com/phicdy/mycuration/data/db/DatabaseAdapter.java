@@ -64,24 +64,6 @@ public class DatabaseAdapter {
 	}
 
 
-	public long getLatestArticleDate(int feedId) {
-		long latestDate = 0;
-		try {
-			String sql = "select " + Article.DATE + " from " + Article.TABLE_NAME +
-					" where " + Article.FEEDID + " = " + feedId +
-					" order by " + Article.DATE + " desc limit 1";
-			Cursor cur = db.rawQuery(sql, null);
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
-				latestDate = cur.getLong(0);
-			}
-			cur.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-        return latestDate;
-	}
-
 	public @NonNull ArrayList<Filter> getEnabledFiltersOfFeed(int feedId) {
 		ArrayList<Filter> filterList = new ArrayList<>();
 		db.beginTransaction();

@@ -57,8 +57,18 @@ class ArticleRepositoryTest {
     }
 
     @Test
-    fun aaa() {
-        assertEquals(1, 1)
+    fun whenGetLatestArticleDate_ThenReturnLatestDate() = runBlocking {
+        val rss = rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
+        rss?.let {
+            val now = Date().time
+            val latestDate = now + 1
+            val testUnreadArticles = arrayListOf(
+                    Article(1, "title", TEST_ARTICLE_URL, Article.UNREAD, "", now, rss.id, "", ""),
+                    Article(2, "title2", TEST_ARTICLE_URL, Article.UNREAD, "", latestDate, rss.id, "", "")
+            )
+            articleRepository.saveNewArticles(testUnreadArticles, rss.id)
+            assertEquals(latestDate, articleRepository.getLatestArticleDate(rss.id))
+        } ?: fail("RSS is null")
     }
 
     companion object {

@@ -443,4 +443,28 @@ class ArticleRepository(val db: SQLiteDatabase) {
 
         return@withContext articles
     }
+
+    suspend fun getLatestArticleDate(feedId: Int): Long = withContext(Dispatchers.IO) {
+        var latestDate: Long = 0
+        var cursor: Cursor? = null
+        try {
+            val sql = "select " + Article.DATE + " from " + Article.TABLE_NAME +
+                    " where " + Article.FEEDID + " = " + feedId +
+                    " order by " + Article.DATE + " desc limit 1"
+            db.beginTransaction()
+            cursor = db.rawQuery(sql, null)
+            if (cursor.count > 0) {
+                cursor.moveToFirst()
+                latestDate = cursor.getLong(0)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+
+        return@withContext latestDate
+    }
 }
