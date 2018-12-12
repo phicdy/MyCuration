@@ -108,7 +108,7 @@ class ArticleListPresenter(private val feedId: Int,
                 allArticles = articleRepository.getTop300Articles(preferenceHelper.sortNewArticleTop)
             }
         } else {
-            allArticles = adapter.getUnreadArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
+            allArticles = articleRepository.getUnreadArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0 && articleRepository.isExistArticleOf(feedId)) {
                 allArticles = adapter.getAllArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
             }

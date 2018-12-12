@@ -396,4 +396,41 @@ class ArticleRepository(val db: SQLiteDatabase) {
 
         return@withContext articles
     }
+
+    suspend fun getUnreadArticlesInAFeed(feedId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+        val articles = arrayListOf<Article>()
+        var cursor: Cursor? = null
+        val columns = arrayOf(
+                Article.ID,
+                Article.TITLE,
+                Article.URL,
+                Article.POINT,
+                Article.DATE
+        )
+        val selection = Article.STATUS + " = '" + Article.UNREAD + "' and " + Article.FEEDID + " = " + feedId
+        val orderBy = Article.DATE + if (isNewestArticleTop) " desc" else " asc"
+        try {
+            db.beginTransaction()
+            cursor = db.query(Article.TABLE_NAME, columns, selection, null, null, null, orderBy)
+            while (cursor.moveToNext()) {
+                val id = cursor.getInt(0)
+                val title = cursor.getString(1)
+                val url = cursor.getString(2)
+                val status = Article.UNREAD
+                val point = cursor.getString(3)
+                val dateLong = cursor.getLong(4)
+                val article = Article(id, title, url, status, point,
+                        dateLong, feedId, "", "")
+                articles.add(article)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Timber.e(e)
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+
+        return@withContext articles
+    }
 }

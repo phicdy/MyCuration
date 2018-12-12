@@ -77,7 +77,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
         var delaySec = 0
         var totalNum = 0
         for (feed in feeds) {
-            val unreadArticles = dbAdapter.getUnreadArticlesInAFeed(feed.id, true)
+            val unreadArticles = articleRepository.getUnreadArticlesInAFeed(feed.id, true)
             if (unreadArticles.isEmpty()) continue
             for (unreadArticle in unreadArticles) {
                 if (unreadArticle.point != Article.DEDAULT_HATENA_POINT && !isWifiConnected) continue
