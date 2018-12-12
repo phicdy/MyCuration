@@ -64,42 +64,6 @@ public class DatabaseAdapter {
 	}
 
 
-    public ArrayList<Article> getAllArticlesInAFeed(int feedId, boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<>();
-		db.beginTransaction();
-		try {
-			// Get unread articles
-			String sql = "select " + Article.ID + ", " + Article.TITLE +  ", " + Article.URL + ", " + Article.STATUS + "" +
-					", " + Article.POINT + ", " + Article.DATE + " from " + Article.TABLE_NAME + " where " + Article.FEEDID + " = "
-					+ feedId + " order by " + Article.DATE;
-			if(isNewestArticleTop) {
-				sql += " desc";
-			}else {
-				sql += " asc";
-			}
-			Cursor cursor = db.rawQuery(sql, null);
-			while (cursor.moveToNext()) {
-				int id = cursor.getInt(0);
-				String title = cursor.getString(1);
-				String url = cursor.getString(2);
-				String status = cursor.getString(3);
-				String point = cursor.getString(4);
-				long dateLong = cursor.getLong(5);
-				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, "", "");
-				articles.add(article);
-			}
-			cursor.close();
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			return articles;
-		} finally {
-			db.endTransaction();
-		}
-
-		return articles;
-	}
-
 	public long getLatestArticleDate(int feedId) {
 		long latestDate = 0;
 		try {

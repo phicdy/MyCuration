@@ -371,7 +371,7 @@ class ArticleListPresenterTest {
         val articles = ArrayList<Article>()
         articles.add(Article(1, "hoge", "http://www.google.com",
                 Article.READ, "1", 1, 1, "feed", ""))
-        `when`(adapter.getAllArticlesInAFeed(testId, true)).thenReturn(articles)
+        `when`(articleRepository.getAllArticlesInAFeed(testId, true)).thenReturn(articles)
         `when`(articleRepository.getTop300Articles(true)).thenReturn(articles)
         `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(articles)
     }
@@ -405,7 +405,7 @@ class ArticleListPresenterTest {
                 Article.READ, "1", 1, 3, "feed", ""))
         readArticles.add(Article(4, "read1", "http://www.google.com",
                 Article.READ, "1", 1, 4, "feed", ""))
-        `when`(adapter.getAllArticlesInAFeed(testId, true)).thenReturn(readArticles)
+        `when`(articleRepository.getAllArticlesInAFeed(testId, true)).thenReturn(readArticles)
         `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(readArticles)
     }
 

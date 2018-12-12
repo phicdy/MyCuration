@@ -397,17 +397,27 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun getUnreadArticlesInAFeed(feedId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+    suspend fun getAllArticlesInAFeed(feedId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
+        return getArticlesInAFeed(feedId, null, isNewestArticleTop)
+    }
+
+    suspend fun getUnreadArticlesInAFeed(feedId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
+        return getArticlesInAFeed(feedId, Article.UNREAD, isNewestArticleTop)
+    }
+
+    private suspend fun getArticlesInAFeed(feedId: Int, searchStatus: String?, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
         val articles = arrayListOf<Article>()
         var cursor: Cursor? = null
         val columns = arrayOf(
                 Article.ID,
                 Article.TITLE,
                 Article.URL,
+                Article.STATUS,
                 Article.POINT,
                 Article.DATE
         )
-        val selection = Article.STATUS + " = '" + Article.UNREAD + "' and " + Article.FEEDID + " = " + feedId
+        val selection = Article.FEEDID + " = " + feedId +
+                if (searchStatus == null) "" else " and " + Article.STATUS + " = '" + searchStatus + "'"
         val orderBy = Article.DATE + if (isNewestArticleTop) " desc" else " asc"
         try {
             db.beginTransaction()
@@ -416,9 +426,9 @@ class ArticleRepository(val db: SQLiteDatabase) {
                 val id = cursor.getInt(0)
                 val title = cursor.getString(1)
                 val url = cursor.getString(2)
-                val status = Article.UNREAD
-                val point = cursor.getString(3)
-                val dateLong = cursor.getLong(4)
+                val status = cursor.getString(3)
+                val point = cursor.getString(4)
+                val dateLong = cursor.getLong(5)
                 val article = Article(id, title, url, status, point,
                         dateLong, feedId, "", "")
                 articles.add(article)
