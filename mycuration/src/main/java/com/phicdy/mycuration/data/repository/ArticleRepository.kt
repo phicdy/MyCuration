@@ -85,14 +85,14 @@ class ArticleRepository(val db: SQLiteDatabase) {
 
                     db.beginTransaction()
                     // Initialize condition
-                    var condition = Article.FEEDID + " = $rssId and " + Article.STATUS + " != " + Article.UNREAD
+                    var condition = Article.FEEDID + " = $rssId"
                     if (keyword.isNotBlank()) { condition = "$condition and title like '%$keyword%'" }
                     if (url.isNotBlank()) { condition = "$condition and url like '%$url%'" }
                     updatedCount += db.update(Article.TABLE_NAME, value, condition, null)
                     db.setTransactionSuccessful()
                 } catch (e: Exception) {
                     Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
-                    db.endTransaction()
+                    Timber.e(e)
                 } finally {
                     db.endTransaction()
                 }
