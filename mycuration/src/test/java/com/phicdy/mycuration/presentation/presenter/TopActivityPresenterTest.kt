@@ -1,10 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.repository.ArticleRepository
-import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
-import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -17,7 +14,6 @@ import org.mockito.Mockito.verify
 
 class TopActivityPresenterTest {
 
-    private lateinit var networkTaskManager: NetworkTaskManager
     private lateinit var mockView: TopActivityView
     private lateinit var mockArticleRepository: ArticleRepository
     private lateinit var mockRssRepository: RssRepository
@@ -28,12 +24,6 @@ class TopActivityPresenterTest {
         mockView = mock(TopActivityView::class.java)
         mockArticleRepository = mock(ArticleRepository::class.java)
         mockRssRepository = mock(RssRepository::class.java)
-        networkTaskManager = NetworkTaskManager(
-                mockArticleRepository,
-                mock(RssRepository::class.java),
-                mock(CurationRepository::class.java),
-                mock(UnreadCountRepository::class.java)
-        )
         presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository)
     }
 

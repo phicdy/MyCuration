@@ -64,44 +64,6 @@ public class DatabaseAdapter {
 	}
 
 
-	public @NonNull ArrayList<Filter> getEnabledFiltersOfFeed(int feedId) {
-		ArrayList<Filter> filterList = new ArrayList<>();
-		db.beginTransaction();
-		try {
-			// Get all filters which feed ID is "feedId"
-			String[] columns = {
-                    Filter.TABLE_NAME + "." + Filter.ID,
-                    Filter.TABLE_NAME + "." + Filter.TITLE,
-                    Filter.TABLE_NAME + "." + Filter.KEYWORD,
-                    Filter.TABLE_NAME + "." + Filter.URL,
-                    Filter.TABLE_NAME + "." + Filter.ENABLED
-            };
-			String condition =
-                    FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FEED_ID + " = " + feedId + " and " +
-                    FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FILTER_ID + " = " + Filter.TABLE_NAME + "." + Filter.ID + " and " +
-							Filter.TABLE_NAME + "." + Filter.ENABLED + " = " + Filter.TRUE;
-			Cursor cur = db.query(Filter.TABLE_NAME + " inner join " + FilterFeedRegistration.TABLE_NAME, columns, condition, null, null,
-					null, null);
-			// Change to ArrayList
-			while (cur.moveToNext()) {
-				int id = cur.getInt(0);
-				String title = cur.getString(1);
-				String keyword = cur.getString(2);
-				String url = cur.getString(3);
-				int enabled = cur.getInt(4);
-				filterList.add(new Filter(id, title, keyword, url, new ArrayList<Feed>(), -1, enabled));
-			}
-			cur.close();
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			return null;
-		} finally {
-			db.endTransaction();
-		}
-
-		return filterList;
-	}
-
 	public @Nullable Filter getFilterById(int filterId) {
 		Filter filter = null;
 		db.beginTransaction();

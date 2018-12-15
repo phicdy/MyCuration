@@ -57,7 +57,7 @@ class RssRepositoryTest {
         val articles = articleRepository.getAllArticlesInRss(rssId, true)
         assertNotNull(articles)
         assertThat(articles.size, `is`(0))
-        var filters = adapter.getEnabledFiltersOfFeed(rssId)
+        var filters = filterRepository.getEnabledFiltersOfFeed(rssId)
         assertNotNull(filters)
         assertThat(filters.size, `is`(0))
 

@@ -3,6 +3,7 @@ package com.phicdy.mycuration.domain.task
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
+import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Feed
@@ -27,6 +28,7 @@ import java.net.URI
 class NetworkTaskManager(private val articleRepository: ArticleRepository,
                          private val rssRepository: RssRepository,
                          private val curationRepository: CurationRepository,
+                         private val filterRepository: FilterRepository,
                          private val unreadCountRepository: UnreadCountRepository) {
 
     val isUpdatingFeed: Boolean get() = false
@@ -78,7 +80,7 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                 unreadCountRepository.appendUnreadArticleCount(feed.id, articles.size)
             }
 
-            val updatedCount = FilterTask(articleRepository).applyFiltering(feed.id)
+            val updatedCount = FilterTask(articleRepository, filterRepository).applyFiltering(feed.id)
             unreadCountRepository.decreaseCount(feed.id, updatedCount)
             try {
                 inputStream.close()
