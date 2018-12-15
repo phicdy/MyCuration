@@ -15,11 +15,13 @@ import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
+import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
+import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -102,4 +104,12 @@ val appModule = module {
         )
     }
 
+    scope("register_filter") { (view: RegisterFilterView, editFilterId: Int) ->
+        RegisterFilterPresenter(
+                view = view,
+                editFilterId = editFilterId,
+                dbAdapter = DatabaseAdapter.getInstance(),
+                filterRepository = get()
+        )
+    }
 }

@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
 import com.phicdy.mycuration.data.filter.Filter;
@@ -64,60 +63,7 @@ public class DatabaseAdapter {
 	}
 
 
-	public @Nullable Filter getFilterById(int filterId) {
-		Filter filter = null;
-		db.beginTransaction();
-		try {
-			String[] columns = {
-					Filter.TABLE_NAME + "." + Filter.ID,
-                    Filter.TABLE_NAME + "." + Filter.KEYWORD,
-                    Filter.TABLE_NAME + "." + Filter.URL,
-                    Filter.TABLE_NAME + "." + Filter.TITLE,
-                    Filter.TABLE_NAME + "." + Filter.ENABLED,
-                    Feed.TABLE_NAME   + "." + Feed.ID,
-                    Feed.TABLE_NAME   + "." + Feed.TITLE,
-            };
-			String condition = Filter.TABLE_NAME + "." + Filter.ID + " = " + filterId + " and " +
-                    FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FILTER_ID + " = " +
-                    filterId + " and " +
-                    FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FEED_ID + " = " +
-                    Feed.TABLE_NAME + "." + Feed.ID;
-            String table = Filter.TABLE_NAME + " inner join " +
-                    FilterFeedRegistration.TABLE_NAME + " inner join " +
-                    Feed.TABLE_NAME;
-			Cursor cur = db.query(table, columns, condition, null, null, null, null);
-			if (cur == null || cur.getCount() < 1) return null;
-
-            ArrayList<Feed> feeds = new ArrayList<>();
-            int id = 0;
-            String keyword = "";
-            String url = "";
-            String title = "";
-            int enabled = 0;
-            while (cur.moveToNext()) {
-                id = cur.getInt(0);
-                keyword = cur.getString(1);
-                url = cur.getString(2);
-                title = cur.getString(3);
-                enabled = cur.getInt(4);
-                int feedId = cur.getInt(5);
-                String feedTitle = cur.getString(6);
-                Feed feed = new Feed(feedId, feedTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, "");
-                feeds.add(feed);
-            }
-			cur.close();
-			db.setTransactionSuccessful();
-			filter = new Filter(id, title, keyword, url, feeds, -1, enabled);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-
-		return filter;
-	}
-
-    /**
+	/**
      * Delete method for specified filter
      *
      * @param filterId Filter ID to delete

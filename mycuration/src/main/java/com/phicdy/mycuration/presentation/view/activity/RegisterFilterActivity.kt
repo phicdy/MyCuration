@@ -11,17 +11,29 @@ import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
+import kotlin.coroutines.CoroutineContext
 
 
-class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
+class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, CoroutineScope {
 
-    private lateinit var presenter: RegisterFilterPresenter
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
+    private val presenter: RegisterFilterPresenter by inject { parametersOf(this, intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID)) }
 
     private lateinit var etTitle: TextInputEditText
     private lateinit var etKeyword: TextInputEditText
@@ -32,10 +44,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register_filter)
 
+        bindScope(getOrCreateScope("register_filter"))
         initView()
-        val dbAdapter = DatabaseAdapter.getInstance()
-        val editFilterId = intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID)
-        presenter = RegisterFilterPresenter(this, dbAdapter, editFilterId)
+        launch {
+            presenter.create()
+        }
     }
 
     private fun initView() {

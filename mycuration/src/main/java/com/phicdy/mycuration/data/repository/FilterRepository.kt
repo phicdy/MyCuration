@@ -120,4 +120,55 @@ class FilterRepository(private val db: SQLiteDatabase) {
 
         return@withContext filterList
     }
+
+    suspend fun getFilterById(filterId: Int): Filter? = withContext(Dispatchers.IO) {
+        var filter: Filter? = null
+        val columns = arrayOf(
+                Filter.TABLE_NAME + "." + Filter.ID,
+                Filter.TABLE_NAME + "." + Filter.KEYWORD,
+                Filter.TABLE_NAME + "." + Filter.URL,
+                Filter.TABLE_NAME + "." + Filter.TITLE,
+                Filter.TABLE_NAME + "." + Filter.ENABLED,
+                Feed.TABLE_NAME + "." + Feed.ID,
+                Feed.TABLE_NAME + "." + Feed.TITLE
+        )
+        val condition = Filter.TABLE_NAME + "." + Filter.ID + " = " + filterId + " and " +
+                FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FILTER_ID + " = " + filterId + " and " +
+                FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FEED_ID + " = " + Feed.TABLE_NAME + "." + Feed.ID
+        val table = Filter.TABLE_NAME + " inner join " +
+                FilterFeedRegistration.TABLE_NAME + " inner join " + Feed.TABLE_NAME
+        var cursor: Cursor? = null
+        try {
+            db.beginTransaction()
+            cursor = db.query(table, columns, condition, null, null, null, null)
+            if (cursor == null || cursor.count < 1) return@withContext null
+
+            val feeds = arrayListOf<Feed>()
+            var id = 0
+            var keyword = ""
+            var url = ""
+            var title = ""
+            var enabled = 0
+            while (cursor.moveToNext()) {
+                id = cursor.getInt(0)
+                keyword = cursor.getString(1)
+                url = cursor.getString(2)
+                title = cursor.getString(3)
+                enabled = cursor.getInt(4)
+                val feedId = cursor.getInt(5)
+                val feedTitle = cursor.getString(6)
+                val feed = Feed(feedId, feedTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, "")
+                feeds.add(feed)
+            }
+            db.setTransactionSuccessful()
+            filter = Filter(id, title, keyword, url, feeds, enabled)
+        } catch (e: Exception) {
+            Timber.e(e)
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+
+        return@withContext filter
+    }
 }

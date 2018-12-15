@@ -1,12 +1,13 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import java.util.ArrayList
 
 class RegisterFilterPresenterTest {
@@ -17,9 +18,9 @@ class RegisterFilterPresenterTest {
 
     @Before
     fun setup() {
-        mockAdapter = Mockito.mock(DatabaseAdapter::class.java)
+        mockAdapter = mock(DatabaseAdapter::class.java)
         mockView = MockView()
-        presenter = RegisterFilterPresenter(mockView, mockAdapter, 1)
+        presenter = RegisterFilterPresenter(mockView, mockAdapter, mock(FilterRepository::class.java), 1)
     }
 
     @Test
