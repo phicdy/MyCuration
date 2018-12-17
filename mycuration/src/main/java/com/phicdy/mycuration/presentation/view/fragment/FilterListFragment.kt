@@ -16,9 +16,18 @@ import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.view.FilterListView
 import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
+import kotlin.coroutines.CoroutineContext
 
-class FilterListFragment : Fragment(), FilterListView {
+class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
 
     companion object {
         private const val EDIT_FILTER_MENU_ID = 2000
@@ -26,7 +35,11 @@ class FilterListFragment : Fragment(), FilterListView {
         const val KEY_EDIT_FILTER_ID = "editFilterId"
     }
 
-    private lateinit var presenter: FilterListPresenter
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
+    private val presenter: FilterListPresenter by inject { parametersOf(this) }
     private lateinit var dbAdapter: DatabaseAdapter
     private lateinit var filtersListAdapter: FiltersListAdapter
     private lateinit var filtersRecyclerView: RecyclerView
@@ -34,8 +47,8 @@ class FilterListFragment : Fragment(), FilterListView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        bindScope(getOrCreateScope("filter_list"))
         dbAdapter = DatabaseAdapter.getInstance()
-        presenter = FilterListPresenter(this, dbAdapter)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,10 +60,14 @@ class FilterListFragment : Fragment(), FilterListView {
         activity?.let {
             filtersRecyclerView = it.findViewById(R.id.rv_filter) as RecyclerView
             emptyView = it.findViewById(R.id.filter_emptyView) as TextView
-            if (dbAdapter.numOfFeeds == 0) {
-                emptyView.setText(R.string.no_rss_message)
+            launch {
+                presenter.onActivityCreated()
             }
         }
+    }
+
+    override fun setRssEmptyMessage() {
+        emptyView.setText(R.string.no_rss_message)
     }
 
     override fun onResume() {
@@ -141,8 +158,10 @@ class FilterListFragment : Fragment(), FilterListView {
                         true
                     }
                     menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter).setOnMenuItemClickListener {
-                        presenter.onDeleteMenuClicked(position, filters[position], filters.size)
-                        filters.removeAt(position)
+                        launch {
+                            presenter.onDeleteMenuClicked(position, filters[position], filters.size)
+                            filters.removeAt(position)
+                        }
                         true
                     }
                 }

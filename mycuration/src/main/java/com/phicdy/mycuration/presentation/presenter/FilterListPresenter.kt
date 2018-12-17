@@ -2,12 +2,23 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.filter.Filter
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.FilterListView
+import kotlinx.coroutines.coroutineScope
 
 class FilterListPresenter(private val view: FilterListView,
+                          private val rssRepository: RssRepository,
+                          private val filterRepository: FilterRepository,
                           private val dbAdapter: DatabaseAdapter) : Presenter {
 
     override fun create() {}
+
+    suspend fun onActivityCreated() = coroutineScope {
+        if (rssRepository.getNumOfRss() == 0) {
+            view.setRssEmptyMessage()
+        }
+    }
 
     override fun resume() {
         dbAdapter.allFilters.let {
@@ -24,9 +35,9 @@ class FilterListPresenter(private val view: FilterListView,
 
     override fun pause() {}
 
-    fun onDeleteMenuClicked(position: Int, selectedFilter: Filter, currentSize: Int) {
-        if (position < 0) return
-        dbAdapter.deleteFilter(selectedFilter.id)
+    suspend fun onDeleteMenuClicked(position: Int, selectedFilter: Filter, currentSize: Int) = coroutineScope {
+        if (position < 0) return@coroutineScope
+        filterRepository.deleteFilter(selectedFilter.id)
         view.remove(position)
         view.notifyListChanged()
         if (currentSize == 1) {

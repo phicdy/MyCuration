@@ -15,6 +15,7 @@ import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
+import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
@@ -24,6 +25,7 @@ import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.TopActivityView
+import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.log.TimberTree
 import org.koin.android.ext.koin.androidApplication
@@ -78,6 +80,7 @@ val appModule = module {
     scope("curation_list") { (view: CurationListView) ->
         CurationListPresenter(
                 view = view,
+                rssRepository = get(),
                 dbAdapter = DatabaseAdapter.getInstance(),
                 unreadCountRepository = get()
         )
@@ -109,6 +112,15 @@ val appModule = module {
                 view = view,
                 editFilterId = editFilterId,
                 dbAdapter = DatabaseAdapter.getInstance(),
+                filterRepository = get()
+        )
+    }
+
+    scope("filter_list") { (view: FilterListFragment) ->
+        FilterListPresenter(
+                view = view,
+                dbAdapter = DatabaseAdapter.getInstance(),
+                rssRepository = get(),
                 filterRepository = get()
         )
     }

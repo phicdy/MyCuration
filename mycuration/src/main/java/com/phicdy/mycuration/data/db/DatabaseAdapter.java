@@ -64,45 +64,6 @@ public class DatabaseAdapter {
 
 
 	/**
-     * Delete method for specified filter
-     *
-     * @param filterId Filter ID to delete
-     */
-	public void deleteFilter(int filterId) {
-		db.beginTransaction();
-		try {
-            String relationWhere = FilterFeedRegistration.FILTER_ID + " = " + filterId;
-            db.delete(FilterFeedRegistration.TABLE_NAME, relationWhere, null);
-            String filterWhere = Filter.ID + " = " + filterId;
-			db.delete(Filter.TABLE_NAME, filterWhere, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-	public int getNumOfFeeds() {
-		int num = 0;
-		db.beginTransaction();
-		try {
-			// Get unread feeds and set num of unread feeds
-			String sql = "select _id from feeds";
-			Cursor cursor = db.rawQuery(sql, null);
-			num = cursor.getCount();
-			cursor.close();
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			num = -1;
-		} finally {
-			db.endTransaction();
-		}
-
-		return num;
-	}
-
-    /**
      *
      * Save method for new filter.
      *

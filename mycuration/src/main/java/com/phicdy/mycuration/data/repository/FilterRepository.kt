@@ -171,4 +171,24 @@ class FilterRepository(private val db: SQLiteDatabase) {
 
         return@withContext filter
     }
+
+    /**
+     * Delete method for specified filter
+     *
+     * @param filterId Filter ID to delete
+     */
+    suspend fun deleteFilter(filterId: Int) = withContext(Dispatchers.IO) {
+        try {
+            db.beginTransaction()
+            val relationWhere = FilterFeedRegistration.FILTER_ID + " = " + filterId
+            db.delete(FilterFeedRegistration.TABLE_NAME, relationWhere, null)
+            val filterWhere = Filter.ID + " = " + filterId
+            db.delete(Filter.TABLE_NAME, filterWhere, null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            Timber.e(e)
+        } finally {
+            db.endTransaction()
+        }
+    }
 }

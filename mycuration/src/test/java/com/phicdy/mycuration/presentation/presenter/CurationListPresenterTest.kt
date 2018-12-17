@@ -1,13 +1,12 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
@@ -24,11 +23,12 @@ class CurationListPresenterTest {
     private lateinit var presenter: CurationListPresenter
     private val item = mock(CurationItem::class.java)
     private val repository = mock(UnreadCountRepository::class.java)
+    private val rssRepository = mock(RssRepository::class.java)
 
     @Before
     fun setUp() {
         DatabaseAdapter.inject(adapter)
-        presenter = CurationListPresenter(view, adapter, repository)
+        presenter = CurationListPresenter(view, rssRepository, adapter, repository)
     }
 
     @Test
@@ -70,8 +70,8 @@ class CurationListPresenterTest {
     }
 
     @Test
-    fun `when empty rss then show empty view`() {
-        `when`(adapter.numOfFeeds).thenReturn(0)
+    fun `when empty rss then show empty view`() = runBlocking {
+        `when`(rssRepository.getNumOfRss()).thenReturn(0)
         presenter.resume()
         verify(view, never()).showRecyclerView()
         verify(view, times(1)).hideRecyclerView()
@@ -106,8 +106,8 @@ class CurationListPresenterTest {
     }
 
     @Test
-    fun `when rss is empty then no rss view is set`() {
-        `when`(adapter.numOfFeeds).thenReturn(0)
+    fun `when rss is empty then no rss view is set`() = runBlocking {
+        `when`(rssRepository.getNumOfRss()).thenReturn(0)
         presenter.activityCreated()
         verify(view, times(1)).setNoRssTextToEmptyView()
     }

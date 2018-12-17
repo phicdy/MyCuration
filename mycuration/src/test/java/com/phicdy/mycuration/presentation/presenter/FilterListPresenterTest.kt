@@ -2,7 +2,10 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.filter.Filter
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.FilterListView
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -24,7 +27,7 @@ class FilterListPresenterTest {
     @Before
     fun setup() {
         view = Mockito.mock(FilterListView::class.java)
-        presenter = FilterListPresenter(view, adapter)
+        presenter = FilterListPresenter(view, mock(RssRepository::class.java), mock(FilterRepository::class.java), adapter)
     }
 
     @Test
@@ -57,14 +60,14 @@ class FilterListPresenterTest {
     }
 
     @Test
-    fun `when delete invalid position then not delete the filter`() {
+    fun `when delete invalid position then not delete the filter`() = runBlocking {
         val testFilter1 = Filter(1, "test1", "testKeyword1", "http://test1.com", ArrayList(), -1, Filter.TRUE)
         presenter.onDeleteMenuClicked(-1, testFilter1, 1)
         verify(view, times(0)).remove(-1)
     }
 
     @Test
-    fun `when delete first filter of one then the size is decreased and show empty view`() {
+    fun `when delete first filter of one then the size is decreased and show empty view`() = runBlocking {
         val testFilter1 = Filter(1, "test1", "testKeyword1", "http://test1.com", ArrayList(), -1, Filter.TRUE)
         presenter.onDeleteMenuClicked(0, testFilter1, 1)
         verify(view, times(1)).remove(0)
@@ -73,7 +76,7 @@ class FilterListPresenterTest {
     }
 
     @Test
-    fun `when delete first filter of two then the size is decreased and not show empty view`() {
+    fun `when delete first filter of two then the size is decreased and not show empty view`() = runBlocking {
         val testFilter1 = Filter(1, "test1", "testKeyword1", "http://test1.com", ArrayList(), -1, Filter.TRUE)
         presenter.onDeleteMenuClicked(0, testFilter1, 2)
         verify(view, times(1)).remove(0)

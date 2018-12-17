@@ -1,13 +1,16 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
+import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
 
 class CurationListPresenter(private val view: CurationListView,
+                            private val rssRepository: RssRepository,
                             private val dbAdapter: DatabaseAdapter,
                             private val unreadCountRepository: UnreadCountRepository) : Presenter {
     private var allCurations: ArrayList<Curation> = arrayListOf()
@@ -42,8 +45,8 @@ class CurationListPresenter(private val view: CurationListView,
         }
     }
 
-    fun activityCreated() {
-        if (dbAdapter.numOfFeeds == 0) {
+    suspend fun activityCreated() = coroutineScope {
+        if (rssRepository.getNumOfRss()== 0) {
             view.setNoRssTextToEmptyView()
         }
     }

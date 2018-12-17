@@ -12,4 +12,5 @@ interface FilterListView {
     fun hideFilterList()
     fun showEmptyView()
     fun hideEmptyView()
+    fun setRssEmptyMessage()
 }

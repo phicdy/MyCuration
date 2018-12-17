@@ -73,7 +73,9 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
         super.onActivityCreated(savedInstanceState)
         curationRecyclerView = activity?.findViewById(R.id.rv_curation) as RecyclerView
         emptyView = activity?.findViewById(R.id.emptyView_curation) as TextView
-        presenter.activityCreated()
+        launch {
+            presenter.activityCreated()
+        }
     }
 
     override fun onDetach() {
