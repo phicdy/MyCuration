@@ -61,17 +61,7 @@ public class DatabaseAdapter {
 	}
 
 
-	public void deleteAllArticles() {
-		db.beginTransaction();
-		try {
-			db.delete(Article.TABLE_NAME, "", null);
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-    /**
+	/**
      * Helper method to delete all of the feeds.
      * This method also deletes relation between filter and feed.
      */

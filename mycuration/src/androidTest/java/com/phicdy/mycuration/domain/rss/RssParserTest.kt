@@ -47,14 +47,12 @@ class RssParserTest {
                 ArticleRepository(helper.writableDatabase),
                 FilterRepository(helper.writableDatabase)
         )
-        adapter.deleteAllArticles()
         adapter.deleteAll()
     }
 
     @After
     @Throws(Exception::class)
     fun tearDown() {
-        adapter.deleteAllArticles()
         adapter.deleteAll()
     }
 
