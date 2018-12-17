@@ -92,7 +92,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
         when (item.itemId) {
             // For arrow button on toolbar
             android.R.id.home -> finish()
-            else -> presenter.optionItemClicked(item)
+            else -> launch { presenter.optionItemClicked(item) }
         }
         return super.onOptionsItemSelected(item)
     }

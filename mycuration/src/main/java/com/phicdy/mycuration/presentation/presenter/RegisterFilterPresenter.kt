@@ -47,7 +47,7 @@ class RegisterFilterPresenter(private val view: RegisterFilterView,
         }
     }
 
-    private fun addMenuClicked() {
+    private suspend fun addMenuClicked() = coroutineScope {
         val keywordText = view.filterKeyword()
         val filterUrlText = view.filterUrl()
         val titleText = view.filterTitle()
@@ -64,7 +64,7 @@ class RegisterFilterPresenter(private val view: RegisterFilterView,
                     view.trackEdit()
                 } else {
                     // Add new filter
-                    result = dbAdapter.saveNewFilter(titleText, selectedFeedList, keywordText, filterUrlText)
+                    result = filterRepository.saveNewFilter(titleText, selectedFeedList, keywordText, filterUrlText)
                     view.trackRegister()
                 }
                 if (result) {
@@ -77,7 +77,7 @@ class RegisterFilterPresenter(private val view: RegisterFilterView,
         }
     }
 
-    fun optionItemClicked(item: MenuItem) {
+    suspend fun optionItemClicked(item: MenuItem) = coroutineScope {
         when (item.itemId) {
             R.id.add_filter -> addMenuClicked()
         }

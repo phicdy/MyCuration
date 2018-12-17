@@ -41,8 +41,8 @@ class FilterRepositoryTest {
         val filterTitle = "filter"
         val keyword = "keyword"
         val filterUrl = "http://filter.com"
-        adapter.saveNewFilter(filterTitle, arrayListOf(stored), keyword, filterUrl)
         stored?.let {
+            filterRepository.saveNewFilter(filterTitle, arrayListOf(stored), keyword, filterUrl)
             val filters = filterRepository.getEnabledFiltersOfFeed(stored.id)
             assertThat(filters.size, `is`(1))
             assertThat(filters[0].title, `is`(filterTitle))
@@ -57,13 +57,13 @@ class FilterRepositoryTest {
         val filterTitle = "filter"
         val keyword = "keyword"
         val filterUrl = "http://filter.com"
-        adapter.saveNewFilter(filterTitle, arrayListOf(stored), keyword, filterUrl)
-
-        // Disable the filter
-        val filter = adapter.allFilters[0]
-        adapter.updateFilterEnabled(filter.id, false)
 
         stored?.let {
+            filterRepository.saveNewFilter(filterTitle, arrayListOf(stored), keyword, filterUrl)
+
+            // Disable the filter
+            val filter = adapter.allFilters[0]
+            adapter.updateFilterEnabled(filter.id, false)
             val filters = filterRepository.getEnabledFiltersOfFeed(stored.id)
             assertThat(filters.size, `is`(0))
         } ?: fail("Failed to store RSS")

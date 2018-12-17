@@ -10,6 +10,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
@@ -39,14 +40,18 @@ class RssRepositoryTest {
     @Test
     fun whenDeleteRSSThenTheRSSAndRelatedArticlesAndFiltersAreDeleted() = runBlocking {
         val rss = rssRepository.store("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
-        assertNotNull(rss)
-        val rssList = arrayListOf(rss)
-        adapter.saveNewFilter("hoge", rssList, "keyword", "")
+        rss?.let {
+            val rssList = arrayListOf(rss)
+            filterRepository.saveNewFilter("hoge", rssList, "keyword", "")
 
-        // Store filter that relates two RSS, means not deleted by deleting one of the RSS
-        val rss2 = rssRepository.store("testrss2", "http://www.hoge.com", "RSS", "http://www.hoge.com")
-        rssList += rss2
-        adapter.saveNewFilter(NOT_DELETED_FILTER_TITLE, rssList, NOT_DELETED_FILTER_KEYWORD, "")
+            // Store filter that relates two RSS, means not deleted by deleting one of the RSS
+            val rss2 = rssRepository.store("testrss2", "http://www.hoge.com", "RSS", "http://www.hoge.com")
+            rss2?.let {
+                rssList += rss2
+            } ?: fail("RSS2 is null")
+            filterRepository.saveNewFilter(NOT_DELETED_FILTER_TITLE, rssList, NOT_DELETED_FILTER_KEYWORD, "")
+        } ?: fail("RSS is null")
+
 
         // Delete rss
         val rssId = rss!!.id

@@ -38,6 +38,7 @@ class DatabaseMigrationTest {
     private lateinit var db: SQLiteDatabase
     private lateinit var adapter: DatabaseAdapter
     private lateinit var rssRepository: RssRepository
+    private lateinit var filterRepository: FilterRepository
 
     @JvmField
     @Rule
@@ -49,7 +50,8 @@ class DatabaseMigrationTest {
         adapter = DatabaseAdapter.getInstance()
         val helper = DatabaseHelper(getTargetContext())
         db = helper.writableDatabase
-        rssRepository = RssRepository(db, ArticleRepository(db), FilterRepository(db))
+        filterRepository = FilterRepository(db)
+        rssRepository = RssRepository(db, ArticleRepository(db), filterRepository)
     }
 
     @After
@@ -101,7 +103,7 @@ class DatabaseMigrationTest {
         val target = ArrayList<Feed>()
         testFeed?.let {
             target.add(testFeed)
-            assertTrue(adapter.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
+            assertTrue(filterRepository.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
         } ?: fail("RSS is null")
     }
 
@@ -148,7 +150,7 @@ class DatabaseMigrationTest {
         val target = ArrayList<Feed>()
         testFeed?.let {
             target.add(testFeed)
-            assertTrue(adapter.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
+            assertTrue(filterRepository.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
         } ?: fail("RSS is null")
     }
 

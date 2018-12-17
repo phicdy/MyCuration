@@ -65,66 +65,6 @@ public class DatabaseAdapter {
 
 	/**
      *
-     * Save method for new filter.
-     *
-     * @param title Filter title
-     * @param selectedFeeds Feed set to register the filter
-     * @param keyword Filter keyword
-     * @param filterUrl Filter URL
-     * @return result of all of the database insert
-     */
-	public boolean saveNewFilter(@NonNull String title, @NonNull ArrayList<Feed> selectedFeeds,
-                                 String keyword, String filterUrl) {
-		boolean result = true;
-		db.beginTransaction();
-        Cursor cur = null;
-        long newFilterId = INSERT_ERROR_ID;
-		try {
-			// Check same filter exists in DB
-            String[] columns = {
-					Filter.ID,
-            };
-            String condition = Filter.TITLE + " = '" + title + "' and " +
-					Filter.KEYWORD + " = '" + keyword + "' and " +
-					Filter.URL + " = '" + filterUrl + "'";
-            String table = Filter.TABLE_NAME;
-            cur = db.query(table, columns, condition, null, null, null, null);
-			if (cur.getCount() != 0) {
-				Timber.i("Same Filter Exist");
-			} else {
-				// Register filter
-				ContentValues filterVal = new ContentValues();
-				filterVal.put(Filter.TITLE, title);
-				filterVal.put(Filter.URL, filterUrl);
-				filterVal.put(Filter.KEYWORD, keyword);
-                filterVal.put(Filter.ENABLED, true);
-				newFilterId = db.insert(Filter.TABLE_NAME, null, filterVal);
-                if (newFilterId == INSERT_ERROR_ID) {
-                    result = false;
-                } else {
-                    db.setTransactionSuccessful();
-                }
-			}
-		} catch (Exception e) {
-			Timber.e("Failed to save new filter %s", e.getMessage());
-            e.printStackTrace();
-            result = false;
-		} finally {
-            if (cur != null) cur.close();
-			db.endTransaction();
-		}
-        if (result) {
-			db.beginTransaction();
-            result = saveFilterFeedRegistration(newFilterId, selectedFeeds);
-			if (result) db.setTransactionSuccessful();
-			db.endTransaction();
-        }
-
-		return result;
-	}
-
-    /**
-     *
      * Save method for relation between filter and feed set into database.
 	 * This method does not have transaction.
      *

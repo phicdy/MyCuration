@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
+import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
@@ -190,5 +191,103 @@ class FilterRepository(private val db: SQLiteDatabase) {
         } finally {
             db.endTransaction()
         }
+    }
+
+    /**
+     *
+     * Save method for new filter.
+     *
+     * @param title Filter title
+     * @param selectedFeeds Feed set to register the filter
+     * @param keyword Filter keyword
+     * @param filterUrl Filter URL
+     * @return result of all of the database insert
+     */
+    suspend fun saveNewFilter(title: String, selectedFeeds: ArrayList<Feed>,
+                      keyword: String, filterUrl: String): Boolean = withContext(Dispatchers.IO) {
+        var result = true
+        db.beginTransaction()
+        var cur: Cursor? = null
+        var newFilterId = INSERT_ERROR_ID.toLong()
+        try {
+            // Check same filter exists in DB
+            val columns = arrayOf(Filter.ID)
+            val condition = Filter.TITLE + " = '" + title + "' and " +
+                    Filter.KEYWORD + " = '" + keyword + "' and " +
+                    Filter.URL + " = '" + filterUrl + "'"
+            val table = Filter.TABLE_NAME
+            cur = db.query(table, columns, condition, null, null, null, null)
+            if (cur.count != 0) {
+                Timber.i("Same Filter Exist")
+            } else {
+                // Register filter
+                val filterVal = ContentValues().apply {
+                    put(Filter.TITLE, title)
+                    put(Filter.URL, filterUrl)
+                    put(Filter.KEYWORD, keyword)
+                    put(Filter.ENABLED, true)
+                }
+                newFilterId = db.insert(Filter.TABLE_NAME, null, filterVal)
+                if (newFilterId == INSERT_ERROR_ID.toLong()) {
+                    result = false
+                } else {
+                    db.setTransactionSuccessful()
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e("Failed to save new filter %s", e.message)
+            result = false
+        } finally {
+            cur?.close()
+            db.endTransaction()
+        }
+        if (result) {
+            result = saveFilterFeedRegistration(newFilterId, selectedFeeds)
+        }
+
+        return@withContext result
+    }
+
+    /**
+     *
+     * Save method for relation between filter and feed set into database.
+     * This method does not have transaction.
+     *
+     * @param filterId Filter ID
+     * @param feeds Feed set to register the filter
+     * @return result of all of the database insert
+     */
+    private suspend fun saveFilterFeedRegistration(filterId: Long, feeds: ArrayList<Feed>): Boolean = coroutineScope {
+        if (filterId < MIN_TABLE_ID) return@coroutineScope false
+        var result = true
+        try {
+            db.beginTransaction()
+            for ((feedId) in feeds) {
+                if (feedId < MIN_TABLE_ID) {
+                    result = false
+                    break
+                }
+                val contentValues = ContentValues().apply {
+                    put(FilterFeedRegistration.FEED_ID, feedId)
+                    put(FilterFeedRegistration.FILTER_ID, filterId)
+                }
+                val id = db.insert(FilterFeedRegistration.TABLE_NAME, null, contentValues)
+                if (id == INSERT_ERROR_ID.toLong()) {
+                    result = false
+                    break
+                }
+            }
+        } catch (e: SQLException) {
+            Timber.e(e)
+        } finally {
+            if (result) db.setTransactionSuccessful()
+            db.endTransaction()
+        }
+        return@coroutineScope result
+    }
+
+    companion object {
+        private const val INSERT_ERROR_ID = -1
+        private const val MIN_TABLE_ID = 1
     }
 }
