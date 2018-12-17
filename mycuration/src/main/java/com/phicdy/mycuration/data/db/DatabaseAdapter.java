@@ -61,23 +61,6 @@ public class DatabaseAdapter {
 	}
 
 
-	public boolean isArticle(Article article) {
-		int num;
-		try {
-			// Get same article
-			String[] columns = {"_id"};
-			String selection = "url = ?";
-			String[] selectionArgs = {article.getUrl()};
-			Cursor cursor = db.query(Article.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-			num = cursor.getCount();
-			cursor.close();
-		} catch (Exception e) {
-			num = -1;
-		}
-
-        return num > 0;
-    }
-
 	public void deleteAllArticles() {
 		db.beginTransaction();
 		try {

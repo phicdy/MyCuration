@@ -53,13 +53,6 @@ class DatabaseAdapterTest {
     }
 
     @Test
-    fun testIsArticle() {
-        for (testArticle in testUnreadArticles) {
-            assertEquals(true, adapter.isArticle(testArticle))
-        }
-    }
-
-    @Test
     fun testSaveNewArticles() = runBlocking {
         // Reset data and insert curation at first
         adapter.deleteAll()
