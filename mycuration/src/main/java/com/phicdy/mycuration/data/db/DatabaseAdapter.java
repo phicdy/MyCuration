@@ -33,8 +33,6 @@ public class DatabaseAdapter {
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
 	public static final int NOT_FOUND_ID = -1;
-    private static final int INSERT_ERROR_ID = -1;
-    private static final int MIN_TABLE_ID = 1;
 
 	private DatabaseAdapter() {
 	}
@@ -62,81 +60,6 @@ public class DatabaseAdapter {
 		return sharedDbAdapter;
 	}
 
-
-	/**
-     *
-     * Save method for relation between filter and feed set into database.
-	 * This method does not have transaction.
-     *
-     * @param filterId Filter ID
-     * @param feeds Feed set to register the filter
-     * @return result of all of the database insert
-     */
-    private boolean saveFilterFeedRegistration(long filterId, @NonNull ArrayList<Feed> feeds) {
-        if (filterId < MIN_TABLE_ID) return false;
-        boolean result = true;
-        for (Feed selectedFeed : feeds) {
-            int feedId = selectedFeed.getId();
-            if (feedId < MIN_TABLE_ID) {
-                result = false;
-                break;
-            }
-            ContentValues val = new ContentValues();
-            val.put(FilterFeedRegistration.FEED_ID, feedId);
-            val.put(FilterFeedRegistration.FILTER_ID, filterId);
-            long id = db.insert(FilterFeedRegistration.TABLE_NAME, null, val);
-            if (id == INSERT_ERROR_ID) {
-                result = false;
-                break;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Update method for filter.
-     *
-     * @param filterId Filter ID to update
-     * @param title New title
-     * @param keyword New keyword
-     * @param url New URL
-     * @param feeds New feeds to filter
-     * @return update result
-     */
-	public boolean updateFilter(int filterId, String title, String keyword, String url, ArrayList<Feed> feeds) {
-		boolean result = false;
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Filter.ID, filterId);
-			values.put(Filter.KEYWORD, keyword);
-			values.put(Filter.URL, url);
-			values.put(Filter.TITLE, title);
-			int affectedNum = db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + filterId, null);
-			// Same ID filter should not exist and 0 means fail to update
-			result = (affectedNum == 1);
-
-			// Delete existing relation between filter and feed
-			if (result) {
-				String where = FilterFeedRegistration.FILTER_ID + " = " + filterId;
-				affectedNum = db.delete(FilterFeedRegistration.TABLE_NAME, where, null);
-				result = (affectedNum > 0);
-			}
-
-			// Insert new relations
-            if (result) {
-                result = saveFilterFeedRegistration(filterId, feeds);
-            }
-
-            if (result) db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-            result = false;
-		} finally {
-			db.endTransaction();
-		}
-		return result;
-	}
 
 	public boolean isArticle(Article article) {
 		int num;

@@ -110,9 +110,8 @@ val appModule = module {
     scope("register_filter") { (view: RegisterFilterView, editFilterId: Int) ->
         RegisterFilterPresenter(
                 view = view,
-                editFilterId = editFilterId,
-                dbAdapter = DatabaseAdapter.getInstance(),
-                filterRepository = get()
+                filterRepository = get(),
+                editFilterId = editFilterId
         )
     }
 

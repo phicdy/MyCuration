@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
@@ -12,15 +11,13 @@ import java.util.ArrayList
 
 class RegisterFilterPresenterTest {
 
-    private lateinit var mockAdapter: DatabaseAdapter
     private lateinit var presenter: RegisterFilterPresenter
     private lateinit var mockView: MockView
 
     @Before
     fun setup() {
-        mockAdapter = mock(DatabaseAdapter::class.java)
         mockView = MockView()
-        presenter = RegisterFilterPresenter(mockView, mockAdapter, mock(FilterRepository::class.java), 1)
+        presenter = RegisterFilterPresenter(mockView, mock(FilterRepository::class.java), 1)
     }
 
     @Test

@@ -249,6 +249,52 @@ class FilterRepository(private val db: SQLiteDatabase) {
     }
 
     /**
+     * Update method for filter.
+     *
+     * @param filterId Filter ID to update
+     * @param title New title
+     * @param keyword New keyword
+     * @param url New URL
+     * @param feeds New feeds to filter
+     * @return update result
+     */
+    suspend fun updateFilter(filterId: Int, title: String, keyword: String, url: String, feeds: ArrayList<Feed>): Boolean = withContext(Dispatchers.IO) {
+        var result: Boolean
+        try {
+            val values = ContentValues().apply {
+                put(Filter.ID, filterId)
+                put(Filter.KEYWORD, keyword)
+                put(Filter.URL, url)
+                put(Filter.TITLE, title)
+            }
+            db.beginTransaction()
+            var affectedNum = db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + filterId, null)
+            // Same ID filter should not exist and 0 means fail to update
+            result = affectedNum == 1
+
+            // Delete existing relation between filter and feed
+            if (result) {
+                val where = FilterFeedRegistration.FILTER_ID + " = " + filterId
+                affectedNum = db.delete(FilterFeedRegistration.TABLE_NAME, where, null)
+                result = affectedNum > 0
+            }
+
+            // Insert new relations
+            if (result) {
+                result = saveFilterFeedRegistration(filterId.toLong(), feeds)
+            }
+
+            if (result) db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            Timber.e(e)
+            result = false
+        } finally {
+            db.endTransaction()
+        }
+        return@withContext result
+    }
+
+    /**
      *
      * Save method for relation between filter and feed set into database.
      * This method does not have transaction.

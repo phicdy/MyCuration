@@ -2,7 +2,6 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.view.MenuItem
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
@@ -10,7 +9,6 @@ import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
 
 class RegisterFilterPresenter(private val view: RegisterFilterView,
-                              private val dbAdapter: DatabaseAdapter,
                               private val filterRepository: FilterRepository,
                               private val editFilterId: Int = NEW_FILTER_ID) {
 
@@ -60,7 +58,7 @@ class RegisterFilterPresenter(private val view: RegisterFilterView,
             else -> {
                 val result: Boolean
                 if (isEdit) {
-                    result = dbAdapter.updateFilter(editFilterId, titleText, keywordText, filterUrlText, selectedFeedList)
+                    result = filterRepository.updateFilter(editFilterId, titleText, keywordText, filterUrlText, selectedFeedList)
                     view.trackEdit()
                 } else {
                     // Add new filter
