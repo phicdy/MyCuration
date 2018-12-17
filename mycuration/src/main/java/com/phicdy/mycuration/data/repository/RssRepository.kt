@@ -32,8 +32,8 @@ class RssRepository(private val db: SQLiteDatabase,
             } catch (e: Exception) {
                 num = -1
             } finally {
-                db.endTransaction()
                 cursor?.close()
+                db.endTransaction()
             }
 
             return@withContext num
