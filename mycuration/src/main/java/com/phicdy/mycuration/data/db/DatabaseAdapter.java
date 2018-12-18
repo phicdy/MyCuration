@@ -61,52 +61,6 @@ public class DatabaseAdapter {
 	}
 
 
-	/**
-     * Helper method to delete all of the feeds.
-     * This method also deletes relation between filter and feed.
-     */
-	public void deleteAll() {
-		try {
-            db.beginTransaction();
-            db.delete(CurationCondition.TABLE_NAME, null, null);
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-            db.delete(CurationSelection.TABLE_NAME, null, null);
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-            db.delete(Article.TABLE_NAME, null, null);
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-            db.delete(FilterFeedRegistration.TABLE_NAME, null, null);
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-			db.delete(Filter.TABLE_NAME, null, null);
-			db.setTransactionSuccessful();
-			db.endTransaction();
-
-            db.beginTransaction();
-            db.delete(Curation.TABLE_NAME, null, null);
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            db.beginTransaction();
-			db.delete(Feed.TABLE_NAME, null, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
     /**
      * Helper method to retrieve all of the filters.
      *

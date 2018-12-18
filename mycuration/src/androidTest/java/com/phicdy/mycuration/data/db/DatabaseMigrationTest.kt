@@ -24,6 +24,7 @@ import android.support.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertEquals
@@ -56,7 +57,8 @@ class DatabaseMigrationTest {
 
     @After
     fun tearDown() {
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Suppress("Deprecation")

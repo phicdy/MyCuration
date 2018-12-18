@@ -1,9 +1,9 @@
 package com.phicdy.mycuration.data.repository
 
 import android.support.test.InstrumentationRegistry.getTargetContext
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -19,7 +19,6 @@ class UnreadCountRepositoryTest {
     private lateinit var filterRepository: FilterRepository
     private lateinit var curationRepository: CurationRepository
     private lateinit var unreadCountRepository: UnreadCountRepository
-    private lateinit var adapter: DatabaseAdapter
     private var rss: Feed? = null
 
     @Before
@@ -30,8 +29,7 @@ class UnreadCountRepositoryTest {
         filterRepository = FilterRepository(db)
         rssRepository = RssRepository(db, articleRepository, filterRepository)
         unreadCountRepository = UnreadCountRepository(rssRepository, curationRepository)
-        adapter = DatabaseAdapter.getInstance()
-        adapter.deleteAll()
+        deleteAll(db)
 
         rss = rssRepository.store("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
         assertNotNull(rss)
@@ -41,7 +39,8 @@ class UnreadCountRepositoryTest {
 
     @After
     fun tearDown() {
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Test

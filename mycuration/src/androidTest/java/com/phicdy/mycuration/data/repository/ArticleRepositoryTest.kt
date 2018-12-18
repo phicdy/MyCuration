@@ -1,9 +1,9 @@
 package com.phicdy.mycuration.data.repository
 
 import android.support.test.InstrumentationRegistry.getTargetContext
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.rss.Article
+import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -21,11 +21,9 @@ class ArticleRepositoryTest {
 
     private lateinit var articleRepository: ArticleRepository
     private lateinit var rssRepository: RssRepository
-    private lateinit var adapter: DatabaseAdapter
 
     @Before
     fun setUp() {
-        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
         val db = DatabaseHelper(getTargetContext()).writableDatabase
         articleRepository = ArticleRepository(db)
         rssRepository = RssRepository(
@@ -33,13 +31,13 @@ class ArticleRepositoryTest {
                 articleRepository,
                 FilterRepository(db)
         )
-        adapter = DatabaseAdapter.getInstance()
-        adapter.deleteAll()
+        deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Theory

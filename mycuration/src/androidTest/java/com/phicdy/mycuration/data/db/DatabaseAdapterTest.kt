@@ -7,6 +7,7 @@ import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
+import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -44,18 +45,19 @@ class DatabaseAdapterTest {
         )
         articleRepository = ArticleRepository(helper.writableDatabase)
         curationRepository = CurationRepository(helper.writableDatabase)
+        deleteAll(helper.writableDatabase)
         insertTestData()
     }
 
     @After
     fun tearDown() {
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Test
     fun testSaveNewArticles() = runBlocking {
         // Reset data and insert curation at first
-        adapter.deleteAll()
         insertTestCurationForArticle1()
         insertTestData()
 

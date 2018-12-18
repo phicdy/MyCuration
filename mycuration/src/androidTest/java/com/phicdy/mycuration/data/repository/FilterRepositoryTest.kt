@@ -4,6 +4,7 @@ import android.support.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -27,12 +28,13 @@ class FilterRepositoryTest {
         filterRepository = FilterRepository(db)
         rssRepository = RssRepository(db, articleRepository, filterRepository)
         adapter = DatabaseAdapter.getInstance()
-        adapter.deleteAll()
+        deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Test

@@ -4,9 +4,15 @@ package com.phicdy.mycuration.uitest
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions.*
+import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.action.ViewActions.closeSoftKeyboard
+import android.support.test.espresso.action.ViewActions.pressImeActionButton
+import android.support.test.espresso.action.ViewActions.replaceText
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.ViewMatchers.*
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withContentDescription
+import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.By
@@ -16,12 +22,12 @@ import android.support.test.uiautomator.Until
 import android.view.View
 import android.view.ViewGroup
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
+import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Description
@@ -60,11 +66,9 @@ class SearchArticleTest : UiTest() {
     @Before
     fun setup() {
         val helper = DatabaseHelper(getTargetContext())
-        DatabaseAdapter.setUp(helper)
-        val adapter = DatabaseAdapter.getInstance()
         articleRepository = ArticleRepository(helper.writableDatabase)
         rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase))
-        adapter.deleteAll()
+        deleteAll(helper.writableDatabase)
     }
 
     @After

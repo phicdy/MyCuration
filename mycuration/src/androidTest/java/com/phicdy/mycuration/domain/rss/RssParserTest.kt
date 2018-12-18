@@ -1,27 +1,24 @@
 package com.phicdy.mycuration.domain.rss
 
-import android.support.test.runner.AndroidJUnit4
-
-import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.data.db.DatabaseHelper
-import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.util.UrlUtil
-
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-
 import android.support.test.InstrumentationRegistry.getTargetContext
+import android.support.test.runner.AndroidJUnit4
+import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
+import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.deleteAll
+import com.phicdy.mycuration.util.UrlUtil
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class RssParserTest {
@@ -31,7 +28,6 @@ class RssParserTest {
 
         override fun failed(reason: RssParseResult.FailedReason, url: String) {}
     }
-    private lateinit var adapter: DatabaseAdapter
     private lateinit var rssRepository: RssRepository
     private lateinit var parser: RssParser
 
@@ -40,20 +36,18 @@ class RssParserTest {
     fun setUp() {
         parser = RssParser()
         val helper = DatabaseHelper(getTargetContext())
-        DatabaseAdapter.setUp(helper)
-        adapter = DatabaseAdapter.getInstance()
         rssRepository = RssRepository(
                 helper.writableDatabase,
                 ArticleRepository(helper.writableDatabase),
                 FilterRepository(helper.writableDatabase)
         )
-        adapter.deleteAll()
+        deleteAll(helper.writableDatabase)
     }
 
     @After
-    @Throws(Exception::class)
     fun tearDown() {
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Test
@@ -68,7 +62,6 @@ class RssParserTest {
         }
 
         val addedFeed = rssRepository.getFeedByUrl("http://news.yahoo.co.jp/pickup/rss.xml")
-        //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         assertNotNull(addedFeed)
         assertEquals("http://news.yahoo.co.jp/pickup/rss.xml", addedFeed?.url)
         assertEquals("https://news.yahoo.co.jp/", addedFeed?.siteUrl)
@@ -111,7 +104,6 @@ class RssParserTest {
         }
 
         val addedFeed = rssRepository.getFeedByUrl("https://hiroki.jp/feed/")
-        //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         assertNotNull(addedFeed)
         assertEquals("https://hiroki.jp/feed/", addedFeed?.url)
         assertEquals("https://hiroki.jp", addedFeed?.siteUrl)
@@ -125,7 +117,6 @@ class RssParserTest {
         }
 
         val infoqFeed = rssRepository.getFeedByUrl("https://www.infoq.com/jp/feed")
-        //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
         assertNotNull(infoqFeed)
         assertEquals("https://www.infoq.com/jp/feed", infoqFeed?.url)
         assertEquals("https://www.infoq.com/jp", infoqFeed?.siteUrl)
@@ -221,7 +212,6 @@ class RssParserTest {
         }
 
         val mercariFeed = rssRepository.getFeedByUrl("https://tech.mercari.com/rss")
-        //		ArrayList<Feed> allFeeds = adapter.getAllFeedsThatHaveUnreadArticles();
 
         assertNotNull(mercariFeed)
         assertEquals("https://tech.mercari.com/rss", mercariFeed?.url)

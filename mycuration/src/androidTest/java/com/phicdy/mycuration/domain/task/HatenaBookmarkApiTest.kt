@@ -1,13 +1,13 @@
 package com.phicdy.mycuration.domain.task
 
 import android.support.test.InstrumentationRegistry.getTargetContext
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
+import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -24,17 +24,15 @@ class HatenaBookmarkApiTest {
     @Before
     fun setup() {
         val helper = DatabaseHelper(getTargetContext())
-        DatabaseAdapter.setUp(helper)
-        val adapter = DatabaseAdapter.getInstance()
         articleRepository = ArticleRepository(helper.writableDatabase)
         rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase))
-        adapter.deleteAll()
+        deleteAll(helper.writableDatabase)
     }
 
     @After
     fun tearDown() {
-        val adapter = DatabaseAdapter.getInstance()
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Test

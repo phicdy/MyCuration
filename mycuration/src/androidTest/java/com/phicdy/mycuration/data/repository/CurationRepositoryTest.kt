@@ -3,12 +3,11 @@ package com.phicdy.mycuration.data.repository
 import android.support.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -25,12 +24,13 @@ class CurationRepositoryTest {
         val db = DatabaseHelper(getTargetContext()).writableDatabase
         curationRepository = CurationRepository(db)
         adapter = DatabaseAdapter.getInstance()
-        adapter.deleteAll()
+        deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Test

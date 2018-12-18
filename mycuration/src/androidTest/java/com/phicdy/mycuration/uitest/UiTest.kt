@@ -10,8 +10,8 @@ import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.Until
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.PermissionChecker
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.deleteAll
 import com.squareup.spoon.Spoon
 import org.junit.Assert.assertNotNull
 import java.io.File
@@ -38,9 +38,7 @@ abstract class UiTest {
     }
 
     private fun deleteAllData() {
-        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
-        val adapter = DatabaseAdapter.getInstance()
-        adapter.deleteAll()
+        deleteAll(DatabaseHelper(getTargetContext()).writableDatabase)
     }
 
     internal fun takeScreenshot(device: UiDevice) {
