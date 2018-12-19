@@ -72,7 +72,9 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
+        launch {
+            presenter.resume()
+        }
     }
 
     override fun showFilterList(filters: ArrayList<Filter>) {

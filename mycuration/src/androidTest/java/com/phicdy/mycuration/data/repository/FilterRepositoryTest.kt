@@ -64,7 +64,7 @@ class FilterRepositoryTest {
             filterRepository.saveNewFilter(filterTitle, arrayListOf(stored), keyword, filterUrl)
 
             // Disable the filter
-            val filter = adapter.allFilters[0]
+            val filter = filterRepository.getAllFilters()[0]
             adapter.updateFilterEnabled(filter.id, false)
             val filters = filterRepository.getEnabledFiltersOfFeed(stored.id)
             assertThat(filters.size, `is`(0))

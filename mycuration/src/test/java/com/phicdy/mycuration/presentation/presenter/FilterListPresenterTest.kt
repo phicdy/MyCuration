@@ -23,40 +23,30 @@ class FilterListPresenterTest {
     private val adapter = Mockito.mock(DatabaseAdapter::class.java)
     private lateinit var presenter: FilterListPresenter
     private lateinit var view: FilterListView
+    private lateinit var filterRepository: FilterRepository
 
     @Before
     fun setup() {
         view = Mockito.mock(FilterListView::class.java)
-        presenter = FilterListPresenter(view, mock(RssRepository::class.java), mock(FilterRepository::class.java), adapter)
+        filterRepository = mock(FilterRepository::class.java)
+        presenter = FilterListPresenter(view, mock(RssRepository::class.java), filterRepository, adapter)
     }
 
     @Test
-    fun testOnCreate() {
-        // For coverage
-        presenter.create()
-    }
-
-    @Test
-    fun `when filter is empty then show empty view`() {
-        `when`(adapter.allFilters).thenReturn(arrayListOf())
+    fun `when filter is empty then show empty view`() = runBlocking {
+        `when`(filterRepository.getAllFilters()).thenReturn(arrayListOf())
         presenter.resume()
         verify(view, times(1)).hideFilterList()
         verify(view, times(1)).showEmptyView()
     }
 
     @Test
-    fun `when filter is not empty then show filter list`() {
+    fun `when filter is not empty then show filter list`() = runBlocking {
         val filters = arrayListOf(mock(Filter::class.java))
-        `when`(adapter.allFilters).thenReturn(filters)
+        `when`(filterRepository.getAllFilters()).thenReturn(filters)
         presenter.resume()
         verify(view, times(1)).hideEmptyView()
         verify(view, times(1)).showFilterList(filters)
-    }
-
-    @Test
-    fun testOnPause() {
-        // For coverage
-        presenter.pause()
     }
 
     @Test

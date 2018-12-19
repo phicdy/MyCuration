@@ -10,9 +10,7 @@ import kotlinx.coroutines.coroutineScope
 class FilterListPresenter(private val view: FilterListView,
                           private val rssRepository: RssRepository,
                           private val filterRepository: FilterRepository,
-                          private val dbAdapter: DatabaseAdapter) : Presenter {
-
-    override fun create() {}
+                          private val dbAdapter: DatabaseAdapter) {
 
     suspend fun onActivityCreated() = coroutineScope {
         if (rssRepository.getNumOfRss() == 0) {
@@ -20,8 +18,8 @@ class FilterListPresenter(private val view: FilterListView,
         }
     }
 
-    override fun resume() {
-        dbAdapter.allFilters.let {
+    suspend fun resume() = coroutineScope {
+        filterRepository.getAllFilters().let {
             if (it.isEmpty()) {
                 view.hideFilterList()
                 view.showEmptyView()
@@ -32,8 +30,6 @@ class FilterListPresenter(private val view: FilterListView,
         }
 
     }
-
-    override fun pause() {}
 
     suspend fun onDeleteMenuClicked(position: Int, selectedFilter: Filter, currentSize: Int) = coroutineScope {
         if (position < 0) return@coroutineScope

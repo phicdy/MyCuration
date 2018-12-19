@@ -37,7 +37,6 @@ import org.junit.Assert.fail
 class DatabaseMigrationTest {
 
     private lateinit var db: SQLiteDatabase
-    private lateinit var adapter: DatabaseAdapter
     private lateinit var rssRepository: RssRepository
     private lateinit var filterRepository: FilterRepository
 
@@ -47,8 +46,6 @@ class DatabaseMigrationTest {
 
     @Before
     fun setUp() {
-        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
-        adapter = DatabaseAdapter.getInstance()
         val helper = DatabaseHelper(getTargetContext())
         db = helper.writableDatabase
         filterRepository = FilterRepository(db)
@@ -97,7 +94,7 @@ class DatabaseMigrationTest {
             cursor?.close()
         }
 
-        val filters = adapter.allFilters
+        val filters = filterRepository.getAllFilters()
         assertThat(filters.size, `is`(1))
         val filter = filters[0]
         assertEquals(filter.title, "hoge")
@@ -144,7 +141,7 @@ class DatabaseMigrationTest {
             cursor?.close()
         }
 
-        val filters = adapter.allFilters
+        val filters = filterRepository.getAllFilters()
         assertThat(filters.size, `is`(1))
         val filter = filters[0]
         assertEquals(filter.title, "hoge")

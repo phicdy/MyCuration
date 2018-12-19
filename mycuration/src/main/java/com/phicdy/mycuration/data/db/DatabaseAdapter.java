@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.phicdy.mycuration.data.filter.Filter;
-import com.phicdy.mycuration.data.filter.FilterFeedRegistration;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Curation;
 import com.phicdy.mycuration.data.rss.CurationCondition;
@@ -60,71 +59,6 @@ public class DatabaseAdapter {
 		return sharedDbAdapter;
 	}
 
-
-    /**
-     * Helper method to retrieve all of the filters.
-     *
-     * @return all of the filters in the database
-     */
-	public ArrayList<Filter> getAllFilters() {
-		ArrayList<Filter> filters = new ArrayList<>();
-		String[] columns = {
-				Filter.TABLE_NAME + "." + Filter.ID,
-				Filter.TABLE_NAME + "." + Filter.TITLE,
-				Filter.TABLE_NAME + "." + Filter.KEYWORD,
-				Filter.TABLE_NAME + "." + Filter.URL,
-				Filter.TABLE_NAME + "." + Filter.ENABLED,
-                Feed.TABLE_NAME + "." + Feed.ID,
-				Feed.TABLE_NAME + "." + Feed.TITLE};
-		String selection = Filter.TABLE_NAME + "." + Filter.ID + "=" +
-				FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FILTER_ID + " and " +
-                FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FEED_ID + "=" +
-                Feed.TABLE_NAME + "." + Feed.ID;
-		db.beginTransaction();
-		try {
-			String table = Filter.TABLE_NAME + " inner join " +
-                    FilterFeedRegistration.TABLE_NAME + " inner join " + Feed.TABLE_NAME;
-            Cursor cursor = db.query(table, columns, selection, null, null, null, null);
-			if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                Filter filter;
-                ArrayList<Feed> feeds = new ArrayList<>();
-                int filterId = cursor.getInt(0);
-                String title = cursor.getString(1);
-                String keyword = cursor.getString(2);
-                String url = cursor.getString(3);
-                int enabled = cursor.getInt(4);
-                int feedId = cursor.getInt(5);
-                String feedTitle = cursor.getString(6);
-                feeds.add(new Feed(feedId, feedTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""));
-				while (cursor.moveToNext()) {
-                    int cursorFilterId = cursor.getInt(0);
-                    if (filterId != cursorFilterId) {
-                        filter = new Filter(filterId, title, keyword, url, feeds, -1, enabled);
-                        filters.add(filter);
-                        filterId = cursorFilterId;
-                        feeds = new ArrayList<>();
-                    }
-                    title = cursor.getString(1);
-                    keyword = cursor.getString(2);
-                    url = cursor.getString(3);
-                    enabled = cursor.getInt(4);
-                    feedId = cursor.getInt(5);
-                    feedTitle = cursor.getString(6);
-                    feeds.add(new Feed(feedId, feedTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""));
-				}
-                filter = new Filter(filterId, title, keyword, url, feeds, -1, enabled);
-                filters.add(filter);
-				cursor.close();
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-		return filters;
-	}
 
 	public void updateFilterEnabled(int id, boolean isEnabled) {
 		db.beginTransaction();
