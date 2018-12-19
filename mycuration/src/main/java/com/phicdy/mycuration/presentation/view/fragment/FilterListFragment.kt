@@ -77,6 +77,11 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
         }
     }
 
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
+    }
+
     override fun showFilterList(filters: ArrayList<Filter>) {
         filtersRecyclerView.visibility = View.VISIBLE
         filtersListAdapter = FiltersListAdapter(filters)
