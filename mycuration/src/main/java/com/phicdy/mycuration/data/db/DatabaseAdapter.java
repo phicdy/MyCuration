@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
-import com.phicdy.mycuration.data.filter.Filter;
 import com.phicdy.mycuration.data.rss.Article;
 import com.phicdy.mycuration.data.rss.Curation;
 import com.phicdy.mycuration.data.rss.CurationCondition;
@@ -59,20 +58,6 @@ public class DatabaseAdapter {
 		return sharedDbAdapter;
 	}
 
-
-	public void updateFilterEnabled(int id, boolean isEnabled) {
-		db.beginTransaction();
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Filter.ENABLED, isEnabled ? Filter.TRUE : Filter.FALSE);
-			db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + id, null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-	}
 
 	public void exportDb(@NonNull File currentDB) {
 		try {

@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -20,7 +19,6 @@ import java.util.ArrayList
 
 class FilterListPresenterTest {
 
-    private val adapter = Mockito.mock(DatabaseAdapter::class.java)
     private lateinit var presenter: FilterListPresenter
     private lateinit var view: FilterListView
     private lateinit var filterRepository: FilterRepository
@@ -29,7 +27,7 @@ class FilterListPresenterTest {
     fun setup() {
         view = Mockito.mock(FilterListView::class.java)
         filterRepository = mock(FilterRepository::class.java)
-        presenter = FilterListPresenter(view, mock(RssRepository::class.java), filterRepository, adapter)
+        presenter = FilterListPresenter(view, mock(RssRepository::class.java), filterRepository)
     }
 
     @Test
@@ -89,14 +87,14 @@ class FilterListPresenterTest {
     }
 
     @Test
-    fun `when check the filter then the filter is enabled`() {
+    fun `when check the filter then the filter is enabled`() = runBlocking {
         val validFilter = Filter(1, "test1", "testKeyword1", "http://test1.com", ArrayList(), -1, Filter.TRUE)
         presenter.onFilterCheckClicked(validFilter, true)
         assertTrue(validFilter.isEnabled)
     }
 
     @Test
-    fun `when uncheck the filter then the filter is disabled`() {
+    fun `when uncheck the filter then the filter is disabled`() = runBlocking {
         val validFilter = Filter(1, "test1", "testKeyword1", "http://test1.com", ArrayList(), -1, Filter.TRUE)
         presenter.onFilterCheckClicked(validFilter, false)
         assertFalse(validFilter.isEnabled)

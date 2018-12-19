@@ -149,8 +149,10 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
                 }
 
                 holder.filterEnabled.setOnCheckedChangeListener { _, isChecked ->
-                    val clickedFilter = filters[position]
-                    presenter.onFilterCheckClicked(clickedFilter, isChecked)
+                    launch {
+                        val clickedFilter = filters[position]
+                        presenter.onFilterCheckClicked(clickedFilter, isChecked)
+                    }
                 }
                 holder.filterEnabled.isChecked = filter.isEnabled
 

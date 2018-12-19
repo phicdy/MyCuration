@@ -118,7 +118,6 @@ val appModule = module {
     scope("filter_list") { (view: FilterListFragment) ->
         FilterListPresenter(
                 view = view,
-                dbAdapter = DatabaseAdapter.getInstance(),
                 rssRepository = get(),
                 filterRepository = get()
         )

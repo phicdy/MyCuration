@@ -332,6 +332,21 @@ class FilterRepository(private val db: SQLiteDatabase) {
         return@coroutineScope result
     }
 
+    suspend fun updateEnabled(id: Int, isEnabled: Boolean) = withContext(Dispatchers.IO) {
+        try {
+            val values = ContentValues().apply {
+                put(Filter.ENABLED, if (isEnabled) Filter.TRUE else Filter.FALSE)
+            }
+            db.beginTransaction()
+            db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + id, null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            Timber.e(e)
+        } finally {
+            db.endTransaction()
+        }
+    }
+
     companion object {
         private const val INSERT_ERROR_ID = -1
         private const val MIN_TABLE_ID = 1

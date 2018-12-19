@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
 import android.support.test.InstrumentationRegistry.getTargetContext
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.deleteAll
@@ -18,16 +17,13 @@ class FilterRepositoryTest {
     private lateinit var rssRepository: RssRepository
     private lateinit var articleRepository: ArticleRepository
     private lateinit var filterRepository: FilterRepository
-    private lateinit var adapter: DatabaseAdapter
 
     @Before
     fun setUp() {
-        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
         val db = DatabaseHelper(getTargetContext()).writableDatabase
         articleRepository = ArticleRepository(db)
         filterRepository = FilterRepository(db)
         rssRepository = RssRepository(db, articleRepository, filterRepository)
-        adapter = DatabaseAdapter.getInstance()
         deleteAll(db)
     }
 
@@ -65,7 +61,7 @@ class FilterRepositoryTest {
 
             // Disable the filter
             val filter = filterRepository.getAllFilters()[0]
-            adapter.updateFilterEnabled(filter.id, false)
+            filterRepository.updateEnabled(filter.id, false)
             val filters = filterRepository.getEnabledFiltersOfFeed(stored.id)
             assertThat(filters.size, `is`(0))
         } ?: fail("Failed to store RSS")

@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -9,8 +8,7 @@ import kotlinx.coroutines.coroutineScope
 
 class FilterListPresenter(private val view: FilterListView,
                           private val rssRepository: RssRepository,
-                          private val filterRepository: FilterRepository,
-                          private val dbAdapter: DatabaseAdapter) {
+                          private val filterRepository: FilterRepository) {
 
     suspend fun onActivityCreated() = coroutineScope {
         if (rssRepository.getNumOfRss() == 0) {
@@ -49,8 +47,8 @@ class FilterListPresenter(private val view: FilterListView,
         view.startEditActivity(id)
     }
 
-    fun onFilterCheckClicked(clickedFilter: Filter, isChecked: Boolean) {
+    suspend fun onFilterCheckClicked(clickedFilter: Filter, isChecked: Boolean) = coroutineScope {
         clickedFilter.isEnabled = isChecked
-        dbAdapter.updateFilterEnabled(clickedFilter.id, isChecked)
+        filterRepository.updateEnabled(clickedFilter.id, isChecked)
     }
 }
