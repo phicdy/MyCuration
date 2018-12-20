@@ -35,15 +35,14 @@ class CurationRepositoryTest {
 
     @Test
     fun testSaveNewCuration() = runBlocking {
-        insertTestCuration()
+        val curationId = insertTestCuration()
 
-        val curationId = adapter.getCurationIdByName(TEST_CURATION_NAME)
         val map = curationRepository.getAllCurationWords()
         assertTrue(map.containsKey(curationId))
         assertThat(map.size, `is`(1))
-        val addedWords = map.get(curationId) ?: emptyList<String>()
-        val TEST_WORDS_SIZE = 3
-        assertEquals(TEST_WORDS_SIZE, addedWords.size)
+        val addedWords = map[curationId] ?: emptyList<String>()
+        val wordSize = 3
+        assertEquals(wordSize, addedWords.size)
         assertEquals(TEST_WORD1, addedWords[0])
         assertEquals(TEST_WORD2, addedWords[1])
         assertEquals(TEST_WORD3, addedWords[2])
@@ -58,13 +57,12 @@ class CurationRepositoryTest {
     @Test
     fun whenInsert1Curation_ThenReturnTheWords() = runBlocking {
         // 1 curation
-        insertTestCuration()
-        val curationId1 = adapter.getCurationIdByName(TEST_CURATION_NAME)
+        val curationId = insertTestCuration()
 
         val map = curationRepository.getAllCurationWords()
         assertEquals(1, map.size)
-        assertTrue(map.containsKey(curationId1))
-        val addedWords1 = map.get(curationId1) ?: emptyList<String>()
+        assertTrue(map.containsKey(curationId))
+        val addedWords1 = map[curationId] ?: emptyList<String>()
         assertEquals(TEST_WORD1, addedWords1[0])
         assertEquals(TEST_WORD2, addedWords1[1])
         assertEquals(TEST_WORD3, addedWords1[2])
@@ -73,7 +71,7 @@ class CurationRepositoryTest {
     @Test
     fun testGetAllCurationWords() = runBlocking {
         // 2 curations
-        insertTestCuration()
+        val curationId = insertTestCuration()
         val curationName2 = "test2"
         val testWord4 = "word4"
         val testWord5 = "word5"
@@ -83,33 +81,34 @@ class CurationRepositoryTest {
             add(testWord5)
             add(testWord6)
         }
-        assertTrue(curationRepository.store(curationName2, words2) > 0)
-        val curationId2 = adapter.getCurationIdByName(curationName2)
+        val curationId2 = curationRepository.store(curationName2, words2).toInt()
+        assertTrue(curationId2 > 0)
 
         val map = curationRepository.getAllCurationWords()
         assertEquals(2, map.size)
 
-        val curationId1 = adapter.getCurationIdByName(TEST_CURATION_NAME)
-        assertTrue(map.containsKey(curationId1))
-        val addedWords1 = map.get(curationId1) ?: emptyList<String>()
+        assertTrue(map.containsKey(curationId))
+        val addedWords1 = map[curationId] ?: emptyList<String>()
         assertEquals(TEST_WORD1, addedWords1[0])
         assertEquals(TEST_WORD2, addedWords1[1])
         assertEquals(TEST_WORD3, addedWords1[2])
 
         assertTrue(map.containsKey(curationId2))
-        val addedWords2 = map.get(curationId2) ?: emptyList<String>()
+        val addedWords2 = map[curationId2] ?: emptyList<String>()
         assertEquals(testWord4, addedWords2[0])
         assertEquals(testWord5, addedWords2[1])
         assertEquals(testWord6, addedWords2[2])
     }
 
-    private fun insertTestCuration() = runBlocking {
+    private fun insertTestCuration(): Int = runBlocking {
         val words = ArrayList<String>().apply {
             add(TEST_WORD1)
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(curationRepository.store(TEST_CURATION_NAME, words) > 0)
+        val id = curationRepository.store(TEST_CURATION_NAME, words).toInt()
+        assertTrue(id > 0)
+        return@runBlocking id
     }
 
     companion object {

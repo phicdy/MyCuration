@@ -27,7 +27,6 @@ public class DatabaseAdapter {
 	private SQLiteDatabase db;
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
-	public static final int NOT_FOUND_ID = -1;
 
 	private DatabaseAdapter() {
 	}
@@ -135,22 +134,6 @@ public class DatabaseAdapter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public int getCurationIdByName(String name) {
-		int id = NOT_FOUND_ID;
-		try {
-			String[] columns = {Curation.ID};
-			String selection = Curation.NAME + " = '' || ? || ''";
-			String[] selectionArgs = {name};
-			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-			cursor.moveToFirst();
-			id = cursor.getInt(0);
-			cursor.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return id;
 	}
 
 	public String getCurationNameById(int curationId) {

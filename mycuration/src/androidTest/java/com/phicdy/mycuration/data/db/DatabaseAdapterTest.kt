@@ -12,6 +12,7 @@ import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -58,7 +59,7 @@ class DatabaseAdapterTest {
     @Test
     fun testSaveNewArticles() = runBlocking {
         // Reset data and insert curation at first
-        insertTestCurationForArticle1()
+        val curationId = insertTestCurationForArticle1()
         insertTestData()
 
         val savedArticles = articleRepository.getTop300Articles(false)
@@ -76,8 +77,7 @@ class DatabaseAdapterTest {
             assertEquals(Article.UNREAD, status2)
         }
 
-        val curatioId = adapter.getCurationIdByName(TEST_CURATION_NAME)
-        val articles = adapter.getAllArticlesOfCuration(curatioId, true)
+        val articles = adapter.getAllArticlesOfCuration(curationId, true)
         assertNotNull(articles)
         assertEquals(1, articles.size)
         assertEquals(TEST_ARTICLE1_TITLE, articles[0].title)
@@ -146,16 +146,14 @@ class DatabaseAdapterTest {
 
     @Test
     fun testDeleteCuration() = runBlocking {
-        insertTestCuration()
-        val curationId = adapter.getCurationIdByName(TEST_CURATION_NAME)
+        val curationId = insertTestCuration()
         assertTrue(curationRepository.delete(curationId))
-        assertEquals(DatabaseAdapter.NOT_FOUND_ID, adapter.getCurationIdByName(TEST_CURATION_NAME))
+        assertFalse(curationRepository.isExist(TEST_CURATION_NAME))
     }
 
     @Test
     fun testGetAllArticlesOfCuration() = runBlocking {
-        insertTestCurationForArticle1()
-        val curationId = adapter.getCurationIdByName(TEST_CURATION_NAME)
+        val curationId = insertTestCurationForArticle1()
 
         val wordsOfCurationForArticle1 = ArrayList<String>().apply {
             add(TEST_ARTICLE1_TITLE)
@@ -169,22 +167,26 @@ class DatabaseAdapterTest {
         assertEquals(TEST_ARTICLE1_TITLE, articles[0].title)
     }
 
-    private fun insertTestCuration() = runBlocking {
+    private fun insertTestCuration(): Int = runBlocking {
         val words = ArrayList<String>().apply {
             add(TEST_WORD1)
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(curationRepository.store(TEST_CURATION_NAME, words) > 0)
+        val id = curationRepository.store(TEST_CURATION_NAME, words).toInt()
+        assertTrue(id > 0)
+        return@runBlocking id
     }
 
-    private fun insertTestCurationForArticle1() = runBlocking {
+    private fun insertTestCurationForArticle1(): Int = runBlocking {
         val words = ArrayList<String>().apply {
             add(TEST_ARTICLE1_TITLE)
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(curationRepository.store(TEST_CURATION_NAME, words) > 0)
+        val id = curationRepository.store(TEST_CURATION_NAME, words).toInt()
+        assertTrue(id > 0)
+        return@runBlocking id
     }
 
     companion object {
