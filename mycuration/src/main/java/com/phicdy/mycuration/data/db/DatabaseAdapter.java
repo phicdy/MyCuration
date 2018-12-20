@@ -3,7 +3,6 @@ package com.phicdy.mycuration.data.db;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
@@ -137,50 +136,6 @@ public class DatabaseAdapter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public boolean adaptCurationToArticles(int curationId, ArrayList<String> words) {
-		if (curationId == NOT_FOUND_ID) {
-			return false;
-		}
-
-		boolean result = true;
-		SQLiteStatement insertSt = db
-				.compileStatement("insert into " + CurationSelection.TABLE_NAME +
-						"(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");");
-		db.beginTransaction();
-        Cursor cursor = null;
-		try {
-			// Delete old curation selection
-			db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null);
-
-			// Get all articles
-			String[] columns = {Article.ID, Article.TITLE};
-			cursor = db.query(Article.TABLE_NAME, columns, null, null, null, null, null);
-
-			// Adapt
-			while (cursor.moveToNext()) {
-				int articleId = cursor.getInt(0);
-				String articleTitle = cursor.getString(1);
-				for (String word : words) {
-					if (articleTitle.contains(word)) {
-						insertSt.bindString(1, String.valueOf(articleId));
-						insertSt.executeInsert();
-						break;
-					}
-				}
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		} finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-			db.endTransaction();
-		}
-		return result;
 	}
 
 	public ArrayList<Curation> getAllCurations() {

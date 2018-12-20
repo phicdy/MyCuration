@@ -161,7 +161,7 @@ class DatabaseAdapterTest {
     }
 
     @Test
-    fun testGetAllArticlesOfCuration() {
+    fun testGetAllArticlesOfCuration() = runBlocking {
         insertTestCurationForArticle1()
         val curationId = adapter.getCurationIdByName(TEST_CURATION_NAME)
 
@@ -170,7 +170,7 @@ class DatabaseAdapterTest {
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(adapter.adaptCurationToArticles(curationId, wordsOfCurationForArticle1))
+        assertTrue(curationRepository.adaptToArticles(curationId, wordsOfCurationForArticle1))
         val articles = adapter.getAllArticlesOfCuration(curationId,  true)
         assertNotNull(articles)
         assertEquals(1, articles.size)

@@ -91,7 +91,7 @@ class AddCurationPresenter(
             editCurationid
         }
         if (id > 0) {
-            adapter.adaptCurationToArticles(id, addedWords)
+            repository.adaptToArticles(id, addedWords)
             if (isNew) {
                 view.handleAddSuccess()
             } else {

@@ -171,10 +171,47 @@ class CurationRepository(private val db: SQLiteDatabase) {
         }
         return@withContext addedCurationId
     }
+
+    suspend fun adaptToArticles(curationId: Int, words: ArrayList<String>): Boolean = withContext(Dispatchers.IO) {
+        if (curationId == NOT_FOUND_ID) return@withContext false
+
+        var result = true
+        var cursor: Cursor? = null
+        try {
+            val insertSt = db.compileStatement("insert into " + CurationSelection.TABLE_NAME +
+                            "(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");")
+            db.beginTransaction()
+            // Delete old curation selection
+            db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null)
+
+            // Get all articles
+            val columns = arrayOf(Article.ID, Article.TITLE)
+            cursor = db.query(Article.TABLE_NAME, columns, null, null, null, null, null)
+
+            // Adapt
+            while (cursor!!.moveToNext()) {
+                val articleId = cursor.getInt(0)
+                val articleTitle = cursor.getString(1)
+                for (word in words) {
+                    if (articleTitle.contains(word)) {
+                        insertSt.bindString(1, articleId.toString())
+                        insertSt.executeInsert()
+                        break
+                    }
+                }
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            Timber.e(e)
             result = false
         } finally {
+            cursor?.close()
             db.endTransaction()
         }
         return@withContext result
+    }
+
+    companion object {
+        private const val NOT_FOUND_ID = -1
     }
 }
