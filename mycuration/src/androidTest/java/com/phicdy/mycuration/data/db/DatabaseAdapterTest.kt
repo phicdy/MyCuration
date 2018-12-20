@@ -153,14 +153,6 @@ class DatabaseAdapterTest {
     }
 
     @Test
-    fun testDeleteAllCuration() = runBlocking {
-        insertTestCuration()
-        assertTrue(adapter.deleteAllCuration())
-        val map = curationRepository.getAllCurationWords()
-        assertEquals(0, map.size)
-    }
-
-    @Test
     fun testGetAllArticlesOfCuration() = runBlocking {
         insertTestCurationForArticle1()
         val curationId = adapter.getCurationIdByName(TEST_CURATION_NAME)

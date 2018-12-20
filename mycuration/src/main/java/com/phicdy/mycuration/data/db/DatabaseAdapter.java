@@ -138,23 +138,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-	public boolean deleteAllCuration() {
-		boolean result = true;
-		db.beginTransaction();
-		try {
-			db.delete(CurationCondition.TABLE_NAME, "", null);
-			db.delete(CurationSelection.TABLE_NAME, "", null);
-			db.delete(Curation.TABLE_NAME, "", null);
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		} finally {
-			db.endTransaction();
-		}
-		return result;
-	}
-
 	public boolean isExistSameNameCuration(String name) {
 		int num = 0;
 		try {
