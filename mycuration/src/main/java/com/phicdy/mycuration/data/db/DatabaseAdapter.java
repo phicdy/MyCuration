@@ -138,31 +138,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-	public ArrayList<Curation> getAllCurations() {
-		ArrayList<Curation> curationList = new ArrayList<>();
-		db.beginTransaction();
-		try {
-			String[] columns = {Curation.ID, Curation.NAME};
-			String orderBy = Curation.NAME;
-			Cursor cursor = db.query(Curation.TABLE_NAME, columns, null, null, null, null, orderBy);
-			if (cursor != null) {
-				while (cursor.moveToNext()) {
-					int id = cursor.getInt(0);
-					String name = cursor.getString(1);
-					curationList.add(new Curation(id, name));
-				}
-				cursor.close();
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
-
-		return curationList;
-	}
-
 	public boolean deleteCuration(int curationId) {
 		int numOfDeleted = 0;
 		db.beginTransaction();

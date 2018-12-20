@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Curation
@@ -11,15 +12,15 @@ import java.util.ArrayList
 
 class CurationListPresenter(private val view: CurationListView,
                             private val rssRepository: RssRepository,
+                            private val curationRepository: CurationRepository,
                             private val dbAdapter: DatabaseAdapter,
-                            private val unreadCountRepository: UnreadCountRepository) : Presenter {
+                            private val unreadCountRepository: UnreadCountRepository) {
     private var allCurations: ArrayList<Curation> = arrayListOf()
 
-    override fun create() {}
 
-    override fun resume() {
+    suspend fun resume() = coroutineScope {
         view.registerContextMenu()
-        allCurations = dbAdapter.allCurations
+        allCurations = curationRepository.getAllCurations()
         if (allCurations.isEmpty()) {
             view.hideRecyclerView()
             view.showEmptyView()
@@ -29,8 +30,6 @@ class CurationListPresenter(private val view: CurationListView,
             view.initListBy(allCurations)
         }
     }
-
-    override fun pause() {}
 
     fun onCurationEditClicked(curationId: Int) {
         if (curationId < 0) return

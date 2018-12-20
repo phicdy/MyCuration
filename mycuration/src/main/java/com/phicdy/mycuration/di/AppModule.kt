@@ -83,6 +83,7 @@ val appModule = module {
         CurationListPresenter(
                 view = view,
                 rssRepository = get(),
+                curationRepository = get(),
                 dbAdapter = DatabaseAdapter.getInstance(),
                 unreadCountRepository = get()
         )

@@ -52,7 +52,9 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
+        launch {
+            presenter.resume()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
