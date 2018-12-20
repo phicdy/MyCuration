@@ -145,10 +145,10 @@ class DatabaseAdapterTest {
 
 
     @Test
-    fun testDeleteCuration() {
+    fun testDeleteCuration() = runBlocking {
         insertTestCuration()
         val curationId = adapter.getCurationIdByName(TEST_CURATION_NAME)
-        assertTrue(adapter.deleteCuration(curationId))
+        assertTrue(curationRepository.delete(curationId))
         assertEquals(DatabaseAdapter.NOT_FOUND_ID, adapter.getCurationIdByName(TEST_CURATION_NAME))
     }
 

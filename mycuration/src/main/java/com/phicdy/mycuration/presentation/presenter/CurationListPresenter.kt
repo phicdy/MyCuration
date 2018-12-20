@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -13,7 +12,6 @@ import java.util.ArrayList
 class CurationListPresenter(private val view: CurationListView,
                             private val rssRepository: RssRepository,
                             private val curationRepository: CurationRepository,
-                            private val dbAdapter: DatabaseAdapter,
                             private val unreadCountRepository: UnreadCountRepository) {
     private var allCurations: ArrayList<Curation> = arrayListOf()
 
@@ -36,8 +34,8 @@ class CurationListPresenter(private val view: CurationListView,
         view.startEditCurationActivity(curationId)
     }
 
-    fun onCurationDeleteClicked(curation: Curation, size: Int) {
-        dbAdapter.deleteCuration(curation.id)
+    suspend fun onCurationDeleteClicked(curation: Curation, size: Int) = coroutineScope {
+        curationRepository.delete(curation.id)
         if (size == 1) {
             view.hideRecyclerView()
             view.showEmptyView()

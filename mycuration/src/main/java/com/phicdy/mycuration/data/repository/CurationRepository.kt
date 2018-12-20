@@ -237,6 +237,22 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext curationList
     }
 
+    suspend fun delete(curationId: Int): Boolean = withContext(Dispatchers.IO) {
+        var numOfDeleted = 0
+        try {
+            db.beginTransaction()
+            db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null)
+            db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null)
+            numOfDeleted = db.delete(Curation.TABLE_NAME, Curation.ID + " = " + curationId, null)
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            Timber.e(e)
+        } finally {
+            db.endTransaction()
+        }
+        return@withContext numOfDeleted == 1
+    }
+
     companion object {
         private const val NOT_FOUND_ID = -1
     }

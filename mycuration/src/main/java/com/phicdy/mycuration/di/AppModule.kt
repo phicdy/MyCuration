@@ -84,7 +84,6 @@ val appModule = module {
                 view = view,
                 rssRepository = get(),
                 curationRepository = get(),
-                dbAdapter = DatabaseAdapter.getInstance(),
                 unreadCountRepository = get()
         )
     }

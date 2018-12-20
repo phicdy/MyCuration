@@ -30,7 +30,7 @@ class CurationListPresenterTest {
     @Before
     fun setUp() {
         DatabaseAdapter.inject(adapter)
-        presenter = CurationListPresenter(view, rssRepository, curationRepository, adapter, repository)
+        presenter = CurationListPresenter(view, rssRepository, curationRepository, repository)
     }
 
     @Test
@@ -74,7 +74,7 @@ class CurationListPresenterTest {
         }
         `when`(curationRepository.getAllCurations()).thenReturn(curations)
         presenter.onCurationDeleteClicked(curation, curations.size)
-        verify(adapter, times(1)).deleteCuration(curation.id)
+        verify(curationRepository, times(1)).delete(curation.id)
         verify(view, times(1)).hideRecyclerView()
         verify(view, times(1)).showEmptyView()
     }
@@ -88,7 +88,7 @@ class CurationListPresenterTest {
         }
         `when`(curationRepository.getAllCurations()).thenReturn(curations)
         presenter.onCurationDeleteClicked(curation, curations.size)
-        verify(adapter, times(1)).deleteCuration(curation.id)
+        verify(curationRepository, times(1)).delete(curation.id)
         verify(view, never()).hideRecyclerView()
         verify(view, never()).showEmptyView()
     }
