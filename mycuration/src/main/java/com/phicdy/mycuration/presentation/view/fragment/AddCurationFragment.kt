@@ -1,8 +1,6 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.support.design.widget.TextInputEditText
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -15,51 +13,54 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
+import kotlin.coroutines.CoroutineContext
 
-class AddCurationFragment : Fragment(), AddCurationView {
+class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     companion object {
         const val EDIT_CURATION_ID = "editCurationId"
     }
-    private lateinit var presenter: AddCurationPresenter
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
+    private val presenter: AddCurationPresenter by inject { parametersOf(this) }
     private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
     private lateinit var etName: TextInputEditText
     private lateinit var curationWordListAdapter: CurationWordListAdapter
     private lateinit var progressDialog: MyProgressDialogFragment
 
-    private lateinit var handler: InsertResultHandler
-
-    private class InsertResultHandler(presenter: AddCurationPresenter) : Handler() {
-        val reference = WeakReference<AddCurationPresenter>(presenter)
-        override fun handleMessage(msg: Message) {
-            val result = msg.obj as Boolean
-            val errorMessage = if (result) { "" } else {
-                msg.data.getString(AddCurationPresenter.INSERT_ERROR_MESSAGE)
-            }
-            val presenter = reference.get() ?: return
-            presenter.handleInsertResultMessage(result, errorMessage)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val adapter = DatabaseAdapter.getInstance()
-        presenter = AddCurationPresenter(this, adapter)
-        handler = InsertResultHandler(presenter)
+        bindScope(getOrCreateScope("add_curation"))
         presenter.create()
     }
 
     override fun onResume() {
         super.onResume()
         presenter.resume()
+    }
+
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -109,45 +110,26 @@ class AddCurationFragment : Fragment(), AddCurationView {
     }
 
     override fun handleEmptyCurationNameError() {
-        val msg = Message.obtain()
-        val bundle = Bundle()
-        msg.obj = false
-        bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_curation_name))
-        msg.data = bundle
-        handler.sendMessage(msg)
+        presenter.handleInsertResultMessage(false, getString(R.string.empty_curation_name))
     }
 
     override fun handleEmptyWordError() {
-        val msg = Message.obtain()
-        val bundle = Bundle()
-        msg.obj = false
-        bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.empty_word_list))
-        msg.data = bundle
-        handler.sendMessage(msg)
+        presenter.handleInsertResultMessage(false, getString(R.string.empty_word_list))
     }
 
     override fun handleSameNameCurationError() {
-        val msg = Message.obtain()
-        val bundle = Bundle()
-        msg.obj = false
-        bundle.putString(AddCurationPresenter.INSERT_ERROR_MESSAGE, getString(R.string.duplicate_curation_name))
-        msg.data = bundle
-        handler.sendMessage(msg)
         TrackerHelper.sendButtonEvent(getString(R.string.add_same_curation_name))
+        presenter.handleInsertResultMessage(false, getString(R.string.duplicate_curation_name))
     }
 
     override fun handleAddSuccess() {
-        val msg = Message.obtain()
-        msg.obj = true
-        handler.sendMessage(msg)
         TrackerHelper.sendButtonEvent(getString(R.string.add_new_curation))
+        presenter.handleInsertResultMessage(true, "")
     }
 
     override fun handleEditSuccess() {
-        val msg = Message.obtain()
-        msg.obj = true
-        handler.sendMessage(msg)
         TrackerHelper.sendButtonEvent(getString(R.string.update_curation))
+        presenter.handleInsertResultMessage(true, "")
     }
 
     override fun showSuccessToast() {
@@ -211,12 +193,10 @@ class AddCurationFragment : Fragment(), AddCurationView {
 
     fun onAddMenuClicked() {
         showProgressDialog()
-        object : Thread() {
-            override fun run() {
-                Thread.sleep(5000)
-                presenter.onAddMenuClicked()
-            }
-        }.start()
+        launch {
+            delay(5000)
+            presenter.onAddMenuClicked()
+        }
     }
 
 }

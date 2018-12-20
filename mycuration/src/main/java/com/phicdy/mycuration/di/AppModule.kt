@@ -11,6 +11,7 @@ import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
+import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
@@ -19,6 +20,7 @@ import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
+import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
@@ -120,6 +122,14 @@ val appModule = module {
                 view = view,
                 rssRepository = get(),
                 filterRepository = get()
+        )
+    }
+
+    scope("add_curation") { (view: AddCurationView) ->
+        AddCurationPresenter(
+                view = view,
+                adapter = DatabaseAdapter.getInstance(),
+                repository = get()
         )
     }
 }

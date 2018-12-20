@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
+import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
@@ -115,5 +116,34 @@ class CurationRepository(private val db: SQLiteDatabase) {
                 }
             }
         }
+    }
+
+    suspend fun update(curationId: Int, name: String, words: ArrayList<String>): Boolean = withContext(Dispatchers.IO) {
+        var result = true
+        try {
+            // Update curation name
+            val values = ContentValues().apply {
+                put(Curation.NAME, name)
+            }
+            db.beginTransaction()
+            db.update(Curation.TABLE_NAME, values, Curation.ID + " = " + curationId, null)
+
+            // Delete old curation conditions and insert new one
+            db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null)
+            for (word in words) {
+                val condtionValue = ContentValues().apply {
+                    put(CurationCondition.CURATION_ID, curationId)
+                    put(CurationCondition.WORD, word)
+                }
+                db.insert(CurationCondition.TABLE_NAME, null, condtionValue)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            Timber.e(e)
+            result = false
+        } finally {
+            db.endTransaction()
+        }
+        return@withContext result
     }
 }

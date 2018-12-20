@@ -140,33 +140,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-	public boolean updateCuration(int curationId, String name, ArrayList<String> words) {
-		boolean result = true;
-		db.beginTransaction();
-		try {
-			// Update curation name
-			ContentValues values = new ContentValues();
-			values.put(Curation.NAME, name);
-			db.update(Curation.TABLE_NAME, values, Curation.ID + " = " + curationId, null);
-
-			// Delete old curation conditions and insert new one
-			db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null);
-			for (String word : words) {
-				ContentValues condtionValue = new ContentValues();
-				condtionValue.put(CurationCondition.CURATION_ID, curationId);
-				condtionValue.put(CurationCondition.WORD, word);
-				db.insert(CurationCondition.TABLE_NAME, null, condtionValue);
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		} finally {
-			db.endTransaction();
-		}
-		return result;
-	}
-
 	public boolean saveNewCuration(String name, ArrayList<String> words) {
 		if(words.isEmpty()) {
 			return false;
