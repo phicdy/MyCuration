@@ -178,7 +178,7 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
         presenter.onAddMenuClicked()
         assertTrue(view.isSuccessToastShowed)
     }
@@ -190,7 +190,7 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
         presenter.onAddMenuClicked()
         assertFalse(view.isProgressDialogShowed)
     }
@@ -202,7 +202,7 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
         presenter.onAddMenuClicked()
         assertTrue(view.isFinished)
     }

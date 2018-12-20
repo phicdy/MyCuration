@@ -170,8 +170,8 @@ class DatabaseAdapterTest {
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(adapter.adaptCurationToArticles(TEST_CURATION_NAME, wordsOfCurationForArticle1))
-        val articles = adapter.getAllArticlesOfCuration(curationId, true)
+        assertTrue(adapter.adaptCurationToArticles(curationId, wordsOfCurationForArticle1))
+        val articles = adapter.getAllArticlesOfCuration(curationId,  true)
         assertNotNull(articles)
         assertEquals(1, articles.size)
         assertEquals(TEST_ARTICLE1_TITLE, articles[0].title)
@@ -183,7 +183,7 @@ class DatabaseAdapterTest {
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(curationRepository.store(TEST_CURATION_NAME, words))
+        assertTrue(curationRepository.store(TEST_CURATION_NAME, words) > 0)
     }
 
     private fun insertTestCurationForArticle1() = runBlocking {
@@ -192,7 +192,7 @@ class DatabaseAdapterTest {
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(curationRepository.store(TEST_CURATION_NAME, words))
+        assertTrue(curationRepository.store(TEST_CURATION_NAME, words) > 0)
     }
 
     companion object {

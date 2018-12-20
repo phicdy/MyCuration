@@ -84,13 +84,14 @@ class AddCurationPresenter(
             view.handleSameNameCurationError()
             return@coroutineScope
         }
-        val result = if (isNew) {
-            repository.store(curationName, addedWords)
+        val id = if (isNew) {
+            repository.store(curationName, addedWords).toInt()
         } else {
             repository.update(editCurationid, curationName, addedWords)
+            editCurationid
         }
-        if (result) {
-            adapter.adaptCurationToArticles(curationName, addedWords)
+        if (id > 0) {
+            adapter.adaptCurationToArticles(id, addedWords)
             if (isNew) {
                 view.handleAddSuccess()
             } else {

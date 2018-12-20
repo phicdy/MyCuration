@@ -147,15 +147,15 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext result
     }
 
-    suspend fun store(name: String, words: ArrayList<String>): Boolean = withContext(Dispatchers.IO) {
-        if (words.isEmpty()) return@withContext false
-        var result = true
+    suspend fun store(name: String, words: ArrayList<String>): Long = withContext(Dispatchers.IO) {
+        if (words.isEmpty()) return@withContext -1L
+        var addedCurationId  = -1L
         try {
             val values = ContentValues().apply {
                 put(Curation.NAME, name)
             }
             db.beginTransaction()
-            val addedCurationId = db.insert(Curation.TABLE_NAME, null, values)
+            addedCurationId = db.insert(Curation.TABLE_NAME, null, values)
             for (word in words) {
                 val condtionValue = ContentValues().apply {
                     put(CurationCondition.CURATION_ID, addedCurationId)
@@ -166,6 +166,11 @@ class CurationRepository(private val db: SQLiteDatabase) {
             db.setTransactionSuccessful()
         } catch (e: SQLException) {
             Timber.e(e)
+        } finally {
+            db.endTransaction()
+        }
+        return@withContext addedCurationId
+    }
             result = false
         } finally {
             db.endTransaction()

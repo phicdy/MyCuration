@@ -139,8 +139,7 @@ public class DatabaseAdapter {
 		}
 	}
 
-	public boolean adaptCurationToArticles(String curationName, ArrayList<String> words) {
-		int curationId = getCurationIdByName(curationName);
+	public boolean adaptCurationToArticles(int curationId, ArrayList<String> words) {
 		if (curationId == NOT_FOUND_ID) {
 			return false;
 		}

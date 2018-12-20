@@ -83,7 +83,7 @@ class CurationRepositoryTest {
             add(testWord5)
             add(testWord6)
         }
-        assertTrue(curationRepository.store(curationName2, words2))
+        assertTrue(curationRepository.store(curationName2, words2) > 0)
         val curationId2 = adapter.getCurationIdByName(curationName2)
 
         val map = curationRepository.getAllCurationWords()
@@ -109,7 +109,7 @@ class CurationRepositoryTest {
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(curationRepository.store(TEST_CURATION_NAME, words))
+        assertTrue(curationRepository.store(TEST_CURATION_NAME, words) > 0)
     }
 
     companion object {
