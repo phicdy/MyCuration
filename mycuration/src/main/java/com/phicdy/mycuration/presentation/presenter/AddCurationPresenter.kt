@@ -85,7 +85,7 @@ class AddCurationPresenter(
             return@coroutineScope
         }
         val result = if (isNew) {
-            adapter.saveNewCuration(curationName, addedWords)
+            repository.store(curationName, addedWords)
         } else {
             repository.update(editCurationid, curationName, addedWords)
         }

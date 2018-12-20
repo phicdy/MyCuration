@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.data.db;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -138,32 +137,6 @@ public class DatabaseAdapter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public boolean saveNewCuration(String name, ArrayList<String> words) {
-		if(words.isEmpty()) {
-			return false;
-		}
-		db.beginTransaction();
-		boolean result = true;
-		try {
-			ContentValues values = new ContentValues();
-			values.put(Curation.NAME, name);
-			long addedCurationId = db.insert(Curation.TABLE_NAME, null, values);
-			for (String word : words) {
-				ContentValues condtionValue = new ContentValues();
-				condtionValue.put(CurationCondition.CURATION_ID, addedCurationId);
-				condtionValue.put(CurationCondition.WORD, word);
-				db.insert(CurationCondition.TABLE_NAME, null, condtionValue);
-			}
-			db.setTransactionSuccessful();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		} finally {
-			db.endTransaction();
-		}
-		return result;
 	}
 
 	public boolean adaptCurationToArticles(String curationName, ArrayList<String> words) {

@@ -177,22 +177,22 @@ class DatabaseAdapterTest {
         assertEquals(TEST_ARTICLE1_TITLE, articles[0].title)
     }
 
-    private fun insertTestCuration() {
+    private fun insertTestCuration() = runBlocking {
         val words = ArrayList<String>().apply {
             add(TEST_WORD1)
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(adapter.saveNewCuration(TEST_CURATION_NAME, words))
+        assertTrue(curationRepository.store(TEST_CURATION_NAME, words))
     }
 
-    private fun insertTestCurationForArticle1() {
+    private fun insertTestCurationForArticle1() = runBlocking {
         val words = ArrayList<String>().apply {
             add(TEST_ARTICLE1_TITLE)
             add(TEST_WORD2)
             add(TEST_WORD3)
         }
-        assertTrue(adapter.saveNewCuration(TEST_CURATION_NAME, words))
+        assertTrue(curationRepository.store(TEST_CURATION_NAME, words))
     }
 
     companion object {

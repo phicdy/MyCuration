@@ -9,7 +9,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import java.util.ArrayList
 
@@ -48,7 +48,7 @@ class AddCurationPresenterTest {
     fun `when edit curation then the name becomes stored one`() {
         // Mock to return test curation
         view.editCurationId = TEST_EDIT_CURATION_ID
-        Mockito.`when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
+        `when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
 
         // Go to onResume() in edit status
         presenter.create()
@@ -161,7 +161,7 @@ class AddCurationPresenterTest {
     @Test
     fun `when add button is clicked then with existing curation name and words then error toast shows`() = runBlocking {
         // Mock test curation exists
-        Mockito.`when`(adapter.isExistSameNameCuration(TEST_EDIT_CURATION_NAME)).thenReturn(true)
+        `when`(adapter.isExistSameNameCuration(TEST_EDIT_CURATION_NAME)).thenReturn(true)
 
         presenter.create()
         presenter.resume()
@@ -178,7 +178,7 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        Mockito.`when`(adapter.saveNewCuration(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
         presenter.onAddMenuClicked()
         assertTrue(view.isSuccessToastShowed)
     }
@@ -190,7 +190,7 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        Mockito.`when`(adapter.saveNewCuration(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
         presenter.onAddMenuClicked()
         assertFalse(view.isProgressDialogShowed)
     }
@@ -202,7 +202,7 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        Mockito.`when`(adapter.saveNewCuration(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
         presenter.onAddMenuClicked()
         assertTrue(view.isFinished)
     }
@@ -210,13 +210,13 @@ class AddCurationPresenterTest {
     @Test
     fun `when edit succeeds then success toast shows`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        Mockito.`when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        Mockito.`when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
+        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
                 .thenReturn(true)
         presenter.onAddMenuClicked()
         assertTrue(view.isSuccessToastShowed)
@@ -231,14 +231,14 @@ class AddCurationPresenterTest {
     @Test
     fun `when edit succeeds then progress dialog dissmisses`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        Mockito.`when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
         presenter = AddCurationPresenter(view, adapter, repository)
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        Mockito.`when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
+        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
                 .thenReturn(true)
         presenter.onAddMenuClicked()
         assertFalse(view.isProgressDialogShowed)
@@ -247,14 +247,14 @@ class AddCurationPresenterTest {
     @Test
     fun `when edit succeeds then view finishes`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        Mockito.`when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
         presenter = AddCurationPresenter(view, adapter, repository)
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        Mockito.`when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
         presenter.onAddMenuClicked()
         assertTrue(view.isFinished)
     }
