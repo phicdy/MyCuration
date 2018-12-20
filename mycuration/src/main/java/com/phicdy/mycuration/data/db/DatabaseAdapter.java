@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.data.db;
 
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -136,21 +135,6 @@ public class DatabaseAdapter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public boolean isExistSameNameCuration(String name) {
-		int num = 0;
-		try {
-			String[] columns = {Curation.ID};
-			String selection = Curation.NAME + " = ?";
-			String[] selectionArgs = {name};
-			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-			num = cursor.getCount();
-			cursor.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return num > 0;
 	}
 
 	public int getCurationIdByName(String name) {

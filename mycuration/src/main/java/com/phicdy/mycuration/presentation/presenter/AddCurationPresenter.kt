@@ -80,7 +80,7 @@ class AddCurationPresenter(
         }
 
         val isNew = editCurationid == AddCurationPresenter.NOT_EDIT_CURATION_ID
-        if (isNew && adapter.isExistSameNameCuration(curationName)) {
+        if (isNew && repository.isExist(curationName)) {
             view.handleSameNameCurationError()
             return@coroutineScope
         }

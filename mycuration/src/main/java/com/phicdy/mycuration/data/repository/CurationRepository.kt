@@ -253,6 +253,27 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext numOfDeleted == 1
     }
 
+    suspend fun isExist(name: String): Boolean = withContext(Dispatchers.IO) {
+        var num = 0
+        var cursor: Cursor? = null
+        try {
+            val columns = arrayOf(Curation.ID)
+            val selection = Curation.NAME + " = ?"
+            val selectionArgs = arrayOf(name)
+            db.beginTransaction()
+            cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null)
+            num = cursor.count
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Timber.e(e)
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+
+        return@withContext num > 0
+    }
+
     companion object {
         private const val NOT_FOUND_ID = -1
     }

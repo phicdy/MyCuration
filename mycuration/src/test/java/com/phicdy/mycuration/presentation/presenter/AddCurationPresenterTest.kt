@@ -161,7 +161,7 @@ class AddCurationPresenterTest {
     @Test
     fun `when add button is clicked then with existing curation name and words then error toast shows`() = runBlocking {
         // Mock test curation exists
-        `when`(adapter.isExistSameNameCuration(TEST_EDIT_CURATION_NAME)).thenReturn(true)
+        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(true)
 
         presenter.create()
         presenter.resume()
@@ -179,6 +179,7 @@ class AddCurationPresenterTest {
         view.words.add("word")
         // Mock save new curation
         `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertTrue(view.isSuccessToastShowed)
     }
@@ -191,6 +192,7 @@ class AddCurationPresenterTest {
         view.words.add("word")
         // Mock save new curation
         `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertFalse(view.isProgressDialogShowed)
     }
@@ -203,6 +205,7 @@ class AddCurationPresenterTest {
         view.words.add("word")
         // Mock save new curation
         `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertTrue(view.isFinished)
     }
