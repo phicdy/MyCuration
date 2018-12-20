@@ -135,52 +135,6 @@ public class DatabaseAdapter {
 		}
 	}
 
-	public ArrayList<Article> getAllUnreadArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<>();
-		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
-				Article.TABLE_NAME + "." + Article.TITLE + "," +
-				Article.TABLE_NAME + "." + Article.URL + "," +
-				Article.TABLE_NAME + "." + Article.STATUS + "," +
-				Article.TABLE_NAME + "." + Article.POINT + "," +
-				Article.TABLE_NAME + "." + Article.DATE + "," +
-				Article.TABLE_NAME + "." + Article.FEEDID + "," +
-				Feed.TABLE_NAME + "." + Feed.TITLE + "," +
-				Feed.TABLE_NAME + "." + Feed.ICON_PATH +
-				" from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-				" on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-				Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
-				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
-				" inner join " + Feed.TABLE_NAME +
-				" on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
-				" order by " + Article.DATE;
-		if(isNewestArticleTop) {
-			sql += " desc";
-		}else {
-			sql += " asc";
-		}
-		try {
-			Cursor cursor = db.rawQuery(sql, null);
-			while (cursor.moveToNext()) {
-				int id = cursor.getInt(0);
-				String title = cursor.getString(1);
-				String url = cursor.getString(2);
-				String status = cursor.getString(3);
-				String point = cursor.getString(4);
-				long dateLong = cursor.getLong(5);
-				int feedId = cursor.getInt(6);
-				String feedTitle = cursor.getString(7);
-				String feedIconPath = cursor.getString(8);
-				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle, feedIconPath);
-				articles.add(article);
-			}
-			cursor.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return articles;
-	}
-
 	public ArrayList<String> getCurationWords(int curationId) {
 		ArrayList<String> words = new ArrayList<>();
 		String[] columns = {CurationCondition.WORD};

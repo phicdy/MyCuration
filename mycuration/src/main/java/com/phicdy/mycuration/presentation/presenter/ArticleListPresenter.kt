@@ -98,7 +98,7 @@ class ArticleListPresenter(private val feedId: Int,
         if (isSearchAction) {
             allArticles = articleRepository.searchArticles(query, preferenceHelper.sortNewArticleTop)
         } else if (curationId != DEFAULT_CURATION_ID) {
-            allArticles = adapter.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
+            allArticles = articleRepository.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0) {
                 allArticles = adapter.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             }

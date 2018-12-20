@@ -358,13 +358,13 @@ class ArticleListPresenterTest {
         `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(arrayListOf())
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(false)
         `when`(articleRepository.isExistArticle()).thenReturn(false)
-        `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
+        `when`(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
         `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(ArrayList())
     }
 
     private fun mock1ReadArticleDatabase(testId: Int) = runBlocking {
         `when`(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(ArrayList())
-        `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
+        `when`(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
         `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(arrayListOf())
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
         `when`(articleRepository.isExistArticle()).thenReturn(true)
@@ -396,7 +396,7 @@ class ArticleListPresenterTest {
         unreadArticles.add(Article(2, "unread2", "http://www.google.com",
                 Article.UNREAD, "1", 1, 2, "feed", ""))
         `when`(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(unreadArticles)
-        `when`(adapter.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(unreadArticles)
+        `when`(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(unreadArticles)
         `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(unreadArticles)
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
         `when`(articleRepository.isExistArticle()).thenReturn(true)
