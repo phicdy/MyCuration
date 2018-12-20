@@ -128,7 +128,6 @@ val appModule = module {
     scope("add_curation") { (view: AddCurationView) ->
         AddCurationPresenter(
                 view = view,
-                adapter = DatabaseAdapter.getInstance(),
                 repository = get()
         )
     }

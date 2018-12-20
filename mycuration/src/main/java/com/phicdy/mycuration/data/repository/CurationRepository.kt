@@ -296,6 +296,29 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext name
     }
 
+    suspend fun getCurationWords(curationId: Int): ArrayList<String> = withContext(Dispatchers.IO) {
+        val words = arrayListOf<String>()
+        val columns = arrayOf(CurationCondition.WORD)
+        val selection = CurationCondition.CURATION_ID + " = ?"
+        val selectionArgs = arrayOf(curationId.toString())
+        var cursor: Cursor? = null
+        try {
+            db.beginTransaction()
+            cursor = db.query(CurationCondition.TABLE_NAME, columns, selection, selectionArgs, null, null, null)
+            while (cursor.moveToNext()) {
+                words.add(cursor.getString(0))
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Timber.e(e)
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+
+        return@withContext words
+    }
+
     companion object {
         private const val NOT_FOUND_ID = -1
     }

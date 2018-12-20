@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.phicdy.mycuration.data.rss.Article;
-import com.phicdy.mycuration.data.rss.CurationCondition;
 import com.phicdy.mycuration.data.rss.CurationSelection;
 import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.util.FileUtil;
@@ -133,23 +132,6 @@ public class DatabaseAdapter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public ArrayList<String> getCurationWords(int curationId) {
-		ArrayList<String> words = new ArrayList<>();
-		String[] columns = {CurationCondition.WORD};
-		String selection = CurationCondition.CURATION_ID + " = ?";
-		String[] selectionArgs = {String.valueOf(curationId)};
-		try {
-			Cursor cursor = db.query(CurationCondition.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-			while (cursor.moveToNext()) {
-				words.add(cursor.getString(0));
-			}
-			cursor.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return words;
 	}
 
 	public ArrayList<Article> getAllArticlesOfCuration(int curationId, boolean isNewestArticleTop) {

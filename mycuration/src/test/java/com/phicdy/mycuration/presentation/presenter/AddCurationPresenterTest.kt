@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import kotlinx.coroutines.runBlocking
@@ -17,16 +16,14 @@ import java.util.ArrayList
 class AddCurationPresenterTest {
 
     private lateinit var presenter: AddCurationPresenter
-    private lateinit var adapter: DatabaseAdapter
     private lateinit var view: MockViewAdd
     private lateinit var repository: CurationRepository
 
     @Before
     fun setup() {
         view = MockViewAdd()
-        adapter = mock(DatabaseAdapter::class.java)
         repository = mock(CurationRepository::class.java)
-        presenter = AddCurationPresenter(view, adapter, repository)
+        presenter = AddCurationPresenter(view, repository)
     }
 
     @Test
@@ -49,6 +46,7 @@ class AddCurationPresenterTest {
         // Mock to return test curation
         view.editCurationId = TEST_EDIT_CURATION_ID
         `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
+        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
 
         // Go to onResume() in edit status
         presenter.create()
@@ -214,6 +212,7 @@ class AddCurationPresenterTest {
     fun `when edit succeeds then success toast shows`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
         `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
@@ -229,7 +228,8 @@ class AddCurationPresenterTest {
     fun `when edit succeeds then progress dialog dissmisses`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
         `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
-        presenter = AddCurationPresenter(view, adapter, repository)
+        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
+        presenter = AddCurationPresenter(view, repository)
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
@@ -245,7 +245,8 @@ class AddCurationPresenterTest {
     fun `when edit succeeds then view finishes`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
         `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
-        presenter = AddCurationPresenter(view, adapter, repository)
+        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
+        presenter = AddCurationPresenter(view, repository)
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)

@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.util.TextUtil
 import com.phicdy.mycuration.presentation.view.AddCurationView
@@ -10,7 +9,6 @@ import kotlinx.coroutines.coroutineScope
 
 class AddCurationPresenter(
         private val view: AddCurationView,
-        private val adapter: DatabaseAdapter,
         private val repository: CurationRepository
 ) {
 
@@ -33,7 +31,7 @@ class AddCurationPresenter(
     suspend fun resume() = coroutineScope {
         if (editCurationid != NOT_EDIT_CURATION_ID) {
             view.setCurationName(repository.getCurationNameById(editCurationid))
-            addedWords = adapter.getCurationWords(editCurationid)
+            addedWords = repository.getCurationWords(editCurationid)
             view.refreshList(addedWords)
         }
         view.refreshList(addedWords)
