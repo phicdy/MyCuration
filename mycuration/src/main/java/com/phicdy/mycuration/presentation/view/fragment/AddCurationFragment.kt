@@ -55,7 +55,9 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
+        launch {
+            presenter.resume()
+        }
     }
 
     override fun onDestroy() {
@@ -85,7 +87,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     override fun refreshList(addedWords: ArrayList<String>) {
         curationWordListAdapter = CurationWordListAdapter(addedWords)
         curationWordRecyclerView.adapter = curationWordListAdapter
-        curationWordRecyclerView.layoutManager = LinearLayoutManager(activity)
+        curationWordRecyclerView.layoutManager = LinearLayoutManager(activity!!)
         curationWordListAdapter.notifyDataSetChanged()
     }
 

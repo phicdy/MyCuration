@@ -12,7 +12,7 @@ class AddCurationPresenter(
         private val view: AddCurationView,
         private val adapter: DatabaseAdapter,
         private val repository: CurationRepository
-) : Presenter {
+) {
 
     companion object {
         const val NOT_EDIT_CURATION_ID = -1
@@ -21,7 +21,7 @@ class AddCurationPresenter(
     private var editCurationid = NOT_EDIT_CURATION_ID
     private var addedWords = ArrayList<String>()
 
-    override fun create() {
+    fun create() {
         editCurationid = view.editCurationId()
     }
 
@@ -30,16 +30,14 @@ class AddCurationPresenter(
         view.refreshList(addedWords)
     }
 
-    override fun resume() {
+    suspend fun resume() = coroutineScope {
         if (editCurationid != NOT_EDIT_CURATION_ID) {
-            view.setCurationName(adapter.getCurationNameById(editCurationid))
+            view.setCurationName(repository.getCurationNameById(editCurationid))
             addedWords = adapter.getCurationWords(editCurationid)
             view.refreshList(addedWords)
         }
         view.refreshList(addedWords)
     }
-
-    override fun pause() {}
 
     fun handleInsertResultMessage(result: Boolean, errorMessage: String) {
         if (result) {

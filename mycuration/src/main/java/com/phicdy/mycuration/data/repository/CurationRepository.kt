@@ -274,6 +274,28 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext num > 0
     }
 
+    suspend fun getCurationNameById(curationId: Int): String = withContext(Dispatchers.IO) {
+        var name = ""
+        val columns = arrayOf(Curation.NAME)
+        val selection = Curation.ID + " = ?"
+        val selectionArgs = arrayOf(curationId.toString())
+        var cursor: Cursor? = null
+        try {
+            db.beginTransaction()
+            cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null)
+            cursor.moveToFirst()
+            name = cursor.getString(0)
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Timber.e(e)
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+
+        return@withContext name
+    }
+
     companion object {
         private const val NOT_FOUND_ID = -1
     }

@@ -37,7 +37,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when onResume default curation name is empty`() {
+    fun `when onResume default curation name is empty`() = runBlocking {
         // Go to onResume() in add status
         presenter.create()
         presenter.resume()
@@ -45,10 +45,10 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when edit curation then the name becomes stored one`() {
+    fun `when edit curation then the name becomes stored one`() = runBlocking {
         // Mock to return test curation
         view.editCurationId = TEST_EDIT_CURATION_ID
-        `when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
+        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
 
         // Go to onResume() in edit status
         presenter.create()
@@ -57,7 +57,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert succeeds then toast shows`() {
+    fun `when insert succeeds then toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
@@ -65,7 +65,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert succeeds then progress dialog dismisses`() {
+    fun `when insert succeeds then progress dialog dismisses`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
@@ -73,7 +73,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert succeeds then view finishes`() {
+    fun `when insert succeeds then view finishes`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
@@ -81,7 +81,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert fails then error toast shows`() {
+    fun `when insert fails then error toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
@@ -89,7 +89,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert fails then progress dialog dismissses`() {
+    fun `when insert fails then progress dialog dismissses`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
@@ -97,7 +97,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert fails then view still shows`() {
+    fun `when insert fails then view still shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
@@ -105,7 +105,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add word button is clicked in empty then error toast shows`() {
+    fun `when add word button is clicked in empty then error toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.onAddWordButtonClicked()
@@ -113,7 +113,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add word button is clicked then the word is added`() {
+    fun `when add word button is clicked then the word is added`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.word = "test"
@@ -122,7 +122,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add word button is clicked then twice words are added`() {
+    fun `when add word button is clicked then twice words are added`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.word = "test"
@@ -133,7 +133,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add word button is clicked then input field becomes empty`() {
+    fun `when add word button is clicked then input field becomes empty`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.word = "test"
@@ -213,7 +213,7 @@ class AddCurationPresenterTest {
     @Test
     fun `when edit succeeds then success toast shows`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        `when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
@@ -226,15 +226,9 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun testOnPause() {
-        // For coverage
-        presenter.pause()
-    }
-
-    @Test
     fun `when edit succeeds then progress dialog dissmisses`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        `when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
         presenter = AddCurationPresenter(view, adapter, repository)
         presenter.create()
         presenter.resume()
@@ -250,7 +244,7 @@ class AddCurationPresenterTest {
     @Test
     fun `when edit succeeds then view finishes`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        `when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
         presenter = AddCurationPresenter(view, adapter, repository)
         presenter.create()
         presenter.resume()

@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
@@ -41,6 +41,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
     private lateinit var fab: FloatingActionButton
 
     private val rssRepository: RssRepository by inject()
+    private val curationRepository: CurationRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,35 +55,34 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         val curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID)
         intent.putExtra(TopActivity.FEED_ID, feedId)
 
-        val dbAdapter = DatabaseAdapter.getInstance()
-        when {
-            curationId != DEFAULT_CURATION_ID -> {
-                // Curation
-                title = dbAdapter.getCurationNameById(curationId)
-                fbTitle = getString(R.string.curation)
-            }
-            feedId == Feed.ALL_FEED_ID -> {
-                // All article
-                title = getString(R.string.all)
-                fbTitle = getString(R.string.all)
-            }
-            else -> {
-                // Select a feed
-                val prefMgr = PreferenceHelper
-                prefMgr.setSearchFeedId(feedId)
-                launch {
+        launch {
+            when {
+                curationId != DEFAULT_CURATION_ID -> {
+                    // Curation
+                    title = curationRepository.getCurationNameById(curationId)
+                    fbTitle = getString(R.string.curation)
+                }
+                feedId == Feed.ALL_FEED_ID -> {
+                    // All article
+                    title = getString(R.string.all)
+                    fbTitle = getString(R.string.all)
+                }
+                else -> {
+                    // Select a feed
+                    val prefMgr = PreferenceHelper
+                    prefMgr.setSearchFeedId(feedId)
                     val selectedFeed = rssRepository.getFeedById(feedId)
                     title = selectedFeed?.title
+                    fbTitle = getString(R.string.ga_not_all_title)
                 }
-                fbTitle = getString(R.string.ga_not_all_title)
             }
-        }
-        TrackerHelper.sendUiEvent(fbTitle)
-        initToolbar()
-        fab = findViewById(R.id.fab_article_list)
-        fab.setOnClickListener {
-            fragment.onFabButtonClicked()
-            TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
+            TrackerHelper.sendUiEvent(fbTitle)
+            initToolbar()
+            fab = findViewById(R.id.fab_article_list)
+            fab.setOnClickListener {
+                fragment.onFabButtonClicked()
+                TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
+            }
         }
     }
 

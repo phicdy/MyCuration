@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.phicdy.mycuration.data.rss.Article;
-import com.phicdy.mycuration.data.rss.Curation;
 import com.phicdy.mycuration.data.rss.CurationCondition;
 import com.phicdy.mycuration.data.rss.CurationSelection;
 import com.phicdy.mycuration.data.rss.Feed;
@@ -134,22 +133,6 @@ public class DatabaseAdapter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public String getCurationNameById(int curationId) {
-		String name = "";
-		try {
-			String[] columns = {Curation.NAME};
-			String selection = Curation.ID + " = ?";
-			String[] selectionArgs = {String.valueOf(curationId)};
-			Cursor cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-			cursor.moveToFirst();
-			name = cursor.getString(0);
-			cursor.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return name;
 	}
 
 	public ArrayList<Article> getAllUnreadArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
