@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -28,21 +27,19 @@ class ArticleListPresenterTest {
     private val unreadCountRepository = mock(UnreadCountRepository::class.java)
     private val rssRepository = mock(RssRepository::class.java)
     private val articleRepository = mock(ArticleRepository::class.java)
-    private val adapter = mock(DatabaseAdapter::class.java)
     private lateinit var presenter: ArticleListPresenter
     private val testFeedId = 1
 
     @Before
     fun setup() {
-        DatabaseAdapter.inject(adapter)
         `when`(preferenceHelper.isOpenInternal).thenReturn(true)
         `when`(preferenceHelper.allReadBack).thenReturn(true)
         `when`(preferenceHelper.sortNewArticleTop).thenReturn(true)
         `when`(preferenceHelper.swipeDirection).thenReturn(PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
         presenter = ArticleListPresenter(
-                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository,
-                preferenceHelper, articleRepository,
-                unreadCountRepository, "", "")
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper,
+                articleRepository, unreadCountRepository,
+                "", "")
     }
 
     @Test
@@ -68,8 +65,8 @@ class ArticleListPresenterTest {
         val testFeedId = Feed.ALL_FEED_ID
         mockEmptyDatabase(testFeedId)
         val presenter = ArticleListPresenter(
-                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository, preferenceHelper, articleRepository,
-                unreadCountRepository,  "", "")
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
+                "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -82,8 +79,8 @@ class ArticleListPresenterTest {
         val testCurationId = 1
         mockEmptyDatabase(testCurationId)
         val presenter = ArticleListPresenter(
-                Feed.DEFAULT_FEED_ID, testCurationId, adapter, rssRepository, preferenceHelper, articleRepository,
-                unreadCountRepository,  "", "")
+                Feed.DEFAULT_FEED_ID, testCurationId, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
+                "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -106,8 +103,8 @@ class ArticleListPresenterTest {
         val testFeedId = Feed.ALL_FEED_ID
         mock1ReadArticleDatabase(testFeedId)
         val presenter = ArticleListPresenter(
-                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository, preferenceHelper, articleRepository,
-                unreadCountRepository,  "", "")
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
+                "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -120,8 +117,8 @@ class ArticleListPresenterTest {
         val testCurationId = 1
         mock1ReadArticleDatabase(testCurationId)
         val presenter = ArticleListPresenter(
-                Feed.DEFAULT_FEED_ID, testCurationId, adapter, rssRepository, preferenceHelper, articleRepository,
-                unreadCountRepository,  "", "")
+                Feed.DEFAULT_FEED_ID, testCurationId, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
+                "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -143,8 +140,8 @@ class ArticleListPresenterTest {
     fun `All unread articles are only loaded after onCreateView`() = runBlocking {
         val testFeedId = Feed.ALL_FEED_ID
         val presenter = ArticleListPresenter(
-                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository, preferenceHelper, articleRepository,
-                unreadCountRepository,  "", "")
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
+                "", "")
         mock2Unread2ReadArticleDatabase(testFeedId)
         val view = MockView()
         presenter.setView(view)
@@ -157,8 +154,8 @@ class ArticleListPresenterTest {
         val testCurationId = 1
         mock2Unread2ReadArticleDatabase(testCurationId)
         val presenter = ArticleListPresenter(
-                Feed.DEFAULT_FEED_ID, testCurationId, adapter, rssRepository, preferenceHelper, articleRepository,
-                unreadCountRepository,  "", "")
+                Feed.DEFAULT_FEED_ID, testCurationId, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
+                "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -273,8 +270,8 @@ class ArticleListPresenterTest {
                 Article.UNREAD, "1", 1, 1, "feed", "")
         mock1ArticleDatabase(clickedArticle)
         val presenter = ArticleListPresenter(
-                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository, preferenceHelper, articleRepository,
-                unreadCountRepository,  "", "")
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
+                "", "")
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -316,9 +313,9 @@ class ArticleListPresenterTest {
                 Article.UNREAD, "1", 1, 1, "feed", "")
         mock1ArticleDatabase(article)
         val presenter = ArticleListPresenter(
-                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository, preferenceHelper,
-                articleRepository, unreadCountRepository,
-                "ghaeogha", Intent.ACTION_SEARCH)
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository,
+                unreadCountRepository, "ghaeogha",
+                Intent.ACTION_SEARCH)
         `when`(articleRepository.searchArticles( "ghaeogha", true)).thenReturn(arrayListOf())
         val view = MockView()
         presenter.setView(view)
@@ -344,8 +341,8 @@ class ArticleListPresenterTest {
         `when`(articleRepository.searchArticles(query, true)).thenReturn(arrayListOf(article))
 
         val presenter = ArticleListPresenter(
-                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, adapter, rssRepository, preferenceHelper, articleRepository,
-                unreadCountRepository, query, Intent.ACTION_SEARCH)
+                testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
+                query, Intent.ACTION_SEARCH)
         val view = MockView()
         presenter.setView(view)
         presenter.createView()
@@ -359,7 +356,7 @@ class ArticleListPresenterTest {
         `when`(articleRepository.isExistArticleOf(testId)).thenReturn(false)
         `when`(articleRepository.isExistArticle()).thenReturn(false)
         `when`(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
-        `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(ArrayList())
+        `when`(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(ArrayList())
     }
 
     private fun mock1ReadArticleDatabase(testId: Int) = runBlocking {
@@ -373,7 +370,7 @@ class ArticleListPresenterTest {
                 Article.READ, "1", 1, 1, "feed", ""))
         `when`(articleRepository.getAllArticlesOfRss(testId, true)).thenReturn(articles)
         `when`(articleRepository.getTop300Articles(true)).thenReturn(articles)
-        `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(articles)
+        `when`(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(articles)
     }
 
     private fun mock1ArticleDatabase(article: Article) = runBlocking {
@@ -406,7 +403,7 @@ class ArticleListPresenterTest {
         readArticles.add(Article(4, "read1", "http://www.google.com",
                 Article.READ, "1", 1, 4, "feed", ""))
         `when`(articleRepository.getAllArticlesOfRss(testId, true)).thenReturn(readArticles)
-        `when`(adapter.getAllArticlesOfCuration(testId, true)).thenReturn(readArticles)
+        `when`(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(readArticles)
     }
 
     private inner class MockView : ArticleListView {

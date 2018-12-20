@@ -1,40 +1,32 @@
 package com.phicdy.mycuration.data.db;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
-import com.phicdy.mycuration.data.rss.Article;
-import com.phicdy.mycuration.data.rss.CurationSelection;
-import com.phicdy.mycuration.data.rss.Feed;
 import com.phicdy.mycuration.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 
 import timber.log.Timber;
 
 public class DatabaseAdapter {
 	
     private static DatabaseAdapter sharedDbAdapter;
-	private SQLiteDatabase db;
 
 	private static final String BACKUP_FOLDER = "filfeed_backup";
 
 	private DatabaseAdapter() {
 	}
 
-	public static void setUp(@NonNull DatabaseHelper dbHelper) {
+	public static void setUp() {
 		if (sharedDbAdapter == null) {
 			synchronized (DatabaseAdapter.class) {
 				if (sharedDbAdapter == null) {
 					sharedDbAdapter = new DatabaseAdapter();
-					sharedDbAdapter.db = dbHelper.getWritableDatabase();
 				}
 			}
 		}
@@ -132,51 +124,6 @@ public class DatabaseAdapter {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public ArrayList<Article> getAllArticlesOfCuration(int curationId, boolean isNewestArticleTop) {
-		ArrayList<Article> articles = new ArrayList<>();
-		String sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
-				Article.TABLE_NAME + "." + Article.TITLE + "," +
-				Article.TABLE_NAME + "." + Article.URL + "," +
-				Article.TABLE_NAME + "." + Article.STATUS + "," +
-				Article.TABLE_NAME + "." + Article.POINT + "," +
-				Article.TABLE_NAME + "." + Article.DATE + "," +
-				Article.TABLE_NAME + "." + Article.FEEDID + "," +
-				Feed.TABLE_NAME + "." + Feed.TITLE + "," +
-				Feed.TABLE_NAME + "." + Feed.ICON_PATH +
-				" from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-				" on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-				Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
-				" inner join " + Feed.TABLE_NAME +
-				" on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
-				" order by " + Article.DATE;
-		if(isNewestArticleTop) {
-			sql += " desc";
-		}else {
-			sql += " asc";
-		}
-		try {
-			Cursor cursor = db.rawQuery(sql, null);
-			while (cursor.moveToNext()) {
-				int id = cursor.getInt(0);
-				String title = cursor.getString(1);
-				String url = cursor.getString(2);
-				String status = cursor.getString(3);
-				String point = cursor.getString(4);
-				long dateLong = cursor.getLong(5);
-				int feedId = cursor.getInt(6);
-				String feedTitle = cursor.getString(7);
-				String feedIconPath = cursor.getString(8);
-				Article article = new Article(id, title, url, status, point,
-						dateLong, feedId, feedTitle, feedIconPath);
-				articles.add(article);
-			}
-			cursor.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return articles;
 	}
 
 }

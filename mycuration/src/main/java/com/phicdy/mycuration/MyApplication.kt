@@ -7,7 +7,6 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.di.appModule
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
@@ -57,7 +56,7 @@ class MyApplication : Application() {
         Fabric.with(this, crashlyticsKit)
 
         PreferenceHelper.setUp(this)
-        DatabaseAdapter.setUp(DatabaseHelper(this))
+        DatabaseAdapter.setUp()
         TrackerHelper.setTracker(setUp(this))
 
         // Font

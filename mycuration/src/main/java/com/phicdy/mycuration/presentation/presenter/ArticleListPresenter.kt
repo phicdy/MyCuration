@@ -3,7 +3,6 @@ package com.phicdy.mycuration.presentation.presenter
 import android.content.Intent
 import android.support.v7.widget.helper.ItemTouchHelper.LEFT
 import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -25,12 +24,12 @@ import java.util.Random
 
 class ArticleListPresenter(private val feedId: Int,
                            private val curationId: Int,
-                           private val adapter: DatabaseAdapter,
                            private val rssRepository: RssRepository,
                            private val preferenceHelper: PreferenceHelper,
                            private val articleRepository: ArticleRepository,
                            private val unreadCountRepository: UnreadCountRepository,
-                           private val query: String, private val action: String) : Presenter {
+                           private val query: String,
+                           private val action: String) : Presenter {
 
     companion object {
         const val DEFAULT_CURATION_ID = -1
@@ -100,7 +99,7 @@ class ArticleListPresenter(private val feedId: Int,
         } else if (curationId != DEFAULT_CURATION_ID) {
             allArticles = articleRepository.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0) {
-                allArticles = adapter.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
+                allArticles = articleRepository.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             }
         } else if (feedId == Feed.ALL_FEED_ID) {
             allArticles = articleRepository.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)

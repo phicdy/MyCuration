@@ -1,13 +1,13 @@
 package com.phicdy.mycuration.data.repository
 
 import android.support.test.InstrumentationRegistry.getTargetContext
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -16,14 +16,11 @@ import org.junit.Test
 class CurationRepositoryTest {
 
     private lateinit var curationRepository: CurationRepository
-    private lateinit var adapter: DatabaseAdapter
 
     @Before
     fun setUp() {
-        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
         val db = DatabaseHelper(getTargetContext()).writableDatabase
         curationRepository = CurationRepository(db)
-        adapter = DatabaseAdapter.getInstance()
         deleteAll(db)
     }
 
@@ -98,6 +95,13 @@ class CurationRepositoryTest {
         assertEquals(testWord4, addedWords2[0])
         assertEquals(testWord5, addedWords2[1])
         assertEquals(testWord6, addedWords2[2])
+    }
+
+    @Test
+    fun testDeleteCuration() = runBlocking {
+        val curationId = insertTestCuration()
+        assertTrue(curationRepository.delete(curationId))
+        assertFalse(curationRepository.isExist(TEST_CURATION_NAME))
     }
 
     private fun insertTestCuration(): Int = runBlocking {
