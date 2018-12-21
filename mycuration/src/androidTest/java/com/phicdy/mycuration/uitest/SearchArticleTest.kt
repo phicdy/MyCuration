@@ -2,10 +2,17 @@ package com.phicdy.mycuration.uitest
 
 
 import android.support.test.InstrumentationRegistry
+import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions.*
+import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.action.ViewActions.closeSoftKeyboard
+import android.support.test.espresso.action.ViewActions.pressImeActionButton
+import android.support.test.espresso.action.ViewActions.replaceText
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.ViewMatchers.*
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withContentDescription
+import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.By
@@ -15,10 +22,14 @@ import android.support.test.uiautomator.Until
 import android.view.View
 import android.view.ViewGroup
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
+import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -27,6 +38,7 @@ import org.hamcrest.core.IsInstanceOf
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,6 +59,17 @@ class SearchArticleTest : UiTest() {
     @JvmField
     @Rule
     var mActivityTestRule = ActivityTestRule(TopActivity::class.java)
+
+    private lateinit var articleRepository: ArticleRepository
+    private lateinit var rssRepository: RssRepository
+
+    @Before
+    fun setup() {
+        val helper = DatabaseHelper(getTargetContext())
+        articleRepository = ArticleRepository(helper.writableDatabase)
+        rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase))
+        deleteAll(helper.writableDatabase)
+    }
 
     @After
     public override fun tearDown() {
@@ -169,15 +192,13 @@ class SearchArticleTest : UiTest() {
         searchAutoComplete2.perform(pressImeActionButton())
     }
 
-    private fun addTestRss() {
-        val context = InstrumentationRegistry.getContext()
-        DatabaseAdapter.setUp(DatabaseHelper(context))
-        val adapter = DatabaseAdapter.getInstance()
-        val feed = adapter.saveNewFeed(testRssTitle, testRssUrl, "RSS1.0", "http://hoge,com")
+    private fun addTestRss() = runBlocking {
+        val feed = rssRepository.store(testRssTitle, testRssUrl, "RSS1.0", "http://hoge,com")
+        assertNotNull(feed)
         // postDate: 2018-01-01 12:34:56
         val articles = arrayListOf(Article(1, testArticleTitle, testArticleUrl, Article.UNREAD,
-                testArticlePoint, testArticleDateLong, feed.id, feed.title, ""))
-        adapter.saveNewArticles(articles, feed.id)
+                testArticlePoint, testArticleDateLong, feed!!.id, feed.title, ""))
+        articleRepository.saveNewArticles(articles, feed.id)
     }
 
     private fun childAtPosition(

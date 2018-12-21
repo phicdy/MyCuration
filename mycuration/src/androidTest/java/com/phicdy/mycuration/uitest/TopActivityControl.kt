@@ -11,7 +11,7 @@ internal object TopActivityControl {
     fun clickAddRssButton() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         val plusButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "fab_top")), 5000)
+                By.res(BuildConfig.APPLICATION_ID, "fab_top")), 10000)
         assertNotNull("Plus button was not found", plusButton)
         plusButton.click()
         val fabAddRss = device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "ll_add_rss")), 3000)
@@ -46,7 +46,7 @@ internal object TopActivityControl {
     fun goToSetting() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         val settingButton = device.wait(
-                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 5000)
+                Until.findObject(By.res(BuildConfig.APPLICATION_ID, "setting_top_activity")), 10000)
         assertNotNull("Setting button was not found", settingButton)
         settingButton.clickAndWait(Until.newWindow(), 5000)
     }

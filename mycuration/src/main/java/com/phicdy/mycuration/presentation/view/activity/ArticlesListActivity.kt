@@ -12,22 +12,36 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.CurationRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import kotlin.coroutines.CoroutineContext
 
-class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
+class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener, CoroutineScope {
 
     companion object {
         private const val DEFAULT_CURATION_ID = -1
     }
 
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
     private lateinit var searchView: SearchView
     private lateinit var fbTitle: String
     private lateinit var fragment: ArticlesListFragment
     private lateinit var fab: FloatingActionButton
+
+    private val rssRepository: RssRepository by inject()
+    private val curationRepository: CurationRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,33 +55,34 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         val curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID)
         intent.putExtra(TopActivity.FEED_ID, feedId)
 
-        val dbAdapter = DatabaseAdapter.getInstance()
-        when {
-            curationId != DEFAULT_CURATION_ID -> {
-                // Curation
-                title = dbAdapter.getCurationNameById(curationId)
-                fbTitle = getString(R.string.curation)
+        launch {
+            when {
+                curationId != DEFAULT_CURATION_ID -> {
+                    // Curation
+                    title = curationRepository.getCurationNameById(curationId)
+                    fbTitle = getString(R.string.curation)
+                }
+                feedId == Feed.ALL_FEED_ID -> {
+                    // All article
+                    title = getString(R.string.all)
+                    fbTitle = getString(R.string.all)
+                }
+                else -> {
+                    // Select a feed
+                    val prefMgr = PreferenceHelper
+                    prefMgr.setSearchFeedId(feedId)
+                    val selectedFeed = rssRepository.getFeedById(feedId)
+                    title = selectedFeed?.title
+                    fbTitle = getString(R.string.ga_not_all_title)
+                }
             }
-            feedId == Feed.ALL_FEED_ID -> {
-                // All article
-                title = getString(R.string.all)
-                fbTitle = getString(R.string.all)
+            TrackerHelper.sendUiEvent(fbTitle)
+            initToolbar()
+            fab = findViewById(R.id.fab_article_list)
+            fab.setOnClickListener {
+                fragment.onFabButtonClicked()
+                TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
             }
-            else -> {
-                // Select a feed
-                val prefMgr = PreferenceHelper
-                prefMgr.setSearchFeedId(feedId)
-                val selectedFeed = dbAdapter.getFeedById(feedId)
-                title = selectedFeed.title
-                fbTitle = getString(R.string.ga_not_all_title)
-            }
-        }
-        TrackerHelper.sendUiEvent(fbTitle)
-        initToolbar()
-        fab = findViewById(R.id.fab_article_list)
-        fab.setOnClickListener {
-            fragment.onFabButtonClicked()
-            TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
         }
     }
 
@@ -134,4 +149,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
+    }
 }

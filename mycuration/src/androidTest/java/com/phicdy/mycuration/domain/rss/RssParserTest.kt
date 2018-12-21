@@ -1,23 +1,24 @@
 package com.phicdy.mycuration.domain.rss
 
+import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.test.runner.AndroidJUnit4
-
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.util.UrlUtil
-
+import kotlinx.coroutines.runBlocking
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.core.Is.`is`
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import android.support.test.InstrumentationRegistry.getTargetContext
-import com.phicdy.mycuration.data.rss.Article
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.Is.`is`
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 
 @RunWith(AndroidJUnit4::class)
 class RssParserTest {
@@ -27,30 +28,32 @@ class RssParserTest {
 
         override fun failed(reason: RssParseResult.FailedReason, url: String) {}
     }
-    private lateinit var adapter: DatabaseAdapter
+    private lateinit var rssRepository: RssRepository
     private lateinit var parser: RssParser
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
         parser = RssParser()
-        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
-        adapter = DatabaseAdapter.getInstance()
-        adapter.deleteAllArticles()
-        adapter.deleteAll()
+        val helper = DatabaseHelper(getTargetContext())
+        rssRepository = RssRepository(
+                helper.writableDatabase,
+                ArticleRepository(helper.writableDatabase),
+                FilterRepository(helper.writableDatabase)
+        )
+        deleteAll(helper.writableDatabase)
     }
 
     @After
-    @Throws(Exception::class)
     fun tearDown() {
-        adapter.deleteAllArticles()
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Test
-    fun testParseFeedInfoRSS1() {
+    fun testParseFeedInfoRSS1() = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://news.yahoo.co.jp/pickup/rss.xml", callback)
         try {
             Thread.sleep(10000)
@@ -58,12 +61,11 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val addedFeed = adapter.getFeedByUrl("http://news.yahoo.co.jp/pickup/rss.xml")
-        //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
+        val addedFeed = rssRepository.getFeedByUrl("http://news.yahoo.co.jp/pickup/rss.xml")
         assertNotNull(addedFeed)
-        assertEquals("http://news.yahoo.co.jp/pickup/rss.xml", addedFeed.url)
-        assertEquals("https://news.yahoo.co.jp/", addedFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.iconPath)
+        assertEquals("http://news.yahoo.co.jp/pickup/rss.xml", addedFeed?.url)
+        assertEquals("https://news.yahoo.co.jp/", addedFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
 
         //http://feed.japan.cnet.com/rss/index.rdf
         //http://itpro.nikkeibp.co.jp/rss/ITpro.rdf
@@ -72,10 +74,10 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoRSS1_rdf() {
+    fun testParseFeedInfoRSS1_rdf() = runBlocking {
         val testUrl = "http://b.hatena.ne.jp/hotentry/it.rss"
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)
         try {
             Thread.sleep(10000)
@@ -83,17 +85,17 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val addedFeed = adapter.getFeedByUrl(testUrl)
+        val addedFeed = rssRepository.getFeedByUrl(testUrl)
         assertNotNull(addedFeed)
-        assertEquals(testUrl, addedFeed.url)
-        assertEquals("http://b.hatena.ne.jp/hotentry/it", addedFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.iconPath)
+        assertEquals(testUrl, addedFeed?.url)
+        assertEquals("http://b.hatena.ne.jp/hotentry/it", addedFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
     }
 
     @Test
-    fun testParseFeedInfoRSS2() {
+    fun testParseFeedInfoRSS2() = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://hiroki.jp/feed/", callback)
         try {
             Thread.sleep(10000)
@@ -101,12 +103,11 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val addedFeed = adapter.getFeedByUrl("https://hiroki.jp/feed/")
-        //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
+        val addedFeed = rssRepository.getFeedByUrl("https://hiroki.jp/feed/")
         assertNotNull(addedFeed)
-        assertEquals("https://hiroki.jp/feed/", addedFeed.url)
-        assertEquals("https://hiroki.jp", addedFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.iconPath)
+        assertEquals("https://hiroki.jp/feed/", addedFeed?.url)
+        assertEquals("https://hiroki.jp", addedFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
 
         executor.start("https://www.infoq.com/jp/feed", callback)
         try {
@@ -115,12 +116,11 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val infoqFeed = adapter.getFeedByUrl("https://www.infoq.com/jp/feed")
-        //		ArrayList<Feed> feeds = adapter.getAllFeedsWithNumOfUnreadArticles();
+        val infoqFeed = rssRepository.getFeedByUrl("https://www.infoq.com/jp/feed")
         assertNotNull(infoqFeed)
-        assertEquals("https://www.infoq.com/jp/feed", infoqFeed.url)
-        assertEquals("https://www.infoq.com/jp", infoqFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, infoqFeed.iconPath)
+        assertEquals("https://www.infoq.com/jp/feed", infoqFeed?.url)
+        assertEquals("https://www.infoq.com/jp", infoqFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, infoqFeed?.iconPath)
 
         //http://blog.riywo.com/feed
         //http://dev.classmethod.jp/feed/
@@ -133,11 +133,11 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoATOM() {
+    fun testParseFeedInfoATOM() = runBlocking {
         // Publickey
         val publicKeyFeedUrl = "https://www.publickey1.jp/atom.xml"
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start(publicKeyFeedUrl, callback)
         try {
             Thread.sleep(10000)
@@ -145,12 +145,12 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val publicKeyFeed = adapter.getFeedByUrl(publicKeyFeedUrl)
+        val publicKeyFeed = rssRepository.getFeedByUrl(publicKeyFeedUrl)
         assertNotNull(publicKeyFeed)
-        assertEquals("Publickey", publicKeyFeed.title)
-        assertEquals(publicKeyFeedUrl, publicKeyFeed.url)
-        assertEquals("https://www.publickey1.jp/", publicKeyFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, publicKeyFeed.iconPath)
+        assertEquals("Publickey", publicKeyFeed?.title)
+        assertEquals(publicKeyFeedUrl, publicKeyFeed?.url)
+        assertEquals("https://www.publickey1.jp/", publicKeyFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, publicKeyFeed?.iconPath)
 
         // Google testing blog
         executor.start("http://feeds.feedburner.com/blogspot/RLXA", callback)
@@ -160,11 +160,11 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val googleTestFeed = adapter.getFeedByUrl("http://feeds.feedburner.com/blogspot/RLXA")
+        val googleTestFeed = rssRepository.getFeedByUrl("http://feeds.feedburner.com/blogspot/RLXA")
         assertNotNull(googleTestFeed)
-        assertEquals("http://feeds.feedburner.com/blogspot/RLXA", googleTestFeed.url)
-        assertEquals("http://testing.googleblog.com/", googleTestFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, googleTestFeed.iconPath)
+        assertEquals("http://feeds.feedburner.com/blogspot/RLXA", googleTestFeed?.url)
+        assertEquals("http://testing.googleblog.com/", googleTestFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, googleTestFeed?.iconPath)
 
         // MOONGIFT
         executor.start("http://feeds.feedburner.com/moongift", callback)
@@ -174,18 +174,18 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val monngiftFeed = adapter.getFeedByUrl("http://feeds.feedburner.com/moongift")
+        val monngiftFeed = rssRepository.getFeedByUrl("http://feeds.feedburner.com/moongift")
         assertNotNull(monngiftFeed)
-        assertEquals("http://feeds.feedburner.com/moongift", monngiftFeed.url)
-        assertEquals("http://www.moongift.jp/", monngiftFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, monngiftFeed.iconPath)
+        assertEquals("http://feeds.feedburner.com/moongift", monngiftFeed?.url)
+        assertEquals("http://www.moongift.jp/", monngiftFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, monngiftFeed?.iconPath)
     }
 
     @Test
-    fun testParseFeedInfoTopHtml() {
+    fun testParseFeedInfoTopHtml() = runBlocking {
         // Test top URL
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://gigazine.net", callback)
         try {
             Thread.sleep(10000)
@@ -193,17 +193,17 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val addedFeed = adapter.getFeedByUrl("https://gigazine.net/news/rss_2.0/")
+        val addedFeed = rssRepository.getFeedByUrl("https://gigazine.net/news/rss_2.0/")
         assertNotNull(addedFeed)
-        assertEquals("https://gigazine.net/news/rss_2.0/", addedFeed.url)
-        assertEquals("https://gigazine.net/", addedFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.iconPath)
+        assertEquals("https://gigazine.net/news/rss_2.0/", addedFeed?.url)
+        assertEquals("https://gigazine.net/", addedFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
     }
 
     @Test
-    fun testParseFeedInfoTopHtml2() {
+    fun testParseFeedInfoTopHtml2() = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://tech.mercari.com/", callback)
         try {
             Thread.sleep(10000)
@@ -211,20 +211,19 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val mercariFeed = adapter.getFeedByUrl("https://tech.mercari.com/rss")
-        //		ArrayList<Feed> allFeeds = adapter.getAllFeedsThatHaveUnreadArticles();
+        val mercariFeed = rssRepository.getFeedByUrl("https://tech.mercari.com/rss")
 
         assertNotNull(mercariFeed)
-        assertEquals("https://tech.mercari.com/rss", mercariFeed.url)
-        assertEquals("https://tech.mercari.com/", mercariFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, mercariFeed.iconPath)
+        assertEquals("https://tech.mercari.com/rss", mercariFeed?.url)
+        assertEquals("https://tech.mercari.com/", mercariFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, mercariFeed?.iconPath)
     }
 
     @Test
-    fun testParseFeedInfoTopHtmlFeedURLStartWithSlash() {
+    fun testParseFeedInfoTopHtmlFeedURLStartWithSlash() = runBlocking {
         // //smhn.info/feed is returned
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://smhn.info", callback)
         try {
             Thread.sleep(10000)
@@ -232,18 +231,18 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val smhnFeed = adapter.getFeedByUrl("http://smhn.info/feed")
+        val smhnFeed = rssRepository.getFeedByUrl("http://smhn.info/feed")
 
         assertNotNull(smhnFeed)
-        assertEquals("http://smhn.info/feed", smhnFeed.url)
-        assertEquals("https://smhn.info", smhnFeed.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, smhnFeed.iconPath)
+        assertEquals("http://smhn.info/feed", smhnFeed?.url)
+        assertEquals("https://smhn.info", smhnFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, smhnFeed?.iconPath)
     }
 
     @Test
-    fun testParseFeedInfoGzip() {
+    fun testParseFeedInfoGzip() = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start("http://ground-sesame.hatenablog.jp", callback)
         try {
             Thread.sleep(10000)
@@ -251,12 +250,12 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val surigomaFeed = adapter.getFeedByUrl("http://ground-sesame.hatenablog.jp/rss")
+        val surigomaFeed = rssRepository.getFeedByUrl("http://ground-sesame.hatenablog.jp/rss")
         assertNotNull(surigomaFeed)
-        assertEquals("http://ground-sesame.hatenablog.jp/rss", surigomaFeed.url)
-        assertEquals("http://ground-sesame.hatenablog.jp/", surigomaFeed.siteUrl)
+        assertEquals("http://ground-sesame.hatenablog.jp/rss", surigomaFeed?.url)
+        assertEquals("http://ground-sesame.hatenablog.jp/", surigomaFeed?.siteUrl)
 
-        assertEquals(Feed.DEDAULT_ICON_PATH, surigomaFeed.iconPath)
+        assertEquals(Feed.DEDAULT_ICON_PATH, surigomaFeed?.iconPath)
     }
 
     @Test
@@ -413,9 +412,9 @@ class RssParserTest {
         assertThat(articles[1].point, `is`("-1"))
     }
 
-    private fun addNewFeedAndCheckResult(testUrl: String, expectedFeedUrl: String, expectedSiteUrl: String) {
+    private fun addNewFeedAndCheckResult(testUrl: String, expectedFeedUrl: String, expectedSiteUrl: String) = runBlocking {
         val parser = RssParser()
-        val executor = RssParseExecutor(parser, DatabaseAdapter.getInstance())
+        val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)
         try {
             Thread.sleep(10000)
@@ -423,11 +422,11 @@ class RssParserTest {
             e.printStackTrace()
         }
 
-        val addedFeed = adapter.getFeedByUrl(expectedFeedUrl)
+        val addedFeed = rssRepository.getFeedByUrl(expectedFeedUrl)
         assertNotNull(addedFeed)
-        assertEquals(expectedFeedUrl, addedFeed.url)
-        assertEquals(expectedSiteUrl, addedFeed.siteUrl)
+        assertEquals(expectedFeedUrl, addedFeed?.url)
+        assertEquals(expectedSiteUrl, addedFeed?.siteUrl)
 
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed.iconPath)
+        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
     }
 }

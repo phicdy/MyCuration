@@ -1,22 +1,24 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.CurationRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
+import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
 
 class CurationListPresenter(private val view: CurationListView,
-                            private val dbAdapter: DatabaseAdapter,
-                            private val unreadCountRepository: UnreadCountRepository) : Presenter {
+                            private val rssRepository: RssRepository,
+                            private val curationRepository: CurationRepository,
+                            private val unreadCountRepository: UnreadCountRepository) {
     private var allCurations: ArrayList<Curation> = arrayListOf()
 
-    override fun create() {}
 
-    override fun resume() {
+    suspend fun resume() = coroutineScope {
         view.registerContextMenu()
-        allCurations = dbAdapter.allCurations
+        allCurations = curationRepository.getAllCurations()
         if (allCurations.isEmpty()) {
             view.hideRecyclerView()
             view.showEmptyView()
@@ -27,23 +29,21 @@ class CurationListPresenter(private val view: CurationListView,
         }
     }
 
-    override fun pause() {}
-
     fun onCurationEditClicked(curationId: Int) {
         if (curationId < 0) return
         view.startEditCurationActivity(curationId)
     }
 
-    fun onCurationDeleteClicked(curation: Curation, size: Int) {
-        dbAdapter.deleteCuration(curation.id)
+    suspend fun onCurationDeleteClicked(curation: Curation, size: Int) = coroutineScope {
+        curationRepository.delete(curation.id)
         if (size == 1) {
             view.hideRecyclerView()
             view.showEmptyView()
         }
     }
 
-    fun activityCreated() {
-        if (dbAdapter.numOfFeeds == 0) {
+    suspend fun activityCreated() = coroutineScope {
+        if (rssRepository.getNumOfRss()== 0) {
             view.setNoRssTextToEmptyView()
         }
     }

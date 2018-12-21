@@ -1,25 +1,12 @@
 package com.phicdy.mycuration.domain.task
 
-import android.os.AsyncTask
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.domain.rss.IconParser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class GetFeedIconTask : AsyncTask<String, Void, Void>() {
+class GetFeedIconTask {
 
-    /**
-     * Get articles from RSS Feed
-     *
-     */
-    override fun doInBackground(vararg url: String): Void? {
-        getFeedIcon(url[0])
-        return null
-    }
-
-    private fun getFeedIcon(siteUrl: String) {
-        val parser = IconParser()
-        val iconUrlStr = parser.parseHtml(siteUrl)
-        if (iconUrlStr.isBlank()) return
-        val dbAdapter = DatabaseAdapter.getInstance()
-        dbAdapter.saveIconPath(siteUrl, iconUrlStr)
+    suspend fun execute(siteUrl: String): String = withContext(Dispatchers.IO) {
+        return@withContext IconParser().parseHtml(siteUrl)
     }
 }

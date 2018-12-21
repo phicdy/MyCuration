@@ -3,8 +3,6 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.phicdy.mycuration.data.db.DatabaseAdapter
-import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -14,6 +12,7 @@ import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
+import io.reactivex.Flowable
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.runBlocking
@@ -36,17 +35,17 @@ class RssListPresenterTest {
 
     private lateinit var presenter: RssListPresenter
     private val view = mock(RssListView::class.java)
-    private val adapter = mock(DatabaseAdapter::class.java)
     private val mockPref = mock(SharedPreferences::class.java)
     private val mockRssRepository = mock(RssRepository::class.java)
-    private val mockArticleRepository = mock(ArticleRepository::class.java)
+    private val networkTaskManager = mock(NetworkTaskManager::class.java)
+    private lateinit var allFeeds: ArrayList<Feed>
 
     @Before
     fun setup() {
         // Mock two RSS returns
         val firstRss = Feed(FIRST_RSS_ID, FIRST_RSS_TITLE, "", Feed.DEDAULT_ICON_PATH, "", FIRST_RSS_UNREAD_COUNT, "")
         val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", SECOND_RSS_ICON_PATH, "", SECOND_RSS_UNREAD_COUNT, "")
-        val allFeeds = arrayListOf(firstRss, secondRss)
+        allFeeds = arrayListOf(firstRss, secondRss)
         runBlocking {
             `when`(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(allFeeds)
             `when`(mockRssRepository.getNumOfRss()).thenReturn(2)
@@ -60,9 +59,7 @@ class RssListPresenterTest {
         `when`(mockPref.edit()).thenReturn(mockEdit)
         `when`(mockEdit.putLong(anyString(), anyLong())).thenReturn(mockEdit)
 
-        DatabaseAdapter.inject(adapter)
-        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository,
-                NetworkTaskManager(mockArticleRepository, mock(UnreadCountRepository::class.java)),
+        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, networkTaskManager,
                 UnreadCountRepository(mockRssRepository, mock(CurationRepository::class.java)))
 
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
@@ -152,6 +149,7 @@ class RssListPresenterTest {
     fun `when onResume and RSS exist and auto update in main UI is enabled and after interval then show refreshing view`() = runBlocking {
         `when`(mockPref.getBoolean(anyString(), anyBoolean())).thenReturn(true)
         `when`(mockPref.getLong(anyString(), anyLong())).thenReturn(System.currentTimeMillis()-1000*60)
+        `when`(networkTaskManager.updateAllFeeds(allFeeds)).thenReturn(Flowable.just(mock(Feed::class.java)))
         presenter.resume()
         verify(view, times(1)).setRefreshing(true)
     }

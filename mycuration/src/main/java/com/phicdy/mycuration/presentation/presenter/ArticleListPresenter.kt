@@ -3,7 +3,8 @@ package com.phicdy.mycuration.presentation.presenter
 import android.content.Intent
 import android.support.v7.widget.helper.ItemTouchHelper.LEFT
 import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
@@ -21,10 +22,14 @@ import java.util.Date
 import java.util.Locale
 import java.util.Random
 
-class ArticleListPresenter(private val feedId: Int, private val curationId: Int, private val adapter: DatabaseAdapter,
+class ArticleListPresenter(private val feedId: Int,
+                           private val curationId: Int,
+                           private val rssRepository: RssRepository,
                            private val preferenceHelper: PreferenceHelper,
+                           private val articleRepository: ArticleRepository,
                            private val unreadCountRepository: UnreadCountRepository,
-                           private val query: String, private val action: String) : Presenter {
+                           private val query: String,
+                           private val action: String) : Presenter {
 
     companion object {
         const val DEFAULT_CURATION_ID = -1
@@ -73,7 +78,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
 
     override fun create() {}
 
-    fun createView() {
+    suspend fun createView() = coroutineScope {
         allArticles = loadAllArticles()
         loadArticle(LOAD_COUNT)
         if (allArticles.size == 0) {
@@ -87,27 +92,27 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         }
     }
 
-    private fun loadAllArticles(): ArrayList<Article> {
+    private suspend fun loadAllArticles(): ArrayList<Article> = coroutineScope {
         var allArticles: ArrayList<Article>
         if (isSearchAction) {
-            allArticles = adapter.searchArticles(query, preferenceHelper.sortNewArticleTop)
+            allArticles = articleRepository.searchArticles(query, preferenceHelper.sortNewArticleTop)
         } else if (curationId != DEFAULT_CURATION_ID) {
-            allArticles = adapter.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
+            allArticles = articleRepository.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             if (allArticles.size == 0) {
-                allArticles = adapter.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
+                allArticles = articleRepository.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             }
         } else if (feedId == Feed.ALL_FEED_ID) {
-            allArticles = adapter.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
-            if (allArticles.size == 0 && adapter.isExistArticle) {
-                allArticles = adapter.getTop300Articles(preferenceHelper.sortNewArticleTop)
+            allArticles = articleRepository.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
+            if (allArticles.size == 0 && articleRepository.isExistArticle()) {
+                allArticles = articleRepository.getTop300Articles(preferenceHelper.sortNewArticleTop)
             }
         } else {
-            allArticles = adapter.getUnreadArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
-            if (allArticles.size == 0 && adapter.isExistArticle(feedId)) {
-                allArticles = adapter.getAllArticlesInAFeed(feedId, preferenceHelper.sortNewArticleTop)
+            allArticles = articleRepository.getUnreadArticlesOfRss(feedId, preferenceHelper.sortNewArticleTop)
+            if (allArticles.size == 0 && articleRepository.isExistArticleOf(feedId)) {
+                allArticles = articleRepository.getAllArticlesOfRss(feedId, preferenceHelper.sortNewArticleTop)
             }
         }
-        return allArticles
+        return@coroutineScope allArticles
     }
 
     private fun loadArticle(num: Int) {
@@ -126,13 +131,14 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
         if (!isSwipeLeftToRight && !isSwipeRightToLeft) {
             setReadStatusToTouchedView(article, Article.TOREAD, false)
             if (preferenceHelper.isOpenInternal) {
-                val feedTitle = if (feedId == Feed.ALL_FEED_ID) {
+                if (feedId == Feed.ALL_FEED_ID) {
                     article.feedTitle
                 } else {
-                    val feed = adapter.getFeedById(feedId)
-                    feed.title
+                    val feed = rssRepository.getFeedById(feedId)
+                    feed?.title
+                }?.let {
+                    view.openInternalWebView(article.url, it)
                 }
-                view.openInternalWebView(article.url, feedTitle)
             } else {
                 view.openExternalWebView(article.url)
             }
@@ -163,7 +169,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             view.notifyListView()
             return@coroutineScope
         }
-        adapter.saveStatus(article.id, status)
+        articleRepository.saveStatus(article.id, status)
         if (status == Article.TOREAD) {
             unreadCountRepository.countDownUnreadCount(article.feedId)
         } else if (status == Article.UNREAD) {
@@ -196,7 +202,7 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
             if (targetArticle.status == Article.UNREAD) {
                 targetArticle.status = Article.TOREAD
                 unreadCountRepository.countDownUnreadCount(targetArticle.feedId)
-                adapter.saveStatus(targetArticle.id, Article.TOREAD)
+                articleRepository.saveStatus(targetArticle.id, Article.TOREAD)
             }
         }
         view.notifyListView()
@@ -213,10 +219,10 @@ class ArticleListPresenter(private val feedId: Int, private val curationId: Int,
 
     suspend fun handleAllRead() = coroutineScope {
         if (feedId == Feed.ALL_FEED_ID) {
-            adapter.saveAllStatusToRead()
+            articleRepository.saveAllStatusToRead()
             unreadCountRepository.readAll()
         } else {
-            adapter.saveStatusToRead(feedId)
+            articleRepository.saveStatusToRead(feedId)
             unreadCountRepository.readAll(feedId)
         }
         if (preferenceHelper.allReadBack) {

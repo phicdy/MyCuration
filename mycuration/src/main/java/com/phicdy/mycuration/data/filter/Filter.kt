@@ -11,7 +11,7 @@ data class Filter(
         val keyword: String,
         val url: String,
         val feeds: ArrayList<Feed> = ArrayList(),
-        val feedId: Int,
+        val feedId: Int = -1, // Not used now. It was used when the filter only for one RSS
         private var enabled: Int = 0
 ) {
 

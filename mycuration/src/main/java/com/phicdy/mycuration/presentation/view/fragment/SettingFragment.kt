@@ -11,20 +11,31 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.widget.Toast
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.presentation.view.activity.LicenseActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.ToastHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.ext.android.bindScope
+import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.core.parameter.parametersOf
+import kotlin.coroutines.CoroutineContext
 
 
-class SettingFragment : PreferenceFragmentCompat(), SettingView {
+class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope {
 
-    private lateinit var presenter: SettingPresenter
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
+    private val presenter: SettingPresenter by inject { parametersOf(this) }
 
     private lateinit var prefUpdateInterval: ListPreference
     private lateinit var prefLaunchTab: ListPreference
@@ -37,26 +48,17 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView {
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        bindScope(getOrCreateScope("setting"))
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         if (BuildConfig.DEBUG) {
             addPreferencesFromResource(R.xml.setting_fragment_debug)
         } else {
             addPreferencesFromResource(R.xml.setting_fragment)
         }
-        val helper = PreferenceHelper
-        val updateIntervalHourItems = resources.getStringArray(R.array.update_interval_items_values)
-        val updateIntervalStringItems = resources.getStringArray(R.array.update_interval_items)
-        val allReadBehaviorItems = resources.getStringArray(R.array.all_read_behavior_values)
-        val allReadBehaviorStringItems = resources.getStringArray(R.array.all_read_behavior)
-        val launchTabItems = resources.getStringArray(R.array.launch_tab_items_values)
-        val launchTabStringItems = resources.getStringArray(R.array.launch_tab_items)
-        val swipeDirectionItems = resources.getStringArray(R.array.swipe_direction_items_values)
-        val swipeDirectionStringItems = resources.getStringArray(R.array.swipe_direction_items)
-        presenter = SettingPresenter(helper, updateIntervalHourItems,
-                updateIntervalStringItems, allReadBehaviorItems, allReadBehaviorStringItems,
-                launchTabItems, launchTabStringItems,
-                swipeDirectionItems, swipeDirectionStringItems)
-        presenter.setView(this)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -142,21 +144,27 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView {
             val prefImport = findPreference(getString(R.string.key_import_db))
             activity?.let { activity ->
                 prefImport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                    val currentDB = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
-                    DatabaseAdapter.getInstance().importDB(currentDB)
-                    ToastHelper.showToast(activity, getString(R.string.import_db), Toast.LENGTH_SHORT)
+                    launch {
+                        val currentDb = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
+                        presenter.onImportDatabaseClicked(currentDb)
+                        ToastHelper.showToast(activity, getString(R.string.import_db), Toast.LENGTH_SHORT)
+                    }
                     true
                 }
                 val prefExport = findPreference(getString(R.string.key_export_db))
                 prefExport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                    val currentDB = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
-                    DatabaseAdapter.getInstance().exportDb(currentDB)
-                    ToastHelper.showToast(activity, getString(R.string.export_db), Toast.LENGTH_SHORT)
+                    launch {
+                        val currentDb = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
+                        presenter.onExportDatabaseClicked(currentDb)
+                        ToastHelper.showToast(activity, getString(R.string.export_db), Toast.LENGTH_SHORT)
+                    }
                     true
                 }
                 val prefAddRss = findPreference(getString(R.string.key_add_rss))
                 prefAddRss.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                    presenter.onDebugAddRssClicked(DatabaseAdapter.getInstance())
+                    launch {
+                        presenter.onDebugAddRssClicked()
+                    }
                     true
                 }
             }

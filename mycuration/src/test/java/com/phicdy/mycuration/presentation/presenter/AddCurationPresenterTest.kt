@@ -1,28 +1,29 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.presentation.view.AddCurationView
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
-
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import java.util.ArrayList
 
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
 
 class AddCurationPresenterTest {
 
     private lateinit var presenter: AddCurationPresenter
-    private lateinit var adapter: DatabaseAdapter
     private lateinit var view: MockViewAdd
+    private lateinit var repository: CurationRepository
 
     @Before
     fun setup() {
         view = MockViewAdd()
-        adapter = Mockito.mock(DatabaseAdapter::class.java)
-        presenter = AddCurationPresenter(view, adapter)
+        repository = mock(CurationRepository::class.java)
+        presenter = AddCurationPresenter(view, repository)
     }
 
     @Test
@@ -33,7 +34,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when onResume default curation name is empty`() {
+    fun `when onResume default curation name is empty`() = runBlocking {
         // Go to onResume() in add status
         presenter.create()
         presenter.resume()
@@ -41,10 +42,11 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when edit curation then the name becomes stored one`() {
+    fun `when edit curation then the name becomes stored one`() = runBlocking {
         // Mock to return test curation
         view.editCurationId = TEST_EDIT_CURATION_ID
-        Mockito.`when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
+        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
+        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
 
         // Go to onResume() in edit status
         presenter.create()
@@ -53,7 +55,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert succeeds then toast shows`() {
+    fun `when insert succeeds then toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
@@ -61,7 +63,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert succeeds then progress dialog dismisses`() {
+    fun `when insert succeeds then progress dialog dismisses`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
@@ -69,7 +71,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert succeeds then view finishes`() {
+    fun `when insert succeeds then view finishes`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
@@ -77,7 +79,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert fails then error toast shows`() {
+    fun `when insert fails then error toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
@@ -85,7 +87,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert fails then progress dialog dismissses`() {
+    fun `when insert fails then progress dialog dismissses`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
@@ -93,7 +95,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when insert fails then view still shows`() {
+    fun `when insert fails then view still shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
@@ -101,7 +103,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add word button is clicked in empty then error toast shows`() {
+    fun `when add word button is clicked in empty then error toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.onAddWordButtonClicked()
@@ -109,7 +111,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add word button is clicked then the word is added`() {
+    fun `when add word button is clicked then the word is added`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.word = "test"
@@ -118,7 +120,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add word button is clicked then twice words are added`() {
+    fun `when add word button is clicked then twice words are added`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.word = "test"
@@ -129,7 +131,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add word button is clicked then input field becomes empty`() {
+    fun `when add word button is clicked then input field becomes empty`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.word = "test"
@@ -138,7 +140,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add button is clicked in empty then name error toast shows`() {
+    fun `when add button is clicked in empty then name error toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         presenter.onAddMenuClicked()
@@ -146,7 +148,7 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add button is clicked with curation name and no words then error toast shows`() {
+    fun `when add button is clicked with curation name and no words then error toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.setCurationName("test")
@@ -155,9 +157,9 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add button is clicked then with existing curation name and words then error toast shows`() {
+    fun `when add button is clicked then with existing curation name and words then error toast shows`() = runBlocking {
         // Mock test curation exists
-        Mockito.`when`(adapter.isExistSameNameCuration(TEST_EDIT_CURATION_NAME)).thenReturn(true)
+        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(true)
 
         presenter.create()
         presenter.resume()
@@ -168,89 +170,89 @@ class AddCurationPresenterTest {
     }
 
     @Test
-    fun `when add button is clicked then and succeeds then success toast shows`() {
+    fun `when add button is clicked then and succeeds then success toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        Mockito.`when`(adapter.saveNewCuration(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertTrue(view.isSuccessToastShowed)
     }
 
     @Test
-    fun `when add button is clicked then and succeeds then progress dialog dissmisses`() {
+    fun `when add button is clicked then and succeeds then progress dialog dissmisses`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        Mockito.`when`(adapter.saveNewCuration(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertFalse(view.isProgressDialogShowed)
     }
 
     @Test
-    fun `when add button is clicked then and succeeds then view finishes`() {
+    fun `when add button is clicked then and succeeds then view finishes`() = runBlocking {
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        Mockito.`when`(adapter.saveNewCuration(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertTrue(view.isFinished)
     }
 
     @Test
-    fun `when edit succeeds then success toast shows`() {
+    fun `when edit succeeds then success toast shows`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        Mockito.`when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        Mockito.`when`(adapter.updateCuration(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
+        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
                 .thenReturn(true)
         presenter.onAddMenuClicked()
         assertTrue(view.isSuccessToastShowed)
     }
 
     @Test
-    fun testOnPause() {
-        // For coverage
-        presenter.pause()
-    }
-
-    @Test
-    fun `when edit succeeds then progress dialog dissmisses`() {
+    fun `when edit succeeds then progress dialog dissmisses`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        Mockito.`when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
-        presenter = AddCurationPresenter(view, adapter)
+        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
+        presenter = AddCurationPresenter(view, repository)
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        Mockito.`when`(adapter.updateCuration(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
+        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
                 .thenReturn(true)
         presenter.onAddMenuClicked()
         assertFalse(view.isProgressDialogShowed)
     }
 
     @Test
-    fun `when edit succeeds then view finishes`() {
+    fun `when edit succeeds then view finishes`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        Mockito.`when`(adapter.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
-        presenter = AddCurationPresenter(view, adapter)
+        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
+        presenter = AddCurationPresenter(view, repository)
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        Mockito.`when`(adapter.updateCuration(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
         presenter.onAddMenuClicked()
         assertTrue(view.isFinished)
     }

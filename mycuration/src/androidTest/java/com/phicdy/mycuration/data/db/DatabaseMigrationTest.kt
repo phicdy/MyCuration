@@ -21,6 +21,11 @@ import org.junit.runner.RunWith
 import java.util.ArrayList
 
 import android.support.test.InstrumentationRegistry.getTargetContext
+import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.deleteAll
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -32,7 +37,8 @@ import org.junit.Assert.fail
 class DatabaseMigrationTest {
 
     private lateinit var db: SQLiteDatabase
-    private lateinit var adapter: DatabaseAdapter
+    private lateinit var rssRepository: RssRepository
+    private lateinit var filterRepository: FilterRepository
 
     @JvmField
     @Rule
@@ -40,25 +46,26 @@ class DatabaseMigrationTest {
 
     @Before
     fun setUp() {
-        DatabaseAdapter.setUp(DatabaseHelper(getTargetContext()))
-        adapter = DatabaseAdapter.getInstance()
         val helper = DatabaseHelper(getTargetContext())
         db = helper.writableDatabase
+        filterRepository = FilterRepository(db)
+        rssRepository = RssRepository(db, ArticleRepository(db), filterRepository)
     }
 
     @After
     fun tearDown() {
-        adapter.deleteAll()
+        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        deleteAll(db)
     }
 
     @Suppress("Deprecation")
     @Test
-    fun migrationFrom1To3() {
+    fun migrationFrom1To3() = runBlocking {
         db.execSQL(Filter.DROP_TABLE_SQL)
         db.execSQL(FilterFeedRegistration.DROP_TABLE_SQL)
         db.execSQL(Filter.CREATE_TABLE_SQL_VER1)
 
-        val testFeed = adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
+        val testFeed = rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         val values = ContentValues().apply {
             put(Filter.TITLE, "hoge")
             put(Filter.FEED_ID, testFeed!!.id)
@@ -87,23 +94,25 @@ class DatabaseMigrationTest {
             cursor?.close()
         }
 
-        val filters = adapter.allFilters
+        val filters = filterRepository.getAllFilters()
         assertThat(filters.size, `is`(1))
         val filter = filters[0]
         assertEquals(filter.title, "hoge")
         assertEquals(filter.isEnabled, true)
         val target = ArrayList<Feed>()
-        target.add(testFeed)
-        assertTrue(adapter.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
+        testFeed?.let {
+            target.add(testFeed)
+            assertTrue(filterRepository.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
+        } ?: fail("RSS is null")
     }
 
     @Suppress("Deprecation")
     @Test
-    fun migrationFrom2To3() {
+    fun migrationFrom2To3() = runBlocking {
         db.execSQL(Filter.DROP_TABLE_SQL)
         db.execSQL(FilterFeedRegistration.DROP_TABLE_SQL)
         db.execSQL(Filter.CREATE_TABLE_SQL_VER2)
-        val testFeed = adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
+        val testFeed = rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         val values = ContentValues().apply {
             put(Filter.TITLE, "hoge")
             put(Filter.FEED_ID, testFeed!!.id)
@@ -132,27 +141,31 @@ class DatabaseMigrationTest {
             cursor?.close()
         }
 
-        val filters = adapter.allFilters
+        val filters = filterRepository.getAllFilters()
         assertThat(filters.size, `is`(1))
         val filter = filters[0]
         assertEquals(filter.title, "hoge")
         assertEquals(filter.isEnabled, false)
         val target = ArrayList<Feed>()
-        target.add(testFeed)
-        assertTrue(adapter.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
+        testFeed?.let {
+            target.add(testFeed)
+            assertTrue(filterRepository.saveNewFilter("hoge", target, "hoge", "http://www.google.com"))
+        } ?: fail("RSS is null")
     }
 
     @Test
-    fun migrationFrom3To4() {
-        val rss = adapter.saveNewFeed(TEST_FEED_TITLE, TEST_FEED_URL, Feed.ATOM, TEST_FEED_URL)
-        adapter.saveIconPath(TEST_FEED_URL, "$TEST_FEED_URL/icon")
+    fun migrationFrom3To4() = runBlocking {
+        val rss = rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, Feed.ATOM, TEST_FEED_URL)
+        rssRepository.saveIconPath(TEST_FEED_URL, "$TEST_FEED_URL/icon")
         val migration = DatabaseMigration(
                 oldVersion = DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION,
                 newVersion = DatabaseMigration.DATABASE_VERSION_FETCH_ICON
         )
         migration.migrate(db)
-        val migratedRss = adapter.getFeedById(rss.id)
-        assertThat(migratedRss.iconPath, `is`(Feed.DEDAULT_ICON_PATH))
+        rss?.let {
+            val migratedRss = rssRepository.getFeedById(rss.id)
+            assertThat(migratedRss?.iconPath, `is`(Feed.DEDAULT_ICON_PATH))
+        } ?: fail("RSS is null")
     }
 
     companion object {

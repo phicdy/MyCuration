@@ -128,7 +128,9 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         articlesListAdapter = SimpleItemRecyclerViewAdapter()
         recyclerView.adapter = articlesListAdapter
         setAllListener()
-        presenter.createView()
+        launch {
+            presenter.createView()
+        }
         return view
     }
 
@@ -138,8 +140,8 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         job.cancel()
+        super.onDestroy()
     }
 
     private fun setAllListener() {

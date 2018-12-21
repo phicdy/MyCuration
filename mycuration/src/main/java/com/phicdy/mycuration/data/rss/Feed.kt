@@ -33,7 +33,7 @@ data class Feed(
         const val TITLE = "title"
         const val ID = "_id"
         const val URL = "url"
-        private const val FORMAT = "format"
+        const val FORMAT = "format"
         const val SITE_URL = "siteUrl"
         const val ICON_PATH = "iconPath"
         const val UNREAD_ARTICLE = "unreadArticle"

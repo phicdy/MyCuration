@@ -1,22 +1,25 @@
 package com.phicdy.mycuration.presentation.presenter
 
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.util.TextUtil
 import com.phicdy.mycuration.presentation.view.AddCurationView
+import kotlinx.coroutines.coroutineScope
 
 
-class AddCurationPresenter(private val view: AddCurationView, private val adapter: DatabaseAdapter) : Presenter {
+class AddCurationPresenter(
+        private val view: AddCurationView,
+        private val repository: CurationRepository
+) {
 
     companion object {
         const val NOT_EDIT_CURATION_ID = -1
-        const val INSERT_ERROR_MESSAGE = "insertErrorMessage"
     }
 
     private var editCurationid = NOT_EDIT_CURATION_ID
     private var addedWords = ArrayList<String>()
 
-    override fun create() {
+    fun create() {
         editCurationid = view.editCurationId()
     }
 
@@ -25,16 +28,14 @@ class AddCurationPresenter(private val view: AddCurationView, private val adapte
         view.refreshList(addedWords)
     }
 
-    override fun resume() {
+    suspend fun resume() = coroutineScope {
         if (editCurationid != NOT_EDIT_CURATION_ID) {
-            view.setCurationName(adapter.getCurationNameById(editCurationid))
-            addedWords = adapter.getCurationWords(editCurationid)
+            view.setCurationName(repository.getCurationNameById(editCurationid))
+            addedWords = repository.getCurationWords(editCurationid)
             view.refreshList(addedWords)
         }
         view.refreshList(addedWords)
     }
-
-    override fun pause() {}
 
     fun handleInsertResultMessage(result: Boolean, errorMessage: String) {
         if (result) {
@@ -63,29 +64,30 @@ class AddCurationPresenter(private val view: AddCurationView, private val adapte
         view.resetInputWord()
     }
 
-    fun onAddMenuClicked() {
+    suspend fun onAddMenuClicked() = coroutineScope {
         val curationName = view.curationName()
         if (TextUtil.isEmpty(curationName)) {
             view.handleEmptyCurationNameError()
-            return
+            return@coroutineScope
         }
         if (addedWords.size == 0) {
             view.handleEmptyWordError()
-            return
+            return@coroutineScope
         }
 
         val isNew = editCurationid == AddCurationPresenter.NOT_EDIT_CURATION_ID
-        if (isNew && adapter.isExistSameNameCuration(curationName)) {
+        if (isNew && repository.isExist(curationName)) {
             view.handleSameNameCurationError()
-            return
+            return@coroutineScope
         }
-        val result = if (isNew) {
-            adapter.saveNewCuration(curationName, addedWords)
+        val id = if (isNew) {
+            repository.store(curationName, addedWords).toInt()
         } else {
-            adapter.updateCuration(editCurationid, curationName, addedWords)
+            repository.update(editCurationid, curationName, addedWords)
+            editCurationid
         }
-        if (result) {
-            adapter.adaptCurationToArticles(curationName, addedWords)
+        if (id > 0) {
+            repository.adaptToArticles(id, addedWords)
             if (isNew) {
                 view.handleAddSuccess()
             } else {

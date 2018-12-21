@@ -1,32 +1,28 @@
 package com.phicdy.mycuration.domain.rss
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.util.UrlUtil
-import java.util.concurrent.Executors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class RssParseExecutor(private val parser: RssParser, private val adapter: DatabaseAdapter) {
+class RssParseExecutor(private val parser: RssParser, private val rssRepository: RssRepository) {
 
     interface RssParseCallback {
         fun succeeded(rssUrl: String)
         fun failed(reason: RssParseResult.FailedReason, url: String)
     }
 
-    fun start(parseTargetUrl: String, callback: RssParseCallback) {
-        executorService.execute {
-            parser.parseRssXml(UrlUtil.removeUrlParameter(parseTargetUrl), true).let { result ->
-                if (result.failedReason == RssParseResult.FailedReason.NOT_FAILED && result.feed != null) {
-                    result.feed.run {
-                        adapter.saveNewFeed(title, url, format, siteUrl)
-                        callback.succeeded(url)
-                    }
-                } else {
-                    callback.failed(result.failedReason, parseTargetUrl)
-                }
-            }
+    suspend fun start(parseTargetUrl: String, callback: RssParseCallback) = withContext(Dispatchers.Main) {
+        val result = withContext(Dispatchers.IO) {
+            parser.parseRssXml(UrlUtil.removeUrlParameter(parseTargetUrl), true)
         }
-    }
-
-    companion object {
-        private val executorService = Executors.newSingleThreadExecutor()
+        if (result.failedReason == RssParseResult.FailedReason.NOT_FAILED && result.feed != null) {
+            result.feed.run {
+                rssRepository.store(title, url, format, siteUrl)
+                callback.succeeded(url)
+            }
+        } else {
+            callback.failed(result.failedReason, parseTargetUrl)
+        }
     }
 }

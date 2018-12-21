@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
@@ -14,14 +14,16 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
                            private val action: String,
                            private val dataString: String,
                            private val extrasText: CharSequence,
-                           private val dbAdapter: DatabaseAdapter,
+                           private val rssRepository: RssRepository,
                            private val networkTaskManager: NetworkTaskManager,
                            private val parser: RssParser) {
 
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) = runBlocking {
-            val newFeed = dbAdapter.getFeedByUrl(rssUrl)
-            networkTaskManager.updateFeed(newFeed)
+            val newFeed = rssRepository.getFeedByUrl(rssUrl)
+            newFeed?.let {
+                networkTaskManager.updateFeed(newFeed)
+            }
             view.showSuccessToast()
             view.finishView()
         }
@@ -37,7 +39,7 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
         }
     }
 
-    fun create() {
+    suspend fun create() {
         if (action != Intent.ACTION_VIEW && action != Intent.ACTION_SEND) {
             view.finishView()
             return
@@ -54,10 +56,10 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
         }
     }
 
-    private fun handle(action: String, url: String) {
+    private suspend fun handle(action: String, url: String) {
         if (action == Intent.ACTION_VIEW || action == Intent.ACTION_SEND) {
             if (UrlUtil.isCorrectUrl(url)) {
-                val executor = RssParseExecutor(parser, dbAdapter)
+                val executor = RssParseExecutor(parser, rssRepository)
                 executor.start(url, callback)
             } else {
                 view.showInvalidUrlErrorToast()
