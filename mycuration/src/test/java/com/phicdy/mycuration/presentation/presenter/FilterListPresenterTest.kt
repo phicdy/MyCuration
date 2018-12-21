@@ -1,20 +1,18 @@
 package com.phicdy.mycuration.presentation.presenter
 
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.repository.FilterRepository
-import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.FilterListView
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import java.util.ArrayList
 
 class FilterListPresenterTest {
@@ -25,14 +23,14 @@ class FilterListPresenterTest {
 
     @Before
     fun setup() {
-        view = Mockito.mock(FilterListView::class.java)
-        filterRepository = mock(FilterRepository::class.java)
-        presenter = FilterListPresenter(view, mock(RssRepository::class.java), filterRepository)
+        view = mock()
+        filterRepository = mock()
+        presenter = FilterListPresenter(view, mock(), filterRepository)
     }
 
     @Test
     fun `when filter is empty then show empty view`() = runBlocking {
-        `when`(filterRepository.getAllFilters()).thenReturn(arrayListOf())
+        whenever(filterRepository.getAllFilters()).thenReturn(arrayListOf())
         presenter.resume()
         verify(view, times(1)).hideFilterList()
         verify(view, times(1)).showEmptyView()
@@ -40,8 +38,8 @@ class FilterListPresenterTest {
 
     @Test
     fun `when filter is not empty then show filter list`() = runBlocking {
-        val filters = arrayListOf(mock(Filter::class.java))
-        `when`(filterRepository.getAllFilters()).thenReturn(filters)
+        val filters = arrayListOf(mock<Filter>())
+        whenever(filterRepository.getAllFilters()).thenReturn(filters)
         presenter.resume()
         verify(view, times(1)).hideEmptyView()
         verify(view, times(1)).showFilterList(filters)

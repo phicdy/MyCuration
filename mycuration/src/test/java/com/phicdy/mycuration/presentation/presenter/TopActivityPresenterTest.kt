@@ -1,15 +1,15 @@
 package com.phicdy.mycuration.presentation.presenter
 
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 
 
 class TopActivityPresenterTest {
@@ -21,9 +21,9 @@ class TopActivityPresenterTest {
 
     @Before
     fun setup() {
-        mockView = mock(TopActivityView::class.java)
-        mockArticleRepository = mock(ArticleRepository::class.java)
-        mockRssRepository = mock(RssRepository::class.java)
+        mockView = mock()
+        mockArticleRepository = mock()
+        mockRssRepository = mock()
         presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository)
     }
 
@@ -59,21 +59,21 @@ class TopActivityPresenterTest {
 
     @Test
     fun `when curation fab is clicked then close add fab`() = runBlocking {
-        `when`(mockRssRepository.getNumOfRss()).thenReturn(1)
+        whenever(mockRssRepository.getNumOfRss()).thenReturn(1)
         presenter.fabCurationClicked()
         verify(mockView, times(1)).closeAddFab()
     }
 
     @Test
     fun `when curation fab is clicked and RSS is empty then open RSS search view`() = runBlocking {
-        `when`(mockRssRepository.getNumOfRss()).thenReturn(0)
+        whenever(mockRssRepository.getNumOfRss()).thenReturn(0)
         presenter.fabCurationClicked()
         verify(mockView, times(1)).goToFeedSearch()
     }
 
     @Test
     fun `when curation fab is clicked and RSS is not empty then open add curation view`() = runBlocking {
-        `when`(mockRssRepository.getNumOfRss()).thenReturn(1)
+        whenever(mockRssRepository.getNumOfRss()).thenReturn(1)
         presenter.fabCurationClicked()
         verify(mockView, times(0)).goToFeedSearch()
         verify(mockView, times(1)).goToAddCuration()
@@ -81,21 +81,21 @@ class TopActivityPresenterTest {
 
     @Test
     fun `when filter fab is clicked then close add fab`() = runBlocking {
-        `when`(mockRssRepository.getNumOfRss()).thenReturn(1)
+        whenever(mockRssRepository.getNumOfRss()).thenReturn(1)
         presenter.fabFilterClicked()
         verify(mockView, times(1)).closeAddFab()
     }
 
     @Test
     fun `when filter fab is clicked and RSS is empty then open RSS search view`() = runBlocking {
-        `when`(mockRssRepository.getNumOfRss()).thenReturn(0)
+        whenever(mockRssRepository.getNumOfRss()).thenReturn(0)
         presenter.fabFilterClicked()
         verify(mockView, times(1)).goToFeedSearch()
     }
 
     @Test
     fun `when filter fab is clicked and RSS is not empty then open add filter view`() = runBlocking {
-        `when`(mockRssRepository.getNumOfRss()).thenReturn(1)
+        whenever(mockRssRepository.getNumOfRss()).thenReturn(1)
         presenter.fabFilterClicked()
         verify(mockView, times(0)).goToFeedSearch()
         verify(mockView, times(1)).goToAddFilter()

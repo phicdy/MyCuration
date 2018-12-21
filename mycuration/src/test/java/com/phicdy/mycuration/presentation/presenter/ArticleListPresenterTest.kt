@@ -1,6 +1,10 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -14,28 +18,23 @@ import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import java.util.ArrayList
 
 class ArticleListPresenterTest {
 
-    private val preferenceHelper = mock(PreferenceHelper::class.java)
-    private val unreadCountRepository = mock(UnreadCountRepository::class.java)
-    private val rssRepository = mock(RssRepository::class.java)
-    private val articleRepository = mock(ArticleRepository::class.java)
+    private val preferenceHelper = mock<PreferenceHelper>()
+    private val unreadCountRepository = mock<UnreadCountRepository>()
+    private val rssRepository = mock<RssRepository>()
+    private val articleRepository = mock<ArticleRepository>()
     private lateinit var presenter: ArticleListPresenter
     private val testFeedId = 1
 
     @Before
     fun setup() {
-        `when`(preferenceHelper.isOpenInternal).thenReturn(true)
-        `when`(preferenceHelper.allReadBack).thenReturn(true)
-        `when`(preferenceHelper.sortNewArticleTop).thenReturn(true)
-        `when`(preferenceHelper.swipeDirection).thenReturn(PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
+        whenever(preferenceHelper.isOpenInternal).thenReturn(true)
+        whenever(preferenceHelper.allReadBack).thenReturn(true)
+        whenever(preferenceHelper.sortNewArticleTop).thenReturn(true)
+        whenever(preferenceHelper.swipeDirection).thenReturn(PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
         presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper,
                 articleRepository, unreadCountRepository,
@@ -228,7 +227,7 @@ class ArticleListPresenterTest {
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         mock1ArticleDatabase(clickedArticle)
-        `when`(preferenceHelper.isOpenInternal).thenReturn(false)
+        whenever(preferenceHelper.isOpenInternal).thenReturn(false)
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -285,7 +284,7 @@ class ArticleListPresenterTest {
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         mock1ArticleDatabase(clickedArticle)
-        `when`(preferenceHelper.isOpenInternal).thenReturn(false)
+        whenever(preferenceHelper.isOpenInternal).thenReturn(false)
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -316,7 +315,7 @@ class ArticleListPresenterTest {
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository,
                 unreadCountRepository, "ghaeogha",
                 Intent.ACTION_SEARCH)
-        `when`(articleRepository.searchArticles( "ghaeogha", true)).thenReturn(arrayListOf())
+        whenever(articleRepository.searchArticles( "ghaeogha", true)).thenReturn(arrayListOf())
         val view = MockView()
         presenter.setView(view)
         presenter.createView()
@@ -338,7 +337,7 @@ class ArticleListPresenterTest {
                 Article.UNREAD, "1", 1, 1, "feed", "")
         mock1ArticleDatabase(article)
         val query = "query"
-        `when`(articleRepository.searchArticles(query, true)).thenReturn(arrayListOf(article))
+        whenever(articleRepository.searchArticles(query, true)).thenReturn(arrayListOf(article))
 
         val presenter = ArticleListPresenter(
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository, unreadCountRepository,
@@ -351,39 +350,39 @@ class ArticleListPresenterTest {
     }
 
     private fun mockEmptyDatabase(testId: Int) = runBlocking {
-        `when`(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(ArrayList())
-        `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(arrayListOf())
-        `when`(articleRepository.isExistArticleOf(testId)).thenReturn(false)
-        `when`(articleRepository.isExistArticle()).thenReturn(false)
-        `when`(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
-        `when`(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(ArrayList())
+        whenever(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(ArrayList())
+        whenever(articleRepository.getAllUnreadArticles(true)).thenReturn(arrayListOf())
+        whenever(articleRepository.isExistArticleOf(testId)).thenReturn(false)
+        whenever(articleRepository.isExistArticle()).thenReturn(false)
+        whenever(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
+        whenever(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(ArrayList())
     }
 
     private fun mock1ReadArticleDatabase(testId: Int) = runBlocking {
-        `when`(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(ArrayList())
-        `when`(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
-        `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(arrayListOf())
-        `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
-        `when`(articleRepository.isExistArticle()).thenReturn(true)
+        whenever(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(ArrayList())
+        whenever(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(ArrayList())
+        whenever(articleRepository.getAllUnreadArticles(true)).thenReturn(arrayListOf())
+        whenever(articleRepository.isExistArticleOf(testId)).thenReturn(true)
+        whenever(articleRepository.isExistArticle()).thenReturn(true)
         val articles = ArrayList<Article>()
         articles.add(Article(1, "hoge", "http://www.google.com",
                 Article.READ, "1", 1, 1, "feed", ""))
-        `when`(articleRepository.getAllArticlesOfRss(testId, true)).thenReturn(articles)
-        `when`(articleRepository.getTop300Articles(true)).thenReturn(articles)
-        `when`(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(articles)
+        whenever(articleRepository.getAllArticlesOfRss(testId, true)).thenReturn(articles)
+        whenever(articleRepository.getTop300Articles(true)).thenReturn(articles)
+        whenever(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(articles)
     }
 
     private fun mock1ArticleDatabase(article: Article) = runBlocking {
         val testId = 1
         val articles = ArrayList<Article>()
         articles.add(article)
-        `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(articles)
-        `when`(articleRepository.getTop300Articles(true)).thenReturn(articles)
-        `when`(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(articles)
-        `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
-        val mockFeed = Mockito.mock(Feed::class.java)
-        `when`(mockFeed.title).thenReturn("feed")
-        `when`(rssRepository.getFeedById(testId)).thenReturn(mockFeed)
+        whenever(articleRepository.getAllUnreadArticles(true)).thenReturn(articles)
+        whenever(articleRepository.getTop300Articles(true)).thenReturn(articles)
+        whenever(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(articles)
+        whenever(articleRepository.isExistArticleOf(testId)).thenReturn(true)
+        val mockFeed = mock<Feed>()
+        whenever(mockFeed.title).thenReturn("feed")
+        whenever(rssRepository.getFeedById(testId)).thenReturn(mockFeed)
     }
 
     private fun mock2Unread2ReadArticleDatabase(testId: Int) = runBlocking {
@@ -392,18 +391,18 @@ class ArticleListPresenterTest {
                 Article.UNREAD, "1", 1, 1, "feed", ""))
         unreadArticles.add(Article(2, "unread2", "http://www.google.com",
                 Article.UNREAD, "1", 1, 2, "feed", ""))
-        `when`(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(unreadArticles)
-        `when`(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(unreadArticles)
-        `when`(articleRepository.getAllUnreadArticles(true)).thenReturn(unreadArticles)
-        `when`(articleRepository.isExistArticleOf(testId)).thenReturn(true)
-        `when`(articleRepository.isExistArticle()).thenReturn(true)
+        whenever(articleRepository.getUnreadArticlesOfRss(testId, true)).thenReturn(unreadArticles)
+        whenever(articleRepository.getAllUnreadArticlesOfCuration(testId, true)).thenReturn(unreadArticles)
+        whenever(articleRepository.getAllUnreadArticles(true)).thenReturn(unreadArticles)
+        whenever(articleRepository.isExistArticleOf(testId)).thenReturn(true)
+        whenever(articleRepository.isExistArticle()).thenReturn(true)
         val readArticles = ArrayList<Article>()
         readArticles.add(Article(3, "read", "http://www.google.com",
                 Article.READ, "1", 1, 3, "feed", ""))
         readArticles.add(Article(4, "read1", "http://www.google.com",
                 Article.READ, "1", 1, 4, "feed", ""))
-        `when`(articleRepository.getAllArticlesOfRss(testId, true)).thenReturn(readArticles)
-        `when`(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(readArticles)
+        whenever(articleRepository.getAllArticlesOfRss(testId, true)).thenReturn(readArticles)
+        whenever(articleRepository.getAllArticlesOfCuration(testId, true)).thenReturn(readArticles)
     }
 
     private inner class MockView : ArticleListView {

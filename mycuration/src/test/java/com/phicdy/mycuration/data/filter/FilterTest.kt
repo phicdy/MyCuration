@@ -2,7 +2,7 @@ package com.phicdy.mycuration.data.filter
 
 import com.phicdy.mycuration.data.rss.Feed
 import org.hamcrest.core.Is.`is`
-import org.junit.Assert.*
+import org.junit.Assert.assertThat
 import org.junit.Test
 
 class FilterTest {
