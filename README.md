@@ -49,6 +49,7 @@ Set status to read automatically by user settings
 * [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
 * [stetho](https://github.com/facebook/stetho)
 * [Timber](https://github.com/JakeWharton/timber)
+* [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin)
 
 ## Devlopment Environment
 

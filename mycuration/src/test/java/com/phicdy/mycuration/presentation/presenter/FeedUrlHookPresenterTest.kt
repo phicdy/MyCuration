@@ -1,6 +1,9 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
@@ -9,23 +12,19 @@ import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 
 class FeedUrlHookPresenterTest {
 
-    private val networkTaskManager =  mock(NetworkTaskManager::class.java)
-    private val rssRepository = mock(RssRepository::class.java)
+    private val networkTaskManager =  mock<NetworkTaskManager>()
+    private val rssRepository = mock<RssRepository>()
     private lateinit var presenter: FeedUrlHookPresenter
     private lateinit var parser: RssParser
     private lateinit var view: FeedUrlHookView
 
     @Before
     fun setup() {
-        parser = Mockito.mock(RssParser::class.java)
-        view = Mockito.mock(FeedUrlHookView::class.java)
+        parser = mock()
+        view = mock()
         presenter = FeedUrlHookPresenter(view, "", "", "", rssRepository,
                 networkTaskManager, parser)
     }

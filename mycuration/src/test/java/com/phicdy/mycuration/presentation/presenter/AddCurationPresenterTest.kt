@@ -1,5 +1,7 @@
 package com.phicdy.mycuration.presentation.presenter
 
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import kotlinx.coroutines.runBlocking
@@ -8,8 +10,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 import java.util.ArrayList
 
 
@@ -22,7 +22,7 @@ class AddCurationPresenterTest {
     @Before
     fun setup() {
         view = MockViewAdd()
-        repository = mock(CurationRepository::class.java)
+        repository = mock()
         presenter = AddCurationPresenter(view, repository)
     }
 
@@ -45,8 +45,8 @@ class AddCurationPresenterTest {
     fun `when edit curation then the name becomes stored one`() = runBlocking {
         // Mock to return test curation
         view.editCurationId = TEST_EDIT_CURATION_ID
-        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
-        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
+        whenever(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn(TEST_EDIT_CURATION_NAME)
+        whenever(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
 
         // Go to onResume() in edit status
         presenter.create()
@@ -159,7 +159,7 @@ class AddCurationPresenterTest {
     @Test
     fun `when add button is clicked then with existing curation name and words then error toast shows`() = runBlocking {
         // Mock test curation exists
-        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(true)
+        whenever(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(true)
 
         presenter.create()
         presenter.resume()
@@ -176,8 +176,8 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
-        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
+        whenever(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        whenever(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertTrue(view.isSuccessToastShowed)
     }
@@ -189,8 +189,8 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
-        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
+        whenever(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        whenever(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertFalse(view.isProgressDialogShowed)
     }
@@ -202,8 +202,8 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock save new curation
-        `when`(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
-        `when`(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
+        whenever(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
+        whenever(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
         assertTrue(view.isFinished)
     }
@@ -211,14 +211,14 @@ class AddCurationPresenterTest {
     @Test
     fun `when edit succeeds then success toast shows`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
-        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
+        whenever(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        whenever(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
+        whenever(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
                 .thenReturn(true)
         presenter.onAddMenuClicked()
         assertTrue(view.isSuccessToastShowed)
@@ -227,15 +227,15 @@ class AddCurationPresenterTest {
     @Test
     fun `when edit succeeds then progress dialog dissmisses`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
-        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
+        whenever(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        whenever(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
         presenter = AddCurationPresenter(view, repository)
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
+        whenever(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
                 .thenReturn(true)
         presenter.onAddMenuClicked()
         assertFalse(view.isProgressDialogShowed)
@@ -244,15 +244,15 @@ class AddCurationPresenterTest {
     @Test
     fun `when edit succeeds then view finishes`() = runBlocking {
         view.editCurationId = TEST_EDIT_CURATION_ID
-        `when`(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
-        `when`(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
+        whenever(repository.getCurationNameById(TEST_EDIT_CURATION_ID)).thenReturn("test")
+        whenever(repository.getCurationWords(TEST_EDIT_CURATION_ID)).thenReturn(arrayListOf())
         presenter = AddCurationPresenter(view, repository)
         presenter.create()
         presenter.resume()
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         // Mock update stored curation
-        `when`(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
+        whenever(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
         presenter.onAddMenuClicked()
         assertTrue(view.isFinished)
     }

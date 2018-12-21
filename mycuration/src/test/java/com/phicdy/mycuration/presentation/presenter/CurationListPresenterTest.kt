@@ -1,5 +1,10 @@
 package com.phicdy.mycuration.presentation.presenter
 
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -9,21 +14,16 @@ import com.phicdy.mycuration.presentation.view.CurationListView
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import java.util.ArrayList
 
 class CurationListPresenterTest {
 
-    private val view = mock(CurationListView::class.java)
+    private val view = mock<CurationListView>()
     private lateinit var presenter: CurationListPresenter
-    private val item = mock(CurationItem::class.java)
-    private val repository = mock(UnreadCountRepository::class.java)
-    private val curationRepository = mock(CurationRepository::class.java)
-    private val rssRepository = mock(RssRepository::class.java)
+    private val item = mock<CurationItem>()
+    private val repository = mock<UnreadCountRepository>()
+    private val curationRepository = mock<CurationRepository>()
+    private val rssRepository = mock<RssRepository>()
 
     @Before
     fun setUp() {
@@ -35,7 +35,7 @@ class CurationListPresenterTest {
         val curations = ArrayList<Curation>()
         val testName = "testCuration"
         curations.add(Curation(1, testName))
-        `when`(curationRepository.getAllCurations()).thenReturn(curations)
+        whenever(curationRepository.getAllCurations()).thenReturn(curations)
         presenter.resume()
         verify(view, times(1)).initListBy(curations)
         verify(view, never()).showEmptyView()
@@ -56,7 +56,7 @@ class CurationListPresenterTest {
 
     @Test
     fun `when empty rss then show empty view`() = runBlocking {
-        `when`(curationRepository.getAllCurations()).thenReturn(arrayListOf())
+        whenever(curationRepository.getAllCurations()).thenReturn(arrayListOf())
         presenter.resume()
         verify(view, never()).showRecyclerView()
         verify(view, times(1)).hideRecyclerView()
@@ -69,7 +69,7 @@ class CurationListPresenterTest {
         val curations = arrayListOf<Curation>().apply {
             add(curation)
         }
-        `when`(curationRepository.getAllCurations()).thenReturn(curations)
+        whenever(curationRepository.getAllCurations()).thenReturn(curations)
         presenter.onCurationDeleteClicked(curation, curations.size)
         verify(curationRepository, times(1)).delete(curation.id)
         verify(view, times(1)).hideRecyclerView()
@@ -83,7 +83,7 @@ class CurationListPresenterTest {
             add(curation)
             add(Curation(2, "test2"))
         }
-        `when`(curationRepository.getAllCurations()).thenReturn(curations)
+        whenever(curationRepository.getAllCurations()).thenReturn(curations)
         presenter.onCurationDeleteClicked(curation, curations.size)
         verify(curationRepository, times(1)).delete(curation.id)
         verify(view, never()).hideRecyclerView()
@@ -92,7 +92,7 @@ class CurationListPresenterTest {
 
     @Test
     fun `when rss is empty then no rss view is set`() = runBlocking {
-        `when`(rssRepository.getNumOfRss()).thenReturn(0)
+        whenever(rssRepository.getNumOfRss()).thenReturn(0)
         presenter.activityCreated()
         verify(view, times(1)).setNoRssTextToEmptyView()
     }
@@ -106,7 +106,7 @@ class CurationListPresenterTest {
 
     @Test
     fun `when curation is not null then not set name and count`() = runBlocking {
-        `when`(repository.getCurationCount(1)).thenReturn(10)
+        whenever(repository.getCurationCount(1)).thenReturn(10)
         presenter.getView(Curation(1, "name"), item)
         verify(item, times(1)).setName("name")
         verify(item, times(1)).setCount("10")
