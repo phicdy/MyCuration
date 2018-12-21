@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.view.FilterListView
@@ -40,7 +39,6 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
         get() = job + Dispatchers.Main
 
     private val presenter: FilterListPresenter by inject { parametersOf(this) }
-    private lateinit var dbAdapter: DatabaseAdapter
     private lateinit var filtersListAdapter: FiltersListAdapter
     private lateinit var filtersRecyclerView: RecyclerView
     private lateinit var emptyView: TextView
@@ -48,7 +46,6 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindScope(getOrCreateScope("filter_list"))
-        dbAdapter = DatabaseAdapter.getInstance()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -19,7 +18,6 @@ import java.util.ArrayList
 
 class CurationListPresenterTest {
 
-    private val adapter = mock(DatabaseAdapter::class.java)
     private val view = mock(CurationListView::class.java)
     private lateinit var presenter: CurationListPresenter
     private val item = mock(CurationItem::class.java)
@@ -29,7 +27,6 @@ class CurationListPresenterTest {
 
     @Before
     fun setUp() {
-        DatabaseAdapter.inject(adapter)
         presenter = CurationListPresenter(view, rssRepository, curationRepository, repository)
     }
 

@@ -6,7 +6,6 @@ import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.di.appModule
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
@@ -24,10 +23,6 @@ import java.io.File
 
 class MyApplication : Application() {
 
-    /**
-     * Gets the default [Tracker] for this [Application].
-     * @return tracker
-     */
     // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
     companion object {
         fun setUp(context: Context): FirebaseAnalytics {
@@ -56,7 +51,6 @@ class MyApplication : Application() {
         Fabric.with(this, crashlyticsKit)
 
         PreferenceHelper.setUp(this)
-        DatabaseAdapter.setUp()
         TrackerHelper.setTracker(setUp(this))
 
         // Font

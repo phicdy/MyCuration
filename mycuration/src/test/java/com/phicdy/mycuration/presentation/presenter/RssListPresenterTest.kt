@@ -3,7 +3,6 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.phicdy.mycuration.data.db.DatabaseAdapter
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -36,7 +35,6 @@ class RssListPresenterTest {
 
     private lateinit var presenter: RssListPresenter
     private val view = mock(RssListView::class.java)
-    private val adapter = mock(DatabaseAdapter::class.java)
     private val mockPref = mock(SharedPreferences::class.java)
     private val mockRssRepository = mock(RssRepository::class.java)
     private val networkTaskManager = mock(NetworkTaskManager::class.java)
@@ -61,7 +59,6 @@ class RssListPresenterTest {
         `when`(mockPref.edit()).thenReturn(mockEdit)
         `when`(mockEdit.putLong(anyString(), anyLong())).thenReturn(mockEdit)
 
-        DatabaseAdapter.inject(adapter)
         presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, networkTaskManager,
                 UnreadCountRepository(mockRssRepository, mock(CurationRepository::class.java)))
 

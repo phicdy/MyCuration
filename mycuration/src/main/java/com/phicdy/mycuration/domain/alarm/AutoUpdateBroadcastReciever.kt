@@ -3,12 +3,11 @@ package com.phicdy.mycuration.domain.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.phicdy.mycuration.data.db.DatabaseAdapter
+import com.phicdy.mycuration.data.network.HatenaBookmarkApi
+import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.data.network.HatenaBookmarkApi
-import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.util.NetworkUtil
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -61,7 +60,6 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
     }
 
     private suspend fun handleUpdateHatena(context: Context) {
-        val dbAdapter = DatabaseAdapter.getInstance()
         // Update Hatena point
         val feeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
         if (feeds.isEmpty()) return
