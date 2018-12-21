@@ -2,9 +2,9 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.presentation.view.SettingView
+import com.phicdy.mycuration.util.PreferenceHelper
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -17,7 +17,7 @@ class SettingPresenterTest {
     private lateinit var mockView: SettingView
     private lateinit var helper: PreferenceHelper
     private lateinit var mockContext: Context
-    private val rssRepository = mock(RssRepository::class.java)
+    private val additionalSettingApi = mock(AdditionalSettingApi::class.java)
 
     @Before
     fun setup() {
@@ -32,18 +32,16 @@ class SettingPresenterTest {
 
     @Test
     fun initViewIsCalledWhenActivityCreated() {
-        val presenter = SettingPresenter(helper, rssRepository, arrayOf(), arrayOf(), arrayOf(),
+        val presenter = SettingPresenter(mockView, helper, additionalSettingApi, arrayOf(), arrayOf(), arrayOf(),
                 arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf())
-        presenter.setView(mockView)
         presenter.activityCreate()
         Mockito.verify(mockView, times(1)).initView()
     }
 
     @Test
     fun initListenerIsCalledWhenActivityCreated() {
-        val presenter = SettingPresenter(helper, rssRepository, arrayOf(), arrayOf(), arrayOf(),
+        val presenter = SettingPresenter(mockView, helper, additionalSettingApi, arrayOf(), arrayOf(), arrayOf(),
                 arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf())
-        presenter.setView(mockView)
         presenter.activityCreate()
         Mockito.verify(mockView, times(1)).initListener()
     }

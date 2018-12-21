@@ -1,25 +1,25 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.util.PreferenceHelper
+import kotlinx.coroutines.coroutineScope
+import java.io.File
 
-class SettingPresenter(private val helper: PreferenceHelper,
-                       private val rssRepository: RssRepository,
-                       private val updateIntervalHourItems: Array<String>,
-                       private val updateIntervalStringItems: Array<String>,
-                       private val allReadBehaviorItems: Array<String>,
-                       private val allReadBehaviorStringItems: Array<String>,
-                       private val launchTabItems: Array<String>,
-                       private val launchTabStringItems: Array<String>,
-                       private val swipeDirectionItems: Array<String>,
-                       private val swipeDirectionStringItems: Array<String>) : Presenter {
-    private lateinit var view: SettingView
-
-    fun setView(view: SettingView) {
-        this.view = view
-    }
+class SettingPresenter(
+        private val view: SettingView,
+        private val helper: PreferenceHelper,
+        private val addtionalSettingApi: AdditionalSettingApi,
+        private val updateIntervalHourItems: Array<String>,
+        private val updateIntervalStringItems: Array<String>,
+        private val allReadBehaviorItems: Array<String>,
+        private val allReadBehaviorStringItems: Array<String>,
+        private val launchTabItems: Array<String>,
+        private val launchTabStringItems: Array<String>,
+        private val swipeDirectionItems: Array<String>,
+        private val swipeDirectionStringItems: Array<String>
+) : Presenter {
 
     override fun create() {}
 
@@ -150,35 +150,14 @@ class SettingPresenter(private val helper: PreferenceHelper,
     }
 
     suspend fun onDebugAddRssClicked() {
-        rssRepository.store(
-                "Yahoo!ニュース・トピックス - 主要",
-                "https://news.yahoo.co.jp/pickup/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
-        )
-        rssRepository.store(
-                "Yahoo!ニュース・トピックス - 国際",
-                "https://news.yahoo.co.jp/pickup/world/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
-        )
-        rssRepository.store(
-                "Yahoo!ニュース・トピックス - エンタメ",
-                "https://news.yahoo.co.jp/pickup/entertainment/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
-        )
-        rssRepository.store(
-                "Yahoo!ニュース・トピックス - IT",
-                "https://news.yahoo.co.jp/pickup/computer/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
-        )
-        rssRepository.store(
-                "Yahoo!ニュース・トピックス - 地域",
-                "https://news.yahoo.co.jp/pickup/local/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
-        )
+        addtionalSettingApi.addDebugRss()
+    }
+
+    suspend fun onImportDatabaseClicked(currentDb: File) = coroutineScope {
+        addtionalSettingApi.importDb(currentDb)
+    }
+
+    suspend fun onExportDatabaseClicked(currentDb: File) = coroutineScope {
+        addtionalSettingApi.exportDb(currentDb)
     }
 }
