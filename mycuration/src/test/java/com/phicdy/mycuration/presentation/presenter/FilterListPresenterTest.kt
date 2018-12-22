@@ -9,8 +9,7 @@ import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.presentation.view.FilterListView
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.util.ArrayList
@@ -88,13 +87,15 @@ class FilterListPresenterTest {
     fun `when check the filter then the filter is enabled`() = runBlocking {
         val validFilter = Filter(1, "test1", "testKeyword1", "http://test1.com", ArrayList(), -1, Filter.TRUE)
         presenter.onFilterCheckClicked(validFilter, true)
-        assertTrue(validFilter.isEnabled)
+        assertThat(validFilter.isEnabled).isTrue()
+        return@runBlocking
     }
 
     @Test
     fun `when uncheck the filter then the filter is disabled`() = runBlocking {
         val validFilter = Filter(1, "test1", "testKeyword1", "http://test1.com", ArrayList(), -1, Filter.TRUE)
         presenter.onFilterCheckClicked(validFilter, false)
-        assertFalse(validFilter.isEnabled)
+        assertThat(validFilter.isEnabled).isFalse()
+        return@runBlocking
     }
 }

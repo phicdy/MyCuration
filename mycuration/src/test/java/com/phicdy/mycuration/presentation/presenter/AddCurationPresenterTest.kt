@@ -5,9 +5,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.util.ArrayList
@@ -30,7 +28,7 @@ class AddCurationPresenterTest {
     fun `when onCreate then default title is title for add`() {
         // Go to onCreate() in add status
         presenter.create()
-        assertEquals(view.title, TITLE_FOR_ADD)
+        assertThat(view.title).isEqualTo(TITLE_FOR_ADD)
     }
 
     @Test
@@ -38,7 +36,7 @@ class AddCurationPresenterTest {
         // Go to onResume() in add status
         presenter.create()
         presenter.resume()
-        assertEquals(view.curationName(), "")
+        assertThat(view.curationName()).isEmpty()
     }
 
     @Test
@@ -51,7 +49,8 @@ class AddCurationPresenterTest {
         // Go to onResume() in edit status
         presenter.create()
         presenter.resume()
-        assertEquals(view.curationName(), TEST_EDIT_CURATION_NAME)
+        assertThat(view.curationName()).isEqualTo(TEST_EDIT_CURATION_NAME)
+        return@runBlocking
     }
 
     @Test
@@ -59,7 +58,8 @@ class AddCurationPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
-        assertTrue(view.isSuccessToastShowed)
+        assertThat(view.isSuccessToastShowed).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -67,7 +67,8 @@ class AddCurationPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
-        assertFalse(view.isProgressDialogShowed)
+        assertThat(view.isProgressDialogShowed).isFalse()
+        return@runBlocking
     }
 
     @Test
@@ -75,7 +76,8 @@ class AddCurationPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(true, "")
-        assertTrue(view.isFinished)
+        assertThat((view.isFinished)).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -83,7 +85,8 @@ class AddCurationPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
-        assertEquals(view.errorToastMessage, MockViewAdd.ERROR_ADD)
+        assertThat(view.errorToastMessage).isEqualTo(MockViewAdd.ERROR_ADD)
+        return@runBlocking
     }
 
     @Test
@@ -91,7 +94,8 @@ class AddCurationPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
-        assertFalse(view.isProgressDialogShowed)
+        assertThat((view.isProgressDialogShowed)).isFalse()
+        return@runBlocking
     }
 
     @Test
@@ -99,7 +103,8 @@ class AddCurationPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.handleInsertResultMessage(false, "Insert Error")
-        assertFalse(view.isFinished)
+        assertThat((view.isFinished)).isFalse()
+        return@runBlocking
     }
 
     @Test
@@ -107,7 +112,8 @@ class AddCurationPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.onAddWordButtonClicked()
-        assertTrue(view.isEmptyWordErrorToastShowed)
+        assertThat((view.isEmptyWordErrorToastShowed)).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -116,7 +122,8 @@ class AddCurationPresenterTest {
         presenter.resume()
         view.word = "test"
         presenter.onAddWordButtonClicked()
-        assertEquals(view.words[0], "test")
+        assertThat(view.words).containsExactly("test")
+        return@runBlocking
     }
 
     @Test
@@ -127,7 +134,8 @@ class AddCurationPresenterTest {
         presenter.onAddWordButtonClicked()
         view.word = "test2"
         presenter.onAddWordButtonClicked()
-        assertEquals(view.words.size, 2)
+        assertThat(view.words).hasSize(2)
+        return@runBlocking
     }
 
     @Test
@@ -136,7 +144,7 @@ class AddCurationPresenterTest {
         presenter.resume()
         view.word = "test"
         presenter.onAddWordButtonClicked()
-        assertEquals(view.word, "")
+        assertThat(view.word).isEmpty()
     }
 
     @Test
@@ -144,7 +152,8 @@ class AddCurationPresenterTest {
         presenter.create()
         presenter.resume()
         presenter.onAddMenuClicked()
-        assertTrue(view.isEmptyNameErrorToastShowed)
+        assertThat((view.isEmptyNameErrorToastShowed)).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -153,7 +162,8 @@ class AddCurationPresenterTest {
         presenter.resume()
         view.setCurationName("test")
         presenter.onAddMenuClicked()
-        assertTrue(view.isNoWordsAddedErrorToastShowed)
+        assertThat((view.isNoWordsAddedErrorToastShowed)).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -166,7 +176,8 @@ class AddCurationPresenterTest {
         view.setCurationName(TEST_EDIT_CURATION_NAME)
         view.words.add("word")
         presenter.onAddMenuClicked()
-        assertTrue(view.isSameNameErrorToastShowed)
+        assertThat((view.isSameNameErrorToastShowed)).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -179,7 +190,8 @@ class AddCurationPresenterTest {
         whenever(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
         whenever(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
-        assertTrue(view.isSuccessToastShowed)
+        assertThat((view.isSuccessToastShowed)).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -192,7 +204,8 @@ class AddCurationPresenterTest {
         whenever(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
         whenever(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
-        assertFalse(view.isProgressDialogShowed)
+        assertThat((view.isProgressDialogShowed)).isFalse()
+        return@runBlocking
     }
 
     @Test
@@ -205,7 +218,8 @@ class AddCurationPresenterTest {
         whenever(repository.store(TEST_EDIT_CURATION_NAME, view.words)).thenReturn(1)
         whenever(repository.isExist(TEST_EDIT_CURATION_NAME)).thenReturn(false)
         presenter.onAddMenuClicked()
-        assertTrue(view.isFinished)
+        assertThat((view.isFinished)).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -221,7 +235,8 @@ class AddCurationPresenterTest {
         whenever(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
                 .thenReturn(true)
         presenter.onAddMenuClicked()
-        assertTrue(view.isSuccessToastShowed)
+        assertThat((view.isSuccessToastShowed)).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -238,7 +253,8 @@ class AddCurationPresenterTest {
         whenever(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words))
                 .thenReturn(true)
         presenter.onAddMenuClicked()
-        assertFalse(view.isProgressDialogShowed)
+        assertThat((view.isProgressDialogShowed)).isFalse()
+        return@runBlocking
     }
 
     @Test
@@ -254,7 +270,8 @@ class AddCurationPresenterTest {
         // Mock update stored curation
         whenever(repository.update(TEST_EDIT_CURATION_ID, TEST_EDIT_CURATION_NAME, view.words)).thenReturn(true)
         presenter.onAddMenuClicked()
-        assertTrue(view.isFinished)
+        assertThat((view.isFinished)).isTrue()
+        return@runBlocking
     }
 
     private class MockViewAdd : AddCurationView {

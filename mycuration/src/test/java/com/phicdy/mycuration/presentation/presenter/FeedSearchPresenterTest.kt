@@ -12,7 +12,6 @@ import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -39,14 +38,12 @@ class FeedSearchPresenterTest {
     fun testOnCreate() {
         // For coverage
         presenter.create()
-        assertTrue(true)
     }
 
     @Test
     fun testOnResume() {
         // For coverage
         presenter.resume()
-        assertTrue(true)
     }
 
     @Test

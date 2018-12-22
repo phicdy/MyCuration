@@ -13,9 +13,7 @@ import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.util.PreferenceHelper
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.util.ArrayList
@@ -56,7 +54,8 @@ class ArticleListPresenterTest {
         presenter.setView(view)
         presenter.create()
         presenter.createView()
-        assertThat(presenter.articleSize(), `is`(0))
+        assertThat(presenter.articleSize()).isEqualTo(0)
+        return@runBlocking
     }
 
     @Test
@@ -70,7 +69,8 @@ class ArticleListPresenterTest {
         presenter.setView(view)
         presenter.create()
         presenter.createView()
-        assertThat(presenter.articleSize(), `is`(0))
+        assertThat(presenter.articleSize()).isEqualTo(0)
+        return@runBlocking
     }
 
     @Test
@@ -84,7 +84,8 @@ class ArticleListPresenterTest {
         presenter.setView(view)
         presenter.create()
         presenter.createView()
-        assertThat(presenter.articleSize(), `is`(0))
+        assertThat(presenter.articleSize()).isEqualTo(0)
+        return@runBlocking
     }
 
     @Test
@@ -94,7 +95,8 @@ class ArticleListPresenterTest {
         presenter.setView(view)
         presenter.create()
         presenter.createView()
-        assertThat(presenter.articleSize(), `is`(1))
+        assertThat(presenter.articleSize()).isEqualTo(1)
+        return@runBlocking
     }
 
     @Test
@@ -108,7 +110,8 @@ class ArticleListPresenterTest {
         presenter.setView(view)
         presenter.create()
         presenter.createView()
-        assertThat(presenter.articleSize(), `is`(1))
+        assertThat(presenter.articleSize()).isEqualTo(1)
+        return@runBlocking
     }
 
     @Test
@@ -122,7 +125,8 @@ class ArticleListPresenterTest {
         presenter.setView(view)
         presenter.create()
         presenter.createView()
-        assertThat(presenter.articleSize(), `is`(1))
+        assertThat(presenter.articleSize()).isEqualTo(1)
+        return@runBlocking
     }
 
     @Test
@@ -132,7 +136,8 @@ class ArticleListPresenterTest {
         presenter.setView(view)
         presenter.create()
         presenter.createView()
-        assertTrue(presenter.isAllUnreadArticle)
+        assertThat(presenter.isAllUnreadArticle).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -145,7 +150,8 @@ class ArticleListPresenterTest {
         val view = MockView()
         presenter.setView(view)
         presenter.createView()
-        assertTrue(presenter.isAllUnreadArticle)
+        assertThat(presenter.isAllUnreadArticle).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -159,7 +165,8 @@ class ArticleListPresenterTest {
         presenter.setView(view)
         presenter.create()
         presenter.createView()
-        assertTrue(presenter.isAllUnreadArticle)
+        assertThat(presenter.isAllUnreadArticle).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -180,7 +187,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertThat(clickedArticle.status, `is`(Article.TOREAD))
+        assertThat(clickedArticle.status).isEqualTo(Article.TOREAD)
+        return@runBlocking
     }
 
     @Test
@@ -193,7 +201,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertThat(clickedArticle.status, `is`(Article.TOREAD))
+        assertThat(clickedArticle.status).isEqualTo(Article.TOREAD)
+        return@runBlocking
     }
 
     @Test
@@ -206,7 +215,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertThat(clickedArticle.status, `is`(Article.READ))
+        assertThat(clickedArticle.status).isEqualTo(Article.READ)
+        return@runBlocking
     }
 
     @Test
@@ -219,7 +229,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertThat<String>(view.openedUrl, `is`(clickedArticle.url))
+        assertThat(view.openedUrl).isEqualTo(clickedArticle.url)
+        return@runBlocking
     }
 
     @Test
@@ -233,7 +244,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertThat<String>(view.openedUrl, `is`(clickedArticle.url))
+        assertThat(view.openedUrl).isEqualTo(clickedArticle.url)
+        return@runBlocking
     }
 
     @Test
@@ -246,7 +258,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertTrue(view.isOpenedInternalWebView)
+        assertThat(view.isOpenedInternalWebView).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -259,7 +272,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertThat(view.openTitle, `is`(clickedArticle.feedTitle))
+        assertThat(view.openTitle).isEqualTo(clickedArticle.feedTitle)
+        return@runBlocking
     }
 
     @Test
@@ -276,7 +290,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertThat(view.openTitle, `is`(clickedArticle.feedTitle))
+        assertThat(view.openTitle).isEqualTo(clickedArticle.feedTitle)
+        return@runBlocking
     }
 
     @Test
@@ -290,7 +305,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemClicked(0)
-        assertTrue(view.isOpenedExternalWebView)
+        assertThat(view.isOpenedExternalWebView).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -303,7 +319,8 @@ class ArticleListPresenterTest {
         presenter.create()
         presenter.createView()
         presenter.onListItemLongClicked(0)
-        assertThat<String>(view.shareUrl, `is`(longClickedArticle.url))
+        assertThat(view.shareUrl).isEqualTo(longClickedArticle.url)
+        return@runBlocking
     }
 
     @Test
@@ -319,7 +336,8 @@ class ArticleListPresenterTest {
         val view = MockView()
         presenter.setView(view)
         presenter.createView()
-        assertTrue(view.isNoSearchResultShowed)
+        assertThat(view.isNoSearchResultShowed).isTrue()
+        return@runBlocking
     }
 
     @Test
@@ -328,7 +346,8 @@ class ArticleListPresenterTest {
         val view = MockView()
         presenter.setView(view)
         presenter.createView()
-        assertTrue(view.isNoArticleShowed)
+        assertThat(view.isNoArticleShowed).isTrue()
+        return@runBlocking
     }
 
     @Test
