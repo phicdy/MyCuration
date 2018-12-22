@@ -50,6 +50,7 @@ Set status to read automatically by user settings
 * [stetho](https://github.com/facebook/stetho)
 * [Timber](https://github.com/JakeWharton/timber)
 * [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin)
+* [AssertJ](https://github.com/joel-costigliola/assertj-core)
 
 ## Devlopment Environment
 
