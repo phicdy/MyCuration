@@ -2,7 +2,7 @@ package com.phicdy.mycuration.presentation.view.activity
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.webkit.WebView
 import com.phicdy.mycuration.R
 import io.github.inflationx.viewpump.ViewPumpContextWrapper

@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v14.preference.SwitchPreference
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import android.widget.Toast
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
@@ -141,7 +141,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         }
 
         if (BuildConfig.DEBUG) {
-            val prefImport = findPreference(getString(R.string.key_import_db))
+            val prefImport = findPreference<Preference>(getString(R.string.key_import_db))
             activity?.let { activity ->
                 prefImport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
@@ -151,7 +151,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     }
                     true
                 }
-                val prefExport = findPreference(getString(R.string.key_export_db))
+                val prefExport = findPreference<Preference>(getString(R.string.key_export_db))
                 prefExport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
                         val currentDb = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
@@ -160,7 +160,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     }
                     true
                 }
-                val prefAddRss = findPreference(getString(R.string.key_add_rss))
+                val prefAddRss = findPreference<Preference>(getString(R.string.key_add_rss))
                 prefAddRss.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
                         presenter.onDebugAddRssClicked()
@@ -168,7 +168,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     true
                 }
             }
-            }
+        }
 
         prefLicense.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             presenter.onLicenseClicked()

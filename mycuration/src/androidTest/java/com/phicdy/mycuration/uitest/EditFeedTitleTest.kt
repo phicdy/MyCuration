@@ -1,12 +1,12 @@
 package com.phicdy.mycuration.uitest
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.filters.SdkSuppress
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
-import android.support.test.uiautomator.By
-import android.support.test.uiautomator.UiDevice
-import android.support.test.uiautomator.Until
+import androidx.test.InstrumentationRegistry
+import androidx.test.filters.SdkSuppress
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import junit.framework.Assert.fail

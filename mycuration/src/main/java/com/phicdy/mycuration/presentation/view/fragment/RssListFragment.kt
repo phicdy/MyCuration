@@ -3,11 +3,11 @@ package com.phicdy.mycuration.presentation.view.fragment
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -192,7 +192,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         val view = inflater.inflate(R.layout.fragment_rss_list, container, false)
         recyclerView = view.findViewById(R.id.rv_rss)
         emptyView = view.findViewById(R.id.emptyView) as TextView
-        swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
+        swipeRefreshLayout = view.findViewById(R.id.srl_container) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         tvAllUnreadArticleCount = view.findViewById(R.id.allUnreadCount) as TextView
         allUnread = view.findViewById(R.id.cl_all_unread) as ConstraintLayout
         registerForContextMenu(recyclerView)
@@ -200,7 +200,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         return view
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
             mListener = context as OnFeedListFragmentListener

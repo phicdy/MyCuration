@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
-import android.support.test.InstrumentationRegistry.getTargetContext
+import androidx.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking

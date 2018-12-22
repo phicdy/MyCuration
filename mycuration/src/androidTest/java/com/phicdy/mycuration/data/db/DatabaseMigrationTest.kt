@@ -4,8 +4,8 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
 
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.data.filter.Filter
@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 
 import java.util.ArrayList
 
-import android.support.test.InstrumentationRegistry.getTargetContext
+import androidx.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository

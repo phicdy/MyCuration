@@ -1,13 +1,13 @@
 package com.phicdy.mycuration.uitest
 
 import android.content.Intent
-import android.support.test.InstrumentationRegistry
-import android.support.test.filters.SdkSuppress
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
-import android.support.test.uiautomator.By
-import android.support.test.uiautomator.UiDevice
-import android.support.test.uiautomator.Until
+import androidx.test.InstrumentationRegistry
+import androidx.test.filters.SdkSuppress
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import android.widget.LinearLayout
 import android.widget.ListView
 import com.phicdy.mycuration.BuildConfig
@@ -99,7 +99,7 @@ class FeedUrlHookTest : UiTest() {
 
         // Go to feed tab
         val tabs = device.wait(Until.findObjects(
-                By.clazz(android.support.v7.app.ActionBar.Tab::class.java)), 5000)
+                By.clazz(androidx.appcompat.app.ActionBar.Tab::class.java)), 5000)
         assertNotNull("Tab was not found", tabs)
         if (tabs.size != 3) fail("Tab size was invalid, size: " + tabs.size)
         tabs[1].click()

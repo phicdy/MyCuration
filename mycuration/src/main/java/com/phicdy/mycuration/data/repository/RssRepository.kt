@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.filter.FilterFeedRegistration
 import com.phicdy.mycuration.data.rss.Article

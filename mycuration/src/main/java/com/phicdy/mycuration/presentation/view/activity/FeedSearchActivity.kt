@@ -8,13 +8,13 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.support.annotation.StringRes
-import android.support.annotation.UiThread
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.Toolbar
+import androidx.annotation.StringRes
+import androidx.annotation.UiThread
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -122,7 +122,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(componentName))
         val searchAutoComplete = searchView
-                .findViewById(android.support.v7.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+                .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
         searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
         searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary))
 

@@ -3,7 +3,7 @@
     android:orientation="vertical" 
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_curation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
