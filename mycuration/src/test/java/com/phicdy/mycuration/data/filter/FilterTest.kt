@@ -1,8 +1,7 @@
 package com.phicdy.mycuration.data.filter
 
 import com.phicdy.mycuration.data.rss.Feed
-import org.hamcrest.core.Is.`is`
-import org.junit.Assert.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class FilterTest {
@@ -16,7 +15,7 @@ class FilterTest {
                 url = "http://www.google.com",
                 feeds = arrayListOf(Feed(title = "title"))
         )
-        assertThat(filter.feedTitle, `is`("title"))
+        assertThat(filter.feedTitle).isEqualTo("title")
     }
 
     @Test
@@ -32,6 +31,6 @@ class FilterTest {
                         Feed(title = "title2")
                 )
         )
-        assertThat(filter.feedTitle, `is`("title, title2"))
+        assertThat(filter.feedTitle).isEqualTo("title, title2")
     }
 }

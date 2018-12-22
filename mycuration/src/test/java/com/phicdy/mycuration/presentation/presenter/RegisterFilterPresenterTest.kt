@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.presenter
 import com.nhaarman.mockitokotlin2.mock
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.util.ArrayList
@@ -24,7 +24,7 @@ class RegisterFilterPresenterTest {
         val testFeeds = ArrayList<Feed>()
         testFeeds.add(Feed(1, "testFeed", "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
         presenter.setSelectedFeedList(testFeeds)
-        assertEquals(mockView.filterTarget, "testFeed")
+        assertThat(mockView.filterTarget).isEqualTo("testFeed")
     }
 
     @Test
@@ -33,14 +33,14 @@ class RegisterFilterPresenterTest {
         testFeeds.add(Feed(1, "testFeed", "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
         testFeeds.add(Feed(2, "testFeed2", "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
         presenter.setSelectedFeedList(testFeeds)
-        assertEquals(mockView.filterTarget, MockView.MULTIPLE_FILTER_TARGET)
+        assertThat(mockView.filterTarget).isEqualTo(MockView.MULTIPLE_FILTER_TARGET)
     }
 
     @Test
     fun `when set empty selected feed list then filter target is default`() {
         val testFeeds = ArrayList<Feed>()
         presenter.setSelectedFeedList(testFeeds)
-        assertEquals(mockView.filterTarget, MockView.DEFAULT_FILTER_TARGET)
+        assertThat(mockView.filterTarget).isEqualTo(MockView.DEFAULT_FILTER_TARGET)
     }
 
     private class MockView : RegisterFilterView {

@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.util.test
 
 import com.phicdy.mycuration.util.TextUtil
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -11,16 +11,16 @@ class TextUtilTest {
 
     @Test
     fun testRemoveLineFeed() {
-        assertEquals("aaa", TextUtil.removeLineFeed("aaa\r"))
-        assertEquals("aaa", TextUtil.removeLineFeed("aaa\n"))
-        assertEquals("aaa", TextUtil.removeLineFeed("aaa\t"))
-        assertEquals("aaa", TextUtil.removeLineFeed("aaa\r\n"))
+        assertThat(TextUtil.removeLineFeed("aaa\r")).isEqualTo("aaa")
+        assertThat(TextUtil.removeLineFeed("aaa\n")).isEqualTo("aaa")
+        assertThat(TextUtil.removeLineFeed("aaa\t")).isEqualTo("aaa")
+        assertThat(TextUtil.removeLineFeed("aaa\r\n")).isEqualTo("aaa")
 
-        assertEquals("aaa", TextUtil.removeLineFeed("a\ra\na"))
-        assertEquals("aaa", TextUtil.removeLineFeed("a\ra\ta"))
-        assertEquals("aaa", TextUtil.removeLineFeed("a\ra\r\na"))
-        assertEquals("aaa", TextUtil.removeLineFeed("a\na\ta"))
-        assertEquals("aaa", TextUtil.removeLineFeed("a\na\r\na"))
-        assertEquals("aaa", TextUtil.removeLineFeed("a\ta\r\na"))
+        assertThat(TextUtil.removeLineFeed("a\ra\na")).isEqualTo("aaa")
+        assertThat(TextUtil.removeLineFeed("a\ra\ta")).isEqualTo("aaa")
+        assertThat(TextUtil.removeLineFeed("a\ra\r\na")).isEqualTo("aaa")
+        assertThat(TextUtil.removeLineFeed("a\na\ta")).isEqualTo("aaa")
+        assertThat(TextUtil.removeLineFeed("a\na\r\na")).isEqualTo("aaa")
+        assertThat(TextUtil.removeLineFeed("a\ta\r\na")).isEqualTo("aaa")
     }
 }

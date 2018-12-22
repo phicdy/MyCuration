@@ -20,10 +20,8 @@ import io.reactivex.Flowable
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
-import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -171,8 +169,11 @@ class RssListPresenterTest {
     @Test
     fun `when first RSS is hidden then first RSS title will be second RSS`() = runBlocking {
         presenter.resume()
-        assertThat(presenter.unreadOnlyFeeds.size, `is`(1))
-        assertThat(presenter.unreadOnlyFeeds[0].title, `is`(SECOND_RSS_TITLE))
+        assertThat(presenter.unreadOnlyFeeds)
+                .hasSize(1)
+                .extracting("title")
+                .contains(SECOND_RSS_TITLE)
+        return@runBlocking
     }
 
     @Test
@@ -182,9 +183,11 @@ class RssListPresenterTest {
         val alreadyReadRss = arrayListOf(firstRss, secondRss)
         whenever(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(alreadyReadRss)
         presenter.resume()
-        assertThat(presenter.unreadOnlyFeeds.size, `is`(2))
-        assertThat(presenter.unreadOnlyFeeds[0].title, `is`(FIRST_RSS_TITLE))
-        assertThat(presenter.unreadOnlyFeeds[1].title, `is`(SECOND_RSS_TITLE))
+        assertThat(presenter.unreadOnlyFeeds)
+                .hasSize(2)
+                .extracting("title")
+                .contains(FIRST_RSS_TITLE, SECOND_RSS_TITLE)
+        return@runBlocking
     }
 
     @Test
@@ -241,8 +244,15 @@ class RssListPresenterTest {
         presenter.resume() // init list
         presenter.onEditFeedOkButtonClicked("newTitle", 0)
         // Current status is hidden, first position RSS is first one in hidden RSS list and second one in all RSS list
-        assertThat(presenter.unreadOnlyFeeds[0].title, `is`("newTitle"))
-        assertThat(presenter.allFeeds[1].title, `is`("newTitle"))
+        assertThat(presenter.unreadOnlyFeeds)
+                .hasSize(1)
+                .extracting("title")
+                .contains("newTitle")
+        assertThat(presenter.allFeeds)
+                .hasSize(2)
+                .extracting("title")
+                .containsExactly(FIRST_RSS_TITLE, "newTitle")
+        return@runBlocking
     }
 
     @Test
@@ -273,10 +283,15 @@ class RssListPresenterTest {
         presenter.resume() // init list
         presenter.onDeleteOkButtonClicked(0)
         // Current status is hidden and size is 1, so hidden list becomes all RSS list after refresh
-        assertThat(presenter.unreadOnlyFeeds[0].id, `is`(FIRST_RSS_ID))
-        assertThat(presenter.unreadOnlyFeeds.size, `is`(1))
-        assertThat(presenter.allFeeds[0].id, `is`(FIRST_RSS_ID))
-        assertThat(presenter.allFeeds.size, `is`(1))
+        assertThat(presenter.unreadOnlyFeeds)
+                .hasSize(1)
+                .extracting("id")
+                .contains(FIRST_RSS_ID)
+        assertThat(presenter.allFeeds)
+                .hasSize(1)
+                .extracting("id")
+                .contains(FIRST_RSS_ID)
+        return@runBlocking
     }
 
     @Test
@@ -286,10 +301,15 @@ class RssListPresenterTest {
         presenter.onRssFooterClicked() // Change to all RSS
         presenter.onDeleteOkButtonClicked(0)
         // Current status is all and first RSS status is read, so hidden list has no update
-        assertThat(presenter.unreadOnlyFeeds[0].id, `is`(SECOND_RSS_ID))
-        assertThat(presenter.unreadOnlyFeeds.size, `is`(1))
-        assertThat(presenter.allFeeds[0].id, `is`(SECOND_RSS_ID))
-        assertThat(presenter.allFeeds.size, `is`(1))
+        assertThat(presenter.unreadOnlyFeeds)
+                .hasSize(1)
+                .extracting("id")
+                .contains(SECOND_RSS_ID)
+        assertThat(presenter.allFeeds)
+                .hasSize(1)
+                .extracting("id")
+                .contains(SECOND_RSS_ID)
+        return@runBlocking
     }
 
     @Test
@@ -322,7 +342,6 @@ class RssListPresenterTest {
     fun `when RSS is clicked and listener is null then not crashed`() = runBlocking {
         presenter.resume() // init list
         presenter.onRssItemClicked(0, null)
-        assertTrue(true)
     }
 
     @Test
@@ -363,14 +382,16 @@ class RssListPresenterTest {
     @Test
     fun `when get item count in RecyclerView in hide status then return num of unread RSS + 1 for footer`() = runBlocking {
         presenter.resume()
-        assertThat(presenter.getItemCount(), `is`(2))
+        assertThat(presenter.getItemCount()).isEqualTo(2)
+        return@runBlocking
     }
 
     @Test
     fun `when get item count in RecyclerView in all status then return num of unread RSS + 1 for footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
-        assertThat(presenter.getItemCount(), `is`(3))
+        assertThat(presenter.getItemCount()).isEqualTo(3)
+        return@runBlocking
     }
 
     @Test
@@ -380,7 +401,6 @@ class RssListPresenterTest {
         val mockRssItemView = mock<RssItemView.Content>()
         presenter.onBindRssViewHolder(0, mockRssItemView)
         verify(mockRssItemView, times(1)).showDefaultIcon()
-
     }
 
     @Test
@@ -400,7 +420,6 @@ class RssListPresenterTest {
         val mockRssItemView = mock<RssItemView.Content>()
         presenter.onBindRssViewHolder(0, mockRssItemView)
         verify(mockRssItemView, times(1)).updateTitle(FIRST_RSS_TITLE)
-
     }
 
     @Test
@@ -410,7 +429,6 @@ class RssListPresenterTest {
         val mockRssItemView = mock<RssItemView.Content>()
         presenter.onBindRssViewHolder(0, mockRssItemView)
         verify(mockRssItemView, times(1)).updateUnreadCount(FIRST_RSS_UNREAD_COUNT.toString())
-
     }
 
     @Test
@@ -419,7 +437,6 @@ class RssListPresenterTest {
         val mockRssItemView = mock<RssItemView.Content>()
         presenter.onBindRssViewHolder(0, mockRssItemView)
         verify(mockRssItemView, times(1)).updateUnreadCount(SECOND_RSS_UNREAD_COUNT.toString())
-
     }
 
     @Test
@@ -429,7 +446,6 @@ class RssListPresenterTest {
         val mockRssFooterView = mock<RssItemView.Footer>()
         presenter.onBindRssFooterViewHolder(mockRssFooterView)
         verify(mockRssFooterView, times(1)).showHideView()
-
     }
 
     @Test
@@ -443,27 +459,31 @@ class RssListPresenterTest {
     @Test
     fun `when get item view type in hide status and position is same with size then rturn footer`() = runBlocking {
         presenter.resume()
-        assertThat(presenter.onGetItemViewType(1), `is`(RssListFragment.VIEW_TYPE_FOOTER))
+        assertThat(presenter.onGetItemViewType(1)).isEqualTo(RssListFragment.VIEW_TYPE_FOOTER)
+        return@runBlocking
     }
 
     @Test
     fun `when get item view type in hide status and position is not same with size then rturn footer`() = runBlocking {
         presenter.resume()
-        assertThat(presenter.onGetItemViewType(0), `is`(RssListFragment.VIEW_TYPE_RSS))
+        assertThat(presenter.onGetItemViewType(0)).isEqualTo(RssListFragment.VIEW_TYPE_RSS)
+        return@runBlocking
     }
 
     @Test
     fun `when get item view type in all status and position is same with size then rturn footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
-        assertThat(presenter.onGetItemViewType(2), `is`(RssListFragment.VIEW_TYPE_FOOTER))
+        assertThat(presenter.onGetItemViewType(2)).isEqualTo(RssListFragment.VIEW_TYPE_FOOTER)
+        return@runBlocking
     }
 
     @Test
     fun `when get item view type in all status and position is not same with size then rturn footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
-        assertThat(presenter.onGetItemViewType(0), `is`(RssListFragment.VIEW_TYPE_RSS))
+        assertThat(presenter.onGetItemViewType(0)).isEqualTo(RssListFragment.VIEW_TYPE_RSS)
+        return@runBlocking
     }
 
     @Test
@@ -471,7 +491,8 @@ class RssListPresenterTest {
         presenter.resume()
         presenter.onRssFooterClicked()
         presenter.onRssFooterClicked()
-        assertThat(presenter.getItemCount(), `is`(2))
+        assertThat(presenter.getItemCount()).isEqualTo(2)
+        return@runBlocking
     }
 
     companion object {
