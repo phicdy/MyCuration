@@ -34,7 +34,7 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         presenter.create()
     }
 
-    override fun onAttachFragment(fragment: Fragment?) {
+    override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
         val rssFragment = fragment as? SelectFilterTargetRssFragment // maybe Glide's fragment
         val selectedList = intent.getParcelableArrayListExtra<Feed>(TARGET_RSS)
