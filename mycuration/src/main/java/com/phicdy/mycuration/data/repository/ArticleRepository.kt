@@ -86,7 +86,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
 
                     db.beginTransaction()
                     // Initialize condition
-                    var condition = Article.FEEDID + " = $rssId"
+                    var condition = Article.FEEDID + " = $rssId and " + Article.STATUS + " = '" + Article.UNREAD + "'"
                     if (keyword.isNotBlank()) { condition = "$condition and title like '%$keyword%'" }
                     if (url.isNotBlank()) { condition = "$condition and url like '%$url%'" }
                     updatedCount += db.update(Article.TABLE_NAME, value, condition, null)
