@@ -150,7 +150,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:layout_margin="16dp"
-        app:backgroundTint="@android:color/black"
         app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_action_new" />
