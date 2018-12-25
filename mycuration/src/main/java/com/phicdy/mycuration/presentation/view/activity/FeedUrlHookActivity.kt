@@ -3,9 +3,9 @@ package com.phicdy.mycuration.presentation.view.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.annotation.UiThread
-import android.support.v7.app.AppCompatActivity
+import androidx.annotation.StringRes
+import androidx.annotation.UiThread
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter

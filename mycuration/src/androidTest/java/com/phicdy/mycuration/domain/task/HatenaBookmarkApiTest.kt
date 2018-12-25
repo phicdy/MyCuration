@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.domain.task
 
-import android.support.test.InstrumentationRegistry.getTargetContext
+import androidx.test.InstrumentationRegistry.getTargetContext
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository

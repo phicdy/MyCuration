@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.domain.rss
 
-import android.support.test.InstrumentationRegistry.getTargetContext
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.InstrumentationRegistry.getTargetContext
+import androidx.test.runner.AndroidJUnit4
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository

@@ -6,13 +6,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
-import android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE
-import android.support.v7.widget.helper.ItemTouchHelper.LEFT
-import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
+import androidx.recyclerview.widget.ItemTouchHelper.LEFT
+import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -110,7 +110,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         presenter.create()
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
             listener = context as OnArticlesListFragmentListener

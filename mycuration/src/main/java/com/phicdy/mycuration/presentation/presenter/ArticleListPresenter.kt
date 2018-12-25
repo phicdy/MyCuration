@@ -1,8 +1,8 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.content.Intent
-import android.support.v7.widget.helper.ItemTouchHelper.LEFT
-import android.support.v7.widget.helper.ItemTouchHelper.RIGHT
+import androidx.recyclerview.widget.ItemTouchHelper.LEFT
+import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository

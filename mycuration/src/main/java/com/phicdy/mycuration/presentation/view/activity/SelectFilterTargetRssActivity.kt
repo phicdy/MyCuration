@@ -2,9 +2,9 @@ package com.phicdy.mycuration.presentation.view.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.phicdy.mycuration.R
@@ -34,7 +34,7 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         presenter.create()
     }
 
-    override fun onAttachFragment(fragment: Fragment?) {
+    override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
         val rssFragment = fragment as? SelectFilterTargetRssFragment // maybe Glide's fragment
         val selectedList = intent.getParcelableArrayListExtra<Feed>(TARGET_RSS)

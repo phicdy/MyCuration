@@ -1,16 +1,16 @@
 package com.phicdy.mycuration.uitest
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.filters.SdkSuppress
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
-import android.support.test.uiautomator.By
-import android.support.test.uiautomator.Direction
-import android.support.test.uiautomator.StaleObjectException
-import android.support.test.uiautomator.UiDevice
-import android.support.test.uiautomator.UiObject2
-import android.support.test.uiautomator.Until
-import android.support.v7.widget.RecyclerView
+import androidx.test.InstrumentationRegistry
+import androidx.test.filters.SdkSuppress
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.StaleObjectException
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.Until
+import androidx.recyclerview.widget.RecyclerView
 import android.webkit.WebView
 import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
@@ -54,7 +54,7 @@ class SettingTest : UiTest() {
         TopActivityControl.goToSetting()
 
         // Enable internal browser
-        val settingsList = device.findObject(By.clazz(RecyclerView::class.java))
+        val settingsList = device.findObject(By.clazz(androidx.recyclerview.widget.RecyclerView::class.java))
         val settings = settingsList.findObjects(By.clazz(LinearLayout::class.java).depth(1))
         for (setting in settings) {
             val text = setting.findObject(By.res("android:id/title"))
@@ -99,7 +99,7 @@ class SettingTest : UiTest() {
         TopActivityControl.goToSetting()
 
         // Disable internal browser
-        val settingsList = device.findObject(By.clazz(RecyclerView::class.java))
+        val settingsList = device.findObject(By.clazz(androidx.recyclerview.widget.RecyclerView::class.java))
         val settings = try {
             settingsList.wait(Until.findObjects(By.clazz(LinearLayout::class.java).depth(1)), 5000)
         } catch (e: StaleObjectException) {
@@ -149,7 +149,7 @@ class SettingTest : UiTest() {
         TopActivityControl.goToSetting()
 
         // Enable option to go back to top
-        val settingsList = device.findObject(By.clazz(RecyclerView::class.java))
+        val settingsList = device.findObject(By.clazz(androidx.recyclerview.widget.RecyclerView::class.java))
         val settings = settingsList.findObjects(By.clazz(LinearLayout::class.java).depth(1))
         for (setting in settings) {
             val text = setting.findObject(By.res("android:id/title"))
@@ -200,7 +200,7 @@ class SettingTest : UiTest() {
         TopActivityControl.goToSetting()
 
         // Disable option to go back to top
-        val settingsList = device.findObject(By.clazz(RecyclerView::class.java))
+        val settingsList = device.findObject(By.clazz(androidx.recyclerview.widget.RecyclerView::class.java))
         val settings = settingsList.findObjects(By.clazz(LinearLayout::class.java).depth(1))
         for (setting in settings) {
             val text = setting.findObject(By.res("android:id/title"))
@@ -245,7 +245,7 @@ class SettingTest : UiTest() {
         TopActivityControl.goToSetting()
 
         // Click license info
-        val settingsList = device.findObject(By.clazz(RecyclerView::class.java))
+        val settingsList = device.findObject(By.clazz(androidx.recyclerview.widget.RecyclerView::class.java))
         settingsList.scroll(Direction.DOWN, 10f)
         val settings = settingsList.findObjects(By.clazz(LinearLayout::class.java).depth(1))
         for (setting in settings) {

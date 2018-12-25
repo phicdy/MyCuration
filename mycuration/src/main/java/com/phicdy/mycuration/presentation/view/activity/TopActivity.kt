@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.Toolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -310,7 +310,7 @@ class TopActivity :
             }
         })
         val searchAutoComplete = searchView!!
-                .findViewById(android.support.v7.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+                .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
         searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
         searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary))
 
