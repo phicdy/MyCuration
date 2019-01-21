@@ -120,9 +120,14 @@
         </activity>
         <activity
             android:name=".presentation.view.activity.SelectFilterTargetRssActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".presentation.view.activity.UserRequestActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
     </application>
 
 </manifest>

@@ -145,6 +145,13 @@
     <string name="tutorial_next">次へ</string>
     <string name="tutorial_close">閉じる</string>
 
+    <!-- レビュー -->
+    <string name="review_dialog_title">レビューにご協力お願いします</string>
+    <string name="review_dialog_message">いつもご利用ありがとうございます。よろしければGoogle Playにてレビューをお願い致します。</string>
+    <string name="review">レビューする</string>
+    <string name="request">要望を送る</string>
+    <string name="title_activity_user_review">ご意見・ご要望</string>
+
     <!-- Google Analytics -->
     <string name="ga_not_all_title">個別RSS</string>
     <string name="tap_add_rss">RSS追加タップ</string>
