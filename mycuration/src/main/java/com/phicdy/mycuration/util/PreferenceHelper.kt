@@ -16,6 +16,9 @@ object PreferenceHelper {
     private const val KEY_SWIPE_DIRECTION = "swipeDirection"
     private const val KEY_LAUNCH_TAB = "launchTab"
     private const val KEY_LAST_UPDATE_DATE = "lastUpdateDate"
+    private const val KEY_REVIEW_COUNT = "reviewCount"
+    private const val KEY_REVIEWED = "reviewed"
+    private const val KEY_PREVIOUS_VERSION = "previousVersion"
 
     const val SWIPE_RIGHT_TO_LEFT = 0
     const val SWIPE_LEFT_TO_RIGHT = 1
@@ -26,6 +29,7 @@ object PreferenceHelper {
     private val SWIPE_DIRECTIONS = intArrayOf(SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT)
     private val LAUNCH_TABS = intArrayOf(LAUNCH_CURATION, LAUNCH_RSS)
     private const val DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60
+    private const val DEFAULT_REVIEW_COUNT = 100
 
     fun setUp(context: Context) {
         pref = context.getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
@@ -97,6 +101,35 @@ object PreferenceHelper {
         pref.put(KEY_SEARCH_FEED_ID, feedId)
     }
 
+    fun getReviewCount(): Int = if (pref.contains(KEY_REVIEW_COUNT)) {
+        pref.getInt(KEY_REVIEW_COUNT, DEFAULT_REVIEW_COUNT)
+    } else LAUNCH_TAB_DEFAULT
+
+    fun decreaseReviewCount() {
+        pref.put(KEY_REVIEW_COUNT, getReviewCount() - 1)
+    }
+
+    fun resetReviewCount() {
+        pref.put(KEY_REVIEW_COUNT, DEFAULT_REVIEW_COUNT)
+    }
+
+    fun isReviewed(): Boolean = if (pref.contains(KEY_REVIEWED)) {
+        pref.getBoolean(KEY_REVIEWED, false)
+    } else false
+
+    fun setReviewed() {
+        pref.put(KEY_REVIEWED, true)
+    }
+
+    fun resetReviewed() {
+        pref.put(KEY_REVIEWED, false)
+    }
+
+    fun setPreviousVersion(version: String) {
+        pref.put(KEY_PREVIOUS_VERSION, version)
+    }
+
+    fun getPreviousVersion(): String = pref.getString(KEY_PREVIOUS_VERSION, "") ?: ""
 
     private fun SharedPreferences.put(key: String, value: Int) {
         edit().putInt(key, value).apply()
@@ -108,5 +141,9 @@ object PreferenceHelper {
 
     private fun SharedPreferences.put(key: String, value: Boolean) {
         edit().putBoolean(key, value).apply()
+    }
+
+    private fun SharedPreferences.put(key: String, value: String) {
+        edit().putString(key, value).apply()
     }
 }

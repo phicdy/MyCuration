@@ -57,7 +57,8 @@ val appModule = module {
         TopActivityPresenter(
                 view = view,
                 articleRepository = get(),
-                rssRepository = get()
+                rssRepository = get(),
+                helper = get()
         )
     }
 

@@ -2,6 +2,7 @@ package com.phicdy.mycuration
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageManager
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
@@ -51,6 +52,16 @@ class MyApplication : Application() {
         Fabric.with(this, crashlyticsKit)
 
         PreferenceHelper.setUp(this)
+        try {
+            val versionName = packageManager.getPackageInfo(packageName, 0).versionName
+            if (PreferenceHelper.getPreviousVersion() != versionName) {
+                PreferenceHelper.resetReviewCount()
+                PreferenceHelper.resetReviewed()
+                PreferenceHelper.setPreviousVersion(versionName)
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+        }
+
         TrackerHelper.setTracker(setUp(this))
 
         // Font

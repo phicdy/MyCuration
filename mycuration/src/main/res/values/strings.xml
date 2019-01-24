@@ -28,19 +28,19 @@
     <string name="add_rss_error_generic">RSS登録に失敗しました。</string>
     <string name="add_rss_error_invalid_url">URLが正しくありません</string>
     <string name="adding_rss">RSSを追加しています。</string>
-    
+
     <string name="delete_rss">RSS削除</string>
     <string name="delete_rss_alert">RSSを削除してもよろしいですか？</string>
     <string name="delete">削除</string>
     <string name="finish_delete_rss_success">RSSを削除しました</string>
     <string name="finish_delete_rss_fail">RSSの削除に失敗しました</string>
-    
+
     <string name="edit_rss_title">RSSのタイトルを編集</string>
     <string name="new_title">新しいタイトル</string>
     <string name="empty_title">新しいタイトルが空になっています。</string>
     <string name="edit_rss_title_success">タイトルを編集しました。</string>
     <string name="edit_rss_title_error">タイトルを編集に失敗しました。</string>
-    
+
     <string name="home">ホーム</string>
 
     <!-- フィルター -->
@@ -101,7 +101,7 @@
 
     <string name="all_read">全て既読にする</string>
     <string name="no_article">未読の記事がありません</string>
-    
+
     <string name="icon">アイコン</string>
     <string name="license">ライセンス</string>
     <string name="license_info">ライセンス情報</string>
@@ -111,11 +111,11 @@
     <string name="search_article">記事を検索</string>
     <string name="no_search_result">該当する記事はありません</string>
     <string name="search_result">検索結果</string>
-    
+
     <string name="hatena">はてな</string>
-    
+
     <string name="share">共有</string>
-    
+
     <!-- キュレーション -->
     <string name="curation">キュレーション</string>
     <string name="curation_title">タイトル</string>

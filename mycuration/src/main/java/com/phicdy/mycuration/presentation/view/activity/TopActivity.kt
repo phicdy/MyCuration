@@ -51,8 +51,7 @@ class TopActivity :
         RssListFragment.OnFeedListFragmentListener,
         CurationListFragment.OnCurationListFragmentListener,
         TopActivityView,
-        CoroutineScope
-{
+        CoroutineScope {
     companion object {
         const val FEED_ID = "FEED_ID"
         const val CURATION_ID = "CURATION_ID"
@@ -424,28 +423,32 @@ class TopActivity :
     }
 
     private fun changeTab(position: Int) {
-        when(position) {
+        when (position) {
             PreferenceHelper.LAUNCH_CURATION -> navigationView.selectedItemId = R.id.navigation_curation
             PreferenceHelper.LAUNCH_RSS -> navigationView.selectedItemId = R.id.navigation_rss
         }
     }
 
-    fun showRateDialog() {
+    override fun showRateDialog() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.review_dialog_title)
                 .setMessage(R.string.review_dialog_message)
                 .setPositiveButton(R.string.review) { _, _ ->
-                    try {
-                        val uri = Uri.parse("market://details?id=$packageName")
-                        startActivity(Intent(Intent.ACTION_VIEW, uri))
-                    } catch (e: Exception) {
-                    }
+                    presenter.onReviewClicked()
                 }
                 .setNeutralButton(R.string.request) { _, _ ->
                     startActivity(Intent(this, UserRequestActivity::class.java))
                 }
                 .setNegativeButton(R.string.cancel, null)
                 .show()
+    }
+
+    override fun goToGooglePlay() {
+        try {
+            val uri = Uri.parse("market://details?id=$packageName")
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+        } catch (e: Exception) {
+        }
     }
 }
 
