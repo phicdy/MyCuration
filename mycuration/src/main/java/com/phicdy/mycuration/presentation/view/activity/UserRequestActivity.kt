@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.view.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
 import android.webkit.WebView
@@ -9,11 +10,13 @@ import com.phicdy.mycuration.R
 
 class UserRequestActivity : AppCompatActivity() {
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_request)
         initToolbar()
         val webview = findViewById<WebView>(R.id.webview_user_review)
+        webview.settings.javaScriptEnabled = true
         webview.loadUrl("https://docs.google.com/forms/d/e/1FAIpQLSdDR-vqD-yk_QzXdbVwiTwTHnl05p4ItHtJ_iOjGr-X0DOBIQ/viewform")
     }
 
