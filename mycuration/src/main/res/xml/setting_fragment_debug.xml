@@ -1,54 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/auto_update_setting" >
+    <PreferenceCategory android:title="@string/auto_update_setting">
         <ListPreference
-            android:title="@string/interval"
-            android:key="@string/key_update_interval"
             android:entries="@array/update_interval_items"
-            android:entryValues="@array/update_interval_items_values"/>
+            android:entryValues="@array/update_interval_items_values"
+            android:key="@string/key_update_interval"
+            android:title="@string/interval" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/launch_setting" >
+    <PreferenceCategory android:title="@string/launch_setting">
         <ListPreference
-            android:title="@string/launch_tab"
-            android:key="@string/key_launch_tab"
             android:entries="@array/launch_tab_items"
-            android:entryValues="@array/launch_tab_items_values"/>
+            android:entryValues="@array/launch_tab_items_values"
+            android:key="@string/key_launch_tab"
+            android:title="@string/launch_tab" />
         <SwitchPreference
-            android:title="@string/auto_update_in_main_ui"
-            android:key="@string/key_auto_update_in_main_ui"/>
+            android:key="@string/key_auto_update_in_main_ui"
+            android:title="@string/auto_update_in_main_ui" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/see_setting" >
+    <PreferenceCategory android:title="@string/see_setting">
 
         <SwitchPreference
-            android:title="@string/article_sort"
-            android:key="@string/key_article_sort"/>
+            android:key="@string/key_article_sort"
+            android:title="@string/article_sort" />
 
         <SwitchPreference
-            android:title="@string/open_internal"
-            android:key="@string/key_internal_browser"/>
+            android:key="@string/key_internal_browser"
+            android:title="@string/open_internal" />
 
         <ListPreference
-            android:title="@string/all_read_behavior"
-            android:key="@string/key_all_read_behavior"
             android:entries="@array/all_read_behavior"
-            android:entryValues="@array/all_read_behavior_values"/>
+            android:entryValues="@array/all_read_behavior_values"
+            android:key="@string/key_all_read_behavior"
+            android:title="@string/all_read_behavior" />
 
         <ListPreference
-            android:title="@string/swipe_direction"
-            android:key="@string/key_swipe_direction"
             android:entries="@array/swipe_direction_items"
-            android:entryValues="@array/swipe_direction_items_values"/>
+            android:entryValues="@array/swipe_direction_items_values"
+            android:key="@string/key_swipe_direction"
+            android:title="@string/swipe_direction" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/license" >
+    <PreferenceCategory android:title="@string/other">
         <Preference
-            android:title="@string/license_info"
-            android:key="@string/key_license" />
+            android:key="@string/key_review"
+            android:title="@string/review_on_google_play" />
+        <Preference
+            android:key="@string/key_request"
+            android:title="@string/request" />
+        <Preference
+            android:key="@string/key_license"
+            android:title="@string/license_info" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/debug" >
+    <PreferenceCategory android:title="@string/debug">
         <Preference
             android:key="@string/key_import_db"
             android:title="@string/import_db" />

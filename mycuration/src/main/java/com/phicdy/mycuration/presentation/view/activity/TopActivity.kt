@@ -3,14 +3,9 @@ package com.phicdy.mycuration.presentation.view.activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -20,6 +15,13 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
@@ -49,8 +51,7 @@ class TopActivity :
         RssListFragment.OnFeedListFragmentListener,
         CurationListFragment.OnCurationListFragmentListener,
         TopActivityView,
-        CoroutineScope
-{
+        CoroutineScope {
     companion object {
         const val FEED_ID = "FEED_ID"
         const val CURATION_ID = "CURATION_ID"
@@ -422,9 +423,31 @@ class TopActivity :
     }
 
     private fun changeTab(position: Int) {
-        when(position) {
+        when (position) {
             PreferenceHelper.LAUNCH_CURATION -> navigationView.selectedItemId = R.id.navigation_curation
             PreferenceHelper.LAUNCH_RSS -> navigationView.selectedItemId = R.id.navigation_rss
+        }
+    }
+
+    override fun showRateDialog() {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.review_dialog_title)
+                .setMessage(R.string.review_dialog_message)
+                .setPositiveButton(R.string.review) { _, _ ->
+                    presenter.onReviewClicked()
+                }
+                .setNeutralButton(R.string.request) { _, _ ->
+                    startActivity(Intent(this, UserRequestActivity::class.java))
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+    }
+
+    override fun goToGooglePlay() {
+        try {
+            val uri = Uri.parse("market://details?id=$packageName")
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+        } catch (e: Exception) {
         }
     }
 }

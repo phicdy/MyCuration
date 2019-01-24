@@ -6,11 +6,13 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.presentation.view.TopActivityView
+import com.phicdy.mycuration.util.PreferenceHelper
 import kotlinx.coroutines.coroutineScope
 
 class TopActivityPresenter(private val view: TopActivityView,
                            private val articleRepository: ArticleRepository,
-                           private val rssRepository: RssRepository
+                           private val rssRepository: RssRepository,
+                           private val helper: PreferenceHelper
 ) {
 
     fun create() {
@@ -21,6 +23,12 @@ class TopActivityPresenter(private val view: TopActivityView,
     }
 
     suspend fun resume() = coroutineScope {
+        if (!helper.isReviewed() && helper.getReviewCount() - 1 <= 0) {
+            view.showRateDialog()
+            helper.resetReviewCount()
+        } else {
+            helper.decreaseReviewCount()
+        }
         articleRepository.saveAllStatusToReadFromToRead()
         view.closeSearchView()
     }
@@ -77,5 +85,10 @@ class TopActivityPresenter(private val view: TopActivityView,
     fun queryTextSubmit(query: String?) {
         if (query == null) return
         view.goToArticleSearchResult(query)
+    }
+
+    fun onReviewClicked() {
+        helper.setReviewed()
+        view.goToGooglePlay()
     }
 }

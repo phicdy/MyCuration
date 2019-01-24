@@ -14,4 +14,6 @@ interface TopActivityView {
     fun goToAddFilter()
     fun goToSetting()
     fun goToArticleSearchResult(query: String)
+    fun showRateDialog()
+    fun goToGooglePlay()
 }

@@ -3,12 +3,13 @@ package com.phicdy.mycuration.presentation.view.fragment
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
-import androidx.preference.SwitchPreference
+import android.widget.Toast
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import android.widget.Toast
+import androidx.preference.SwitchPreference
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseHelper
@@ -16,6 +17,7 @@ import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.presentation.view.activity.LicenseActivity
+import com.phicdy.mycuration.presentation.view.activity.UserRequestActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +47,8 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     private lateinit var prefArticleSort: SwitchPreference
     private lateinit var prefInternalBrowser: SwitchPreference
     private lateinit var prefLicense: Preference
+    private lateinit var prefReview: Preference
+    private lateinit var prefRequest: Preference
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
@@ -85,6 +89,8 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         prefSwipeDirection = findPreference(getString(R.string.key_swipe_direction)) as ListPreference
         prefLaunchTab = findPreference(getString(R.string.key_launch_tab)) as ListPreference
         prefLicense = findPreference(getString(R.string.key_license))
+        prefReview = findPreference(getString(R.string.key_review))
+        prefRequest = findPreference(getString(R.string.key_request))
     }
 
     override fun initListener() {
@@ -172,6 +178,22 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
         prefLicense.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             presenter.onLicenseClicked()
+            true
+        }
+
+        prefReview.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            activity?.let { a ->
+                try {
+                    val uri = Uri.parse("market://details?id=${a.packageName}")
+                    a.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                } catch (e: Exception) {
+                }
+            }
+            true
+        }
+
+        prefRequest.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            activity?.startActivity(Intent(context, UserRequestActivity::class.java))
             true
         }
     }

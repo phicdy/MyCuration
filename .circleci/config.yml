@@ -16,6 +16,9 @@ jobs:
           name: Print Android home
           command: echo $ANDROID_HOME
       - run:
+          name: Accept licenses
+          command: yes | sdkmanager --licenses || true
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - run:

@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 
 object PreferenceHelper {
     private lateinit var pref: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
 
     private const val PREF_KEY = "FilterPref"
     private const val KEY_AUTO_UPDATE_INTERVAL = "autoUpdateInterval"
@@ -17,6 +16,9 @@ object PreferenceHelper {
     private const val KEY_SWIPE_DIRECTION = "swipeDirection"
     private const val KEY_LAUNCH_TAB = "launchTab"
     private const val KEY_LAST_UPDATE_DATE = "lastUpdateDate"
+    private const val KEY_REVIEW_COUNT = "reviewCount"
+    private const val KEY_REVIEWED = "reviewed"
+    private const val KEY_PREVIOUS_VERSION = "previousVersion"
 
     const val SWIPE_RIGHT_TO_LEFT = 0
     const val SWIPE_LEFT_TO_RIGHT = 1
@@ -27,6 +29,7 @@ object PreferenceHelper {
     private val SWIPE_DIRECTIONS = intArrayOf(SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT)
     private val LAUNCH_TABS = intArrayOf(LAUNCH_CURATION, LAUNCH_RSS)
     private const val DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60
+    private const val DEFAULT_REVIEW_COUNT = 100
 
     fun setUp(context: Context) {
         pref = context.getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
@@ -37,49 +40,37 @@ object PreferenceHelper {
             pref.getInt(KEY_AUTO_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL_SECOND)
         } else DEFAULT_UPDATE_INTERVAL_SECOND
         set(intervalSecond) {
-            editor = pref.edit()
-            editor.putInt(KEY_AUTO_UPDATE_INTERVAL, intervalSecond)
-            editor.apply()
+            pref.put(KEY_AUTO_UPDATE_INTERVAL, intervalSecond)
         }
 
     var autoUpdateInMainUi: Boolean
         get() = pref.getBoolean(KEY_AUTO_UPDATE_IN_MAIN_UI, false)
         set(isAutoUpdateInMainUi) {
-            editor = pref.edit()
-            editor.putBoolean(KEY_AUTO_UPDATE_IN_MAIN_UI, isAutoUpdateInMainUi)
-            editor.apply()
+            pref.put(KEY_AUTO_UPDATE_IN_MAIN_UI, isAutoUpdateInMainUi)
         }
 
     var lastUpdateDate: Long
         get() = pref.getLong(KEY_LAST_UPDATE_DATE, 0)
         set(lastUpdateDate) {
-            editor = pref.edit()
-            editor.putLong(KEY_LAST_UPDATE_DATE, lastUpdateDate)
-            editor.apply()
+            pref.put(KEY_LAST_UPDATE_DATE, lastUpdateDate)
         }
 
     var sortNewArticleTop: Boolean
         get() = !pref.contains(KEY_SORT_NEW_ARTICLE_TOP) || pref.getBoolean(KEY_SORT_NEW_ARTICLE_TOP, true)
         set(isNewArticleTop) {
-            editor = pref.edit()
-            editor.putBoolean(KEY_SORT_NEW_ARTICLE_TOP, isNewArticleTop)
-            editor.apply()
+            pref.put(KEY_SORT_NEW_ARTICLE_TOP, isNewArticleTop)
         }
 
     var allReadBack: Boolean
         get() = !pref.contains(KEY_ALL_READ_BACK) || pref.getBoolean(KEY_ALL_READ_BACK, true)
         set(isAllReadBack) {
-            editor = pref.edit()
-            editor.putBoolean(KEY_ALL_READ_BACK, isAllReadBack)
-            editor.apply()
+            pref.put(KEY_ALL_READ_BACK, isAllReadBack)
         }
 
     var isOpenInternal: Boolean
         get() = pref.contains(KEY_OPEN_INTERNAL_ID) && pref.getBoolean(KEY_OPEN_INTERNAL_ID, false)
         set(isOpenInternal) {
-            editor = pref.edit()
-            editor.putBoolean(KEY_OPEN_INTERNAL_ID, isOpenInternal)
-            editor.apply()
+            pref.put(KEY_OPEN_INTERNAL_ID, isOpenInternal)
         }
 
     var swipeDirection: Int
@@ -89,10 +80,7 @@ object PreferenceHelper {
         set(newSwipeDirection) {
             for (direction in SWIPE_DIRECTIONS) {
                 if (direction == newSwipeDirection) {
-                    editor = pref.edit()
-                    editor.putInt(KEY_SWIPE_DIRECTION, newSwipeDirection)
-                    editor.apply()
-                    return
+                    pref.put(KEY_SWIPE_DIRECTION, newSwipeDirection)
                 }
             }
         }
@@ -104,18 +92,58 @@ object PreferenceHelper {
         set(newLaunchTab) {
             for (tab in LAUNCH_TABS) {
                 if (tab == newLaunchTab) {
-                    editor = pref.edit()
-                    editor.putInt(KEY_LAUNCH_TAB, newLaunchTab)
-                    editor.apply()
-                    return
+                    pref.put(KEY_LAUNCH_TAB, newLaunchTab)
                 }
             }
         }
 
     fun setSearchFeedId(feedId: Int) {
-        editor = pref.edit()
-        editor.putInt(KEY_SEARCH_FEED_ID, feedId)
-        editor.apply()
+        pref.put(KEY_SEARCH_FEED_ID, feedId)
     }
 
+    fun getReviewCount(): Int = if (pref.contains(KEY_REVIEW_COUNT)) {
+        pref.getInt(KEY_REVIEW_COUNT, DEFAULT_REVIEW_COUNT)
+    } else LAUNCH_TAB_DEFAULT
+
+    fun decreaseReviewCount() {
+        pref.put(KEY_REVIEW_COUNT, getReviewCount() - 1)
+    }
+
+    fun resetReviewCount() {
+        pref.put(KEY_REVIEW_COUNT, DEFAULT_REVIEW_COUNT)
+    }
+
+    fun isReviewed(): Boolean = if (pref.contains(KEY_REVIEWED)) {
+        pref.getBoolean(KEY_REVIEWED, false)
+    } else false
+
+    fun setReviewed() {
+        pref.put(KEY_REVIEWED, true)
+    }
+
+    fun resetReviewed() {
+        pref.put(KEY_REVIEWED, false)
+    }
+
+    fun setPreviousVersion(version: String) {
+        pref.put(KEY_PREVIOUS_VERSION, version)
+    }
+
+    fun getPreviousVersion(): String = pref.getString(KEY_PREVIOUS_VERSION, "") ?: ""
+
+    private fun SharedPreferences.put(key: String, value: Int) {
+        edit().putInt(key, value).apply()
+    }
+
+    private fun SharedPreferences.put(key: String, value: Long) {
+        edit().putLong(key, value).apply()
+    }
+
+    private fun SharedPreferences.put(key: String, value: Boolean) {
+        edit().putBoolean(key, value).apply()
+    }
+
+    private fun SharedPreferences.put(key: String, value: String) {
+        edit().putString(key, value).apply()
+    }
 }

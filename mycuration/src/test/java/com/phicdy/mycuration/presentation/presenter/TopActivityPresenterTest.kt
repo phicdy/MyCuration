@@ -24,7 +24,7 @@ class TopActivityPresenterTest {
         mockView = mock()
         mockArticleRepository = mock()
         mockRssRepository = mock()
-        presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository)
+        presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository, mock())
     }
 
     @Test
