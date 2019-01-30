@@ -5,8 +5,6 @@
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/app_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -17,23 +15,23 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_register_filter"
+            style="@style/BaseToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            style="@style/BaseToolbar"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_filter_title"
+        style="@style/AppTheme.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginRight="16dp"
-        style="@style/AppTheme.TextInputLayout"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/app_bar">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/filterTitle"
@@ -41,48 +39,48 @@
             android:layout_height="match_parent"
             android:drawableLeft="@drawable/ic_filter_list_black"
             android:drawablePadding="8dp"
+            android:hint="@string/filter_name"
             android:inputType="text"
-            android:textSize="@dimen/text_size_register_filter"
-            android:hint="@string/filter_name"/>
+            android:textSize="@dimen/text_size_register_filter" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_filter_keyword"
+        style="@style/AppTheme.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginRight="16dp"
-        style="@style/AppTheme.TextInputLayout"
         app:helperText="@string/keyword_description"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_filter_title">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/filterKeyword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="90"
             android:drawableLeft="@drawable/ic_description_black"
             android:drawablePadding="8dp"
+            android:hint="@string/keyword"
             android:inputType="text"
-            android:textSize="@dimen/text_size_register_filter"
-            android:layout_weight="90"
-            android:hint="@string/keyword"/>
+            android:textSize="@dimen/text_size_register_filter" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_filter_url"
+        style="@style/AppTheme.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginRight="16dp"
-        style="@style/AppTheme.TextInputLayout"
         app:helperText="@string/article_url_description"
-        app:layout_constraintTop_toBottomOf="@id/til_filter_keyword"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/til_filter_keyword">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/filterUrl"
@@ -90,25 +88,25 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_web_black"
             android:drawablePadding="8dp"
+            android:hint="@string/article_url"
             android:inputType="textUri"
-            android:textSize="@dimen/text_size_register_filter"
-            android:hint="@string/article_url"/>
+            android:textSize="@dimen/text_size_register_filter" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/tv_target_rss"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_gravity="center_vertical"
-        android:padding="12dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/bg_filter_target_rss"
         android:drawableLeft="@drawable/ic_rss_feed_black"
         android:drawablePadding="8dp"
-        android:background="@drawable/bg_filter_target_rss"
         android:hint="@string/target_rss"
+        android:padding="12dp"
         android:textSize="@dimen/text_size_register_filter"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_filter_url"/>
+        app:layout_constraintTop_toBottomOf="@id/til_filter_url" />
 </androidx.constraintlayout.widget.ConstraintLayout>
