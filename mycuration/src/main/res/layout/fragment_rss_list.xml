@@ -1,56 +1,59 @@
-<androidx.constraintlayout.widget.ConstraintLayout android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:apps="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_all_unread"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/view_selected"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        apps:layout_constraintEnd_toEndOf="parent"
+        apps:layout_constraintStart_toStartOf="parent"
+        apps:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/allIcon"
             style="@style/AppTheme.IconListItem.Icon"
-            android:src="@drawable/ic_view_headline_black_24dp"
             android:contentDescription="@string/all"
+            android:src="@drawable/ic_view_headline_black_24dp"
+            apps:layout_constraintBottom_toBottomOf="parent"
             apps:layout_constraintStart_toStartOf="parent"
-            apps:layout_constraintTop_toTopOf="parent"
-            apps:layout_constraintBottom_toBottomOf="parent" />
+            apps:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/allUnreadFeed"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
             style="@style/AppTheme.IconListItem.Title"
-            android:textSize="18sp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/all"
+            android:textSize="18sp"
+            apps:layout_constraintBottom_toBottomOf="parent"
             apps:layout_constraintStart_toEndOf="@id/allIcon"
-            apps:layout_constraintTop_toTopOf="parent"
-            apps:layout_constraintBottom_toBottomOf="parent" />
+            apps:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/allUnreadCount"
+            style="@style/AppTheme.IconListItem.EndText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AppTheme.IconListItem.EndText"
             android:layout_gravity="center_vertical"
+            apps:layout_constraintBottom_toBottomOf="parent"
             apps:layout_constraintEnd_toEndOf="parent"
             apps:layout_constraintTop_toTopOf="parent"
-            apps:layout_constraintBottom_toBottomOf="parent"
-            tools:text="100"/>
+            tools:text="100" />
 
         <View
+            style="@style/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            style="@style/divider"
-            apps:layout_constraintStart_toStartOf="@id/allUnreadFeed"
+            apps:layout_constraintBottom_toBottomOf="parent"
             apps:layout_constraintEnd_toEndOf="parent"
-            apps:layout_constraintBottom_toBottomOf="parent" />
+            apps:layout_constraintStart_toStartOf="@id/allUnreadFeed" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -58,23 +61,24 @@
         android:id="@+id/srl_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        apps:layout_constraintTop_toBottomOf="@id/cl_all_unread"
-        apps:layout_constraintBottom_toBottomOf="parent">
+        apps:layout_constraintBottom_toBottomOf="parent"
+        apps:layout_constraintTop_toBottomOf="@id/cl_all_unread">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_rss"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:drawSelectorOnTop="true"/>
+            android:drawSelectorOnTop="true" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <TextView
         android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:gravity="center"
-        android:visibility="gone"
         android:text="@string/no_rss_message"
-        apps:layout_constraintTop_toBottomOf="@id/cl_all_unread"
+        android:visibility="gone"
         apps:layout_constraintBottom_toBottomOf="parent"
+        apps:layout_constraintTop_toBottomOf="@id/cl_all_unread"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
