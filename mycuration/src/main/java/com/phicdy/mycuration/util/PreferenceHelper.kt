@@ -2,6 +2,7 @@ package com.phicdy.mycuration.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.phicdy.mycuration.BuildConfig
 
 object PreferenceHelper {
     private lateinit var pref: SharedPreferences
@@ -29,7 +30,7 @@ object PreferenceHelper {
     private val SWIPE_DIRECTIONS = intArrayOf(SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT)
     private val LAUNCH_TABS = intArrayOf(LAUNCH_CURATION, LAUNCH_RSS)
     private const val DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60
-    private const val DEFAULT_REVIEW_COUNT = 100
+    private val DEFAULT_REVIEW_COUNT = if (BuildConfig.DEBUG) 3 else 50
 
     fun setUp(context: Context) {
         pref = context.getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)

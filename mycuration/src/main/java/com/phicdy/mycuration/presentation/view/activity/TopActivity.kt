@@ -430,6 +430,7 @@ class TopActivity :
     }
 
     override fun showRateDialog() {
+        TrackerHelper.sendUiEvent(getString(R.string.show_review_dialog))
         AlertDialog.Builder(this)
                 .setTitle(R.string.review_dialog_title)
                 .setMessage(R.string.review_dialog_message)
@@ -437,13 +438,17 @@ class TopActivity :
                     presenter.onReviewClicked()
                 }
                 .setNeutralButton(R.string.request) { _, _ ->
+                    TrackerHelper.sendButtonEvent(getString(R.string.tap_request))
                     startActivity(Intent(this, UserRequestActivity::class.java))
                 }
-                .setNegativeButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel) { _, _ ->
+                    TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))
+                }
                 .show()
     }
 
     override fun goToGooglePlay() {
+        TrackerHelper.sendButtonEvent(getString(R.string.tap_go_to_google_play))
         try {
             val uri = Uri.parse("market://details?id=$packageName")
             startActivity(Intent(Intent.ACTION_VIEW, uri))
