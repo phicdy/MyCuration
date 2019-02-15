@@ -182,6 +182,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         }
 
         prefReview.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            TrackerHelper.sendButtonEvent(getString(R.string.tap_go_to_google_play_from_setting))
             activity?.let { a ->
                 try {
                     val uri = Uri.parse("market://details?id=${a.packageName}")
@@ -193,6 +194,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         }
 
         prefRequest.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            TrackerHelper.sendButtonEvent(getString(R.string.tap_request_from_setting))
             activity?.startActivity(Intent(context, UserRequestActivity::class.java))
             true
         }
