@@ -163,6 +163,10 @@
     <string name="tap_add_filter">フィルター追加タップ</string>
     <string name="tap_article_internal">記事を内部ブラウザで開く</string>
     <string name="tap_article_external">記事を外部ブラウザで開く</string>
+    <string name="tap_go_to_google_play">レビュータップ</string>
+    <string name="tap_request">要望を送るタップ</string>
+    <string name="cancel_review">レビューキャンセル</string>
+    <string name="show_review_dialog">レビューダイアログ</string>
     <string name="share_article">記事共有</string>
     <string name="read_all_articles">記事全既読</string>
     <string name="scroll_article_list">記事リストをスクロール</string>
