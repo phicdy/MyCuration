@@ -1,12 +1,14 @@
 <resources>
-	<color name="all_pressed">#727272</color>
+    <color name="all_pressed">#727272</color>
 
-	<color name="primary">#212121</color>
-	<color name="primary_dark">#000000</color>
-	<color name="accent">#388E3C</color>
-	<color name="text_primary">#ffffff</color>
+    <color name="primary">#212121</color>
+    <color name="primary_dark">#000000</color>
+    <color name="accent">#388E3C</color>
+    <color name="text_primary">#ffffff</color>
 
-	<color name="black">#000000</color>
-	<color name="black_transparent_12">#0F000000</color>
-	<color name="black_transparent_87">#DE000000</color>
+    <color name="white">#ffffff</color>
+
+    <color name="black">#000000</color>
+    <color name="black_transparent_12">#0F000000</color>
+    <color name="black_transparent_87">#DE000000</color>
 </resources>
