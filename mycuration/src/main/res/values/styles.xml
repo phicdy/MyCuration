@@ -9,18 +9,6 @@
         <item name="colorSecondary">@color/accent</item>
         <item name="colorOnSecondary">@color/text_primary</item>
         <item name="colorAccent">@color/accent</item>
-        <item name="actionBarStyle">@style/MyActionBar</item>
-    </style>
-
-    <!-- ActionBar styles -->
-    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="titleTextStyle">@style/MyActionBarTitleText</item>
-    </style>
-
-
-    <!-- ActionBar title text -->
-    <style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/text_primary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
