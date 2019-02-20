@@ -5,7 +5,7 @@
 
       <item
           android:id="@+id/add_curation"
-          android:icon="@drawable/ic_action_new"
+          android:icon="@drawable/ic_add"
           app:showAsAction="collapseActionView|ifRoom"
           android:title="@string/add_word"/>
 </menu>
