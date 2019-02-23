@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/menu_pc_mode"
-        android:icon="@drawable/ic_action_pc_mode"
+        android:icon="@drawable/ic_computer"
         app:showAsAction="ifRoom"
         android:title="@string/share"/>
 
