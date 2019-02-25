@@ -1,5 +1,4 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,8 +12,6 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_article_search_result"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
             style="@style/BaseToolbar"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -24,5 +21,5 @@
         android:name="com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"/>
+        android:layout_marginTop="?attr/actionBarSize" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

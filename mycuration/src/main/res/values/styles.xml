@@ -21,6 +21,8 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="BaseToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:theme">@style/ToolbarTheme</item>
         <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
         <item name="android:background">@color/white</item>
