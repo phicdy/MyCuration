@@ -2,8 +2,10 @@ package com.phicdy.mycuration.presentation.view.activity
 
 import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.MenuItem
 import android.webkit.WebView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.R
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
@@ -12,6 +14,11 @@ class LicenseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_license)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_license)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         title = getString(R.string.license)
         val webView = findViewById(R.id.license_web_view) as WebView
@@ -22,4 +29,11 @@ class LicenseActivity : AppCompatActivity() {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            android.R.id.home -> finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }
