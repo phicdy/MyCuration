@@ -28,6 +28,7 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.tracker.TrackerHelper
+import com.phicdy.mycuration.util.getThemeColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -118,13 +119,14 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
             }
         })
 
+        val color = getThemeColor(R.attr.colorPrimary)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(componentName))
         val searchAutoComplete = searchView
                 .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary))
+        searchAutoComplete.setTextColor(color)
+        searchAutoComplete.setHintTextColor(color)
 
 
         // Start tutorial at first time

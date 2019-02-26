@@ -19,7 +19,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.BuildConfig
@@ -33,6 +32,7 @@ import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.getThemeColor
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -310,10 +310,12 @@ class TopActivity :
                 return false
             }
         })
+
+        val color = getThemeColor(R.attr.colorPrimary)
         val searchAutoComplete = searchView!!
                 .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary))
+        searchAutoComplete.setTextColor(color)
+        searchAutoComplete.setHintTextColor(color)
 
         // Start tutorial at first time
         if (!BuildConfig.DEBUG) {

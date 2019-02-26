@@ -18,6 +18,7 @@ import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.getThemeColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -128,10 +129,11 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                 return false
             }
         })
+        val color = getThemeColor(R.attr.colorPrimary)
         val searchAutoComplete = searchView
                 .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary))
+        searchAutoComplete.setTextColor(color)
+        searchAutoComplete.setHintTextColor(color)
         return true
     }
 
