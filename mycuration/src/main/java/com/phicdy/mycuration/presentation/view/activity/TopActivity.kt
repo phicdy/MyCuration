@@ -13,8 +13,10 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -52,6 +54,7 @@ class TopActivity :
         CurationListFragment.OnCurationListFragmentListener,
         TopActivityView,
         CoroutineScope {
+
     companion object {
         const val FEED_ID = "FEED_ID"
         const val CURATION_ID = "CURATION_ID"
@@ -398,6 +401,22 @@ class TopActivity :
         startActivity(intent)
     }
 
+    override fun onListLongClicked(rssId: Int, feedTitle: String) {
+        val addView = View.inflate(this, R.layout.edit_feed_title, null)
+        val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
+        editTitleView.setText(feedTitle)
+
+        AlertDialog.Builder(this)
+                .setTitle(R.string.edit_rss_title)
+                .setView(addView)
+                .setPositiveButton(R.string.save) { _, _ ->
+                    val newTitle = editTitleView.text.toString()
+                    launch(context = coroutineContext) {
+                        presenter.onEditFeedOkButtonClicked(newTitle, rssId)
+                    }
+                }.setNegativeButton(R.string.cancel, null).show()
+    }
+
     override fun onAllUnreadClicked() {
         val intent = Intent(applicationContext, ArticlesListActivity::class.java)
         startActivity(intent)
@@ -455,6 +474,25 @@ class TopActivity :
             val uri = Uri.parse("market://details?id=$packageName")
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         } catch (e: Exception) {
+        }
+    }
+
+    override fun showEditFeedTitleEmptyErrorToast() {
+        Toast.makeText(this, getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showEditFeedFailToast() {
+        Toast.makeText(this, getString(R.string.edit_rss_title_error), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showEditFeedSuccessToast() {
+        Toast.makeText(this, getString(R.string.edit_rss_title_success), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun updateFeedTitle(rssId: Int, newTitle: String) {
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
+        if (fragment is RssListFragment) {
+            fragment.updateFeedTitle(rssId, newTitle)
         }
     }
 }

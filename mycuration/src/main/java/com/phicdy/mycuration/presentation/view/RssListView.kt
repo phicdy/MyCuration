@@ -6,14 +6,11 @@ import java.util.ArrayList
 
 interface RssListView {
     fun showDeleteFeedAlertDialog(position: Int)
-    fun showEditTitleDialog(position: Int, feedTitle: String)
+    fun showEditTitleDialog(rssId: Int, feedTitle: String)
     fun setRefreshing(doScroll: Boolean)
     fun init(feeds: ArrayList<Feed>)
     fun setTotalUnreadCount(count: Int)
     fun onRefreshCompleted()
-    fun showEditFeedTitleEmptyErrorToast()
-    fun showEditFeedFailToast()
-    fun showEditFeedSuccessToast()
     fun showDeleteSuccessToast()
     fun showDeleteFailToast()
     fun showAddFeedSuccessToast()

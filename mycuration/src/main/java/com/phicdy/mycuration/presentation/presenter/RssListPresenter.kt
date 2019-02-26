@@ -76,7 +76,10 @@ class RssListPresenter(private val view: RssListView,
     }
 
     fun onEditFeedMenuClicked(position: Int) {
-        view.showEditTitleDialog(position, getFeedTitleAtPosition(position))
+        view.showEditTitleDialog(
+                rssId = getFeedIdAtPosition(position),
+                feedTitle = getFeedTitleAtPosition(position)
+        )
     }
 
     private fun getFeedTitleAtPosition(position: Int): String {
@@ -90,22 +93,7 @@ class RssListPresenter(private val view: RssListView,
         }
     }
 
-    suspend fun onEditFeedOkButtonClicked(newTitle: String, position: Int) = coroutineScope {
-        if (newTitle.isBlank()) {
-            view.showEditFeedTitleEmptyErrorToast()
-        } else {
-            val updatedFeedId = getFeedIdAtPosition(position)
-            val numOfUpdate = rssRepository.saveNewTitle(updatedFeedId, newTitle)
-            if (numOfUpdate == 1) {
-                view.showEditFeedSuccessToast()
-                updateFeedTitle(updatedFeedId, newTitle)
-            } else {
-                view.showEditFeedFailToast()
-            }
-        }
-    }
-
-    private fun updateFeedTitle(feedId: Int, newTitle: String) {
+    fun updateFeedTitle(feedId: Int, newTitle: String) {
         for (feed in allFeeds) {
             if (feed.id == feedId) {
                 feed.title = newTitle

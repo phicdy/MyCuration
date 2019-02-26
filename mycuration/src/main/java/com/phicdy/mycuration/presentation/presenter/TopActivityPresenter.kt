@@ -91,4 +91,19 @@ class TopActivityPresenter(private val view: TopActivityView,
         helper.setReviewed()
         view.goToGooglePlay()
     }
+
+    suspend fun onEditFeedOkButtonClicked(newTitle: String, rssId: Int) = coroutineScope {
+        if (newTitle.isBlank()) {
+            view.showEditFeedTitleEmptyErrorToast()
+        } else {
+            val numOfUpdate = rssRepository.saveNewTitle(rssId, newTitle)
+            if (numOfUpdate == 1) {
+                view.showEditFeedSuccessToast()
+                view.updateFeedTitle(rssId, newTitle)
+            } else {
+                view.showEditFeedFailToast()
+            }
+        }
+    }
+
 }

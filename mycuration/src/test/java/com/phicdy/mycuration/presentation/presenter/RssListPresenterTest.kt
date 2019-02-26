@@ -145,7 +145,7 @@ class RssListPresenterTest {
     @Test
     fun `when onResume and RSS exist and auto update in main UI is enabled and after interval then show refreshing view`() = runBlocking {
         whenever(mockPref.getBoolean(anyString(), any())).thenReturn(true)
-        whenever(mockPref.getLong(anyString(), anyLong())).thenReturn(System.currentTimeMillis()-1000*60)
+        whenever(mockPref.getLong(anyString(), anyLong())).thenReturn(System.currentTimeMillis() - 1000 * 60)
         whenever(networkTaskManager.updateAllFeeds(allFeeds)).thenReturn(Flowable.just(mock()))
         presenter.resume()
         verify(view, times(1)).setRefreshing(true)
@@ -201,7 +201,7 @@ class RssListPresenterTest {
         // Default hidden option is enaled
         presenter.resume()
         presenter.onEditFeedMenuClicked(FIRST_RSS_POSITION)
-        verify(view, times(1)).showEditTitleDialog(FIRST_RSS_POSITION, SECOND_RSS_TITLE)
+        verify(view, times(1)).showEditTitleDialog(SECOND_RSS_ID, SECOND_RSS_TITLE)
     }
 
     @Test
@@ -210,56 +210,6 @@ class RssListPresenterTest {
         presenter.onRssFooterClicked()
         presenter.onEditFeedMenuClicked(FIRST_RSS_POSITION)
         verify(view, times(1)).showEditTitleDialog(FIRST_RSS_POSITION, FIRST_RSS_TITLE)
-    }
-
-    @Test
-    fun `when edit ok button is clicked and new title is empty then show error toast`() = runBlocking {
-        presenter.onEditFeedOkButtonClicked("", 0)
-        verify(view, times(1)).showEditFeedTitleEmptyErrorToast()
-    }
-
-    @Test
-    fun `when edit ok button is clicked and new title is blank then show error toast`() = runBlocking {
-        presenter.onEditFeedOkButtonClicked("   ", 0)
-        verify(view, times(1)).showEditFeedTitleEmptyErrorToast()
-    }
-
-    @Test
-    fun `when edit ok button is clicked and succeeds then show success toast`() = runBlocking {
-        whenever(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(1)
-        presenter.onEditFeedOkButtonClicked("newTitle", 0)
-        verify(view, times(1)).showEditFeedSuccessToast()
-    }
-
-    @Test
-    fun `when edit ok button is clicked and succeeds then refresh the list`() = runBlocking {
-        whenever(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(1)
-        presenter.onEditFeedOkButtonClicked("newTitle", 0)
-        verify(view, times(1)).notifyDataSetChanged()
-    }
-
-    @Test
-    fun `when edit ok button is clicked and succeeds then the title will be updated`() = runBlocking {
-        whenever(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(1)
-        presenter.resume() // init list
-        presenter.onEditFeedOkButtonClicked("newTitle", 0)
-        // Current status is hidden, first position RSS is first one in hidden RSS list and second one in all RSS list
-        assertThat(presenter.unreadOnlyFeeds)
-                .hasSize(1)
-                .extracting("title")
-                .contains("newTitle")
-        assertThat(presenter.allFeeds)
-                .hasSize(2)
-                .extracting("title")
-                .containsExactly(FIRST_RSS_TITLE, "newTitle")
-        return@runBlocking
-    }
-
-    @Test
-    fun `when edit ok button is clicked and fails then show error toast`() = runBlocking {
-        whenever(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(0)
-        presenter.onEditFeedOkButtonClicked("newTitle", 0)
-        verify(view, times(1)).showEditFeedFailToast()
     }
 
     @Test

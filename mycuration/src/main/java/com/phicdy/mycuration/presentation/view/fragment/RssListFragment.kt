@@ -3,18 +3,17 @@ package com.phicdy.mycuration.presentation.view.fragment
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.Fragment
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.di.GlideApp
@@ -61,20 +60,8 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         }
     }
 
-    override fun showEditTitleDialog(position: Int, feedTitle: String) {
-        val addView = View.inflate(activity, R.layout.edit_feed_title, null)
-        val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
-        editTitleView.setText(feedTitle)
-
-        AlertDialog.Builder(activity)
-                .setTitle(R.string.edit_rss_title)
-                .setView(addView)
-                .setPositiveButton(R.string.save) { _, _ ->
-                    val newTitle = editTitleView.text.toString()
-                    launch(context = coroutineContext) {
-                        presenter.onEditFeedOkButtonClicked(newTitle, position)
-                    }
-                }.setNegativeButton(R.string.cancel, null).show()
+    override fun showEditTitleDialog(rssId: Int, feedTitle: String) {
+        mListener?.onListLongClicked(rssId, feedTitle)
     }
 
     override fun setRefreshing(doScroll: Boolean) {
@@ -94,18 +81,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
 
     override fun onRefreshCompleted() {
         swipeRefreshLayout.isRefreshing = false
-    }
-
-    override fun showEditFeedTitleEmptyErrorToast() {
-        Toast.makeText(activity, getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showEditFeedFailToast() {
-        Toast.makeText(activity, getString(R.string.edit_rss_title_error), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showEditFeedSuccessToast() {
-        Toast.makeText(activity, getString(R.string.edit_rss_title_success), Toast.LENGTH_SHORT).show()
     }
 
     override fun showDeleteSuccessToast() {
@@ -215,14 +190,19 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         mListener = null
     }
 
+    fun updateFeedTitle(rssId: Int, newTitle: String) {
+        presenter.updateFeedTitle(rssId, newTitle)
+    }
+
     interface OnFeedListFragmentListener {
         fun onListClicked(feedId: Int)
+        fun onListLongClicked(rssId: Int, feedTitle: String)
         fun onAllUnreadClicked()
     }
 
     private inner class RssFeedListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            return when(viewType) {
+            return when (viewType) {
                 VIEW_TYPE_RSS -> {
                     val view = LayoutInflater.from(parent.context)
                             .inflate(R.layout.feeds_list, parent, false)
@@ -271,7 +251,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
 
         private inner class RssViewHolder(
                 itemView: View
-        ): RecyclerView.ViewHolder(itemView), RssItemView.Content {
+        ) : RecyclerView.ViewHolder(itemView), RssItemView.Content {
             private val feedIcon = itemView.findViewById(R.id.feedIcon) as ImageView
             private val feedTitle = itemView.findViewById(R.id.feedTitle) as TextView
             private val feedCount = itemView.findViewById(R.id.feedCount) as TextView
@@ -300,7 +280,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
 
         private inner class RssFooterView(
                 itemView: View
-        ): RecyclerView.ViewHolder(itemView), RssItemView.Footer {
+        ) : RecyclerView.ViewHolder(itemView), RssItemView.Footer {
             internal val title = itemView.findViewById<TextView>(R.id.tv_rss_footer_title)
             override fun showAllView() {
                 title.setText(R.string.show_all_rsses)
