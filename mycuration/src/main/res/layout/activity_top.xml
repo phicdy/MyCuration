@@ -36,6 +36,8 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:elevation="@dimen/elevation_bottom_navigation"
+        app:itemIconTint="@color/item_bottom_navigation"
+        app:itemTextColor="@color/item_bottom_navigation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_insetEdge="bottom"
         app:menu="@menu/menu_top_bottom_navigation" />
