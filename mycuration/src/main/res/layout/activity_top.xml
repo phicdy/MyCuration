@@ -34,7 +34,7 @@
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="@color/white"
         app:elevation="@dimen/elevation_bottom_navigation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_insetEdge="bottom"
