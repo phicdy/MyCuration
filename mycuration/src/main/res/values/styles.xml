@@ -1,8 +1,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
-        <!-- 500 -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/primary</item>
         <!-- 700 -->
         <item name="colorPrimaryDark">@color/primary_dark</item>
