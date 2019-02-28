@@ -13,6 +13,8 @@ class SettingPresenter(
         private val addtionalSettingApi: AdditionalSettingApi,
         private val updateIntervalHourItems: Array<String>,
         private val updateIntervalStringItems: Array<String>,
+        private val themeItems: Array<String>,
+        private val themeStringItems: Array<String>,
         private val allReadBehaviorItems: Array<String>,
         private val allReadBehaviorStringItems: Array<String>,
         private val launchTabItems: Array<String>,
@@ -74,6 +76,13 @@ class SettingPresenter(
                 break
             }
         }
+
+        for (i in themeItems.indices) {
+            if (Integer.valueOf(themeItems[i]) == helper.theme) {
+                view.setTheme(i, themeStringItems[i])
+                break
+            }
+        }
     }
 
     fun updateUpdateInterval(intervalHour: Int,
@@ -116,6 +125,18 @@ class SettingPresenter(
         for (i in swipeDirectionItems.indices) {
             if (Integer.valueOf(swipeDirectionItems[i]) == swipeDirection) {
                 view.setSwipeDirection(i, swipeDirectionStringItems[i])
+                break
+            }
+        }
+    }
+
+    fun updateTheme(theme: Int) {
+        helper.theme = theme
+
+        // Refresh summary
+        for (i in themeItems.indices) {
+            if (Integer.valueOf(themeItems[i]) == theme) {
+                view.setTheme(i, themeStringItems[i])
                 break
             }
         }

@@ -44,6 +44,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     private lateinit var prefAllReadBehavior: ListPreference
     private lateinit var prefSwipeDirection: ListPreference
     private lateinit var prefAutoUpdateInMainUi: SwitchPreference
+    private lateinit var prefTheme: ListPreference
     private lateinit var prefArticleSort: SwitchPreference
     private lateinit var prefInternalBrowser: SwitchPreference
     private lateinit var prefLicense: Preference
@@ -83,6 +84,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     override fun initView() {
         prefUpdateInterval = findPreference(getString(R.string.key_update_interval)) as ListPreference
         prefAutoUpdateInMainUi = findPreference(getString(R.string.key_auto_update_in_main_ui)) as SwitchPreference
+        prefTheme = findPreference(getString(R.string.key_theme)) as ListPreference
         prefArticleSort = findPreference(getString(R.string.key_article_sort)) as SwitchPreference
         prefInternalBrowser = findPreference(getString(R.string.key_internal_browser)) as SwitchPreference
         prefAllReadBehavior = findPreference(getString(R.string.key_all_read_behavior)) as ListPreference
@@ -118,6 +120,10 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     val swipeDirectionStringItems = resources.getStringArray(R.array.swipe_direction_items)
                     TrackerHelper.sendSettingEvent(getString(R.string.change_swipe_direction),
                             swipeDirectionStringItems[Integer.valueOf(prefSwipeDirection.value)])
+                }
+                getString(R.string.key_theme) -> {
+                    val theme = Integer.valueOf(prefTheme.value)
+                    presenter.updateTheme(theme)
                 }
                 getString(R.string.key_article_sort) -> {
                     val isNewArticleTop = prefArticleSort.isChecked
@@ -207,6 +213,11 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     override fun setAutoUpdateInMainUi(isAutoUpdateInMainUi: Boolean) {
         prefAutoUpdateInMainUi.isChecked = isAutoUpdateInMainUi
+    }
+
+    override fun setTheme(index: Int, theme: String) {
+        prefTheme.setValueIndex(index)
+        prefTheme.summary = theme
     }
 
     override fun setArticleSort(isNewArticleTop: Boolean) {

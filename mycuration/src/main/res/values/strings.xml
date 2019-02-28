@@ -74,6 +74,7 @@
     <string name="interval">自動更新の頻度</string>
     <string name="auto_update_in_main_ui">起動時に更新</string>
     <string name="not_auto_update_in_main_ui">起動時に更新しない</string>
+    <string name="theme">テーマ</string>
     <string name="article_sort">新しい記事を先頭</string>
     <string name="not_article_sort">新しい記事を先頭にしない</string>
     <string name="all_read_behavior">全ての記事を既読にした時の動作</string>
@@ -89,6 +90,7 @@
     <string name="add_test_rss">テストRSS挿入</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_launch_tab">keyLaunchTab</string>
+    <string name="key_theme">keyTheme</string>
     <string name="key_article_sort">keyArticleSort</string>
     <string name="key_auto_update_in_main_ui">keyAutoUpdateInMainUi</string>
     <string name="key_internal_browser">keyInternalBrowser</string>

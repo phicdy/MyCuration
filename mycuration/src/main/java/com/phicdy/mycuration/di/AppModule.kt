@@ -141,6 +141,8 @@ val appModule = module {
     scope("setting") { (view: SettingView) ->
         val updateIntervalHourItems = get<Context>().resources.getStringArray(R.array.update_interval_items_values)
         val updateIntervalStringItems = get<Context>().resources.getStringArray(R.array.update_interval_items)
+        val themeItems = get<Context>().resources.getStringArray(R.array.theme_items_values)
+        val themeStringItems = get<Context>().resources.getStringArray(R.array.theme_items)
         val allReadBehaviorItems = get<Context>().resources.getStringArray(R.array.all_read_behavior_values)
         val allReadBehaviorStringItems = get<Context>().resources.getStringArray(R.array.all_read_behavior)
         val launchTabItems = get<Context>().resources.getStringArray(R.array.launch_tab_items_values)
@@ -153,6 +155,8 @@ val appModule = module {
                 addtionalSettingApi = get(),
                 updateIntervalHourItems = updateIntervalHourItems,
                 updateIntervalStringItems = updateIntervalStringItems,
+                themeItems = themeItems,
+                themeStringItems = themeStringItems,
                 allReadBehaviorStringItems = allReadBehaviorStringItems,
                 allReadBehaviorItems = allReadBehaviorItems,
                 launchTabItems = launchTabItems,

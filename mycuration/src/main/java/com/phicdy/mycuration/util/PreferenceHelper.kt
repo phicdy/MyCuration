@@ -10,6 +10,7 @@ object PreferenceHelper {
     private const val PREF_KEY = "FilterPref"
     private const val KEY_AUTO_UPDATE_INTERVAL = "autoUpdateInterval"
     private const val KEY_AUTO_UPDATE_IN_MAIN_UI = "autoUpdateInMainUi"
+    private const val KEY_THEME = "theme"
     private const val KEY_SORT_NEW_ARTICLE_TOP = "sortNewArticleTop"
     private const val KEY_ALL_READ_BACK = "allReadBack"
     private const val KEY_SEARCH_FEED_ID = "searchFeedId"
@@ -27,6 +28,10 @@ object PreferenceHelper {
     const val LAUNCH_CURATION = 0
     const val LAUNCH_RSS = 1
     const val LAUNCH_TAB_DEFAULT = LAUNCH_CURATION
+    const val THEME_LIGHT = 0
+    const val THEME_DARK = 1
+    const val THEME_DEFAULT = THEME_LIGHT
+    private val THEMES = intArrayOf(THEME_LIGHT, THEME_DARK)
     private val SWIPE_DIRECTIONS = intArrayOf(SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT)
     private val LAUNCH_TABS = intArrayOf(LAUNCH_CURATION, LAUNCH_RSS)
     private const val DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60
@@ -54,6 +59,18 @@ object PreferenceHelper {
         get() = pref.getLong(KEY_LAST_UPDATE_DATE, 0)
         set(lastUpdateDate) {
             pref.put(KEY_LAST_UPDATE_DATE, lastUpdateDate)
+        }
+
+    var theme: Int
+        get() = if (pref.contains(KEY_THEME)) {
+            pref.getInt(KEY_THEME, THEME_DEFAULT)
+        } else THEME_DEFAULT
+        set(newTheme) {
+            for (theme in THEMES) {
+                if (theme == newTheme) {
+                    pref.put(KEY_THEME, theme)
+                }
+            }
         }
 
     var sortNewArticleTop: Boolean
