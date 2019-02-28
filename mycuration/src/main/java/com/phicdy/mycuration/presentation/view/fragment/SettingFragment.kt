@@ -52,6 +52,11 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     private lateinit var prefRequest: Preference
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
+    private lateinit var fragmentListener: OnSettingFragmentListener
+
+    interface OnSettingFragmentListener {
+        fun onThemeChanged(mode: Int)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +68,15 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
             addPreferencesFromResource(R.xml.setting_fragment_debug)
         } else {
             addPreferencesFromResource(R.xml.setting_fragment)
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            fragmentListener = context as OnSettingFragmentListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must implement OnSettingFragmentListener")
         }
     }
 
@@ -215,9 +229,10 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         prefAutoUpdateInMainUi.isChecked = isAutoUpdateInMainUi
     }
 
-    override fun setTheme(index: Int, theme: String) {
+    override fun setTheme(index: Int, theme: String, mode: Int) {
         prefTheme.setValueIndex(index)
         prefTheme.summary = theme
+        fragmentListener.onThemeChanged(mode)
     }
 
     override fun setArticleSort(isNewArticleTop: Boolean) {
@@ -247,3 +262,4 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         startActivity(Intent(activity, LicenseActivity::class.java))
     }
 }
+

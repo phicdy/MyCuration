@@ -19,6 +19,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -85,7 +86,6 @@ class TopActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
-
         bindScope(getOrCreateScope("top"))
         presenter.create()
         if (savedInstanceState == null) {
@@ -283,6 +283,11 @@ class TopActivity :
             presenter.resume()
         }
         navigationView.setOnNavigationItemReselectedListener { }
+        delegate.setLocalNightMode(when (PreferenceHelper.theme) {
+            PreferenceHelper.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+            PreferenceHelper.THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_NO
+        })
     }
 
     override fun onDestroy() {

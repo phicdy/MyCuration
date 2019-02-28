@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
+import androidx.appcompat.app.AppCompatDelegate
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.view.SettingView
@@ -79,7 +80,12 @@ class SettingPresenter(
 
         for (i in themeItems.indices) {
             if (Integer.valueOf(themeItems[i]) == helper.theme) {
-                view.setTheme(i, themeStringItems[i])
+                val mode = when (i) {
+                    PreferenceHelper.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+                    PreferenceHelper.THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+                    else -> AppCompatDelegate.MODE_NIGHT_NO
+                }
+                view.setTheme(i, themeStringItems[i], mode)
                 break
             }
         }
@@ -136,7 +142,12 @@ class SettingPresenter(
         // Refresh summary
         for (i in themeItems.indices) {
             if (Integer.valueOf(themeItems[i]) == theme) {
-                view.setTheme(i, themeStringItems[i])
+                val mode = when (i) {
+                    PreferenceHelper.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+                    PreferenceHelper.THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+                    else -> AppCompatDelegate.MODE_NIGHT_NO
+                }
+                view.setTheme(i, themeStringItems[i], mode)
                 break
             }
         }

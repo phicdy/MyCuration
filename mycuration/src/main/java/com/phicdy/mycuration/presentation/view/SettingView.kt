@@ -5,7 +5,7 @@ interface SettingView {
     fun initListener()
     fun setUpdateInterval(index: Int, summary: String)
     fun setAutoUpdateInMainUi(isAutoUpdateInMainUi: Boolean)
-    fun setTheme(index: Int, theme: String)
+    fun setTheme(index: Int, theme: String, mode: Int)
     fun setArticleSort(isNewArticleTop: Boolean)
     fun setInternalBrowser(isEnabled: Boolean)
     fun setAllReadBehavior(index: Int, summary: String)
