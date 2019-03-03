@@ -6,18 +6,19 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
-import androidx.recyclerview.widget.ItemTouchHelper.LEFT
-import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
+import androidx.recyclerview.widget.ItemTouchHelper.LEFT
+import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.di.GlideApp
@@ -51,9 +52,11 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         get() = job + Dispatchers.Main
 
     private val presenter: ArticleListPresenter by inject {
-        val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
+        val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID)
+                ?: Feed.ALL_FEED_ID
         val curationId = activity?.intent?.getIntExtra(TopActivity.CURATION_ID,
-                ArticleListPresenter.DEFAULT_CURATION_ID) ?: ArticleListPresenter.DEFAULT_CURATION_ID
+                ArticleListPresenter.DEFAULT_CURATION_ID)
+                ?: ArticleListPresenter.DEFAULT_CURATION_ID
         val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
         parametersOf(
                 feedId,
@@ -84,7 +87,8 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
     override val isBottomVisible: Boolean
         get() {
-            val isLastItemVisible = recyclerView.adapter?.let { lastVisiblePosition == it.itemCount - 1 } ?: false
+            val isLastItemVisible = recyclerView.adapter?.let { lastVisiblePosition == it.itemCount - 1 }
+                    ?: false
             val chilidCount = recyclerView.childCount
             if (chilidCount < 1) return false
             val lastItem = recyclerView.getChildAt(chilidCount - 1) ?: return false
@@ -102,7 +106,8 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         job = Job()
 
         // Set swipe direction
-        val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
+        val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID)
+                ?: Feed.ALL_FEED_ID
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(feedId)
 
@@ -329,17 +334,19 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
             }
 
             fun changeColorToRead() {
-                articleTitle.setTextColor(Color.GRAY)
-                articlePostedTime.setTextColor(Color.GRAY)
-                articlePoint.setTextColor(Color.GRAY)
-                feedTitleView.setTextColor(Color.GRAY)
+                val color = ContextCompat.getColor(itemView.context, R.color.gray)
+                articleTitle.setTextColor(color)
+                articlePostedTime.setTextColor(color)
+                articlePoint.setTextColor(color)
+                feedTitleView.setTextColor(color)
             }
 
             fun changeColorToUnread() {
-                articleTitle.setTextColor(Color.BLACK)
-                articlePostedTime.setTextColor(Color.BLACK)
-                articlePoint.setTextColor(Color.BLACK)
-                feedTitleView.setTextColor(Color.BLACK)
+                val color = ContextCompat.getColor(itemView.context, R.color.black)
+                articleTitle.setTextColor(color)
+                articlePostedTime.setTextColor(color)
+                articlePoint.setTextColor(color)
+                feedTitleView.setTextColor(color)
             }
         }
     }

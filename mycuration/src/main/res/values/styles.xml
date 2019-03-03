@@ -9,6 +9,7 @@
         <item name="colorSecondary">@color/accent</item>
         <item name="colorOnSecondary">@color/color_secondary</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -60,5 +61,32 @@
     <style name="AppTheme.IconListItem.EndText">
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.Article" />
+
+    <style name="AppTheme.Article.Title">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.Article.Rss">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AppTheme.Article.Url">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="AppTheme.Article.Date">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black_transparent_87</item>
+    </style>
+
+    <style name="AppTheme.Article.Point">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black_transparent_87</item>
     </style>
 </resources>

@@ -9,26 +9,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/articleTitle"
+            style="@style/AppTheme.Article.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:gravity="center_vertical"
-            android:minHeight="24dp" />
+            android:minHeight="24dp"
+            tools:text="Article title" />
         <!-- android:onClick="displayArticle" -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginRight="8dp"
+            android:layout_marginBottom="4dp"
             android:orientation="horizontal"
             tools:ignore="UseCompoundDrawables">
 
@@ -37,45 +39,45 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_rss"
-                android:contentDescription="@string/icon" />
+                android:contentDescription="@string/icon"
+                android:src="@drawable/ic_rss" />
 
             <TextView
                 android:id="@+id/feedTitle"
+                style="@style/AppTheme.Article.Rss"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:text="@string/sample_rss_title"
                 android:layout_gravity="center_vertical"
-                android:textSize="12sp" />
+                android:layout_marginLeft="4dp"
+                android:textSize="12sp"
+                tools:text="@string/sample_rss_title" />
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_articleUrl"
+            style="@style/AppTheme.Article.Url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
             android:layout_gravity="center_vertical"
-            android:textSize="12sp"
-            android:maxLines="2"
-            android:ellipsize="end"
+            android:layout_marginLeft="8dp"
             tools:text="@string/sample_article_url" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/articlePostedTime"
+                style="@style/AppTheme.Article.Date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="90"
-                android:textSize="12sp" />
+                tools:text="2019/01/01 12:00:00" />
 
             <ImageView
                 android:id="@+id/hatenaIcon"
@@ -87,16 +89,17 @@
 
             <TextView
                 android:id="@+id/articlePoint"
+                style="@style/AppTheme.Article.Point"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="4dp"
                 android:layout_weight="10"
-                android:textSize="12sp" />
+                tools:text="100" />
         </LinearLayout>
     </LinearLayout>
 
-    <View 
+    <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#cccccc" />
