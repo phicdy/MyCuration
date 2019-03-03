@@ -9,7 +9,7 @@
         android:id="@+id/cl_all_unread"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/view_selected"
+        android:background="?android:attr/selectableItemBackground"
         android:orientation="horizontal"
         apps:layout_constraintEnd_toEndOf="parent"
         apps:layout_constraintStart_toStartOf="parent"

@@ -1,6 +1,4 @@
 <resources>
-    <color name="all_pressed">#727272</color>
-
     <color name="primary">#212121</color>
     <color name="primary_dark">#000000</color>
     <color name="accent">#388E3C</color>
