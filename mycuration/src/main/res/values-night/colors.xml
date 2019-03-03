@@ -1,0 +1,17 @@
+<resources>
+    <color name="all_pressed">#727272</color>
+
+    <color name="primary">#388E3C</color>
+    <color name="primary_dark">#000000</color>
+    <color name="accent">#388E3C</color>
+    <color name="color_secondary">#ffffff</color>
+    <color name="icon_tint">#ffffff</color>
+
+    <color name="white">#000000</color>
+
+    <color name="black">#ffffff</color>
+    <color name="black_transparent_12">#0fffffff</color>
+    <color name="black_transparent_87">#deffffff</color>
+
+    <color name="gray">#757575</color>
+</resources>
