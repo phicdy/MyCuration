@@ -7,6 +7,7 @@ import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.R
+import com.phicdy.mycuration.util.changeTheme
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 class LicenseActivity : AppCompatActivity() {
@@ -36,4 +37,10 @@ class LicenseActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
+    }
+
 }

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
+import com.phicdy.mycuration.util.changeTheme
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentListener {
@@ -33,6 +34,11 @@ class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentLi
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
     }
 
     override fun onThemeChanged(mode: Int) {

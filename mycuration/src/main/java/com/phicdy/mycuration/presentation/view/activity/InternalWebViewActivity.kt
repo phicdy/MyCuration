@@ -3,18 +3,19 @@ package com.phicdy.mycuration.presentation.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.widget.NestedScrollView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.presenter.InternalWebViewPresenter
 import com.phicdy.mycuration.presentation.view.InternalWebViewView
+import com.phicdy.mycuration.util.changeTheme
 
 class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
 
@@ -22,6 +23,7 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
     private lateinit var webView: WebView
     private lateinit var scrollView: NestedScrollView
     private lateinit var presenter: InternalWebViewPresenter
+
     companion object {
         const val KEY_OPEN_URL = "openUrl"
         const val KEY_RSS_TITLE = "rssTitle"
@@ -42,7 +44,7 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
                 menu.findItem(R.id.menu_pc_mode).isVisible = false
                 menu.findItem(R.id.menu_mobile_mode).isVisible = true
             } else {
-                menu.findItem(R.id.menu_pc_mode).isVisible =  true
+                menu.findItem(R.id.menu_pc_mode).isVisible = true
                 menu.findItem(R.id.menu_mobile_mode).isVisible = false
             }
         }
@@ -64,6 +66,11 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
     }
 
     @SuppressLint("SetJavaScriptEnabled")

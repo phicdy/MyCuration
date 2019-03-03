@@ -8,13 +8,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import androidx.annotation.StringRes
-import androidx.annotation.UiThread
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -23,11 +16,18 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.annotation.StringRes
+import androidx.annotation.UiThread
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.tracker.TrackerHelper
+import com.phicdy.mycuration.util.changeTheme
 import com.phicdy.mycuration.util.getThemeColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -182,6 +182,11 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
             val query = intent.getStringExtra(SearchManager.QUERY) ?: return
             launch { presenter.handle(query) }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
     }
 
     override fun onPause() {

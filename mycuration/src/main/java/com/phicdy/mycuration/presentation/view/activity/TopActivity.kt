@@ -19,7 +19,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -35,6 +34,7 @@ import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.changeTheme
 import com.phicdy.mycuration.util.getThemeColor
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
@@ -283,11 +283,7 @@ class TopActivity :
             presenter.resume()
         }
         navigationView.setOnNavigationItemReselectedListener { }
-        delegate.setLocalNightMode(when (PreferenceHelper.theme) {
-            PreferenceHelper.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
-            PreferenceHelper.THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
-            else -> AppCompatDelegate.MODE_NIGHT_NO
-        })
+        changeTheme()
     }
 
     override fun onDestroy() {

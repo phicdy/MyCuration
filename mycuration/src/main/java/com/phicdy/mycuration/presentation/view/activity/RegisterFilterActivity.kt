@@ -3,19 +3,20 @@ package com.phicdy.mycuration.presentation.view.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputEditText
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.textfield.TextInputEditText
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
+import com.phicdy.mycuration.util.changeTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -95,6 +96,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
             else -> launch { presenter.optionItemClicked(item) }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
     }
 
     override fun filterKeyword(): String {
