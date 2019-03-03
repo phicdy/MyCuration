@@ -66,11 +66,11 @@
     <style name="AppTheme.Article" />
 
     <style name="AppTheme.Article.Title">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="AppTheme.Article.Rss">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="AppTheme.Article.Url">
