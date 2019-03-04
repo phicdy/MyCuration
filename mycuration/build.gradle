@@ -117,6 +117,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
+    androidTestImplementation 'org.assertj:assertj-core:3.11.1'
 
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'com.google.android.material:material:1.1.0-alpha02'
