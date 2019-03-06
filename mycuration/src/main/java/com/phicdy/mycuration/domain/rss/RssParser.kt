@@ -193,8 +193,7 @@ class RssParser {
                             val title = TextUtil.removeLineFeed(parser.nextText())
                             article.title = title
                         }
-                        if (itemFlag && tag == "link"
-                                && (article.url == "" || article.url == "")) {
+                        if (itemFlag && tag == "link" && article.url.isBlank()) {
                             // RSS 1.0 & 2.0
                             var articleURL: String? = parser.nextText()
                             if (articleURL == null || articleURL == "") {
