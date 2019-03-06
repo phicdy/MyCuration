@@ -209,7 +209,7 @@ class RssParser {
                             }
                         }
                         if (itemFlag
-                                && (tag == "date" || tag == "pubDate" || tag == "published")
+                                && (tag == "date" || tag == "pubDate" || tag == "published" || tag == "updated")
                                 && article.postedDate == 0L) {
                             val date = parser.nextText()
                             article.postedDate = DateParser.changeToJapaneseDate(date)
