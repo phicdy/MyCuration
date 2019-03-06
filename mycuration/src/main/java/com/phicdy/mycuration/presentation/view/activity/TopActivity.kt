@@ -402,7 +402,7 @@ class TopActivity :
         startActivity(intent)
     }
 
-    override fun onListLongClicked(rssId: Int, feedTitle: String) {
+    override fun onEditRssClicked(rssId: Int, feedTitle: String) {
         val addView = View.inflate(this, R.layout.edit_feed_title, null)
         val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
         editTitleView.setText(feedTitle)

@@ -61,7 +61,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
     }
 
     override fun showEditTitleDialog(rssId: Int, feedTitle: String) {
-        mListener?.onListLongClicked(rssId, feedTitle)
+        mListener?.onEditRssClicked(rssId, feedTitle)
     }
 
     override fun setRefreshing(doScroll: Boolean) {
@@ -196,7 +196,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
 
     interface OnFeedListFragmentListener {
         fun onListClicked(feedId: Int)
-        fun onListLongClicked(rssId: Int, feedTitle: String)
+        fun onEditRssClicked(rssId: Int, feedTitle: String)
         fun onAllUnreadClicked()
     }
 
