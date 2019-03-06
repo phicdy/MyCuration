@@ -193,18 +193,23 @@ class RssParser {
                             val title = TextUtil.removeLineFeed(parser.nextText())
                             article.title = title
                         }
-                        if (itemFlag && tag == "link"
-                                && (article.url == "" || article.url == "")) {
+                        if (itemFlag && tag == "link" && article.url.isBlank()) {
                             // RSS 1.0 & 2.0
-                            var articleURL: String? = parser.nextText()
-                            if (articleURL == null || articleURL == "") {
+                            val href = parseAtomAriticleUrl(parser)
+                            if (href.isNotBlank() && href != "\n") {
                                 // Atom
-                                articleURL = parseAtomAriticleUrl(parser)
+                                article.url = href
+                            } else {
+                                val nextText = parser.nextText() ?: ""
+                                if (nextText.isNotBlank() && nextText != "\n") {
+                                    article.url = nextText
+                                } else {
+                                    article.url = parser.text
+                                }
                             }
-                            article.url = articleURL
                         }
                         if (itemFlag
-                                && (tag == "date" || tag == "pubDate" || tag == "published")
+                                && (tag == "date" || tag == "pubDate" || tag == "published" || tag == "updated")
                                 && article.postedDate == 0L) {
                             val date = parser.nextText()
                             article.postedDate = DateParser.changeToJapaneseDate(date)
@@ -257,29 +262,10 @@ class RssParser {
     private fun parseAtomAriticleUrl(parser: XmlPullParser): String {
         var attributeName: String?
         var attributeValue: String?
-        var isAlternate = false
-        var isTextHtml = false
-        var isHref = false
         for (i in 0 until parser.attributeCount) {
             attributeName = parser.getAttributeName(i)
             attributeValue = parser.getAttributeValue(i)
-            if (attributeName == null || attributeValue == null) {
-                continue
-            }
-
-            if (attributeName == "rel" && attributeValue == "alternate") {
-                isAlternate = true
-                continue
-            }
-            if (attributeName == "type" && attributeValue == "text/html") {
-                isTextHtml = true
-                continue
-            }
             if (attributeName == "href") {
-                isHref = true
-            }
-
-            if (isAlternate && isTextHtml && isHref) {
                 if (attributeValue.startsWith("http://") || attributeValue.startsWith("https://")) {
                     return attributeValue
                 }

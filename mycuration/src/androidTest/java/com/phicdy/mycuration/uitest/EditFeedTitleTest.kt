@@ -1,9 +1,9 @@
 package com.phicdy.mycuration.uitest
 
-import androidx.test.InstrumentationRegistry
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
@@ -51,7 +51,7 @@ class EditFeedTitleTest : UiTest() {
         // Open yahoo RSS URL
         val urlEditText = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000)
-        assertNotNull("URL edit text was not found", urlEditText )
+        assertNotNull("URL edit text was not found", urlEditText)
         val url = "http://news.yahoo.co.jp/pickup/rss.xml"
         urlEditText.text = url
         device.pressEnter()
@@ -60,7 +60,7 @@ class EditFeedTitleTest : UiTest() {
         // Assert yahoo RSS was added
         var feedTitles = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000)
-        assertNotNull("Feed was not found", feedTitles )
+        assertNotNull("Feed was not found", feedTitles)
         if (feedTitles.size != 1) fail("Feed was not added")
         assertThat(feedTitles[0].text, `is`("Yahoo!ニュース・トピックス - 主要"))
         val footerTitle = device.wait(Until.findObject(
