@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -83,14 +82,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         swipeRefreshLayout.isRefreshing = false
     }
 
-    override fun showDeleteSuccessToast() {
-        Toast.makeText(activity, getString(R.string.finish_delete_rss_success), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showDeleteFailToast() {
-        Toast.makeText(activity, getString(R.string.finish_delete_rss_fail), Toast.LENGTH_SHORT).show()
-    }
-
     override fun showAddFeedSuccessToast() {
         Toast.makeText(activity, R.string.add_rss_success, Toast.LENGTH_SHORT).show()
     }
@@ -131,15 +122,8 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         emptyView.visibility = View.GONE
     }
 
-    override fun showDeleteFeedAlertDialog(position: Int) {
-        AlertDialog.Builder(activity)
-                .setTitle(R.string.delete_rss_alert)
-                .setPositiveButton(R.string.delete) { _, _ ->
-                    launch(context = coroutineContext) {
-                        presenter.onDeleteOkButtonClicked(position)
-                    }
-                }
-                .setNegativeButton(R.string.cancel, null).show()
+    override fun showDeleteFeedAlertDialog(rssId: Int, position: Int) {
+        mListener?.onDeleteRssClicked(rssId, position)
     }
 
     override fun onPause() {
@@ -194,9 +178,14 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         presenter.updateFeedTitle(rssId, newTitle)
     }
 
+    suspend fun deleteFeedAtPosition(position: Int) {
+        presenter.deleteFeedAtPosition(position)
+    }
+
     interface OnFeedListFragmentListener {
         fun onListClicked(feedId: Int)
         fun onEditRssClicked(rssId: Int, feedTitle: String)
+        fun onDeleteRssClicked(rssId: Int, position: Int)
         fun onAllUnreadClicked()
     }
 

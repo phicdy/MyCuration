@@ -106,4 +106,12 @@ class TopActivityPresenter(private val view: TopActivityView,
         }
     }
 
+    suspend fun onDeleteOkButtonClicked(rssId: Int, position: Int) = coroutineScope {
+        if (rssRepository.deleteRss(rssId)) {
+            view.deleteFeedAtPosition(position)
+            view.showDeleteSuccessToast()
+        } else {
+            view.showDeleteFailToast()
+        }
+    }
 }

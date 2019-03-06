@@ -72,7 +72,7 @@ class RssListPresenter(private val view: RssListView,
     fun pause() {}
 
     fun onDeleteFeedMenuClicked(position: Int) {
-        view.showDeleteFeedAlertDialog(position)
+        view.showDeleteFeedAlertDialog(getFeedIdAtPosition(position), position)
     }
 
     fun onEditFeedMenuClicked(position: Int) {
@@ -109,16 +109,6 @@ class RssListPresenter(private val view: RssListView,
         view.notifyDataSetChanged()
     }
 
-    suspend fun onDeleteOkButtonClicked(position: Int) = coroutineScope {
-        val feedId = getFeedIdAtPosition(position)
-        if (rssRepository.deleteRss(feedId)) {
-            deleteFeedAtPosition(position)
-            view.showDeleteSuccessToast()
-        } else {
-            view.showDeleteFailToast()
-        }
-    }
-
     private fun getFeedIdAtPosition(position: Int): Int {
         if (position < 0) return -1
 
@@ -134,7 +124,7 @@ class RssListPresenter(private val view: RssListView,
         return allFeeds[position].id
     }
 
-    private suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
+    suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
         fun deleteAtPosition(currentList: ArrayList<Feed>, oppositeList: ArrayList<Feed>) {
             if (currentList.size <= position) return
             val (id) = currentList[position]

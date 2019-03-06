@@ -40,6 +40,7 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
@@ -416,6 +417,32 @@ class TopActivity :
                         presenter.onEditFeedOkButtonClicked(newTitle, rssId)
                     }
                 }.setNegativeButton(R.string.cancel, null).show()
+    }
+
+    override fun onDeleteRssClicked(rssId: Int, position: Int) {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.delete_rss_alert)
+                .setPositiveButton(R.string.delete) { _, _ ->
+                    launch {
+                        presenter.onDeleteOkButtonClicked(rssId, position)
+                    }
+                }
+                .setNegativeButton(R.string.cancel, null).show()
+    }
+
+    override suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
+        if (fragment is RssListFragment) {
+            fragment.deleteFeedAtPosition(position)
+        }
+    }
+
+    override fun showDeleteSuccessToast() {
+        Toast.makeText(this, getString(R.string.finish_delete_rss_success), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showDeleteFailToast() {
+        Toast.makeText(this, getString(R.string.finish_delete_rss_fail), Toast.LENGTH_SHORT).show()
     }
 
     override fun onAllUnreadClicked() {
