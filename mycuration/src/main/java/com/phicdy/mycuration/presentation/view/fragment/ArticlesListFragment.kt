@@ -334,7 +334,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
             }
 
             fun changeColorToRead() {
-                val color = ContextCompat.getColor(itemView.context, R.color.gray)
+                val color = ContextCompat.getColor(itemView.context, R.color.gray_757575)
                 articleTitle.setTextColor(color)
                 articlePostedTime.setTextColor(color)
                 articlePoint.setTextColor(color)
