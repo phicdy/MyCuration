@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
-import androidx.test.InstrumentationRegistry.getTargetContext
+import androidx.test.core.app.ApplicationProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
@@ -19,14 +19,14 @@ class CurationRepositoryTest {
 
     @Before
     fun setUp() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         curationRepository = CurationRepository(db)
         deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
     }
 

@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
-import androidx.test.InstrumentationRegistry.getTargetContext
+import androidx.test.core.app.ApplicationProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.deleteAll
 import kotlinx.coroutines.runBlocking
@@ -22,7 +22,7 @@ class RssRepositoryTest {
 
     @Before
     fun setUp() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         articleRepository = ArticleRepository(db)
         filterRepository = FilterRepository(db)
         rssRepository = RssRepository(db, articleRepository, filterRepository)
@@ -31,7 +31,7 @@ class RssRepositoryTest {
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
     }
 
@@ -73,7 +73,7 @@ class RssRepositoryTest {
         assertThat(keyword, `is`(NOT_DELETED_FILTER_KEYWORD))
     }
 
-   companion object {
+    companion object {
         private const val NOT_DELETED_FILTER_TITLE = "notDeletedFilterTitle"
         private const val NOT_DELETED_FILTER_KEYWORD = "notDeletedFilterKeyword"
     }

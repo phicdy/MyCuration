@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.domain.task
 
-import androidx.test.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
@@ -22,7 +22,7 @@ class GetFeedIconTaskTest {
 
     @Before
     fun setup() {
-        val db = DatabaseHelper(InstrumentationRegistry.getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         rssRepository = RssRepository(db, ArticleRepository(db), FilterRepository(db))
     }
 

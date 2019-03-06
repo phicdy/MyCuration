@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.domain.task
 
-import androidx.test.InstrumentationRegistry.getTargetContext
+import androidx.test.core.app.ApplicationProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
@@ -23,7 +23,7 @@ class HatenaBookmarkApiTest {
 
     @Before
     fun setup() {
-        val helper = DatabaseHelper(getTargetContext())
+        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext())
         articleRepository = ArticleRepository(helper.writableDatabase)
         rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase))
         deleteAll(helper.writableDatabase)
@@ -31,7 +31,7 @@ class HatenaBookmarkApiTest {
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
     }
 

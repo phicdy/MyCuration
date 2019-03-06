@@ -1,15 +1,17 @@
 package com.phicdy.mycuration.uitest
 
+import android.content.Context
 import android.content.Intent
-import androidx.test.InstrumentationRegistry
+import android.widget.LinearLayout
+import android.widget.ListView
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import android.widget.LinearLayout
-import android.widget.ListView
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import junit.framework.Assert.assertNotNull
@@ -45,7 +47,7 @@ class FeedUrlHookTest : UiTest() {
     fun addYahooNewsFromDefaultBrowser() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         // Launch default browser
-        val context = InstrumentationRegistry.getContext()
+        val context = ApplicationProvider.getApplicationContext<Context>()
         var intent: Intent? = context.packageManager.getLaunchIntentForPackage("com.android.browser")
                 ?: return // Default browser is not existed
         intent?.let {

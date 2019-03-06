@@ -1,16 +1,15 @@
 package com.phicdy.mycuration.uitest
 
-import androidx.test.InstrumentationRegistry
+import android.widget.CheckBox
+import android.widget.LinearLayout
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
-import androidx.recyclerview.widget.RecyclerView
-import android.widget.CheckBox
-import android.widget.LinearLayout
 import com.phicdy.mycuration.BuildConfig
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import org.hamcrest.CoreMatchers.`is`
