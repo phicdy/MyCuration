@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
-import androidx.test.InstrumentationRegistry.getTargetContext
+import androidx.test.core.app.ApplicationProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.deleteAll
@@ -20,7 +20,7 @@ class FilterRepositoryTest {
 
     @Before
     fun setUp() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         articleRepository = ArticleRepository(db)
         filterRepository = FilterRepository(db)
         rssRepository = RssRepository(db, articleRepository, filterRepository)
@@ -29,7 +29,7 @@ class FilterRepositoryTest {
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
     }
 

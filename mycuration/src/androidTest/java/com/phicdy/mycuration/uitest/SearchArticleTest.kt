@@ -1,8 +1,9 @@
 package com.phicdy.mycuration.uitest
 
 
-import androidx.test.InstrumentationRegistry
-import androidx.test.InstrumentationRegistry.getTargetContext
+import android.view.View
+import android.view.ViewGroup
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
@@ -13,14 +14,13 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
-import android.view.View
-import android.view.ViewGroup
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
@@ -65,7 +65,7 @@ class SearchArticleTest : UiTest() {
 
     @Before
     fun setup() {
-        val helper = DatabaseHelper(getTargetContext())
+        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext())
         articleRepository = ArticleRepository(helper.writableDatabase)
         rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase))
         deleteAll(helper.writableDatabase)

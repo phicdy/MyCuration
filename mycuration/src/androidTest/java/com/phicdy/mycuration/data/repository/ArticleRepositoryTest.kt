@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
-import androidx.test.InstrumentationRegistry.getTargetContext
+import androidx.test.core.app.ApplicationProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.deleteAll
@@ -29,7 +29,7 @@ class ArticleRepositoryTest {
 
     @Before
     fun setUp() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         articleRepository = ArticleRepository(db)
         rssRepository = RssRepository(
                 db,
@@ -42,7 +42,7 @@ class ArticleRepositoryTest {
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
     }
 
@@ -117,7 +117,7 @@ class ArticleRepositoryTest {
         articles.add(toReadArticle2)
         articleRepository.saveNewArticles(articles, id)
 
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         val repository = ArticleRepository(db)
         repository.saveAllStatusToReadFromToRead()
         val changedArticles = articleRepository.getTop300Articles(true)
@@ -141,7 +141,7 @@ class ArticleRepositoryTest {
             add(TEST_WORD3)
         }
         assertTrue(curationRepository.adaptToArticles(curationId, wordsOfCurationForArticle1))
-        val articles = articleRepository.getAllArticlesOfCuration(curationId,  true)
+        val articles = articleRepository.getAllArticlesOfCuration(curationId, true)
         assertNotNull(articles)
         assertEquals(1, articles.size)
         assertEquals(TEST_ARTICLE1_TITLE, articles[0].title)

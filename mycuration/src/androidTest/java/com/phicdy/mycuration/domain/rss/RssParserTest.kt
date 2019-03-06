@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.domain.rss
 
-import androidx.test.InstrumentationRegistry.getTargetContext
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
@@ -35,7 +35,7 @@ class RssParserTest {
     @Throws(Exception::class)
     fun setUp() {
         parser = RssParser()
-        val helper = DatabaseHelper(getTargetContext())
+        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext())
         rssRepository = RssRepository(
                 helper.writableDatabase,
                 ArticleRepository(helper.writableDatabase),
@@ -46,7 +46,7 @@ class RssParserTest {
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(getTargetContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
     }
 
