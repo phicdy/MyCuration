@@ -195,12 +195,18 @@ class RssParser {
                         }
                         if (itemFlag && tag == "link" && article.url.isBlank()) {
                             // RSS 1.0 & 2.0
-                            var articleURL: String? = parser.nextText()
-                            if (articleURL == null || articleURL == "") {
+                            val href = parseAtomAriticleUrl(parser)
+                            if (href.isNotBlank() && href != "\n") {
                                 // Atom
-                                articleURL = parseAtomAriticleUrl(parser)
+                                article.url = href
+                            } else {
+                                val nextText = parser.nextText() ?: ""
+                                if (nextText.isNotBlank() && nextText != "\n") {
+                                    article.url = nextText
+                                } else {
+                                    article.url = parser.text
+                                }
                             }
-                            article.url = articleURL
                         }
                         if (itemFlag
                                 && (tag == "date" || tag == "pubDate" || tag == "published")
