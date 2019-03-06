@@ -411,6 +411,13 @@ class RssParserTest {
         assertThat(articles[1].point).isEqualTo("-1")
     }
 
+    @Test
+    fun parserAtom() {
+        val articles = parser.parseXml(Atom().text().byteInputStream(), -1)
+        assertThat(articles[0].url)
+                .isEqualTo("http://feedproxy.google.com/~r/AndroidDagashi/~3/saI5mOCH5sg/57-2019-03-03")
+    }
+
     private fun addNewFeedAndCheckResult(testUrl: String, expectedFeedUrl: String, expectedSiteUrl: String) = runBlocking {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
