@@ -191,9 +191,10 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when delete menu is clicked then show alert dialog`() {
+    fun `when delete menu is clicked then show alert dialog`() = runBlocking {
+        presenter.resume()
         presenter.onDeleteFeedMenuClicked(0)
-        verify(view, times(1)).showDeleteFeedAlertDialog(0)
+        verify(view, times(1)).showDeleteFeedAlertDialog(SECOND_RSS_ID, 0)
     }
 
     @Test
@@ -213,25 +214,10 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when delete ok button is clicked and fails then show error toast`() = runBlocking {
-        whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(false)
-        presenter.onDeleteOkButtonClicked(0)
-        verify(view, times(1)).showDeleteFailToast()
-    }
-
-    @Test
-    fun `when delete ok button is clicked and succeeds then show success toast`() = runBlocking {
-        whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
-        presenter.resume() // init list
-        presenter.onDeleteOkButtonClicked(0)
-        verify(view, times(1)).showDeleteSuccessToast()
-    }
-
-    @Test
     fun `when delete ok button is clicked in hidden status and succeeds then delete the RSS`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
-        presenter.onDeleteOkButtonClicked(0)
+        presenter.deleteFeedAtPosition(0)
         // Current status is hidden and size is 1, so hidden list becomes all RSS list after refresh
         assertThat(presenter.unreadOnlyFeeds)
                 .hasSize(1)
@@ -249,7 +235,7 @@ class RssListPresenterTest {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onRssFooterClicked() // Change to all RSS
-        presenter.onDeleteOkButtonClicked(0)
+        presenter.deleteFeedAtPosition(0)
         // Current status is all and first RSS status is read, so hidden list has no update
         assertThat(presenter.unreadOnlyFeeds)
                 .hasSize(1)
@@ -267,8 +253,8 @@ class RssListPresenterTest {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onRssFooterClicked() // Change to all RSS
-        presenter.onDeleteOkButtonClicked(0)
-        presenter.onDeleteOkButtonClicked(0)
+        presenter.deleteFeedAtPosition(0)
+        presenter.deleteFeedAtPosition(0)
         verify(view, times(1)).showEmptyView()
     }
 
