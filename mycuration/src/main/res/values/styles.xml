@@ -89,11 +89,11 @@
 
     <style name="AppTheme.Article.Date">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black_transparent_87</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 
     <style name="AppTheme.Article.Point">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black_transparent_87</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 </resources>
