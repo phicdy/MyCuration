@@ -3,14 +3,15 @@ package com.phicdy.mycuration.presentation.view.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.Toast
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper
+import com.phicdy.mycuration.util.changeTheme
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,12 +29,14 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FeedUrlHookPresenter by inject { parametersOf(
-            this,
-            if (intent.action == null) "" else intent.action,
-            if (intent.dataString == null) "" else intent.dataString,
-            if (intent.extras == null) "" else intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "") ?: ""
-            )
+    private val presenter: FeedUrlHookPresenter by inject {
+        parametersOf(
+                this,
+                if (intent.action == null) "" else intent.action,
+                if (intent.dataString == null) "" else intent.dataString,
+                if (intent.extras == null) "" else intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "")
+                        ?: ""
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +44,11 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
         setContentView(R.layout.activity_feed_url_hook)
         bindScope(getOrCreateScope("rss_url_hook"))
         launch { presenter.create() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
     }
 
     override fun attachBaseContext(newBase: Context) {

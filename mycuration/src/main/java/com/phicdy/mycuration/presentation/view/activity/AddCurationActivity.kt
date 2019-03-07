@@ -2,13 +2,13 @@ package com.phicdy.mycuration.presentation.view.activity
 
 import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
+import com.phicdy.mycuration.util.changeTheme
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 
@@ -44,6 +44,11 @@ class AddCurationActivity : AppCompatActivity() {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
+    }
+   
     private fun initView() {
         wordListFragment = supportFragmentManager.findFragmentById(R.id.fr_curation_condition) as AddCurationFragment
     }

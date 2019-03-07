@@ -1,17 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tv_curation_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginBottom="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:textSize="18sp" />
 
@@ -19,12 +19,12 @@
         android:id="@+id/tv_curation_count"
         android:layout_width="24dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="12dp"
-        android:textSize="14sp"
         android:layout_gravity="center_vertical"
-        android:gravity="center_vertical|end" />
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical|end"
+        android:textSize="14sp" />
 
 </LinearLayout>

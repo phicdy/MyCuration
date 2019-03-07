@@ -4,7 +4,7 @@
     <item
         android:id="@+id/search_rss"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        android:icon="@drawable/ic_action_search"
+        android:icon="@drawable/ic_search"
         app:showAsAction="always"
         android:title="@string/search_rss"/>
 </menu>

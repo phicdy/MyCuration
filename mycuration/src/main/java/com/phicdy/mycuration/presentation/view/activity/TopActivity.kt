@@ -13,13 +13,14 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.BuildConfig
@@ -33,10 +34,13 @@ import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.changeTheme
+import com.phicdy.mycuration.util.getThemeColor
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.ext.android.bindScope
@@ -52,6 +56,7 @@ class TopActivity :
         CurationListFragment.OnCurationListFragmentListener,
         TopActivityView,
         CoroutineScope {
+
     companion object {
         const val FEED_ID = "FEED_ID"
         const val CURATION_ID = "CURATION_ID"
@@ -82,7 +87,6 @@ class TopActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
-
         bindScope(getOrCreateScope("top"))
         presenter.create()
         if (savedInstanceState == null) {
@@ -280,6 +284,7 @@ class TopActivity :
             presenter.resume()
         }
         navigationView.setOnNavigationItemReselectedListener { }
+        changeTheme()
     }
 
     override fun onDestroy() {
@@ -310,10 +315,12 @@ class TopActivity :
                 return false
             }
         })
+
+        val color = getThemeColor(R.attr.colorPrimary)
         val searchAutoComplete = searchView!!
                 .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary))
+        searchAutoComplete.setTextColor(color)
+        searchAutoComplete.setHintTextColor(color)
 
         // Start tutorial at first time
         if (!BuildConfig.DEBUG) {
@@ -396,6 +403,48 @@ class TopActivity :
         startActivity(intent)
     }
 
+    override fun onEditRssClicked(rssId: Int, feedTitle: String) {
+        val addView = View.inflate(this, R.layout.edit_feed_title, null)
+        val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
+        editTitleView.setText(feedTitle)
+
+        AlertDialog.Builder(this)
+                .setTitle(R.string.edit_rss_title)
+                .setView(addView)
+                .setPositiveButton(R.string.save) { _, _ ->
+                    val newTitle = editTitleView.text.toString()
+                    launch(context = coroutineContext) {
+                        presenter.onEditFeedOkButtonClicked(newTitle, rssId)
+                    }
+                }.setNegativeButton(R.string.cancel, null).show()
+    }
+
+    override fun onDeleteRssClicked(rssId: Int, position: Int) {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.delete_rss_alert)
+                .setPositiveButton(R.string.delete) { _, _ ->
+                    launch {
+                        presenter.onDeleteOkButtonClicked(rssId, position)
+                    }
+                }
+                .setNegativeButton(R.string.cancel, null).show()
+    }
+
+    override suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
+        if (fragment is RssListFragment) {
+            fragment.deleteFeedAtPosition(position)
+        }
+    }
+
+    override fun showDeleteSuccessToast() {
+        Toast.makeText(this, getString(R.string.finish_delete_rss_success), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showDeleteFailToast() {
+        Toast.makeText(this, getString(R.string.finish_delete_rss_fail), Toast.LENGTH_SHORT).show()
+    }
+
     override fun onAllUnreadClicked() {
         val intent = Intent(applicationContext, ArticlesListActivity::class.java)
         startActivity(intent)
@@ -453,6 +502,25 @@ class TopActivity :
             val uri = Uri.parse("market://details?id=$packageName")
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         } catch (e: Exception) {
+        }
+    }
+
+    override fun showEditFeedTitleEmptyErrorToast() {
+        Toast.makeText(this, getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showEditFeedFailToast() {
+        Toast.makeText(this, getString(R.string.edit_rss_title_error), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showEditFeedSuccessToast() {
+        Toast.makeText(this, getString(R.string.edit_rss_title_success), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun updateFeedTitle(rssId: Int, newTitle: String) {
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
+        if (fragment is RssListFragment) {
+            fragment.updateFeedTitle(rssId, newTitle)
         }
     }
 }

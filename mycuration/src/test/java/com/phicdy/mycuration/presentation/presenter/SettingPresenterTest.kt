@@ -33,7 +33,7 @@ class SettingPresenterTest {
     @Test
     fun initViewIsCalledWhenActivityCreated() {
         val presenter = SettingPresenter(mockView, helper, additionalSettingApi, arrayOf(), arrayOf(), arrayOf(),
-                arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf())
+                arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf())
         presenter.activityCreate()
         verify(mockView, times(1)).initView()
     }
@@ -41,7 +41,7 @@ class SettingPresenterTest {
     @Test
     fun initListenerIsCalledWhenActivityCreated() {
         val presenter = SettingPresenter(mockView, helper, additionalSettingApi, arrayOf(), arrayOf(), arrayOf(),
-                arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf())
+                arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf())
         presenter.activityCreate()
         verify(mockView, times(1)).initListener()
     }

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:color="@color/black_transparent_87"
+    android:color="@color/background_text_input_edit_text"
     tools:targetApi="lollipop">
 
     <item>
-        <shape
-            android:shape="rectangle">
-            <solid android:color="@color/black_transparent_12" />
+        <shape android:shape="rectangle">
+            <solid android:color="@color/solid_text_input_edit_text" />
             <corners android:radius="4dp" />
         </shape>
     </item>

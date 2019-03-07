@@ -2,16 +2,17 @@ package com.phicdy.mycuration.presentation.view.activity
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.presenter.SelectFilterTargetRssPresenter
 import com.phicdy.mycuration.presentation.view.SelectTargetRssView
 import com.phicdy.mycuration.presentation.view.fragment.SelectFilterTargetRssFragment
+import com.phicdy.mycuration.util.changeTheme
 
 class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
 
@@ -53,6 +54,11 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
             else -> presenter.optionItemSelected(item)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
     }
 
     override fun finishSelect() {

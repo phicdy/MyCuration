@@ -16,8 +16,6 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_register_filter"
             style="@style/BaseToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -37,7 +35,7 @@
             android:id="@+id/filterTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:drawableLeft="@drawable/ic_filter_list_black"
+            android:drawableLeft="@drawable/ic_filter"
             android:drawablePadding="8dp"
             android:hint="@string/filter_name"
             android:inputType="text"
@@ -62,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="90"
-            android:drawableLeft="@drawable/ic_description_black"
+            android:drawableLeft="@drawable/ic_description"
             android:drawablePadding="8dp"
             android:hint="@string/keyword"
             android:inputType="text"
@@ -86,7 +84,7 @@
             android:id="@+id/filterUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_web_black"
+            android:drawableLeft="@drawable/ic_web"
             android:drawablePadding="8dp"
             android:hint="@string/article_url"
             android:inputType="textUri"
@@ -102,10 +100,11 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/bg_filter_target_rss"
-        android:drawableLeft="@drawable/ic_rss_feed_black"
+        android:drawableLeft="@drawable/ic_rss_black"
         android:drawablePadding="8dp"
         android:hint="@string/target_rss"
         android:padding="12dp"
+        android:textColorHint="@color/text_hint_text_input_edit_text"
         android:textSize="@dimen/text_size_register_filter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_filter_url" />

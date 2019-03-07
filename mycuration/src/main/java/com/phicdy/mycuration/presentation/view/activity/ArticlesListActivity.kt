@@ -4,13 +4,12 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.content.ContextCompat
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import android.view.Menu
-import android.view.MenuItem
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -18,6 +17,8 @@ import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.changeTheme
+import com.phicdy.mycuration.util.getThemeColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -128,10 +129,11 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                 return false
             }
         })
+        val color = getThemeColor(R.attr.colorPrimary)
         val searchAutoComplete = searchView
                 .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.text_primary))
+        searchAutoComplete.setTextColor(color)
+        searchAutoComplete.setHintTextColor(color)
         return true
     }
 
@@ -147,6 +149,11 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
     }
 
     override fun onDestroy() {

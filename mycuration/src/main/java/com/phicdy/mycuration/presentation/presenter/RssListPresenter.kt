@@ -72,11 +72,14 @@ class RssListPresenter(private val view: RssListView,
     fun pause() {}
 
     fun onDeleteFeedMenuClicked(position: Int) {
-        view.showDeleteFeedAlertDialog(position)
+        view.showDeleteFeedAlertDialog(getFeedIdAtPosition(position), position)
     }
 
     fun onEditFeedMenuClicked(position: Int) {
-        view.showEditTitleDialog(position, getFeedTitleAtPosition(position))
+        view.showEditTitleDialog(
+                rssId = getFeedIdAtPosition(position),
+                feedTitle = getFeedTitleAtPosition(position)
+        )
     }
 
     private fun getFeedTitleAtPosition(position: Int): String {
@@ -90,22 +93,7 @@ class RssListPresenter(private val view: RssListView,
         }
     }
 
-    suspend fun onEditFeedOkButtonClicked(newTitle: String, position: Int) = coroutineScope {
-        if (newTitle.isBlank()) {
-            view.showEditFeedTitleEmptyErrorToast()
-        } else {
-            val updatedFeedId = getFeedIdAtPosition(position)
-            val numOfUpdate = rssRepository.saveNewTitle(updatedFeedId, newTitle)
-            if (numOfUpdate == 1) {
-                view.showEditFeedSuccessToast()
-                updateFeedTitle(updatedFeedId, newTitle)
-            } else {
-                view.showEditFeedFailToast()
-            }
-        }
-    }
-
-    private fun updateFeedTitle(feedId: Int, newTitle: String) {
+    fun updateFeedTitle(feedId: Int, newTitle: String) {
         for (feed in allFeeds) {
             if (feed.id == feedId) {
                 feed.title = newTitle
@@ -119,16 +107,6 @@ class RssListPresenter(private val view: RssListView,
             }
         }
         view.notifyDataSetChanged()
-    }
-
-    suspend fun onDeleteOkButtonClicked(position: Int) = coroutineScope {
-        val feedId = getFeedIdAtPosition(position)
-        if (rssRepository.deleteRss(feedId)) {
-            deleteFeedAtPosition(position)
-            view.showDeleteSuccessToast()
-        } else {
-            view.showDeleteFailToast()
-        }
     }
 
     private fun getFeedIdAtPosition(position: Int): Int {
@@ -146,7 +124,7 @@ class RssListPresenter(private val view: RssListView,
         return allFeeds[position].id
     }
 
-    private suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
+    suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
         fun deleteAtPosition(currentList: ArrayList<Feed>, oppositeList: ArrayList<Feed>) {
             if (currentList.size <= position) return
             val (id) = currentList[position]

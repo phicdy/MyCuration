@@ -1,0 +1,23 @@
+<resources>
+    <color name="primary">#ffffff</color>
+    <color name="primary_dark">#000000</color>
+    <color name="accent">#388e3c</color>
+    <color name="color_secondary">#ffffff</color>
+
+    <color name="background_toolbar">#000000</color>
+    <color name="background_bottom_navigation_bar">#000000</color>
+    <color name="background_context_menu">#000000</color>
+    <color name="background_base_divider">#ffffff</color>
+    <color name="background_text_input_edit_text">#deffffff</color>
+
+    <color name="text_primary">#ffffff</color>
+    <color name="text_read">#757575</color>
+    <color name="text_url">#757575</color>
+    <color name="text_hint_text_input_edit_text">#bdbdbd</color>
+
+    <color name="fill_base_toolbar_icon">#ffffff</color>
+    <color name="fill_bottom_navigation_bar_icon_checked">#388e3c</color>
+    <color name="fill_bottom_navigation_bar_icon_not_checked">#ffffff</color>
+
+    <color name="solid_text_input_edit_text">#424242</color>
+</resources>

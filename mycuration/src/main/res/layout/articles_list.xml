@@ -1,103 +1,93 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/view_selected"
+    android:background="?android:attr/selectableItemBackground"
     android:drawSelectorOnTop="true"
-    android:orientation="vertical">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/articleTitle"
+        style="@style/AppTheme.Article.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:orientation="vertical" >
+        android:layout_marginTop="8dp"
+        android:minHeight="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Article title" />
 
-        <TextView
-            android:id="@+id/articleTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center_vertical"
-            android:minHeight="24dp" />
-        <!-- android:onClick="displayArticle" -->
+    <ImageView
+        android:id="@+id/iv_feed_icon"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/icon"
+        android:src="@drawable/ic_rss"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/articleTitle" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:orientation="horizontal"
-            tools:ignore="UseCompoundDrawables">
+    <TextView
+        android:id="@+id/feedTitle"
+        style="@style/AppTheme.Article.Rss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_feed_icon"
+        app:layout_constraintStart_toEndOf="@id/iv_feed_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_feed_icon"
+        tools:text="@string/sample_rss_title" />
 
-            <ImageView
-                android:id="@+id/iv_feed_icon"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_rss"
-                android:contentDescription="@string/icon" />
+    <TextView
+        android:id="@+id/tv_articleUrl"
+        style="@style/AppTheme.Article.Url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_feed_icon"
+        tools:text="@string/sample_article_url" />
 
-            <TextView
-                android:id="@+id/feedTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:text="@string/sample_rss_title"
-                android:layout_gravity="center_vertical"
-                android:textSize="12sp" />
+    <TextView
+        android:id="@+id/articlePostedTime"
+        style="@style/AppTheme.Article.Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="@id/articleTitle"
+        app:layout_constraintTop_toBottomOf="@id/tv_articleUrl"
+        tools:text="2019/01/01 12:00:00" />
 
-        </LinearLayout>
+    <ImageView
+        android:id="@+id/hatenaIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="4dp"
+        android:contentDescription="@string/hatena"
+        android:src="@drawable/hatena"
+        app:layout_constraintBottom_toBottomOf="@id/articlePostedTime"
+        app:layout_constraintEnd_toStartOf="@id/articlePoint"
+        app:layout_constraintTop_toTopOf="@id/articlePostedTime" />
 
-        <TextView
-            android:id="@+id/tv_articleUrl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_gravity="center_vertical"
-            android:textSize="12sp"
-            android:maxLines="2"
-            android:ellipsize="end"
-            tools:text="@string/sample_article_url" />
+    <TextView
+        android:id="@+id/articlePoint"
+        style="@style/AppTheme.Article.Point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/articlePostedTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/articlePostedTime"
+        tools:text="100" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/articlePostedTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="90"
-                android:textSize="12sp" />
-
-            <ImageView
-                android:id="@+id/hatenaIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/hatena"
-                android:src="@drawable/hatena" />
-
-            <TextView
-                android:id="@+id/articlePoint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="4dp"
-                android:layout_weight="10"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <View 
+    <View
+        style="@style/Divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#cccccc" />
-</LinearLayout>
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/articlePostedTime" />
+</androidx.constraintlayout.widget.ConstraintLayout>

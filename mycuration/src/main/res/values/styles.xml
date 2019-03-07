@@ -1,26 +1,17 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
-        <!-- 500 -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/primary</item>
-        <!-- 700 -->
+        <!-- Status bar -->
         <item name="colorPrimaryDark">@color/primary_dark</item>
+        <!-- FAB -->
         <item name="colorSecondary">@color/accent</item>
-        <item name="colorOnSecondary">@color/text_primary</item>
+        <item name="colorOnSecondary">@color/color_secondary</item>
         <item name="colorAccent">@color/accent</item>
-        <item name="actionBarStyle">@style/MyActionBar</item>
-    </style>
-
-    <!-- ActionBar styles -->
-    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="titleTextStyle">@style/MyActionBarTitleText</item>
-    </style>
-
-
-    <!-- ActionBar title text -->
-    <style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/text_primary</item>
+        <!-- Context Menu -->
+        <item name="android:dropDownListViewStyle">@style/AppTheme.DropDownList</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -32,14 +23,26 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="BaseToolbar" parent="Widget.AppCompat.Toolbar">
-        <item name="android:textColorPrimary">@color/text_primary</item>
-        <item name="android:textColorSecondary">@color/text_primary</item>
-        <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
+    <style name="AppTheme.DropDownList" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:background">@color/background_context_menu</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 
-    <style name="divider">
-        <item name="android:background">@color/black</item>
+    <style name="BaseToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:theme">@style/ToolbarTheme</item>
+        <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
+        <item name="android:background">@color/background_toolbar</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_primary</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:background">@color/background_base_divider</item>
         <item name="android:alpha">0.12</item>
     </style>
 
@@ -65,5 +68,32 @@
     <style name="AppTheme.IconListItem.EndText">
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.Article" />
+
+    <style name="AppTheme.Article.Title">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AppTheme.Article.Rss">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="AppTheme.Article.Url">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_url</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="AppTheme.Article.Date">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="AppTheme.Article.Point">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 </resources>

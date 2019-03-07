@@ -22,6 +22,12 @@
 
     <PreferenceCategory android:title="@string/see_setting">
 
+        <ListPreference
+            android:entries="@array/theme_items"
+            android:entryValues="@array/theme_items_values"
+            android:key="@string/key_theme"
+            android:title="@string/theme" />
+
         <SwitchPreference
             android:key="@string/key_article_sort"
             android:title="@string/article_sort" />

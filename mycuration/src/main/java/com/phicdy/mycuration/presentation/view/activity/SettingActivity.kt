@@ -3,13 +3,15 @@ package com.phicdy.mycuration.presentation.view.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import android.view.MenuItem
 import com.phicdy.mycuration.R
+import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
+import com.phicdy.mycuration.util.changeTheme
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
-class SettingActivity : AppCompatActivity() {
+class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,5 +34,14 @@ class SettingActivity : AppCompatActivity() {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        changeTheme()
+    }
+
+    override fun onThemeChanged(mode: Int) {
+        delegate.setLocalNightMode(mode)
     }
 }
