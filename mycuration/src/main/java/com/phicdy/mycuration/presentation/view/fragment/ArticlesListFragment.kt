@@ -342,7 +342,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
             }
 
             fun changeColorToUnread() {
-                val color = ContextCompat.getColor(itemView.context, R.color.black)
+                val color = ContextCompat.getColor(itemView.context, R.color.text_primary)
                 articleTitle.setTextColor(color)
                 articlePostedTime.setTextColor(color)
                 articlePoint.setTextColor(color)

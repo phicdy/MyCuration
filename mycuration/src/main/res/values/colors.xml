@@ -8,8 +8,12 @@
     <color name="background_toolbar">#ffffff</color>
     <color name="background_bottom_navigation_bar">#ffffff</color>
     <color name="background_context_menu">#ffffff</color>
+    <color name="background_base_divider">#000000</color>
 
-    <color name="black">#000000</color>
+    <color name="text_primary">#000000</color>
+
+    <color name="fill_base_toolbar_icon">#000000</color>
+
     <color name="black_transparent_87">#DE000000</color>
 
     <color name="gray_757575">#757575</color>
