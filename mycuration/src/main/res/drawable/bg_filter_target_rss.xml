@@ -6,7 +6,7 @@
 
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/solid_text_inpu_edit_text" />
+            <solid android:color="@color/solid_text_input_edit_text" />
             <corners android:radius="4dp" />
         </shape>
     </item>
