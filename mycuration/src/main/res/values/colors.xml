@@ -3,7 +3,6 @@
     <color name="primary_dark">#000000</color>
     <color name="accent">#388E3C</color>
     <color name="color_secondary">#ffffff</color>
-    <color name="icon_tint">#757575</color>
 
     <color name="background_toolbar">#ffffff</color>
     <color name="background_bottom_navigation_bar">#ffffff</color>
@@ -17,6 +16,8 @@
     <color name="text_hint_text_input_edit_text">#616161</color>
 
     <color name="fill_base_toolbar_icon">#000000</color>
+    <color name="fill_bottom_navigation_bar_icon_checked">#388E3C</color>
+    <color name="fill_bottom_navigation_bar_icon_not_checked">#757575</color>
 
     <color name="solid_text_inpu_edit_text">#e0e0e0</color>
 </resources>
