@@ -9,6 +9,7 @@
     <color name="background_bottom_navigation_bar">#ffffff</color>
     <color name="background_context_menu">#ffffff</color>
     <color name="background_base_divider">#000000</color>
+    <color name="background_text_input_edit_text">#de000000</color>
 
     <color name="text_primary">#000000</color>
     <color name="text_read">#757575</color>
