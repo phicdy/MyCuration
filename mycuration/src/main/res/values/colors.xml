@@ -18,5 +18,5 @@
 
     <color name="fill_base_toolbar_icon">#000000</color>
 
-    <color name="gray_e0e0e0">#e0e0e0</color>
+    <color name="solid_text_inpu_edit_text">#e0e0e0</color>
 </resources>
