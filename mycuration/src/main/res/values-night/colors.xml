@@ -11,12 +11,13 @@
     <color name="background_base_divider">#ffffff</color>
 
     <color name="text_primary">#ffffff</color>
+    <color name="text_read">#757575</color>
+    <color name="text_url">#757575</color>
 
     <color name="fill_base_toolbar_icon">#ffffff</color>
 
     <color name="black_transparent_87">#deffffff</color>
 
-    <color name="gray_757575">#757575</color>
     <color name="gray_616161">#bdbdbd</color>
     <color name="gray_e0e0e0">#424242</color>
 </resources>

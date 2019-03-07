@@ -82,7 +82,7 @@
 
     <style name="AppTheme.Article.Url">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/gray_757575</item>
+        <item name="android:textColor">@color/text_url</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
     </style>
