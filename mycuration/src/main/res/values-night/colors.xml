@@ -5,7 +5,9 @@
     <color name="color_secondary">#ffffff</color>
     <color name="icon_tint">#ffffff</color>
 
-    <color name="white">#000000</color>
+    <color name="background_toolbar">#000000</color>
+    <color name="background_bottom_navigation_bar">#000000</color>
+    <color name="background_context_menu">#000000</color>
 
     <color name="black">#ffffff</color>
     <color name="black_transparent_87">#deffffff</color>

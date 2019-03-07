@@ -24,7 +24,7 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppTheme.DropDownList" parent="Widget.AppCompat.ListView.DropDown">
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/background_context_menu</item>
         <item name="android:textColor">@color/black</item>
     </style>
 
@@ -33,7 +33,7 @@
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:theme">@style/ToolbarTheme</item>
         <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/background_toolbar</item>
     </style>
 
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
