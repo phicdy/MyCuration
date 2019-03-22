@@ -204,7 +204,10 @@ class RssParser {
                                 if (nextText.isNotBlank() && nextText != "\n") {
                                     article.url = nextText
                                 } else {
-                                    article.url = parser.text
+                                    try {
+                                        article.url = parser.text
+                                    } catch (ignored: IllegalStateException) {
+                                    }
                                 }
                             }
                         }
@@ -260,12 +263,19 @@ class RssParser {
      * @return URL or empty string
      */
     private fun parseAtomAriticleUrl(parser: XmlPullParser): String {
-        var attributeName: String?
-        var attributeValue: String?
+        var isTypeTextHtml = false
+        var hasType = false
         for (i in 0 until parser.attributeCount) {
-            attributeName = parser.getAttributeName(i)
-            attributeValue = parser.getAttributeValue(i)
-            if (attributeName == "href") {
+            val attributeName = parser.getAttributeName(i)
+            val attributeValue = parser.getAttributeValue(i)
+            if (attributeName == "type") {
+                hasType = true
+                if (attributeValue == "text/html") {
+                    isTypeTextHtml = true
+                }
+                continue
+            }
+            if (attributeName == "href" && (!hasType || isTypeTextHtml)) {
                 if (attributeValue.startsWith("http://") || attributeValue.startsWith("https://")) {
                     return attributeValue
                 }

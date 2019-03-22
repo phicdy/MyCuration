@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.domain.rss
 
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
@@ -17,9 +16,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class RssParserTest {
 
     private val callback = object : RssParseExecutor.RssParseCallback {
@@ -416,6 +413,13 @@ class RssParserTest {
         val articles = parser.parseXml(Atom().text().byteInputStream(), -1)
         assertThat(articles[0].url)
                 .isEqualTo("http://feedproxy.google.com/~r/AndroidDagashi/~3/saI5mOCH5sg/57-2019-03-03")
+    }
+
+    @Test
+    fun parserAtomAndroidDeveloperBlog() {
+        val articles = parser.parseXml(AtomAndroidDeveloperBlog().text.byteInputStream(), -1)
+        assertThat(articles[0].url)
+                .isEqualTo("http://feedproxy.google.com/~r/blogspot/hsDu/~3/X3CHRsxGnbE/google-mobile-developer-day-at-game.html")
     }
 
     private fun addNewFeedAndCheckResult(testUrl: String, expectedFeedUrl: String, expectedSiteUrl: String) = runBlocking {
