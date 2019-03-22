@@ -162,7 +162,7 @@ class RssParser {
         return RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
     }
 
-    fun parseXml(`is`: InputStream, latestDate: Long): ArrayList<Article> {
+    fun parseXml(inputStream: InputStream, latestDate: Long): ArrayList<Article> {
         val articles = ArrayList<Article>()
 
         // TODO Get hatena bookmark(?) count
@@ -174,7 +174,7 @@ class RssParser {
             val factory = XmlPullParserFactory.newInstance()
             factory.isNamespaceAware = true
             val parser = factory.newPullParser()
-            parser.setInput(`is`, "UTF-8")
+            parser.setInput(inputStream, "UTF-8")
 
             // Start parse to the END_DOCUMENT
             var eventType = parser.eventType
@@ -204,7 +204,10 @@ class RssParser {
                                 if (nextText.isNotBlank() && nextText != "\n") {
                                     article.url = nextText
                                 } else {
-                                    article.url = parser.text
+                                    try {
+                                        article.url = parser.text
+                                    } catch (ignored: IllegalStateException) {
+                                    }
                                 }
                             }
                         }
@@ -260,12 +263,19 @@ class RssParser {
      * @return URL or empty string
      */
     private fun parseAtomAriticleUrl(parser: XmlPullParser): String {
-        var attributeName: String?
-        var attributeValue: String?
+        var isTypeTextHtml = false
+        var hasType = false
         for (i in 0 until parser.attributeCount) {
-            attributeName = parser.getAttributeName(i)
-            attributeValue = parser.getAttributeValue(i)
-            if (attributeName == "href") {
+            val attributeName = parser.getAttributeName(i)
+            val attributeValue = parser.getAttributeValue(i)
+            if (attributeName == "type") {
+                hasType = true
+                if (attributeValue == "text/html") {
+                    isTypeTextHtml = true
+                }
+                continue
+            }
+            if (attributeName == "href" && (!hasType || isTypeTextHtml)) {
                 if (attributeValue.startsWith("http://") || attributeValue.startsWith("https://")) {
                     return attributeValue
                 }
