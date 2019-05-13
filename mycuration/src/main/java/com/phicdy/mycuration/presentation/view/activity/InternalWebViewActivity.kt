@@ -83,7 +83,7 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
         webView.settings.useWideViewPort = true
         webView.settings.setSupportZoom(true)
         webView.isFocusableInTouchMode = true
-        webView.setWebViewClient(object : WebViewClient() {
+        webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 scrollView.scrollY = 0
                 return false
@@ -94,7 +94,7 @@ class InternalWebViewActivity : AppCompatActivity(), InternalWebViewView {
                 return false
             }
 
-        })
+        }
         scrollView = findViewById(R.id.nsv_internal_web_view) as NestedScrollView
     }
 
