@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
+import android.app.PendingIntent
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -25,10 +27,10 @@ import com.phicdy.mycuration.di.GlideApp
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.ArticleRecyclerView
-import com.phicdy.mycuration.presentation.view.activity.InternalWebViewActivity
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.util.bitmapFrom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,6 +41,7 @@ import org.koin.android.scope.ext.android.getOrCreateScope
 import org.koin.core.parameter.parametersOf
 import java.security.InvalidParameterException
 import kotlin.coroutines.CoroutineContext
+
 
 class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
@@ -194,10 +197,21 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
     override fun openInternalWebView(url: String, rssTitle: String) {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_internal))
-        val intent = Intent(activity, InternalWebViewActivity::class.java)
-        intent.putExtra(InternalWebViewActivity.KEY_OPEN_URL, url)
-        intent.putExtra(InternalWebViewActivity.KEY_RSS_TITLE, rssTitle)
-        startActivity(intent)
+        val intent = Intent(Intent.ACTION_SEND)
+                .setType("text/plain")
+                .putExtra(Intent.EXTRA_TEXT, url)
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        activity?.let { activity ->
+            val icon = bitmapFrom(activity, R.drawable.ic_share)
+            icon?.let {
+                val customTabsIntent = CustomTabsIntent.Builder()
+                        .setShowTitle(true)
+                        .setToolbarColor(ContextCompat.getColor(activity, R.color.background_toolbar))
+                        .setActionButton(icon, getString(R.string.share), pendingIntent)
+                        .build()
+                customTabsIntent.launchUrl(activity, Uri.parse(url))
+            }
+        }
     }
 
     override fun openExternalWebView(url: String) {
