@@ -96,18 +96,21 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     }
 
     override fun initView() {
-        prefUpdateInterval = findPreference(getString(R.string.key_update_interval)) as ListPreference
-        prefAutoUpdateInMainUi = findPreference(getString(R.string.key_auto_update_in_main_ui)) as SwitchPreference
-        prefTheme = findPreference(getString(R.string.key_theme)) as ListPreference
-        prefArticleSort = findPreference(getString(R.string.key_article_sort)) as SwitchPreference
-        prefInternalBrowser = findPreference(getString(R.string.key_internal_browser)) as SwitchPreference
-        prefAllReadBehavior = findPreference(getString(R.string.key_all_read_behavior)) as ListPreference
-        prefSwipeDirection = findPreference(getString(R.string.key_swipe_direction)) as ListPreference
-        prefLaunchTab = findPreference(getString(R.string.key_launch_tab)) as ListPreference
-        prefLicense = findPreference(getString(R.string.key_license))
-        prefReview = findPreference(getString(R.string.key_review))
-        prefRequest = findPreference(getString(R.string.key_request))
+        prefUpdateInterval = requirePreference(R.string.key_update_interval)
+        prefAutoUpdateInMainUi = requirePreference(R.string.key_auto_update_in_main_ui)
+        prefTheme = requirePreference(R.string.key_theme)
+        prefArticleSort = requirePreference(R.string.key_article_sort)
+        prefInternalBrowser = requirePreference(R.string.key_internal_browser)
+        prefAllReadBehavior = requirePreference(R.string.key_all_read_behavior)
+        prefSwipeDirection = requirePreference(R.string.key_swipe_direction)
+        prefLaunchTab = requirePreference(R.string.key_launch_tab)
+        prefLicense = requirePreference(R.string.key_license)
+        prefReview = requirePreference(R.string.key_review)
+        prefRequest = requirePreference(R.string.key_request)
     }
+
+    private fun <T : Preference> requirePreference(key: Int): T = findPreference(getString(key))
+            ?: throw IllegalArgumentException("key not found")
 
     override fun initListener() {
         listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -167,7 +170,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         }
 
         if (BuildConfig.DEBUG) {
-            val prefImport = findPreference<Preference>(getString(R.string.key_import_db))
+            val prefImport = requirePreference<Preference>(R.string.key_import_db)
             activity?.let { activity ->
                 prefImport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
@@ -177,7 +180,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     }
                     true
                 }
-                val prefExport = findPreference<Preference>(getString(R.string.key_export_db))
+                val prefExport = requirePreference<Preference>(R.string.key_export_db)
                 prefExport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
                         val currentDb = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
@@ -186,7 +189,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     }
                     true
                 }
-                val prefAddRss = findPreference<Preference>(getString(R.string.key_add_rss))
+                val prefAddRss = requirePreference<Preference>(R.string.key_add_rss)
                 prefAddRss.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
                         presenter.onDebugAddRssClicked()
