@@ -151,8 +151,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVer"
 
-    def firebaseVer = '16.0.5'
-    implementation "com.google.firebase:firebase-core:$firebaseVer"
+    implementation 'com.google.firebase:firebase-core:16.0.9'
 
     def koinVer = '1.0.1'
     implementation "org.koin:koin-android-scope:$koinVer"
