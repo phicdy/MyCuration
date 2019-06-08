@@ -1,6 +1,8 @@
 package com.phicdy.mycuration.uitest
 
+import android.view.ViewGroup
 import android.webkit.WebView
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
@@ -81,12 +83,11 @@ class SettingTest : UiTest() {
         // Click first article
         val articleList = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "rv_article")), 5000)
-        val firstArticle = articleList.findObject(By.clazz(LinearLayout::class.java))
+        val firstArticle = articleList.findObject(By.clazz(ViewGroup::class.java))
         firstArticle.click()
 
         // Assert share button in internal browser exist
-        val shareButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "menu_item_share")), 5000)
+        val shareButton = device.wait(Until.findObject(By.clazz(ImageButton::class.java)), 5000)
         assertNotNull(shareButton)
     }
 
@@ -131,7 +132,7 @@ class SettingTest : UiTest() {
         val articleList = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "rv_article")), 5000)
         val firstArticle = articleList.findObject(
-                By.clazz(LinearLayout::class.java))
+                By.clazz(ViewGroup::class.java))
         firstArticle.click()
 
         // Assert share button in internal browser does not exist
