@@ -6,7 +6,6 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.ActivityTestRule
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.filter.FilterFeedRegistration
 import com.phicdy.mycuration.data.repository.ArticleRepository
@@ -14,7 +13,6 @@ import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.deleteAll
-import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -24,7 +22,6 @@ import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.ArrayList
@@ -35,10 +32,6 @@ class DatabaseMigrationTest {
     private lateinit var db: SQLiteDatabase
     private lateinit var rssRepository: RssRepository
     private lateinit var filterRepository: FilterRepository
-
-    @JvmField
-    @Rule
-    var mActivityRule = ActivityTestRule(TopActivity::class.java)
 
     @Before
     fun setUp() {
