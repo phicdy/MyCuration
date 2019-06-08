@@ -24,9 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.CoroutineContext
 
@@ -37,7 +35,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: SettingPresenter by inject { parametersOf(this) }
+    private val presenter: SettingPresenter by currentScope.inject { parametersOf(this) }
 
     private lateinit var prefUpdateInterval: ListPreference
     private lateinit var prefLaunchTab: ListPreference
@@ -60,7 +58,6 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bindScope(getOrCreateScope("setting"))
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

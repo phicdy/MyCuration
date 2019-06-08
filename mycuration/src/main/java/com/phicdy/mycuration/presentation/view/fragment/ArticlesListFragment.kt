@@ -35,9 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import java.security.InvalidParameterException
 import kotlin.coroutines.CoroutineContext
@@ -54,7 +52,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: ArticleListPresenter by inject {
+    private val presenter: ArticleListPresenter by currentScope.inject {
         val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID)
                 ?: Feed.ALL_FEED_ID
         val curationId = activity?.intent?.getIntExtra(TopActivity.CURATION_ID,
@@ -105,7 +103,6 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bindScope(getOrCreateScope("article_list"))
         job = Job()
 
         // Set swipe direction

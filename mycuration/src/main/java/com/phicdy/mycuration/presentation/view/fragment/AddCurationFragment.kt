@@ -1,10 +1,6 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputEditText
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +8,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
@@ -22,9 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
@@ -39,7 +37,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: AddCurationPresenter by inject { parametersOf(this) }
+    private val presenter: AddCurationPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
     private lateinit var etName: TextInputEditText
@@ -49,7 +47,6 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bindScope(getOrCreateScope("add_curation"))
         presenter.create()
     }
 
@@ -92,7 +89,8 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     }
 
     override fun editCurationId(): Int {
-        return activity?.intent?.getIntExtra(EDIT_CURATION_ID, AddCurationPresenter.NOT_EDIT_CURATION_ID)?: AddCurationPresenter.NOT_EDIT_CURATION_ID
+        return activity?.intent?.getIntExtra(EDIT_CURATION_ID, AddCurationPresenter.NOT_EDIT_CURATION_ID)
+                ?: AddCurationPresenter.NOT_EDIT_CURATION_ID
     }
 
     override fun inputWord(): String {

@@ -153,8 +153,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:16.0.9'
 
-    def koinVer = '1.0.1'
-    implementation "org.koin:koin-android-scope:$koinVer"
+    implementation 'org.koin:koin-android-scope:2.0.1'
 
     def glideVer = '4.8.0'
     implementation("com.github.bumptech.glide:glide:$glideVer") {
