@@ -89,6 +89,10 @@ class SettingTest : UiTest() {
         // Assert share button in internal browser exist
         val shareButton = device.wait(Until.findObject(By.clazz(ImageButton::class.java)), 5000)
         assertNotNull(shareButton)
+
+        val closeButton = device.wait(Until.findObject(
+                By.res("com.android.chrome:id/close_button")), 5000)
+        closeButton.click()
     }
 
     @Test
