@@ -32,11 +32,21 @@ import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.presentation.view.TopActivityView
+import com.phicdy.mycuration.presentation.view.activity.FeedSearchActivity
+import com.phicdy.mycuration.presentation.view.activity.FeedUrlHookActivity
+import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity
+import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
+import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
+import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
+import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
+import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.log.TimberTree
 import org.koin.android.ext.koin.androidApplication
-import org.koin.dsl.module.module
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
 
 val appModule = module {
@@ -53,116 +63,136 @@ val appModule = module {
 
     single { TimberTree() }
 
-    scope("top") { (view: TopActivityView) ->
-        TopActivityPresenter(
-                view = view,
-                articleRepository = get(),
-                rssRepository = get(),
-                helper = get()
-        )
+    scope(named<TopActivity>()) {
+        scoped { (view: TopActivityView) ->
+            TopActivityPresenter(
+                    view = view,
+                    articleRepository = get(),
+                    rssRepository = get(),
+                    helper = get()
+            )
+        }
     }
 
-    scope("rss_list") { (view: RssListView) ->
-        RssListPresenter(
-                view = view,
-                preferenceHelper = get(),
-                rssRepository = get(),
-                networkTaskManager = get(),
-                unreadCountRepository = get()
-        )
+    scope(named<RssListFragment>()) {
+        scoped { (view: RssListView) ->
+            RssListPresenter(
+                    view = view,
+                    preferenceHelper = get(),
+                    rssRepository = get(),
+                    networkTaskManager = get(),
+                    unreadCountRepository = get()
+            )
+        }
     }
 
-    scope("article_list") { (feedId: Int, curationId: Int, query: String, action: String) ->
-        ArticleListPresenter(
-                feedId = feedId,
-                curationId = curationId,
-                rssRepository = get(),
-                preferenceHelper = get(),
-                articleRepository = get(),
-                unreadCountRepository = get(),
-                query = query,
-                action = action
-        )
+    scope(named<ArticlesListFragment>()) {
+        scoped { (feedId: Int, curationId: Int, query: String, action: String) ->
+            ArticleListPresenter(
+                    feedId = feedId,
+                    curationId = curationId,
+                    rssRepository = get(),
+                    preferenceHelper = get(),
+                    articleRepository = get(),
+                    unreadCountRepository = get(),
+                    query = query,
+                    action = action
+            )
+        }
     }
 
-    scope("curation_list") { (view: CurationListView) ->
-        CurationListPresenter(
-                view = view,
-                rssRepository = get(),
-                curationRepository = get(),
-                unreadCountRepository = get()
-        )
+    scope(named<CurationListFragment>()) {
+        scoped { (view: CurationListView) ->
+            CurationListPresenter(
+                    view = view,
+                    rssRepository = get(),
+                    curationRepository = get(),
+                    unreadCountRepository = get()
+            )
+        }
     }
 
-    scope("rss_search") { (view: FeedSearchView) ->
-        FeedSearchPresenter(
-                view = view,
-                rssRepository = get(),
-                networkTaskManager = get(),
-                executor = RssParseExecutor(RssParser(), get())
-        )
+    scope(named<FeedSearchActivity>()) {
+        scoped { (view: FeedSearchView) ->
+            FeedSearchPresenter(
+                    view = view,
+                    rssRepository = get(),
+                    networkTaskManager = get(),
+                    executor = RssParseExecutor(RssParser(), get())
+            )
+        }
     }
 
-    scope("rss_url_hook") { (view: FeedUrlHookView, action: String, dataString: String, extrasText: String) ->
-        FeedUrlHookPresenter(
-                view = view,
-                rssRepository = get(),
-                networkTaskManager = get(),
-                action = action,
-                dataString = dataString,
-                extrasText = extrasText,
-                parser = RssParser()
-        )
+    scope(named<FeedUrlHookActivity>()) {
+        scoped { (view: FeedUrlHookView, action: String, dataString: String, extrasText: String) ->
+            FeedUrlHookPresenter(
+                    view = view,
+                    rssRepository = get(),
+                    networkTaskManager = get(),
+                    action = action,
+                    dataString = dataString,
+                    extrasText = extrasText,
+                    parser = RssParser()
+            )
+        }
     }
 
-    scope("register_filter") { (view: RegisterFilterView, editFilterId: Int) ->
-        RegisterFilterPresenter(
-                view = view,
-                filterRepository = get(),
-                editFilterId = editFilterId
-        )
+    scope(named<RegisterFilterActivity>()) {
+        scoped { (view: RegisterFilterView, editFilterId: Int) ->
+            RegisterFilterPresenter(
+                    view = view,
+                    filterRepository = get(),
+                    editFilterId = editFilterId
+            )
+        }
     }
 
-    scope("filter_list") { (view: FilterListFragment) ->
-        FilterListPresenter(
-                view = view,
-                rssRepository = get(),
-                filterRepository = get()
-        )
+    scope(named<FilterListFragment>()) {
+        scoped { (view: FilterListFragment) ->
+            FilterListPresenter(
+                    view = view,
+                    rssRepository = get(),
+                    filterRepository = get()
+            )
+        }
     }
 
-    scope("add_curation") { (view: AddCurationView) ->
-        AddCurationPresenter(
-                view = view,
-                repository = get()
-        )
+    scope(named<AddCurationFragment>()) {
+        scoped { (view: AddCurationView) ->
+            AddCurationPresenter(
+                    view = view,
+                    repository = get()
+            )
+        }
     }
 
-    scope("setting") { (view: SettingView) ->
-        val updateIntervalHourItems = get<Context>().resources.getStringArray(R.array.update_interval_items_values)
-        val updateIntervalStringItems = get<Context>().resources.getStringArray(R.array.update_interval_items)
-        val themeItems = get<Context>().resources.getStringArray(R.array.theme_items_values)
-        val themeStringItems = get<Context>().resources.getStringArray(R.array.theme_items)
-        val allReadBehaviorItems = get<Context>().resources.getStringArray(R.array.all_read_behavior_values)
-        val allReadBehaviorStringItems = get<Context>().resources.getStringArray(R.array.all_read_behavior)
-        val launchTabItems = get<Context>().resources.getStringArray(R.array.launch_tab_items_values)
-        val launchTabStringItems = get<Context>().resources.getStringArray(R.array.launch_tab_items)
-        val swipeDirectionItems = get<Context>().resources.getStringArray(R.array.swipe_direction_items_values)
-        val swipeDirectionStringItems = get<Context>().resources.getStringArray(R.array.swipe_direction_items)
-        SettingPresenter(
-                view = view,
-                helper = get(),
-                addtionalSettingApi = get(),
-                updateIntervalHourItems = updateIntervalHourItems,
-                updateIntervalStringItems = updateIntervalStringItems,
-                themeItems = themeItems,
-                themeStringItems = themeStringItems,
-                allReadBehaviorStringItems = allReadBehaviorStringItems,
-                allReadBehaviorItems = allReadBehaviorItems,
-                launchTabItems = launchTabItems,
-                launchTabStringItems = launchTabStringItems,
-                swipeDirectionItems = swipeDirectionItems,
-                swipeDirectionStringItems = swipeDirectionStringItems
-        )
+    scope(named<SettingFragment>()) {
+        scoped { (view: SettingView) ->
+            val updateIntervalHourItems = get<Context>().resources.getStringArray(R.array.update_interval_items_values)
+            val updateIntervalStringItems = get<Context>().resources.getStringArray(R.array.update_interval_items)
+            val themeItems = get<Context>().resources.getStringArray(R.array.theme_items_values)
+            val themeStringItems = get<Context>().resources.getStringArray(R.array.theme_items)
+            val allReadBehaviorItems = get<Context>().resources.getStringArray(R.array.all_read_behavior_values)
+            val allReadBehaviorStringItems = get<Context>().resources.getStringArray(R.array.all_read_behavior)
+            val launchTabItems = get<Context>().resources.getStringArray(R.array.launch_tab_items_values)
+            val launchTabStringItems = get<Context>().resources.getStringArray(R.array.launch_tab_items)
+            val swipeDirectionItems = get<Context>().resources.getStringArray(R.array.swipe_direction_items_values)
+            val swipeDirectionStringItems = get<Context>().resources.getStringArray(R.array.swipe_direction_items)
+            SettingPresenter(
+                    view = view,
+                    helper = get(),
+                    addtionalSettingApi = get(),
+                    updateIntervalHourItems = updateIntervalHourItems,
+                    updateIntervalStringItems = updateIntervalStringItems,
+                    themeItems = themeItems,
+                    themeStringItems = themeStringItems,
+                    allReadBehaviorStringItems = allReadBehaviorStringItems,
+                    allReadBehaviorItems = allReadBehaviorItems,
+                    launchTabItems = launchTabItems,
+                    launchTabStringItems = launchTabStringItems,
+                    swipeDirectionItems = swipeDirectionItems,
+                    swipeDirectionStringItems = swipeDirectionStringItems
+            )
+        }
     }
 }

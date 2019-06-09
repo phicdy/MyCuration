@@ -23,9 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import java.security.InvalidParameterException
 import kotlin.coroutines.CoroutineContext
@@ -35,7 +33,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: RssListPresenter by inject { parametersOf(this) }
+    private val presenter: RssListPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var tvAllUnreadArticleCount: TextView
     private lateinit var allUnread: ConstraintLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -47,8 +45,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        bindScope(getOrCreateScope("rss_list"))
         presenter.create()
     }
 

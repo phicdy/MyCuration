@@ -71,7 +71,7 @@ class RssParserTest {
 
     @Test
     fun testParseFeedInfoRSS1_rdf() = runBlocking {
-        val testUrl = "http://b.hatena.ne.jp/hotentry/it.rss"
+        val testUrl = "https://b.hatena.ne.jp/hotentry/it.rss"
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)
@@ -84,7 +84,7 @@ class RssParserTest {
         val addedFeed = rssRepository.getFeedByUrl(testUrl)
         assertNotNull(addedFeed)
         assertEquals(testUrl, addedFeed?.url)
-        assertEquals("http://b.hatena.ne.jp/hotentry/it", addedFeed?.siteUrl)
+        assertEquals("https://b.hatena.ne.jp/hotentry/it", addedFeed?.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
     }
 
@@ -256,9 +256,9 @@ class RssParserTest {
 
     @Test
     fun testPathOnlyUrl() {
-        addNewFeedAndCheckResult("http://b.hatena.ne.jp/hotentry/game",
-                "http://b.hatena.ne.jp/hotentry/game.rss",
-                "http://b.hatena.ne.jp/hotentry/game")
+        addNewFeedAndCheckResult("https://b.hatena.ne.jp/hotentry/game",
+                "https://b.hatena.ne.jp/hotentry/game.rss",
+                "https://b.hatena.ne.jp/hotentry/game")
     }
 
     @Test

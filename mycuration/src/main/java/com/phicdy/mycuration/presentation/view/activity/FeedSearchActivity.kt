@@ -33,9 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
@@ -52,7 +50,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FeedSearchPresenter by inject { parametersOf(this) }
+    private val presenter: FeedSearchPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var searchView: SearchView
     private lateinit var webView: WebView
     private lateinit var fab: FloatingActionButton
@@ -61,8 +59,6 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_search)
-
-        bindScope(getOrCreateScope("rss_search"))
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_feed_search)
         setSupportActionBar(toolbar)
@@ -100,6 +96,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
     }
 
     override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
         handleIntent(intent)
     }
 

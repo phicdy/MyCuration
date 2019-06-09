@@ -15,8 +15,8 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 

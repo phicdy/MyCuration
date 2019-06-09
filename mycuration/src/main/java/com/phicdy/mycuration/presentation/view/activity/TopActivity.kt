@@ -42,9 +42,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
@@ -68,7 +66,7 @@ class TopActivity :
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: TopActivityPresenter by inject { parametersOf(this) }
+    private val presenter: TopActivityPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var fab: FloatingActionButton
     private lateinit var fabAddCuration: FloatingActionButton
     private lateinit var fabAddRss: FloatingActionButton
@@ -87,7 +85,6 @@ class TopActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
-        bindScope(getOrCreateScope("top"))
         presenter.create()
         if (savedInstanceState == null) {
             changeTab(PreferenceHelper.launchTab)

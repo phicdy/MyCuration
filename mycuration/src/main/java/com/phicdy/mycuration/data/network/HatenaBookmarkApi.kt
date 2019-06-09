@@ -1,8 +1,6 @@
 package com.phicdy.mycuration.data.network
 
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -18,13 +16,12 @@ class HatenaBookmarkApi {
 
     private interface HatenaRequestService {
         @GET("entry.count")
-        fun bookmark(@Query("url") url: String): Deferred<Response<ResponseBody>>
+        suspend fun bookmark(@Query("url") url: String): Response<ResponseBody>
     }
 
     init {
         val retrofit = Retrofit.Builder()
                 .baseUrl("http://api.b.st-hatena.com")
-                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .build()
         hatenaRequestService = retrofit.create(HatenaRequestService::class.java)
     }
@@ -37,7 +34,7 @@ class HatenaBookmarkApi {
      */
     suspend fun request(url: String): String = withContext(Dispatchers.IO) {
         try {
-            val response = hatenaRequestService.bookmark(url).await()
+            val response = hatenaRequestService.bookmark(url)
             return@withContext response.body()?.string() ?: "0"
         } catch (t: Throwable) {
             Timber.d("Request error:%s", t.toString())

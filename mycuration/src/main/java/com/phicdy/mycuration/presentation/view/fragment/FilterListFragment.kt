@@ -2,14 +2,14 @@ package com.phicdy.mycuration.presentation.view.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
@@ -19,9 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
@@ -38,15 +36,10 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FilterListPresenter by inject { parametersOf(this) }
+    private val presenter: FilterListPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var filtersListAdapter: FiltersListAdapter
     private lateinit var filtersRecyclerView: RecyclerView
     private lateinit var emptyView: TextView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bindScope(getOrCreateScope("filter_list"))
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_filter_list, container, false)

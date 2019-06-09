@@ -21,9 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.CoroutineContext
 
@@ -34,7 +32,9 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: RegisterFilterPresenter by inject { parametersOf(this, intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID)) }
+    private val presenter: RegisterFilterPresenter by currentScope.inject {
+        parametersOf(this, intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID))
+    }
 
     private lateinit var etTitle: TextInputEditText
     private lateinit var etKeyword: TextInputEditText
@@ -45,7 +45,6 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register_filter)
 
-        bindScope(getOrCreateScope("register_filter"))
         initView()
         launch {
             presenter.create()
@@ -75,6 +74,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) return
         if (requestCode == TARGET_FEED_SELECT_REQUEST) {
             data?.extras?.let {
