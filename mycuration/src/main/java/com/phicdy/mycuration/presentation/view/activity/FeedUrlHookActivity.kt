@@ -17,9 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.CoroutineContext
 
@@ -29,7 +27,7 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FeedUrlHookPresenter by inject {
+    private val presenter: FeedUrlHookPresenter by currentScope.inject {
         parametersOf(
                 this,
                 if (intent.action == null) "" else intent.action,
@@ -42,7 +40,6 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_url_hook)
-        bindScope(getOrCreateScope("rss_url_hook"))
         launch { presenter.create() }
     }
 

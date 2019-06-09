@@ -38,13 +38,4 @@ class GetFeedIconTaskTest {
         val iconPath = task.execute(kindou)
         assertThat(iconPath, `is`("https://kindou.info/img/favicon.ico"))
     }
-
-    @Test
-    fun iconDoesNotExistWhenGetGreeBlogIcon() = runBlocking {
-        val gree = "http://labs.gree.jp/blog"
-        rssRepository.store("gree", gree, Feed.ATOM, gree)
-        val greeBlogIconTask = GetFeedIconTask()
-        val iconPath = greeBlogIconTask.execute(gree)
-        assertThat(iconPath, `is`(""))
-    }
 }

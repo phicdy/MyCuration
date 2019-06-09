@@ -2,13 +2,13 @@ package com.phicdy.mycuration.presentation.view.fragment
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.rss.Curation
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
@@ -19,9 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.ext.android.bindScope
-import org.koin.android.scope.ext.android.getOrCreateScope
+import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
@@ -38,7 +36,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: CurationListPresenter by inject { parametersOf(this) }
+    private val presenter: CurationListPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var curationListAdapter: CurationListAdapter
     private var mListener: OnCurationListFragmentListener? = null
     private lateinit var curationRecyclerView: RecyclerView
@@ -46,7 +44,6 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bindScope(getOrCreateScope("curation_list"))
         job = Job()
     }
 
@@ -170,7 +167,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
         }
 
-        inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), CurationItem {
+        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), CurationItem {
             val curationName = itemView.findViewById(R.id.tv_curation_title) as TextView
             val curationCount = itemView.findViewById(R.id.tv_curation_count) as TextView
 

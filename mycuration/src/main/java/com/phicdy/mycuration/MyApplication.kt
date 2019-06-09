@@ -17,7 +17,9 @@ import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
 import org.koin.android.ext.android.get
-import org.koin.android.ext.android.startKoin
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import timber.log.Timber
 import java.io.File
 
@@ -34,7 +36,11 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin(this, listOf(appModule))
+        startKoin {
+            if (BuildConfig.DEBUG) androidLogger()
+            androidContext(this@MyApplication)
+            modules(listOf(appModule))
+        }
 
         if (BuildConfig.DEBUG) {
             Timber.plant(get<TimberTree>())
@@ -84,5 +90,4 @@ class MyApplication : Application() {
             }
         }
     }
-
 }
