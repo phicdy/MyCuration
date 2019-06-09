@@ -34,7 +34,6 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
-import org.hamcrest.core.IsInstanceOf
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -97,66 +96,56 @@ class SearchArticleTest : UiTest() {
         openSearchResult(testArticleTitle)
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         assertNull(device.wait<UiObject2>(Until.findObject(By.text("該当する記事はありません")), 5000))
-        val textView = onView(
+
+        val title = onView(
                 allOf(withId(R.id.articleTitle), withText(testArticleTitle),
                         childAtPosition(
                                 childAtPosition(
-                                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
+                                        withId(R.id.rv_article),
                                         0),
                                 0),
                         isDisplayed()))
-        textView.check(matches(withText(testArticleTitle)))
+        title.check(matches(withText(testArticleTitle)))
 
-        val textView2 = onView(
+        val rss = onView(
                 allOf(withId(R.id.feedTitle), withText(testRssTitle),
                         childAtPosition(
                                 childAtPosition(
-                                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                                        1),
-                                1),
+                                        withId(R.id.rv_article),
+                                        0),
+                                2),
                         isDisplayed()))
-        textView2.check(matches(withText(testRssTitle)))
+        rss.check(matches(withText(testRssTitle)))
 
         val textView3 = onView(
                 allOf(withId(R.id.tv_articleUrl), withText(testArticleUrl),
                         childAtPosition(
                                 childAtPosition(
-                                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
+                                        withId(R.id.rv_article),
                                         0),
-                                2),
+                                3),
                         isDisplayed()))
         textView3.check(matches(withText(testArticleUrl)))
 
-        val textView4 = onView(
+        val date = onView(
                 allOf(withId(R.id.articlePostedTime), withText(testArticleDateStr),
                         childAtPosition(
                                 childAtPosition(
-                                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                                        3),
-                                0),
+                                        withId(R.id.rv_article),
+                                        0),
+                                4),
                         isDisplayed()))
-        textView4.check(matches(withText(testArticleDateStr)))
+        date.check(matches(withText(testArticleDateStr)))
 
-        val textView5 = onView(
+        val point = onView(
                 allOf(withId(R.id.articlePoint), withText(testArticlePoint),
                         childAtPosition(
                                 childAtPosition(
-                                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                                        3),
-                                2),
+                                        withId(R.id.rv_article),
+                                        0),
+                                6),
                         isDisplayed()))
-        textView5.check(matches(withText(testArticlePoint)))
-
-        val recyclerView = onView(
-                allOf(withId(R.id.rv_article),
-                        childAtPosition(
-                                allOf(withId(R.id.fr_article_search_result),
-                                        childAtPosition(
-                                                IsInstanceOf.instanceOf(android.view.ViewGroup::class.java),
-                                                1)),
-                                0),
-                        isDisplayed()))
-        recyclerView.check(matches(isDisplayed()))
+        point.check(matches(withText(testArticlePoint)))
     }
 
     private fun openSearchResult(query: String) {
