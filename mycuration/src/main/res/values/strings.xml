@@ -88,6 +88,7 @@
     <string name="import_db">データベースのインポート</string>
     <string name="export_db">データベースのエクスポート</string>
     <string name="add_test_rss">テストRSS挿入</string>
+    <string name="fix_unread_count">未読数修正</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_launch_tab">keyLaunchTab</string>
     <string name="key_theme">keyTheme</string>
@@ -100,6 +101,7 @@
     <string name="key_import_db">keyImportDb</string>
     <string name="key_export_db">keyExportDb</string>
     <string name="key_add_rss">keyAddRss</string>
+    <string name="key_fix_unread_count">keyFixUnreadCount</string>
     <string name="key_review">keyReview</string>
     <string name="key_request">keyRequest</string>
 

@@ -10,7 +10,10 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent != null && intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            AlarmManagerTaskManager(context).setNewAlarm(PreferenceHelper.autoUpdateIntervalSecond)
+            AlarmManagerTaskManager(context).run {
+                setNewAlarm(PreferenceHelper.autoUpdateIntervalSecond)
+                setFixUnreadCountAlarm()
+            }
         }
     }
 }

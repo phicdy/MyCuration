@@ -21,6 +21,10 @@ class AlarmManagerTaskManager(private val context: Context) {
         setAlarm(context, AutoUpdateBroadcastReciever.AUTO_UPDATE_HATENA_ACTION, HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE_SECOND)
     }
 
+    fun setFixUnreadCountAlarm(intervalSec: Int = FIX_UNREAD_COUNT_INTERVAL) {
+        setAlarm(context, AutoUpdateBroadcastReciever.FIX_UNREAD_COUNT_ACTION, intervalSec)
+    }
+
     private fun setAlarm(context: Context, action: String, intervalSec: Int) {
         val i = Intent(context, AutoUpdateBroadcastReciever::class.java).apply {
             this.action = action
@@ -32,7 +36,7 @@ class AlarmManagerTaskManager(private val context: Context) {
             timeInMillis = System.currentTimeMillis()
             add(Calendar.SECOND, intervalSec)
         }
-        Timber.d( "Set alarm : %s", calendar.time.toString())
+        Timber.d("Set alarm : %s", calendar.time.toString())
 
         val alm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alm.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pi)
@@ -49,5 +53,6 @@ class AlarmManagerTaskManager(private val context: Context) {
 
     companion object {
         private const val HATENA_UPDATE_INTERVAL_AFTER_FEED_UPDATE_SECOND = 10
+        private const val FIX_UNREAD_COUNT_INTERVAL = 12 * 60 * 60 // 12hours
     }
 }

@@ -8,6 +8,7 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.di.appModule
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -89,5 +90,7 @@ class MyApplication : Application() {
                 dir.delete()
             }
         }
+
+        AlarmManagerTaskManager(this).setFixUnreadCountAlarm()
     }
 }

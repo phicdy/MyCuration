@@ -192,4 +192,8 @@ class SettingPresenter(
     suspend fun onExportDatabaseClicked(currentDb: File) = coroutineScope {
         addtionalSettingApi.exportDb(currentDb)
     }
+
+    suspend fun onFixUnreadCount() {
+        addtionalSettingApi.fixUnreadCount()
+    }
 }

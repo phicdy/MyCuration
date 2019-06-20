@@ -11,6 +11,7 @@ import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -45,6 +46,7 @@ import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.log.TimberTree
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -59,7 +61,8 @@ val appModule = module {
     single { PreferenceHelper }
     single { NetworkTaskManager(get(), get(), get(), get(), get()) }
     single { UnreadCountRepository(get(), get()) }
-    single<AdditionalSettingApi> { AdditionalSettingRepository(get()) }
+    single<AdditionalSettingApi> { AdditionalSettingRepository(get(), get()) }
+    single { AlarmManagerTaskManager(androidContext()) }
 
     single { TimberTree() }
 

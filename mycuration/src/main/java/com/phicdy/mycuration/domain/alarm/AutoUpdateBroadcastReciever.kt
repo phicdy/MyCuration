@@ -6,6 +6,7 @@ import android.content.Intent
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -25,14 +26,14 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
     private val rssRepository: RssRepository by inject()
     private val articleRepository: ArticleRepository by inject()
     private val networkTaskManager: NetworkTaskManager by inject()
+    private val unreadCountRepository: UnreadCountRepository by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
         GlobalScope.launch {
-            if (intent == null || intent.action == null) return@launch
-            if (intent.action == AUTO_UPDATE_ACTION) {
-                handleAutoUpdate(context)
-            } else if (intent.action == AUTO_UPDATE_HATENA_ACTION) {
-                handleUpdateHatena(context)
+            when (intent?.action) {
+                AUTO_UPDATE_ACTION -> handleAutoUpdate(context)
+                AUTO_UPDATE_HATENA_ACTION -> handleUpdateHatena(context)
+                FIX_UNREAD_COUNT_ACTION -> handleFixUnreadCount(context)
             }
         }
     }
@@ -87,8 +88,21 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
         }
     }
 
+    private suspend fun handleFixUnreadCount(context: Context) {
+        val rssList = rssRepository.getAllFeedsWithoutNumOfUnreadArticles()
+        rssList.forEach {
+            val size = articleRepository.getUnreadArticlesOfRss(it.id, false).size
+            unreadCountRepository.readAll(it.id)
+            unreadCountRepository.appendUnreadArticleCount(it.id, size)
+        }
+
+        val manager = AlarmManagerTaskManager(context)
+        manager.setFixUnreadCountAlarm()
+    }
+
     companion object {
         const val AUTO_UPDATE_ACTION = "autoUpdateFeed"
         const val AUTO_UPDATE_HATENA_ACTION = "autoUpdateHatena"
+        const val FIX_UNREAD_COUNT_ACTION = "fixUnreadCount"
     }
 }
