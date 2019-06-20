@@ -28,11 +28,9 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
 
     override fun onReceive(context: Context, intent: Intent?) {
         GlobalScope.launch {
-            if (intent == null || intent.action == null) return@launch
-            if (intent.action == AUTO_UPDATE_ACTION) {
-                handleAutoUpdate(context)
-            } else if (intent.action == AUTO_UPDATE_HATENA_ACTION) {
-                handleUpdateHatena(context)
+            when (intent?.action) {
+                AUTO_UPDATE_ACTION -> handleAutoUpdate(context)
+                AUTO_UPDATE_HATENA_ACTION -> handleUpdateHatena(context)
             }
         }
     }
