@@ -193,6 +193,13 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     }
                     true
                 }
+                val prefFixUnreadCount = requirePreference<Preference>(R.string.key_fix_unread_count)
+                prefFixUnreadCount.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                    launch {
+                        presenter.onFixUnreadCount()
+                    }
+                    true
+                }
             }
         }
 

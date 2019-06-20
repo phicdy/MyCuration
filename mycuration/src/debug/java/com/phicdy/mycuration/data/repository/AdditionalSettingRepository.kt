@@ -2,6 +2,7 @@ package com.phicdy.mycuration.data.repository
 
 import android.os.Environment
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.util.FileUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -11,7 +12,10 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 
 
-class AdditionalSettingRepository(private val rssRepository: RssRepository): AdditionalSettingApi {
+class AdditionalSettingRepository(
+        private val rssRepository: RssRepository,
+        private val alarmManagerTaskManager: AlarmManagerTaskManager
+) : AdditionalSettingApi {
 
     override suspend fun exportDb(currentDb: File) = withContext(Dispatchers.IO) {
         try {
@@ -161,6 +165,10 @@ class AdditionalSettingRepository(private val rssRepository: RssRepository): Add
                 "RSS2.0",
                 "https://news.yahoo.co.jp"
         )
+    }
+
+    override suspend fun fixUnreadCount() {
+        alarmManagerTaskManager.setFixUnreadCountAlarm(1)
     }
 
     companion object {
