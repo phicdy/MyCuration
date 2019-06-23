@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.domain.filter
+package com.phicdy.mycuration.domain.task
 
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
