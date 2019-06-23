@@ -5,9 +5,9 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import androidx.annotation.VisibleForTesting
-import com.phicdy.mycuration.data.rss.Article
-import com.phicdy.mycuration.data.rss.CurationSelection
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Article
+import com.phicdy.mycuration.domain.entity.CurationSelection
+import com.phicdy.mycuration.domain.entity.Feed
 import com.phicdy.mycuration.domain.entity.Filter
 import com.phicdy.mycuration.domain.entity.FilterFeedRegistration
 import kotlinx.coroutines.Dispatchers

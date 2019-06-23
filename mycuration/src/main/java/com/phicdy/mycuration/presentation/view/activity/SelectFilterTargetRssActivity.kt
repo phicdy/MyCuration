@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Feed
 import com.phicdy.mycuration.presentation.presenter.SelectFilterTargetRssPresenter
 import com.phicdy.mycuration.presentation.view.SelectTargetRssView
 import com.phicdy.mycuration.presentation.view.fragment.SelectFilterTargetRssFragment

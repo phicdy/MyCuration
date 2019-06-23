@@ -8,8 +8,8 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
-import com.phicdy.mycuration.data.rss.Article
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Article
+import com.phicdy.mycuration.domain.entity.Feed
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.util.PreferenceHelper
 import kotlinx.coroutines.runBlocking
@@ -332,7 +332,7 @@ class ArticleListPresenterTest {
                 testFeedId, ArticleListPresenter.DEFAULT_CURATION_ID, rssRepository, preferenceHelper, articleRepository,
                 unreadCountRepository, "ghaeogha",
                 Intent.ACTION_SEARCH)
-        whenever(articleRepository.searchArticles( "ghaeogha", true)).thenReturn(arrayListOf())
+        whenever(articleRepository.searchArticles("ghaeogha", true)).thenReturn(arrayListOf())
         val view = MockView()
         presenter.setView(view)
         presenter.createView()

@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
-import com.phicdy.mycuration.data.rss.Article
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Article
+import com.phicdy.mycuration.domain.entity.Feed
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.util.PreferenceHelper
@@ -35,6 +35,7 @@ class ArticleListPresenter(private val feedId: Int,
         const val DEFAULT_CURATION_ID = -1
         private const val LOAD_COUNT = 100
     }
+
     private lateinit var view: ArticleListView
 
     private var allArticles: ArrayList<Article> = arrayListOf()
@@ -123,7 +124,9 @@ class ArticleListPresenter(private val feedId: Int,
 
     override fun resume() {}
 
-    override fun pause() { disposable?.dispose() }
+    override fun pause() {
+        disposable?.dispose()
+    }
 
     suspend fun onListItemClicked(position: Int) = coroutineScope {
         if (position < 0) return@coroutineScope

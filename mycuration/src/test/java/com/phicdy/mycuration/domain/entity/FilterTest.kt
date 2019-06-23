@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.domain.entity
 
-import com.phicdy.mycuration.data.rss.Feed
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

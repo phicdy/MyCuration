@@ -4,10 +4,10 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.data.rss.Article
-import com.phicdy.mycuration.data.rss.Curation
-import com.phicdy.mycuration.data.rss.CurationCondition
-import com.phicdy.mycuration.data.rss.CurationSelection
+import com.phicdy.mycuration.domain.entity.Article
+import com.phicdy.mycuration.domain.entity.Curation
+import com.phicdy.mycuration.domain.entity.CurationCondition
+import com.phicdy.mycuration.domain.entity.CurationSelection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -149,7 +149,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
 
     suspend fun store(name: String, words: ArrayList<String>): Long = withContext(Dispatchers.IO) {
         if (words.isEmpty()) return@withContext -1L
-        var addedCurationId  = -1L
+        var addedCurationId = -1L
         try {
             val values = ContentValues().apply {
                 put(Curation.NAME, name)
@@ -179,7 +179,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         var cursor: Cursor? = null
         try {
             val insertSt = db.compileStatement("insert into " + CurationSelection.TABLE_NAME +
-                            "(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");")
+                    "(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");")
             db.beginTransaction()
             // Delete old curation selection
             db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null)

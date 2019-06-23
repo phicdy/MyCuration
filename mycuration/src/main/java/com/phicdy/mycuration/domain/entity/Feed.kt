@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.data.rss
+package com.phicdy.mycuration.domain.entity
 
 
 import android.os.Parcel

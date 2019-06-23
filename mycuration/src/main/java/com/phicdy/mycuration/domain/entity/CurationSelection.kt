@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.data.rss
+package com.phicdy.mycuration.domain.entity
 
 object CurationSelection {
     const val TABLE_NAME = "curationSelections"

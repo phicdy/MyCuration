@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.presentation.view
 
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Feed
 
 import java.util.ArrayList
 
