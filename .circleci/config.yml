@@ -11,7 +11,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "mycuration/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Print Android home
           command: echo $ANDROID_HOME
@@ -23,22 +23,22 @@ jobs:
           command: ./gradlew androidDependencies
       - run:
           name: Decode google-services.json
-          command: echo $GOOGLE_SERVICE | base64 --decode > ./mycuration/google-services.json
+          command: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
       - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "mycuration/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Run Tests
           command: ./gradlew testDebugUnitTest
       - run:
           name: Create jacoco report
-          command: ./gradlew jacocoTestReport 
+          command: ./gradlew jacocoTestReport
       - run:
           name: Publish to codecov
           command: bash <(curl -s https://codecov.io/bash)
       - store_test_results:
-          path: mycuration/build/test-results
+          path: app/build/test-results
   lint:
     working_directory: ~/code
     docker:
@@ -50,7 +50,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "mycuration/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Print Android home
           command: echo $ANDROID_HOME
@@ -62,16 +62,16 @@ jobs:
           command: ./gradlew androidDependencies
       - run:
           name: Decode google-services.json
-          command: echo $GOOGLE_SERVICE | base64 --decode > ./mycuration/google-services.json
+          command: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
       - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "mycuration/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Run Lint
           command: ./gradlew lintDebug
       - store_artifacts:
-          path: mycuration/build/reports
+          path: app/build/reports
           destination: reports
 
 workflows:
