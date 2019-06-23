@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.presenter
 import android.view.MenuItem
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.repository.FilterRepository
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Feed
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList

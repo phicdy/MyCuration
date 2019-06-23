@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.domain.rss
 
-import com.phicdy.mycuration.data.rss.Article
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Article
+import com.phicdy.mycuration.domain.entity.Feed
 import com.phicdy.mycuration.util.DateParser
 import com.phicdy.mycuration.util.TextUtil
 import org.jsoup.Jsoup

@@ -3,15 +3,13 @@ package com.phicdy.mycuration.data.db
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-
-import com.phicdy.mycuration.data.filter.Filter
-import com.phicdy.mycuration.data.filter.FilterFeedRegistration
-import com.phicdy.mycuration.data.rss.Article
-import com.phicdy.mycuration.data.rss.Curation
-import com.phicdy.mycuration.data.rss.CurationCondition
-import com.phicdy.mycuration.data.rss.CurationSelection
-import com.phicdy.mycuration.data.rss.Feed
-import com.phicdy.mycuration.util.FileUtil
+import com.phicdy.mycuration.domain.entity.Article
+import com.phicdy.mycuration.domain.entity.Curation
+import com.phicdy.mycuration.domain.entity.CurationCondition
+import com.phicdy.mycuration.domain.entity.CurationSelection
+import com.phicdy.mycuration.domain.entity.Feed
+import com.phicdy.mycuration.domain.entity.Filter
+import com.phicdy.mycuration.domain.entity.FilterFeedRegistration
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 

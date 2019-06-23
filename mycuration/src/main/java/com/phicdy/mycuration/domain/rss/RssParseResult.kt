@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.domain.rss
 
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Feed
 
 
 class RssParseResult(val feed: Feed? = null,

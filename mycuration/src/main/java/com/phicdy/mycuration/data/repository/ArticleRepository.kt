@@ -4,10 +4,10 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.data.filter.Filter
-import com.phicdy.mycuration.data.rss.Article
-import com.phicdy.mycuration.data.rss.CurationSelection
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Article
+import com.phicdy.mycuration.domain.entity.CurationSelection
+import com.phicdy.mycuration.domain.entity.Feed
+import com.phicdy.mycuration.domain.entity.Filter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -87,8 +87,12 @@ class ArticleRepository(val db: SQLiteDatabase) {
                     db.beginTransaction()
                     // Initialize condition
                     var condition = Article.FEEDID + " = $rssId and " + Article.STATUS + " = '" + Article.UNREAD + "'"
-                    if (keyword.isNotBlank()) { condition = "$condition and title like '%$keyword%'" }
-                    if (url.isNotBlank()) { condition = "$condition and url like '%$url%'" }
+                    if (keyword.isNotBlank()) {
+                        condition = "$condition and title like '%$keyword%'"
+                    }
+                    if (url.isNotBlank()) {
+                        condition = "$condition and url like '%$url%'"
+                    }
                     updatedCount += db.update(Article.TABLE_NAME, value, condition, null)
                     db.setTransactionSuccessful()
                 } catch (e: Exception) {
@@ -160,7 +164,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         var cursor: Cursor? = null
         try {
             val selection = if (rssId == null) null else Article.FEEDID + " = " + rssId
-            cursor= db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
+            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
             isExist = cursor.count > 0
             db.setTransactionSuccessful()
         } catch (e: SQLException) {
@@ -353,7 +357,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         if (searchKeyWord.contains("_")) {
             searchKeyWord = searchKeyWord.replace("_", "$" + "_")
         }
-        var columns =  arrayOf(
+        var columns = arrayOf(
                 Article.ID, Article.TITLE, Article.URL, Article.STATUS, Article.POINT, Article.DATE
         ).joinToString(postfix = ", ") {
             Article.TABLE_NAME + "." + it

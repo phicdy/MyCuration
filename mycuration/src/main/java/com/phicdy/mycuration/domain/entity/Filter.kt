@@ -1,7 +1,5 @@
-package com.phicdy.mycuration.data.filter
+package com.phicdy.mycuration.domain.entity
 
-
-import com.phicdy.mycuration.data.rss.Feed
 
 import java.util.ArrayList
 

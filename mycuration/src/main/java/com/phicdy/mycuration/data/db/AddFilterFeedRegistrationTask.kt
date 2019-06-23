@@ -6,8 +6,8 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 
-import com.phicdy.mycuration.data.filter.Filter
-import com.phicdy.mycuration.data.filter.FilterFeedRegistration
+import com.phicdy.mycuration.domain.entity.Filter
+import com.phicdy.mycuration.domain.entity.FilterFeedRegistration
 
 import java.util.ArrayList
 

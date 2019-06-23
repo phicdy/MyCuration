@@ -5,8 +5,8 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import com.phicdy.mycuration.data.filter.Filter
 import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.domain.entity.Filter
 import com.phicdy.mycuration.presentation.view.FilterListView
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat

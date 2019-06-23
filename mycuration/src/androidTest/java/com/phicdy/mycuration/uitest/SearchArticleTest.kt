@@ -26,8 +26,8 @@ import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.deleteAll
+import com.phicdy.mycuration.domain.entity.Article
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Description

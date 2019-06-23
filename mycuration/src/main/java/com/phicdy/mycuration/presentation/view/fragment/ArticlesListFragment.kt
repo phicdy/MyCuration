@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.rss.Feed
 import com.phicdy.mycuration.di.GlideApp
+import com.phicdy.mycuration.domain.entity.Feed
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.ArticleRecyclerView

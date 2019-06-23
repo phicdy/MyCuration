@@ -3,7 +3,7 @@ package com.phicdy.mycuration.presentation.presenter
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
-import com.phicdy.mycuration.data.rss.Curation
+import com.phicdy.mycuration.domain.entity.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import kotlinx.coroutines.coroutineScope
@@ -43,7 +43,7 @@ class CurationListPresenter(private val view: CurationListView,
     }
 
     suspend fun activityCreated() = coroutineScope {
-        if (rssRepository.getNumOfRss()== 0) {
+        if (rssRepository.getNumOfRss() == 0) {
             view.setNoRssTextToEmptyView()
         }
     }

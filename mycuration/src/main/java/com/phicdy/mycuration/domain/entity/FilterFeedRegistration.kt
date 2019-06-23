@@ -1,7 +1,5 @@
-package com.phicdy.mycuration.data.filter
+package com.phicdy.mycuration.domain.entity
 
-
-import com.phicdy.mycuration.data.rss.Feed
 
 object FilterFeedRegistration {
     const val TABLE_NAME = "filterFeedRegistrations"

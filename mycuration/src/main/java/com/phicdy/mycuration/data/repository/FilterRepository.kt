@@ -4,9 +4,9 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.data.filter.Filter
-import com.phicdy.mycuration.data.filter.FilterFeedRegistration
-import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Feed
+import com.phicdy.mycuration.domain.entity.Filter
+import com.phicdy.mycuration.domain.entity.FilterFeedRegistration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -204,7 +204,7 @@ class FilterRepository(private val db: SQLiteDatabase) {
      * @return result of all of the database insert
      */
     suspend fun saveNewFilter(title: String, selectedFeeds: ArrayList<Feed>,
-                      keyword: String, filterUrl: String): Boolean = withContext(Dispatchers.IO) {
+                              keyword: String, filterUrl: String): Boolean = withContext(Dispatchers.IO) {
         var result = true
         db.beginTransaction()
         var cur: Cursor? = null
