@@ -10,10 +10,9 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import com.phicdy.mycuration.BuildConfig
-import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
+import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.presentation.view.activity.LicenseActivity
@@ -24,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.koin.android.scope.BuildConfig
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.CoroutineContext

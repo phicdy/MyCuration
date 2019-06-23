@@ -2,9 +2,9 @@ package com.phicdy.mycuration.presentation.presenter
 
 import android.view.KeyEvent
 import android.view.MenuItem
-import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.util.PreferenceHelper
 import kotlinx.coroutines.coroutineScope

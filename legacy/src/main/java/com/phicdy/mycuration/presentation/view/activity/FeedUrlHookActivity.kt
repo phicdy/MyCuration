@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
-import com.phicdy.mycuration.R
+import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper

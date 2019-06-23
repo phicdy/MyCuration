@@ -1,8 +1,8 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import android.view.MenuItem
+import com.phicdy.mycuration.legacy.R
 
-import com.phicdy.mycuration.R
 import com.phicdy.mycuration.presentation.view.SelectTargetRssView
 
 class SelectFilterTargetRssPresenter(private val view: SelectTargetRssView) : Presenter {

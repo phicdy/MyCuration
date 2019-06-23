@@ -22,8 +22,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.phicdy.mycuration.BuildConfig
-import com.phicdy.mycuration.R
+import com.phicdy.mycuration.legacy.BuildConfig
+import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.tracker.TrackerHelper
