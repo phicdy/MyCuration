@@ -29,6 +29,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
     implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
 
     implementation "org.koin:koin-android-scope:$koin_version"
 

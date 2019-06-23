@@ -2,8 +2,8 @@ package com.phicdy.mycuration.presentation.presenter
 
 
 import com.phicdy.mycuration.data.repository.CurationRepository
-import com.phicdy.mycuration.util.TextUtil
 import com.phicdy.mycuration.presentation.view.AddCurationView
+import com.phicdy.mycuration.util.TextUtil
 import kotlinx.coroutines.coroutineScope
 
 
