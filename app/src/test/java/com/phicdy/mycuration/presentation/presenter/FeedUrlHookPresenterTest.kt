@@ -15,7 +15,7 @@ import org.junit.Test
 
 class FeedUrlHookPresenterTest {
 
-    private val networkTaskManager =  mock<NetworkTaskManager>()
+    private val networkTaskManager = mock<NetworkTaskManager>()
     private val rssRepository = mock<RssRepository>()
     private lateinit var presenter: FeedUrlHookPresenter
     private lateinit var parser: RssParser
