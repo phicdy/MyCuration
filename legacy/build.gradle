@@ -30,7 +30,12 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
+    implementation "org.koin:koin-android-scope:$koin_version"
+
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
 
     implementation "com.jakewharton.timber:timber:$timber_version"
 }
