@@ -2,7 +2,7 @@ package com.phicdy.mycuration.tracker
 
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.phicdy.mycuration.BuildConfig
+import com.phicdy.mycuration.legacy.BuildConfig
 
 object TrackerHelper {
 

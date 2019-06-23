@@ -149,7 +149,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
-    implementation 'com.google.firebase:firebase-core:16.0.9'
+    implementation "com.google.firebase:firebase-core:$firebase_version"
 
     implementation "org.koin:koin-android-scope:$koin_version"
 

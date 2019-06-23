@@ -8,6 +8,7 @@ buildscript {
     ext.rxjava_version = '2.2.0'
     ext.rxandroid_version = '2.1.0'
     ext.koin_version = '2.0.1'
+    ext.firebase_version = '16.0.9'
 
     repositories {
         google().content {
