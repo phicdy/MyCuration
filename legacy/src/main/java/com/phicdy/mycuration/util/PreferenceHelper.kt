@@ -2,7 +2,7 @@ package com.phicdy.mycuration.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.phicdy.mycuration.BuildConfig
+import com.phicdy.mycuration.legacy.BuildConfig
 
 object PreferenceHelper {
     private lateinit var pref: SharedPreferences
