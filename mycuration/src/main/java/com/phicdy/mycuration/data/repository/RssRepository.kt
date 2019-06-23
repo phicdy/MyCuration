@@ -5,11 +5,11 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import androidx.annotation.VisibleForTesting
-import com.phicdy.mycuration.data.filter.Filter
-import com.phicdy.mycuration.data.filter.FilterFeedRegistration
 import com.phicdy.mycuration.data.rss.Article
 import com.phicdy.mycuration.data.rss.CurationSelection
 import com.phicdy.mycuration.data.rss.Feed
+import com.phicdy.mycuration.domain.entity.Filter
+import com.phicdy.mycuration.domain.entity.FilterFeedRegistration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -276,7 +276,7 @@ class RssRepository(private val db: SQLiteDatabase,
         var isBeginTransaction = false
         try {
             // Get same feeds from DB
-            val selection = Feed.TITLE + "=\"$feedTitle\" and " + Feed.URL + "=\"$feedUrl\" and "+
+            val selection = Feed.TITLE + "=\"$feedTitle\" and " + Feed.URL + "=\"$feedUrl\" and " +
                     Feed.FORMAT + "=\"$format\""
             val stored = query(arrayOf(Feed.ID), selection)
             if (stored != null) return@withContext null

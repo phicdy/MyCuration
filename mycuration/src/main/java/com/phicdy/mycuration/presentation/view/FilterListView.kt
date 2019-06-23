@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.presentation.view
 
-import com.phicdy.mycuration.data.filter.Filter
+import com.phicdy.mycuration.domain.entity.Filter
 
 import java.util.ArrayList
 
