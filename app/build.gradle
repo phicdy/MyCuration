@@ -86,6 +86,12 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
 
     implementation "org.koin:koin-android-scope:$koin_version"
+
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
+    // Font
+    implementation 'io.github.inflationx:calligraphy3:3.0.0'
+    implementation 'io.github.inflationx:viewpump:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

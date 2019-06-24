@@ -48,10 +48,6 @@ dependencies {
 
     implementation 'org.jsoup:jsoup:1.10.2'
 
-    // Font
-    implementation 'io.github.inflationx:calligraphy3:3.0.0'
-    implementation 'io.github.inflationx:viewpump:1.0.0'
-
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0@aar'
 
     implementation "com.google.firebase:firebase-core:$firebase_version"
