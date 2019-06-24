@@ -28,6 +28,56 @@ android {
     }
 }
 
+jacoco {
+    toolVersion = jacoco_version
+}
+
+// A list of directories which should be included in coverage report
+def coverageSourceDirs = ['src/main/java', 'src/main/kotlin']
+// A list of files which should be excluded from coverage report since they are generated and/or framework code
+def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*',
+                            '**/BuildConfig.class', '**/*Activity*.class',
+                            '**/*Fragment*.class', '**/*Receiver.class',
+                            '**/*Manifest*.class', '**/*Application*.class',
+                            '**/com/phicdy/mycuration/data/db/*.*',
+                            '**/com/phicdy/mycuration/data/repository/*.*',
+                            '**/com/phicdy/mycuration/di/*.*',
+                            '**/com/phicdy/mycuration/domain/alarm/*.*',
+                            '**/com/phicdy/mycuration/data/filter/Filter.class',
+                            '**/com/phicdy/mycuration/data/filter/FilterFeedRegistration.class',
+                            '**/com/phicdy/mycuration/data/rss/Article.class',
+                            '**/com/phicdy/mycuration/data/rss/Curation.class',
+                            '**/com/phicdy/mycuration/data/rss/CurationCondition.class',
+                            '**/com/phicdy/mycuration/data/rss/CurationSelection.class',
+                            '**/com/phicdy/mycuration/data/rss/Feed*',
+                            '**/com/phicdy/mycuration/domain/task/GetFeedIconTask*',
+                            '**/com/phicdy/mycuration/domain/task/HatenaBookmarkApi*',
+                            '**/com/phicdy/mycuration/tracker/*.*']
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+        xml.destination new File("${buildDir}/reports/jacoco/jacocoTestReport.xml")
+        html.destination new File("${buildDir}/reports/jacoco/html")
+        classDirectories =
+                fileTree(dir: "${buildDir}/intermediates/classes/debug",
+                        exclude: coverageExcludeFiles) +
+                        fileTree(dir: "$buildDir/tmp/kotlin-classes/debug",
+                                excludes: coverageExcludeFiles)
+    }
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files "${buildDir}/jacoco/testDebugUnitTest.exec"
+
+    doLast {
+        println "jacoco xml report has been generated to file://${buildDir}/reports/jacoco/jacocoTestReport.xml"
+        println "jacoco html report has been generated to file://${reports.html.destination}/index.html"
+    }
+}
+
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
