@@ -29,11 +29,8 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
-          name: Run Tests
+          name: Run Tests and create jacoco report
           command: ./gradlew testDebugUnitTest
-      - run:
-          name: Create jacoco report
-          command: ./gradlew jacocoTestReport
       - run:
           name: Publish to codecov
           command: bash <(curl -s https://codecov.io/bash)
