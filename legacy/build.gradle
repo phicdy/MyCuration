@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 28
@@ -59,7 +60,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
 
     implementation "com.jakewharton.timber:timber:$timber_version"
-   
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0'
     testImplementation 'org.assertj:assertj-core:3.11.1'

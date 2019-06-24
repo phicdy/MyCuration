@@ -10,6 +10,7 @@ buildscript {
     ext.rxandroid_version = '2.1.0'
     ext.koin_version = '2.0.1'
     ext.firebase_version = '16.0.9'
+    ext.jacoco_version = "0.8.2"
 
     repositories {
         google().content {
@@ -134,3 +135,62 @@ allprojects {
         }
     }
 }
+
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = jacoco_version
+}
+
+task jacocoMerge(type: JacocoMerge) {
+    gradle.afterProject { p, state ->
+        if (p.rootProject != p && p.plugins.hasPlugin('jacoco')) {
+            executionData file("${p.buildDir}/jacoco").listFiles().findAll {
+                it.name.endsWith(".exec")
+            }
+        }
+    }
+}
+
+def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*',
+                            '**/BuildConfig.class', '**/*Activity*.class',
+                            '**/*Fragment*.class', '**/*Receiver.class',
+                            '**/*Manifest*.class', '**/*Application*.class',
+                            '**/com/phicdy/mycuration/data/db/*.*',
+                            '**/com/phicdy/mycuration/data/repository/*.*',
+                            '**/com/phicdy/mycuration/di/*.*',
+                            '**/com/phicdy/mycuration/domain/alarm/*.*',
+                            '**/com/phicdy/mycuration/data/filter/Filter.class',
+                            '**/com/phicdy/mycuration/data/filter/FilterFeedRegistration.class',
+                            '**/com/phicdy/mycuration/data/rss/Article.class',
+                            '**/com/phicdy/mycuration/data/rss/Curation.class',
+                            '**/com/phicdy/mycuration/data/rss/CurationCondition.class',
+                            '**/com/phicdy/mycuration/data/rss/CurationSelection.class',
+                            '**/com/phicdy/mycuration/data/rss/Feed*',
+                            '**/com/phicdy/mycuration/domain/task/GetFeedIconTask*',
+                            '**/com/phicdy/mycuration/domain/task/HatenaBookmarkApi*',
+                            '**/com/phicdy/mycuration/tracker/*.*']
+task jacocoMergedReport(type: JacocoReport, dependsOn: [tasks.jacocoMerge]) {
+    executionData jacocoMerge.destinationFile
+    def sources = []
+    subprojects.forEach {
+        sources += "${it.projectDir.path}/src/main/java"
+    }
+    sourceDirectories = files(sources)
+    classDirectories = fileTree(
+            dir: ".",
+            includes: ["**/build/intermediates/classes/debug/**",
+                       "**/build/tmp/kotlin-classes/debug/**"],
+            excludes: coverageExcludeFiles
+    )
+
+    reports {
+        xml.enabled = true
+        html.enabled true
+        csv.enabled false
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        html.destination file("${buildDir}/reports/jacoco/html")
+    }
+}
+
+task testDebugUnitTest(dependsOn: [tasks.jacocoMergedReport])
