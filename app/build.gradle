@@ -1,9 +1,9 @@
-apply plugin: 'jacoco'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'spoon'
 apply plugin: 'io.fabric'
+apply from: '../jacoco.gradle'
 
 android {
     compileSdkVersion 28
@@ -59,41 +59,6 @@ spoon {
     // To grant permissions to Android M >= devices */
     grantAllPermissions = true
 }
-
-jacoco {
-    toolVersion = jacoco_version
-}
-
-// A list of directories which should be included in coverage report
-def coverageSourceDirs = ['src/main/java', 'src/main/kotlin']
-// A list of files which should be excluded from coverage report since they are generated and/or framework code
-def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*',
-                            '**/BuildConfig.class', '**/*Activity*.class',
-                            '**/*Manifest*.class', '**/*Application*.class']
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
-    group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
-    reports {
-        xml.enabled true
-        html.enabled true
-        csv.enabled false
-        xml.destination new File("${buildDir}/reports/jacoco/jacocoTestReport.xml")
-        html.destination new File("${buildDir}/reports/jacoco/html")
-        classDirectories =
-                fileTree(dir: "${buildDir}/intermediates/classes/debug",
-                        exclude: coverageExcludeFiles) +
-                        fileTree(dir: "$buildDir/tmp/kotlin-classes/debug",
-                                excludes: coverageExcludeFiles)
-    }
-    sourceDirectories = files(coverageSourceDirs)
-    executionData = files "${buildDir}/jacoco/testDebugUnitTest.exec"
-
-    doLast {
-        println "jacoco xml report has been generated to file://${buildDir}/reports/jacoco/jacocoTestReport.xml"
-        println "jacoco html report has been generated to file://${reports.html.destination}/index.html"
-    }
-}
-
 
 dependencies {
     testImplementation 'junit:junit:4.12'
