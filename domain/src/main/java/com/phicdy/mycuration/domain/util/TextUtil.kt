@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.util
+package com.phicdy.mycuration.domain.util
 
 import java.util.regex.Pattern
 
