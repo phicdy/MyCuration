@@ -53,8 +53,15 @@ android {
     }
 }
 
+spoon {
+    debug = true
+
+    // To grant permissions to Android M >= devices */
+    grantAllPermissions = true
+}
+
 jacoco {
-    toolVersion = "0.7.7.201606060606"
+    toolVersion = jacoco_version
 }
 
 // A list of directories which should be included in coverage report
@@ -62,22 +69,7 @@ def coverageSourceDirs = ['src/main/java', 'src/main/kotlin']
 // A list of files which should be excluded from coverage report since they are generated and/or framework code
 def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*',
                             '**/BuildConfig.class', '**/*Activity*.class',
-                            '**/*Fragment*.class', '**/*Receiver.class',
-                            '**/*Manifest*.class', '**/*Application*.class',
-                            '**/com/phicdy/mycuration/data/db/*.*',
-                            '**/com/phicdy/mycuration/data/repository/*.*',
-                            '**/com/phicdy/mycuration/di/*.*',
-                            '**/com/phicdy/mycuration/domain/alarm/*.*',
-                            '**/com/phicdy/mycuration/data/filter/Filter.class',
-                            '**/com/phicdy/mycuration/data/filter/FilterFeedRegistration.class',
-                            '**/com/phicdy/mycuration/data/rss/Article.class',
-                            '**/com/phicdy/mycuration/data/rss/Curation.class',
-                            '**/com/phicdy/mycuration/data/rss/CurationCondition.class',
-                            '**/com/phicdy/mycuration/data/rss/CurationSelection.class',
-                            '**/com/phicdy/mycuration/data/rss/Feed*',
-                            '**/com/phicdy/mycuration/domain/task/GetFeedIconTask*',
-                            '**/com/phicdy/mycuration/domain/task/HatenaBookmarkApi*',
-                            '**/com/phicdy/mycuration/tracker/*.*']
+                            '**/*Manifest*.class', '**/*Application*.class']
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
@@ -102,12 +94,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     }
 }
 
-spoon {
-    debug = true
-
-    // To grant permissions to Android M >= devices */
-    grantAllPermissions = true
-}
 
 dependencies {
     testImplementation 'junit:junit:4.12'
@@ -124,41 +110,27 @@ dependencies {
     }
     androidTestImplementation 'org.assertj:assertj-core:3.11.1'
 
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha05'
+    implementation project(':legacy')
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation 'com.google.android.material:material:1.1.0-alpha07'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha05'
-    implementation 'androidx.preference:preference:1.1.0-alpha05'
-    implementation 'androidx.browser:browser:1.0.0'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-
-    implementation 'org.jsoup:jsoup:1.10.2'
-    implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0@aar'
-    implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    implementation "com.google.firebase:firebase-core:$firebase_version"
+
+    implementation "org.koin:koin-android-scope:$koin_version"
+
+    implementation "com.jakewharton.timber:timber:$timber_version"
 
     // Font
     implementation 'io.github.inflationx:calligraphy3:3.0.0'
     implementation 'io.github.inflationx:viewpump:1.0.0'
-
-    def coroutineVer = '1.1.1'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVer"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVer"
-
-    implementation 'com.google.firebase:firebase-core:16.0.9'
-
-    implementation 'org.koin:koin-android-scope:2.0.1'
-
-    def glideVer = '4.8.0'
-    implementation("com.github.bumptech.glide:glide:$glideVer") {
-        exclude group: "com.android.support"
-    }
-    kapt "com.github.bumptech.glide:compiler:$glideVer"
 }
 
 apply plugin: 'com.google.gms.google-services'
