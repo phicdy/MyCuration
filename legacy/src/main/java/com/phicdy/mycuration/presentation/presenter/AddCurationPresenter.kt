@@ -3,7 +3,6 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.presentation.view.AddCurationView
-import com.phicdy.mycuration.util.TextUtil
 import kotlinx.coroutines.coroutineScope
 
 
@@ -66,7 +65,7 @@ class AddCurationPresenter(
 
     suspend fun onAddMenuClicked() = coroutineScope {
         val curationName = view.curationName()
-        if (TextUtil.isEmpty(curationName)) {
+        if (curationName.isEmpty()) {
             view.handleEmptyCurationNameError()
             return@coroutineScope
         }
