@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.domain.entity
+package com.phicdy.mycuration.entity
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

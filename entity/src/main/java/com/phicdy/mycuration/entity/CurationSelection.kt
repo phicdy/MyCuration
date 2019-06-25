@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.domain.entity
+package com.phicdy.mycuration.entity
 
 object CurationSelection {
     const val TABLE_NAME = "curationSelections"

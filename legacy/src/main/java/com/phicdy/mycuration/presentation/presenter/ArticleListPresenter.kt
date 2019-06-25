@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
-import com.phicdy.mycuration.domain.entity.Article
-import com.phicdy.mycuration.domain.entity.Feed
+import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.presentation.view.ArticleListView
 import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.util.PreferenceHelper

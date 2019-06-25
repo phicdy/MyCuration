@@ -4,10 +4,10 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.domain.entity.Article
-import com.phicdy.mycuration.domain.entity.CurationSelection
-import com.phicdy.mycuration.domain.entity.Feed
-import com.phicdy.mycuration.domain.entity.Filter
+import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.CurationSelection
+import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.entity.Filter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext

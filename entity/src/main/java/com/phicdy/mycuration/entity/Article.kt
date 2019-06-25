@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.domain.entity
+package com.phicdy.mycuration.entity
 
 
 data class Article(

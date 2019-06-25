@@ -6,9 +6,9 @@ import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
-import com.phicdy.mycuration.domain.entity.Feed
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.util.TextUtil
+import com.phicdy.mycuration.entity.Feed
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers

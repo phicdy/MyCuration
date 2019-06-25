@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.domain.entity
+package com.phicdy.mycuration.entity
 
 object CurationCondition {
     const val TABLE_NAME = "curationConditions"
