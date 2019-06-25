@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.util
+package com.phicdy.mycuration.domain.util
 
 import timber.log.Timber
 import java.text.ParseException
@@ -9,14 +9,14 @@ import java.util.Locale
 
 object DateParser {
 
-	private fun parseDate(pubDate: String): Date? {
-		val input = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
+    private fun parseDate(pubDate: String): Date? {
+        val input = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
         val formatWithPubDate: Date?
         try {
-			formatWithPubDate = input.parse(pubDate)
+            formatWithPubDate = input.parse(pubDate)
             return formatWithPubDate
-		} catch (e: ParseException) {
-		}
+        } catch (e: ParseException) {
+        }
 
         //2014-06-25 17:24:07
         // TODO: set device locale
@@ -61,13 +61,13 @@ object DateParser {
 
         Timber.d("Contains T, but failed to parse")
         return null
-	}
+    }
 
-	fun changeToJapaneseDate(dateBeforeChange: String): Long {
-		val cal = Calendar.getInstance()
-		val date = parseDate(dateBeforeChange) ?: return 0
-		cal.time = date
+    fun changeToJapaneseDate(dateBeforeChange: String): Long {
+        val cal = Calendar.getInstance()
+        val date = parseDate(dateBeforeChange) ?: return 0
+        cal.time = date
 
-		return cal.timeInMillis
-	}
+        return cal.timeInMillis
+    }
 }
