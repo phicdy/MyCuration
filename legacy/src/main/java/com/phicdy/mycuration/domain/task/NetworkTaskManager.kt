@@ -7,7 +7,6 @@ import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.rss.RssParser
-import com.phicdy.mycuration.domain.util.TextUtil
 import com.phicdy.mycuration.entity.Feed
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
@@ -33,7 +32,7 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
     val isUpdatingFeed: Boolean get() = false
 
     fun updateAllFeeds(feeds: ArrayList<Feed>): Flowable<Feed> {
-        return Flowable.fromIterable<Feed>(feeds)
+        return Flowable.fromIterable(feeds)
                 .subscribeOn(Schedulers.io())
                 .filter { feed -> feed.id > 0 }
                 .flatMap({ data -> Flowable.just(data).subscribeOn(Schedulers.io()) })
@@ -51,7 +50,7 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
     }
 
     suspend fun updateFeed(feed: Feed) = coroutineScope {
-        if (TextUtil.isEmpty(feed.url)) return@coroutineScope
+        if (feed.url.isEmpty()) return@coroutineScope
         val uri = URI.create(feed.url)
         val retrofit = Retrofit.Builder()
                 .baseUrl(uri.scheme + "://" + uri.host)

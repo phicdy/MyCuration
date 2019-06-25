@@ -1,9 +1,9 @@
 package com.phicdy.mycuration.domain.rss
 
+import com.phicdy.mycuration.domain.util.DateParser
+import com.phicdy.mycuration.domain.util.TextUtil
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.util.DateParser
-import com.phicdy.mycuration.util.TextUtil
 import org.jsoup.Jsoup
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
