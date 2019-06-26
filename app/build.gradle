@@ -56,6 +56,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':entity')
     implementation project(':legacy')
+    implementation project(':repository')
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation 'com.google.android.material:material:1.1.0-alpha07'
 
