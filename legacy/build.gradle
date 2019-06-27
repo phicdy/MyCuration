@@ -5,6 +5,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':entity')
     implementation project(':repository')
+    implementation project(':util')
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"

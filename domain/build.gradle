@@ -10,6 +10,7 @@ android {
 dependencies {
     implementation project(':entity')
     implementation project(':repository')
+    implementation project(':util')
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
@@ -20,6 +21,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
 
     implementation 'org.jsoup:jsoup:1.10.2'
-    
+
     implementation "com.jakewharton.timber:timber:$timber_version"
 }
