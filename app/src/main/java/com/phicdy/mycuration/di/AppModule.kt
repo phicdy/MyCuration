@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.data.repository.AdditionalSettingRepository
 import com.phicdy.mycuration.data.repository.ArticleRepository
@@ -43,7 +44,6 @@ import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
-import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.log.TimberTree
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext

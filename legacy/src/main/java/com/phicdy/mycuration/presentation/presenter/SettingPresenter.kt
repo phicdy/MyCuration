@@ -1,10 +1,10 @@
 package com.phicdy.mycuration.presentation.presenter
 
 import androidx.appcompat.app.AppCompatDelegate
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.presentation.view.SettingView
-import com.phicdy.mycuration.util.PreferenceHelper
 import kotlinx.coroutines.coroutineScope
 import java.io.File
 

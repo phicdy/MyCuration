@@ -23,6 +23,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.legacy.BuildConfig
 import com.phicdy.mycuration.legacy.R
@@ -33,7 +34,6 @@ import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.util.PreferenceHelper
 import com.phicdy.mycuration.util.changeTheme
 import com.phicdy.mycuration.util.getThemeColor
 import io.github.inflationx.viewpump.ViewPumpContextWrapper

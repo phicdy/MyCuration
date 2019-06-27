@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.presenter
 
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
@@ -7,7 +8,6 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
-import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking

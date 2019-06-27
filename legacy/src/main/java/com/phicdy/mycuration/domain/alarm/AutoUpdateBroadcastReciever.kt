@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -11,7 +12,6 @@ import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.domain.util.NetworkUtil
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.util.PreferenceHelper
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope

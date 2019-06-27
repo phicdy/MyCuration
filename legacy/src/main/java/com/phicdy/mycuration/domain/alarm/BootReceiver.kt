@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-import com.phicdy.mycuration.util.PreferenceHelper
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 
 class BootReceiver : BroadcastReceiver() {
 

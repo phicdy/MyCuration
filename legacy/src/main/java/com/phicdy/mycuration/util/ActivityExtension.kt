@@ -4,6 +4,7 @@ import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 
 fun AppCompatActivity.getThemeColor(@AttrRes res: Int): Int {
     val typedValue = TypedValue()
