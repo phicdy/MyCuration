@@ -19,15 +19,11 @@ dependencies {
 
     implementation "org.koin:koin-android-scope:$koin_version"
 
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-
     def glideVer = '4.8.0'
     implementation("com.github.bumptech.glide:glide:$glideVer") {
         exclude group: "com.android.support"
     }
     kapt "com.github.bumptech.glide:compiler:$glideVer"
-
-    implementation 'org.jsoup:jsoup:1.10.2'
 
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0@aar'
 
