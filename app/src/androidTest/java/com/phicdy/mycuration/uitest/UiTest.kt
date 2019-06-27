@@ -12,8 +12,8 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.deleteAll
-import com.phicdy.mycuration.util.PreferenceHelper
 import com.squareup.spoon.Spoon
 import org.junit.Assert.assertNotNull
 import java.io.File

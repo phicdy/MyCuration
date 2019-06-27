@@ -2,7 +2,7 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.domain.entity.Filter
+import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.presentation.view.FilterListView
 import kotlinx.coroutines.coroutineScope
 

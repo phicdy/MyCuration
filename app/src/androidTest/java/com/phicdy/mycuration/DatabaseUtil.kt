@@ -2,13 +2,13 @@ package com.phicdy.mycuration
 
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.domain.entity.Article
-import com.phicdy.mycuration.domain.entity.Curation
-import com.phicdy.mycuration.domain.entity.CurationCondition
-import com.phicdy.mycuration.domain.entity.CurationSelection
-import com.phicdy.mycuration.domain.entity.Feed
-import com.phicdy.mycuration.domain.entity.Filter
-import com.phicdy.mycuration.domain.entity.FilterFeedRegistration
+import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.Curation
+import com.phicdy.mycuration.entity.CurationCondition
+import com.phicdy.mycuration.entity.CurationSelection
+import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.entity.Filter
+import com.phicdy.mycuration.entity.FilterFeedRegistration
 import timber.log.Timber
 
 fun deleteAll(db: SQLiteDatabase) {

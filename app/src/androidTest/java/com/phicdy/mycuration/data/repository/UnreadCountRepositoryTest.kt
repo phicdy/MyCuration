@@ -3,7 +3,7 @@ package com.phicdy.mycuration.data.repository
 import androidx.test.core.app.ApplicationProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.deleteAll
-import com.phicdy.mycuration.domain.entity.Feed
+import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After

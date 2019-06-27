@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.di.GlideApp
-import com.phicdy.mycuration.domain.entity.Feed
+import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.legacy.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

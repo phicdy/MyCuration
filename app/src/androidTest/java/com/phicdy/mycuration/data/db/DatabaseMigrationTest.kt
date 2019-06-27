@@ -10,9 +10,9 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.deleteAll
-import com.phicdy.mycuration.domain.entity.Feed
-import com.phicdy.mycuration.domain.entity.Filter
-import com.phicdy.mycuration.domain.entity.FilterFeedRegistration
+import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.entity.Filter
+import com.phicdy.mycuration.entity.FilterFeedRegistration
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After

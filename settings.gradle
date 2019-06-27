@@ -1,2 +1,6 @@
 include ':app',
-        ':legacy'
+        ':entity',
+        ':domain',
+        ':repository',
+        ':legacy',
+        ':util'

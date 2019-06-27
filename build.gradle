@@ -136,6 +136,48 @@ allprojects {
     }
 }
 
+subprojects {
+    if (name == 'app') {
+        apply plugin: 'com.android.application'
+    } else {
+        apply plugin: 'com.android.library'
+    }
+    apply plugin: 'kotlin-android'
+    apply plugin: 'kotlin-kapt'
+    apply from: "$rootDir/jacoco.gradle"
+
+    android {
+        compileSdkVersion 28
+
+        defaultConfig {
+            minSdkVersion 21
+            targetSdkVersion 28
+            versionName "1.7.2"
+            versionCode 47
+
+            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        }
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+
+        testOptions {
+            unitTests.returnDefaultValues = true
+        }
+    }
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+       
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0'
+        testImplementation 'org.assertj:assertj-core:3.11.1'
+    }
+}
+
+
 apply plugin: 'jacoco'
 
 jacoco {
