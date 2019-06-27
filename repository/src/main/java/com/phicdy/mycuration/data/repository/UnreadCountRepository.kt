@@ -99,7 +99,7 @@ class UnreadCountRepository(private val rssRepository: RssRepository,
         updateDatbase(rssId)
     }
 
-    suspend fun decreaseCount(rssId: Int, count: Int){
+    suspend fun decreaseCount(rssId: Int, count: Int) {
         if (!unreadCountMap.containsKey(rssId)) {
             Timber.d("RSS doesn't exist in the map, skip. RSS ID is %s", rssId)
             return
