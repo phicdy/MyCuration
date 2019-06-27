@@ -1,1 +1,5 @@
-<manifest package="com.phicdy.mycuration.domain" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.phicdy.mycuration.domain">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+</manifest>
