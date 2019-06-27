@@ -9,4 +9,10 @@ android {
 
 dependencies {
     implementation project(':entity')
+
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+
+    implementation "com.jakewharton.timber:timber:$timber_version"
 }
