@@ -19,5 +19,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
 
+    implementation 'org.jsoup:jsoup:1.10.2'
+    
     implementation "com.jakewharton.timber:timber:$timber_version"
 }
