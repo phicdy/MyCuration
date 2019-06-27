@@ -38,7 +38,7 @@ class RssParser {
      * <link rel="canonical" href="http://xxxxxxxx"></link>
      * @return RssParseResult. If not found or error occurs, feed instance in the result is null.
      */
-    internal fun parseRssXml(baseUrl: String, checkCanonical: Boolean): RssParseResult {
+    fun parseRssXml(baseUrl: String, checkCanonical: Boolean): RssParseResult {
         try {
             val url = URL(baseUrl)
             if (!"http".equals(url.protocol, ignoreCase = true) && !"https".equals(url.protocol, ignoreCase = true)) {
