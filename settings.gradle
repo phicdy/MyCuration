@@ -1,6 +1,7 @@
 include ':app',
         ':entity',
         ':domain',
+        ':feature_article_list',
         ':repository',
         ':legacy',
         ':util'
