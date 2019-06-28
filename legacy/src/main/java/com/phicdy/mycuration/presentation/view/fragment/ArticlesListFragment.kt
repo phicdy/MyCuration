@@ -24,8 +24,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.articlelist.ArticleListView
 import com.phicdy.mycuration.articlelist.ArticleRecyclerView
 import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.di.GlideApp
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
 import com.phicdy.mycuration.presentation.view.activity.TopActivity

@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.phicdy.mycuration.di.GlideApp
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
 import com.phicdy.mycuration.presentation.view.RssItemView
