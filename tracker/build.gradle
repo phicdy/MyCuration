@@ -9,4 +9,5 @@ android {
 }
 
 dependencies {
+    implementation "com.google.firebase:firebase-core:$firebase_version"
 }
