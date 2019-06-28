@@ -9,4 +9,6 @@ android {
 }
 
 dependencies {
+    implementation project(':entity')
+    implementation project(':repository')
 }

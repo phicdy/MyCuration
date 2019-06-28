@@ -4,6 +4,7 @@ android {
 dependencies {
     implementation project(':domain')
     implementation project(':entity')
+    implementation project(':feature_article_list')
     implementation project(':repository')
     implementation project(':util')
 
