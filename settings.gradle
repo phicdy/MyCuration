@@ -4,4 +4,5 @@ include ':app',
         ':feature_article_list',
         ':repository',
         ':legacy',
+        ':tracker',
         ':util'

@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/feature_article_list" />
             <option value="$PROJECT_DIR$/legacy" />
             <option value="$PROJECT_DIR$/repository" />
+            <option value="$PROJECT_DIR$/tracker" />
             <option value="$PROJECT_DIR$/util" />
           </set>
         </option>
