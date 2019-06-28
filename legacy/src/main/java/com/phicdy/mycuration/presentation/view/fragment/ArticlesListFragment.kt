@@ -22,12 +22,12 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.articlelist.ArticleListView
+import com.phicdy.mycuration.articlelist.ArticleRecyclerView
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.di.GlideApp
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.ArticleListPresenter
-import com.phicdy.mycuration.presentation.view.ArticleRecyclerView
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.bitmapFrom

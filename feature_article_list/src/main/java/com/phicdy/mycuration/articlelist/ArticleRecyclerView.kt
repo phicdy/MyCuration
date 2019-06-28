@@ -1,7 +1,6 @@
-package com.phicdy.mycuration.presentation.view
+package com.phicdy.mycuration.articlelist
 
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 
 class ArticleRecyclerView(context: Context, attrs: AttributeSet?) : androidx.recyclerview.widget.RecyclerView(context, attrs) {
