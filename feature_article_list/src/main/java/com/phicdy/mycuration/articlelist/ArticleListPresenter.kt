@@ -1,10 +1,8 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.articlelist
 
 import android.content.Intent
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
-import com.phicdy.mycuration.articlelist.ArticleItemView
-import com.phicdy.mycuration.articlelist.ArticleListView
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository

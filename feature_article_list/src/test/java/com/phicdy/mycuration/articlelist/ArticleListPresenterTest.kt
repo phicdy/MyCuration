@@ -1,11 +1,10 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.articlelist
 
 import android.content.Intent
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import com.phicdy.mycuration.articlelist.ArticleListView
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
