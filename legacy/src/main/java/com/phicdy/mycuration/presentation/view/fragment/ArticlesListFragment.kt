@@ -45,8 +45,6 @@ import kotlin.coroutines.CoroutineContext
 class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
     companion object {
-        const val VIEW_TYPE_ARTICLE = 0
-        const val VIEW_TYPE_FOOTER = 1
     }
 
     private lateinit var job: Job
@@ -255,12 +253,12 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val holder: RecyclerView.ViewHolder
             holder = when (viewType) {
-                VIEW_TYPE_FOOTER -> {
+                ArticleListPresenter.VIEW_TYPE_FOOTER -> {
                     val footer = LayoutInflater.from(parent.context)
                             .inflate(R.layout.footer_article_list_activity, parent, false)
                     FooterViewHolder(footer)
                 }
-                VIEW_TYPE_ARTICLE -> {
+                ArticleListPresenter.VIEW_TYPE_ARTICLE -> {
                     val view = LayoutInflater.from(parent.context)
                             .inflate(R.layout.articles_list, parent, false)
                     ArticleViewHolder(view)

@@ -11,7 +11,6 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -35,6 +34,9 @@ class ArticleListPresenter(private val feedId: Int,
     companion object {
         const val DEFAULT_CURATION_ID = -1
         private const val LOAD_COUNT = 100
+
+        const val VIEW_TYPE_ARTICLE = 0
+        const val VIEW_TYPE_FOOTER = 1
     }
 
     private lateinit var view: ArticleListView
@@ -287,7 +289,7 @@ class ArticleListPresenter(private val feedId: Int,
     }
 
     fun onGetItemViewType(position: Int): Int {
-        return if (position == loadedPosition + 1) ArticlesListFragment.VIEW_TYPE_FOOTER else ArticlesListFragment.VIEW_TYPE_ARTICLE
+        return if (position == loadedPosition + 1) VIEW_TYPE_FOOTER else VIEW_TYPE_ARTICLE
     }
 
     suspend fun onSwiped(direction: Int, touchedPosition: Int) = coroutineScope {
