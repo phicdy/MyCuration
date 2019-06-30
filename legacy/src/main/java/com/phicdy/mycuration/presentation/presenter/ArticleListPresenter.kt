@@ -29,7 +29,7 @@ class ArticleListPresenter(private val feedId: Int,
                            private val articleRepository: ArticleRepository,
                            private val unreadCountRepository: UnreadCountRepository,
                            private val query: String,
-                           private val action: String) : Presenter {
+                           private val action: String) {
 
     companion object {
         const val DEFAULT_CURATION_ID = -1
@@ -77,7 +77,7 @@ class ArticleListPresenter(private val feedId: Int,
         this.view = view
     }
 
-    override fun create() {}
+    fun create() {}
 
     suspend fun createView() = coroutineScope {
         allArticles = loadAllArticles()
@@ -122,9 +122,9 @@ class ArticleListPresenter(private val feedId: Int,
         if (loadedPosition >= allArticles.size - 1) loadedPosition = allArticles.size - 1
     }
 
-    override fun resume() {}
+    fun resume() {}
 
-    override fun pause() {
+    fun pause() {
         disposable?.dispose()
     }
 
