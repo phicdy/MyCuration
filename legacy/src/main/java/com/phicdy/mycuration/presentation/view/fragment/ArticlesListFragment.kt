@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.articlelist.ArticleItemView
 import com.phicdy.mycuration.articlelist.ArticleListView
 import com.phicdy.mycuration.articlelist.ArticleRecyclerView
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -293,7 +294,9 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         }
 
         internal inner class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-        inner class ArticleViewHolder internal constructor(internal val mView: View) : RecyclerView.ViewHolder(mView) {
+        inner class ArticleViewHolder internal constructor(
+                internal val mView: View
+        ) : RecyclerView.ViewHolder(mView), ArticleItemView {
             internal val articleTitle: TextView = mView.findViewById(R.id.articleTitle) as TextView
             internal val articlePostedTime: TextView = mView.findViewById(R.id.articlePostedTime) as TextView
             internal val articlePoint: TextView = mView.findViewById(R.id.articlePoint) as TextView
@@ -301,37 +304,37 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
             private val feedTitleView: TextView = mView.findViewById(R.id.feedTitle) as TextView
             private val feedIconView: ImageView = mView.findViewById(R.id.iv_feed_icon) as ImageView
 
-            fun setArticleTitle(title: String) {
+            override fun setArticleTitle(title: String) {
                 articleTitle.text = title
             }
 
-            fun setArticleUrl(url: String) {
+            override fun setArticleUrl(url: String) {
                 articleUrl.text = url
             }
 
-            fun setArticlePostedTime(time: String) {
+            override fun setArticlePostedTime(time: String) {
                 articlePostedTime.text = time
             }
 
-            fun setNotGetPoint() {
+            override fun setNotGetPoint() {
                 articlePoint.text = getString(R.string.not_get_hatena_point)
             }
 
-            fun setArticlePoint(point: String) {
+            override fun setArticlePoint(point: String) {
                 articlePoint.text = point
             }
 
-            fun hideRssInfo() {
+            override fun hideRssInfo() {
                 feedTitleView.visibility = View.GONE
                 feedIconView.visibility = View.GONE
             }
 
-            fun setRssTitle(title: String) {
+            override fun setRssTitle(title: String) {
                 feedTitleView.text = title
                 feedTitleView.setTextColor(Color.BLACK)
             }
 
-            fun setRssIcon(path: String) {
+            override fun setRssIcon(path: String) {
                 GlideApp.with(this@ArticlesListFragment)
                         .load(path)
                         .placeholder(R.drawable.ic_rss)
@@ -340,11 +343,11 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
                         .into(feedIconView)
             }
 
-            fun setDefaultRssIcon() {
+            override fun setDefaultRssIcon() {
                 feedIconView.setImageResource(R.drawable.ic_rss)
             }
 
-            fun changeColorToRead() {
+            override fun changeColorToRead() {
                 val color = ContextCompat.getColor(itemView.context, R.color.text_read)
                 articleTitle.setTextColor(color)
                 articlePostedTime.setTextColor(color)
@@ -352,7 +355,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
                 feedTitleView.setTextColor(color)
             }
 
-            fun changeColorToUnread() {
+            override fun changeColorToUnread() {
                 val color = ContextCompat.getColor(itemView.context, R.color.text_primary)
                 articleTitle.setTextColor(color)
                 articlePostedTime.setTextColor(color)

@@ -3,6 +3,7 @@ package com.phicdy.mycuration.presentation.presenter
 import android.content.Intent
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+import com.phicdy.mycuration.articlelist.ArticleItemView
 import com.phicdy.mycuration.articlelist.ArticleListView
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
@@ -238,44 +239,44 @@ class ArticleListPresenter(private val feedId: Int,
         }
     }
 
-    fun onBindViewHolder(holder: ArticlesListFragment.SimpleItemRecyclerViewAdapter.ArticleViewHolder, position: Int) {
+    fun onBindViewHolder(item: ArticleItemView, position: Int) {
         val article = allArticles[position]
-        holder.setArticleTitle(article.title)
-        holder.setArticleUrl(article.url)
+        item.setArticleTitle(article.title)
+        item.setArticleUrl(article.url)
 
         // Set article posted date
         val format = SimpleDateFormat(
                 "yyyy/MM/dd HH:mm:ss", Locale.US)
         val dateString = format.format(Date(article.postedDate))
-        holder.setArticlePostedTime(dateString)
+        item.setArticlePostedTime(dateString)
 
         // Set RSS Feed unread article count
         val hatenaPoint = article.point
         if (hatenaPoint == Article.DEDAULT_HATENA_POINT) {
-            holder.setNotGetPoint()
+            item.setNotGetPoint()
         } else {
-            holder.setArticlePoint(hatenaPoint)
+            item.setArticlePoint(hatenaPoint)
         }
 
         val feedTitle = article.feedTitle
         if (feedTitle == "") {
-            holder.hideRssInfo()
+            item.hideRssInfo()
         } else {
-            holder.setRssTitle(article.feedTitle)
+            item.setRssTitle(article.feedTitle)
 
             val iconPath = article.feedIconPath
             if (iconPath.isNotBlank() && iconPath != Feed.DEDAULT_ICON_PATH) {
-                holder.setRssIcon(article.feedIconPath)
+                item.setRssIcon(article.feedIconPath)
             } else {
-                holder.setDefaultRssIcon()
+                item.setDefaultRssIcon()
             }
         }
 
         // Change color if already be read
         if (article.status == Article.TOREAD || article.status == Article.READ) {
-            holder.changeColorToRead()
+            item.changeColorToRead()
         } else {
-            holder.changeColorToUnread()
+            item.changeColorToUnread()
         }
 
     }
