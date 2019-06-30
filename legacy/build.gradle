@@ -6,6 +6,7 @@ dependencies {
     implementation project(':entity')
     implementation project(':feature_article_list')
     implementation project(':glide')
+    implementation project(':resource')
     implementation project(':repository')
     implementation project(':util')
     implementation project(':tracker')

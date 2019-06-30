@@ -1,1 +1,195 @@
-<resources></resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MyCuration</string>
+
+    <!-- 記事一覧 -->
+    <string name="all">全ての記事</string>
+    <string name="sample_rss_title">hogehogehoge</string>
+    <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</string>
+
+    <!-- RSS一覧 -->
+    <string name="show_all_rsses">全てのRSSを表示</string>
+    <string name="hide_rsses">既読のRSSを隠す</string>
+
+    <string name="keyword">キーワード</string>
+    <string name="filter_keyword">キーワード: %1$s</string>
+    <string name="keyword_description">記事タイトルに指定したキーワードが含まれていると自動的に既読になります</string>
+    <string name="article_url">記事URL</string>
+    <string name="article_url_description">記事URLに指定したURLが含まれていると自動的に既読になります。はてなブックマークなど1つのRSSに複数のURLが含まれている場合に便利です</string>
+    <string name="cancel">キャンセル</string>
+    <string name="title_empty_error">タイトルを入力してください。</string>
+    <string name="both_keyword_and_url_empty_error">キーワードと記事URLどちらかを入力してください。</string>
+    <string name="no_rss_message">"まずはRSSを登録しましょう！"</string>
+
+    <string name="rss">RSS</string>
+    <string name="add_rss">RSS登録</string>
+    <string name="add_rss_success">"RSS登録に成功しました。"</string>
+    <string name="add_rss_error_generic">RSS登録に失敗しました。</string>
+    <string name="add_rss_error_invalid_url">URLが正しくありません</string>
+    <string name="adding_rss">RSSを追加しています。</string>
+
+    <string name="delete_rss">RSS削除</string>
+    <string name="delete_rss_alert">RSSを削除してもよろしいですか？</string>
+    <string name="delete">削除</string>
+    <string name="finish_delete_rss_success">RSSを削除しました</string>
+    <string name="finish_delete_rss_fail">RSSの削除に失敗しました</string>
+
+    <string name="edit_rss_title">RSSのタイトルを編集</string>
+    <string name="new_title">新しいタイトル</string>
+    <string name="empty_title">新しいタイトルが空になっています。</string>
+    <string name="edit_rss_title_success">タイトルを編集しました。</string>
+    <string name="edit_rss_title_error">タイトルを編集に失敗しました。</string>
+
+    <string name="home">ホーム</string>
+
+    <!-- フィルター -->
+    <string name="filter">フィルター</string>
+    <string name="filter_saved">フィルターを登録しました。</string>
+    <string name="filter_saved_error">フィルターの登録に失敗しました。</string>
+    <string name="percent_only_error">この単語では登録できません。</string>
+    <string name="add_filter">フィルター登録</string>
+    <string name="delete_filter">フィルター削除</string>
+    <string name="edit_filter">フィルターの編集</string>
+    <string name="not_get_hatena_point">取得中</string>
+    <string name="none">なし</string>
+    <string name="no_filter">フィルターを登録しましょう！</string>
+    <string name="sample_filter_title">サンプルフィルター</string>
+    <string name="sample_filter_target">サンプル対象RSS</string>
+    <string name="sample_filter_keyword">キーワード: サンプル</string>
+    <string name="sample_filter_url">URL: http://www.google.com</string>
+    <string name="done">done</string>
+    <string name="title_select_filter_rss">RSSを選択</string>
+    <string name="filter_name">フィルター名</string>
+    <string name="url">URL: %1$s</string>
+    <string name="target_rss">対象RSS</string>
+    <string name="multiple_target_rss">複数のRSS</string>
+
+    <!-- 設定 -->
+    <string name="setting">設定</string>
+    <string name="auto_update_setting">自動更新の設定</string>
+    <string name="launch_setting">起動時の設定</string>
+    <string name="launch_tab">起動時に開くタブ</string>
+    <string name="see_setting">閲覧の設定</string>
+    <string name="interval">自動更新の頻度</string>
+    <string name="auto_update_in_main_ui">起動時に更新</string>
+    <string name="not_auto_update_in_main_ui">起動時に更新しない</string>
+    <string name="theme">テーマ</string>
+    <string name="article_sort">新しい記事を先頭</string>
+    <string name="not_article_sort">新しい記事を先頭にしない</string>
+    <string name="all_read_behavior">全ての記事を既読にした時の動作</string>
+    <string name="all_read_back">RSS一覧に戻る</string>
+    <string name="all_read_not_back">RSS一覧に戻らない</string>
+    <string name="open_internal">内蔵ブラウザで開く</string>
+    <string name="not_open_internal">内蔵ブラウザで開かない</string>
+    <string name="swipe_direction">スワイプ方向</string>
+    <string name="save">保存</string>
+    <string name="debug">デバッグ</string>
+    <string name="import_db">データベースのインポート</string>
+    <string name="export_db">データベースのエクスポート</string>
+    <string name="add_test_rss">テストRSS挿入</string>
+    <string name="fix_unread_count">未読数修正</string>
+    <string name="key_update_interval">keyUpdateInterval</string>
+    <string name="key_launch_tab">keyLaunchTab</string>
+    <string name="key_theme">keyTheme</string>
+    <string name="key_article_sort">keyArticleSort</string>
+    <string name="key_auto_update_in_main_ui">keyAutoUpdateInMainUi</string>
+    <string name="key_internal_browser">keyInternalBrowser</string>
+    <string name="key_all_read_behavior">keyAllReadBehavior</string>
+    <string name="key_swipe_direction">keySwipeDirection</string>
+    <string name="key_license">keyLicense</string>
+    <string name="key_import_db">keyImportDb</string>
+    <string name="key_export_db">keyExportDb</string>
+    <string name="key_add_rss">keyAddRss</string>
+    <string name="key_fix_unread_count">keyFixUnreadCount</string>
+    <string name="key_review">keyReview</string>
+    <string name="key_request">keyRequest</string>
+
+    <string name="all_read">全て既読にする</string>
+    <string name="no_article">未読の記事がありません</string>
+
+    <string name="icon">アイコン</string>
+    <string name="license">ライセンス</string>
+    <string name="license_info">ライセンス情報</string>
+    <string name="other">その他</string>
+    <string name="review_on_google_play">Google Playでレビューする</string>
+
+
+    <!-- 記事検索 -->
+    <string name="search_article">記事を検索</string>
+    <string name="no_search_result">該当する記事はありません</string>
+    <string name="search_result">検索結果</string>
+
+    <string name="hatena">はてな</string>
+
+    <string name="share">共有</string>
+
+    <!-- キュレーション -->
+    <string name="curation">キュレーション</string>
+    <string name="curation_title">タイトル</string>
+    <string name="no_curation_message">キュレーションを登録しましょう！</string>
+    <string name="add_word">追加</string>
+    <string name="adding_curation">キュレーションを追加しています</string>
+    <string name="word_setting">単語</string>
+    <string name="delete_curation">キュレーションの削除</string>
+    <string name="edit_curation">キュレーションの編集</string>
+    <string name="title_activity_add_curation">キュレーションを追加</string>
+    <string name="title_activity_edit_curation">キュレーションを編集</string>
+    <string name="empty_curation_name">キュレーション名が空です。</string>
+    <string name="empty_word">空の単語は追加できません。</string>
+    <string name="empty_word_list">単語が1つもありません。</string>
+    <string name="duplicate_word">既に同じ単語が入っています。</string>
+    <string name="duplicate_curation_name">既に同じ名前のキュレーションが存在します。</string>
+    <string name="curation_added_success">キュレーションを追加しました。</string>
+    <string name="curation_added_error">キュレーションの追加に失敗しました。</string>
+
+    <!-- RSS検索 -->
+    <string name="search_rss">サイトまたはURLを入力</string>
+
+    <!-- チュートリアル -->
+    <string name="tutorial_go_to_search_rss_description">インストールありがとうございます。まずは購読するサイトのRSSを登録しましょう。</string>
+    <string name="tutorial_search_rss_description">購読したいサイトを検索して開きます。RSSのURLを直接入力して購読することもできます。</string>
+    <string name="tutorial_add_rss_description">購読したいサイトを開いたらボタンを押して購読します。</string>
+    <string name="tutorial_next">次へ</string>
+    <string name="tutorial_close">閉じる</string>
+
+    <!-- レビュー -->
+    <string name="review_dialog_title">レビューにご協力お願いします</string>
+    <string name="review_dialog_message">いつもご利用ありがとうございます。よろしければGoogle Playにてレビューをお願い致します。</string>
+    <string name="review">レビューする</string>
+    <string name="request">要望を送る</string>
+    <string name="title_activity_user_review">ご意見・ご要望</string>
+
+    <!-- Google Analytics -->
+    <string name="ga_not_all_title">個別RSS</string>
+    <string name="tap_add_rss">RSS追加タップ</string>
+    <string name="tap_add_curation">キュレーション追加タップ</string>
+    <string name="tap_add_filter">フィルター追加タップ</string>
+    <string name="tap_article_internal">記事を内部ブラウザで開く</string>
+    <string name="tap_article_external">記事を外部ブラウザで開く</string>
+    <string name="tap_go_to_google_play">レビュータップ</string>
+    <string name="tap_go_to_google_play_from_setting">設定からレビュータップ</string>
+    <string name="tap_request">要望を送るタップ</string>
+    <string name="tap_request_from_setting">設定から要望を送るタップ</string>
+    <string name="cancel_review">レビューキャンセル</string>
+    <string name="show_review_dialog">レビューダイアログ</string>
+    <string name="share_article">記事共有</string>
+    <string name="read_all_articles">記事全既読</string>
+    <string name="scroll_article_list">記事リストをスクロール</string>
+    <string name="change_auto_update_interval">自動更新間隔変更</string>
+    <string name="change_all_read_behavior">全部記事読了後の動作変更</string>
+    <string name="change_swipe_direction">スワイプ方向変更</string>
+    <string name="change_aricle_sort">記事並び替え方法変更</string>
+    <string name="change_browser_option">記事を開くブラウザ変更</string>
+    <string name="change_auto_update_in_main_ui_option">起動時に更新変更</string>
+    <string name="add_same_curation_name">同じキュレーション名で追加</string>
+    <string name="add_new_curation">キュレーション追加</string>
+    <string name="update_curation">キュレーション更新</string>
+    <string name="add_rss_input_url">URL入力からRSS追加</string>
+    <string name="add_rss_input_url_error">URL入力からRSS追加エラー</string>
+    <string name="add_rss_from_intent_error">共有からRSS追加エラー</string>
+    <string name="add_new_filter">フィルター追加</string>
+    <string name="update_filter">フィルター更新</string>
+    <string name="add_new_filter_no_title">タイトルなしフィルター追加</string>
+    <string name="add_new_filter_no_keyword_url">キーワードURLなしフィルター追加</string>
+</resources>

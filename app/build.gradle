@@ -58,6 +58,7 @@ dependencies {
     implementation project(':feature_article_list')
     implementation project(':legacy')
     implementation project(':repository')
+    implementation project(':resource')
     implementation project(':util')
     implementation project(':tracker')
     implementation "androidx.appcompat:appcompat:$appcompat_version"
