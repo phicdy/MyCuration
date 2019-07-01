@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.articlelist.ArticleListPresenter
+import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
@@ -39,7 +40,6 @@ import com.phicdy.mycuration.presentation.view.activity.FeedUrlHookActivity
 import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
-import com.phicdy.mycuration.presentation.view.fragment.ArticlesListFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment

@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.fragment
+package com.phicdy.mycuration.articlelist
 
 import android.app.PendingIntent
 import android.app.SearchManager
@@ -21,15 +21,10 @@ import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.phicdy.mycuration.articlelist.ArticleItemView
-import com.phicdy.mycuration.articlelist.ArticleListPresenter
-import com.phicdy.mycuration.articlelist.ArticleListView
-import com.phicdy.mycuration.articlelist.ArticleRecyclerView
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
-import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.tracker.TrackerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -10,12 +10,14 @@ android {
 
 dependencies {
     implementation project(':entity')
+    implementation project(':glide')
     implementation project(':resource')
     implementation project(':repository')
     implementation project(':tracker')
 
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation 'androidx.browser:browser:1.0.0'
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
