@@ -25,13 +25,13 @@ import com.phicdy.mycuration.articlelist.ArticleItemView
 import com.phicdy.mycuration.articlelist.ArticleListPresenter
 import com.phicdy.mycuration.articlelist.ArticleListView
 import com.phicdy.mycuration.articlelist.ArticleRecyclerView
+import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.util.bitmapFrom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

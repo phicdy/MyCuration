@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.util
+package com.phicdy.mycuration.articlelist.util
 
 import android.content.Context
 import android.graphics.Bitmap
