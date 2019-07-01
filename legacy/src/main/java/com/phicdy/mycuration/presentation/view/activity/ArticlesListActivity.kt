@@ -32,6 +32,18 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
     companion object {
         private const val DEFAULT_CURATION_ID = -1
         private const val TAG_FRAGMENT = "TAG_FRAGMENT"
+        private const val RSS_ID = "RSS_ID"
+        private const val CURATION_ID = "CURATION_ID"
+
+        fun createRssIntent(context: Context, rssId: Int) =
+                Intent(context, ArticlesListActivity::class.java).apply {
+                    putExtra(RSS_ID, rssId)
+                }
+
+        fun createCurationIntent(context: Context, curationId: Int) =
+                Intent(context, ArticlesListActivity::class.java).apply {
+                    putExtra(CURATION_ID, curationId)
+                }
     }
 
     private val job = Job()
@@ -51,9 +63,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
 
         // Set feed id and url from main activity
         val intent = intent
-        val feedId = intent.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID)
-        val curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID)
-        intent.putExtra(TopActivity.FEED_ID, feedId)
+        val feedId = intent.getIntExtra(RSS_ID, Feed.ALL_FEED_ID)
+        val curationId = intent.getIntExtra(CURATION_ID, DEFAULT_CURATION_ID)
 
         if (savedInstanceState == null) {
             val fragment = ArticlesListFragment.newInstance(feedId, curationId)

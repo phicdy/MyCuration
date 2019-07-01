@@ -56,8 +56,6 @@ class TopActivity :
         CoroutineScope {
 
     companion object {
-        const val FEED_ID = "FEED_ID"
-        const val CURATION_ID = "CURATION_ID"
         private const val SHOWCASE_ID = "tutorialAddRss"
         private const val FRAGMENT_TAG = "FRAGMENT_TAG"
     }
@@ -395,9 +393,7 @@ class TopActivity :
     }
 
     override fun onListClicked(feedId: Int) {
-        val intent = Intent(applicationContext, ArticlesListActivity::class.java)
-        intent.putExtra(FEED_ID, feedId)
-        startActivity(intent)
+        startActivity(ArticlesListActivity.createRssIntent(this, feedId))
     }
 
     override fun onEditRssClicked(rssId: Int, feedTitle: String) {
@@ -448,10 +444,7 @@ class TopActivity :
     }
 
     override fun onCurationListClicked(curationId: Int) {
-        val intent = Intent()
-        intent.setClass(applicationContext, ArticlesListActivity::class.java)
-        intent.putExtra(CURATION_ID, curationId)
-        startActivity(intent)
+        startActivity(ArticlesListActivity.createCurationIntent(this, curationId))
     }
 
     override fun startEditCurationActivity(editCurationId: Int) {
