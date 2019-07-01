@@ -11,6 +11,7 @@ buildscript {
     ext.koin_version = '2.0.1'
     ext.firebase_version = '16.0.9'
     ext.jacoco_version = "0.8.2"
+    ext.glideVer = '4.8.0'
 
     repositories {
         google().content {
@@ -170,7 +171,7 @@ subprojects {
 
     dependencies {
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-       
+
         testImplementation 'junit:junit:4.12'
         testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0'
         testImplementation 'org.assertj:assertj-core:3.11.1'

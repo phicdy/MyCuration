@@ -23,8 +23,12 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
+import com.phicdy.mycuration.articlelist.ArticlesListActivity
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
+import com.phicdy.mycuration.feature.util.changeTheme
+import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.legacy.BuildConfig
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
@@ -34,8 +38,6 @@ import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.util.changeTheme
-import com.phicdy.mycuration.util.getThemeColor
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,8 +58,6 @@ class TopActivity :
         CoroutineScope {
 
     companion object {
-        const val FEED_ID = "FEED_ID"
-        const val CURATION_ID = "CURATION_ID"
         private const val SHOWCASE_ID = "tutorialAddRss"
         private const val FRAGMENT_TAG = "FRAGMENT_TAG"
     }
@@ -395,9 +395,7 @@ class TopActivity :
     }
 
     override fun onListClicked(feedId: Int) {
-        val intent = Intent(applicationContext, ArticlesListActivity::class.java)
-        intent.putExtra(FEED_ID, feedId)
-        startActivity(intent)
+        startActivity(ArticlesListActivity.createRssIntent(this, feedId))
     }
 
     override fun onEditRssClicked(rssId: Int, feedTitle: String) {
@@ -448,10 +446,7 @@ class TopActivity :
     }
 
     override fun onCurationListClicked(curationId: Int) {
-        val intent = Intent()
-        intent.setClass(applicationContext, ArticlesListActivity::class.java)
-        intent.putExtra(CURATION_ID, curationId)
-        startActivity(intent)
+        startActivity(ArticlesListActivity.createCurationIntent(this, curationId))
     }
 
     override fun startEditCurationActivity(editCurationId: Int) {

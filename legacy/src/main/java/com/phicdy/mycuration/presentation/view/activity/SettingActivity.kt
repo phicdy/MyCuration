@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
-import com.phicdy.mycuration.util.changeTheme
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentListener {

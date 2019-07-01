@@ -4,8 +4,13 @@ android {
 dependencies {
     implementation project(':domain')
     implementation project(':entity')
+    implementation project(':feature_article_list')
+    implementation project(':feature_util')
+    implementation project(':glide')
+    implementation project(':resource')
     implementation project(':repository')
     implementation project(':util')
+    implementation project(':tracker')
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
@@ -15,11 +20,9 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
     implementation 'androidx.preference:preference:1.1.0-alpha05'
-    implementation 'androidx.browser:browser:1.0.0'
 
     implementation "org.koin:koin-android-scope:$koin_version"
 
-    def glideVer = '4.8.0'
     implementation("com.github.bumptech.glide:glide:$glideVer") {
         exclude group: "com.android.support"
     }
@@ -28,8 +31,6 @@ dependencies {
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0@aar'
 
     implementation 'io.github.inflationx:viewpump:1.0.0'
-
-    implementation "com.google.firebase:firebase-core:$firebase_version"
 
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"

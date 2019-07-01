@@ -1,0 +1,37 @@
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(':entity')
+    implementation project(':feature_util')
+    implementation project(':glide')
+    implementation project(':resource')
+    implementation project(':repository')
+    implementation project(':tracker')
+
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0-alpha07'
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
+
+    implementation "org.koin:koin-android-scope:$koin_version"
+
+    implementation("com.github.bumptech.glide:glide:$glideVer") {
+        exclude group: "com.android.support"
+    }
+   
+    implementation 'io.github.inflationx:viewpump:1.0.0'
+}

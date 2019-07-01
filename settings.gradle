@@ -1,6 +1,11 @@
 include ':app',
         ':entity',
         ':domain',
+        ':feature_article_list',
+        ':feature_util',
+        ':glide',
         ':repository',
         ':legacy',
+        ':resource',
+        ':tracker',
         ':util'

@@ -8,11 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.SelectFilterTargetRssPresenter
 import com.phicdy.mycuration.presentation.view.SelectTargetRssView
 import com.phicdy.mycuration.presentation.view.fragment.SelectFilterTargetRssFragment
-import com.phicdy.mycuration.util.changeTheme
 
 class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
 

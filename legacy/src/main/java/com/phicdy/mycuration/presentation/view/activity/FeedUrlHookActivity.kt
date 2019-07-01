@@ -7,11 +7,11 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
+import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.util.changeTheme
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

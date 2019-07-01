@@ -6,8 +6,8 @@ import android.view.MenuItem
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.util.changeTheme
 
 class UserRequestActivity : AppCompatActivity() {
 

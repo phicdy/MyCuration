@@ -11,12 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.util.changeTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
