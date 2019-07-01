@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.activity
+package com.phicdy.mycuration.articlelist
 
 import android.app.SearchManager
 import android.content.Context
@@ -10,15 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
-import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
-import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.tracker.TrackerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
