@@ -1,13 +1,11 @@
-package com.phicdy.mycuration.presentation.view.activity
+package com.phicdy.mycuration.articlelist
 
 import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.feature.util.changeTheme
-import com.phicdy.mycuration.legacy.R
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {

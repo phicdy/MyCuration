@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.CurationRepository

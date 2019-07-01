@@ -27,7 +27,7 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".presentation.view.activity.ArticleSearchResultActivity"
+            android:name=".articlelist.ArticleSearchResultActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop"
