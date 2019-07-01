@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.util
+package com.phicdy.mycuration.feature.util
 
 import android.util.TypedValue
 import androidx.annotation.AttrRes

@@ -15,10 +15,10 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.feature.util.changeTheme
+import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.tracker.TrackerHelper
-import com.phicdy.mycuration.util.changeTheme
-import com.phicdy.mycuration.util.getThemeColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
