@@ -26,10 +26,12 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import kotlin.coroutines.CoroutineContext
 
+
 class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener, CoroutineScope {
 
     companion object {
         private const val DEFAULT_CURATION_ID = -1
+        private const val TAG_FRAGMENT = "TAG_FRAGMENT"
     }
 
     private val job = Job()
@@ -38,7 +40,6 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
 
     private lateinit var searchView: SearchView
     private lateinit var fbTitle: String
-    private lateinit var fragment: ArticlesListFragment
     private lateinit var fab: FloatingActionButton
 
     private val rssRepository: RssRepository by inject()
@@ -48,13 +49,18 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_articles_list)
 
-        fragment = supportFragmentManager.findFragmentById(R.id.fr_article_list) as ArticlesListFragment
-
         // Set feed id and url from main activity
         val intent = intent
         val feedId = intent.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID)
         val curationId = intent.getIntExtra(TopActivity.CURATION_ID, DEFAULT_CURATION_ID)
         intent.putExtra(TopActivity.FEED_ID, feedId)
+
+        if (savedInstanceState == null) {
+            val fragment = ArticlesListFragment.newInstance(feedId, curationId)
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.container, fragment, TAG_FRAGMENT)
+                    .commit()
+        }
 
         launch {
             when {
@@ -81,7 +87,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
             initToolbar()
             fab = findViewById(R.id.fab_article_list)
             fab.setOnClickListener {
-                fragment.onFabButtonClicked()
+                val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
+                fragment?.onFabButtonClicked()
                 TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
             }
         }
@@ -142,7 +149,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         when (item.itemId) {
             R.id.all_read -> {
                 TrackerHelper.sendButtonEvent(getString(R.string.read_all_articles))
-                fragment.handleAllRead()
+                val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
+                fragment?.handleAllRead()
             }
             android.R.id.home -> finish()
             else -> {

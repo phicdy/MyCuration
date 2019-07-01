@@ -30,7 +30,6 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +44,15 @@ import kotlin.coroutines.CoroutineContext
 class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
     companion object {
+        const val RSS_ID = "RSS_ID"
+        const val CURATION_ID = "CURATION_ID"
+
+        fun newInstance(rssId: Int, curationId: Int) = ArticlesListFragment().apply {
+            arguments = Bundle().apply {
+                putInt(RSS_ID, rssId)
+                putInt(CURATION_ID, curationId)
+            }
+        }
     }
 
     private lateinit var job: Job
@@ -52,9 +60,9 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         get() = job + Dispatchers.Main
 
     private val presenter: ArticleListPresenter by currentScope.inject {
-        val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID)
+        val feedId = arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID)
                 ?: Feed.ALL_FEED_ID
-        val curationId = activity?.intent?.getIntExtra(TopActivity.CURATION_ID,
+        val curationId = arguments?.getInt(CURATION_ID,
                 ArticleListPresenter.DEFAULT_CURATION_ID)
                 ?: ArticleListPresenter.DEFAULT_CURATION_ID
         val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
@@ -105,7 +113,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         job = Job()
 
         // Set swipe direction
-        val feedId = activity?.intent?.getIntExtra(TopActivity.FEED_ID, Feed.ALL_FEED_ID)
+        val feedId = arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID)
                 ?: Feed.ALL_FEED_ID
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(feedId)
