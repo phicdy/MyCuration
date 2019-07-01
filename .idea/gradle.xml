@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/entity" />
             <option value="$PROJECT_DIR$/feature_article_list" />
+            <option value="$PROJECT_DIR$/feature_util" />
             <option value="$PROJECT_DIR$/glide" />
             <option value="$PROJECT_DIR$/legacy" />
             <option value="$PROJECT_DIR$/repository" />
