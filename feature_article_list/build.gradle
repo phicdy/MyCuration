@@ -12,6 +12,7 @@ dependencies {
     implementation project(':entity')
     implementation project(':resource')
     implementation project(':repository')
+    implementation project(':tracker')
 
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
