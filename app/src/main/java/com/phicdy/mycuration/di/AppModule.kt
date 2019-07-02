@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.articlelist.ArticleListPresenter
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
+import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
@@ -63,6 +64,7 @@ val appModule = module {
     single { UnreadCountRepository(get(), get()) }
     single<AdditionalSettingApi> { AdditionalSettingRepository(get(), get()) }
     single { AlarmManagerTaskManager(androidContext()) }
+    single { Dispatcher() }
 
     single { TimberTree() }
 

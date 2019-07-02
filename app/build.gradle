@@ -53,6 +53,7 @@ dependencies {
     }
     androidTestImplementation 'org.assertj:assertj-core:3.11.1'
 
+    implementation project(':core')
     implementation project(':domain')
     implementation project(':entity')
     implementation project(':feature_article_list')
