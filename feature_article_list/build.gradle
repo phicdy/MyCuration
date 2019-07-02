@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    implementation project(':core')
     implementation project(':entity')
     implementation project(':feature_util')
     implementation project(':glide')
@@ -32,6 +33,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:$glideVer") {
         exclude group: "com.android.support"
     }
-   
+
     implementation 'io.github.inflationx:viewpump:1.0.0'
 }

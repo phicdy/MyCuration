@@ -54,19 +54,41 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: ArticleListPresenter by currentScope.inject {
-        val feedId = arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID)
-                ?: Feed.ALL_FEED_ID
-        val curationId = arguments?.getInt(CURATION_ID,
+    private val rssId: Int  by lazy {
+        arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
+    }
+    private val curationId: Int by lazy {
+        arguments?.getInt(CURATION_ID,
                 ArticleListPresenter.DEFAULT_CURATION_ID)
                 ?: ArticleListPresenter.DEFAULT_CURATION_ID
+    }
+
+    private val presenter: ArticleListPresenter by currentScope.inject {
         val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
         parametersOf(
-                feedId,
+                rssId,
                 curationId,
                 query,
                 activity?.intent?.action ?: ""
         )
+    }
+
+    private val fetchArticleListOfRssActionCreator by currentScope.inject<FetchArticleListOfRssActionCreator> {
+        parametersOf(rssId)
+    }
+
+
+    private val fetchArticleListOfCurationActionCreator by currentScope.inject<FetchArticleListOfCurationActionCreator> {
+        parametersOf(curationId)
+    }
+
+    private val fetchAllArticleListArticleListActionCreator by currentScope.inject<FetchAllArticleListActionCreator> {
+        parametersOf()
+    }
+
+    private val searchArticleListActionCreator by currentScope.inject<SearchArticleListActionCreator> {
+        val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
+        parametersOf(query)
     }
 
     private lateinit var recyclerView: ArticleRecyclerView
@@ -108,10 +130,8 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         job = Job()
 
         // Set swipe direction
-        val feedId = arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID)
-                ?: Feed.ALL_FEED_ID
         val prefMgr = PreferenceHelper
-        prefMgr.setSearchFeedId(feedId)
+        prefMgr.setSearchFeedId(rssId)
 
         presenter.setView(this)
         presenter.create()
@@ -137,6 +157,12 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         setAllListener()
         launch {
             presenter.createView()
+            when {
+                activity?.intent?.action == Intent.ACTION_SEARCH -> searchArticleListActionCreator.run()
+                curationId != -1 -> fetchArticleListOfCurationActionCreator.run()
+                rssId == Feed.ALL_FEED_ID -> fetchAllArticleListArticleListActionCreator.run()
+                else -> fetchArticleListOfRssActionCreator.run()
+            }
         }
         return view
     }

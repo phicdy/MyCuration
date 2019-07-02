@@ -5,6 +5,10 @@ import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.articlelist.ArticleListPresenter
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
+import com.phicdy.mycuration.articlelist.FetchAllArticleListActionCreator
+import com.phicdy.mycuration.articlelist.FetchArticleListOfCurationActionCreator
+import com.phicdy.mycuration.articlelist.FetchArticleListOfRssActionCreator
+import com.phicdy.mycuration.articlelist.SearchArticleListActionCreator
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -102,6 +106,37 @@ val appModule = module {
                     unreadCountRepository = get(),
                     query = query,
                     action = action
+            )
+        }
+        scoped { (rssId: Int) ->
+            FetchArticleListOfRssActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get(),
+                    rssId = rssId
+            )
+        }
+        scoped { (curationId: Int) ->
+            FetchArticleListOfCurationActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get(),
+                    curationId = curationId
+            )
+        }
+        scoped {
+            FetchAllArticleListActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get()
+            )
+        }
+        scoped { (query: String) ->
+            SearchArticleListActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get(),
+                    query = query
             )
         }
     }
