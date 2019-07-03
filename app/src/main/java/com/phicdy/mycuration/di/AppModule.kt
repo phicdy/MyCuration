@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.articlelist.ArticleListPresenter
+import com.phicdy.mycuration.articlelist.ArticleListStore
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.articlelist.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.FetchArticleListOfCurationActionCreator
@@ -52,6 +53,7 @@ import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.util.log.TimberTree
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -139,6 +141,7 @@ val appModule = module {
                     query = query
             )
         }
+        viewModel { ArticleListStore(get()) }
     }
 
     scope(named<CurationListFragment>()) {

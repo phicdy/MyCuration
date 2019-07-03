@@ -14,10 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.coroutineScope
-import java.text.SimpleDateFormat
 import java.util.ArrayList
-import java.util.Date
-import java.util.Locale
 import java.util.Random
 
 class ArticleListPresenter(private val feedId: Int,
@@ -239,55 +236,9 @@ class ArticleListPresenter(private val feedId: Int,
         }
     }
 
-    fun onBindViewHolder(item: ArticleItemView, position: Int) {
-        val article = allArticles[position]
-        item.setArticleTitle(article.title)
-        item.setArticleUrl(article.url)
-
-        // Set article posted date
-        val format = SimpleDateFormat(
-                "yyyy/MM/dd HH:mm:ss", Locale.US)
-        val dateString = format.format(Date(article.postedDate))
-        item.setArticlePostedTime(dateString)
-
-        // Set RSS Feed unread article count
-        val hatenaPoint = article.point
-        if (hatenaPoint == Article.DEDAULT_HATENA_POINT) {
-            item.setNotGetPoint()
-        } else {
-            item.setArticlePoint(hatenaPoint)
-        }
-
-        val feedTitle = article.feedTitle
-        if (feedTitle == "") {
-            item.hideRssInfo()
-        } else {
-            item.setRssTitle(article.feedTitle)
-
-            val iconPath = article.feedIconPath
-            if (iconPath.isNotBlank() && iconPath != Feed.DEDAULT_ICON_PATH) {
-                item.setRssIcon(article.feedIconPath)
-            } else {
-                item.setDefaultRssIcon()
-            }
-        }
-
-        // Change color if already be read
-        if (article.status == Article.TOREAD || article.status == Article.READ) {
-            item.changeColorToRead()
-        } else {
-            item.changeColorToUnread()
-        }
-
-    }
-
     fun articleSize(): Int {
         return if (loadedPosition == allArticles.size - 1) allArticles.size else loadedPosition + 2
         // Index starts with 0 and add +1 for footer, so add 2
-    }
-
-    fun onGetItemViewType(position: Int): Int {
-        return if (position == loadedPosition + 1) VIEW_TYPE_FOOTER else VIEW_TYPE_ARTICLE
     }
 
     suspend fun onSwiped(direction: Int, touchedPosition: Int) = coroutineScope {

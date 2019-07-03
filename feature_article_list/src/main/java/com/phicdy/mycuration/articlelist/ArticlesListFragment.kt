@@ -4,17 +4,16 @@ import android.app.PendingIntent
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
@@ -23,8 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
+import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.tracker.TrackerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +31,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
-import java.security.InvalidParameterException
 import kotlin.coroutines.CoroutineContext
 
 
@@ -91,8 +89,10 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         parametersOf(query)
     }
 
+    private val store: ArticleListStore by currentScope.inject()
+
     private lateinit var recyclerView: ArticleRecyclerView
-    private lateinit var articlesListAdapter: SimpleItemRecyclerViewAdapter
+    private lateinit var articlesListAdapter: ArticleListAdapter
 
 
     private lateinit var listener: OnArticlesListFragmentListener
@@ -135,6 +135,10 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
         presenter.setView(this)
         presenter.create()
+        store.onCreate()
+        store.list.observe(this, Observer<List<Article>> {
+            articlesListAdapter.submitList(it)
+        })
     }
 
     override fun onAttach(context: Context) {
@@ -152,11 +156,10 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        articlesListAdapter = SimpleItemRecyclerViewAdapter()
+        articlesListAdapter = ArticleListAdapter(this, presenter)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
         launch {
-            presenter.createView()
             when {
                 activity?.intent?.action == Intent.ACTION_SEARCH -> searchArticleListActionCreator.run()
                 curationId != -1 -> fetchArticleListOfCurationActionCreator.run()
@@ -278,117 +281,4 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         emptyView.text = getText(R.string.no_search_result)
     }
 
-    inner class SimpleItemRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val holder: RecyclerView.ViewHolder
-            holder = when (viewType) {
-                ArticleListPresenter.VIEW_TYPE_FOOTER -> {
-                    val footer = LayoutInflater.from(parent.context)
-                            .inflate(R.layout.footer_article_list_activity, parent, false)
-                    FooterViewHolder(footer)
-                }
-                ArticleListPresenter.VIEW_TYPE_ARTICLE -> {
-                    val view = LayoutInflater.from(parent.context)
-                            .inflate(R.layout.articles_list, parent, false)
-                    ArticleViewHolder(view)
-                }
-                else -> throw InvalidParameterException("Invalid view type for article list")
-            }
-            return holder
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            if (holder is ArticleViewHolder) {
-                holder.mView.setOnClickListener {
-                    launch {
-                        presenter.onListItemClicked(holder.getAdapterPosition())
-                    }
-                }
-                holder.mView.setOnLongClickListener {
-                    presenter.onListItemLongClicked(holder.getAdapterPosition())
-                    true
-                }
-                presenter.onBindViewHolder(holder, position)
-            }
-        }
-
-        override fun getItemViewType(position: Int): Int {
-            return presenter.onGetItemViewType(position)
-        }
-
-        override fun getItemCount(): Int {
-            return presenter.articleSize()
-        }
-
-        internal inner class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-        inner class ArticleViewHolder internal constructor(
-                internal val mView: View
-        ) : RecyclerView.ViewHolder(mView), ArticleItemView {
-            internal val articleTitle: TextView = mView.findViewById(R.id.articleTitle) as TextView
-            internal val articlePostedTime: TextView = mView.findViewById(R.id.articlePostedTime) as TextView
-            internal val articlePoint: TextView = mView.findViewById(R.id.articlePoint) as TextView
-            private val articleUrl: TextView = mView.findViewById(R.id.tv_articleUrl) as TextView
-            private val feedTitleView: TextView = mView.findViewById(R.id.feedTitle) as TextView
-            private val feedIconView: ImageView = mView.findViewById(R.id.iv_feed_icon) as ImageView
-
-            override fun setArticleTitle(title: String) {
-                articleTitle.text = title
-            }
-
-            override fun setArticleUrl(url: String) {
-                articleUrl.text = url
-            }
-
-            override fun setArticlePostedTime(time: String) {
-                articlePostedTime.text = time
-            }
-
-            override fun setNotGetPoint() {
-                articlePoint.text = getString(R.string.not_get_hatena_point)
-            }
-
-            override fun setArticlePoint(point: String) {
-                articlePoint.text = point
-            }
-
-            override fun hideRssInfo() {
-                feedTitleView.visibility = View.GONE
-                feedIconView.visibility = View.GONE
-            }
-
-            override fun setRssTitle(title: String) {
-                feedTitleView.text = title
-                feedTitleView.setTextColor(Color.BLACK)
-            }
-
-            override fun setRssIcon(path: String) {
-                GlideApp.with(this@ArticlesListFragment)
-                        .load(path)
-                        .placeholder(R.drawable.ic_rss)
-                        .circleCrop()
-                        .error(R.drawable.ic_rss)
-                        .into(feedIconView)
-            }
-
-            override fun setDefaultRssIcon() {
-                feedIconView.setImageResource(R.drawable.ic_rss)
-            }
-
-            override fun changeColorToRead() {
-                val color = ContextCompat.getColor(itemView.context, R.color.text_read)
-                articleTitle.setTextColor(color)
-                articlePostedTime.setTextColor(color)
-                articlePoint.setTextColor(color)
-                feedTitleView.setTextColor(color)
-            }
-
-            override fun changeColorToUnread() {
-                val color = ContextCompat.getColor(itemView.context, R.color.text_primary)
-                articleTitle.setTextColor(color)
-                articlePostedTime.setTextColor(color)
-                articlePoint.setTextColor(color)
-                feedTitleView.setTextColor(color)
-            }
-        }
-    }
 }
