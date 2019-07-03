@@ -75,6 +75,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
 
     implementation "org.koin:koin-android-scope:$koin_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
 
     implementation "com.jakewharton.timber:timber:$timber_version"
 
