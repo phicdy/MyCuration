@@ -4,7 +4,7 @@ import kotlinx.coroutines.withContext
 
 class Dispatcher {
 
-    private val stores = mutableListOf<Store>()
+    private val stores = mutableListOf<Store<*>>()
 
     suspend fun <T> dispatch(action: Action<T>) {
         stores.forEach {
@@ -14,11 +14,11 @@ class Dispatcher {
         }
     }
 
-    fun register(store: Store) {
+    fun register(store: Store<*>) {
         stores.add(store)
     }
 
-    fun unregister(store: Store) {
+    fun unregister(store: Store<*>) {
         stores.remove(store)
     }
 }

@@ -138,13 +138,10 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
 
         presenter.setView(this)
         presenter.create()
-        articleListStore.onCreate()
-        readArticlePositionStore.onCreate()
-        finishStateStore.onCreate()
-        articleListStore.list.observe(this, Observer<List<Article>> {
+        articleListStore.state.observe(this, Observer<List<Article>> {
             articlesListAdapter.submitList(it)
         })
-        readArticlePositionStore.position.observe(this, Observer<Int> {
+        readArticlePositionStore.state.observe(this, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
             launch {
                 FinishStateActionCreator(
