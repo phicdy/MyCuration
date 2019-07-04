@@ -21,7 +21,7 @@ import java.util.Locale
 
 class ArticleListAdapter(
         private val coroutineScope: CoroutineScope,
-        private val presenter: ArticleListPresenter
+        private val listener: Listener
 ) : ListAdapter<Article, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -44,7 +44,7 @@ class ArticleListAdapter(
         if (holder is ArticleViewHolder) {
             holder.mView.setOnClickListener {
                 coroutineScope.launch {
-                    presenter.onListItemClicked(holder.getAdapterPosition())
+                    listener.onItemClicked(holder.getAdapterPosition(), currentList)
                 }
             }
             holder.mView.setOnLongClickListener {
@@ -101,7 +101,7 @@ class ArticleListAdapter(
     }
 
     private class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-   
+
     private class ArticleViewHolder(
             val mView: View
     ) : RecyclerView.ViewHolder(mView) {
@@ -111,6 +111,11 @@ class ArticleListAdapter(
         val articleUrl: TextView = mView.findViewById(R.id.tv_articleUrl) as TextView
         val feedTitleView: TextView = mView.findViewById(R.id.feedTitle) as TextView
         val feedIconView: ImageView = mView.findViewById(R.id.iv_feed_icon) as ImageView
+    }
+
+    interface Listener {
+        fun onItemClicked(position: Int, articles: List<Article>)
+        fun onItemLongClicked(position: Int, articles: List<Article>)
     }
 }
 
@@ -125,5 +130,4 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Article>() {
     }
 
 }
-
 

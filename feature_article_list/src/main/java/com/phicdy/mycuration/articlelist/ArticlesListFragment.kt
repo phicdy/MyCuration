@@ -29,12 +29,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.CoroutineContext
 
 
-class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
+class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, ArticleListAdapter.Listener {
 
     companion object {
         const val RSS_ID = "RSS_ID"
@@ -89,7 +90,9 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         parametersOf(query)
     }
 
-    private val store: ArticleListStore by currentScope.inject()
+    private val articleListStore: ArticleListStore by currentScope.inject()
+    private val finishStateStore: FinishStateStore by currentScope.inject()
+    private val readArticlePositionStore: ReadArticlePositionStore by currentScope.inject()
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
@@ -135,9 +138,25 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
 
         presenter.setView(this)
         presenter.create()
-        store.onCreate()
-        store.list.observe(this, Observer<List<Article>> {
+        articleListStore.onCreate()
+        readArticlePositionStore.onCreate()
+        finishStateStore.onCreate()
+        articleListStore.list.observe(this, Observer<List<Article>> {
             articlesListAdapter.submitList(it)
+        })
+        readArticlePositionStore.position.observe(this, Observer<Int> {
+            articlesListAdapter.notifyItemChanged(it)
+            launch {
+                FinishStateActionCreator(
+                        dispatcher = get(),
+                        preferenceHelper = get(),
+                        articles = articlesListAdapter.currentList
+                ).run()
+            }
+
+        })
+        finishStateStore.state.observe(this, Observer<Boolean> {
+            if (it) listener.finish()
         })
     }
 
@@ -156,7 +175,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        articlesListAdapter = ArticleListAdapter(this, presenter)
+        articlesListAdapter = ArticleListAdapter(this, this)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
         launch {
@@ -281,4 +300,19 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         emptyView.text = getText(R.string.no_search_result)
     }
 
+    override fun onItemClicked(position: Int, articles: List<Article>) {
+        val actionCreator = ReadArticleActionCreator(
+                dispatcher = get(),
+                articleRepository = get(),
+                unreadCountRepository = get(),
+                position = position,
+                articles = articles
+        )
+        launch {
+            actionCreator.run()
+        }
+    }
+
+    override fun onItemLongClicked(position: Int, articles: List<Article>) {
+    }
 }

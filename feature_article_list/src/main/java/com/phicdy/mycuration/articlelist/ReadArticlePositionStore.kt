@@ -6,21 +6,20 @@ import androidx.lifecycle.ViewModel
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
-import com.phicdy.mycuration.entity.Article
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class ArticleListStore(private val dispatcher: Dispatcher) : Store, CoroutineScope, ViewModel() {
+class ReadArticlePositionStore(private val dispatcher: Dispatcher) : Store, CoroutineScope, ViewModel() {
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val _list = MutableLiveData<List<Article>>()
-    val list: LiveData<List<Article>>
-        get() = _list
+    private val _position = MutableLiveData<Int>()
+    val position: LiveData<Int>
+        get() = _position
 
     fun onCreate() {
         dispatcher.register(this)
@@ -28,7 +27,7 @@ class ArticleListStore(private val dispatcher: Dispatcher) : Store, CoroutineSco
 
     override suspend fun <T> notify(action: Action<T>) {
         when (action) {
-            is FetchArticleAction -> _list.value = action.value
+            is ReadArticleAction -> _position.value = action.value
         }
     }
 

@@ -12,3 +12,19 @@ data class FetchArticleAction(
         const val TYPE = "FetchArticleActionType"
     }
 }
+
+data class ReadArticleAction(
+        override val value: Int
+) : ArticleListAction<Int>(TYPE) {
+    companion object {
+        const val TYPE = "ReadArticleActionType"
+    }
+}
+
+data class FinishAction(
+        override val value: Unit
+) : ArticleListAction<Unit>(TYPE) {
+    companion object {
+        const val TYPE = "FinishActionType"
+    }
+}
