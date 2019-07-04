@@ -48,7 +48,7 @@ class ArticleListAdapter(
                 }
             }
             holder.mView.setOnLongClickListener {
-                presenter.onListItemLongClicked(holder.getAdapterPosition())
+                listener.onItemLongClicked(holder.getAdapterPosition(), currentList)
                 true
             }
 

@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.articlelist
+package com.phicdy.mycuration.articlelist.action
 
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher
