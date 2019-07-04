@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.articlelist
+package com.phicdy.mycuration.articlelist.store
 
 import com.phicdy.mycuration.articlelist.action.ReadArticleAction
 import com.phicdy.mycuration.core.Action

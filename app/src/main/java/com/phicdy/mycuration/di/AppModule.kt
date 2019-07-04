@@ -4,14 +4,14 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.articlelist.ArticleListPresenter
-import com.phicdy.mycuration.articlelist.ArticleListStore
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
-import com.phicdy.mycuration.articlelist.FinishStateStore
-import com.phicdy.mycuration.articlelist.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
+import com.phicdy.mycuration.articlelist.store.ArticleListStore
+import com.phicdy.mycuration.articlelist.store.FinishStateStore
+import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
