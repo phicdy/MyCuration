@@ -16,3 +16,11 @@ data class ReadArticleAction(
 data class FinishAction(
         override val value: Unit
 ) : ArticleListAction<Unit>()
+
+data class OpenInternalBrowserAction(
+        override val value: Article
+) : ArticleListAction<Article>()
+
+data class OpenExternalBrowserAction(
+        override val value: String
+) : ArticleListAction<String>()

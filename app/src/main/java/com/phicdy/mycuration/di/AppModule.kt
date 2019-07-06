@@ -11,6 +11,8 @@ import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreat
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
+import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
+import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.db.DatabaseHelper
@@ -146,6 +148,8 @@ val appModule = module {
         viewModel { ArticleListStore(get()) }
         viewModel { FinishStateStore(get()) }
         viewModel { ReadArticlePositionStore(get()) }
+        viewModel { OpenInternalWebBrowserStateStore(get()) }
+        viewModel { OpenExternalWebBrowserStateStore(get()) }
     }
 
     scope(named<CurationListFragment>()) {

@@ -23,11 +23,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
-import com.phicdy.mycuration.articlelist.action.FinishStateActionCreator
+import com.phicdy.mycuration.articlelist.action.OpenUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.ReadArticleActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
+import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
+import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -102,6 +104,8 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     private val articleListStore: ArticleListStore by currentScope.inject()
     private val finishStateStore: FinishStateStore by currentScope.inject()
     private val readArticlePositionStore: ReadArticlePositionStore by currentScope.inject()
+    private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by currentScope.inject()
+    private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by currentScope.inject()
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
@@ -152,17 +156,15 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         })
         readArticlePositionStore.state.observe(this, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
-            launch {
-                FinishStateActionCreator(
-                        dispatcher = get(),
-                        preferenceHelper = get(),
-                        articles = articlesListAdapter.currentList
-                ).run()
-            }
-
         })
         finishStateStore.state.observe(this, Observer<Boolean> {
             if (it) listener.finish()
+        })
+        openInternalWebBrowserStateStore.state.observe(this, Observer<Article> {
+            openInternalWebView(it.url, it.feedTitle)
+        })
+        openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
+            openExternalWebView(it)
         })
     }
 
@@ -316,6 +318,16 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         )
         launch {
             actionCreator.run()
+        }
+        val openUrlActionCreator = OpenUrlActionCreator(
+                dispatcher = get(),
+                preferenceHelper = get(),
+                feedId = rssId,
+                article = articles[position],
+                rssRepository = get()
+        )
+        launch {
+            openUrlActionCreator.run()
         }
     }
 
