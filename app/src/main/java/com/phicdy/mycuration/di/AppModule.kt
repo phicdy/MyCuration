@@ -106,7 +106,6 @@ val appModule = module {
             ArticleListPresenter(
                     feedId = feedId,
                     curationId = curationId,
-                    rssRepository = get(),
                     preferenceHelper = get(),
                     articleRepository = get(),
                     unreadCountRepository = get(),
