@@ -73,8 +73,6 @@ class ArticleListPresenter(private val feedId: Int,
         this.view = view
     }
 
-    fun create() {}
-
     suspend fun createView() = coroutineScope {
         allArticles = loadAllArticles()
         loadArticle(LOAD_COUNT)

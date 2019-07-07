@@ -150,7 +150,6 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         prefMgr.setSearchFeedId(rssId)
 
         presenter.setView(this)
-        presenter.create()
         articleListStore.state.observe(this, Observer<List<Article>> {
             articlesListAdapter.submitList(it)
         })
