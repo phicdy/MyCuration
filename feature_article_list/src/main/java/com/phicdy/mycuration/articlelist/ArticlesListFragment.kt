@@ -155,7 +155,11 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
 
         presenter.setView(this)
         articleListStore.state.observe(this, Observer<List<Article>> {
-            articlesListAdapter.submitList(it)
+            if (it.isEmpty()) {
+                showEmptyView()
+            } else {
+                articlesListAdapter.submitList(it)
+            }
         })
         readArticlePositionStore.state.observe(this, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
