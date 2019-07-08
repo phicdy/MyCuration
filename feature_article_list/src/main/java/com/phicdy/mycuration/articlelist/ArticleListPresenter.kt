@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.articlelist
 
-import android.content.Intent
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -17,12 +16,9 @@ import java.util.ArrayList
 import java.util.Random
 
 class ArticleListPresenter(private val feedId: Int,
-                           private val curationId: Int,
                            private val preferenceHelper: PreferenceHelper,
                            private val articleRepository: ArticleRepository,
-                           private val unreadCountRepository: UnreadCountRepository,
-                           private val query: String,
-                           private val action: String) {
+                           private val unreadCountRepository: UnreadCountRepository) {
 
     companion object {
         const val DEFAULT_CURATION_ID = -1
@@ -53,11 +49,6 @@ class ArticleListPresenter(private val feedId: Int,
             return isAllRead
         }
 
-    private val isSearchAction: Boolean
-        get() {
-            return Intent.ACTION_SEARCH == action
-        }
-
     internal val isAllUnreadArticle: Boolean
         get() {
             var index = 0
@@ -71,43 +62,6 @@ class ArticleListPresenter(private val feedId: Int,
 
     fun setView(view: ArticleListView) {
         this.view = view
-    }
-
-    suspend fun createView() = coroutineScope {
-        allArticles = loadAllArticles()
-        loadArticle(LOAD_COUNT)
-        if (allArticles.size == 0) {
-            if (isSearchAction) {
-                view.showNoSearchResult()
-            } else {
-                view.showEmptyView()
-            }
-        } else {
-            view.notifyListView()
-        }
-    }
-
-    private suspend fun loadAllArticles(): ArrayList<Article> = coroutineScope {
-        var allArticles: ArrayList<Article>
-        if (isSearchAction) {
-            allArticles = articleRepository.searchArticles(query, preferenceHelper.sortNewArticleTop)
-        } else if (curationId != DEFAULT_CURATION_ID) {
-            allArticles = articleRepository.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
-            if (allArticles.size == 0) {
-                allArticles = articleRepository.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
-            }
-        } else if (feedId == Feed.ALL_FEED_ID) {
-            allArticles = articleRepository.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
-            if (allArticles.size == 0 && articleRepository.isExistArticle()) {
-                allArticles = articleRepository.getTop300Articles(preferenceHelper.sortNewArticleTop)
-            }
-        } else {
-            allArticles = articleRepository.getUnreadArticlesOfRss(feedId, preferenceHelper.sortNewArticleTop)
-            if (allArticles.size == 0 && articleRepository.isExistArticleOf(feedId)) {
-                allArticles = articleRepository.getAllArticlesOfRss(feedId, preferenceHelper.sortNewArticleTop)
-            }
-        }
-        return@coroutineScope allArticles
     }
 
     private fun loadArticle(num: Int) {

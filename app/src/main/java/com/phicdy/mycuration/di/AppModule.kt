@@ -107,12 +107,9 @@ val appModule = module {
         scoped { (feedId: Int, curationId: Int, query: String, action: String) ->
             ArticleListPresenter(
                     feedId = feedId,
-                    curationId = curationId,
                     preferenceHelper = get(),
                     articleRepository = get(),
-                    unreadCountRepository = get(),
-                    query = query,
-                    action = action
+                    unreadCountRepository = get()
             )
         }
         scoped { (rssId: Int) ->
