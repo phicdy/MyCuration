@@ -9,6 +9,10 @@ data class FetchArticleAction(
         override val value: List<Article>
 ) : ArticleListAction<List<Article>>()
 
+data class SearchArticleAction(
+        override val value: List<Article>
+) : ArticleListAction<List<Article>>()
+
 data class ReadArticleAction(
         override val value: Int
 ) : ArticleListAction<Int>()

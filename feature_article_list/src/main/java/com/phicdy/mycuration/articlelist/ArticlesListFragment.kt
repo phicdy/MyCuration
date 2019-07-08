@@ -34,6 +34,7 @@ import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
+import com.phicdy.mycuration.articlelist.store.SearchResultStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Article
@@ -105,6 +106,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     }
 
     private val articleListStore: ArticleListStore by currentScope.inject()
+    private val searchResultStore: SearchResultStore by currentScope.inject()
     private val finishStateStore: FinishStateStore by currentScope.inject()
     private val readArticlePositionStore: ReadArticlePositionStore by currentScope.inject()
     private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by currentScope.inject()
@@ -157,6 +159,13 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         articleListStore.state.observe(this, Observer<List<Article>> {
             if (it.isEmpty()) {
                 showEmptyView()
+            } else {
+                articlesListAdapter.submitList(it)
+            }
+        })
+        searchResultStore.state.observe(this, Observer<List<Article>> {
+            if (it.isEmpty()) {
+                showNoSearchResult()
             } else {
                 articlesListAdapter.submitList(it)
             }

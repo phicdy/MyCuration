@@ -16,7 +16,7 @@ class SearchArticleListActionCreator(
 
     override suspend fun run() {
         withContext(Dispatchers.IO) {
-            dispatcher.dispatch(FetchArticleAction(articleRepository.searchArticles(query, preferenceHelper.sortNewArticleTop)))
+            dispatcher.dispatch(SearchArticleAction(articleRepository.searchArticles(query, preferenceHelper.sortNewArticleTop)))
         }
     }
 
