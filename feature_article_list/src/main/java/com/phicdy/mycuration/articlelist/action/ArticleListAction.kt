@@ -24,3 +24,7 @@ data class OpenInternalBrowserAction(
 data class OpenExternalBrowserAction(
         override val value: String
 ) : ArticleListAction<String>()
+
+data class ScrollAction(
+        override val value: Int
+) : ArticleListAction<Int>()

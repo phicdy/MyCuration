@@ -23,14 +23,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
+import com.phicdy.mycuration.articlelist.action.FinishStateActionCreator
 import com.phicdy.mycuration.articlelist.action.OpenUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.ReadArticleActionCreator
+import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
 import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
+import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Article
@@ -106,6 +109,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     private val readArticlePositionStore: ReadArticlePositionStore by currentScope.inject()
     private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by currentScope.inject()
     private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by currentScope.inject()
+    private val scrollPositionStore: ScrollPositionStore by currentScope.inject()
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
@@ -164,6 +168,16 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         })
         openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
             openExternalWebView(it)
+        })
+        scrollPositionStore.state.observe(this, Observer<Int> {
+            scrollTo(it)
+            launch {
+                FinishStateActionCreator(
+                        dispatcher = get(),
+                        preferenceHelper = get(),
+                        articles = articlesListAdapter.currentList
+                ).run()
+            }
         })
     }
 
@@ -239,7 +253,15 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
 
     fun onFabButtonClicked() {
         launch {
-            presenter.onFabButtonClicked()
+            val manager = recyclerView.layoutManager as LinearLayoutManager
+            ScrollActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    unreadCountRepository = get(),
+                    firstVisiblePosition = manager.findFirstVisibleItemPosition(),
+                    lastVisiblePosition = manager.findLastCompletelyVisibleItemPosition(),
+                    allArticles = articlesListAdapter.currentList
+            ).run()
         }
     }
 

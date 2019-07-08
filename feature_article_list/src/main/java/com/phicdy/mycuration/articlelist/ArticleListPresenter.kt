@@ -167,31 +167,6 @@ class ArticleListPresenter(private val feedId: Int,
         view.showShareUi(article.url)
     }
 
-    suspend fun onFabButtonClicked() = coroutineScope {
-        if (allArticles.size == 0) return@coroutineScope
-        val firstPosition = view.firstVisiblePosition
-        val lastPosition = view.lastVisiblePosition
-        for (i in firstPosition..lastPosition) {
-            if (i > loadedPosition) break
-            val targetArticle = allArticles[i]
-            if (targetArticle.status == Article.UNREAD) {
-                targetArticle.status = Article.TOREAD
-                unreadCountRepository.countDownUnreadCount(targetArticle.feedId)
-                articleRepository.saveStatus(targetArticle.id, Article.TOREAD)
-            }
-        }
-        view.notifyListView()
-        val visibleNum = lastPosition - firstPosition
-        var positionAfterScroll = lastPosition + visibleNum
-        if (positionAfterScroll >= loadedPosition) positionAfterScroll = loadedPosition
-        view.scrollTo(positionAfterScroll)
-        if (preferenceHelper.allReadBack && view.isBottomVisible) {
-            if (isAllRead) {
-                view.finish()
-            }
-        }
-    }
-
     suspend fun handleAllRead() = coroutineScope {
         if (feedId == Feed.ALL_FEED_ID) {
             articleRepository.saveAllStatusToRead()
