@@ -17,6 +17,10 @@ data class ReadArticleAction(
         override val value: Int
 ) : ArticleListAction<Int>()
 
+data class ReadALlArticlesAction(
+        override val value: Unit
+) : ArticleListAction<Unit>()
+
 data class FinishAction(
         override val value: Unit
 ) : ArticleListAction<Unit>()

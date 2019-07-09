@@ -13,6 +13,7 @@ import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
 import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
+import com.phicdy.mycuration.articlelist.store.ReadAllArticlesStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
 import com.phicdy.mycuration.articlelist.store.SearchResultStore
@@ -106,12 +107,7 @@ val appModule = module {
 
     scope(named<ArticlesListFragment>()) {
         scoped { (feedId: Int, curationId: Int, query: String, action: String) ->
-            ArticleListPresenter(
-                    feedId = feedId,
-                    preferenceHelper = get(),
-                    articleRepository = get(),
-                    unreadCountRepository = get()
-            )
+            ArticleListPresenter()
         }
         scoped { (rssId: Int) ->
             FetchArticleListOfRssActionCreator(
@@ -152,6 +148,7 @@ val appModule = module {
         viewModel { OpenExternalWebBrowserStateStore(get()) }
         viewModel { ScrollPositionStore(get()) }
         viewModel { SwipePositionStore(get()) }
+        viewModel { ReadAllArticlesStateStore(get()) }
     }
 
     scope(named<CurationListFragment>()) {

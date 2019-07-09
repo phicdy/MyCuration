@@ -1,17 +1,9 @@
 package com.phicdy.mycuration.articlelist
 
-import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.data.repository.ArticleRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.entity.Article
-import com.phicdy.mycuration.entity.Feed
-import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
 
-class ArticleListPresenter(private val feedId: Int,
-                           private val preferenceHelper: PreferenceHelper,
-                           private val articleRepository: ArticleRepository,
-                           private val unreadCountRepository: UnreadCountRepository) {
+class ArticleListPresenter {
 
     companion object {
         const val DEFAULT_CURATION_ID = -1
@@ -25,16 +17,6 @@ class ArticleListPresenter(private val feedId: Int,
     private var allArticles: ArrayList<Article> = arrayListOf()
     private var loadedPosition = -1
 
-    internal val isAllUnreadArticle: Boolean
-        get() {
-            var index = 0
-            for (article in allArticles) {
-                if (article.status != Article.UNREAD) return false
-                index++
-                if (index == loadedPosition) break
-            }
-            return true
-        }
 
     fun setView(view: ArticleListView) {
         this.view = view
@@ -44,24 +26,6 @@ class ArticleListPresenter(private val feedId: Int,
         if (position < 0) return
         val article = allArticles[position]
         view.showShareUi(article.url)
-    }
-
-    suspend fun handleAllRead() = coroutineScope {
-        if (feedId == Feed.ALL_FEED_ID) {
-            articleRepository.saveAllStatusToRead()
-            unreadCountRepository.readAll()
-        } else {
-            articleRepository.saveStatusToRead(feedId)
-            unreadCountRepository.readAll(feedId)
-        }
-        if (preferenceHelper.allReadBack) {
-            view.finish()
-        } else {
-            for (i in allArticles.indices) {
-                allArticles[i].status = Article.READ
-            }
-            view.notifyListView()
-        }
     }
 
     fun articleSize(): Int {

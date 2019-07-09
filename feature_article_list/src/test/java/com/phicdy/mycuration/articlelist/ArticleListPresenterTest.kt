@@ -31,8 +31,7 @@ class ArticleListPresenterTest {
         whenever(preferenceHelper.allReadBack).thenReturn(true)
         whenever(preferenceHelper.sortNewArticleTop).thenReturn(true)
         whenever(preferenceHelper.swipeDirection).thenReturn(PreferenceHelper.SWIPE_LEFT_TO_RIGHT)
-        presenter = ArticleListPresenter(
-                testFeedId, preferenceHelper, articleRepository, unreadCountRepository)
+        presenter = ArticleListPresenter()
     }
 
     @Test
@@ -58,8 +57,7 @@ class ArticleListPresenterTest {
     fun `No Articles are loaded after onCreateView with empty DB for all feed`() = runBlocking {
         val testFeedId = Feed.ALL_FEED_ID
         mockEmptyDatabase(testFeedId)
-        val presenter = ArticleListPresenter(
-                testFeedId, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -72,8 +70,7 @@ class ArticleListPresenterTest {
     fun `No Articles are loaded after onCreateView with empty DB for curation`() = runBlocking {
         val testCurationId = 1
         mockEmptyDatabase(testCurationId)
-        val presenter = ArticleListPresenter(
-                Feed.DEFAULT_FEED_ID, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -97,8 +94,7 @@ class ArticleListPresenterTest {
     fun `All artciles are loaded after onCreateView if already read`() = runBlocking {
         val testFeedId = Feed.ALL_FEED_ID
         mock1ReadArticleDatabase(testFeedId)
-        val presenter = ArticleListPresenter(
-                testFeedId, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -111,8 +107,7 @@ class ArticleListPresenterTest {
     fun `All artciles OfCurationare loaded after onCreateView if already read`() = runBlocking {
         val testCurationId = 1
         mock1ReadArticleDatabase(testCurationId)
-        val presenter = ArticleListPresenter(
-                Feed.DEFAULT_FEED_ID, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -135,8 +130,7 @@ class ArticleListPresenterTest {
     @Test
     fun `All unread articles are only loaded after onCreateView`() = runBlocking {
         val testFeedId = Feed.ALL_FEED_ID
-        val presenter = ArticleListPresenter(
-                testFeedId, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         mock2Unread2ReadArticleDatabase(testFeedId)
         val view = MockView()
         presenter.setView(view)
@@ -149,8 +143,7 @@ class ArticleListPresenterTest {
     fun `All unread articles of curation are only loaded after onCreateView`() = runBlocking {
         val testCurationId = 1
         mock2Unread2ReadArticleDatabase(testCurationId)
-        val presenter = ArticleListPresenter(
-                Feed.DEFAULT_FEED_ID, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -272,8 +265,7 @@ class ArticleListPresenterTest {
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         mock1ArticleDatabase(clickedArticle)
-        val presenter = ArticleListPresenter(
-                testFeedId, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         val view = MockView()
         presenter.setView(view)
         presenter.create()
@@ -317,8 +309,7 @@ class ArticleListPresenterTest {
         val article = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
         mock1ArticleDatabase(article)
-        val presenter = ArticleListPresenter(
-                testFeedId, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         whenever(articleRepository.searchArticles("ghaeogha", true)).thenReturn(arrayListOf())
         val view = MockView()
         presenter.setView(view)
@@ -345,8 +336,7 @@ class ArticleListPresenterTest {
         val query = "query"
         whenever(articleRepository.searchArticles(query, true)).thenReturn(arrayListOf(article))
 
-        val presenter = ArticleListPresenter(
-                testFeedId, preferenceHelper, articleRepository, unreadCountRepository)
+        val presenter = ArticleListPresenter()
         val view = MockView()
         presenter.setView(view)
         presenter.createView()

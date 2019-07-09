@@ -25,6 +25,7 @@ import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationAction
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
 import com.phicdy.mycuration.articlelist.action.FinishStateActionCreator
 import com.phicdy.mycuration.articlelist.action.OpenUrlActionCreator
+import com.phicdy.mycuration.articlelist.action.ReadAllArticlesActionCreator
 import com.phicdy.mycuration.articlelist.action.ReadArticleActionCreator
 import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
@@ -33,6 +34,7 @@ import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
 import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
+import com.phicdy.mycuration.articlelist.store.ReadAllArticlesStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
 import com.phicdy.mycuration.articlelist.store.SearchResultStore
@@ -115,6 +117,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by currentScope.inject()
     private val scrollPositionStore: ScrollPositionStore by currentScope.inject()
     private val swipePositionStore: SwipePositionStore by currentScope.inject()
+    private val readAllArticlesStateStore: ReadAllArticlesStateStore by currentScope.inject()
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
@@ -187,24 +190,26 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         })
         scrollPositionStore.state.observe(this, Observer<Int> {
             scrollTo(it)
-            launch {
-                FinishStateActionCreator(
-                        dispatcher = get(),
-                        preferenceHelper = get(),
-                        articles = articlesListAdapter.currentList
-                ).run()
-            }
+            runFinishActionCreator()
         })
         swipePositionStore.state.observe(this, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
-            launch {
-                FinishStateActionCreator(
-                        dispatcher = get(),
-                        preferenceHelper = get(),
-                        articles = articlesListAdapter.currentList
-                ).run()
-            }
+            runFinishActionCreator()
         })
+        readAllArticlesStateStore.state.observe(this, Observer<Unit> {
+            notifyListView()
+            runFinishActionCreator()
+        })
+    }
+
+    private fun runFinishActionCreator() {
+        launch {
+            FinishStateActionCreator(
+                    dispatcher = get(),
+                    preferenceHelper = get(),
+                    articles = articlesListAdapter.currentList
+            ).run()
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -286,7 +291,13 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
 
     fun handleAllRead() {
         launch {
-            presenter.handleAllRead()
+            ReadAllArticlesActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    unreadCountRepository = get(),
+                    feedId = rssId,
+                    allArticles = articlesListAdapter.currentList
+            ).run()
         }
     }
 
