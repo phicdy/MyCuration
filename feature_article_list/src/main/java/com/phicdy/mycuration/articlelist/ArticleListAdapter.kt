@@ -26,12 +26,12 @@ class ArticleListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ArticleListPresenter.VIEW_TYPE_FOOTER -> {
+            VIEW_TYPE_FOOTER -> {
                 val footer = LayoutInflater.from(parent.context)
                         .inflate(R.layout.footer_article_list_activity, parent, false)
                 FooterViewHolder(footer)
             }
-            ArticleListPresenter.VIEW_TYPE_ARTICLE -> {
+            VIEW_TYPE_ARTICLE -> {
                 val view = LayoutInflater.from(parent.context)
                         .inflate(R.layout.articles_list, parent, false)
                 ArticleViewHolder(view)
@@ -116,6 +116,11 @@ class ArticleListAdapter(
     interface Listener {
         fun onItemClicked(position: Int, articles: List<Article>)
         fun onItemLongClicked(position: Int, articles: List<Article>)
+    }
+
+    companion object {
+        private const val VIEW_TYPE_ARTICLE = 0
+        private const val VIEW_TYPE_FOOTER = 1
     }
 }
 

@@ -61,6 +61,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     companion object {
         const val RSS_ID = "RSS_ID"
         const val CURATION_ID = "CURATION_ID"
+        const val DEFAULT_CURATION_ID = -1
 
         fun newInstance(rssId: Int, curationId: Int) = ArticlesListFragment().apply {
             arguments = Bundle().apply {
@@ -78,9 +79,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
     }
     private val curationId: Int by lazy {
-        arguments?.getInt(CURATION_ID,
-                ArticleListPresenter.DEFAULT_CURATION_ID)
-                ?: ArticleListPresenter.DEFAULT_CURATION_ID
+        arguments?.getInt(CURATION_ID, DEFAULT_CURATION_ID) ?: DEFAULT_CURATION_ID
     }
 
     private val presenter: ArticleListPresenter by currentScope.inject {

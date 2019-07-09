@@ -5,13 +5,6 @@ import java.util.ArrayList
 
 class ArticleListPresenter {
 
-    companion object {
-        const val DEFAULT_CURATION_ID = -1
-
-        const val VIEW_TYPE_ARTICLE = 0
-        const val VIEW_TYPE_FOOTER = 1
-    }
-
     private lateinit var view: ArticleListView
 
     private var allArticles: ArrayList<Article> = arrayListOf()
