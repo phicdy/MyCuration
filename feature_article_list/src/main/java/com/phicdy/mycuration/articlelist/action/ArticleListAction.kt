@@ -40,3 +40,8 @@ data class ScrollAction(
 data class SwipeAction(
         override val value: Int
 ) : ArticleListAction<Int>()
+
+data class ShareUrlAction(
+        override val value: String
+) : ArticleListAction<String>()
+

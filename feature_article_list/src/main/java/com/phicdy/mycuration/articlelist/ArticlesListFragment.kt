@@ -29,6 +29,7 @@ import com.phicdy.mycuration.articlelist.action.ReadAllArticlesActionCreator
 import com.phicdy.mycuration.articlelist.action.ReadArticleActionCreator
 import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
+import com.phicdy.mycuration.articlelist.action.ShareUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
@@ -38,6 +39,7 @@ import com.phicdy.mycuration.articlelist.store.ReadAllArticlesStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
 import com.phicdy.mycuration.articlelist.store.SearchResultStore
+import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -118,6 +120,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     private val scrollPositionStore: ScrollPositionStore by currentScope.inject()
     private val swipePositionStore: SwipePositionStore by currentScope.inject()
     private val readAllArticlesStateStore: ReadAllArticlesStateStore by currentScope.inject()
+    private val shareUrlStore: ShareUrlStore by currentScope.inject()
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
@@ -199,6 +202,9 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         readAllArticlesStateStore.state.observe(this, Observer<Unit> {
             notifyListView()
             runFinishActionCreator()
+        })
+        shareUrlStore.state.observe(this, Observer<String> {
+            showShareUi(it)
         })
     }
 
@@ -383,5 +389,12 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     }
 
     override fun onItemLongClicked(position: Int, articles: List<Article>) {
+        launch {
+            ShareUrlActionCreator(
+                    dispatcher = get(),
+                    position = position,
+                    articles = articles
+            ).run()
+        }
     }
 }

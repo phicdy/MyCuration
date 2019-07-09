@@ -22,12 +22,6 @@ class ArticleListPresenter {
         this.view = view
     }
 
-    fun onListItemLongClicked(position: Int) {
-        if (position < 0) return
-        val article = allArticles[position]
-        view.showShareUi(article.url)
-    }
-
     fun articleSize(): Int {
         return if (loadedPosition == allArticles.size - 1) allArticles.size else loadedPosition + 2
         // Index starts with 0 and add +1 for footer, so add 2
