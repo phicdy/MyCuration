@@ -1,7 +1,5 @@
 package com.phicdy.mycuration.articlelist
 
-import androidx.recyclerview.widget.ItemTouchHelper.LEFT
-import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
@@ -31,23 +29,8 @@ class ArticleListPresenter(private val feedId: Int,
     private lateinit var view: ArticleListView
 
     private var allArticles: ArrayList<Article> = arrayListOf()
-    private var isSwipeRightToLeft = false
-    private var isSwipeLeftToRight = false
     private var loadedPosition = -1
     private var disposable: Disposable? = null
-
-    private val isAllRead: Boolean
-        get() {
-            var isAllRead = true
-            for (i in 0..loadedPosition) {
-                val article = allArticles[i]
-                if (article.status == Article.UNREAD) {
-                    isAllRead = false
-                    break
-                }
-            }
-            return isAllRead
-        }
 
     internal val isAllUnreadArticle: Boolean
         get() {
@@ -92,29 +75,6 @@ class ArticleListPresenter(private val feedId: Int,
                 }
     }
 
-    private suspend fun setReadStatusToTouchedView(article: Article, status: String, isAllReadBack: Boolean) = coroutineScope {
-        val oldStatus = article.status
-        if (oldStatus == status || oldStatus == Article.READ && status == Article.TOREAD) {
-            view.notifyListView()
-            return@coroutineScope
-        }
-        articleRepository.saveStatus(article.id, status)
-        if (status == Article.TOREAD) {
-            unreadCountRepository.countDownUnreadCount(article.feedId)
-        } else if (status == Article.UNREAD) {
-            unreadCountRepository.conutUpUnreadCount(article.feedId)
-        }
-        article.status = status
-
-        article.status = status
-        if (isAllReadBack) {
-            if (isAllRead) {
-                view.finish()
-            }
-        }
-        view.notifyListView()
-    }
-
     fun onListItemLongClicked(position: Int) {
         if (position < 0) return
         val article = allArticles[position]
@@ -142,32 +102,6 @@ class ArticleListPresenter(private val feedId: Int,
     fun articleSize(): Int {
         return if (loadedPosition == allArticles.size - 1) allArticles.size else loadedPosition + 2
         // Index starts with 0 and add +1 for footer, so add 2
-    }
-
-    suspend fun onSwiped(direction: Int, touchedPosition: Int) = coroutineScope {
-        val touchedArticle = allArticles[touchedPosition]
-        when (direction) {
-            LEFT -> {
-                isSwipeRightToLeft = true
-                when (preferenceHelper.swipeDirection) {
-                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, preferenceHelper.allReadBack)
-                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, preferenceHelper.allReadBack)
-                    else -> {
-                    }
-                }
-                isSwipeRightToLeft = false
-            }
-            RIGHT -> {
-                isSwipeLeftToRight = true
-                when (preferenceHelper.swipeDirection) {
-                    PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> setReadStatusToTouchedView(touchedArticle, Article.UNREAD, preferenceHelper.allReadBack)
-                    PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> setReadStatusToTouchedView(touchedArticle, Article.TOREAD, preferenceHelper.allReadBack)
-                    else -> {
-                    }
-                }
-                isSwipeLeftToRight = false
-            }
-        }
     }
 
 }

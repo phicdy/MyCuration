@@ -32,3 +32,7 @@ data class OpenExternalBrowserAction(
 data class ScrollAction(
         override val value: Int
 ) : ArticleListAction<Int>()
+
+data class SwipeAction(
+        override val value: Int
+) : ArticleListAction<Int>()

@@ -16,6 +16,7 @@ import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
 import com.phicdy.mycuration.articlelist.store.SearchResultStore
+import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -150,6 +151,7 @@ val appModule = module {
         viewModel { OpenInternalWebBrowserStateStore(get()) }
         viewModel { OpenExternalWebBrowserStateStore(get()) }
         viewModel { ScrollPositionStore(get()) }
+        viewModel { SwipePositionStore(get()) }
     }
 
     scope(named<CurationListFragment>()) {

@@ -28,6 +28,7 @@ import com.phicdy.mycuration.articlelist.action.OpenUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.ReadArticleActionCreator
 import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
+import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
 import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
@@ -35,6 +36,7 @@ import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
 import com.phicdy.mycuration.articlelist.store.SearchResultStore
+import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Article
@@ -112,6 +114,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by currentScope.inject()
     private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by currentScope.inject()
     private val scrollPositionStore: ScrollPositionStore by currentScope.inject()
+    private val swipePositionStore: SwipePositionStore by currentScope.inject()
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
@@ -192,6 +195,16 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
                 ).run()
             }
         })
+        swipePositionStore.state.observe(this, Observer<Int> {
+            articlesListAdapter.notifyItemChanged(it)
+            launch {
+                FinishStateActionCreator(
+                        dispatcher = get(),
+                        preferenceHelper = get(),
+                        articles = articlesListAdapter.currentList
+                ).run()
+            }
+        })
     }
 
     override fun onAttach(context: Context) {
@@ -236,7 +249,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     private fun setAllListener() {
         val helper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
             override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                return ItemTouchHelper.Callback.makeFlag(ACTION_STATE_SWIPE, LEFT or RIGHT)
+                return makeFlag(ACTION_STATE_SWIPE, LEFT or RIGHT)
             }
 
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
@@ -244,8 +257,17 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val actionCreator = SwipeActionCreator(
+                        dispatcher = get(),
+                        articleRepository = get(),
+                        unreadCountRepository = get(),
+                        preferenceHelper = get(),
+                        position = viewHolder.adapterPosition,
+                        direction = direction,
+                        articles = articlesListAdapter.currentList
+                )
                 launch {
-                    presenter.onSwiped(direction, viewHolder.adapterPosition)
+                    actionCreator.run()
                 }
             }
         })
