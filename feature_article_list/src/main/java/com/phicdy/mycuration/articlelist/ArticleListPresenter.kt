@@ -5,13 +5,8 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
-import java.util.Random
 
 class ArticleListPresenter(private val feedId: Int,
                            private val preferenceHelper: PreferenceHelper,
@@ -20,7 +15,6 @@ class ArticleListPresenter(private val feedId: Int,
 
     companion object {
         const val DEFAULT_CURATION_ID = -1
-        private const val LOAD_COUNT = 100
 
         const val VIEW_TYPE_ARTICLE = 0
         const val VIEW_TYPE_FOOTER = 1
@@ -30,7 +24,6 @@ class ArticleListPresenter(private val feedId: Int,
 
     private var allArticles: ArrayList<Article> = arrayListOf()
     private var loadedPosition = -1
-    private var disposable: Disposable? = null
 
     internal val isAllUnreadArticle: Boolean
         get() {
@@ -45,34 +38,6 @@ class ArticleListPresenter(private val feedId: Int,
 
     fun setView(view: ArticleListView) {
         this.view = view
-    }
-
-    private fun loadArticle(num: Int) {
-        if (loadedPosition >= allArticles.size || num < 0) return
-        loadedPosition += num
-        if (loadedPosition >= allArticles.size - 1) loadedPosition = allArticles.size - 1
-    }
-
-    fun resume() {}
-
-    fun pause() {
-        disposable?.dispose()
-    }
-
-    fun onScrolled(lastItemPosition: Int) {
-        if (loadedPosition == allArticles.size - 1) {
-            // All articles are loaded
-            return
-        }
-        if (lastItemPosition < loadedPosition + 1) return
-        disposable = Flowable.just(Math.abs(Random(System.currentTimeMillis()).nextLong() % 1000))
-                .subscribeOn(Schedulers.io())
-                .map { Thread.sleep(it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    loadArticle(LOAD_COUNT)
-                    view.notifyListView()
-                }
     }
 
     fun onListItemLongClicked(position: Int) {

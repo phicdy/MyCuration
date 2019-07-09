@@ -236,11 +236,6 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.resume()
-    }
-
     override fun onDestroy() {
         job.cancel()
         super.onDestroy()
@@ -273,17 +268,6 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         })
         helper.attachToRecyclerView(recyclerView)
         recyclerView.addItemDecoration(helper)
-
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val manager = recyclerView.layoutManager as LinearLayoutManager
-                val lastItemPosition = manager.findLastVisibleItemPosition()
-                presenter.onScrolled(lastItemPosition)
-            }
-        })
-
     }
 
     fun onFabButtonClicked() {
