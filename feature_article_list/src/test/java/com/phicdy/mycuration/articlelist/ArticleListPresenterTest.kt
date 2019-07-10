@@ -35,48 +35,6 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `unread article status becomes to read when clicked`() = runBlocking {
-        val clickedArticle = Article(1, "unread", "http://www.google.com",
-                Article.UNREAD, "1", 1, 1, "feed", "")
-        mock1ArticleDatabase(clickedArticle)
-        val view = MockView()
-        presenter.setView(view)
-        presenter.create()
-        presenter.createView()
-        presenter.onListItemClicked(0)
-        assertThat(clickedArticle.status).isEqualTo(Article.TOREAD)
-        return@runBlocking
-    }
-
-    @Test
-    fun `Toread article status is still to read when clicked`() = runBlocking {
-        val clickedArticle = Article(1, "unread", "http://www.google.com",
-                Article.TOREAD, "1", 1, 1, "feed", "")
-        mock1ArticleDatabase(clickedArticle)
-        val view = MockView()
-        presenter.setView(view)
-        presenter.create()
-        presenter.createView()
-        presenter.onListItemClicked(0)
-        assertThat(clickedArticle.status).isEqualTo(Article.TOREAD)
-        return@runBlocking
-    }
-
-    @Test
-    fun `Read article status is still read when clicked`() = runBlocking {
-        val clickedArticle = Article(1, "unread", "http://www.google.com",
-                Article.READ, "1", 1, 1, "feed", "")
-        mock1ArticleDatabase(clickedArticle)
-        val view = MockView()
-        presenter.setView(view)
-        presenter.create()
-        presenter.createView()
-        presenter.onListItemClicked(0)
-        assertThat(clickedArticle.status).isEqualTo(Article.READ)
-        return@runBlocking
-    }
-
-    @Test
     fun `Article is opened with internal option when clicked`() = runBlocking {
         val clickedArticle = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
