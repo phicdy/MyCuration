@@ -25,14 +25,14 @@ class SwipeActionCreator(
         withContext(Dispatchers.IO) {
             suspend fun update(newStatus: String) {
                 if (articles[position].status == newStatus) return
+                articles[position].status = newStatus
+                dispatcher.dispatch(SwipeAction(position))
                 articleRepository.saveStatus(articles[position].id, newStatus)
                 if (newStatus == Article.TOREAD) {
                     unreadCountRepository.countDownUnreadCount(articles[position].feedId)
                 } else {
                     unreadCountRepository.conutUpUnreadCount(articles[position].feedId)
                 }
-                articles[position].status = newStatus
-                dispatcher.dispatch(SwipeAction(position))
             }
 
             when (direction) {
