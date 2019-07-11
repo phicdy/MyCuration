@@ -56,7 +56,7 @@ import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.CoroutineContext
 
 
-class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, ArticleListAdapter.Listener {
+class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.Listener {
 
     companion object {
         const val RSS_ID = "RSS_ID"
@@ -82,20 +82,9 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         arguments?.getInt(CURATION_ID, DEFAULT_CURATION_ID) ?: DEFAULT_CURATION_ID
     }
 
-    private val presenter: ArticleListPresenter by currentScope.inject {
-        val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
-        parametersOf(
-                rssId,
-                curationId,
-                query,
-                activity?.intent?.action ?: ""
-        )
-    }
-
     private val fetchArticleListOfRssActionCreator by currentScope.inject<FetchArticleListOfRssActionCreator> {
         parametersOf(rssId)
     }
-
 
     private val fetchArticleListOfCurationActionCreator by currentScope.inject<FetchArticleListOfCurationActionCreator> {
         parametersOf(curationId)
@@ -124,32 +113,8 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
 
-
     private lateinit var listener: OnArticlesListFragmentListener
     private lateinit var emptyView: TextView
-
-    override val firstVisiblePosition: Int
-        get() {
-            val manager = recyclerView.layoutManager as LinearLayoutManager
-            return manager.findFirstVisibleItemPosition()
-        }
-
-    override val lastVisiblePosition: Int
-        get() {
-            val manager = recyclerView.layoutManager as LinearLayoutManager
-            return manager.findLastCompletelyVisibleItemPosition()
-        }
-
-    override val isBottomVisible: Boolean
-        get() {
-            val isLastItemVisible = recyclerView.adapter?.let { lastVisiblePosition == it.itemCount - 1 }
-                    ?: false
-            val chilidCount = recyclerView.childCount
-            if (chilidCount < 1) return false
-            val lastItem = recyclerView.getChildAt(chilidCount - 1) ?: return false
-            val isLastItemBottomVisible = lastItem.bottom == recyclerView.height
-            return isLastItemVisible && isLastItemBottomVisible
-        }
 
     interface OnArticlesListFragmentListener {
         fun finish()
@@ -163,7 +128,6 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(rssId)
 
-        presenter.setView(this)
         articleListStore.state.observe(this, Observer<List<Article>> {
             if (it.isEmpty()) {
                 showEmptyView()
@@ -185,7 +149,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
             if (it) listener.finish()
         })
         openInternalWebBrowserStateStore.state.observe(this, Observer<Article> {
-            openInternalWebView(it.url, it.feedTitle)
+            openInternalWebView(it.url)
         })
         openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
             openExternalWebView(it)
@@ -222,7 +186,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         try {
             listener = context as OnArticlesListFragmentListener
         } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement Article list listener")
+            throw ClassCastException("$context must implement Article list listener")
         }
 
     }
@@ -306,7 +270,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         }
     }
 
-    override fun openInternalWebView(url: String, rssTitle: String) {
+    private fun openInternalWebView(url: String) {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_internal))
         val intent = Intent(Intent.ACTION_SEND)
                 .setType("text/plain")
@@ -325,22 +289,22 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         }
     }
 
-    override fun openExternalWebView(url: String) {
+    private fun openExternalWebView(url: String) {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
     }
 
-    override fun notifyListView() {
+    private fun notifyListView() {
         articlesListAdapter.notifyDataSetChanged()
     }
 
-    override fun finish() {
+    fun finish() {
         listener.finish()
     }
 
-    override fun showShareUi(url: String) {
+    private fun showShareUi(url: String) {
         if (isAdded) TrackerHelper.sendButtonEvent(getString(R.string.share_article))
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
@@ -348,17 +312,17 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope, Articl
         startActivity(intent)
     }
 
-    override fun scrollTo(position: Int) {
+    private fun scrollTo(position: Int) {
         recyclerView.smoothScrollToPosition(position)
     }
 
-    override fun showEmptyView() {
+    private fun showEmptyView() {
         recyclerView.visibility = View.GONE
         emptyView.visibility = View.VISIBLE
         emptyView.text = getText(R.string.no_article)
     }
 
-    override fun showNoSearchResult() {
+    private fun showNoSearchResult() {
         recyclerView.visibility = View.GONE
         emptyView.visibility = View.VISIBLE
         emptyView.text = getText(R.string.no_search_result)
