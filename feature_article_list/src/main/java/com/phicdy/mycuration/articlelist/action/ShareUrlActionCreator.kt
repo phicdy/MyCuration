@@ -14,7 +14,7 @@ class ShareUrlActionCreator(
 
     override suspend fun run() {
         withContext(Dispatchers.IO) {
-            if (position < 0) return@withContext
+            if (position < 0 || position >= articles.size) return@withContext
             dispatcher.dispatch(ShareUrlAction(articles[position].url))
         }
     }

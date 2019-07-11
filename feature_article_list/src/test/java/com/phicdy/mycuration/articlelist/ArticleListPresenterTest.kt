@@ -35,20 +35,6 @@ class ArticleListPresenterTest {
     }
 
     @Test
-    fun `Share UI shows when long clicked`() = runBlocking {
-        val longClickedArticle = Article(1, "unread", "http://www.google.com",
-                Article.UNREAD, "1", 1, 1, "feed", "")
-        mock1ArticleDatabase(longClickedArticle)
-        val view = MockView()
-        presenter.setView(view)
-        presenter.create()
-        presenter.createView()
-        presenter.onListItemLongClicked(0)
-        assertThat(view.shareUrl).isEqualTo(longClickedArticle.url)
-        return@runBlocking
-    }
-
-    @Test
     fun `No search result view shows when search action and no result`() = runBlocking {
         val article = Article(1, "unread", "http://www.google.com",
                 Article.UNREAD, "1", 1, 1, "feed", "")
