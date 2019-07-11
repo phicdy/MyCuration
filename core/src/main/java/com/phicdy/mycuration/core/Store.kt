@@ -9,12 +9,13 @@ import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
 abstract class Store<T>(
-        protected val dispatcher: Dispatcher
+        protected val dispatcher: Dispatcher,
+        val context: CoroutineContext = Dispatchers.Main
 ) : ViewModel(), CoroutineScope {
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+        get() = job + context
 
     protected val _state = MutableLiveData<T>()
     val state: LiveData<T>
