@@ -56,7 +56,7 @@ class AdditionalSettingRepository(
 
                 val walFile = File(currentDb.path + "-wal")
                 val backupWal = File(backupStrage, backupDbFolderPath + DatabaseHelper.DATABASE_NAME + "-wal")
-                if (backupWal.exists()) {
+                if (walFile.exists()) {
                     val walSrc = FileInputStream(walFile).channel
                     val walDst = FileOutputStream(backupWal).channel
                     walDst.transferFrom(walSrc, 0, walSrc.size())
@@ -66,7 +66,7 @@ class AdditionalSettingRepository(
 
                 val shmFile = File(currentDb.path + "-shm")
                 val backupShm = File(backupStrage, backupDbFolderPath + DatabaseHelper.DATABASE_NAME + "-shm")
-                if (backupShm.exists()) {
+                if (shmFile.exists()) {
                     val shmSrc = FileInputStream(shmFile).channel
                     val shmDst = FileOutputStream(backupShm).channel
                     shmDst.transferFrom(shmSrc, 0, shmSrc.size())
