@@ -49,6 +49,7 @@ import com.phicdy.mycuration.tracker.TrackerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.scope.currentScope
@@ -155,8 +156,13 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
             openExternalWebView(it)
         })
         scrollPositionStore.state.observe(this, Observer<Int> {
-            scrollTo(it)
-            runFinishActionCreator()
+            launch {
+                scrollTo(it)
+                delay(200) // Wait for scroll
+                val manager = recyclerView.layoutManager as LinearLayoutManager
+                articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), it)
+                runFinishActionCreator()
+            }
         })
         swipePositionStore.state.observe(this, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)

@@ -21,9 +21,6 @@ class ScrollActionCreator(
         withContext(Dispatchers.IO) {
             if (allArticles.isEmpty()) return@withContext
 
-            // For notify after scroll
-            val readPositionList = mutableListOf<Int>()
-
             for (position in firstVisiblePosition..lastVisiblePosition) {
                 if (position > allArticles.size - 1) break
                 val targetArticle = allArticles[position]
@@ -31,7 +28,6 @@ class ScrollActionCreator(
                     targetArticle.status = Article.TOREAD
                     unreadCountRepository.countDownUnreadCount(targetArticle.feedId)
                     articleRepository.saveStatus(targetArticle.id, Article.TOREAD)
-                    readPositionList.add(position)
                 }
             }
 
@@ -41,10 +37,6 @@ class ScrollActionCreator(
                     if (lastVisiblePosition + visibleNum >= allArticles.size - 1) allArticles.size - 1
                     else lastVisiblePosition + visibleNum
             dispatcher.dispatch(ScrollAction(positionAfterScroll))
-
-            readPositionList.forEach {
-                dispatcher.dispatch(ReadArticleAction(it))
-            }
         }
     }
 }
