@@ -235,7 +235,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
                 val actionCreator = SwipeActionCreator(
                         dispatcher = get(),
                         articleRepository = get(),
-                        unreadCountRepository = get(),
+                        rssRepository = get(),
                         preferenceHelper = get(),
                         position = viewHolder.adapterPosition,
                         direction = direction,
@@ -256,7 +256,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
             ScrollActionCreator(
                     dispatcher = get(),
                     articleRepository = get(),
-                    unreadCountRepository = get(),
+                    rssRepository = get(),
                     firstVisiblePosition = manager.findFirstVisibleItemPosition(),
                     lastVisiblePosition = manager.findLastCompletelyVisibleItemPosition(),
                     allArticles = articlesListAdapter.currentList
@@ -269,7 +269,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
             ReadAllArticlesActionCreator(
                     dispatcher = get(),
                     articleRepository = get(),
-                    unreadCountRepository = get(),
+                    rssRepository = get(),
                     feedId = rssId,
                     allArticles = articlesListAdapter.currentList
             ).run()
@@ -338,7 +338,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         val actionCreator = ReadArticleActionCreator(
                 dispatcher = get(),
                 articleRepository = get(),
-                unreadCountRepository = get(),
+                rssRepository = get(),
                 position = position,
                 articles = articles
         )

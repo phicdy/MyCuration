@@ -25,7 +25,7 @@ class ReadArticleActionCreatorTest {
             ReadArticleActionCreator(
                     dispatcher = mock(),
                     articleRepository = mock(),
-                    unreadCountRepository = mock(),
+                    rssRepository = mock(),
                     position = 0,
                     articles = listOf(article)
             ).run()
@@ -50,7 +50,7 @@ class ReadArticleActionCreatorTest {
             ReadArticleActionCreator(
                     dispatcher = mock(),
                     articleRepository = mock(),
-                    unreadCountRepository = mock(),
+                    rssRepository = mock(),
                     position = 0,
                     articles = listOf(article)
             ).run()
@@ -75,7 +75,7 @@ class ReadArticleActionCreatorTest {
             ReadArticleActionCreator(
                     dispatcher = mock(),
                     articleRepository = mock(),
-                    unreadCountRepository = mock(),
+                    rssRepository = mock(),
                     position = 0,
                     articles = listOf(article)
             ).run()

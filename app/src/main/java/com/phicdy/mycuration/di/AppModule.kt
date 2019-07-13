@@ -27,7 +27,6 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParser
@@ -74,8 +73,7 @@ val appModule = module {
     single { CurationRepository(get()) }
     single { FilterRepository(get()) }
     single { PreferenceHelper }
-    single { NetworkTaskManager(get(), get(), get(), get(), get()) }
-    single { UnreadCountRepository(get(), get()) }
+    single { NetworkTaskManager(get(), get(), get(), get()) }
     single<AdditionalSettingApi> { AdditionalSettingRepository(get(), get()) }
     single { AlarmManagerTaskManager(androidContext()) }
     single { Dispatcher() }
@@ -99,8 +97,7 @@ val appModule = module {
                     view = view,
                     preferenceHelper = get(),
                     rssRepository = get(),
-                    networkTaskManager = get(),
-                    unreadCountRepository = get()
+                    networkTaskManager = get()
             )
         }
     }
@@ -154,8 +151,7 @@ val appModule = module {
             CurationListPresenter(
                     view = view,
                     rssRepository = get(),
-                    curationRepository = get(),
-                    unreadCountRepository = get()
+                    curationRepository = get()
             )
         }
     }

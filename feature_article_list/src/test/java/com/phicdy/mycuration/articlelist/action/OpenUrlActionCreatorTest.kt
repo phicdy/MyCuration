@@ -53,7 +53,10 @@ class OpenUrlActionCreatorTest {
                     dispatcher = dispatcher,
                     preferenceHelper = preferenceHelper,
                     feedId = 0,
-                    article = mock { on { copy(feedTitle = "") } doReturn mock() },
+                    article = mock {
+                        on { copy(feedTitle = "") } doReturn mock()
+                        on { url } doReturn "aaa"
+                    },
                     rssRepository = mock()
             ).run()
             verify(store).notify(any())

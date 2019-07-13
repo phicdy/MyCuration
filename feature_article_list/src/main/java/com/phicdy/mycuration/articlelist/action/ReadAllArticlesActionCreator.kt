@@ -3,7 +3,7 @@ package com.phicdy.mycuration.articlelist.action
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.repository.ArticleRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 class ReadAllArticlesActionCreator(
         private val dispatcher: Dispatcher,
         private val articleRepository: ArticleRepository,
-        private val unreadCountRepository: UnreadCountRepository,
+        private val rssRepository: RssRepository,
         private val feedId: Int,
         private val allArticles: List<Article>
 ) : ActionCreator {
@@ -28,10 +28,13 @@ class ReadAllArticlesActionCreator(
             val updateRepository = async {
                 if (feedId == Feed.ALL_FEED_ID) {
                     articleRepository.saveAllStatusToRead()
-                    unreadCountRepository.readAll()
+                    rssRepository.updateUnreadArticleCount(feedId, 0)
                 } else {
                     articleRepository.saveStatusToRead(feedId)
-                    unreadCountRepository.readAll(feedId)
+                    val allFeeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
+                    allFeeds.forEach {
+                        rssRepository.updateUnreadArticleCount(it.id, 0)
+                    }
                 }
             }
             changeStatus.await()

@@ -6,7 +6,7 @@ import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Article
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 class SwipeActionCreator(
         private val dispatcher: Dispatcher,
         private val articleRepository: ArticleRepository,
-        private val unreadCountRepository: UnreadCountRepository,
+        private val rssRepository: RssRepository,
         private val preferenceHelper: PreferenceHelper,
         private val position: Int,
         private val direction: Int,
@@ -24,14 +24,18 @@ class SwipeActionCreator(
     override suspend fun run() {
         withContext(Dispatchers.IO) {
             suspend fun update(newStatus: String) {
-                if (articles[position].status == newStatus) return
-                articles[position].status = newStatus
+                val article = articles[position]
+                if (article.status == newStatus) return
+                article.status = newStatus
                 dispatcher.dispatch(SwipeAction(position))
-                articleRepository.saveStatus(articles[position].id, newStatus)
-                if (newStatus == Article.TOREAD) {
-                    unreadCountRepository.countDownUnreadCount(articles[position].feedId)
-                } else {
-                    unreadCountRepository.conutUpUnreadCount(articles[position].feedId)
+                articleRepository.saveStatus(article.id, newStatus)
+                val rss = rssRepository.getFeedById(article.feedId)
+                rss?.let {
+                    if (newStatus == Article.TOREAD) {
+                        rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount - 1)
+                    } else {
+                        rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount + 1)
+                    }
                 }
             }
 
