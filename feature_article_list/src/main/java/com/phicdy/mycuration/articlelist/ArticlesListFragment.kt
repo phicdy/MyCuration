@@ -158,7 +158,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         scrollPositionStore.state.observe(this, Observer<Int> {
             launch {
                 scrollTo(it)
-                delay(200) // Wait for scroll
+                delay(250) // Wait for scroll
                 val manager = recyclerView.layoutManager as LinearLayoutManager
                 articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), it)
                 runFinishActionCreator()
