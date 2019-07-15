@@ -7,6 +7,7 @@
     <string name="all">全ての記事</string>
     <string name="sample_rss_title">hogehogehoge</string>
     <string name="sample_article_url">http://www.hoge.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</string>
+    <string name="open_internal_browser_error">Chromeを有効にしてください</string>
 
     <!-- RSS一覧 -->
     <string name="show_all_rsses">全てのRSSを表示</string>

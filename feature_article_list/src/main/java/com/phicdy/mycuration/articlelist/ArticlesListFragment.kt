@@ -2,6 +2,7 @@ package com.phicdy.mycuration.articlelist
 
 import android.app.PendingIntent
 import android.app.SearchManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
@@ -285,12 +287,17 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         activity?.let { activity ->
             val icon = bitmapFrom(activity, R.drawable.ic_share)
             icon?.let {
-                val customTabsIntent = CustomTabsIntent.Builder()
-                        .setShowTitle(true)
-                        .setToolbarColor(ContextCompat.getColor(activity, R.color.background_toolbar))
-                        .setActionButton(icon, getString(R.string.share), pendingIntent)
-                        .build()
-                customTabsIntent.launchUrl(activity, Uri.parse(url))
+                try {
+                    val customTabsIntent = CustomTabsIntent.Builder()
+                            .setShowTitle(true)
+                            .setToolbarColor(ContextCompat.getColor(activity, R.color.background_toolbar))
+                            .setActionButton(icon, getString(R.string.share), pendingIntent)
+                            .build()
+                    customTabsIntent.intent.setPackage("com.android.chrome")
+                    customTabsIntent.launchUrl(activity, Uri.parse(url))
+                } catch (e: ActivityNotFoundException) {
+                    Snackbar.make(activity.findViewById(R.id.fab_article_list), R.string.open_internal_browser_error, Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
     }
