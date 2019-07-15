@@ -316,7 +316,7 @@ class RssRepository(private val db: SQLiteDatabase,
     }
 
     suspend fun getFeedById(feedId: Int): Feed? = withContext(Dispatchers.IO) {
-        val columns = arrayOf(Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL)
+        val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
         val selection = Feed.ID + " = " + feedId
         return@withContext query(columns, selection)
     }

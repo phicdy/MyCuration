@@ -3,8 +3,22 @@ package com.phicdy.mycuration.di
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.articlelist.ArticleListPresenter
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
+import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
+import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
+import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
+import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
+import com.phicdy.mycuration.articlelist.store.ArticleListStore
+import com.phicdy.mycuration.articlelist.store.FinishStateStore
+import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
+import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
+import com.phicdy.mycuration.articlelist.store.ReadAllArticlesStateStore
+import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
+import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
+import com.phicdy.mycuration.articlelist.store.SearchResultStore
+import com.phicdy.mycuration.articlelist.store.ShareUrlStore
+import com.phicdy.mycuration.articlelist.store.SwipePositionStore
+import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
@@ -13,7 +27,6 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParser
@@ -47,6 +60,7 @@ import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.util.log.TimberTree
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -59,10 +73,10 @@ val appModule = module {
     single { CurationRepository(get()) }
     single { FilterRepository(get()) }
     single { PreferenceHelper }
-    single { NetworkTaskManager(get(), get(), get(), get(), get()) }
-    single { UnreadCountRepository(get(), get()) }
+    single { NetworkTaskManager(get(), get(), get(), get()) }
     single<AdditionalSettingApi> { AdditionalSettingRepository(get(), get()) }
     single { AlarmManagerTaskManager(androidContext()) }
+    single { Dispatcher() }
 
     single { TimberTree() }
 
@@ -83,25 +97,53 @@ val appModule = module {
                     view = view,
                     preferenceHelper = get(),
                     rssRepository = get(),
-                    networkTaskManager = get(),
-                    unreadCountRepository = get()
+                    networkTaskManager = get()
             )
         }
     }
 
     scope(named<ArticlesListFragment>()) {
-        scoped { (feedId: Int, curationId: Int, query: String, action: String) ->
-            ArticleListPresenter(
-                    feedId = feedId,
-                    curationId = curationId,
-                    rssRepository = get(),
-                    preferenceHelper = get(),
+        scoped { (rssId: Int) ->
+            FetchArticleListOfRssActionCreator(
+                    dispatcher = get(),
                     articleRepository = get(),
-                    unreadCountRepository = get(),
-                    query = query,
-                    action = action
+                    preferenceHelper = get(),
+                    rssId = rssId
             )
         }
+        scoped { (curationId: Int) ->
+            FetchArticleListOfCurationActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get(),
+                    curationId = curationId
+            )
+        }
+        scoped {
+            FetchAllArticleListActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get()
+            )
+        }
+        scoped { (query: String) ->
+            SearchArticleListActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get(),
+                    query = query
+            )
+        }
+        viewModel { ArticleListStore(get()) }
+        viewModel { SearchResultStore(get()) }
+        viewModel { FinishStateStore(get()) }
+        viewModel { ReadArticlePositionStore(get()) }
+        viewModel { OpenInternalWebBrowserStateStore(get()) }
+        viewModel { OpenExternalWebBrowserStateStore(get()) }
+        viewModel { ScrollPositionStore(get()) }
+        viewModel { SwipePositionStore(get()) }
+        viewModel { ReadAllArticlesStateStore(get()) }
+        viewModel { ShareUrlStore(get()) }
     }
 
     scope(named<CurationListFragment>()) {
@@ -109,8 +151,7 @@ val appModule = module {
             CurationListPresenter(
                     view = view,
                     rssRepository = get(),
-                    curationRepository = get(),
-                    unreadCountRepository = get()
+                    curationRepository = get()
             )
         }
     }

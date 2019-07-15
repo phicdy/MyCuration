@@ -10,7 +10,6 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.presentation.view.RssItemView
@@ -56,8 +55,7 @@ class RssListPresenterTest {
         whenever(mockPref.edit()).thenReturn(mockEdit)
         whenever(mockEdit.putLong(any(), any())).thenReturn(mockEdit)
 
-        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, networkTaskManager,
-                UnreadCountRepository(mockRssRepository, mock()))
+        presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, networkTaskManager)
 
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
     }
@@ -122,8 +120,7 @@ class RssListPresenterTest {
     fun `when onResume and RSS exist then fetch RSS from database`() {
         runBlocking {
             presenter.resume()
-            // Also called in UnreadCountRepository
-            verify(mockRssRepository, times(2)).getAllFeedsWithNumOfUnreadArticles()
+            verify(mockRssRepository).getAllFeedsWithNumOfUnreadArticles()
         }
     }
 
@@ -298,8 +295,7 @@ class RssListPresenterTest {
     fun `when finish refresh then fetch RSS`() {
         runBlocking {
             presenter.onFinishUpdate()
-            // Also called in UnreadCountRepository
-            verify(mockRssRepository, times(2)).getAllFeedsWithNumOfUnreadArticles()
+            verify(mockRssRepository).getAllFeedsWithNumOfUnreadArticles()
         }
     }
 

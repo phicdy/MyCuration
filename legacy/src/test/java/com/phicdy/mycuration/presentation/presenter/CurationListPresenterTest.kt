@@ -7,7 +7,6 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
@@ -21,13 +20,12 @@ class CurationListPresenterTest {
     private val view = mock<CurationListView>()
     private lateinit var presenter: CurationListPresenter
     private val item = mock<CurationItem>()
-    private val repository = mock<UnreadCountRepository>()
     private val curationRepository = mock<CurationRepository>()
     private val rssRepository = mock<RssRepository>()
 
     @Before
     fun setUp() {
-        presenter = CurationListPresenter(view, rssRepository, curationRepository, repository)
+        presenter = CurationListPresenter(view, rssRepository, curationRepository)
     }
 
     @Test
@@ -106,7 +104,7 @@ class CurationListPresenterTest {
 
     @Test
     fun `when curation is not null then not set name and count`() = runBlocking {
-        whenever(repository.getCurationCount(1)).thenReturn(10)
+        whenever(curationRepository.calcNumOfAllUnreadArticlesOfCuration(1)).thenReturn(10)
         presenter.getView(Curation(1, "name"), item)
         verify(item, times(1)).setName("name")
         verify(item, times(1)).setCount("10")

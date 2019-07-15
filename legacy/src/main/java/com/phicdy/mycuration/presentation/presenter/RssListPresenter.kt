@@ -2,7 +2,6 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.presentation.view.RssItemView
@@ -18,8 +17,7 @@ import java.util.ArrayList
 class RssListPresenter(private val view: RssListView,
                        private val preferenceHelper: PreferenceHelper,
                        private val rssRepository: RssRepository,
-                       private val networkTaskManager: NetworkTaskManager,
-                       private val unreadCountRepository: UnreadCountRepository) {
+                       private val networkTaskManager: NetworkTaskManager) {
 
     var unreadOnlyFeeds = arrayListOf<Feed>()
         private set
@@ -41,7 +39,6 @@ class RssListPresenter(private val view: RssListView,
             view.showAllUnreadView()
             view.showRecyclerView()
             view.hideEmptyView()
-            unreadCountRepository.retrieve()
             fetchAllRss()
             refreshList()
             if (preferenceHelper.autoUpdateInMainUi && isAfterInterval) {
@@ -53,7 +50,7 @@ class RssListPresenter(private val view: RssListView,
 
     private fun generateHidedFeedList() {
         if (allFeeds.isEmpty()) return
-        unreadOnlyFeeds = allFeeds.filter { unreadCountRepository.getUnreadCount(it.id) > 0 } as ArrayList<Feed>
+        unreadOnlyFeeds = allFeeds.filter { it.unreadAriticlesCount > 0 } as ArrayList<Feed>
         if (unreadOnlyFeeds.isEmpty()) {
             unreadOnlyFeeds = allFeeds
         }
@@ -66,7 +63,7 @@ class RssListPresenter(private val view: RssListView,
         } else {
             view.init(allFeeds)
         }
-        view.setTotalUnreadCount(unreadCountRepository.total)
+        view.setTotalUnreadCount(allFeeds.sumBy { it.unreadAriticlesCount })
     }
 
     fun pause() {}
@@ -128,7 +125,6 @@ class RssListPresenter(private val view: RssListView,
         fun deleteAtPosition(currentList: ArrayList<Feed>, oppositeList: ArrayList<Feed>) {
             if (currentList.size <= position) return
             val (id) = currentList[position]
-            unreadCountRepository.deleteFeed(id)
             currentList.removeAt(position)
             for (i in oppositeList.indices) {
                 if (oppositeList[i].id == id) {
@@ -205,7 +201,6 @@ class RssListPresenter(private val view: RssListView,
     }
 
     suspend fun onFinishUpdate() = coroutineScope {
-        unreadCountRepository.retrieve()
         fetchAllRss()
         refreshList()
         onRefreshComplete()
@@ -230,11 +225,7 @@ class RssListPresenter(private val view: RssListView,
             view.showIcon(feed.iconPath)
         }
         view.updateTitle(feed.title)
-        view.updateUnreadCount(
-                unreadCountRepository.getUnreadCount(
-                        if (isHided) unreadOnlyFeeds[position].id else allFeeds[position].id
-                ).toString()
-        )
+        view.updateUnreadCount(feed.unreadAriticlesCount.toString())
     }
 
     fun onBindRssFooterViewHolder(view: RssItemView.Footer) {

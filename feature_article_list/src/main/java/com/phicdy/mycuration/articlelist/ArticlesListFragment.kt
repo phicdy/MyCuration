@@ -4,43 +4,65 @@ import android.app.PendingIntent
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
+import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
+import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
+import com.phicdy.mycuration.articlelist.action.FinishStateActionCreator
+import com.phicdy.mycuration.articlelist.action.OpenUrlActionCreator
+import com.phicdy.mycuration.articlelist.action.ReadAllArticlesActionCreator
+import com.phicdy.mycuration.articlelist.action.ReadArticleActionCreator
+import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
+import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
+import com.phicdy.mycuration.articlelist.action.ShareUrlActionCreator
+import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
+import com.phicdy.mycuration.articlelist.store.ArticleListStore
+import com.phicdy.mycuration.articlelist.store.FinishStateStore
+import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
+import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
+import com.phicdy.mycuration.articlelist.store.ReadAllArticlesStateStore
+import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
+import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
+import com.phicdy.mycuration.articlelist.store.SearchResultStore
+import com.phicdy.mycuration.articlelist.store.ShareUrlStore
+import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
+import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.tracker.TrackerHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
-import java.security.InvalidParameterException
 import kotlin.coroutines.CoroutineContext
 
 
-class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
+class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.Listener {
 
     companion object {
         const val RSS_ID = "RSS_ID"
         const val CURATION_ID = "CURATION_ID"
+        const val DEFAULT_CURATION_ID = -1
 
         fun newInstance(rssId: Int, curationId: Int) = ArticlesListFragment().apply {
             arguments = Bundle().apply {
@@ -54,50 +76,46 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: ArticleListPresenter by currentScope.inject {
-        val feedId = arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID)
-                ?: Feed.ALL_FEED_ID
-        val curationId = arguments?.getInt(CURATION_ID,
-                ArticleListPresenter.DEFAULT_CURATION_ID)
-                ?: ArticleListPresenter.DEFAULT_CURATION_ID
-        val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
-        parametersOf(
-                feedId,
-                curationId,
-                query,
-                activity?.intent?.action ?: ""
-        )
+    private val rssId: Int  by lazy {
+        arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
+    }
+    private val curationId: Int by lazy {
+        arguments?.getInt(CURATION_ID, DEFAULT_CURATION_ID) ?: DEFAULT_CURATION_ID
     }
 
-    private lateinit var recyclerView: ArticleRecyclerView
-    private lateinit var articlesListAdapter: SimpleItemRecyclerViewAdapter
+    private val fetchArticleListOfRssActionCreator by currentScope.inject<FetchArticleListOfRssActionCreator> {
+        parametersOf(rssId)
+    }
 
+    private val fetchArticleListOfCurationActionCreator by currentScope.inject<FetchArticleListOfCurationActionCreator> {
+        parametersOf(curationId)
+    }
+
+    private val fetchAllArticleListArticleListActionCreator by currentScope.inject<FetchAllArticleListActionCreator> {
+        parametersOf()
+    }
+
+    private val searchArticleListActionCreator by currentScope.inject<SearchArticleListActionCreator> {
+        val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
+        parametersOf(query)
+    }
+
+    private val articleListStore: ArticleListStore by currentScope.inject()
+    private val searchResultStore: SearchResultStore by currentScope.inject()
+    private val finishStateStore: FinishStateStore by currentScope.inject()
+    private val readArticlePositionStore: ReadArticlePositionStore by currentScope.inject()
+    private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by currentScope.inject()
+    private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by currentScope.inject()
+    private val scrollPositionStore: ScrollPositionStore by currentScope.inject()
+    private val swipePositionStore: SwipePositionStore by currentScope.inject()
+    private val readAllArticlesStateStore: ReadAllArticlesStateStore by currentScope.inject()
+    private val shareUrlStore: ShareUrlStore by currentScope.inject()
+
+    private lateinit var recyclerView: ArticleRecyclerView
+    private lateinit var articlesListAdapter: ArticleListAdapter
 
     private lateinit var listener: OnArticlesListFragmentListener
     private lateinit var emptyView: TextView
-
-    override val firstVisiblePosition: Int
-        get() {
-            val manager = recyclerView.layoutManager as LinearLayoutManager
-            return manager.findFirstVisibleItemPosition()
-        }
-
-    override val lastVisiblePosition: Int
-        get() {
-            val manager = recyclerView.layoutManager as LinearLayoutManager
-            return manager.findLastCompletelyVisibleItemPosition()
-        }
-
-    override val isBottomVisible: Boolean
-        get() {
-            val isLastItemVisible = recyclerView.adapter?.let { lastVisiblePosition == it.itemCount - 1 }
-                    ?: false
-            val chilidCount = recyclerView.childCount
-            if (chilidCount < 1) return false
-            val lastItem = recyclerView.getChildAt(chilidCount - 1) ?: return false
-            val isLastItemBottomVisible = lastItem.bottom == recyclerView.height
-            return isLastItemVisible && isLastItemBottomVisible
-        }
 
     interface OnArticlesListFragmentListener {
         fun finish()
@@ -108,13 +126,65 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         job = Job()
 
         // Set swipe direction
-        val feedId = arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID)
-                ?: Feed.ALL_FEED_ID
         val prefMgr = PreferenceHelper
-        prefMgr.setSearchFeedId(feedId)
+        prefMgr.setSearchFeedId(rssId)
 
-        presenter.setView(this)
-        presenter.create()
+        articleListStore.state.observe(this, Observer<List<Article>> {
+            if (it.isEmpty()) {
+                showEmptyView()
+            } else {
+                articlesListAdapter.submitList(it)
+            }
+        })
+        searchResultStore.state.observe(this, Observer<List<Article>> {
+            if (it.isEmpty()) {
+                showNoSearchResult()
+            } else {
+                articlesListAdapter.submitList(it)
+            }
+        })
+        readArticlePositionStore.state.observe(this, Observer<Int> {
+            articlesListAdapter.notifyItemChanged(it)
+        })
+        finishStateStore.state.observe(this, Observer<Boolean> {
+            if (it) listener.finish()
+        })
+        openInternalWebBrowserStateStore.state.observe(this, Observer<Article> {
+            openInternalWebView(it.url)
+        })
+        openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
+            openExternalWebView(it)
+        })
+        scrollPositionStore.state.observe(this, Observer<Int> {
+            launch {
+                scrollTo(it)
+                delay(250) // Wait for scroll
+                val manager = recyclerView.layoutManager as LinearLayoutManager
+                articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), it)
+                runFinishActionCreator()
+            }
+        })
+        swipePositionStore.state.observe(this, Observer<Int> {
+            articlesListAdapter.notifyItemChanged(it)
+            runFinishActionCreator()
+        })
+        readAllArticlesStateStore.state.observe(this, Observer<Unit> {
+            notifyListView()
+            runFinishActionCreator()
+        })
+        shareUrlStore.state.observe(this, Observer<String> {
+            showShareUi(it)
+        })
+    }
+
+    private fun runFinishActionCreator() {
+        launch {
+            FinishStateActionCreator(
+                    dispatcher = get(),
+                    preferenceHelper = get(),
+                    articles = articlesListAdapter.currentList
+            ).run()
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -122,7 +192,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         try {
             listener = context as OnArticlesListFragmentListener
         } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement Article list listener")
+            throw ClassCastException("$context must implement Article list listener")
         }
 
     }
@@ -132,18 +202,18 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        articlesListAdapter = SimpleItemRecyclerViewAdapter()
+        articlesListAdapter = ArticleListAdapter(this, this)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
         launch {
-            presenter.createView()
+            when {
+                activity?.intent?.action == Intent.ACTION_SEARCH -> searchArticleListActionCreator.run()
+                curationId != -1 -> fetchArticleListOfCurationActionCreator.run()
+                rssId == Feed.ALL_FEED_ID -> fetchAllArticleListArticleListActionCreator.run()
+                else -> fetchArticleListOfRssActionCreator.run()
+            }
         }
         return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-        presenter.resume()
     }
 
     override fun onDestroy() {
@@ -154,7 +224,7 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
     private fun setAllListener() {
         val helper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
             override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                return ItemTouchHelper.Callback.makeFlag(ACTION_STATE_SWIPE, LEFT or RIGHT)
+                return makeFlag(ACTION_STATE_SWIPE, LEFT or RIGHT)
             }
 
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
@@ -162,39 +232,51 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val actionCreator = SwipeActionCreator(
+                        dispatcher = get(),
+                        articleRepository = get(),
+                        rssRepository = get(),
+                        preferenceHelper = get(),
+                        position = viewHolder.adapterPosition,
+                        direction = direction,
+                        articles = articlesListAdapter.currentList
+                )
                 launch {
-                    presenter.onSwiped(direction, viewHolder.adapterPosition)
+                    actionCreator.run()
                 }
             }
         })
         helper.attachToRecyclerView(recyclerView)
         recyclerView.addItemDecoration(helper)
-
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val manager = recyclerView.layoutManager as LinearLayoutManager
-                val lastItemPosition = manager.findLastVisibleItemPosition()
-                presenter.onScrolled(lastItemPosition)
-            }
-        })
-
     }
 
     fun onFabButtonClicked() {
         launch {
-            presenter.onFabButtonClicked()
+            val manager = recyclerView.layoutManager as LinearLayoutManager
+            ScrollActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    rssRepository = get(),
+                    firstVisiblePosition = manager.findFirstVisibleItemPosition(),
+                    lastVisiblePosition = manager.findLastCompletelyVisibleItemPosition(),
+                    allArticles = articlesListAdapter.currentList
+            ).run()
         }
     }
 
     fun handleAllRead() {
         launch {
-            presenter.handleAllRead()
+            ReadAllArticlesActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    rssRepository = get(),
+                    feedId = rssId,
+                    allArticles = articlesListAdapter.currentList
+            ).run()
         }
     }
 
-    override fun openInternalWebView(url: String, rssTitle: String) {
+    private fun openInternalWebView(url: String) {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_internal))
         val intent = Intent(Intent.ACTION_SEND)
                 .setType("text/plain")
@@ -213,22 +295,22 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         }
     }
 
-    override fun openExternalWebView(url: String) {
+    private fun openExternalWebView(url: String) {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
     }
 
-    override fun notifyListView() {
+    private fun notifyListView() {
         articlesListAdapter.notifyDataSetChanged()
     }
 
-    override fun finish() {
+    fun finish() {
         listener.finish()
     }
 
-    override fun showShareUi(url: String) {
+    private fun showShareUi(url: String) {
         if (isAdded) TrackerHelper.sendButtonEvent(getString(R.string.share_article))
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
@@ -236,133 +318,52 @@ class ArticlesListFragment : Fragment(), ArticleListView, CoroutineScope {
         startActivity(intent)
     }
 
-    override fun scrollTo(position: Int) {
+    private fun scrollTo(position: Int) {
         recyclerView.smoothScrollToPosition(position)
     }
 
-    override fun showEmptyView() {
+    private fun showEmptyView() {
         recyclerView.visibility = View.GONE
         emptyView.visibility = View.VISIBLE
         emptyView.text = getText(R.string.no_article)
     }
 
-    override fun showNoSearchResult() {
+    private fun showNoSearchResult() {
         recyclerView.visibility = View.GONE
         emptyView.visibility = View.VISIBLE
         emptyView.text = getText(R.string.no_search_result)
     }
 
-    inner class SimpleItemRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val holder: RecyclerView.ViewHolder
-            holder = when (viewType) {
-                ArticleListPresenter.VIEW_TYPE_FOOTER -> {
-                    val footer = LayoutInflater.from(parent.context)
-                            .inflate(R.layout.footer_article_list_activity, parent, false)
-                    FooterViewHolder(footer)
-                }
-                ArticleListPresenter.VIEW_TYPE_ARTICLE -> {
-                    val view = LayoutInflater.from(parent.context)
-                            .inflate(R.layout.articles_list, parent, false)
-                    ArticleViewHolder(view)
-                }
-                else -> throw InvalidParameterException("Invalid view type for article list")
-            }
-            return holder
+    override fun onItemClicked(position: Int, articles: List<Article>) {
+        val actionCreator = ReadArticleActionCreator(
+                dispatcher = get(),
+                articleRepository = get(),
+                rssRepository = get(),
+                position = position,
+                articles = articles
+        )
+        launch {
+            actionCreator.run()
         }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            if (holder is ArticleViewHolder) {
-                holder.mView.setOnClickListener {
-                    launch {
-                        presenter.onListItemClicked(holder.getAdapterPosition())
-                    }
-                }
-                holder.mView.setOnLongClickListener {
-                    presenter.onListItemLongClicked(holder.getAdapterPosition())
-                    true
-                }
-                presenter.onBindViewHolder(holder, position)
-            }
+        val openUrlActionCreator = OpenUrlActionCreator(
+                dispatcher = get(),
+                preferenceHelper = get(),
+                feedId = rssId,
+                article = articles[position],
+                rssRepository = get()
+        )
+        launch {
+            openUrlActionCreator.run()
         }
+    }
 
-        override fun getItemViewType(position: Int): Int {
-            return presenter.onGetItemViewType(position)
-        }
-
-        override fun getItemCount(): Int {
-            return presenter.articleSize()
-        }
-
-        internal inner class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-        inner class ArticleViewHolder internal constructor(
-                internal val mView: View
-        ) : RecyclerView.ViewHolder(mView), ArticleItemView {
-            internal val articleTitle: TextView = mView.findViewById(R.id.articleTitle) as TextView
-            internal val articlePostedTime: TextView = mView.findViewById(R.id.articlePostedTime) as TextView
-            internal val articlePoint: TextView = mView.findViewById(R.id.articlePoint) as TextView
-            private val articleUrl: TextView = mView.findViewById(R.id.tv_articleUrl) as TextView
-            private val feedTitleView: TextView = mView.findViewById(R.id.feedTitle) as TextView
-            private val feedIconView: ImageView = mView.findViewById(R.id.iv_feed_icon) as ImageView
-
-            override fun setArticleTitle(title: String) {
-                articleTitle.text = title
-            }
-
-            override fun setArticleUrl(url: String) {
-                articleUrl.text = url
-            }
-
-            override fun setArticlePostedTime(time: String) {
-                articlePostedTime.text = time
-            }
-
-            override fun setNotGetPoint() {
-                articlePoint.text = getString(R.string.not_get_hatena_point)
-            }
-
-            override fun setArticlePoint(point: String) {
-                articlePoint.text = point
-            }
-
-            override fun hideRssInfo() {
-                feedTitleView.visibility = View.GONE
-                feedIconView.visibility = View.GONE
-            }
-
-            override fun setRssTitle(title: String) {
-                feedTitleView.text = title
-                feedTitleView.setTextColor(Color.BLACK)
-            }
-
-            override fun setRssIcon(path: String) {
-                GlideApp.with(this@ArticlesListFragment)
-                        .load(path)
-                        .placeholder(R.drawable.ic_rss)
-                        .circleCrop()
-                        .error(R.drawable.ic_rss)
-                        .into(feedIconView)
-            }
-
-            override fun setDefaultRssIcon() {
-                feedIconView.setImageResource(R.drawable.ic_rss)
-            }
-
-            override fun changeColorToRead() {
-                val color = ContextCompat.getColor(itemView.context, R.color.text_read)
-                articleTitle.setTextColor(color)
-                articlePostedTime.setTextColor(color)
-                articlePoint.setTextColor(color)
-                feedTitleView.setTextColor(color)
-            }
-
-            override fun changeColorToUnread() {
-                val color = ContextCompat.getColor(itemView.context, R.color.text_primary)
-                articleTitle.setTextColor(color)
-                articlePostedTime.setTextColor(color)
-                articlePoint.setTextColor(color)
-                feedTitleView.setTextColor(color)
-            }
+    override fun onItemLongClicked(position: Int, articles: List<Article>) {
+        launch {
+            ShareUrlActionCreator(
+                    dispatcher = get(),
+                    position = position,
+                    articles = articles
+            ).run()
         }
     }
 }

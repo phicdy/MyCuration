@@ -5,7 +5,6 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.entity.Feed
 import io.reactivex.Flowable
@@ -26,8 +25,7 @@ import java.net.URI
 class NetworkTaskManager(private val articleRepository: ArticleRepository,
                          private val rssRepository: RssRepository,
                          private val curationRepository: CurationRepository,
-                         private val filterRepository: FilterRepository,
-                         private val unreadCountRepository: UnreadCountRepository) {
+                         private val filterRepository: FilterRepository) {
 
     val isUpdatingFeed: Boolean get() = false
 
@@ -76,11 +74,13 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                     val point = hatenaBookmarkApi.request(article.url)
                     articleRepository.saveHatenaPoint(article.url, point)
                 }
-                unreadCountRepository.appendUnreadArticleCount(feed.id, articles.size)
+                feed.unreadAriticlesCount += articles.size
+                rssRepository.updateUnreadArticleCount(feed.id, feed.unreadAriticlesCount + articles.size)
             }
 
             val updatedCount = FilterTask(articleRepository, filterRepository).applyFiltering(feed.id)
-            unreadCountRepository.decreaseCount(feed.id, updatedCount)
+            rssRepository.updateUnreadArticleCount(feed.id, feed.unreadAriticlesCount - updatedCount)
+            feed.unreadAriticlesCount -= updatedCount
             try {
                 inputStream.close()
             } catch (e: IOException) {

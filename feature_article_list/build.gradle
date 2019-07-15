@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    implementation project(':core')
     implementation project(':entity')
     implementation project(':feature_util')
     implementation project(':glide')
@@ -18,6 +19,9 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation 'androidx.browser:browser:1.0.0'
     implementation 'com.google.android.material:material:1.1.0-alpha07'
 
@@ -28,10 +32,13 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
 
     implementation "org.koin:koin-android-scope:$koin_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
 
     implementation("com.github.bumptech.glide:glide:$glideVer") {
         exclude group: "com.android.support"
     }
-   
+
     implementation 'io.github.inflationx:viewpump:1.0.0'
+
+    testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
 }

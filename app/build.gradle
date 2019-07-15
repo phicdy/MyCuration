@@ -53,6 +53,7 @@ dependencies {
     }
     androidTestImplementation 'org.assertj:assertj-core:3.11.1'
 
+    implementation project(':core')
     implementation project(':domain')
     implementation project(':entity')
     implementation project(':feature_article_list')
@@ -74,6 +75,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
 
     implementation "org.koin:koin-android-scope:$koin_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
 
     implementation "com.jakewharton.timber:timber:$timber_version"
 

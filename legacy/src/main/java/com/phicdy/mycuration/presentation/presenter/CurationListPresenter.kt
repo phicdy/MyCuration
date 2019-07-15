@@ -2,7 +2,6 @@ package com.phicdy.mycuration.presentation.presenter
 
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
@@ -11,8 +10,7 @@ import java.util.ArrayList
 
 class CurationListPresenter(private val view: CurationListView,
                             private val rssRepository: RssRepository,
-                            private val curationRepository: CurationRepository,
-                            private val unreadCountRepository: UnreadCountRepository) {
+                            private val curationRepository: CurationRepository) {
     private var allCurations: ArrayList<Curation> = arrayListOf()
 
 
@@ -51,7 +49,8 @@ class CurationListPresenter(private val view: CurationListView,
     suspend fun getView(curation: Curation?, item: CurationItem) {
         curation?.let {
             item.setName(it.name)
-            item.setCount(unreadCountRepository.getCurationCount(it.id).toString())
+            val count = curationRepository.calcNumOfAllUnreadArticlesOfCuration(curation.id)
+            item.setCount(count.toString())
         }
     }
 }

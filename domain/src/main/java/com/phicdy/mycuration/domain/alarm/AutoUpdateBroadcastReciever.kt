@@ -7,7 +7,6 @@ import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.data.repository.UnreadCountRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.domain.util.NetworkUtil
 import com.phicdy.mycuration.entity.Article
@@ -26,7 +25,6 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
     private val rssRepository: RssRepository by inject()
     private val articleRepository: ArticleRepository by inject()
     private val networkTaskManager: NetworkTaskManager by inject()
-    private val unreadCountRepository: UnreadCountRepository by inject()
 
     override fun onReceive(context: Context, intent: Intent?) {
         GlobalScope.launch {
@@ -39,7 +37,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
     }
 
     private suspend fun handleAutoUpdate(context: Context) = coroutineScope {
-        val feeds = rssRepository.getAllFeedsWithoutNumOfUnreadArticles()
+        val feeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
         networkTaskManager.updateAllFeeds(feeds)
                 .observeOn(Schedulers.io())
                 .subscribe(object : Subscriber<Feed> {
@@ -92,8 +90,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
         val rssList = rssRepository.getAllFeedsWithoutNumOfUnreadArticles()
         rssList.forEach {
             val size = articleRepository.getUnreadArticlesOfRss(it.id, false).size
-            unreadCountRepository.readAll(it.id)
-            unreadCountRepository.appendUnreadArticleCount(it.id, size)
+            rssRepository.updateUnreadArticleCount(it.id, size)
         }
 
         val manager = AlarmManagerTaskManager(context)
