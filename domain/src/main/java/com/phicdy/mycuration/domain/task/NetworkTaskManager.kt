@@ -56,7 +56,8 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                 .baseUrl(uri.scheme + "://" + uri.host)
                 .build()
         val service = retrofit.create(FeedRequestService::class.java)
-        val call = service.feeds(uri.path)
+        val path = uri.toString().substring((uri.scheme + "://" + uri.host).length)
+        val call = service.feeds(path)
         try {
             val response = withContext(Dispatchers.IO) { call.execute() }
             if (response.body() == null) {
