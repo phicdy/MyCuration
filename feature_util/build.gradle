@@ -1,0 +1,16 @@
+apply plugin: 'com.android.library'
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(':repository')
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+}

@@ -1,6 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = '1.3.21'
+    ext.timber_version = '4.7.1'
+    ext.coroutine_version = '1.1.1'
+    ext.lifecycle_version = '2.1.0-beta01'
+    ext.appcompat_version = '1.1.0-beta01'
+    ext.recyclerview_version = '1.1.0-alpha05'
+    ext.retrofit_version = '2.6.0'
+    ext.rxjava_version = '2.2.0'
+    ext.rxandroid_version = '2.1.0'
+    ext.koin_version = '2.0.1'
+    ext.firebase_version = '16.0.9'
+    ext.jacoco_version = "0.8.2"
+    ext.glideVer = '4.8.0'
+
     repositories {
         google().content {
             includeGroupByRegex 'com\\.google.*'
@@ -124,3 +137,105 @@ allprojects {
         }
     }
 }
+
+subprojects {
+    if (name == 'app') {
+        apply plugin: 'com.android.application'
+    } else {
+        apply plugin: 'com.android.library'
+    }
+    apply plugin: 'kotlin-android'
+    apply plugin: 'kotlin-kapt'
+    apply from: "$rootDir/jacoco.gradle"
+
+    android {
+        compileSdkVersion 28
+
+        defaultConfig {
+            minSdkVersion 21
+            targetSdkVersion 28
+            versionName "1.7.3"
+            versionCode 48
+
+            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        }
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+
+        testOptions {
+            unitTests.returnDefaultValues = true
+        }
+    }
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0'
+        testImplementation 'org.assertj:assertj-core:3.11.1'
+    }
+}
+
+
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = jacoco_version
+}
+
+task jacocoMerge(type: JacocoMerge) {
+    gradle.afterProject { p, state ->
+        if (p.rootProject != p && p.plugins.hasPlugin('jacoco')) {
+            executionData file("${p.buildDir}/jacoco").listFiles().findAll {
+                it.name.endsWith(".exec")
+            }
+        }
+    }
+}
+
+def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*',
+                            '**/BuildConfig.class', '**/*Activity*.class',
+                            '**/*Fragment*.class', '**/*Receiver.class',
+                            '**/*Manifest*.class', '**/*Application*.class',
+                            '**/com/phicdy/mycuration/data/db/*.*',
+                            '**/com/phicdy/mycuration/data/repository/*.*',
+                            '**/com/phicdy/mycuration/data/network/*',
+                            '**/com/phicdy/mycuration/di/*.*',
+                            '**/com/phicdy/mycuration/domain/alarm/*.*',
+                            '**/com/phicdy/mycuration/domain/entity/Filter*',
+                            '**/com/phicdy/mycuration/domain/entity/Article.class',
+                            '**/com/phicdy/mycuration/domain/entity/Curation.class',
+                            '**/com/phicdy/mycuration/domain/entity/CurationCondition.class',
+                            '**/com/phicdy/mycuration/domain/entity/CurationSelection.class',
+                            '**/com/phicdy/mycuration/domain/entity/Feed*',
+                            '**/com/phicdy/mycuration/domain/task/GetFeedIconTask*',
+                            '**/com/phicdy/mycuration/presentation/view/*',
+                            '**/com/phicdy/mycuration/util/log/*',
+                            '**/com/phicdy/mycuration/tracker/*.*']
+task jacocoMergedReport(type: JacocoReport, dependsOn: [tasks.jacocoMerge]) {
+    executionData jacocoMerge.destinationFile
+    def sources = []
+    subprojects.forEach {
+        sources += "${it.projectDir.path}/src/main/java"
+    }
+    sourceDirectories = files(sources)
+    classDirectories = fileTree(
+            dir: ".",
+            includes: ["**/build/intermediates/classes/debug/**",
+                       "**/build/tmp/kotlin-classes/debug/**"],
+            excludes: coverageExcludeFiles
+    )
+
+    reports {
+        xml.enabled = true
+        html.enabled true
+        csv.enabled false
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        html.destination file("${buildDir}/reports/jacoco/html")
+    }
+}
+
+task testDebugUnitTest(dependsOn: [tasks.jacocoMergedReport])

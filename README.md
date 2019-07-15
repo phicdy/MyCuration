@@ -33,6 +33,11 @@ Set status to read automatically by user settings
 * Target RSS
 * Enable/Disable
 
+## Mutli-Module
+
+<img src="https://raw.githubusercontent.com/phicdy/MyCuration/92044ce7008606c6dd1573cf449538ed170527ba/modules.png" alt="modules" title="modules">
+
+
 ## Credits
 
 * [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)

@@ -1,0 +1,98 @@
+apply plugin: 'spoon'
+apply plugin: 'io.fabric'
+
+android {
+    defaultConfig {
+        applicationId "com.phicdy.mycuration"
+        multiDexEnabled true
+
+        testApplicationId "com.phicdy.mycuration.test"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            keyAlias "$RELEASE_KEY_ALIAS"
+            storeFile file("$RELEASE_STORE_FILE_PATH")
+            keyPassword "$RELEASE_KEY_PASSWORD"
+            storePassword "$RELEASE_STORE_PASSWORD"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lintOptions {
+        disable 'MissingTranslation'
+        disable "RtlHardcoded"
+        abortOnError true
+    }
+}
+
+spoon {
+    debug = true
+
+    // To grant permissions to Android M >= devices */
+    grantAllPermissions = true
+}
+
+dependencies {
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'com.squareup.spoon:spoon-client:1.6.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestImplementation 'org.assertj:assertj-core:3.11.1'
+
+    implementation project(':core')
+    implementation project(':domain')
+    implementation project(':entity')
+    implementation project(':feature_article_list')
+    implementation project(':legacy')
+    implementation project(':repository')
+    implementation project(':resource')
+    implementation project(':util')
+    implementation project(':tracker')
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation 'com.google.android.material:material:1.1.0-alpha07'
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
+    implementation "com.google.firebase:firebase-core:$firebase_version"
+
+    implementation "org.koin:koin-android-scope:$koin_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
+
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
+    // Font
+    implementation 'io.github.inflationx:calligraphy3:3.0.0'
+    implementation 'io.github.inflationx:viewpump:1.0.0'
+}
+
+apply plugin: 'com.google.gms.google-services'
+
+afterEvaluate { project ->
+    project.tasks.assembleDebug {
+        println "$COPY_BUILD_DESTINATION"
+        project.copy {
+            from 'build/outputs/apk/debug'
+            into "$COPY_BUILD_DESTINATION"
+            include '**/*.apk'
+        }
+    }
+}
