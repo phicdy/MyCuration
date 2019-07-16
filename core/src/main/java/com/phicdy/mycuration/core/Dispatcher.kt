@@ -7,9 +7,12 @@ class Dispatcher {
     private val stores = mutableListOf<Store<*>>()
 
     suspend fun <T> dispatch(action: Action<T>) {
-        stores.forEach {
-            withContext(it.coroutineContext) {
-                it.notify(action)
+        for (i in 0 until stores.size) {
+            // Maybe unregistered from other thread
+            if (i >= stores.size) continue
+            val store = stores[i]
+            withContext(store.coroutineContext) {
+                store.notify(action)
             }
         }
     }
