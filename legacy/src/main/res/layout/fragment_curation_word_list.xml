@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toStartOf="@id/btn_add_word"
+        app:layout_constraintEnd_toStartOf="@id/iv_add_word"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_title">
 
@@ -37,12 +37,13 @@
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btn_add_word"
+    <ImageView
+        android:id="@+id/iv_add_word"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_word"
-        android:textSize="12sp"
+        android:layout_margin="4dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="@id/til_word"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/til_word" />

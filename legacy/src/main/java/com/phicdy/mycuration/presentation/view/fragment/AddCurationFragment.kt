@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -73,8 +73,8 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     override fun initView() {
         activity?.let {
-            val btnAdd = it.findViewById(R.id.btn_add_word) as Button
-            btnAdd.setOnClickListener { presenter.onAddWordButtonClicked() }
+            val addIcon = it.findViewById<ImageView>(R.id.iv_add_word)
+            addIcon.setOnClickListener { presenter.onAddWordButtonClicked() }
             etInput = it.findViewById(R.id.et_curation_word) as EditText
             etName = it.findViewById(R.id.et_curation_name) as TextInputEditText
             curationWordRecyclerView = it.findViewById(R.id.rv_curation_word) as RecyclerView
@@ -181,7 +181,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
             val word = words[position]
             if (holder is ViewHolder) {
                 holder.tvWord.text = word
-                holder.btnDelete.setOnClickListener {
+                holder.deleteIcon.setOnClickListener {
                     presenter.onDeleteButtonClicked(position)
                 }
             }
@@ -189,7 +189,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
         private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             internal val tvWord = itemView.findViewById(R.id.tv_word) as TextView
-            internal val btnDelete = itemView.findViewById(R.id.btn_delete) as Button
+            internal val deleteIcon = itemView.findViewById<ImageView>(R.id.iv_delete)
         }
     }
 
