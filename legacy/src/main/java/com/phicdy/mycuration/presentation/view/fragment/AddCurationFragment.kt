@@ -1,9 +1,11 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -73,9 +75,15 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     override fun initView() {
         activity?.let {
-            val addIcon = it.findViewById<ImageView>(R.id.iv_add_word)
-            addIcon.setOnClickListener { presenter.onAddWordButtonClicked() }
-            etInput = it.findViewById(R.id.et_curation_word) as EditText
+            etInput = it.findViewById<TextInputEditText>(R.id.et_curation_word)
+            etInput.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE && event?.action != KeyEvent.ACTION_UP) {
+                    presenter.onAddWordButtonClicked(v.text.toString())
+                    return@setOnEditorActionListener true
+                }
+
+                return@setOnEditorActionListener false
+            }
             etName = it.findViewById(R.id.et_curation_name) as TextInputEditText
             curationWordRecyclerView = it.findViewById(R.id.rv_curation_word) as RecyclerView
         }
@@ -91,10 +99,6 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     override fun editCurationId(): Int {
         return activity?.intent?.getIntExtra(EDIT_CURATION_ID, AddCurationPresenter.NOT_EDIT_CURATION_ID)
                 ?: AddCurationPresenter.NOT_EDIT_CURATION_ID
-    }
-
-    override fun inputWord(): String {
-        return etInput.text.toString()
     }
 
     override fun curationName(): String {

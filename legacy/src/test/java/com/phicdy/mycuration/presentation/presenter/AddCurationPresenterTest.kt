@@ -111,7 +111,7 @@ class AddCurationPresenterTest {
     fun `when add word button is clicked in empty then error toast shows`() = runBlocking {
         presenter.create()
         presenter.resume()
-        presenter.onAddWordButtonClicked()
+        presenter.onAddWordButtonClicked("")
         assertThat((view.isEmptyWordErrorToastShowed)).isTrue()
         return@runBlocking
     }
@@ -120,8 +120,7 @@ class AddCurationPresenterTest {
     fun `when add word button is clicked then the word is added`() = runBlocking {
         presenter.create()
         presenter.resume()
-        view.word = "test"
-        presenter.onAddWordButtonClicked()
+        presenter.onAddWordButtonClicked("test")
         assertThat(view.words).containsExactly("test")
         return@runBlocking
     }
@@ -130,10 +129,8 @@ class AddCurationPresenterTest {
     fun `when add word button is clicked then twice words are added`() = runBlocking {
         presenter.create()
         presenter.resume()
-        view.word = "test"
-        presenter.onAddWordButtonClicked()
-        view.word = "test2"
-        presenter.onAddWordButtonClicked()
+        presenter.onAddWordButtonClicked("test")
+        presenter.onAddWordButtonClicked("test2")
         assertThat(view.words).hasSize(2)
         return@runBlocking
     }
@@ -142,8 +139,7 @@ class AddCurationPresenterTest {
     fun `when add word button is clicked then input field becomes empty`() = runBlocking {
         presenter.create()
         presenter.resume()
-        view.word = "test"
-        presenter.onAddWordButtonClicked()
+        presenter.onAddWordButtonClicked("test")
         assertThat(view.word).isEmpty()
     }
 
@@ -296,10 +292,6 @@ class AddCurationPresenterTest {
 
         internal fun setEditCurationId(id: Int) {
             this.editCurationId = id
-        }
-
-        override fun inputWord(): String {
-            return word
         }
 
         override fun curationName(): String {
