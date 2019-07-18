@@ -41,7 +41,7 @@
         android:id="@+id/rv_curation_word"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:drawSelectorOnTop="false"
+        android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
