@@ -1,11 +1,13 @@
 package com.phicdy.mycuration.presentation.view.fragment
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -73,9 +75,15 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     override fun initView() {
         activity?.let {
-            val btnAdd = it.findViewById(R.id.btn_add_word) as Button
-            btnAdd.setOnClickListener { presenter.onAddWordButtonClicked() }
-            etInput = it.findViewById(R.id.et_curation_word) as EditText
+            etInput = it.findViewById<TextInputEditText>(R.id.et_curation_word)
+            etInput.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE && event?.action != KeyEvent.ACTION_UP) {
+                    presenter.onAddWordButtonClicked(v.text.toString())
+                    return@setOnEditorActionListener true
+                }
+
+                return@setOnEditorActionListener false
+            }
             etName = it.findViewById(R.id.et_curation_name) as TextInputEditText
             curationWordRecyclerView = it.findViewById(R.id.rv_curation_word) as RecyclerView
         }
@@ -91,10 +99,6 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     override fun editCurationId(): Int {
         return activity?.intent?.getIntExtra(EDIT_CURATION_ID, AddCurationPresenter.NOT_EDIT_CURATION_ID)
                 ?: AddCurationPresenter.NOT_EDIT_CURATION_ID
-    }
-
-    override fun inputWord(): String {
-        return etInput.text.toString()
     }
 
     override fun curationName(): String {
@@ -181,7 +185,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
             val word = words[position]
             if (holder is ViewHolder) {
                 holder.tvWord.text = word
-                holder.btnDelete.setOnClickListener {
+                holder.deleteIcon.setOnClickListener {
                     presenter.onDeleteButtonClicked(position)
                 }
             }
@@ -189,7 +193,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
         private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             internal val tvWord = itemView.findViewById(R.id.tv_word) as TextView
-            internal val btnDelete = itemView.findViewById(R.id.btn_delete) as Button
+            internal val deleteIcon = itemView.findViewById<ImageView>(R.id.iv_delete)
         }
     }
 

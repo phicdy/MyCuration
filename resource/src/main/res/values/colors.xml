@@ -19,5 +19,6 @@
     <color name="fill_bottom_navigation_bar_icon_checked">#388E3C</color>
     <color name="fill_bottom_navigation_bar_icon_not_checked">#757575</color>
 
-    <color name="solid_text_input_edit_text">#e0e0e0</color>
+    <color name="solid_text_input_edit_text">#ffffff</color>
+    <color name="stroke_text_input_edit_text">#9e9e9e</color>
 </resources>
