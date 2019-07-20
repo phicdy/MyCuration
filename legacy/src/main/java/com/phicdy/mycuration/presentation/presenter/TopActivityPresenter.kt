@@ -27,7 +27,11 @@ class TopActivityPresenter(private val view: TopActivityView,
             view.showRateDialog()
             helper.resetReviewCount()
         } else {
-            helper.decreaseReviewCount()
+            if (helper.getReviewCount() <= 0) {
+                helper.resetReviewCount()
+            } else {
+                helper.decreaseReviewCount()
+            }
         }
         articleRepository.saveAllStatusToReadFromToRead()
         view.closeSearchView()
@@ -90,6 +94,14 @@ class TopActivityPresenter(private val view: TopActivityView,
     fun onReviewClicked() {
         helper.setReviewed()
         view.goToGooglePlay()
+    }
+
+    fun onRequestClicked() {
+        helper.setReviewed()
+    }
+
+    fun onCancelClicked() {
+        helper.resetReviewCount()
     }
 
     suspend fun onEditFeedOkButtonClicked(newTitle: String, rssId: Int) = coroutineScope {

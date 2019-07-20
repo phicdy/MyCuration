@@ -59,15 +59,6 @@ class MyApplication : Application() {
         Fabric.with(this, crashlyticsKit)
 
         PreferenceHelper.setUp(this)
-        try {
-            val versionName = packageManager.getPackageInfo(packageName, 0).versionName
-            if (PreferenceHelper.getPreviousVersion() != versionName) {
-                PreferenceHelper.resetReviewCount()
-                PreferenceHelper.resetReviewed()
-                PreferenceHelper.setPreviousVersion(versionName)
-            }
-        } catch (e: PackageManager.NameNotFoundException) {
-        }
 
         TrackerHelper.setTracker(setUp(this))
 
