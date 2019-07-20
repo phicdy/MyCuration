@@ -17,7 +17,6 @@ import java.util.ArrayList
 
 class RssParser {
 
-    private var isArticleFlag = false
     private var isCanonical = false
 
     private fun parse(canonicalUrl: String): RssParseResult {
@@ -162,7 +161,7 @@ class RssParser {
         return RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
     }
 
-    fun parseArticlesFromRss(inputStream: InputStream, latestDate: Long): ArrayList<Article> {
+    fun parseArticlesFromRss(inputStream: InputStream): ArrayList<Article> {
         val articles = ArrayList<Article>()
 
         // TODO Get hatena bookmark(?) count
@@ -223,21 +222,10 @@ class RssParser {
                     XmlPullParser.END_TAG -> {
                         tag = parser.name
                         if (tag == "item" || tag == "entry") {
-                            // RSS starts from latest article.
-                            // So, if latest article date in DB is after parsing article date,
-                            // it is already saved in DB
-                            if (latestDate >= article.postedDate) {
-                                isArticleFlag = true
-                            } else {
-                                articles.add(article)
-                            }
+                            articles.add(article)
                             itemFlag = false
                         }
                     }
-                }
-                // If article is already saved, stop parse
-                if (isArticleFlag) {
-                    break
                 }
                 eventType = parser.next()
                 tag = parser.name
