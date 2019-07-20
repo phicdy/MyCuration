@@ -481,6 +481,7 @@ class TopActivity :
                 .setNeutralButton(R.string.request) { _, _ ->
                     TrackerHelper.sendButtonEvent(getString(R.string.tap_request))
                     startActivity(Intent(this, UserRequestActivity::class.java))
+                    presenter.onRequestClicked()
                 }
                 .setNegativeButton(R.string.cancel) { _, _ ->
                     TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))

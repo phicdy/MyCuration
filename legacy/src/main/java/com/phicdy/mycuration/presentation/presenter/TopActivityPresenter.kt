@@ -92,6 +92,10 @@ class TopActivityPresenter(private val view: TopActivityView,
         view.goToGooglePlay()
     }
 
+    fun onRequestClicked() {
+        helper.setReviewed()
+    }
+
     suspend fun onEditFeedOkButtonClicked(newTitle: String, rssId: Int) = coroutineScope {
         if (newTitle.isBlank()) {
             view.showEditFeedTitleEmptyErrorToast()
