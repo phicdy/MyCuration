@@ -27,7 +27,11 @@ class TopActivityPresenter(private val view: TopActivityView,
             view.showRateDialog()
             helper.resetReviewCount()
         } else {
-            helper.decreaseReviewCount()
+            if (helper.getReviewCount() <= 0) {
+                helper.resetReviewCount()
+            } else {
+                helper.decreaseReviewCount()
+            }
         }
         articleRepository.saveAllStatusToReadFromToRead()
         view.closeSearchView()
