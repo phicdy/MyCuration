@@ -48,8 +48,7 @@ class AddCurationPresenter(
         }
     }
 
-    fun onAddWordButtonClicked() {
-        val word = view.inputWord()
+    fun onAddWordButtonClicked(word: String) {
         if (word == "") {
             view.showWordEmptyErrorToast()
             return

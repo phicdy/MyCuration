@@ -12,6 +12,8 @@
         <item name="android:textColor">@color/text_primary</item>
         <!-- Context Menu -->
         <item name="android:dropDownListViewStyle">@style/AppTheme.DropDownList</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox
+        </item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -45,8 +47,6 @@
         <item name="android:background">@color/background_base_divider</item>
         <item name="android:alpha">0.12</item>
     </style>
-
-    <style name="AppTheme.TextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense" />
 
     <style name="AppTheme.IconListItem" />
 

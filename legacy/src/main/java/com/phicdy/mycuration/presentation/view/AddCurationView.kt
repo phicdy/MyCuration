@@ -3,7 +3,6 @@ package com.phicdy.mycuration.presentation.view
 interface AddCurationView {
     fun initView()
     fun editCurationId(): Int
-    fun inputWord(): String
     fun curationName(): String
     fun setCurationName(name: String)
     fun resetInputWord()
