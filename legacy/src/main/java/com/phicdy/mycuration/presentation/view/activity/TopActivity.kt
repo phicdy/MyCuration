@@ -485,6 +485,7 @@ class TopActivity :
                 }
                 .setNegativeButton(R.string.cancel) { _, _ ->
                     TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))
+                    presenter.onCancelClicked()
                 }
                 .show()
     }

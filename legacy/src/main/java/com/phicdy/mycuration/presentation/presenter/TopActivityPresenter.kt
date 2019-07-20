@@ -100,6 +100,10 @@ class TopActivityPresenter(private val view: TopActivityView,
         helper.setReviewed()
     }
 
+    fun onCancelClicked() {
+        helper.resetReviewCount()
+    }
+
     suspend fun onEditFeedOkButtonClicked(newTitle: String, rssId: Int) = coroutineScope {
         if (newTitle.isBlank()) {
             view.showEditFeedTitleEmptyErrorToast()
