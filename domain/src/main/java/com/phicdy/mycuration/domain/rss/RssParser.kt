@@ -162,7 +162,7 @@ class RssParser {
         return RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
     }
 
-    fun parseXml(inputStream: InputStream, latestDate: Long): ArrayList<Article> {
+    fun parseArticlesFromRss(inputStream: InputStream, latestDate: Long): ArrayList<Article> {
         val articles = ArrayList<Article>()
 
         // TODO Get hatena bookmark(?) count

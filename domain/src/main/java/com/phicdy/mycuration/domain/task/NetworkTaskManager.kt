@@ -64,7 +64,7 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
             val inputStream = response.body()?.byteStream() ?: return@coroutineScope
             val parser = RssParser()
             val latestDate = articleRepository.getLatestArticleDate(feed.id)
-            val articles = parser.parseXml(inputStream, latestDate)
+            val articles = parser.parseArticlesFromRss(inputStream, latestDate)
 
             if (articles.size > 0) {
                 val savedArtices = articleRepository.saveNewArticles(articles, feed.id)
