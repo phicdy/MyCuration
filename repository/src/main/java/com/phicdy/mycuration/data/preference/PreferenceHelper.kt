@@ -34,7 +34,7 @@ object PreferenceHelper {
     private val SWIPE_DIRECTIONS = intArrayOf(SWIPE_RIGHT_TO_LEFT, SWIPE_LEFT_TO_RIGHT)
     private val LAUNCH_TABS = intArrayOf(LAUNCH_CURATION, LAUNCH_RSS)
     private const val DEFAULT_UPDATE_INTERVAL_SECOND = 3 * 60 * 60
-    private val DEFAULT_REVIEW_COUNT = if (BuildConfig.DEBUG) 3 else 50
+    private val DEFAULT_REVIEW_COUNT = if (BuildConfig.DEBUG) 3 else 100
 
     fun setUp(context: Context) {
         pref = context.getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
