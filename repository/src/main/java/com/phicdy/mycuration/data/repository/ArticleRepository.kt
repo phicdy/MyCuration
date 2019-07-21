@@ -112,7 +112,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param articles Article array to save
      * @param feedId Feed ID of the articles
      */
-    suspend fun saveNewArticles(articles: ArrayList<Article>, feedId: Int): List<Article> = coroutineScope {
+    suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> = coroutineScope {
         return@coroutineScope withContext(Dispatchers.IO) {
             if (articles.isEmpty()) {
                 return@withContext emptyList<Article>()
@@ -158,12 +158,16 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param rssId RSS ID to check
      * @return `true` if exists.
      */
-    suspend fun isExistArticleOf(rssId: Int? = null): Boolean = withContext(Dispatchers.IO) {
+    suspend fun isExistArticleOf(rssId: Int? = null, url: String? = null): Boolean = withContext(Dispatchers.IO) {
         var isExist = false
         db.beginTransaction()
         var cursor: Cursor? = null
         try {
-            val selection = if (rssId == null) null else Article.FEEDID + " = " + rssId
+            var selection = if (rssId == null) null else Article.FEEDID + " = " + rssId
+            if (!url.isNullOrBlank()) {
+                if (selection == null) selection = Article.URL + " = '" + url + "'"
+                else selection += " and " + Article.URL + " = '" + url + "'"
+            }
             cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
             isExist = cursor.count > 0
             db.setTransactionSuccessful()

@@ -64,18 +64,18 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
             val inputStream = response.body()?.byteStream() ?: return@coroutineScope
             val parser = RssParser()
             val articles = parser.parseArticlesFromRss(inputStream)
-
-            if (articles.size > 0) {
-                val savedArtices = articleRepository.saveNewArticles(articles, feed.id)
-                curationRepository.saveCurationsOf(savedArtices)
-                val hatenaBookmarkApi = HatenaBookmarkApi()
-                for (article in articles) {
-                    val point = hatenaBookmarkApi.request(article.url)
-                    articleRepository.saveHatenaPoint(article.url, point)
-                }
-                feed.unreadAriticlesCount += articles.size
-                rssRepository.updateUnreadArticleCount(feed.id, feed.unreadAriticlesCount + articles.size)
-            }
+            articles.filter { !articleRepository.isExistArticleOf(url = it.url) }
+                    .also {
+                        val savedArtices = articleRepository.saveNewArticles(it, feed.id)
+                        curationRepository.saveCurationsOf(savedArtices)
+                        feed.unreadAriticlesCount += it.size
+                        rssRepository.updateUnreadArticleCount(feed.id, feed.unreadAriticlesCount + it.size)
+                    }
+                    .map {
+                        val hatenaBookmarkApi = HatenaBookmarkApi()
+                        val point = hatenaBookmarkApi.request(it.url)
+                        articleRepository.saveHatenaPoint(it.url, point)
+                    }
 
             val updatedCount = FilterTask(articleRepository, filterRepository).applyFiltering(feed.id)
             rssRepository.updateUnreadArticleCount(feed.id, feed.unreadAriticlesCount - updatedCount)
