@@ -28,13 +28,13 @@ class ReadAllArticlesActionCreator(
             val updateRepository = async {
                 if (feedId == Feed.ALL_FEED_ID) {
                     articleRepository.saveAllStatusToRead()
-                    rssRepository.updateUnreadArticleCount(feedId, 0)
-                } else {
-                    articleRepository.saveStatusToRead(feedId)
                     val allFeeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
                     allFeeds.forEach {
                         rssRepository.updateUnreadArticleCount(it.id, 0)
                     }
+                } else {
+                    articleRepository.saveStatusToRead(feedId)
+                    rssRepository.updateUnreadArticleCount(feedId, 0)
                 }
             }
             changeStatus.await()
