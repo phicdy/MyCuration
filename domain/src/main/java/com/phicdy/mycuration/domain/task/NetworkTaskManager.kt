@@ -7,12 +7,9 @@ import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.entity.Feed
-import io.reactivex.Flowable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -29,19 +26,6 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                          private val filterRepository: FilterRepository) {
 
     val isUpdatingFeed: Boolean get() = false
-
-    fun updateAllFeeds(feeds: ArrayList<Feed>): Flowable<Feed> {
-        return Flowable.fromIterable(feeds)
-                .subscribeOn(Schedulers.io())
-                .filter { feed -> feed.id > 0 }
-                .flatMap({ data -> Flowable.just(data).subscribeOn(Schedulers.io()) })
-                { _, newData ->
-                    runBlocking {
-                        updateFeed(newData)
-                    }
-                    newData
-                }
-    }
 
     suspend fun updateAll(rssList: List<Feed>) = withContext(Dispatchers.IO) {
         rssList.filter { it.id > 0 }
