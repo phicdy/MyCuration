@@ -108,7 +108,6 @@ allprojects {
                 includeGroup 'com.squareup.okhttp3'
                 includeGroup 'com.github.bumptech.glide'
                 includeGroup 'com.nhaarman.mockitokotlin2'
-                includeGroup 'io.reactivex.rxjava2'
                 includeGroup 'io.github.inflationx'
                 includeGroup 'junit'
                 includeGroup 'it.unimi.dsi'
