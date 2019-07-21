@@ -10,6 +10,7 @@ import com.phicdy.mycuration.entity.Feed
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -40,6 +41,12 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                     }
                     newData
                 }
+    }
+
+    suspend fun updateAll(rssList: List<Feed>) = withContext(Dispatchers.IO) {
+        rssList.filter { it.id > 0 }
+                .map { async { updateFeed(it) } }
+                .map { it.await() }
     }
 
     private interface FeedRequestService {

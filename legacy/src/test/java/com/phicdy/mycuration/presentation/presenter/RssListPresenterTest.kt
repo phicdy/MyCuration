@@ -15,12 +15,8 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
-import io.reactivex.Flowable
-import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -56,13 +52,6 @@ class RssListPresenterTest {
         whenever(mockEdit.putLong(any(), any())).thenReturn(mockEdit)
 
         presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, networkTaskManager)
-
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-    }
-
-    @After
-    fun tearDown() {
-        RxAndroidPlugins.reset()
     }
 
     // For coverage
@@ -143,7 +132,6 @@ class RssListPresenterTest {
     fun `when onResume and RSS exist and auto update in main UI is enabled and after interval then show refreshing view`() = runBlocking {
         whenever(mockPref.getBoolean(anyString(), any())).thenReturn(true)
         whenever(mockPref.getLong(anyString(), anyLong())).thenReturn(System.currentTimeMillis() - 1000 * 60)
-        whenever(networkTaskManager.updateAllFeeds(allFeeds)).thenReturn(Flowable.just(mock()))
         presenter.resume()
         verify(view, times(1)).setRefreshing(true)
     }

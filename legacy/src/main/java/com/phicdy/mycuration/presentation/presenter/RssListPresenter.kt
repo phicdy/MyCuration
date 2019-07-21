@@ -7,11 +7,7 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.presentation.view.RssItemView
 import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
-import org.reactivestreams.Subscriber
-import org.reactivestreams.Subscription
 import java.util.ArrayList
 
 class RssListPresenter(private val view: RssListView,
@@ -178,22 +174,11 @@ class RssListPresenter(private val view: RssListView,
     }
 
     private suspend fun updateAllRss() = coroutineScope {
-        networkTaskManager.updateAllFeeds(allFeeds)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Subscriber<Feed> {
-                    override fun onSubscribe(s: Subscription) {
-                        s.request((allFeeds.size).toLong())
-                    }
-
-                    override fun onNext(feed: Feed) {}
-
-                    override fun onError(t: Throwable) {
-                    }
-
-                    override fun onComplete() = runBlocking {
-                        onFinishUpdate()
-                    }
-                })
+        try {
+            networkTaskManager.updateAll(allFeeds)
+            onFinishUpdate()
+        } catch (e: Exception) {
+        }
     }
 
     private fun onRefreshComplete() {
