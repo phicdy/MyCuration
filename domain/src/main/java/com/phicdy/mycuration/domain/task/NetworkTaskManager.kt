@@ -11,21 +11,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.http.GET
-import retrofit2.http.Url
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 import java.io.IOException
-import java.net.URI
 
-class NetworkTaskManager(private val articleRepository: ArticleRepository,
-                         private val rssRepository: RssRepository,
-                         private val curationRepository: CurationRepository,
-                         private val filterRepository: FilterRepository) {
+class NetworkTaskManager(
+        private val articleRepository: ArticleRepository,
+        private val rssRepository: RssRepository,
+        private val curationRepository: CurationRepository,
+        private val filterRepository: FilterRepository
+) : KoinComponent {
 
     val isUpdatingFeed: Boolean get() = false
+
+    private val client: OkHttpClient by inject()
 
     suspend fun updateAll(rssList: List<Feed>) = withContext(Dispatchers.IO) {
         rssList.filter { it.id > 0 }
@@ -33,25 +35,11 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
                 .map { it.await() }
     }
 
-    private interface FeedRequestService {
-        @GET
-        fun feeds(@Url url: String): Call<ResponseBody>
-    }
-
     suspend fun updateFeed(feed: Feed) = coroutineScope {
         if (feed.url.isEmpty()) return@coroutineScope
-        val uri = URI.create(feed.url)
-        val retrofit = Retrofit.Builder()
-                .baseUrl(uri.scheme + "://" + uri.host)
-                .build()
-        val service = retrofit.create(FeedRequestService::class.java)
-        val path = uri.toString().substring((uri.scheme + "://" + uri.host).length)
-        val call = service.feeds(path)
         try {
-            val response = withContext(Dispatchers.IO) { call.execute() }
-            if (response.body() == null) {
-                return@coroutineScope
-            }
+            val request = Request.Builder().url(feed.url).build()
+            val response = client.newCall(request).execute()
             val inputStream = response.body()?.byteStream() ?: return@coroutineScope
             val parser = RssParser()
             val articles = parser.parseArticlesFromRss(inputStream)
