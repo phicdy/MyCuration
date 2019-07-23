@@ -55,7 +55,8 @@ class NetworkTaskManager(private val articleRepository: ArticleRepository,
             val inputStream = response.body()?.byteStream() ?: return@coroutineScope
             val parser = RssParser()
             val articles = parser.parseArticlesFromRss(inputStream)
-            articles.filter { !articleRepository.isExistArticleOf(url = it.url) }
+            val storedUrlList = articleRepository.getStoredUrlListIn(articles)
+            articles.filter { it.url !in storedUrlList }
                     .also {
                         val savedArtices = articleRepository.saveNewArticles(it, feed.id)
                         curationRepository.saveCurationsOf(savedArtices)

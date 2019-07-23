@@ -158,16 +158,12 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param rssId RSS ID to check
      * @return `true` if exists.
      */
-    suspend fun isExistArticleOf(rssId: Int? = null, url: String? = null): Boolean = withContext(Dispatchers.IO) {
+    suspend fun isExistArticleOf(rssId: Int? = null): Boolean = withContext(Dispatchers.IO) {
         var isExist = false
         db.beginTransaction()
         var cursor: Cursor? = null
         try {
-            var selection = if (rssId == null) null else Article.FEEDID + " = " + rssId
-            if (!url.isNullOrBlank()) {
-                if (selection == null) selection = Article.URL + " = '" + url + "'"
-                else selection += " and " + Article.URL + " = '" + url + "'"
-            }
+            val selection = if (rssId == null) null else Article.FEEDID + " = " + rssId
             cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
             isExist = cursor.count > 0
             db.setTransactionSuccessful()
@@ -178,6 +174,36 @@ class ArticleRepository(val db: SQLiteDatabase) {
             db.endTransaction()
         }
         return@withContext isExist
+    }
+
+    /**
+     * Get article URLs that were stored in database from argument articles
+     *
+     */
+    suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(Dispatchers.IO) {
+        val urls = mutableListOf<String>()
+        db.beginTransaction()
+        var cursor: Cursor? = null
+        try {
+            val selection = StringBuffer().apply {
+                append(Article.URL)
+                append(" in (")
+                articles.map { append("'" + it.url + "', ") }
+                delete(length - 2, length)
+                append(")")
+            }.toString()
+            cursor = db.query(true, Article.TABLE_NAME, arrayOf(Article.URL), selection, null, null, null, null, null)
+            while (cursor.moveToNext()) {
+                urls.add(cursor.getString(0))
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+        return@withContext urls
     }
 
     /**
