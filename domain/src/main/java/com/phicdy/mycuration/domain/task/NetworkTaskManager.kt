@@ -49,7 +49,6 @@ class NetworkTaskManager(
                         val savedArtices = articleRepository.saveNewArticles(it, feed.id)
                         curationRepository.saveCurationsOf(savedArtices)
                         feed.unreadAriticlesCount += it.size
-                        rssRepository.updateUnreadArticleCount(feed.id, feed.unreadAriticlesCount + it.size)
                     }
                     .map {
                         val hatenaBookmarkApi = HatenaBookmarkApi()
@@ -57,9 +56,13 @@ class NetworkTaskManager(
                         articleRepository.saveHatenaPoint(it.url, point)
                     }
 
-            val updatedCount = FilterTask(articleRepository, filterRepository).applyFiltering(feed.id)
-            rssRepository.updateUnreadArticleCount(feed.id, feed.unreadAriticlesCount - updatedCount)
-            feed.unreadAriticlesCount -= updatedCount
+            FilterTask(articleRepository, filterRepository).applyFiltering(feed.id)
+
+            val size = articleRepository.getUnreadArticleCount(feed.id)
+            if (size >= 0) {
+                rssRepository.updateUnreadArticleCount(feed.id, size)
+                feed.unreadAriticlesCount = size
+            }
             try {
                 inputStream.close()
             } catch (e: IOException) {

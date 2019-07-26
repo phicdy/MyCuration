@@ -440,6 +440,21 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return getArticlesOfRss(rssId, Article.UNREAD, isNewestArticleTop)
     }
 
+    suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(Dispatchers.IO) {
+        var cursor: Cursor? = null
+        var count = -1
+        try {
+            val selection = "${Article.STATUS} = '${Article.UNREAD}' and ${Article.FEEDID} = $rssId"
+            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, null)
+            count = cursor.count
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+        }
+        return@withContext count
+    }
+
     private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
         val articles = arrayListOf<Article>()
         var cursor: Cursor? = null
