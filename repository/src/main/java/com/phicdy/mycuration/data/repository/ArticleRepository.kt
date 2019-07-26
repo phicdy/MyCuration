@@ -444,13 +444,16 @@ class ArticleRepository(val db: SQLiteDatabase) {
         var cursor: Cursor? = null
         var count = -1
         try {
-            val selection = "${Article.STATUS} = '${Article.UNREAD}' and ${Article.FEEDID} = $rssId"
-            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, null)
+            val selection = "${Article.FEEDID} = $rssId and ${Article.STATUS} = '${Article.UNREAD}'"
+            db.beginTransaction()
+            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null)
             count = cursor.count
+            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
         } finally {
             cursor?.close()
+            db.endTransaction()
         }
         return@withContext count
     }
