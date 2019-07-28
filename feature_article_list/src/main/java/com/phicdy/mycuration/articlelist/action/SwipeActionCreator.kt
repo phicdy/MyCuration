@@ -25,7 +25,10 @@ class SwipeActionCreator(
         withContext(Dispatchers.IO) {
             suspend fun update(newStatus: String) {
                 val article = articles[position]
-                if (article.status == newStatus) return
+                if (article.status == newStatus) {
+                    dispatcher.dispatch(SwipeAction(position))
+                    return
+                }
                 article.status = newStatus
                 dispatcher.dispatch(SwipeAction(position))
                 articleRepository.saveStatus(article.id, newStatus)
