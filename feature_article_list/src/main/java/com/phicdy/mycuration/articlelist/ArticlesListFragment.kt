@@ -157,12 +157,14 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
             openExternalWebView(it)
         })
-        scrollPositionStore.state.observe(this, Observer<Int> {
+        scrollPositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
             launch {
-                scrollTo(it)
-                delay(250) // Wait for scroll
                 val manager = recyclerView.layoutManager as LinearLayoutManager
-                articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), it)
+                val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
+                val num = positionAfterScroll - firstPositionBeforeScroll + 1
+                scrollTo(positionAfterScroll)
+                delay(250) // Wait for scroll
+                articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), num)
                 runFinishActionCreator()
             }
         })
