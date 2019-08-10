@@ -11,4 +11,14 @@ android {
 }
 
 dependencies {
+    implementation project(':advertisement')
+
+    implementation 'com.google.firebase:firebase-ads:18.1.1'
+   
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation "org.koin:koin-android-scope:$koin_version"
+
 }
