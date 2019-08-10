@@ -112,7 +112,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param articles Article array to save
      * @param feedId Feed ID of the articles
      */
-    suspend fun saveNewArticles(articles: ArrayList<Article>, feedId: Int): List<Article> = coroutineScope {
+    suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> = coroutineScope {
         return@coroutineScope withContext(Dispatchers.IO) {
             if (articles.isEmpty()) {
                 return@withContext emptyList<Article>()
@@ -174,6 +174,36 @@ class ArticleRepository(val db: SQLiteDatabase) {
             db.endTransaction()
         }
         return@withContext isExist
+    }
+
+    /**
+     * Get article URLs that were stored in database from argument articles
+     *
+     */
+    suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(Dispatchers.IO) {
+        val urls = mutableListOf<String>()
+        db.beginTransaction()
+        var cursor: Cursor? = null
+        try {
+            val selection = StringBuffer().apply {
+                append(Article.URL)
+                append(" in (")
+                articles.map { append("'" + it.url + "', ") }
+                delete(length - 2, length)
+                append(")")
+            }.toString()
+            cursor = db.query(true, Article.TABLE_NAME, arrayOf(Article.URL), selection, null, null, null, null, null)
+            while (cursor.moveToNext()) {
+                urls.add(cursor.getString(0))
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+        return@withContext urls
     }
 
     /**
@@ -410,6 +440,24 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return getArticlesOfRss(rssId, Article.UNREAD, isNewestArticleTop)
     }
 
+    suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(Dispatchers.IO) {
+        var cursor: Cursor? = null
+        var count = -1
+        try {
+            val selection = "${Article.FEEDID} = $rssId and ${Article.STATUS} = '${Article.UNREAD}'"
+            db.beginTransaction()
+            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null)
+            count = cursor.count
+            db.setTransactionSuccessful()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            cursor?.close()
+            db.endTransaction()
+        }
+        return@withContext count
+    }
+
     private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
         val articles = arrayListOf<Article>()
         var cursor: Cursor? = null
@@ -447,30 +495,6 @@ class ArticleRepository(val db: SQLiteDatabase) {
         }
 
         return@withContext articles
-    }
-
-    suspend fun getLatestArticleDate(feedId: Int): Long = withContext(Dispatchers.IO) {
-        var latestDate: Long = 0
-        var cursor: Cursor? = null
-        try {
-            val sql = "select " + Article.DATE + " from " + Article.TABLE_NAME +
-                    " where " + Article.FEEDID + " = " + feedId +
-                    " order by " + Article.DATE + " desc limit 1"
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            if (cursor.count > 0) {
-                cursor.moveToFirst()
-                latestDate = cursor.getLong(0)
-            }
-            db.setTransactionSuccessful()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
-        }
-
-        return@withContext latestDate
     }
 
     suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {

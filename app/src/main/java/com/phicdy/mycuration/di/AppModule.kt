@@ -58,6 +58,7 @@ import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.util.log.TimberTree
+import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
@@ -77,6 +78,7 @@ val appModule = module {
     single<AdditionalSettingApi> { AdditionalSettingRepository(get(), get()) }
     single { AlarmManagerTaskManager(androidContext()) }
     single { Dispatcher() }
+    single { OkHttpClient() }
 
     single { TimberTree() }
 

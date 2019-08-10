@@ -43,8 +43,6 @@ Set status to read automatically by user settings
 * [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
 * [Koin](https://github.com/InsertKoinIO/koin)
 * [RecyclerView](https://dl.google.com/dl/android/maven2/index.html)
-* [RxJava](https://github.com/ReactiveX/RxJava)
-* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [Retrofit](https://github.com/square/retrofit)
 * [Glide](https://github.com/bumptech/glide)
 * [Firebase Analytics](https://firebase.google.com/docs/analytics/)
