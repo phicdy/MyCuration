@@ -2,11 +2,11 @@ package com.phicdy.mycuration
 
 import android.app.Application
 import android.content.Context
-import android.content.pm.PackageManager
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.di.appModule
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
@@ -18,6 +18,7 @@ import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -33,6 +34,8 @@ class MyApplication : Application() {
             return FirebaseAnalytics.getInstance(context)
         }
     }
+
+    private val adProvider by inject<AdProvider>()
 
     override fun onCreate() {
         super.onCreate()
@@ -83,5 +86,7 @@ class MyApplication : Application() {
         }
 
         AlarmManagerTaskManager(this).setFixUnreadCountAlarm()
+
+        adProvider.init(this)
     }
 }
