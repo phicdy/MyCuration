@@ -3,6 +3,8 @@ package com.phicdy.mycuration.di
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
+import com.phicdy.mycuration.admob.AdmobProvider
+import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
@@ -79,6 +81,7 @@ val appModule = module {
     single { AlarmManagerTaskManager(androidContext()) }
     single { Dispatcher() }
     single { OkHttpClient() }
+    single<AdProvider> { AdmobProvider() }
 
     single { TimberTree() }
 
