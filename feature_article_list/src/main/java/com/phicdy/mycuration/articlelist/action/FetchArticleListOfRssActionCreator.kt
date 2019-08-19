@@ -20,12 +20,14 @@ class FetchArticleListOfRssActionCreator(
             val allArticles = articleRepository.getUnreadArticlesOfRss(rssId, preferenceHelper.sortNewArticleTop)
             if (allArticles.isEmpty() && articleRepository.isExistArticleOf(rssId)) {
                 mutableListOf<ArticleItem>().apply {
+                    add(ArticleItem.Advertisement)
                     articleRepository.getAllArticlesOfRss(rssId, preferenceHelper.sortNewArticleTop)
                             .map { ArticleItem.Content(it) }
                             .let(::addAll)
                 }.let { dispatcher.dispatch(FetchArticleAction(it)) }
             } else {
                 mutableListOf<ArticleItem>().apply {
+                    add(ArticleItem.Advertisement)
                     allArticles.map { ArticleItem.Content(it) }
                             .let(::addAll)
                 }.let { dispatcher.dispatch(FetchArticleAction(it)) }

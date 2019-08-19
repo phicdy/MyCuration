@@ -20,12 +20,14 @@ class FetchArticleListOfCurationActionCreator(
             val allArticles = articleRepository.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             if (allArticles.isEmpty()) {
                 mutableListOf<ArticleItem>().apply {
+                    add(ArticleItem.Advertisement)
                     articleRepository.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
                             .map { ArticleItem.Content(it) }
                             .let(::addAll)
                 }.let { dispatcher.dispatch(FetchArticleAction(it)) }
             } else {
                 mutableListOf<ArticleItem>().apply {
+                    add(ArticleItem.Advertisement)
                     allArticles.map { ArticleItem.Content(it) }
                             .let(::addAll)
                 }.let { dispatcher.dispatch(FetchArticleAction(it)) }

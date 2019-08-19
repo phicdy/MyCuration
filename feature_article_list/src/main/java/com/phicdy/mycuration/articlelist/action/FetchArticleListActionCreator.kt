@@ -19,12 +19,14 @@ class FetchAllArticleListActionCreator(
             val allArticles = articleRepository.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
             if (allArticles.isEmpty() && articleRepository.isExistArticle()) {
                 mutableListOf<ArticleItem>().apply {
+                    add(ArticleItem.Advertisement)
                     articleRepository.getTop300Articles(preferenceHelper.sortNewArticleTop)
                             .map { ArticleItem.Content(it) }
                             .let(::addAll)
                 }.let { dispatcher.dispatch(FetchArticleAction(it)) }
             } else {
                 mutableListOf<ArticleItem>().apply {
+                    add(ArticleItem.Advertisement)
                     allArticles.map { ArticleItem.Content(it) }
                             .let(::addAll)
                 }.let { dispatcher.dispatch(FetchArticleAction(it)) }
