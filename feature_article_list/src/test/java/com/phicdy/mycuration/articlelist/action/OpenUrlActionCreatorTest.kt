@@ -31,7 +31,7 @@ class OpenUrlActionCreatorTest {
                     dispatcher = dispatcher,
                     preferenceHelper = preferenceHelper,
                     feedId = 0,
-                    article = mock { on { copy(feedTitle = "") } doReturn mock() },
+                    item = mock { on { copy(feedTitle = "") } doReturn mock() },
                     rssRepository = mock()
             ).run()
             verify(store).notify(any())
@@ -53,7 +53,7 @@ class OpenUrlActionCreatorTest {
                     dispatcher = dispatcher,
                     preferenceHelper = preferenceHelper,
                     feedId = 0,
-                    article = mock {
+                    item = mock {
                         on { copy(feedTitle = "") } doReturn mock()
                         on { url } doReturn "aaa"
                     },

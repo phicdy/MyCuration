@@ -1,17 +1,18 @@
 package com.phicdy.mycuration.articlelist.action
 
+import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.entity.Article
 
 sealed class ArticleListAction<out T> : Action<T>
 
 data class FetchArticleAction(
-        override val value: List<Article>
-) : ArticleListAction<List<Article>>()
+        override val value: List<ArticleItem>
+) : ArticleListAction<List<ArticleItem>>()
 
 data class SearchArticleAction(
-        override val value: List<Article>
-) : ArticleListAction<List<Article>>()
+        override val value: List<ArticleItem>
+) : ArticleListAction<List<ArticleItem>>()
 
 data class ReadArticleAction(
         override val value: Int

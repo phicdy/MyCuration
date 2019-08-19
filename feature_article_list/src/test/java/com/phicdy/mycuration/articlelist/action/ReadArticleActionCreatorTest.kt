@@ -27,7 +27,7 @@ class ReadArticleActionCreatorTest {
                     articleRepository = mock(),
                     rssRepository = mock(),
                     position = 0,
-                    articles = listOf(article)
+                    items = listOf(article)
             ).run()
             assertThat(article.status).isEqualTo(Article.TOREAD)
         }
@@ -52,7 +52,7 @@ class ReadArticleActionCreatorTest {
                     articleRepository = mock(),
                     rssRepository = mock(),
                     position = 0,
-                    articles = listOf(article)
+                    items = listOf(article)
             ).run()
             assertThat(article.status).isEqualTo(Article.TOREAD)
         }
@@ -77,7 +77,7 @@ class ReadArticleActionCreatorTest {
                     articleRepository = mock(),
                     rssRepository = mock(),
                     position = 0,
-                    articles = listOf(article)
+                    items = listOf(article)
             ).run()
             assertThat(article.status).isEqualTo(Article.READ)
         }

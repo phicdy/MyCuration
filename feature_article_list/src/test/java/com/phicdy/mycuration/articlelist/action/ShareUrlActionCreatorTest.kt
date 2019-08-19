@@ -31,7 +31,7 @@ class ShareUrlActionCreatorTest {
             ShareUrlActionCreator(
                     dispatcher = dispatcher,
                     position = 0,
-                    articles = listOf(article)
+                    items = listOf(article)
             ).run()
             assertThat(store.state.value).isEqualTo("aaa")
         }
@@ -49,7 +49,7 @@ class ShareUrlActionCreatorTest {
             ShareUrlActionCreator(
                     dispatcher = dispatcher,
                     position = -1,
-                    articles = listOf(article)
+                    items = listOf(article)
             ).run()
             assertThat(store.state.value).isNull()
         }
@@ -67,7 +67,7 @@ class ShareUrlActionCreatorTest {
             ShareUrlActionCreator(
                     dispatcher = dispatcher,
                     position = 1,
-                    articles = listOf(article)
+                    items = listOf(article)
             ).run()
             assertThat(store.state.value).isNull()
         }
