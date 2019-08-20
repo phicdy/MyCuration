@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.advertisement.AdProvider
+import com.phicdy.mycuration.advertisement.AdViewHolder
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
@@ -21,8 +23,9 @@ import java.util.Locale
 
 class ArticleListAdapter(
         private val coroutineScope: CoroutineScope,
-        private val listener: Listener
-) : ListAdapter<Article, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+        private val listener: Listener,
+        private val adProvider: AdProvider
+) : ListAdapter<ArticleItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -36,68 +39,82 @@ class ArticleListAdapter(
                         .inflate(R.layout.articles_list, parent, false)
                 ArticleViewHolder(view)
             }
+            VIEW_TYPE_AD -> {
+                adProvider.newViewHolderInstance(parent)
+            }
             else -> throw InvalidParameterException("Invalid view type for article list")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is ArticleViewHolder) {
-            holder.mView.setOnClickListener {
-                coroutineScope.launch {
-                    listener.onItemClicked(holder.getAdapterPosition(), currentList)
+        when (holder) {
+            is ArticleViewHolder -> {
+                holder.mView.setOnClickListener {
+                    coroutineScope.launch {
+                        listener.onItemClicked(holder.getAdapterPosition(), currentList)
+                    }
                 }
-            }
-            holder.mView.setOnLongClickListener {
-                listener.onItemLongClicked(holder.getAdapterPosition(), currentList)
-                true
-            }
+                holder.mView.setOnLongClickListener {
+                    listener.onItemLongClicked(holder.getAdapterPosition(), currentList)
+                    true
+                }
 
-            val article = getItem(position)
+                val content = getItem(position) as? ArticleItem.Content
+                        ?: throw IllegalStateException()
+                val article = content.value
 
-            holder.articleTitle.text = article.title
-            holder.articleUrl.text = article.url
+                holder.articleTitle.text = article.title
+                holder.articleUrl.text = article.url
 
-            val format = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US)
-            val dateString = format.format(Date(article.postedDate))
-            holder.articlePostedTime.text = dateString
+                val format = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US)
+                val dateString = format.format(Date(article.postedDate))
+                holder.articlePostedTime.text = dateString
 
-            // Set RSS Feed unread article count
-            holder.articlePoint.text = if (article.point == Article.DEDAULT_HATENA_POINT) {
-                holder.itemView.context.getString(R.string.not_get_hatena_point)
-            } else {
-                article.point
-            }
-
-            if (article.feedTitle.isEmpty()) {
-                holder.feedTitleView.visibility = View.GONE
-                holder.feedIconView.visibility = View.GONE
-            } else {
-                holder.feedTitleView.text = article.feedTitle
-
-                val iconPath = article.feedIconPath
-                if (iconPath.isNotBlank() && iconPath != Feed.DEDAULT_ICON_PATH) {
-                    GlideApp.with(holder.feedIconView)
-                            .load(article.feedIconPath)
-                            .placeholder(R.drawable.ic_rss)
-                            .circleCrop()
-                            .error(R.drawable.ic_rss)
-                            .into(holder.feedIconView)
+                // Set RSS Feed unread article count
+                holder.articlePoint.text = if (article.point == Article.DEDAULT_HATENA_POINT) {
+                    holder.itemView.context.getString(R.string.not_get_hatena_point)
                 } else {
-                    holder.feedIconView.setImageResource(R.drawable.ic_rss)
+                    article.point
                 }
+
+                if (article.feedTitle.isEmpty()) {
+                    holder.feedTitleView.visibility = View.GONE
+                    holder.feedIconView.visibility = View.GONE
+                } else {
+                    holder.feedTitleView.text = article.feedTitle
+
+                    val iconPath = article.feedIconPath
+                    if (iconPath.isNotBlank() && iconPath != Feed.DEDAULT_ICON_PATH) {
+                        GlideApp.with(holder.feedIconView)
+                                .load(article.feedIconPath)
+                                .placeholder(R.drawable.ic_rss)
+                                .circleCrop()
+                                .error(R.drawable.ic_rss)
+                                .into(holder.feedIconView)
+                    } else {
+                        holder.feedIconView.setImageResource(R.drawable.ic_rss)
+                    }
+                }
+
+                // Change color if already be read
+                val color = if (article.status == Article.TOREAD || article.status == Article.READ) {
+                    ContextCompat.getColor(holder.itemView.context, R.color.text_read)
+                } else {
+                    ContextCompat.getColor(holder.itemView.context, R.color.text_primary)
+                }
+                holder.articleTitle.setTextColor(color)
+                holder.articlePostedTime.setTextColor(color)
+                holder.articlePoint.setTextColor(color)
+                holder.feedTitleView.setTextColor(color)
             }
 
-            // Change color if already be read
-            val color = if (article.status == Article.TOREAD || article.status == Article.READ) {
-                ContextCompat.getColor(holder.itemView.context, R.color.text_read)
-            } else {
-                ContextCompat.getColor(holder.itemView.context, R.color.text_primary)
-            }
-            holder.articleTitle.setTextColor(color)
-            holder.articlePostedTime.setTextColor(color)
-            holder.articlePoint.setTextColor(color)
-            holder.feedTitleView.setTextColor(color)
+            is AdViewHolder -> holder.bind()
         }
+    }
+
+    override fun getItemViewType(position: Int) = when (getItem(position)) {
+        is ArticleItem.Content -> VIEW_TYPE_ARTICLE
+        is ArticleItem.Advertisement -> VIEW_TYPE_AD
     }
 
     private class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -114,25 +131,56 @@ class ArticleListAdapter(
     }
 
     interface Listener {
-        fun onItemClicked(position: Int, articles: List<Article>)
-        fun onItemLongClicked(position: Int, articles: List<Article>)
+        fun onItemClicked(position: Int, articles: List<ArticleItem>)
+        fun onItemLongClicked(position: Int, articles: List<ArticleItem>)
     }
 
     companion object {
         private const val VIEW_TYPE_ARTICLE = 0
         private const val VIEW_TYPE_FOOTER = 1
+        private const val VIEW_TYPE_AD = 2
     }
 }
 
 
-private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Article>() {
-    override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
-        return oldItem.id == newItem.id
+private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ArticleItem>() {
+    override fun areItemsTheSame(oldItem: ArticleItem, newItem: ArticleItem): Boolean {
+        return when (newItem) {
+            is ArticleItem.Content -> {
+                when (oldItem) {
+                    is ArticleItem.Content -> oldItem.value.id == newItem.value.id
+                    is ArticleItem.Advertisement -> false
+                }
+            }
+            is ArticleItem.Advertisement -> {
+                when (oldItem) {
+                    is ArticleItem.Content -> false
+                    is ArticleItem.Advertisement -> newItem == oldItem
+                }
+            }
+        }
     }
 
-    override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
-        return oldItem == newItem
+    override fun areContentsTheSame(oldItem: ArticleItem, newItem: ArticleItem): Boolean {
+        return when (newItem) {
+            is ArticleItem.Content -> {
+                when (oldItem) {
+                    is ArticleItem.Content -> oldItem.value == newItem.value
+                    is ArticleItem.Advertisement -> false
+                }
+            }
+            is ArticleItem.Advertisement -> {
+                when (oldItem) {
+                    is ArticleItem.Content -> false
+                    is ArticleItem.Advertisement -> true
+                }
+            }
+        }
     }
 
 }
 
+sealed class ArticleItem {
+    data class Content(val value: Article) : ArticleItem()
+    object Advertisement : ArticleItem()
+}

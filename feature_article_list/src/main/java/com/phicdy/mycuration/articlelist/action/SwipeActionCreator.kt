@@ -2,6 +2,7 @@ package com.phicdy.mycuration.articlelist.action
 
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -18,26 +19,30 @@ class SwipeActionCreator(
         private val preferenceHelper: PreferenceHelper,
         private val position: Int,
         private val direction: Int,
-        private val articles: List<Article>
+        private val items: List<ArticleItem>
 ) : ActionCreator {
 
     override suspend fun run() {
         withContext(Dispatchers.IO) {
             suspend fun update(newStatus: String) {
-                val article = articles[position]
-                if (article.status == newStatus) {
-                    dispatcher.dispatch(SwipeAction(position))
-                    return
-                }
-                article.status = newStatus
-                dispatcher.dispatch(SwipeAction(position))
-                articleRepository.saveStatus(article.id, newStatus)
-                val rss = rssRepository.getFeedById(article.feedId)
-                rss?.let {
-                    if (newStatus == Article.TOREAD) {
-                        rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount - 1)
-                    } else {
-                        rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount + 1)
+                when (val item = items[position]) {
+                    is ArticleItem.Content -> {
+                        val article = item.value
+                        if (article.status == newStatus) {
+                            dispatcher.dispatch(SwipeAction(position))
+                            return
+                        }
+                        article.status = newStatus
+                        dispatcher.dispatch(SwipeAction(position))
+                        articleRepository.saveStatus(article.id, newStatus)
+                        val rss = rssRepository.getFeedById(article.feedId)
+                        rss?.let {
+                            if (newStatus == Article.TOREAD) {
+                                rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount - 1)
+                            } else {
+                                rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount + 1)
+                            }
+                        }
                     }
                 }
             }

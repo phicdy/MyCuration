@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.articlelist.action
 
 import com.nhaarman.mockitokotlin2.mock
+import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.entity.Article
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +28,7 @@ class ReadArticleActionCreatorTest {
                     articleRepository = mock(),
                     rssRepository = mock(),
                     position = 0,
-                    articles = listOf(article)
+                    items = listOf(ArticleItem.Content(article))
             ).run()
             assertThat(article.status).isEqualTo(Article.TOREAD)
         }
@@ -52,7 +53,7 @@ class ReadArticleActionCreatorTest {
                     articleRepository = mock(),
                     rssRepository = mock(),
                     position = 0,
-                    articles = listOf(article)
+                    items = listOf(ArticleItem.Content(article))
             ).run()
             assertThat(article.status).isEqualTo(Article.TOREAD)
         }
@@ -77,7 +78,7 @@ class ReadArticleActionCreatorTest {
                     articleRepository = mock(),
                     rssRepository = mock(),
                     position = 0,
-                    articles = listOf(article)
+                    items = listOf(ArticleItem.Content(article))
             ).run()
             assertThat(article.status).isEqualTo(Article.READ)
         }

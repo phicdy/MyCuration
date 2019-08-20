@@ -1,21 +1,23 @@
 package com.phicdy.mycuration.articlelist.action
 
+import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher
-import com.phicdy.mycuration.entity.Article
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ShareUrlActionCreator(
         private val dispatcher: Dispatcher,
         private val position: Int,
-        private val articles: List<Article>
+        private val items: List<ArticleItem>
 ) : ActionCreator {
 
     override suspend fun run() {
         withContext(Dispatchers.IO) {
-            if (position < 0 || position >= articles.size) return@withContext
-            dispatcher.dispatch(ShareUrlAction(articles[position].url))
+            if (position < 0 || position >= items.size) return@withContext
+            when(val item = items[position]) {
+                is ArticleItem.Content -> dispatcher.dispatch(ShareUrlAction(item.value.url))
+            }
         }
     }
 }
