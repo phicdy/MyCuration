@@ -3,6 +3,8 @@ package com.phicdy.mycuration.di
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.R
+import com.phicdy.mycuration.admob.AdmobProvider
+import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
@@ -58,6 +60,7 @@ import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.util.log.TimberTree
+import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
@@ -77,6 +80,8 @@ val appModule = module {
     single<AdditionalSettingApi> { AdditionalSettingRepository(get(), get()) }
     single { AlarmManagerTaskManager(androidContext()) }
     single { Dispatcher() }
+    single { OkHttpClient() }
+    single<AdProvider> { AdmobProvider() }
 
     single { TimberTree() }
 

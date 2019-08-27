@@ -10,15 +10,11 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.domain.util.NetworkUtil
 import com.phicdy.mycuration.entity.Article
-import com.phicdy.mycuration.entity.Feed
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import org.reactivestreams.Subscriber
-import org.reactivestreams.Subscription
 
 class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
 
@@ -38,19 +34,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
 
     private suspend fun handleAutoUpdate(context: Context) = coroutineScope {
         val feeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
-        networkTaskManager.updateAllFeeds(feeds)
-                .observeOn(Schedulers.io())
-                .subscribe(object : Subscriber<Feed> {
-                    override fun onSubscribe(s: Subscription) {
-                        s.request(feeds.size.toLong())
-                    }
-
-                    override fun onNext(feed: Feed) {}
-
-                    override fun onError(t: Throwable) {}
-
-                    override fun onComplete() {}
-                })
+        networkTaskManager.updateAll(feeds)
         val manager = AlarmManagerTaskManager(context)
         manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context)
 

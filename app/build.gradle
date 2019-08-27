@@ -62,6 +62,8 @@ dependencies {
     implementation project(':resource')
     implementation project(':util')
     implementation project(':tracker')
+    implementation project(':advertisement')
+    implementation project(':admob')
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation 'com.google.android.material:material:1.1.0-alpha07'
 
@@ -74,6 +76,8 @@ dependencies {
 
     implementation "com.google.firebase:firebase-core:$firebase_version"
 
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    
     implementation "org.koin:koin-android-scope:$koin_version"
     implementation "org.koin:koin-android-viewmodel:$koin_version"
 

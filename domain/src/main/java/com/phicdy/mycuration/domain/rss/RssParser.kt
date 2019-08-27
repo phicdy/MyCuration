@@ -17,7 +17,6 @@ import java.util.ArrayList
 
 class RssParser {
 
-    private var isArticleFlag = false
     private var isCanonical = false
 
     private fun parse(canonicalUrl: String): RssParseResult {
@@ -162,7 +161,7 @@ class RssParser {
         return RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
     }
 
-    fun parseXml(inputStream: InputStream, latestDate: Long): ArrayList<Article> {
+    fun parseArticlesFromRss(inputStream: InputStream): ArrayList<Article> {
         val articles = ArrayList<Article>()
 
         // TODO Get hatena bookmark(?) count
@@ -182,40 +181,45 @@ class RssParser {
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 when (eventType) {
                     XmlPullParser.START_TAG -> {
-                        // when new Item found, initialize currentItem
-                        if (tag == "item" || tag == "entry") {
-                            article = Article(0, "", "", Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, "", "")
-                            itemFlag = true
-                        }
-
-                        // add Title and Link to currentItem
-                        if (itemFlag && tag == "title" && article.title == "") {
-                            val title = TextUtil.removeLineFeed(parser.nextText())
-                            article.title = title
-                        }
-                        if (itemFlag && tag == "link" && article.url.isBlank()) {
-                            // RSS 1.0 & 2.0
-                            val href = parseAtomAriticleUrl(parser)
-                            if (href.isNotBlank() && href != "\n") {
-                                // Atom
-                                article.url = href
-                            } else {
-                                val nextText = parser.nextText() ?: ""
-                                if (nextText.isNotBlank() && nextText != "\n") {
-                                    article.url = nextText
-                                } else {
-                                    try {
-                                        article.url = parser.text
-                                    } catch (ignored: IllegalStateException) {
+                        when (tag) {
+                            // when new Item found, initialize currentItem
+                            "item", "entry" -> {
+                                article = Article(0, "", "", Article.UNREAD, Article.DEDAULT_HATENA_POINT, 0, 0, "", "")
+                                itemFlag = true
+                            }
+                            // add Title and Link to currentItem
+                            "title" -> {
+                                if (itemFlag && article.title == "") {
+                                    val title = TextUtil.removeLineFeed(parser.nextText())
+                                    article.title = title
+                                }
+                            }
+                            "link" -> {
+                                if (itemFlag && article.url.isBlank()) {
+                                    // RSS 1.0 & 2.0
+                                    val href = parseAtomAriticleUrl(parser)
+                                    if (href.isNotBlank() && href != "\n") {
+                                        // Atom
+                                        article.url = href
+                                    } else {
+                                        val nextText = parser.nextText() ?: ""
+                                        if (nextText.isNotBlank() && nextText != "\n") {
+                                            article.url = nextText
+                                        } else {
+                                            try {
+                                                article.url = parser.text
+                                            } catch (ignored: IllegalStateException) {
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if (itemFlag
-                                && (tag == "date" || tag == "pubDate" || tag == "published" || tag == "updated")
-                                && article.postedDate == 0L) {
-                            val date = parser.nextText()
-                            article.postedDate = DateParser.changeToJapaneseDate(date)
+                            "date", "pubDate", "published", "updated" -> {
+                                if (itemFlag && article.postedDate == 0L) {
+                                    val date = parser.nextText()
+                                    article.postedDate = DateParser.changeToJapaneseDate(date)
+                                }
+                            }
                         }
                     }
 
@@ -223,21 +227,10 @@ class RssParser {
                     XmlPullParser.END_TAG -> {
                         tag = parser.name
                         if (tag == "item" || tag == "entry") {
-                            // RSS starts from latest article.
-                            // So, if latest article date in DB is after parsing article date,
-                            // it is already saved in DB
-                            if (latestDate >= article.postedDate) {
-                                isArticleFlag = true
-                            } else {
-                                articles.add(article)
-                            }
+                            articles.add(article)
                             itemFlag = false
                         }
                     }
-                }
-                // If article is already saved, stop parse
-                if (isArticleFlag) {
-                    break
                 }
                 eventType = parser.next()
                 tag = parser.name

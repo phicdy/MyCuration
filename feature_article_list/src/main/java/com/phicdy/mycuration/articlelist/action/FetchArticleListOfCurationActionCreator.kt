@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.articlelist.action
 
+import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -18,9 +19,18 @@ class FetchArticleListOfCurationActionCreator(
         withContext(Dispatchers.IO) {
             val allArticles = articleRepository.getAllUnreadArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
             if (allArticles.isEmpty()) {
-                dispatcher.dispatch(FetchArticleAction(articleRepository.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)))
+                mutableListOf<ArticleItem>().apply {
+                    add(ArticleItem.Advertisement)
+                    articleRepository.getAllArticlesOfCuration(curationId, preferenceHelper.sortNewArticleTop)
+                            .map { ArticleItem.Content(it) }
+                            .let(::addAll)
+                }.let { dispatcher.dispatch(FetchArticleAction(it)) }
             } else {
-                dispatcher.dispatch(FetchArticleAction(allArticles))
+                mutableListOf<ArticleItem>().apply {
+                    add(ArticleItem.Advertisement)
+                    allArticles.map { ArticleItem.Content(it) }
+                            .let(::addAll)
+                }.let { dispatcher.dispatch(FetchArticleAction(it)) }
             }
         }
     }

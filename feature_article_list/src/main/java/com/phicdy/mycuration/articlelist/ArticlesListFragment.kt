@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
@@ -54,6 +55,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.CoroutineContext
@@ -119,6 +121,8 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
     private lateinit var listener: OnArticlesListFragmentListener
     private lateinit var emptyView: TextView
 
+    private val adProvider by inject<AdProvider>()
+
     interface OnArticlesListFragmentListener {
         fun finish()
     }
@@ -131,14 +135,14 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(rssId)
 
-        articleListStore.state.observe(this, Observer<List<Article>> {
+        articleListStore.state.observe(this, Observer<List<ArticleItem>> {
             if (it.isEmpty()) {
                 showEmptyView()
             } else {
                 articlesListAdapter.submitList(it)
             }
         })
-        searchResultStore.state.observe(this, Observer<List<Article>> {
+        searchResultStore.state.observe(this, Observer<List<ArticleItem>> {
             if (it.isEmpty()) {
                 showNoSearchResult()
             } else {
@@ -157,12 +161,14 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
             openExternalWebView(it)
         })
-        scrollPositionStore.state.observe(this, Observer<Int> {
+        scrollPositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
             launch {
-                scrollTo(it)
-                delay(250) // Wait for scroll
                 val manager = recyclerView.layoutManager as LinearLayoutManager
-                articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), it)
+                val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
+                val num = positionAfterScroll - firstPositionBeforeScroll + 1
+                scrollTo(positionAfterScroll)
+                delay(250) // Wait for scroll
+                articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), num)
                 runFinishActionCreator()
             }
         })
@@ -184,7 +190,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
             FinishStateActionCreator(
                     dispatcher = get(),
                     preferenceHelper = get(),
-                    articles = articlesListAdapter.currentList
+                    items = articlesListAdapter.currentList
             ).run()
         }
     }
@@ -204,7 +210,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        articlesListAdapter = ArticleListAdapter(this, this)
+        articlesListAdapter = ArticleListAdapter(this, this, adProvider)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
         launch {
@@ -241,7 +247,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
                         preferenceHelper = get(),
                         position = viewHolder.adapterPosition,
                         direction = direction,
-                        articles = articlesListAdapter.currentList
+                        items = articlesListAdapter.currentList
                 )
                 launch {
                     actionCreator.run()
@@ -261,7 +267,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
                     rssRepository = get(),
                     firstVisiblePosition = manager.findFirstVisibleItemPosition(),
                     lastVisiblePosition = manager.findLastCompletelyVisibleItemPosition(),
-                    allArticles = articlesListAdapter.currentList
+                    items = articlesListAdapter.currentList
             ).run()
         }
     }
@@ -273,7 +279,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
                     articleRepository = get(),
                     rssRepository = get(),
                     feedId = rssId,
-                    allArticles = articlesListAdapter.currentList
+                    items = articlesListAdapter.currentList
             ).run()
         }
     }
@@ -341,13 +347,13 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         emptyView.text = getText(R.string.no_search_result)
     }
 
-    override fun onItemClicked(position: Int, articles: List<Article>) {
+    override fun onItemClicked(position: Int, articles: List<ArticleItem>) {
         val actionCreator = ReadArticleActionCreator(
                 dispatcher = get(),
                 articleRepository = get(),
                 rssRepository = get(),
                 position = position,
-                articles = articles
+                items = articles
         )
         launch {
             actionCreator.run()
@@ -356,7 +362,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
                 dispatcher = get(),
                 preferenceHelper = get(),
                 feedId = rssId,
-                article = articles[position],
+                item = articles[position],
                 rssRepository = get()
         )
         launch {
@@ -364,12 +370,12 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         }
     }
 
-    override fun onItemLongClicked(position: Int, articles: List<Article>) {
+    override fun onItemLongClicked(position: Int, items: List<ArticleItem>) {
         launch {
             ShareUrlActionCreator(
                     dispatcher = get(),
                     position = position,
-                    articles = articles
+                    items = items
             ).run()
         }
     }

@@ -32,8 +32,5 @@ dependencies {
 
     implementation 'io.github.inflationx:viewpump:1.0.0'
 
-    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
-    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
-
     implementation "com.jakewharton.timber:timber:$timber_version"
 }

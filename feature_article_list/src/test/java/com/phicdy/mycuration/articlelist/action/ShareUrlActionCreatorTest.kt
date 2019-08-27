@@ -3,6 +3,7 @@ package com.phicdy.mycuration.articlelist.action
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.entity.Article
@@ -31,7 +32,7 @@ class ShareUrlActionCreatorTest {
             ShareUrlActionCreator(
                     dispatcher = dispatcher,
                     position = 0,
-                    articles = listOf(article)
+                    items = listOf(ArticleItem.Content(article))
             ).run()
             assertThat(store.state.value).isEqualTo("aaa")
         }
@@ -49,7 +50,7 @@ class ShareUrlActionCreatorTest {
             ShareUrlActionCreator(
                     dispatcher = dispatcher,
                     position = -1,
-                    articles = listOf(article)
+                    items = listOf(ArticleItem.Content(article))
             ).run()
             assertThat(store.state.value).isNull()
         }
@@ -67,7 +68,7 @@ class ShareUrlActionCreatorTest {
             ShareUrlActionCreator(
                     dispatcher = dispatcher,
                     position = 1,
-                    articles = listOf(article)
+                    items = listOf(ArticleItem.Content(article))
             ).run()
             assertThat(store.state.value).isNull()
         }

@@ -108,7 +108,6 @@ allprojects {
                 includeGroup 'com.squareup.okhttp3'
                 includeGroup 'com.github.bumptech.glide'
                 includeGroup 'com.nhaarman.mockitokotlin2'
-                includeGroup 'io.reactivex.rxjava2'
                 includeGroup 'io.github.inflationx'
                 includeGroup 'junit'
                 includeGroup 'it.unimi.dsi'
@@ -155,8 +154,8 @@ subprojects {
         defaultConfig {
             minSdkVersion 21
             targetSdkVersion 28
-            versionName "1.7.6"
-            versionCode 51
+            versionName "1.7.7"
+            versionCode 52
 
             testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         }

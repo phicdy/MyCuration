@@ -1,0 +1,31 @@
+android {
+    defaultConfig {
+        manifestPlaceholders = [
+                ad_app_id: "$ADMOB_ID_MYCURATION"
+        ]
+
+        buildConfigField "String", "AD_APP_ID", "\"$ADMOB_ID_MYCURATION\""
+        resValue "string", "ad_unit_id_list", "$ADMOB_UNIT_ID_MYCURATION_LIST"
+        resValue "string", "ad_unit_id_fragment", "$ADMOB_UNIT_ID_MYCURATION_FRAGMENT"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':advertisement')
+
+    implementation 'com.google.firebase:firebase-ads:18.1.1'
+
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation "org.koin:koin-android-scope:$koin_version"
+
+}

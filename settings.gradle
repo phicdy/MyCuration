@@ -1,4 +1,6 @@
 include ':app',
+        ':admob',
+        ':advertisement',
         ':core',
         ':entity',
         ':domain',
