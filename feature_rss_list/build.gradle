@@ -8,7 +8,13 @@ android {
 }
 
 dependencies {
+    implementation project(':domain')
     implementation project(':entity')
+    implementation project(':repository')
+
+    implementation "org.koin:koin-android-scope:$koin_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
    
-    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 }

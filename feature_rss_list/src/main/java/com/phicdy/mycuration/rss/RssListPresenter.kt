@@ -1,11 +1,9 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.rss.RssItemView
-import com.phicdy.mycuration.rss.RssListView
 import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
 

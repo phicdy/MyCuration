@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.rss
 
 
 import android.content.Context
@@ -12,8 +12,6 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.rss.RssItemView
-import com.phicdy.mycuration.rss.RssListView
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertFalse
