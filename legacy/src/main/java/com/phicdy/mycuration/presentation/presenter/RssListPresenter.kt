@@ -102,7 +102,7 @@ class RssListPresenter(private val view: RssListView,
         view.notifyDataSetChanged()
     }
 
-    private fun getFeedIdAtPosition(position: Int): Int {
+    fun getFeedIdAtPosition(position: Int): Int {
         if (position < 0) return -1
 
         if (isHided) {
@@ -143,11 +143,6 @@ class RssListPresenter(private val view: RssListView,
         view.hideAllUnreadView()
         view.hideRecyclerView()
         view.showEmptyView()
-    }
-
-    fun onRssItemClicked(position: Int, mListener: RssListFragment.OnFeedListFragmentListener?) {
-        val feedId = getFeedIdAtPosition(position)
-        if (feedId != -1) mListener?.onListClicked(feedId)
     }
 
     fun onRssFooterClicked() {

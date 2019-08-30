@@ -244,28 +244,6 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when RSS is clicked then callback is called`() = runBlocking {
-        val listner = mock<RssListFragment.OnFeedListFragmentListener>()
-        presenter.resume() // init list
-        presenter.onRssItemClicked(0, listner)
-        verify(listner, times(1)).onListClicked(SECOND_RSS_ID)
-    }
-
-    @Test
-    fun `when invalid RSS is clicked then callback is not called`() = runBlocking {
-        val listner = mock<RssListFragment.OnFeedListFragmentListener>()
-        presenter.resume() // init list
-        presenter.onRssItemClicked(9999, listner)
-        verify(listner, times(0)).onListClicked(SECOND_RSS_ID)
-    }
-
-    @Test
-    fun `when RSS is clicked and listener is null then not crashed`() = runBlocking {
-        presenter.resume() // init list
-        presenter.onRssItemClicked(0, null)
-    }
-
-    @Test
     fun `when refresh and RSS is empty then finish refresh`() = runBlocking {
         whenever(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(arrayListOf())
         presenter.resume()

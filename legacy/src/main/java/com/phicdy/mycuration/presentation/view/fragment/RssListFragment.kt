@@ -213,7 +213,8 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is RssViewHolder) {
                 holder.itemView.setOnClickListener {
-                    presenter.onRssItemClicked(position, mListener)
+                    val feedId = presenter.getFeedIdAtPosition(position)
+                    if (feedId != -1) mListener?.onListClicked(feedId)
                 }
                 holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
                     menu.add(0, EDIT_FEED_TITLE_MENU_ID, 0, R.string.edit_rss_title).setOnMenuItemClickListener {
