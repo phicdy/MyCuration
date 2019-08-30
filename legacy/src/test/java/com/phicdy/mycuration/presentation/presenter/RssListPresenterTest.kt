@@ -12,11 +12,12 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.rss.RssItemView
 import com.phicdy.mycuration.rss.RssListView
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -357,14 +358,14 @@ class RssListPresenterTest {
     @Test
     fun `when get item view type in hide status and position is same with size then rturn footer`() = runBlocking {
         presenter.resume()
-        assertThat(presenter.onGetItemViewType(1)).isEqualTo(RssListFragment.VIEW_TYPE_FOOTER)
+        assertTrue(presenter.isBottom(1))
         return@runBlocking
     }
 
     @Test
     fun `when get item view type in hide status and position is not same with size then rturn footer`() = runBlocking {
         presenter.resume()
-        assertThat(presenter.onGetItemViewType(0)).isEqualTo(RssListFragment.VIEW_TYPE_RSS)
+        assertFalse(presenter.isBottom(0))
         return@runBlocking
     }
 
@@ -372,7 +373,7 @@ class RssListPresenterTest {
     fun `when get item view type in all status and position is same with size then rturn footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
-        assertThat(presenter.onGetItemViewType(2)).isEqualTo(RssListFragment.VIEW_TYPE_FOOTER)
+        assertTrue(presenter.isBottom(2))
         return@runBlocking
     }
 
@@ -380,7 +381,7 @@ class RssListPresenterTest {
     fun `when get item view type in all status and position is not same with size then rturn footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
-        assertThat(presenter.onGetItemViewType(0)).isEqualTo(RssListFragment.VIEW_TYPE_RSS)
+        assertFalse(presenter.isBottom(0))
         return@runBlocking
     }
 

@@ -206,9 +206,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
             return presenter.getItemCount()
         }
 
-        override fun getItemViewType(position: Int): Int {
-            return presenter.onGetItemViewType(position)
-        }
+        override fun getItemViewType(position: Int) = if (presenter.isBottom(position)) VIEW_TYPE_FOOTER else VIEW_TYPE_RSS
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is RssViewHolder) {
