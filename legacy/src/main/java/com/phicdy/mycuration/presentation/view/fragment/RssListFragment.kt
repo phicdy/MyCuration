@@ -17,7 +17,7 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.RssListPresenter
-import com.phicdy.mycuration.presentation.view.RssItemView
+import com.phicdy.mycuration.rss.RssItemView
 import com.phicdy.mycuration.rss.RssListView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
