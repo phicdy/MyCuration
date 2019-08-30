@@ -47,7 +47,6 @@ import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
-import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.presentation.view.activity.FeedSearchActivity
@@ -59,6 +58,7 @@ import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
+import com.phicdy.mycuration.rss.RssListView
 import com.phicdy.mycuration.util.log.TimberTree
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication

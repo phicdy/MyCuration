@@ -5,8 +5,8 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.presentation.view.RssItemView
-import com.phicdy.mycuration.presentation.view.RssListView
 import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
+import com.phicdy.mycuration.rss.RssListView
 import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
 

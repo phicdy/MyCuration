@@ -57,6 +57,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':entity')
     implementation project(':feature_article_list')
+    implementation project(':feature_rss_list')
     implementation project(':legacy')
     implementation project(':repository')
     implementation project(':resource')
@@ -77,7 +78,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_version"
 
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    
+
     implementation "org.koin:koin-android-scope:$koin_version"
     implementation "org.koin:koin-android-viewmodel:$koin_version"
 
