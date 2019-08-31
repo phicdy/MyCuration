@@ -33,7 +33,8 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
                 if (intent.action == null) "" else intent.action,
                 if (intent.dataString == null) "" else intent.dataString,
                 if (intent.extras == null) "" else intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "")
-                        ?: ""
+                        ?: "",
+                this
         )
     }
 

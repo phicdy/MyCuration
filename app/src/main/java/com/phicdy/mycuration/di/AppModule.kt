@@ -175,7 +175,7 @@ val appModule = module {
     }
 
     scope(named<FeedUrlHookActivity>()) {
-        scoped { (view: FeedUrlHookView, action: String, dataString: String, extrasText: String) ->
+        scoped { (view: FeedUrlHookView, action: String, dataString: String, extrasText: String, coroutineScoe: CoroutineScope) ->
             FeedUrlHookPresenter(
                     view = view,
                     rssRepository = get(),
@@ -183,6 +183,7 @@ val appModule = module {
                     action = action,
                     dataString = dataString,
                     extrasText = extrasText,
+                    coroutineScope = coroutineScoe,
                     parser = RssParser()
             )
         }
