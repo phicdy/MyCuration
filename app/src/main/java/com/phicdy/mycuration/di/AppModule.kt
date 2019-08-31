@@ -55,8 +55,8 @@ import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
-import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
+import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.rss.RssListPresenter
 import com.phicdy.mycuration.rss.RssListView
 import com.phicdy.mycuration.util.log.TimberTree

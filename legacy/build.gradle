@@ -17,7 +17,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
     implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation 'com.google.android.material:material:1.1.0-alpha07'
+    implementation "com.google.android.material:material:$material_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
     implementation 'androidx.preference:preference:1.1.0-alpha05'
