@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.fragment
+package com.phicdy.mycuration.rss
 
 import android.content.Context
 import android.os.Bundle
@@ -15,10 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
-import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.presenter.RssListPresenter
-import com.phicdy.mycuration.presentation.view.RssItemView
-import com.phicdy.mycuration.presentation.view.RssListView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -147,7 +143,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         val view = inflater.inflate(R.layout.fragment_rss_list, container, false)
         recyclerView = view.findViewById(R.id.rv_rss)
         emptyView = view.findViewById(R.id.emptyView) as TextView
-        swipeRefreshLayout = view.findViewById(R.id.srl_container) as androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
         tvAllUnreadArticleCount = view.findViewById(R.id.allUnreadCount) as TextView
         allUnread = view.findViewById(R.id.cl_all_unread) as ConstraintLayout
         registerForContextMenu(recyclerView)
@@ -206,14 +202,13 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
             return presenter.getItemCount()
         }
 
-        override fun getItemViewType(position: Int): Int {
-            return presenter.onGetItemViewType(position)
-        }
+        override fun getItemViewType(position: Int) = if (presenter.isBottom(position)) VIEW_TYPE_FOOTER else VIEW_TYPE_RSS
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is RssViewHolder) {
                 holder.itemView.setOnClickListener {
-                    presenter.onRssItemClicked(position, mListener)
+                    val feedId = presenter.getFeedIdAtPosition(position)
+                    if (feedId != -1) mListener?.onListClicked(feedId)
                 }
                 holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
                     menu.add(0, EDIT_FEED_TITLE_MENU_ID, 0, R.string.edit_rss_title).setOnMenuItemClickListener {

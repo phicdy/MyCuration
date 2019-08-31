@@ -6,6 +6,7 @@ package entity
 package domain
 package legacy
 package feature_article_list
+package feature_rss_list
 package feature_util
 package glide
 package resource
@@ -17,6 +18,7 @@ app -down-> entity
 app -down-> domain
 app -down-> legacy
 app -down-> feature_article_list
+app -down-> feature_rss_list
 app -down-> resource
 app -down-> util
 app -down-> tracker
@@ -32,11 +34,18 @@ feature_article_list -down-> feature_util
 feature_article_list -down-> resource
 feature_article_list -down-> tracker
 
+feature_rss_list -down-> repository
+feature_rss_list -down-> domain
+feature_rss_list -down-> entity
+feature_rss_list -down-> glide
+feature_rss_list -down-> resource
+
 legacy -down-> repository
 legacy -down-> entity
 legacy -down-> domain
 legacy -down-> feature_util
 legacy -down-> feature_article_list
+legacy -down-> feature_rss_list
 legacy -down-> resource
 legacy -down-> util
 legacy -down-> tracker

@@ -1,12 +1,9 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.presentation.view.RssItemView
-import com.phicdy.mycuration.presentation.view.RssListView
-import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
 
@@ -102,7 +99,7 @@ class RssListPresenter(private val view: RssListView,
         view.notifyDataSetChanged()
     }
 
-    private fun getFeedIdAtPosition(position: Int): Int {
+    fun getFeedIdAtPosition(position: Int): Int {
         if (position < 0) return -1
 
         if (isHided) {
@@ -143,11 +140,6 @@ class RssListPresenter(private val view: RssListView,
         view.hideAllUnreadView()
         view.hideRecyclerView()
         view.showEmptyView()
-    }
-
-    fun onRssItemClicked(position: Int, mListener: RssListFragment.OnFeedListFragmentListener?) {
-        val feedId = getFeedIdAtPosition(position)
-        if (feedId != -1) mListener?.onListClicked(feedId)
     }
 
     fun onRssFooterClicked() {
@@ -221,19 +213,10 @@ class RssListPresenter(private val view: RssListView,
         }
     }
 
-    fun onGetItemViewType(position: Int): Int {
-        return if (isHided) {
-            if (position == unreadOnlyFeeds.size) {
-                RssListFragment.VIEW_TYPE_FOOTER
+    fun isBottom(position: Int): Boolean =
+            if (isHided) {
+                position == unreadOnlyFeeds.size
             } else {
-                RssListFragment.VIEW_TYPE_RSS
+                position == allFeeds.size
             }
-        } else {
-            if (position == allFeeds.size) {
-                RssListFragment.VIEW_TYPE_FOOTER
-            } else {
-                RssListFragment.VIEW_TYPE_RSS
-            }
-        }
-    }
 }

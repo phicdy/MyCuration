@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.rss
 
 
 import android.content.Context
@@ -12,11 +12,10 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.presentation.view.RssItemView
-import com.phicdy.mycuration.presentation.view.RssListView
-import com.phicdy.mycuration.presentation.view.fragment.RssListFragment
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -244,28 +243,6 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when RSS is clicked then callback is called`() = runBlocking {
-        val listner = mock<RssListFragment.OnFeedListFragmentListener>()
-        presenter.resume() // init list
-        presenter.onRssItemClicked(0, listner)
-        verify(listner, times(1)).onListClicked(SECOND_RSS_ID)
-    }
-
-    @Test
-    fun `when invalid RSS is clicked then callback is not called`() = runBlocking {
-        val listner = mock<RssListFragment.OnFeedListFragmentListener>()
-        presenter.resume() // init list
-        presenter.onRssItemClicked(9999, listner)
-        verify(listner, times(0)).onListClicked(SECOND_RSS_ID)
-    }
-
-    @Test
-    fun `when RSS is clicked and listener is null then not crashed`() = runBlocking {
-        presenter.resume() // init list
-        presenter.onRssItemClicked(0, null)
-    }
-
-    @Test
     fun `when refresh and RSS is empty then finish refresh`() = runBlocking {
         whenever(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(arrayListOf())
         presenter.resume()
@@ -379,14 +356,14 @@ class RssListPresenterTest {
     @Test
     fun `when get item view type in hide status and position is same with size then rturn footer`() = runBlocking {
         presenter.resume()
-        assertThat(presenter.onGetItemViewType(1)).isEqualTo(RssListFragment.VIEW_TYPE_FOOTER)
+        assertTrue(presenter.isBottom(1))
         return@runBlocking
     }
 
     @Test
     fun `when get item view type in hide status and position is not same with size then rturn footer`() = runBlocking {
         presenter.resume()
-        assertThat(presenter.onGetItemViewType(0)).isEqualTo(RssListFragment.VIEW_TYPE_RSS)
+        assertFalse(presenter.isBottom(0))
         return@runBlocking
     }
 
@@ -394,7 +371,7 @@ class RssListPresenterTest {
     fun `when get item view type in all status and position is same with size then rturn footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
-        assertThat(presenter.onGetItemViewType(2)).isEqualTo(RssListFragment.VIEW_TYPE_FOOTER)
+        assertTrue(presenter.isBottom(2))
         return@runBlocking
     }
 
@@ -402,7 +379,7 @@ class RssListPresenterTest {
     fun `when get item view type in all status and position is not same with size then rturn footer`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
-        assertThat(presenter.onGetItemViewType(0)).isEqualTo(RssListFragment.VIEW_TYPE_RSS)
+        assertFalse(presenter.isBottom(0))
         return@runBlocking
     }
 
