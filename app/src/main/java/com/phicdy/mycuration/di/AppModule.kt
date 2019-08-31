@@ -60,6 +60,7 @@ import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.rss.RssListPresenter
 import com.phicdy.mycuration.rss.RssListView
 import com.phicdy.mycuration.util.log.TimberTree
+import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
@@ -162,11 +163,12 @@ val appModule = module {
     }
 
     scope(named<FeedSearchActivity>()) {
-        scoped { (view: FeedSearchView) ->
+        scoped { (view: FeedSearchView, coroutineScope: CoroutineScope) ->
             FeedSearchPresenter(
                     view = view,
                     rssRepository = get(),
                     networkTaskManager = get(),
+                    coroutineScope = coroutineScope,
                     executor = RssParseExecutor(RssParser(), get())
             )
         }
