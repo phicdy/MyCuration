@@ -50,7 +50,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FeedSearchPresenter by currentScope.inject { parametersOf(this) }
+    private val presenter: FeedSearchPresenter by currentScope.inject { parametersOf(this, this) }
     private lateinit var searchView: SearchView
     private lateinit var webView: WebView
     private lateinit var fab: FloatingActionButton

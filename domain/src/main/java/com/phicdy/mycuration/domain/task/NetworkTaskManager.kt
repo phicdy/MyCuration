@@ -9,7 +9,6 @@ import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -35,12 +34,12 @@ class NetworkTaskManager(
                 .map { it.await() }
     }
 
-    suspend fun updateFeed(feed: Feed) = coroutineScope {
-        if (feed.url.isEmpty()) return@coroutineScope
+    suspend fun updateFeed(feed: Feed) = withContext(Dispatchers.IO) {
+        if (feed.url.isEmpty()) return@withContext
         try {
             val request = Request.Builder().url(feed.url).build()
             val response = client.newCall(request).execute()
-            val inputStream = response.body()?.byteStream() ?: return@coroutineScope
+            val inputStream = response.body()?.byteStream() ?: return@withContext
             val parser = RssParser()
             val articles = parser.parseArticlesFromRss(inputStream)
             val storedUrlList = articleRepository.getStoredUrlListIn(articles)
