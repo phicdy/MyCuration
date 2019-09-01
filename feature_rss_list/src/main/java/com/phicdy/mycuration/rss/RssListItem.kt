@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.rss
 
-sealed class RssListItem {
+sealed class RssListItem : Equatable {
     data class Content(
             val rssId: Int,
             val rssTitle: String,
@@ -15,4 +15,12 @@ sealed class RssListItem {
 enum class RssListFooterState {
     ALL,
     UNREAD_ONLY
+}
+
+/**
+ * For suppress lint of DiffUtil.ItemCallback
+ * https://stackoverflow.com/questions/55895359/lint-error-suspicious-equality-check-equals-is-not-implemented-in-object-dif
+ */
+interface Equatable {
+    override fun equals(other: Any?): Boolean
 }
