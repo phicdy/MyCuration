@@ -50,7 +50,7 @@ class RssListAdapter(
                             true
                         }
                         menu.add(0, DELETE_FEED_MENU_ID, 1, R.string.delete_rss).setOnMenuItemClickListener {
-                            presenter.onDeleteFeedMenuClicked(position)
+                            mListener?.onDeleteRssClicked(item.rssId, position)
                             true
                         }
                     }

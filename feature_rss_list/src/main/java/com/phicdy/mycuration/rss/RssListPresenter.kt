@@ -61,10 +61,6 @@ class RssListPresenter(private val view: RssListView,
 
     fun pause() {}
 
-    fun onDeleteFeedMenuClicked(position: Int) {
-        view.showDeleteFeedAlertDialog(getFeedIdAtPosition(position), position)
-    }
-
     fun updateFeedTitle(feedId: Int, newTitle: String) {
         for (feed in allFeeds) {
             if (feed.id == feedId) {

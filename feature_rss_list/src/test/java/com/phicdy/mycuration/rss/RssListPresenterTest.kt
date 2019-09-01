@@ -175,13 +175,6 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when delete menu is clicked then show alert dialog`() = runBlocking {
-        presenter.resume()
-        presenter.onDeleteFeedMenuClicked(0)
-        verify(view, times(1)).showDeleteFeedAlertDialog(SECOND_RSS_ID, 0)
-    }
-
-    @Test
     fun `when delete ok button is clicked in hidden status and succeeds then delete the RSS`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
