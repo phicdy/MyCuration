@@ -115,7 +115,7 @@ class RssListPresenterTest {
     @Test
     fun `when onResume and RSS exist then init with hidden list`() = runBlocking {
         presenter.resume()
-        verify(view, times(1)).init(presenter.unreadOnlyFeeds.toRssListItem())
+        verify(view, times(1)).init(presenter.unreadOnlyFeeds.toRssListItem(RssListFooterState.UNREAD_ONLY))
     }
 
     @Test
@@ -124,7 +124,7 @@ class RssListPresenterTest {
         presenter.onRssFooterClicked() // call init(allFeeds)
         presenter.pause()
         presenter.resume()
-        verify(view, times(2)).init(presenter.allFeeds.toRssListItem())
+        verify(view, times(2)).init(presenter.allFeeds.toRssListItem(RssListFooterState.ALL))
     }
 
     @Test
@@ -244,30 +244,13 @@ class RssListPresenterTest {
     @Test
     fun `when finish refresh then reload RSS list`() {
         runBlocking { presenter.onFinishUpdate() }
-        verify(view, times(1)).init(presenter.unreadOnlyFeeds.toRssListItem())
+        verify(view, times(1)).init(presenter.unreadOnlyFeeds.toRssListItem(RssListFooterState.UNREAD_ONLY))
     }
 
     @Test
     fun `when finish refresh then last update time will be updated`() {
         runBlocking { presenter.onFinishUpdate() }
         verify(mockPref.edit(), times(1)).putLong(anyString(), anyLong())
-    }
-
-    @Test
-    fun `when bind footer in all status then show hide view`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        val mockRssFooterView = mock<RssItemView.Footer>()
-        presenter.onBindRssFooterViewHolder(mockRssFooterView)
-        verify(mockRssFooterView, times(1)).showHideView()
-    }
-
-    @Test
-    fun `when bind footer in hidden status then show all view`() = runBlocking {
-        presenter.resume()
-        val mockRssFooterView = mock<RssItemView.Footer>()
-        presenter.onBindRssFooterViewHolder(mockRssFooterView)
-        verify(mockRssFooterView, times(1)).showAllView()
     }
 
     @Test
@@ -279,13 +262,13 @@ class RssListPresenterTest {
         }
         argumentCaptor<List<RssListItem>> {
             verify(view, times(3)).init(capture())
-            assertEquals(presenter.unreadOnlyFeeds.toRssListItem(), firstValue)
-            assertEquals(presenter.allFeeds.toRssListItem(), secondValue)
-            assertEquals(presenter.unreadOnlyFeeds.toRssListItem(), thirdValue)
+            assertEquals(presenter.unreadOnlyFeeds.toRssListItem(RssListFooterState.UNREAD_ONLY), firstValue)
+            assertEquals(presenter.allFeeds.toRssListItem(RssListFooterState.ALL), secondValue)
+            assertEquals(presenter.unreadOnlyFeeds.toRssListItem(RssListFooterState.UNREAD_ONLY), thirdValue)
         }
     }
 
-    private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
+    private fun ArrayList<Feed>.toRssListItem(state: RssListFooterState): List<RssListItem> = mutableListOf<RssListItem>().apply {
         this@toRssListItem.map {
             this.add(RssListItem.Content(
                     rssId = it.id,
@@ -295,7 +278,7 @@ class RssListPresenterTest {
                     unreadCount = it.unreadAriticlesCount
             ))
         }
-        add(RssListItem.Footer)
+        add(RssListItem.Footer(state))
     }
 
     companion object {

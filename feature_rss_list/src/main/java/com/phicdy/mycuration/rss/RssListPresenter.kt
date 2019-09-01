@@ -77,21 +77,6 @@ class RssListPresenter(private val view: RssListView,
         view.notifyDataSetChanged(if (isHided) unreadOnlyFeeds.toRssListItem() else allFeeds.toRssListItem())
     }
 
-    fun getFeedIdAtPosition(position: Int): Int {
-        if (position < 0) return -1
-
-        if (isHided) {
-            return if (position > unreadOnlyFeeds.size - 1) {
-                -1
-            } else unreadOnlyFeeds[position].id
-        } else {
-            if (position > allFeeds.size - 1) {
-                return -1
-            }
-        }
-        return allFeeds[position].id
-    }
-
     suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
         fun deleteAtPosition(currentList: ArrayList<Feed>, oppositeList: ArrayList<Feed>) {
             if (currentList.size <= position) return
@@ -166,14 +151,6 @@ class RssListPresenter(private val view: RssListView,
         allFeeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
     }
 
-    fun onBindRssFooterViewHolder(view: RssItemView.Footer) {
-        if (isHided) {
-            view.showAllView()
-        } else {
-            view.showHideView()
-        }
-    }
-
     private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
         this@toRssListItem.map {
             this.add(RssListItem.Content(
@@ -184,6 +161,6 @@ class RssListPresenter(private val view: RssListView,
                     unreadCount = it.unreadAriticlesCount
             ))
         }
-        add(RssListItem.Footer)
+        add(RssListItem.Footer(if (isHided) RssListFooterState.UNREAD_ONLY else RssListFooterState.ALL))
     }
 }

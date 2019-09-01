@@ -68,7 +68,15 @@ class RssListAdapter(
             holder.itemView.setOnClickListener {
                 presenter.onRssFooterClicked()
             }
-            presenter.onBindRssFooterViewHolder(holder)
+            when (val item = getItem(position)) {
+                is RssListItem.Content -> throw IllegalStateException()
+                is RssListItem.Footer -> {
+                    when (item.state) {
+                        RssListFooterState.UNREAD_ONLY -> holder.showAllView()
+                        RssListFooterState.ALL -> holder.showHideView()
+                    }
+                }
+            }
         }
     }
 
@@ -132,7 +140,7 @@ private val diffCallback = object : DiffUtil.ItemCallback<RssListItem>() {
             is RssListItem.Footer -> {
                 when (newItem) {
                     is RssListItem.Content -> false
-                    is RssListItem.Footer -> oldItem == newItem
+                    is RssListItem.Footer -> oldItem.state == newItem.state
                 }
             }
         }

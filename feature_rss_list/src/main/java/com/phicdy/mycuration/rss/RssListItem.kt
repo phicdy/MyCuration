@@ -9,5 +9,10 @@ sealed class RssListItem {
             val unreadCount: Int
     ) : RssListItem()
 
-    object Footer : RssListItem()
+    data class Footer(val state: RssListFooterState) : RssListItem()
+}
+
+enum class RssListFooterState {
+    ALL,
+    UNREAD_ONLY
 }
