@@ -60,7 +60,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         rssFeedListAdapter = RssListAdapter(presenter, mListener)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = rssFeedListAdapter
-        rssFeedListAdapter.notifyDataSetChanged()
+        rssFeedListAdapter.submitList(feeds)
     }
 
     override fun setTotalUnreadCount(count: Int) {

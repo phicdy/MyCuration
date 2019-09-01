@@ -5,14 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import java.security.InvalidParameterException
 
 class RssListAdapter(
         private val presenter: RssListPresenter,
         private val mListener: RssListFragment.OnFeedListFragmentListener?
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : ListAdapter<Feed, RecyclerView.ViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             RssListFragment.VIEW_TYPE_RSS -> {
@@ -105,5 +108,15 @@ class RssListAdapter(
     companion object {
         private const val DELETE_FEED_MENU_ID = 1000
         private const val EDIT_FEED_TITLE_MENU_ID = 1001
+    }
+}
+
+private val diffCallback = object : DiffUtil.ItemCallback<Feed>() {
+    override fun areItemsTheSame(oldItem: Feed, newItem: Feed): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: Feed, newItem: Feed): Boolean {
+        return oldItem == newItem
     }
 }
