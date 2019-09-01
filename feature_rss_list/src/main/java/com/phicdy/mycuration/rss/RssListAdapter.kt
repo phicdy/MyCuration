@@ -46,7 +46,7 @@ class RssListAdapter(
                     }
                     holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
                         menu.add(0, EDIT_FEED_TITLE_MENU_ID, 0, R.string.edit_rss_title).setOnMenuItemClickListener {
-                            presenter.onEditFeedMenuClicked(position)
+                            mListener?.onEditRssClicked(item.rssId, item.rssTitle)
                             true
                         }
                         menu.add(0, DELETE_FEED_MENU_ID, 1, R.string.delete_rss).setOnMenuItemClickListener {

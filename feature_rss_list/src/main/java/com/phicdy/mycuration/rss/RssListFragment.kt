@@ -47,10 +47,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         }
     }
 
-    override fun showEditTitleDialog(rssId: Int, feedTitle: String) {
-        mListener?.onEditRssClicked(rssId, feedTitle)
-    }
-
     override fun setRefreshing(doScroll: Boolean) {
         swipeRefreshLayout.isRefreshing = doScroll
     }
@@ -82,8 +78,8 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         Toast.makeText(activity, R.string.add_rss_error_invalid_url, Toast.LENGTH_SHORT).show()
     }
 
-    override fun notifyDataSetChanged() {
-        rssFeedListAdapter.notifyDataSetChanged()
+    override fun notifyDataSetChanged(items: List<RssListItem>) {
+        rssFeedListAdapter.submitList(items)
     }
 
     override fun showAllUnreadView() {

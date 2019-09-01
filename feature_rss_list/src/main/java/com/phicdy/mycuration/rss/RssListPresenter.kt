@@ -65,24 +65,6 @@ class RssListPresenter(private val view: RssListView,
         view.showDeleteFeedAlertDialog(getFeedIdAtPosition(position), position)
     }
 
-    fun onEditFeedMenuClicked(position: Int) {
-        view.showEditTitleDialog(
-                rssId = getFeedIdAtPosition(position),
-                feedTitle = getFeedTitleAtPosition(position)
-        )
-    }
-
-    private fun getFeedTitleAtPosition(position: Int): String {
-        if (position < 0) return ""
-        return if (isHided) {
-            if (position > unreadOnlyFeeds.size - 1) return ""
-            unreadOnlyFeeds[position].title
-        } else {
-            if (position > allFeeds.size - 1) return ""
-            allFeeds[position].title
-        }
-    }
-
     fun updateFeedTitle(feedId: Int, newTitle: String) {
         for (feed in allFeeds) {
             if (feed.id == feedId) {
@@ -96,7 +78,7 @@ class RssListPresenter(private val view: RssListView,
                 break
             }
         }
-        view.notifyDataSetChanged()
+        view.notifyDataSetChanged(if (isHided) unreadOnlyFeeds.toRssListItem() else allFeeds.toRssListItem())
     }
 
     fun getFeedIdAtPosition(position: Int): Int {

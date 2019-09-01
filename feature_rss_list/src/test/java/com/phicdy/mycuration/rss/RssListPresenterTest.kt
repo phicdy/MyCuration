@@ -182,22 +182,6 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when first RSS is hidden then first edit title will be second RSS`() = runBlocking {
-        // Default hidden option is enaled
-        presenter.resume()
-        presenter.onEditFeedMenuClicked(FIRST_RSS_POSITION)
-        verify(view, times(1)).showEditTitleDialog(SECOND_RSS_ID, SECOND_RSS_TITLE)
-    }
-
-    @Test
-    fun `when RSS is not hidden then first edit title will be first RSS`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        presenter.onEditFeedMenuClicked(FIRST_RSS_POSITION)
-        verify(view, times(1)).showEditTitleDialog(FIRST_RSS_POSITION, FIRST_RSS_TITLE)
-    }
-
-    @Test
     fun `when delete ok button is clicked in hidden status and succeeds then delete the RSS`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
@@ -327,7 +311,6 @@ class RssListPresenterTest {
         private const val SECOND_RSS_TITLE = "rss2"
         private const val FIRST_RSS_ID = 0
         private const val SECOND_RSS_ID = 1
-        private const val FIRST_RSS_POSITION = 0
         private const val SECOND_RSS_ICON_PATH = "https://www.google.com/icon"
         private const val FIRST_RSS_UNREAD_COUNT = 0
         private const val SECOND_RSS_UNREAD_COUNT = 1
