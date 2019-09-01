@@ -52,9 +52,9 @@ class RssListPresenter(private val view: RssListView,
     private fun refreshList() {
         generateHidedFeedList()
         if (isHided) {
-            view.init(unreadOnlyFeeds)
+            view.init(unreadOnlyFeeds.toRssListItem())
         } else {
-            view.init(allFeeds)
+            view.init(allFeeds.toRssListItem())
         }
         view.setTotalUnreadCount(allFeeds.sumBy { it.unreadAriticlesCount })
     }
@@ -150,10 +150,10 @@ class RssListPresenter(private val view: RssListView,
         generateHidedFeedList()
         if (isHided) {
             isHided = false
-            view.init(allFeeds)
+            view.init(allFeeds.toRssListItem())
         } else {
             isHided = true
-            view.init(unreadOnlyFeeds)
+            view.init(unreadOnlyFeeds.toRssListItem())
         }
     }
 
@@ -188,12 +188,6 @@ class RssListPresenter(private val view: RssListView,
         allFeeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
     }
 
-    fun getItemCount(): Int {
-        // Add +1 for the footer
-        if (isHided) return unreadOnlyFeeds.size + 1
-        return allFeeds.size + 1
-    }
-
     fun onBindRssViewHolder(position: Int, view: RssItemView.Content) {
         val feed = if (isHided) unreadOnlyFeeds[position] else allFeeds[position]
         if (feed.iconPath.isBlank() || feed.iconPath == Feed.DEDAULT_ICON_PATH) {
@@ -219,4 +213,9 @@ class RssListPresenter(private val view: RssListView,
             } else {
                 position == allFeeds.size
             }
+
+    private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
+        this@toRssListItem.map { this.add(RssListItem.Content(it)) }
+        add(RssListItem.Footer)
+    }
 }

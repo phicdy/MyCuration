@@ -8,14 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import java.security.InvalidParameterException
 
 class RssListAdapter(
         private val presenter: RssListPresenter,
         private val mListener: RssListFragment.OnFeedListFragmentListener?
-) : ListAdapter<Feed, RecyclerView.ViewHolder>(diffCallback) {
+) : ListAdapter<RssListItem, RecyclerView.ViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             RssListFragment.VIEW_TYPE_RSS -> {
@@ -30,10 +29,6 @@ class RssListAdapter(
             }
             else -> throw InvalidParameterException("Invalid view type")
         }
-    }
-
-    override fun getItemCount(): Int {
-        return presenter.getItemCount()
     }
 
     override fun getItemViewType(position: Int) = if (presenter.isBottom(position)) RssListFragment.VIEW_TYPE_FOOTER else RssListFragment.VIEW_TYPE_RSS
@@ -111,12 +106,38 @@ class RssListAdapter(
     }
 }
 
-private val diffCallback = object : DiffUtil.ItemCallback<Feed>() {
-    override fun areItemsTheSame(oldItem: Feed, newItem: Feed): Boolean {
-        return oldItem.id == newItem.id
+private val diffCallback = object : DiffUtil.ItemCallback<RssListItem>() {
+    override fun areItemsTheSame(oldItem: RssListItem, newItem: RssListItem): Boolean {
+        return when (oldItem) {
+            is RssListItem.Content -> {
+                when (newItem) {
+                    is RssListItem.Content -> oldItem.rss.id == newItem.rss.id
+                    is RssListItem.Footer -> false
+                }
+            }
+            is RssListItem.Footer -> {
+                when (newItem) {
+                    is RssListItem.Content -> false
+                    is RssListItem.Footer -> oldItem == newItem
+                }
+            }
+        }
     }
 
-    override fun areContentsTheSame(oldItem: Feed, newItem: Feed): Boolean {
-        return oldItem == newItem
+    override fun areContentsTheSame(oldItem: RssListItem, newItem: RssListItem): Boolean {
+        return when (oldItem) {
+            is RssListItem.Content -> {
+                when (newItem) {
+                    is RssListItem.Content -> oldItem.rss == newItem.rss
+                    is RssListItem.Footer -> false
+                }
+            }
+            is RssListItem.Footer -> {
+                when (newItem) {
+                    is RssListItem.Content -> false
+                    is RssListItem.Footer -> oldItem == newItem
+                }
+            }
+        }
     }
 }

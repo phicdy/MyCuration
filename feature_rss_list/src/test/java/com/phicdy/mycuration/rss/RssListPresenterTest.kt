@@ -4,6 +4,7 @@ package com.phicdy.mycuration.rss
 import android.content.Context
 import android.content.SharedPreferences
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
@@ -14,6 +15,7 @@ import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -115,7 +117,7 @@ class RssListPresenterTest {
     @Test
     fun `when onResume and RSS exist then init with hidden list`() = runBlocking {
         presenter.resume()
-        verify(view, times(1)).init(presenter.unreadOnlyFeeds)
+        verify(view, times(1)).init(presenter.unreadOnlyFeeds.toRssListItem())
     }
 
     @Test
@@ -124,7 +126,7 @@ class RssListPresenterTest {
         presenter.onRssFooterClicked() // call init(allFeeds)
         presenter.pause()
         presenter.resume()
-        verify(view, times(2)).init(presenter.allFeeds)
+        verify(view, times(2)).init(presenter.allFeeds.toRssListItem())
     }
 
     @Test
@@ -267,28 +269,13 @@ class RssListPresenterTest {
     @Test
     fun `when finish refresh then reload RSS list`() {
         runBlocking { presenter.onFinishUpdate() }
-        verify(view, times(1)).init(presenter.unreadOnlyFeeds)
+        verify(view, times(1)).init(presenter.unreadOnlyFeeds.toRssListItem())
     }
 
     @Test
     fun `when finish refresh then last update time will be updated`() {
         runBlocking { presenter.onFinishUpdate() }
         verify(mockPref.edit(), times(1)).putLong(anyString(), anyLong())
-    }
-
-    @Test
-    fun `when get item count in RecyclerView in hide status then return num of unread RSS + 1 for footer`() = runBlocking {
-        presenter.resume()
-        assertThat(presenter.getItemCount()).isEqualTo(2)
-        return@runBlocking
-    }
-
-    @Test
-    fun `when get item count in RecyclerView in all status then return num of unread RSS + 1 for footer`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        assertThat(presenter.getItemCount()).isEqualTo(3)
-        return@runBlocking
     }
 
     @Test
@@ -384,12 +371,23 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when click footer twice then go back to hidden status`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        presenter.onRssFooterClicked()
-        assertThat(presenter.getItemCount()).isEqualTo(2)
-        return@runBlocking
+    fun `when click footer twice then go back to hidden status`() {
+        runBlocking {
+            presenter.resume()
+            presenter.onRssFooterClicked()
+            presenter.onRssFooterClicked()
+        }
+        argumentCaptor<List<RssListItem>> {
+            verify(view, times(3)).init(capture())
+            assertEquals(presenter.unreadOnlyFeeds.toRssListItem(), firstValue)
+            assertEquals(presenter.allFeeds.toRssListItem(), secondValue)
+            assertEquals(presenter.unreadOnlyFeeds.toRssListItem(), thirdValue)
+        }
+    }
+
+    private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
+        this@toRssListItem.map { this.add(RssListItem.Content(it)) }
+        add(RssListItem.Footer)
     }
 
     companion object {

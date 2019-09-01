@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -56,11 +55,11 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         swipeRefreshLayout.isRefreshing = doScroll
     }
 
-    override fun init(feeds: ArrayList<Feed>) {
+    override fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(presenter, mListener)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = rssFeedListAdapter
-        rssFeedListAdapter.submitList(feeds)
+        rssFeedListAdapter.submitList(items)
     }
 
     override fun setTotalUnreadCount(count: Int) {
