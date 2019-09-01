@@ -16,8 +16,6 @@ import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -293,36 +291,6 @@ class RssListPresenterTest {
         val mockRssFooterView = mock<RssItemView.Footer>()
         presenter.onBindRssFooterViewHolder(mockRssFooterView)
         verify(mockRssFooterView, times(1)).showAllView()
-    }
-
-    @Test
-    fun `when get item view type in hide status and position is same with size then rturn footer`() = runBlocking {
-        presenter.resume()
-        assertTrue(presenter.isBottom(1))
-        return@runBlocking
-    }
-
-    @Test
-    fun `when get item view type in hide status and position is not same with size then rturn footer`() = runBlocking {
-        presenter.resume()
-        assertFalse(presenter.isBottom(0))
-        return@runBlocking
-    }
-
-    @Test
-    fun `when get item view type in all status and position is same with size then rturn footer`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        assertTrue(presenter.isBottom(2))
-        return@runBlocking
-    }
-
-    @Test
-    fun `when get item view type in all status and position is not same with size then rturn footer`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        assertFalse(presenter.isBottom(0))
-        return@runBlocking
     }
 
     @Test

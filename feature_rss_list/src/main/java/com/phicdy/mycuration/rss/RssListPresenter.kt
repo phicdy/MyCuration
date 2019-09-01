@@ -196,13 +196,6 @@ class RssListPresenter(private val view: RssListView,
         }
     }
 
-    fun isBottom(position: Int): Boolean =
-            if (isHided) {
-                position == unreadOnlyFeeds.size
-            } else {
-                position == allFeeds.size
-            }
-
     private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
         this@toRssListItem.map {
             this.add(RssListItem.Content(

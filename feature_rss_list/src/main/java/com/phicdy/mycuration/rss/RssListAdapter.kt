@@ -31,7 +31,10 @@ class RssListAdapter(
         }
     }
 
-    override fun getItemViewType(position: Int) = if (presenter.isBottom(position)) RssListFragment.VIEW_TYPE_FOOTER else RssListFragment.VIEW_TYPE_RSS
+    override fun getItemViewType(position: Int) = when (getItem(position)) {
+        is RssListItem.Content -> RssListFragment.VIEW_TYPE_RSS
+        is RssListItem.Footer -> RssListFragment.VIEW_TYPE_FOOTER
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is RssViewHolder) {
