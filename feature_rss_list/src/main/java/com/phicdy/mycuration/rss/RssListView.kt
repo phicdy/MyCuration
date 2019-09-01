@@ -1,20 +1,15 @@
 package com.phicdy.mycuration.rss
 
-import com.phicdy.mycuration.entity.Feed
-
-import java.util.ArrayList
-
 interface RssListView {
     fun showDeleteFeedAlertDialog(rssId: Int, position: Int)
-    fun showEditTitleDialog(rssId: Int, feedTitle: String)
     fun setRefreshing(doScroll: Boolean)
-    fun init(feeds: ArrayList<Feed>)
+    fun init(items: List<RssListItem>)
     fun setTotalUnreadCount(count: Int)
     fun onRefreshCompleted()
     fun showAddFeedSuccessToast()
     fun showGenericAddFeedErrorToast()
     fun showInvalidUrlAddFeedErrorToast()
-    fun notifyDataSetChanged()
+    fun notifyDataSetChanged(items: List<RssListItem>)
     fun showAllUnreadView()
     fun hideAllUnreadView()
     fun showRecyclerView()

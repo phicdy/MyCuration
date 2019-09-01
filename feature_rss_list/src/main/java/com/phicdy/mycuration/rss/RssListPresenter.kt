@@ -52,36 +52,14 @@ class RssListPresenter(private val view: RssListView,
     private fun refreshList() {
         generateHidedFeedList()
         if (isHided) {
-            view.init(unreadOnlyFeeds)
+            view.init(unreadOnlyFeeds.toRssListItem())
         } else {
-            view.init(allFeeds)
+            view.init(allFeeds.toRssListItem())
         }
         view.setTotalUnreadCount(allFeeds.sumBy { it.unreadAriticlesCount })
     }
 
     fun pause() {}
-
-    fun onDeleteFeedMenuClicked(position: Int) {
-        view.showDeleteFeedAlertDialog(getFeedIdAtPosition(position), position)
-    }
-
-    fun onEditFeedMenuClicked(position: Int) {
-        view.showEditTitleDialog(
-                rssId = getFeedIdAtPosition(position),
-                feedTitle = getFeedTitleAtPosition(position)
-        )
-    }
-
-    private fun getFeedTitleAtPosition(position: Int): String {
-        if (position < 0) return ""
-        return if (isHided) {
-            if (position > unreadOnlyFeeds.size - 1) return ""
-            unreadOnlyFeeds[position].title
-        } else {
-            if (position > allFeeds.size - 1) return ""
-            allFeeds[position].title
-        }
-    }
 
     fun updateFeedTitle(feedId: Int, newTitle: String) {
         for (feed in allFeeds) {
@@ -96,22 +74,7 @@ class RssListPresenter(private val view: RssListView,
                 break
             }
         }
-        view.notifyDataSetChanged()
-    }
-
-    fun getFeedIdAtPosition(position: Int): Int {
-        if (position < 0) return -1
-
-        if (isHided) {
-            return if (position > unreadOnlyFeeds.size - 1) {
-                -1
-            } else unreadOnlyFeeds[position].id
-        } else {
-            if (position > allFeeds.size - 1) {
-                return -1
-            }
-        }
-        return allFeeds[position].id
+        view.notifyDataSetChanged(if (isHided) unreadOnlyFeeds.toRssListItem() else allFeeds.toRssListItem())
     }
 
     suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
@@ -150,10 +113,10 @@ class RssListPresenter(private val view: RssListView,
         generateHidedFeedList()
         if (isHided) {
             isHided = false
-            view.init(allFeeds)
+            view.init(allFeeds.toRssListItem())
         } else {
             isHided = true
-            view.init(unreadOnlyFeeds)
+            view.init(unreadOnlyFeeds.toRssListItem())
         }
     }
 
@@ -188,35 +151,16 @@ class RssListPresenter(private val view: RssListView,
         allFeeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
     }
 
-    fun getItemCount(): Int {
-        // Add +1 for the footer
-        if (isHided) return unreadOnlyFeeds.size + 1
-        return allFeeds.size + 1
-    }
-
-    fun onBindRssViewHolder(position: Int, view: RssItemView.Content) {
-        val feed = if (isHided) unreadOnlyFeeds[position] else allFeeds[position]
-        if (feed.iconPath.isBlank() || feed.iconPath == Feed.DEDAULT_ICON_PATH) {
-            view.showDefaultIcon()
-        } else {
-            view.showIcon(feed.iconPath)
+    private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
+        this@toRssListItem.map {
+            this.add(RssListItem.Content(
+                    rssId = it.id,
+                    rssTitle = it.title,
+                    isDefaultIcon = it.iconPath.isBlank() || it.iconPath == Feed.DEDAULT_ICON_PATH,
+                    rssIconPath = it.iconPath,
+                    unreadCount = it.unreadAriticlesCount
+            ))
         }
-        view.updateTitle(feed.title)
-        view.updateUnreadCount(feed.unreadAriticlesCount.toString())
+        add(RssListItem.Footer(if (isHided) RssListFooterState.UNREAD_ONLY else RssListFooterState.ALL))
     }
-
-    fun onBindRssFooterViewHolder(view: RssItemView.Footer) {
-        if (isHided) {
-            view.showAllView()
-        } else {
-            view.showHideView()
-        }
-    }
-
-    fun isBottom(position: Int): Boolean =
-            if (isHided) {
-                position == unreadOnlyFeeds.size
-            } else {
-                position == allFeeds.size
-            }
 }
