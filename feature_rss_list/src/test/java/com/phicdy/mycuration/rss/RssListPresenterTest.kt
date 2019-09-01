@@ -279,51 +279,6 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when bind default icon RSS then show default icon`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        val mockRssItemView = mock<RssItemView.Content>()
-        presenter.onBindRssViewHolder(0, mockRssItemView)
-        verify(mockRssItemView, times(1)).showDefaultIcon()
-    }
-
-    @Test
-    fun `when bind default icon RSS and fails to show the icon then show default icon`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        val mockRssItemView = mock<RssItemView.Content>()
-        presenter.onBindRssViewHolder(0, mockRssItemView)
-        verify(mockRssItemView, times(1)).showDefaultIcon()
-
-    }
-
-    @Test
-    fun `when bind RSS then update the title`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        val mockRssItemView = mock<RssItemView.Content>()
-        presenter.onBindRssViewHolder(0, mockRssItemView)
-        verify(mockRssItemView, times(1)).updateTitle(FIRST_RSS_TITLE)
-    }
-
-    @Test
-    fun `when bind RSS in all status then update unread count`() = runBlocking {
-        presenter.resume()
-        presenter.onRssFooterClicked()
-        val mockRssItemView = mock<RssItemView.Content>()
-        presenter.onBindRssViewHolder(0, mockRssItemView)
-        verify(mockRssItemView, times(1)).updateUnreadCount(FIRST_RSS_UNREAD_COUNT.toString())
-    }
-
-    @Test
-    fun `when bind RSS in hidden status then update unread count`() = runBlocking {
-        presenter.resume()
-        val mockRssItemView = mock<RssItemView.Content>()
-        presenter.onBindRssViewHolder(0, mockRssItemView)
-        verify(mockRssItemView, times(1)).updateUnreadCount(SECOND_RSS_UNREAD_COUNT.toString())
-    }
-
-    @Test
     fun `when bind footer in all status then show hide view`() = runBlocking {
         presenter.resume()
         presenter.onRssFooterClicked()
@@ -386,7 +341,15 @@ class RssListPresenterTest {
     }
 
     private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
-        this@toRssListItem.map { this.add(RssListItem.Content(it)) }
+        this@toRssListItem.map {
+            this.add(RssListItem.Content(
+                    rssId = it.id,
+                    rssTitle = it.title,
+                    rssIconPath = it.iconPath,
+                    isDefaultIcon = it.iconPath.isBlank() || it.iconPath == Feed.DEDAULT_ICON_PATH,
+                    unreadCount = it.unreadAriticlesCount
+            ))
+        }
         add(RssListItem.Footer)
     }
 

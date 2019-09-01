@@ -35,21 +35,32 @@ class RssListAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is RssViewHolder) {
-            holder.itemView.setOnClickListener {
-                val feedId = presenter.getFeedIdAtPosition(position)
-                if (feedId != -1) mListener?.onListClicked(feedId)
-            }
-            holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
-                menu.add(0, EDIT_FEED_TITLE_MENU_ID, 0, R.string.edit_rss_title).setOnMenuItemClickListener {
-                    presenter.onEditFeedMenuClicked(position)
-                    true
+            when (val item = getItem(position)) {
+                is RssListItem.Content -> {
+                    holder.itemView.setOnClickListener {
+                        val feedId = item.rssId
+                        if (feedId != -1) mListener?.onListClicked(feedId)
+                    }
+                    holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
+                        menu.add(0, EDIT_FEED_TITLE_MENU_ID, 0, R.string.edit_rss_title).setOnMenuItemClickListener {
+                            presenter.onEditFeedMenuClicked(position)
+                            true
+                        }
+                        menu.add(0, DELETE_FEED_MENU_ID, 1, R.string.delete_rss).setOnMenuItemClickListener {
+                            presenter.onDeleteFeedMenuClicked(position)
+                            true
+                        }
+                    }
+                    if (item.isDefaultIcon) {
+                        holder.showDefaultIcon()
+                    } else {
+                        holder.showIcon(item.rssIconPath)
+                    }
+                    holder.updateTitle(item.rssTitle)
+                    holder.updateUnreadCount(item.unreadCount.toString())
                 }
-                menu.add(0, DELETE_FEED_MENU_ID, 1, R.string.delete_rss).setOnMenuItemClickListener {
-                    presenter.onDeleteFeedMenuClicked(position)
-                    true
-                }
+                is RssListItem.Footer -> throw IllegalStateException()
             }
-            presenter.onBindRssViewHolder(position, holder)
         } else if (holder is RssFooterView) {
             holder.itemView.setOnClickListener {
                 presenter.onRssFooterClicked()
@@ -60,16 +71,16 @@ class RssListAdapter(
 
     private inner class RssViewHolder(
             itemView: View
-    ) : RecyclerView.ViewHolder(itemView), RssItemView.Content {
+    ) : RecyclerView.ViewHolder(itemView) {
         private val feedIcon = itemView.findViewById(R.id.feedIcon) as ImageView
         private val feedTitle = itemView.findViewById(R.id.feedTitle) as TextView
         private val feedCount = itemView.findViewById(R.id.feedCount) as TextView
 
-        override fun showDefaultIcon() {
+        fun showDefaultIcon() {
             feedIcon.setImageResource(R.drawable.ic_rss)
         }
 
-        override fun showIcon(iconPath: String) {
+        fun showIcon(iconPath: String) {
             GlideApp.with(feedIcon.context)
                     .load(iconPath)
                     .placeholder(R.drawable.ic_rss)
@@ -78,11 +89,11 @@ class RssListAdapter(
                     .into(feedIcon)
         }
 
-        override fun updateTitle(title: String) {
+        fun updateTitle(title: String) {
             feedTitle.text = title
         }
 
-        override fun updateUnreadCount(count: String) {
+        fun updateUnreadCount(count: String) {
             feedCount.text = count
         }
     }
@@ -111,7 +122,7 @@ private val diffCallback = object : DiffUtil.ItemCallback<RssListItem>() {
         return when (oldItem) {
             is RssListItem.Content -> {
                 when (newItem) {
-                    is RssListItem.Content -> oldItem.rss.id == newItem.rss.id
+                    is RssListItem.Content -> oldItem.rssId == newItem.rssId
                     is RssListItem.Footer -> false
                 }
             }
@@ -128,7 +139,7 @@ private val diffCallback = object : DiffUtil.ItemCallback<RssListItem>() {
         return when (oldItem) {
             is RssListItem.Content -> {
                 when (newItem) {
-                    is RssListItem.Content -> oldItem.rss == newItem.rss
+                    is RssListItem.Content -> oldItem == newItem
                     is RssListItem.Footer -> false
                 }
             }
