@@ -16,6 +16,9 @@ class DatabaseMigration(private val oldVersion: Int, newVersion: Int) {
             if (oldVersion < DATABASE_VERSION_FETCH_ICON) {
                 tasks.add(ResetIconPathTask())
             }
+            if (oldVersion < DATABASE_VERSION_FAVORITE) {
+                tasks.add(AddFavoriteTask())
+            }
         }
     }
 
@@ -30,5 +33,6 @@ class DatabaseMigration(private val oldVersion: Int, newVersion: Int) {
         const val DATABASE_VERSION_ADD_ENABLED_TO_FILTER = 2
         const val DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION = 3
         const val DATABASE_VERSION_FETCH_ICON = 4
+        const val DATABASE_VERSION_FAVORITE = 5
     }
 }
