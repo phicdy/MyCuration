@@ -27,8 +27,8 @@ data class FinishAction(
 ) : ArticleListAction<Unit>()
 
 data class OpenInternalBrowserAction(
-        override val value: Article
-) : ArticleListAction<Article>()
+        override val value: String
+) : ArticleListAction<String>()
 
 data class OpenExternalBrowserAction(
         override val value: String

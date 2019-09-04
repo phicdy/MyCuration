@@ -4,11 +4,10 @@ import com.phicdy.mycuration.articlelist.action.OpenInternalBrowserAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
-import com.phicdy.mycuration.entity.Article
 
 class OpenInternalWebBrowserStateStore(
         dispatcher: Dispatcher
-) : Store<Article>(dispatcher) {
+) : Store<String>(dispatcher) {
 
     init {
         dispatcher.register(this)

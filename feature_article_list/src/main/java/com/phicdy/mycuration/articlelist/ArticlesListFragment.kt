@@ -46,7 +46,6 @@ import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.tracker.TrackerHelper
 import kotlinx.coroutines.CoroutineScope
@@ -155,8 +154,8 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         finishStateStore.state.observe(this, Observer<Boolean> {
             if (it) listener.finish()
         })
-        openInternalWebBrowserStateStore.state.observe(this, Observer<Article> {
-            openInternalWebView(it.url)
+        openInternalWebBrowserStateStore.state.observe(this, Observer<String> { url ->
+            openInternalWebView(url)
         })
         openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
             openExternalWebView(it)

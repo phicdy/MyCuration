@@ -26,11 +26,11 @@ class OpenUrlActionCreator(
                     val content = item.value
                     if (preferenceHelper.isOpenInternal) {
                         if (feedId == Feed.ALL_FEED_ID) {
-                            dispatcher.dispatch(OpenInternalBrowserAction(content))
+                            dispatcher.dispatch(OpenInternalBrowserAction(content.url))
                         } else {
                             val feed = rssRepository.getFeedById(feedId)
                             val article = content.copy(feedTitle = feed?.title ?: "")
-                            dispatcher.dispatch(OpenInternalBrowserAction(article))
+                            dispatcher.dispatch(OpenInternalBrowserAction(article.url))
                         }
                     } else {
                         dispatcher.dispatch(OpenExternalBrowserAction(content.url))
