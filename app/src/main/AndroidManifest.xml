@@ -119,6 +119,10 @@
         <activity
             android:name=".presentation.view.activity.UserRequestActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".curatedarticlelist.CuratedArticlesListActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
