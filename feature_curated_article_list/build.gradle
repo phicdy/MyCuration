@@ -10,6 +10,7 @@ android {
 dependencies {
     implementation project(':core')
     implementation project(':entity')
+    implementation project(':feature_article_list')
     implementation project(':feature_util')
     implementation project(':glide')
     implementation project(':resource')
