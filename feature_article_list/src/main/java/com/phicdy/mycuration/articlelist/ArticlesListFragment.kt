@@ -67,10 +67,9 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         const val CURATION_ID = "CURATION_ID"
         const val DEFAULT_CURATION_ID = -1
 
-        fun newInstance(rssId: Int, curationId: Int) = ArticlesListFragment().apply {
+        fun newInstance(rssId: Int) = ArticlesListFragment().apply {
             arguments = Bundle().apply {
                 putInt(RSS_ID, rssId)
-                putInt(CURATION_ID, curationId)
             }
         }
     }

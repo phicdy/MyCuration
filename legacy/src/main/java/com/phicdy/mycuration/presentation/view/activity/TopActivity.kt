@@ -396,7 +396,7 @@ class TopActivity :
     }
 
     override fun onListClicked(feedId: Int) {
-        startActivity(ArticlesListActivity.createRssIntent(this, feedId))
+        startActivity(ArticlesListActivity.createIntent(this, feedId))
     }
 
     override fun onEditRssClicked(rssId: Int, feedTitle: String) {
