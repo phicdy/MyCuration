@@ -25,20 +25,20 @@ import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.curatedarticlelist.action.FetchCuratedArticleListActionCreator
 import com.phicdy.mycuration.curatedarticlelist.action.FinishStateActionCreator
 import com.phicdy.mycuration.curatedarticlelist.action.OpenUrlActionCreator
-import com.phicdy.mycuration.curatedarticlelist.action.ReadAllArticlesActionCreator
-import com.phicdy.mycuration.curatedarticlelist.action.ReadArticleActionCreator
+import com.phicdy.mycuration.curatedarticlelist.action.ReadAllCuratedArticlesActionCreator
+import com.phicdy.mycuration.curatedarticlelist.action.ReadCuratedArticleActionCreator
 import com.phicdy.mycuration.curatedarticlelist.action.ScrollActionCreator
 import com.phicdy.mycuration.curatedarticlelist.action.ShareUrlActionCreator
 import com.phicdy.mycuration.curatedarticlelist.action.SwipeActionCreator
 import com.phicdy.mycuration.curatedarticlelist.store.CuratedArticleListStore
-import com.phicdy.mycuration.curatedarticlelist.store.FinishStateStore
-import com.phicdy.mycuration.curatedarticlelist.store.OpenExternalWebBrowserStateStore
-import com.phicdy.mycuration.curatedarticlelist.store.OpenInternalWebBrowserStateStore
-import com.phicdy.mycuration.curatedarticlelist.store.ReadAllArticlesStateStore
-import com.phicdy.mycuration.curatedarticlelist.store.ReadArticlePositionStore
-import com.phicdy.mycuration.curatedarticlelist.store.ScrollPositionStore
-import com.phicdy.mycuration.curatedarticlelist.store.ShareUrlStore
-import com.phicdy.mycuration.curatedarticlelist.store.SwipePositionStore
+import com.phicdy.mycuration.curatedarticlelist.store.FinishCuratedArticleStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.OpenCuratedArticleWithExternalWebBrowserStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.OpenCuratedArticleWithInternalWebBrowserStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.ReadAllCuratedArticlesStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.ReadCuratedArticlePositionStore
+import com.phicdy.mycuration.curatedarticlelist.store.ScrollCuratedArticlePositionStore
+import com.phicdy.mycuration.curatedarticlelist.store.ShareCuratedArticleUrlStore
+import com.phicdy.mycuration.curatedarticlelist.store.SwipeCuratedArticlePositionStore
 import com.phicdy.mycuration.curatedarticlelist.util.bitmapFrom
 import com.phicdy.mycuration.feature_curated_article_list.R
 import com.phicdy.mycuration.tracker.TrackerHelper
@@ -80,14 +80,14 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
     }
 
     private val curatedArticleListStore: CuratedArticleListStore by currentScope.inject()
-    private val finishStateStore: FinishStateStore by currentScope.inject()
-    private val readArticlePositionStore: ReadArticlePositionStore by currentScope.inject()
-    private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by currentScope.inject()
-    private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by currentScope.inject()
-    private val scrollPositionStore: ScrollPositionStore by currentScope.inject()
-    private val swipePositionStore: SwipePositionStore by currentScope.inject()
-    private val readAllArticlesStateStore: ReadAllArticlesStateStore by currentScope.inject()
-    private val shareUrlStore: ShareUrlStore by currentScope.inject()
+    private val finishCuratedArticleStateStore: FinishCuratedArticleStateStore by currentScope.inject()
+    private val readCuratedArticlePositionStore: ReadCuratedArticlePositionStore by currentScope.inject()
+    private val openCuratedArticleWithInternalWebBrowserStateStore: OpenCuratedArticleWithInternalWebBrowserStateStore by currentScope.inject()
+    private val openCuratedArticleWithExternalWebBrowserStateStore: OpenCuratedArticleWithExternalWebBrowserStateStore by currentScope.inject()
+    private val scrollCuratedArticlePositionStore: ScrollCuratedArticlePositionStore by currentScope.inject()
+    private val swipeCuratedArticlePositionStore: SwipeCuratedArticlePositionStore by currentScope.inject()
+    private val readAllCuratedArticlesStateStore: ReadAllCuratedArticlesStateStore by currentScope.inject()
+    private val shareCuratedArticleUrlStore: ShareCuratedArticleUrlStore by currentScope.inject()
 
     private lateinit var recyclerView: CuratedArticleRecyclerView
     private lateinit var articlesListAdapter: CuratedArticleListAdapter
@@ -112,19 +112,19 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
                 articlesListAdapter.submitList(it)
             }
         })
-        readArticlePositionStore.state.observe(this, Observer<Int> {
+        readCuratedArticlePositionStore.state.observe(this, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
         })
-        finishStateStore.state.observe(this, Observer<Boolean> {
+        finishCuratedArticleStateStore.state.observe(this, Observer<Boolean> {
             if (it) listener.finish()
         })
-        openInternalWebBrowserStateStore.state.observe(this, Observer<String> { url ->
+        openCuratedArticleWithInternalWebBrowserStateStore.state.observe(this, Observer<String> { url ->
             openInternalWebView(url)
         })
-        openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
+        openCuratedArticleWithExternalWebBrowserStateStore.state.observe(this, Observer<String> {
             openExternalWebView(it)
         })
-        scrollPositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
+        scrollCuratedArticlePositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
             launch {
                 val manager = recyclerView.layoutManager as LinearLayoutManager
                 val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
@@ -135,15 +135,15 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
                 runFinishActionCreator()
             }
         })
-        swipePositionStore.state.observe(this, Observer<Int> {
+        swipeCuratedArticlePositionStore.state.observe(this, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
             runFinishActionCreator()
         })
-        readAllArticlesStateStore.state.observe(this, Observer<Unit> {
+        readAllCuratedArticlesStateStore.state.observe(this, Observer<Unit> {
             notifyListView()
             runFinishActionCreator()
         })
-        shareUrlStore.state.observe(this, Observer<String> {
+        shareCuratedArticleUrlStore.state.observe(this, Observer<String> {
             showShareUi(it)
         })
     }
@@ -232,7 +232,7 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
 
     fun handleAllRead() {
         launch {
-            ReadAllArticlesActionCreator(
+            ReadAllCuratedArticlesActionCreator(
                     dispatcher = get(),
                     articleRepository = get(),
                     rssRepository = get(),
@@ -295,7 +295,7 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
     }
 
     override fun onItemClicked(position: Int, articles: List<CuratedArticleItem>) {
-        val actionCreator = ReadArticleActionCreator(
+        val actionCreator = ReadCuratedArticleActionCreator(
                 dispatcher = get(),
                 articleRepository = get(),
                 rssRepository = get(),

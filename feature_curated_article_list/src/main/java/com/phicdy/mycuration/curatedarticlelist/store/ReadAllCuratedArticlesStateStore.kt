@@ -3,11 +3,11 @@ package com.phicdy.mycuration.curatedarticlelist.store
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
-import com.phicdy.mycuration.curatedarticlelist.action.ScrollAction
+import com.phicdy.mycuration.curatedarticlelist.action.ReadALlArticlesAction
 
-class ScrollPositionStore(
+class ReadAllCuratedArticlesStateStore(
         dispatcher: Dispatcher
-) : Store<Int>(dispatcher) {
+) : Store<Unit>(dispatcher) {
 
     init {
         dispatcher.register(this)
@@ -15,7 +15,7 @@ class ScrollPositionStore(
 
     override suspend fun notify(action: Action<*>) {
         when (action) {
-            is ScrollAction -> _state.value = action.value
+            is ReadALlArticlesAction -> _state.value = action.value
         }
     }
 }

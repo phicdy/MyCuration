@@ -3,9 +3,9 @@ package com.phicdy.mycuration.curatedarticlelist.store
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
-import com.phicdy.mycuration.curatedarticlelist.action.ReadArticleAction
+import com.phicdy.mycuration.curatedarticlelist.action.SwipeAction
 
-class ReadArticlePositionStore(
+class SwipeCuratedArticlePositionStore(
         dispatcher: Dispatcher
 ) : Store<Int>(dispatcher) {
 
@@ -15,7 +15,7 @@ class ReadArticlePositionStore(
 
     override suspend fun notify(action: Action<*>) {
         when (action) {
-            is ReadArticleAction -> _state.value = action.value
+            is SwipeAction -> _state.value = action.value
         }
     }
 }

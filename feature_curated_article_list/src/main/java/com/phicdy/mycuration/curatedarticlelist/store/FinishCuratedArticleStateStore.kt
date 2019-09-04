@@ -6,7 +6,7 @@ import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.action.FinishAction
 import kotlinx.coroutines.CoroutineScope
 
-class FinishStateStore(
+class FinishCuratedArticleStateStore(
         dispatcher: Dispatcher
 ) : Store<Boolean>(dispatcher), CoroutineScope {
 

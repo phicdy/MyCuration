@@ -21,6 +21,17 @@ import com.phicdy.mycuration.articlelist.store.SearchResultStore
 import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.core.Dispatcher
+import com.phicdy.mycuration.curatedarticlelist.CuratedArticlesListFragment
+import com.phicdy.mycuration.curatedarticlelist.action.FetchCuratedArticleListActionCreator
+import com.phicdy.mycuration.curatedarticlelist.store.CuratedArticleListStore
+import com.phicdy.mycuration.curatedarticlelist.store.FinishCuratedArticleStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.OpenCuratedArticleWithExternalWebBrowserStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.OpenCuratedArticleWithInternalWebBrowserStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.ReadAllCuratedArticlesStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.ReadCuratedArticlePositionStore
+import com.phicdy.mycuration.curatedarticlelist.store.ScrollCuratedArticlePositionStore
+import com.phicdy.mycuration.curatedarticlelist.store.ShareCuratedArticleUrlStore
+import com.phicdy.mycuration.curatedarticlelist.store.SwipeCuratedArticlePositionStore
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
@@ -150,6 +161,26 @@ val appModule = module {
         viewModel { SwipePositionStore(get()) }
         viewModel { ReadAllArticlesStateStore(get()) }
         viewModel { ShareUrlStore(get()) }
+    }
+
+    scope(named<CuratedArticlesListFragment>()) {
+        scoped { (curationId: Int) ->
+            FetchCuratedArticleListActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get(),
+                    curationId = curationId
+            )
+        }
+        viewModel { CuratedArticleListStore(get()) }
+        viewModel { FinishCuratedArticleStateStore(get()) }
+        viewModel { ReadCuratedArticlePositionStore(get()) }
+        viewModel { OpenCuratedArticleWithInternalWebBrowserStateStore(get()) }
+        viewModel { OpenCuratedArticleWithExternalWebBrowserStateStore(get()) }
+        viewModel { ScrollCuratedArticlePositionStore(get()) }
+        viewModel { SwipeCuratedArticlePositionStore(get()) }
+        viewModel { ReadAllCuratedArticlesStateStore(get()) }
+        viewModel { ShareCuratedArticleUrlStore(get()) }
     }
 
     scope(named<CurationListFragment>()) {

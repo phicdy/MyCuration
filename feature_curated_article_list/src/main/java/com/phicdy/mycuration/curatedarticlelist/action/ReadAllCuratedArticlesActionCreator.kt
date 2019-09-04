@@ -10,7 +10,7 @@ import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class ReadAllArticlesActionCreator(
+class ReadAllCuratedArticlesActionCreator(
         private val dispatcher: Dispatcher,
         private val articleRepository: ArticleRepository,
         private val rssRepository: RssRepository,

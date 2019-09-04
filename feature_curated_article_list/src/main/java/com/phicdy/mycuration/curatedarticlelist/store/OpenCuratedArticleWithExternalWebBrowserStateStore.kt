@@ -3,11 +3,11 @@ package com.phicdy.mycuration.curatedarticlelist.store
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
-import com.phicdy.mycuration.curatedarticlelist.action.ReadALlArticlesAction
+import com.phicdy.mycuration.curatedarticlelist.action.OpenExternalBrowserAction
 
-class ReadAllArticlesStateStore(
+class OpenCuratedArticleWithExternalWebBrowserStateStore(
         dispatcher: Dispatcher
-) : Store<Unit>(dispatcher) {
+) : Store<String>(dispatcher) {
 
     init {
         dispatcher.register(this)
@@ -15,7 +15,8 @@ class ReadAllArticlesStateStore(
 
     override suspend fun notify(action: Action<*>) {
         when (action) {
-            is ReadALlArticlesAction -> _state.value = action.value
+            is OpenExternalBrowserAction -> _state.value = action.value
         }
     }
+
 }

@@ -5,7 +5,7 @@ import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.action.OpenInternalBrowserAction
 
-class OpenInternalWebBrowserStateStore(
+class OpenCuratedArticleWithInternalWebBrowserStateStore(
         dispatcher: Dispatcher
 ) : Store<String>(dispatcher) {
 

@@ -7,7 +7,7 @@ import com.phicdy.mycuration.curatedarticlelist.action.ShareUrlAction
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 
-class ShareUrlStore(
+class ShareCuratedArticleUrlStore(
         dispatcher: Dispatcher,
         context: CoroutineContext = Dispatchers.Main
 ) : Store<String>(dispatcher, context) {
