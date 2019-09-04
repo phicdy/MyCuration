@@ -11,7 +11,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.feature.util.changeTheme
@@ -28,19 +27,12 @@ import kotlin.coroutines.CoroutineContext
 class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener, CoroutineScope {
 
     companion object {
-        private const val DEFAULT_CURATION_ID = -1
         private const val TAG_FRAGMENT = "TAG_FRAGMENT"
         private const val RSS_ID = "RSS_ID"
-        private const val CURATION_ID = "CURATION_ID"
 
-        fun createRssIntent(context: Context, rssId: Int) =
+        fun createIntent(context: Context, rssId: Int) =
                 Intent(context, ArticlesListActivity::class.java).apply {
                     putExtra(RSS_ID, rssId)
-                }
-
-        fun createCurationIntent(context: Context, curationId: Int) =
-                Intent(context, ArticlesListActivity::class.java).apply {
-                    putExtra(CURATION_ID, curationId)
                 }
     }
 
@@ -53,7 +45,6 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
     private lateinit var fab: FloatingActionButton
 
     private val rssRepository: RssRepository by inject()
-    private val curationRepository: CurationRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,23 +53,17 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         // Set feed id and url from main activity
         val intent = intent
         val feedId = intent.getIntExtra(RSS_ID, Feed.ALL_FEED_ID)
-        val curationId = intent.getIntExtra(CURATION_ID, DEFAULT_CURATION_ID)
 
         if (savedInstanceState == null) {
-            val fragment = ArticlesListFragment.newInstance(feedId, curationId)
+            val fragment = ArticlesListFragment.newInstance(feedId)
             supportFragmentManager.beginTransaction()
                     .add(R.id.container, fragment, TAG_FRAGMENT)
                     .commit()
         }
 
         launch {
-            when {
-                curationId != DEFAULT_CURATION_ID -> {
-                    // Curation
-                    title = curationRepository.getCurationNameById(curationId)
-                    fbTitle = getString(R.string.curation)
-                }
-                feedId == Feed.ALL_FEED_ID -> {
+            when (feedId) {
+                Feed.ALL_FEED_ID -> {
                     // All article
                     title = getString(R.string.all)
                     fbTitle = getString(R.string.all)

@@ -7,7 +7,6 @@ import com.phicdy.mycuration.admob.AdmobProvider
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
-import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
@@ -126,14 +125,6 @@ val appModule = module {
                     articleRepository = get(),
                     preferenceHelper = get(),
                     rssId = rssId
-            )
-        }
-        scoped { (curationId: Int) ->
-            FetchArticleListOfCurationActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    preferenceHelper = get(),
-                    curationId = curationId
             )
         }
         scoped {

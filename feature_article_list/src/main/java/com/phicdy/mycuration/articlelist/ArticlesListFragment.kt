@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
-import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
 import com.phicdy.mycuration.articlelist.action.FinishStateActionCreator
 import com.phicdy.mycuration.articlelist.action.OpenUrlActionCreator
@@ -64,8 +63,6 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
 
     companion object {
         const val RSS_ID = "RSS_ID"
-        const val CURATION_ID = "CURATION_ID"
-        const val DEFAULT_CURATION_ID = -1
 
         fun newInstance(rssId: Int) = ArticlesListFragment().apply {
             arguments = Bundle().apply {
@@ -81,16 +78,9 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
     private val rssId: Int  by lazy {
         arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
     }
-    private val curationId: Int by lazy {
-        arguments?.getInt(CURATION_ID, DEFAULT_CURATION_ID) ?: DEFAULT_CURATION_ID
-    }
 
     private val fetchArticleListOfRssActionCreator by currentScope.inject<FetchArticleListOfRssActionCreator> {
         parametersOf(rssId)
-    }
-
-    private val fetchArticleListOfCurationActionCreator by currentScope.inject<FetchArticleListOfCurationActionCreator> {
-        parametersOf(curationId)
     }
 
     private val fetchAllArticleListArticleListActionCreator by currentScope.inject<FetchAllArticleListActionCreator> {
@@ -214,7 +204,6 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         launch {
             when {
                 activity?.intent?.action == Intent.ACTION_SEARCH -> searchArticleListActionCreator.run()
-                curationId != -1 -> fetchArticleListOfCurationActionCreator.run()
                 rssId == Feed.ALL_FEED_ID -> fetchAllArticleListArticleListActionCreator.run()
                 else -> fetchArticleListOfRssActionCreator.run()
             }
@@ -368,12 +357,12 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         }
     }
 
-    override fun onItemLongClicked(position: Int, items: List<ArticleItem>) {
+    override fun onItemLongClicked(position: Int, articles: List<ArticleItem>) {
         launch {
             ShareUrlActionCreator(
                     dispatcher = get(),
                     position = position,
-                    items = items
+                    items = articles
             ).run()
         }
     }
