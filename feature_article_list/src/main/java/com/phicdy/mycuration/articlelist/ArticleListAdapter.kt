@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.advertisement.AdViewHolder
 import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import kotlinx.coroutines.CoroutineScope
@@ -181,6 +182,6 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ArticleItem>() {
 }
 
 sealed class ArticleItem {
-    data class Content(val value: Article) : ArticleItem()
+    data class Content(val value: FavoritableArticle) : ArticleItem()
     object Advertisement : ArticleItem()
 }
