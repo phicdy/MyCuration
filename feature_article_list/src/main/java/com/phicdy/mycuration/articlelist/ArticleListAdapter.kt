@@ -107,6 +107,16 @@ class ArticleListAdapter(
                 holder.articlePostedTime.setTextColor(color)
                 holder.articlePoint.setTextColor(color)
                 holder.feedTitleView.setTextColor(color)
+
+                holder.favoriteOnIcon.setOnClickListener {
+                    holder.favoriteOffIcon.visibility = View.VISIBLE
+                    holder.favoriteOnIcon.visibility = View.GONE
+                }
+
+                holder.favoriteOffIcon.setOnClickListener {
+                    holder.favoriteOffIcon.visibility = View.GONE
+                    holder.favoriteOnIcon.visibility = View.VISIBLE
+                }
             }
 
             is AdViewHolder -> holder.bind()
@@ -129,6 +139,8 @@ class ArticleListAdapter(
         val articleUrl: TextView = mView.findViewById(R.id.tv_articleUrl) as TextView
         val feedTitleView: TextView = mView.findViewById(R.id.feedTitle) as TextView
         val feedIconView: ImageView = mView.findViewById(R.id.iv_feed_icon) as ImageView
+        val favoriteOnIcon: ImageView = mView.findViewById(R.id.favoriteOn)
+        val favoriteOffIcon: ImageView = mView.findViewById(R.id.favoriteOff)
     }
 
     interface Listener {
