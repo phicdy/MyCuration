@@ -108,11 +108,13 @@ class ArticleListAdapter(
                 holder.articlePoint.setTextColor(color)
                 holder.feedTitleView.setTextColor(color)
 
+                holder.favoriteOnIcon.visibility = if (article.isFavorite) View.VISIBLE else View.GONE
                 holder.favoriteOnIcon.setOnClickListener {
                     holder.favoriteOffIcon.visibility = View.VISIBLE
                     holder.favoriteOnIcon.visibility = View.GONE
                 }
 
+                holder.favoriteOffIcon.visibility = if (article.isFavorite) View.GONE else View.VISIBLE
                 holder.favoriteOffIcon.setOnClickListener {
                     holder.favoriteOffIcon.visibility = View.GONE
                     holder.favoriteOnIcon.visibility = View.VISIBLE
