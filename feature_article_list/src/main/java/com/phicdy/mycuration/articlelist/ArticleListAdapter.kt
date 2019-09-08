@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.advertisement.AdViewHolder
+import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.Feed
@@ -25,7 +26,8 @@ import java.util.Locale
 class ArticleListAdapter(
         private val coroutineScope: CoroutineScope,
         private val listener: Listener,
-        private val adProvider: AdProvider
+        private val adProvider: AdProvider,
+        private val updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator
 ) : ListAdapter<ArticleItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -112,12 +114,18 @@ class ArticleListAdapter(
                 holder.favoriteOnIcon.setOnClickListener {
                     holder.favoriteOffIcon.visibility = View.VISIBLE
                     holder.favoriteOnIcon.visibility = View.GONE
+                    coroutineScope.launch {
+                        updateFavoriteStatusActionCreator.run(position, currentList)
+                    }
                 }
 
                 holder.favoriteOffIcon.visibility = if (article.isFavorite) View.GONE else View.VISIBLE
                 holder.favoriteOffIcon.setOnClickListener {
                     holder.favoriteOffIcon.visibility = View.GONE
                     holder.favoriteOnIcon.visibility = View.VISIBLE
+                    coroutineScope.launch {
+                        updateFavoriteStatusActionCreator.run(position, currentList)
+                    }
                 }
             }
 

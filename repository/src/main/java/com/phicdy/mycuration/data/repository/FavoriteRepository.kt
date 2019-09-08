@@ -30,11 +30,11 @@ class FavoriteRepository(val db: SQLiteDatabase) {
         return@withContext id
     }
 
-    suspend fun delete(favoriteArticleId: Int): Boolean = withContext(Dispatchers.IO) {
+    suspend fun delete(articleId: Int): Boolean = withContext(Dispatchers.IO) {
         var numOfDeleted = 0
         try {
             db.beginTransaction()
-            numOfDeleted = db.delete(FavoriteArticle.TABLE_NAME, FavoriteArticle.ID + " = " + favoriteArticleId, null)
+            numOfDeleted = db.delete(FavoriteArticle.TABLE_NAME, FavoriteArticle.ARTICLE_ID + " = " + articleId, null)
             db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()

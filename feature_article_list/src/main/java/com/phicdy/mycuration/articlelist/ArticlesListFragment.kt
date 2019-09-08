@@ -33,6 +33,7 @@ import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.ShareUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
+import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
 import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
@@ -91,6 +92,8 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
         parametersOf(query)
     }
+
+    private val updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator by currentScope.inject()
 
     private val articleListStore: ArticleListStore by currentScope.inject()
     private val searchResultStore: SearchResultStore by currentScope.inject()
@@ -198,7 +201,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        articlesListAdapter = ArticleListAdapter(this, this, adProvider)
+        articlesListAdapter = ArticleListAdapter(this, this, adProvider, updateFavoriteStatusActionCreator)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
         launch {
