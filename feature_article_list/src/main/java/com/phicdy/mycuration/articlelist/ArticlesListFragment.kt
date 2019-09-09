@@ -351,9 +351,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         val openUrlActionCreator = OpenUrlActionCreator(
                 dispatcher = get(),
                 preferenceHelper = get(),
-                feedId = rssId,
-                item = articles[position],
-                rssRepository = get()
+                item = articles[position]
         )
         launch {
             openUrlActionCreator.run()

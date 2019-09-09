@@ -33,9 +33,7 @@ class OpenUrlActionCreatorTest {
             OpenUrlActionCreator(
                     dispatcher = dispatcher,
                     preferenceHelper = preferenceHelper,
-                    feedId = 0,
-                    item = ArticleItem.Content(article),
-                    rssRepository = mock()
+                    item = ArticleItem.Content(article)
             ).run()
             verify(store).notify(any())
         }
@@ -59,9 +57,7 @@ class OpenUrlActionCreatorTest {
             OpenUrlActionCreator(
                     dispatcher = dispatcher,
                     preferenceHelper = preferenceHelper,
-                    feedId = 0,
-                    item = ArticleItem.Content(article),
-                    rssRepository = mock()
+                    item = ArticleItem.Content(article)
             ).run()
             verify(store).notify(any())
         }
