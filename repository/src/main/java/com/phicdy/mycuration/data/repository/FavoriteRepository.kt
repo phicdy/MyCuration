@@ -5,8 +5,9 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.FavoriteArticle
-import com.phicdy.mycuration.entity.FavoriteArticleItem
+import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -44,17 +45,24 @@ class FavoriteRepository(val db: SQLiteDatabase) {
         return@withContext numOfDeleted == 1
     }
 
-    suspend fun fetchAll(isNewestArticleTop: Boolean): List<FavoriteArticleItem> = withContext(Dispatchers.IO) {
+    suspend fun fetchAll(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
         var columns = arrayOf(
                 Article.ID, Article.TITLE, Article.URL, Article.STATUS, Article.POINT, Article.DATE
         ).joinToString(postfix = ", ") {
             Article.TABLE_NAME + "." + it
         }
+        columns += arrayOf(Feed.ID, Feed.TITLE, Feed.ICON_PATH).joinToString(postfix = ", ") { Feed.TABLE_NAME + "." + it }
         columns += arrayOf(FavoriteArticle.ID).joinToString { FavoriteArticle.TABLE_NAME + "." + it }
         val sql = StringBuilder().apply {
             append("select $columns")
-            append(" from " + Article.TABLE_NAME + " inner join " + FavoriteArticle.TABLE_NAME)
-            append(" where " + Article.TABLE_NAME + "." + Article.ID + " = " + FavoriteArticle.TABLE_NAME + "." + FavoriteArticle.ID)
+            append(" from")
+            append(" ${Article.TABLE_NAME}")
+            append(" inner join ${Feed.TABLE_NAME}")
+            append(" left outer join ${FavoriteArticle.TABLE_NAME}")
+            append(" on (${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
+            append(" where " + Article.TABLE_NAME + "." + Article.ID + " = " + FavoriteArticle.TABLE_NAME + "." + FavoriteArticle.ARTICLE_ID)
+            append(" and")
+            append(" ${Article.TABLE_NAME}.${Article.FEEDID} = ${Feed.TABLE_NAME}.${Feed.ID}")
             append(" order by " + Article.DATE)
             append(if (isNewestArticleTop) {
                 " desc"
@@ -62,7 +70,7 @@ class FavoriteRepository(val db: SQLiteDatabase) {
                 " asc"
             })
         }.toString()
-        val articles = mutableListOf<FavoriteArticleItem>()
+        val articles = mutableListOf<FavoritableArticle>()
         var cursor: Cursor? = null
         try {
             db.beginTransaction()
@@ -74,12 +82,13 @@ class FavoriteRepository(val db: SQLiteDatabase) {
                 val status = cursor.getString(3)
                 val point = cursor.getString(4)
                 val dateLong = cursor.getLong(5)
-                val feedTitle = cursor.getString(6)
-                val feedIconPath = cursor.getString(7)
-                val article = Article(id, title, url, status, point,
-                        dateLong, 0, feedTitle, feedIconPath)
-                val favoriteArticleId = cursor.getInt(7)
-                articles.add(FavoriteArticleItem(favoriteArticleId, article))
+                val feedId = cursor.getInt(6)
+                val feedTitle = cursor.getString(7)
+                val feedIconPath = cursor.getString(8)
+                val favoriteArticleId = cursor.getInt(9)
+                val article = FavoritableArticle(id, title, url, status, point,
+                        dateLong, feedId, feedTitle, feedIconPath, favoriteArticleId > 0)
+                articles.add(article)
             }
             db.setTransactionSuccessful()
         } catch (e: Exception) {

@@ -28,6 +28,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
     private val presenter: RssListPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var tvAllUnreadArticleCount: TextView
     private lateinit var allUnread: ConstraintLayout
+    private lateinit var favorite: ConstraintLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyView: TextView
@@ -129,6 +130,9 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         allUnread.setOnClickListener {
             mListener?.onAllUnreadClicked()
         }
+        favorite.setOnClickListener {
+            mListener?.onFavoriteClicked()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -138,6 +142,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
         tvAllUnreadArticleCount = view.findViewById(R.id.allUnreadCount) as TextView
         allUnread = view.findViewById(R.id.cl_all_unread) as ConstraintLayout
+        favorite = view.findViewById(R.id.cl_favorite)
         registerForContextMenu(recyclerView)
         setAllListener()
         return view
@@ -171,6 +176,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         fun onEditRssClicked(rssId: Int, feedTitle: String)
         fun onDeleteRssClicked(rssId: Int, position: Int)
         fun onAllUnreadClicked()
+        fun onFavoriteClicked()
     }
 
     companion object {

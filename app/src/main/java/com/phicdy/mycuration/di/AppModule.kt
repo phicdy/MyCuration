@@ -6,8 +6,10 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.admob.AdmobProvider
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
+import com.phicdy.mycuration.articlelist.FavoriteArticlesListFragment
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
+import com.phicdy.mycuration.articlelist.action.FetchFavoriteArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
@@ -153,6 +155,31 @@ val appModule = module {
         }
         viewModel { ArticleListStore(get()) }
         viewModel { SearchResultStore(get()) }
+        viewModel { FinishStateStore(get()) }
+        viewModel { ReadArticlePositionStore(get()) }
+        viewModel { OpenInternalWebBrowserStateStore(get()) }
+        viewModel { OpenExternalWebBrowserStateStore(get()) }
+        viewModel { ScrollPositionStore(get()) }
+        viewModel { SwipePositionStore(get()) }
+        viewModel { ReadAllArticlesStateStore(get()) }
+        viewModel { ShareUrlStore(get()) }
+    }
+
+    scope(named<FavoriteArticlesListFragment>()) {
+        scoped {
+            FetchFavoriteArticleListActionCreator(
+                    dispatcher = get(),
+                    favoriteRepository = get(),
+                    preferenceHelper = get()
+            )
+        }
+        scoped {
+            UpdateFavoriteStatusActionCreator(
+                    dispatcher = get(),
+                    favoriteRepository = get()
+            )
+        }
+        viewModel { ArticleListStore(get()) }
         viewModel { FinishStateStore(get()) }
         viewModel { ReadArticlePositionStore(get()) }
         viewModel { OpenInternalWebBrowserStateStore(get()) }
