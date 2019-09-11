@@ -50,6 +50,12 @@
 
     <style name="AppTheme.IconListItem" />
 
+    <style name="AppTheme.IconListItem.Item">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
     <style name="AppTheme.IconListItem.Icon">
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>

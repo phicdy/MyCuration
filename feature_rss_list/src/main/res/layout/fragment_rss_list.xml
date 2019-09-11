@@ -7,9 +7,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_all_unread"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
+        style="@style/AppTheme.IconListItem.Item"
         apps:layout_constraintEnd_toEndOf="parent"
         apps:layout_constraintStart_toStartOf="parent"
         apps:layout_constraintTop_toTopOf="parent">
@@ -55,9 +53,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_favorite"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
+        style="@style/AppTheme.IconListItem.Item"
         apps:layout_constraintEnd_toEndOf="parent"
         apps:layout_constraintStart_toStartOf="parent"
         apps:layout_constraintTop_toBottomOf="@id/cl_all_unread">
