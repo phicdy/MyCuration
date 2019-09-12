@@ -178,9 +178,4 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         fun onAllUnreadClicked()
         fun onFavoriteClicked()
     }
-
-    companion object {
-        const val VIEW_TYPE_RSS = 0
-        const val VIEW_TYPE_FOOTER = 1
-    }
 }

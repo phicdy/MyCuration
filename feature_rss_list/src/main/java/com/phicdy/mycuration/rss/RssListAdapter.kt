@@ -17,12 +17,12 @@ class RssListAdapter(
 ) : ListAdapter<RssListItem, RecyclerView.ViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            RssListFragment.VIEW_TYPE_RSS -> {
+            VIEW_TYPE_RSS -> {
                 val view = LayoutInflater.from(parent.context)
                         .inflate(R.layout.feeds_list, parent, false)
                 RssViewHolder(view)
             }
-            RssListFragment.VIEW_TYPE_FOOTER -> {
+            VIEW_TYPE_FOOTER -> {
                 val view = LayoutInflater.from(parent.context)
                         .inflate(R.layout.list_item_rss_footer, parent, false)
                 RssFooterView(view)
@@ -32,8 +32,8 @@ class RssListAdapter(
     }
 
     override fun getItemViewType(position: Int) = when (getItem(position)) {
-        is RssListItem.Content -> RssListFragment.VIEW_TYPE_RSS
-        is RssListItem.Footer -> RssListFragment.VIEW_TYPE_FOOTER
+        is RssListItem.Content -> VIEW_TYPE_RSS
+        is RssListItem.Footer -> VIEW_TYPE_FOOTER
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -125,6 +125,9 @@ class RssListAdapter(
     companion object {
         private const val DELETE_FEED_MENU_ID = 1000
         private const val EDIT_FEED_TITLE_MENU_ID = 1001
+
+        private const val VIEW_TYPE_RSS = 0
+        private const val VIEW_TYPE_FOOTER = 1
     }
 }
 
