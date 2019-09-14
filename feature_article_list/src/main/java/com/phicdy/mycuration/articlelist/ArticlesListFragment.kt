@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
-import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
 import com.phicdy.mycuration.articlelist.action.FinishStateActionCreator
 import com.phicdy.mycuration.articlelist.action.OpenUrlActionCreator
@@ -34,6 +33,7 @@ import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.ShareUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
+import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
 import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
@@ -46,7 +46,6 @@ import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.tracker.TrackerHelper
 import kotlinx.coroutines.CoroutineScope
@@ -65,13 +64,10 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
 
     companion object {
         const val RSS_ID = "RSS_ID"
-        const val CURATION_ID = "CURATION_ID"
-        const val DEFAULT_CURATION_ID = -1
 
-        fun newInstance(rssId: Int, curationId: Int) = ArticlesListFragment().apply {
+        fun newInstance(rssId: Int) = ArticlesListFragment().apply {
             arguments = Bundle().apply {
                 putInt(RSS_ID, rssId)
-                putInt(CURATION_ID, curationId)
             }
         }
     }
@@ -83,16 +79,9 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
     private val rssId: Int  by lazy {
         arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
     }
-    private val curationId: Int by lazy {
-        arguments?.getInt(CURATION_ID, DEFAULT_CURATION_ID) ?: DEFAULT_CURATION_ID
-    }
 
     private val fetchArticleListOfRssActionCreator by currentScope.inject<FetchArticleListOfRssActionCreator> {
         parametersOf(rssId)
-    }
-
-    private val fetchArticleListOfCurationActionCreator by currentScope.inject<FetchArticleListOfCurationActionCreator> {
-        parametersOf(curationId)
     }
 
     private val fetchAllArticleListArticleListActionCreator by currentScope.inject<FetchAllArticleListActionCreator> {
@@ -103,6 +92,8 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
         parametersOf(query)
     }
+
+    private val updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator by currentScope.inject()
 
     private val articleListStore: ArticleListStore by currentScope.inject()
     private val searchResultStore: SearchResultStore by currentScope.inject()
@@ -155,8 +146,8 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         finishStateStore.state.observe(this, Observer<Boolean> {
             if (it) listener.finish()
         })
-        openInternalWebBrowserStateStore.state.observe(this, Observer<Article> {
-            openInternalWebView(it.url)
+        openInternalWebBrowserStateStore.state.observe(this, Observer<String> { url ->
+            openInternalWebView(url)
         })
         openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
             openExternalWebView(it)
@@ -210,13 +201,12 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        articlesListAdapter = ArticleListAdapter(this, this, adProvider)
+        articlesListAdapter = ArticleListAdapter(this, this, adProvider, updateFavoriteStatusActionCreator)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
         launch {
             when {
                 activity?.intent?.action == Intent.ACTION_SEARCH -> searchArticleListActionCreator.run()
-                curationId != -1 -> fetchArticleListOfCurationActionCreator.run()
                 rssId == Feed.ALL_FEED_ID -> fetchAllArticleListArticleListActionCreator.run()
                 else -> fetchArticleListOfRssActionCreator.run()
             }
@@ -361,21 +351,19 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         val openUrlActionCreator = OpenUrlActionCreator(
                 dispatcher = get(),
                 preferenceHelper = get(),
-                feedId = rssId,
-                item = articles[position],
-                rssRepository = get()
+                item = articles[position]
         )
         launch {
             openUrlActionCreator.run()
         }
     }
 
-    override fun onItemLongClicked(position: Int, items: List<ArticleItem>) {
+    override fun onItemLongClicked(position: Int, articles: List<ArticleItem>) {
         launch {
             ShareUrlActionCreator(
                     dispatcher = get(),
                     position = position,
-                    items = items
+                    items = articles
             ).run()
         }
     }

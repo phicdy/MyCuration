@@ -29,7 +29,6 @@ class RssListPresenter(private val view: RssListView,
         if (rssRepository.getNumOfRss() == 0) {
             updateViewForEmpty()
         } else {
-            view.showAllUnreadView()
             view.showRecyclerView()
             view.hideEmptyView()
             fetchAllRss()
@@ -56,7 +55,6 @@ class RssListPresenter(private val view: RssListView,
         } else {
             view.init(allFeeds.toRssListItem())
         }
-        view.setTotalUnreadCount(allFeeds.sumBy { it.unreadAriticlesCount })
     }
 
     fun pause() {}
@@ -100,7 +98,6 @@ class RssListPresenter(private val view: RssListView,
     }
 
     private fun updateViewForEmpty() {
-        view.hideAllUnreadView()
         view.hideRecyclerView()
         view.showEmptyView()
     }
@@ -152,6 +149,8 @@ class RssListPresenter(private val view: RssListView,
     }
 
     private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
+        add(RssListItem.All(this@toRssListItem.sumBy { it.unreadAriticlesCount }))
+        add(RssListItem.Favroite)
         this@toRssListItem.map {
             this.add(RssListItem.Content(
                     rssId = it.id,

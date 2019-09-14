@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.advertisement.AdViewHolder
+import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +26,8 @@ import java.util.Locale
 class ArticleListAdapter(
         private val coroutineScope: CoroutineScope,
         private val listener: Listener,
-        private val adProvider: AdProvider
+        private val adProvider: AdProvider,
+        private val updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator
 ) : ListAdapter<ArticleItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -106,6 +109,24 @@ class ArticleListAdapter(
                 holder.articlePostedTime.setTextColor(color)
                 holder.articlePoint.setTextColor(color)
                 holder.feedTitleView.setTextColor(color)
+
+                holder.favoriteOnIcon.visibility = if (article.isFavorite) View.VISIBLE else View.GONE
+                holder.favoriteOnIcon.setOnClickListener {
+                    holder.favoriteOffIcon.visibility = View.VISIBLE
+                    holder.favoriteOnIcon.visibility = View.GONE
+                    coroutineScope.launch {
+                        updateFavoriteStatusActionCreator.run(position, currentList)
+                    }
+                }
+
+                holder.favoriteOffIcon.visibility = if (article.isFavorite) View.GONE else View.VISIBLE
+                holder.favoriteOffIcon.setOnClickListener {
+                    holder.favoriteOffIcon.visibility = View.GONE
+                    holder.favoriteOnIcon.visibility = View.VISIBLE
+                    coroutineScope.launch {
+                        updateFavoriteStatusActionCreator.run(position, currentList)
+                    }
+                }
             }
 
             is AdViewHolder -> holder.bind()
@@ -128,6 +149,8 @@ class ArticleListAdapter(
         val articleUrl: TextView = mView.findViewById(R.id.tv_articleUrl) as TextView
         val feedTitleView: TextView = mView.findViewById(R.id.feedTitle) as TextView
         val feedIconView: ImageView = mView.findViewById(R.id.iv_feed_icon) as ImageView
+        val favoriteOnIcon: ImageView = mView.findViewById(R.id.favoriteOn)
+        val favoriteOffIcon: ImageView = mView.findViewById(R.id.favoriteOff)
     }
 
     interface Listener {
@@ -181,6 +204,6 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ArticleItem>() {
 }
 
 sealed class ArticleItem {
-    data class Content(val value: Article) : ArticleItem()
+    data class Content(val value: FavoritableArticle) : ArticleItem()
     object Advertisement : ArticleItem()
 }

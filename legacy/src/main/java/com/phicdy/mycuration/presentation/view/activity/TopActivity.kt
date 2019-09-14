@@ -25,6 +25,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
 import com.phicdy.mycuration.articlelist.ArticlesListActivity
+import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
+import com.phicdy.mycuration.curatedarticlelist.CuratedArticlesListActivity
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.feature.util.changeTheme
@@ -395,7 +397,7 @@ class TopActivity :
     }
 
     override fun onListClicked(feedId: Int) {
-        startActivity(ArticlesListActivity.createRssIntent(this, feedId))
+        startActivity(ArticlesListActivity.createIntent(this, feedId))
     }
 
     override fun onEditRssClicked(rssId: Int, feedTitle: String) {
@@ -445,8 +447,12 @@ class TopActivity :
         startActivity(intent)
     }
 
+    override fun onFavoriteClicked() {
+        startActivity(FavoriteArticlesListActivity.createIntent(this))
+    }
+
     override fun onCurationListClicked(curationId: Int) {
-        startActivity(ArticlesListActivity.createCurationIntent(this, curationId))
+        startActivity(CuratedArticlesListActivity.createIntent(this, curationId))
     }
 
     override fun startEditCurationActivity(editCurationId: Int) {

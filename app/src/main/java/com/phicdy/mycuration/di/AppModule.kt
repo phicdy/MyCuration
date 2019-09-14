@@ -6,10 +6,12 @@ import com.phicdy.mycuration.R
 import com.phicdy.mycuration.admob.AdmobProvider
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
+import com.phicdy.mycuration.articlelist.FavoriteArticlesListFragment
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
-import com.phicdy.mycuration.articlelist.action.FetchArticleListOfCurationActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
+import com.phicdy.mycuration.articlelist.action.FetchFavoriteArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
+import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
 import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
@@ -21,12 +23,24 @@ import com.phicdy.mycuration.articlelist.store.SearchResultStore
 import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.core.Dispatcher
+import com.phicdy.mycuration.curatedarticlelist.CuratedArticlesListFragment
+import com.phicdy.mycuration.curatedarticlelist.action.FetchCuratedArticleListActionCreator
+import com.phicdy.mycuration.curatedarticlelist.store.CuratedArticleListStore
+import com.phicdy.mycuration.curatedarticlelist.store.FinishCuratedArticleStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.OpenCuratedArticleWithExternalWebBrowserStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.OpenCuratedArticleWithInternalWebBrowserStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.ReadAllCuratedArticlesStateStore
+import com.phicdy.mycuration.curatedarticlelist.store.ReadCuratedArticlePositionStore
+import com.phicdy.mycuration.curatedarticlelist.store.ScrollCuratedArticlePositionStore
+import com.phicdy.mycuration.curatedarticlelist.store.ShareCuratedArticleUrlStore
+import com.phicdy.mycuration.curatedarticlelist.store.SwipeCuratedArticlePositionStore
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.data.repository.AdditionalSettingRepository
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
+import com.phicdy.mycuration.data.repository.FavoriteRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
@@ -76,6 +90,7 @@ val appModule = module {
     single { ArticleRepository(get()) }
     single { CurationRepository(get()) }
     single { FilterRepository(get()) }
+    single { FavoriteRepository(get()) }
     single { PreferenceHelper }
     single { NetworkTaskManager(get(), get(), get(), get()) }
     single<AdditionalSettingApi> { AdditionalSettingRepository(get(), get()) }
@@ -117,14 +132,6 @@ val appModule = module {
                     rssId = rssId
             )
         }
-        scoped { (curationId: Int) ->
-            FetchArticleListOfCurationActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    preferenceHelper = get(),
-                    curationId = curationId
-            )
-        }
         scoped {
             FetchAllArticleListActionCreator(
                     dispatcher = get(),
@@ -140,6 +147,12 @@ val appModule = module {
                     query = query
             )
         }
+        scoped {
+            UpdateFavoriteStatusActionCreator(
+                    dispatcher = get(),
+                    favoriteRepository = get()
+            )
+        }
         viewModel { ArticleListStore(get()) }
         viewModel { SearchResultStore(get()) }
         viewModel { FinishStateStore(get()) }
@@ -150,6 +163,51 @@ val appModule = module {
         viewModel { SwipePositionStore(get()) }
         viewModel { ReadAllArticlesStateStore(get()) }
         viewModel { ShareUrlStore(get()) }
+    }
+
+    scope(named<FavoriteArticlesListFragment>()) {
+        scoped {
+            FetchFavoriteArticleListActionCreator(
+                    dispatcher = get(),
+                    favoriteRepository = get(),
+                    preferenceHelper = get()
+            )
+        }
+        scoped {
+            UpdateFavoriteStatusActionCreator(
+                    dispatcher = get(),
+                    favoriteRepository = get()
+            )
+        }
+        viewModel { ArticleListStore(get()) }
+        viewModel { FinishStateStore(get()) }
+        viewModel { ReadArticlePositionStore(get()) }
+        viewModel { OpenInternalWebBrowserStateStore(get()) }
+        viewModel { OpenExternalWebBrowserStateStore(get()) }
+        viewModel { ScrollPositionStore(get()) }
+        viewModel { SwipePositionStore(get()) }
+        viewModel { ReadAllArticlesStateStore(get()) }
+        viewModel { ShareUrlStore(get()) }
+    }
+
+    scope(named<CuratedArticlesListFragment>()) {
+        scoped { (curationId: Int) ->
+            FetchCuratedArticleListActionCreator(
+                    dispatcher = get(),
+                    articleRepository = get(),
+                    preferenceHelper = get(),
+                    curationId = curationId
+            )
+        }
+        viewModel { CuratedArticleListStore(get()) }
+        viewModel { FinishCuratedArticleStateStore(get()) }
+        viewModel { ReadCuratedArticlePositionStore(get()) }
+        viewModel { OpenCuratedArticleWithInternalWebBrowserStateStore(get()) }
+        viewModel { OpenCuratedArticleWithExternalWebBrowserStateStore(get()) }
+        viewModel { ScrollCuratedArticlePositionStore(get()) }
+        viewModel { SwipeCuratedArticlePositionStore(get()) }
+        viewModel { ReadAllCuratedArticlesStateStore(get()) }
+        viewModel { ShareCuratedArticleUrlStore(get()) }
     }
 
     scope(named<CurationListFragment>()) {

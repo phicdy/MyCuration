@@ -6,7 +6,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.core.Dispatcher
-import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.FavoritableArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -26,7 +26,7 @@ class ShareUrlActionCreatorTest {
             val dispatcher = Dispatcher()
             val store = ShareUrlStore(dispatcher, Dispatchers.Unconfined)
             dispatcher.register(store)
-            val article = mock<Article> {
+            val article = mock<FavoritableArticle> {
                 on { url } doReturn "aaa"
             }
             ShareUrlActionCreator(
@@ -44,7 +44,7 @@ class ShareUrlActionCreatorTest {
             val dispatcher = Dispatcher()
             val store = ShareUrlStore(dispatcher, Dispatchers.Unconfined)
             dispatcher.register(store)
-            val article = mock<Article> {
+            val article = mock<FavoritableArticle> {
                 on { url } doReturn "aaa"
             }
             ShareUrlActionCreator(
@@ -62,7 +62,7 @@ class ShareUrlActionCreatorTest {
             val dispatcher = Dispatcher()
             val store = ShareUrlStore(dispatcher, Dispatchers.Unconfined)
             dispatcher.register(store)
-            val article = mock<Article> {
+            val article = mock<FavoritableArticle> {
                 on { url } doReturn "aaa"
             }
             ShareUrlActionCreator(
