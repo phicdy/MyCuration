@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,9 +25,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         get() = job + Dispatchers.Main
 
     private val presenter: RssListPresenter by currentScope.inject { parametersOf(this) }
-    private lateinit var tvAllUnreadArticleCount: TextView
-    private lateinit var allUnread: ConstraintLayout
-    private lateinit var favorite: ConstraintLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyView: TextView
@@ -59,10 +55,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         rssFeedListAdapter.submitList(items)
     }
 
-    override fun setTotalUnreadCount(count: Int) {
-        tvAllUnreadArticleCount.text = count.toString()
-    }
-
     override fun onRefreshCompleted() {
         swipeRefreshLayout.isRefreshing = false
     }
@@ -81,14 +73,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
 
     override fun notifyDataSetChanged(items: List<RssListItem>) {
         rssFeedListAdapter.submitList(items)
-    }
-
-    override fun showAllUnreadView() {
-        allUnread.visibility = View.VISIBLE
-    }
-
-    override fun hideAllUnreadView() {
-        allUnread.visibility = View.GONE
     }
 
     override fun showRecyclerView() {
@@ -127,12 +111,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
                 presenter.onRefresh()
             }
         }
-        allUnread.setOnClickListener {
-            mListener?.onAllUnreadClicked()
-        }
-        favorite.setOnClickListener {
-            mListener?.onFavoriteClicked()
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -140,9 +118,6 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         recyclerView = view.findViewById(R.id.rv_rss)
         emptyView = view.findViewById(R.id.emptyView) as TextView
         swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
-        tvAllUnreadArticleCount = view.findViewById(R.id.allUnreadCount) as TextView
-        allUnread = view.findViewById(R.id.cl_all_unread) as ConstraintLayout
-        favorite = view.findViewById(R.id.cl_favorite)
         registerForContextMenu(recyclerView)
         setAllListener()
         return view

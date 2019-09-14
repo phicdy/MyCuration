@@ -17,6 +17,16 @@ class RssListAdapter(
 ) : ListAdapter<RssListItem, RecyclerView.ViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
+            VIEW_TYPE_ALL_RSS -> {
+                val view = LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_all_rss, parent, false)
+                AllRssViewHolder(view)
+            }
+            VIEW_TYPE_FAVORITE -> {
+                val view = LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_favorite, parent, false)
+                FavoriteViewHolder(view)
+            }
             VIEW_TYPE_RSS -> {
                 val view = LayoutInflater.from(parent.context)
                         .inflate(R.layout.feeds_list, parent, false)
@@ -32,53 +42,82 @@ class RssListAdapter(
     }
 
     override fun getItemViewType(position: Int) = when (getItem(position)) {
+        is RssListItem.All -> VIEW_TYPE_ALL_RSS
+        is RssListItem.Favroite -> VIEW_TYPE_FAVORITE
         is RssListItem.Content -> VIEW_TYPE_RSS
         is RssListItem.Footer -> VIEW_TYPE_FOOTER
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is RssViewHolder) {
-            when (val item = getItem(position)) {
-                is RssListItem.Content -> {
-                    holder.itemView.setOnClickListener {
-                        val feedId = item.rssId
-                        if (feedId != -1) mListener?.onListClicked(feedId)
-                    }
-                    holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
-                        menu.add(0, EDIT_FEED_TITLE_MENU_ID, 0, R.string.edit_rss_title).setOnMenuItemClickListener {
-                            mListener?.onEditRssClicked(item.rssId, item.rssTitle)
-                            true
-                        }
-                        menu.add(0, DELETE_FEED_MENU_ID, 1, R.string.delete_rss).setOnMenuItemClickListener {
-                            mListener?.onDeleteRssClicked(item.rssId, position)
-                            true
-                        }
-                    }
-                    if (item.isDefaultIcon) {
-                        holder.showDefaultIcon()
-                    } else {
-                        holder.showIcon(item.rssIconPath)
-                    }
-                    holder.updateTitle(item.rssTitle)
-                    holder.updateUnreadCount(item.unreadCount.toString())
+        when (holder) {
+            is AllRssViewHolder -> {
+                val item = getItem(position) as RssListItem.All
+                holder.setUnreadCount(item.unreadCount.toString())
+                holder.itemView.setOnClickListener {
+                    mListener?.onAllUnreadClicked()
                 }
-                is RssListItem.Footer -> throw IllegalStateException()
             }
-        } else if (holder is RssFooterView) {
-            holder.itemView.setOnClickListener {
-                presenter.onRssFooterClicked()
+            is FavoriteViewHolder -> {
+                holder.itemView.setOnClickListener {
+                    mListener?.onFavoriteClicked()
+                }
             }
-            when (val item = getItem(position)) {
-                is RssListItem.Content -> throw IllegalStateException()
-                is RssListItem.Footer -> {
-                    when (item.state) {
-                        RssListFooterState.UNREAD_ONLY -> holder.showAllView()
-                        RssListFooterState.ALL -> holder.showHideView()
+            is RssViewHolder -> {
+                when (val item = getItem(position)) {
+                    is RssListItem.Content -> {
+                        holder.itemView.setOnClickListener {
+                            val feedId = item.rssId
+                            if (feedId != -1) mListener?.onListClicked(feedId)
+                        }
+                        holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
+                            menu.add(0, EDIT_FEED_TITLE_MENU_ID, 0, R.string.edit_rss_title).setOnMenuItemClickListener {
+                                mListener?.onEditRssClicked(item.rssId, item.rssTitle)
+                                true
+                            }
+                            menu.add(0, DELETE_FEED_MENU_ID, 1, R.string.delete_rss).setOnMenuItemClickListener {
+                                mListener?.onDeleteRssClicked(item.rssId, position)
+                                true
+                            }
+                        }
+                        if (item.isDefaultIcon) {
+                            holder.showDefaultIcon()
+                        } else {
+                            holder.showIcon(item.rssIconPath)
+                        }
+                        holder.updateTitle(item.rssTitle)
+                        holder.updateUnreadCount(item.unreadCount.toString())
+                    }
+                    is RssListItem.Footer -> throw IllegalStateException()
+                }
+            }
+            is RssFooterView -> {
+                holder.itemView.setOnClickListener {
+                    presenter.onRssFooterClicked()
+                }
+                when (val item = getItem(position)) {
+                    is RssListItem.Content -> throw IllegalStateException()
+                    is RssListItem.Footer -> {
+                        when (item.state) {
+                            RssListFooterState.UNREAD_ONLY -> holder.showAllView()
+                            RssListFooterState.ALL -> holder.showHideView()
+                        }
                     }
                 }
             }
         }
     }
+
+    private class AllRssViewHolder(
+            itemView: View
+    ) : RecyclerView.ViewHolder(itemView) {
+        fun setUnreadCount(count: String) {
+            itemView.findViewById<TextView>(R.id.allUnreadCount).text = count
+        }
+    }
+
+    private class FavoriteViewHolder(
+            itemView: View
+    ) : RecyclerView.ViewHolder(itemView)
 
     private inner class RssViewHolder(
             itemView: View
@@ -126,8 +165,10 @@ class RssListAdapter(
         private const val DELETE_FEED_MENU_ID = 1000
         private const val EDIT_FEED_TITLE_MENU_ID = 1001
 
-        private const val VIEW_TYPE_RSS = 0
-        private const val VIEW_TYPE_FOOTER = 1
+        private const val VIEW_TYPE_ALL_RSS = 0
+        private const val VIEW_TYPE_FAVORITE = 1
+        private const val VIEW_TYPE_RSS = 2
+        private const val VIEW_TYPE_FOOTER = 3
     }
 }
 
@@ -137,13 +178,25 @@ private val diffCallback = object : DiffUtil.ItemCallback<RssListItem>() {
             is RssListItem.Content -> {
                 when (newItem) {
                     is RssListItem.Content -> oldItem.rssId == newItem.rssId
-                    is RssListItem.Footer -> false
+                    else -> false
                 }
             }
             is RssListItem.Footer -> {
                 when (newItem) {
-                    is RssListItem.Content -> false
                     is RssListItem.Footer -> oldItem.state == newItem.state
+                    else -> false
+                }
+            }
+            is RssListItem.All -> {
+                when (newItem) {
+                    is RssListItem.All -> true
+                    else -> false
+                }
+            }
+            is RssListItem.Favroite -> {
+                when (newItem) {
+                    is RssListItem.Favroite -> true
+                    else -> false
                 }
             }
         }
@@ -154,13 +207,25 @@ private val diffCallback = object : DiffUtil.ItemCallback<RssListItem>() {
             is RssListItem.Content -> {
                 when (newItem) {
                     is RssListItem.Content -> oldItem == newItem
-                    is RssListItem.Footer -> false
+                    else -> false
                 }
             }
             is RssListItem.Footer -> {
                 when (newItem) {
-                    is RssListItem.Content -> false
                     is RssListItem.Footer -> oldItem == newItem
+                    else -> false
+                }
+            }
+            is RssListItem.All -> {
+                when (newItem) {
+                    is RssListItem.All -> true
+                    else -> false
+                }
+            }
+            is RssListItem.Favroite -> {
+                when (newItem) {
+                    is RssListItem.Favroite -> true
+                    else -> false
                 }
             }
         }

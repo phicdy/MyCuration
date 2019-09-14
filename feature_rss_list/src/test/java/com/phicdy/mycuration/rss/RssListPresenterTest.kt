@@ -60,13 +60,6 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when onResume and RSS doesn't exist then hide all unread view`() = runBlocking {
-        whenever(mockRssRepository.getNumOfRss()).thenReturn(0)
-        presenter.resume()
-        verify(view, times(1)).hideAllUnreadView()
-    }
-
-    @Test
     fun `when onResume and RSS doesn't exist then hide recyclerview`() = runBlocking {
         whenever(mockRssRepository.getNumOfRss()).thenReturn(0)
         presenter.resume()
@@ -81,12 +74,6 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when onResume and RSS exist then show all unread view`() = runBlocking {
-        presenter.resume()
-        verify(view, times(1)).showAllUnreadView()
-    }
-
-    @Test
     fun `when onResume and RSS exist then show recyclerview`() = runBlocking {
         presenter.resume()
         verify(view, times(1)).showRecyclerView()
@@ -96,12 +83,6 @@ class RssListPresenterTest {
     fun `when onResume and RSS exist then hide empty view`() = runBlocking {
         presenter.resume()
         verify(view, times(1)).hideEmptyView()
-    }
-
-    @Test
-    fun `when onResume and RSS exist then set num of unread count`() = runBlocking {
-        presenter.resume()
-        verify(view, times(1)).setTotalUnreadCount(1)
     }
 
     @Test
@@ -269,6 +250,8 @@ class RssListPresenterTest {
     }
 
     private fun ArrayList<Feed>.toRssListItem(state: RssListFooterState): List<RssListItem> = mutableListOf<RssListItem>().apply {
+        add(RssListItem.All(this@toRssListItem.sumBy { it.unreadAriticlesCount }))
+        add(RssListItem.Favroite)
         this@toRssListItem.map {
             this.add(RssListItem.Content(
                     rssId = it.id,

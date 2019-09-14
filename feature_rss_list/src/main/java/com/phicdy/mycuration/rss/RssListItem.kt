@@ -1,6 +1,13 @@
 package com.phicdy.mycuration.rss
 
 sealed class RssListItem : Equatable {
+
+    data class All(val unreadCount: Int) : RssListItem()
+
+    object Favroite : RssListItem() {
+        override fun equals(other: Any?): Boolean = other is Favroite
+    }
+
     data class Content(
             val rssId: Int,
             val rssTitle: String,
