@@ -44,7 +44,6 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
@@ -421,16 +420,16 @@ class TopActivity :
                 .setTitle(R.string.delete_rss_alert)
                 .setPositiveButton(R.string.delete) { _, _ ->
                     launch {
-                        presenter.onDeleteOkButtonClicked(rssId, position)
+                        presenter.onDeleteOkButtonClicked(rssId)
                     }
                 }
                 .setNegativeButton(R.string.cancel, null).show()
     }
 
-    override suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
+    override suspend fun removeRss(rssId: Int) {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
         if (fragment is RssListFragment) {
-            fragment.deleteFeedAtPosition(position)
+            fragment.removeRss(rssId)
         }
     }
 

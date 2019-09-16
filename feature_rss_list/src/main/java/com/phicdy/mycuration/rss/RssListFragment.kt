@@ -142,8 +142,8 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         presenter.updateFeedTitle(rssId, newTitle)
     }
 
-    suspend fun deleteFeedAtPosition(position: Int) {
-        presenter.deleteFeedAtPosition(position)
+    suspend fun removeRss(rssId: Int) {
+        presenter.removeRss(rssId)
     }
 
     interface OnFeedListFragmentListener {

@@ -20,7 +20,7 @@ interface TopActivityView {
     fun showEditFeedFailToast()
     fun showEditFeedSuccessToast()
     fun updateFeedTitle(rssId: Int, newTitle: String)
-    suspend fun deleteFeedAtPosition(position: Int)
+    suspend fun removeRss(rssId: Int)
     fun showDeleteSuccessToast()
     fun showDeleteFailToast()
 }
