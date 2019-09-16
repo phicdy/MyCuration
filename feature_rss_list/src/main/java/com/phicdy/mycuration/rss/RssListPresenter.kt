@@ -75,23 +75,12 @@ class RssListPresenter(private val view: RssListView,
         view.notifyDataSetChanged(if (isHided) unreadOnlyFeeds.toRssListItem() else allFeeds.toRssListItem())
     }
 
-    suspend fun deleteFeedAtPosition(position: Int) = coroutineScope {
-        fun deleteAtPosition(currentList: ArrayList<Feed>, oppositeList: ArrayList<Feed>) {
-            if (currentList.size <= position) return
-            val (id) = currentList[position]
-            currentList.removeAt(position)
-            for (i in oppositeList.indices) {
-                if (oppositeList[i].id == id) {
-                    oppositeList.removeAt(i)
-                    break
-                }
+    fun removeRss(rssId: Int) {
+        for (i in allFeeds.indices) {
+            if (allFeeds[i].id == rssId) {
+                allFeeds.removeAt(i)
+                break
             }
-        }
-
-        if (isHided) {
-            deleteAtPosition(unreadOnlyFeeds, allFeeds)
-        } else {
-            deleteAtPosition(allFeeds, unreadOnlyFeeds)
         }
         refreshList()
         if (allFeeds.isEmpty()) updateViewForEmpty()

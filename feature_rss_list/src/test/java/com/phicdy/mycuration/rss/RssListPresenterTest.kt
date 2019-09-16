@@ -159,16 +159,16 @@ class RssListPresenterTest {
     fun `when delete ok button is clicked in hidden status and succeeds then delete the RSS`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
-        presenter.deleteFeedAtPosition(0)
+        presenter.removeRss(FIRST_RSS_ID)
         // Current status is hidden and size is 1, so hidden list becomes all RSS list after refresh
         assertThat(presenter.unreadOnlyFeeds)
                 .hasSize(1)
                 .extracting("id")
-                .contains(FIRST_RSS_ID)
+                .contains(SECOND_RSS_ID)
         assertThat(presenter.allFeeds)
                 .hasSize(1)
                 .extracting("id")
-                .contains(FIRST_RSS_ID)
+                .contains(SECOND_RSS_ID)
         return@runBlocking
     }
 
@@ -177,7 +177,7 @@ class RssListPresenterTest {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onRssFooterClicked() // Change to all RSS
-        presenter.deleteFeedAtPosition(0)
+        presenter.removeRss(FIRST_RSS_ID)
         // Current status is all and first RSS status is read, so hidden list has no update
         assertThat(presenter.unreadOnlyFeeds)
                 .hasSize(1)
@@ -195,9 +195,9 @@ class RssListPresenterTest {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
         presenter.onRssFooterClicked() // Change to all RSS
-        presenter.deleteFeedAtPosition(0)
-        presenter.deleteFeedAtPosition(0)
-        verify(view, times(1)).showEmptyView()
+        presenter.removeRss(FIRST_RSS_ID)
+        presenter.removeRss(SECOND_RSS_ID)
+        verify(view).showEmptyView()
     }
 
     @Test
