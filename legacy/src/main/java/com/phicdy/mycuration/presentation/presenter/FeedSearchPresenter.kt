@@ -6,13 +6,15 @@ import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.util.UrlUtil
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 
 class FeedSearchPresenter(private val view: FeedSearchView,
                           private val networkTaskManager: NetworkTaskManager,
                           private val rssRepository: RssRepository,
+                          private val coroutineScope: CoroutineScope,
                           private val executor: RssParseExecutor) : Presenter {
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {
@@ -51,7 +53,7 @@ class FeedSearchPresenter(private val view: FeedSearchView,
         }
     }
 
-    fun onFinishAddFeed(url: String, reason: RssParseResult.FailedReason) = runBlocking {
+    fun onFinishAddFeed(url: String, reason: RssParseResult.FailedReason) = coroutineScope.launch {
         val newFeed = rssRepository.getFeedByUrl(url)
         if (reason === RssParseResult.FailedReason.NOT_FAILED && newFeed != null) {
             networkTaskManager.updateFeed(newFeed)

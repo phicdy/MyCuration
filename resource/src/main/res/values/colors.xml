@@ -21,4 +21,7 @@
 
     <color name="solid_text_input_edit_text">#ffffff</color>
     <color name="stroke_text_input_edit_text">#9e9e9e</color>
+
+    <color name="fill_favorite">#ffd600</color>
+    <color name="stroke_non_favorite">#6c6c6c</color>
 </resources>

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.annotation.VisibleForTesting
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.CurationSelection
+import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
@@ -81,6 +82,7 @@ class RssRepository(private val db: SQLiteDatabase,
                 val allArticlesInRss = articleRepository.getAllArticlesInRss(rssId, true)
                 for (article in allArticlesInRss) {
                     db.delete(CurationSelection.TABLE_NAME, CurationSelection.ARTICLE_ID + " = " + article.id, null)
+                    db.delete(FavoriteArticle.TABLE_NAME, FavoriteArticle.ARTICLE_ID + " = " + article.id, null)
                 }
                 db.delete(Article.TABLE_NAME, Article.FEEDID + " = " + rssId, null)
 

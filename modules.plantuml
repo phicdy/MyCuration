@@ -1,11 +1,16 @@
 @startuml
 
 package app
+package advertisement
+package admob
+package core
 package repository
 package entity
 package domain
 package legacy
 package feature_article_list
+package feature_curated_article_list
+package feature_rss_list
 package feature_util
 package glide
 package resource
@@ -17,9 +22,16 @@ app -down-> entity
 app -down-> domain
 app -down-> legacy
 app -down-> feature_article_list
+app -down-> feature_curated_article_list
+app -down-> feature_rss_list
 app -down-> resource
 app -down-> util
 app -down-> tracker
+app -down-> core
+app -down-> advertisement
+app -down-> admob
+
+admob -down-> advertisement
 
 domain -down-> entity
 domain -down-> repository
@@ -31,12 +43,32 @@ feature_article_list -down-> glide
 feature_article_list -down-> feature_util
 feature_article_list -down-> resource
 feature_article_list -down-> tracker
+feature_article_list -down-> core
+feature_article_list -down-> advertisement
+
+feature_curated_article_list -down-> core
+feature_curated_article_list -down-> entity
+feature_curated_article_list -down-> feature_article_list
+feature_curated_article_list -down-> repository
+feature_curated_article_list -down-> glide
+feature_curated_article_list -down-> feature_util
+feature_curated_article_list -down-> resource
+feature_curated_article_list -down-> tracker
+feature_curated_article_list -down-> advertisement
+
+feature_rss_list -down-> repository
+feature_rss_list -down-> domain
+feature_rss_list -down-> entity
+feature_rss_list -down-> glide
+feature_rss_list -down-> resource
 
 legacy -down-> repository
 legacy -down-> entity
 legacy -down-> domain
 legacy -down-> feature_util
 legacy -down-> feature_article_list
+legacy -down-> feature_curated_article_list
+legacy -down-> feature_rss_list
 legacy -down-> resource
 legacy -down-> util
 legacy -down-> tracker

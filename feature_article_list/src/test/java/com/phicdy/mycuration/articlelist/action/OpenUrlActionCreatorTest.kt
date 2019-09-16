@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.articlelist.action
 
-import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -9,7 +9,7 @@ import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.FavoritableArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -20,6 +20,7 @@ class OpenUrlActionCreatorTest {
 
     @Test
     fun `when internal option is enabled then open internal browser`() {
+        val dispatcher = mock<Dispatcher>()
         runBlocking {
             val preferenceHelper = mock<PreferenceHelper> {
                 on { isOpenInternal } doReturn true
@@ -27,22 +28,27 @@ class OpenUrlActionCreatorTest {
             val store = mock<OpenInternalWebBrowserStateStore> {
                 on { coroutineContext } doReturn Dispatchers.Unconfined
             }
-            val dispatcher = Dispatcher()
             dispatcher.register(store)
-            val article = mock<Article> { on { copy(feedTitle = "") } doReturn mock() }
+            val article = mock<FavoritableArticle> {
+                on { copy(feedTitle = "") } doReturn mock()
+                on { url } doReturn "aaa"
+            }
             OpenUrlActionCreator(
                     dispatcher = dispatcher,
                     preferenceHelper = preferenceHelper,
-                    feedId = 0,
-                    item = ArticleItem.Content(article),
-                    rssRepository = mock()
+                    item = ArticleItem.Content(article)
             ).run()
-            verify(store).notify(any())
+        }
+        runBlocking {
+            argumentCaptor<OpenInternalBrowserAction> {
+                verify(dispatcher).dispatch(capture())
+            }
         }
     }
 
     @Test
     fun `when external option is enabled then open external browser`() {
+        val dispatcher = mock<Dispatcher>()
         runBlocking {
             val preferenceHelper = mock<PreferenceHelper> {
                 on { isOpenInternal } doReturn false
@@ -50,20 +56,21 @@ class OpenUrlActionCreatorTest {
             val store = mock<OpenExternalWebBrowserStateStore> {
                 on { coroutineContext } doReturn Dispatchers.Unconfined
             }
-            val dispatcher = Dispatcher()
             dispatcher.register(store)
-            val article = mock<Article> {
+            val article = mock<FavoritableArticle> {
                 on { copy(feedTitle = "") } doReturn mock()
                 on { url } doReturn "aaa"
             }
             OpenUrlActionCreator(
                     dispatcher = dispatcher,
                     preferenceHelper = preferenceHelper,
-                    feedId = 0,
-                    item = ArticleItem.Content(article),
-                    rssRepository = mock()
+                    item = ArticleItem.Content(article)
             ).run()
-            verify(store).notify(any())
+        }
+        runBlocking {
+            argumentCaptor<OpenExternalBrowserAction> {
+                verify(dispatcher).dispatch(capture())
+            }
         }
     }
 }

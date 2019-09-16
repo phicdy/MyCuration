@@ -8,7 +8,8 @@ import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.util.UrlUtil
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class FeedUrlHookPresenter(private val view: FeedUrlHookView,
                            private val action: String,
@@ -16,16 +17,19 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
                            private val extrasText: CharSequence,
                            private val rssRepository: RssRepository,
                            private val networkTaskManager: NetworkTaskManager,
+                           private val coroutineScope: CoroutineScope,
                            private val parser: RssParser) {
 
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
-        override fun succeeded(rssUrl: String) = runBlocking {
-            val newFeed = rssRepository.getFeedByUrl(rssUrl)
-            newFeed?.let {
-                networkTaskManager.updateFeed(newFeed)
+        override fun succeeded(rssUrl: String) {
+            coroutineScope.launch {
+                val newFeed = rssRepository.getFeedByUrl(rssUrl)
+                newFeed?.let {
+                    networkTaskManager.updateFeed(newFeed)
+                }
+                view.showSuccessToast()
+                view.finishView()
             }
-            view.showSuccessToast()
-            view.finishView()
         }
 
         override fun failed(reason: RssParseResult.FailedReason, url: String) {

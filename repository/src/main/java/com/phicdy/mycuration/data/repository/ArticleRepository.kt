@@ -6,6 +6,8 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.CurationSelection
+import com.phicdy.mycuration.entity.FavoritableArticle
+import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import kotlinx.coroutines.Dispatchers
@@ -296,20 +298,34 @@ class ArticleRepository(val db: SQLiteDatabase) {
         }
     }
 
-    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
-        val articles = arrayListOf<Article>()
+    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
+        val articles = mutableListOf<FavoritableArticle>()
         var cursor: Cursor? = null
         try {
             // Get unread articles
-            var sql = "select articles._id,articles.title,articles.url,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
-                    "from articles inner join feeds " +
-                    "where articles.status = \"unread\" and articles.feedId = feeds._id " +
-                    "order by date "
-            sql += if (isNewestArticleTop) {
-                "desc"
-            } else {
-                "asc"
-            }
+            val sql = StringBuilder().apply {
+                append("select ")
+                append("${Article.TABLE_NAME}.${Article.ID},")
+                append("${Article.TABLE_NAME}.${Article.TITLE},")
+                append("${Article.TABLE_NAME}.${Article.URL},")
+                append("${Article.TABLE_NAME}.${Article.POINT},")
+                append("${Article.TABLE_NAME}.${Article.DATE},")
+                append("${Article.TABLE_NAME}.${Article.FEEDID},")
+                append("${Feed.TABLE_NAME}.${Feed.TITLE},")
+                append("${Feed.TABLE_NAME}.${Feed.ICON_PATH},")
+                append("${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID} ")
+                append("from ")
+                append("${Article.TABLE_NAME} ")
+                append("inner join ${Feed.TABLE_NAME} ")
+                append("left outer join ${FavoriteArticle.TABLE_NAME} ")
+                append("on ")
+                append("(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
+                append("where ")
+                append("${Article.TABLE_NAME}.${Article.STATUS} = \"${Article.UNREAD}\" and ")
+                append("${Article.TABLE_NAME}.${Article.FEEDID} = ${Feed.TABLE_NAME}.${Feed.ID} ")
+                append("order by ${Article.DATE} ")
+                append(if (isNewestArticleTop) "desc" else "asc")
+            }.toString()
             db.beginTransaction()
             cursor = db.rawQuery(sql, null)
             while (cursor.moveToNext()) {
@@ -322,8 +338,9 @@ class ArticleRepository(val db: SQLiteDatabase) {
                 val feedId = cursor.getInt(5)
                 val feedTitle = cursor.getString(6)
                 val feedIconPath = cursor.getString(7)
-                val article = Article(id, title, url, status, point,
-                        dateLong, feedId, feedTitle, feedIconPath)
+                val favoriteId = cursor.getInt(8)
+                val article = FavoritableArticle(id, title, url, status, point,
+                        dateLong, feedId, feedTitle, feedIconPath, favoriteId > 0)
                 articles.add(article)
             }
             db.setTransactionSuccessful()
@@ -337,21 +354,35 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun getTop300Articles(isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
-        val articles = arrayListOf<Article>()
+    suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
+        val articles = mutableListOf<FavoritableArticle>()
         var cursor: Cursor? = null
         try {
             // Get unread articles
-            var sql = "select articles._id,articles.title,articles.url,articles.status,articles.point,articles.date,articles.feedId,feeds.title,feeds.iconPath " +
-                    "from articles inner join feeds " +
-                    "where articles.feedId = feeds._id " +
-                    "order by articles._id "
-            sql += if (isNewestArticleTop) {
-                "desc"
-            } else {
-                "asc"
-            }
-            sql += " limit 300"
+            val sql = StringBuilder().apply {
+                append("select ")
+                append("${Article.TABLE_NAME}.${Article.ID},")
+                append("${Article.TABLE_NAME}.${Article.TITLE},")
+                append("${Article.TABLE_NAME}.${Article.URL},")
+                append("${Article.TABLE_NAME}.${Article.STATUS},")
+                append("${Article.TABLE_NAME}.${Article.POINT},")
+                append("${Article.TABLE_NAME}.${Article.DATE},")
+                append("${Article.TABLE_NAME}.${Article.FEEDID},")
+                append("${Feed.TABLE_NAME}.${Feed.TITLE},")
+                append("${Feed.TABLE_NAME}.${Feed.ICON_PATH},")
+                append("${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID} ")
+                append("from ")
+                append("${Article.TABLE_NAME} ")
+                append("inner join ${Feed.TABLE_NAME} ")
+                append("left outer join ${FavoriteArticle.TABLE_NAME} ")
+                append("on ")
+                append("(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
+                append("where ")
+                append("${Article.TABLE_NAME}.${Article.FEEDID} = ${Feed.TABLE_NAME}.${Feed.ID} ")
+                append("order by ${Article.DATE} ")
+                append(if (isNewestArticleTop) "desc " else "asc ")
+                append("limit 300")
+            }.toString()
             db.beginTransaction()
             cursor = db.rawQuery(sql, null)
             while (cursor.moveToNext()) {
@@ -364,8 +395,9 @@ class ArticleRepository(val db: SQLiteDatabase) {
                 val feedId = cursor.getInt(6)
                 val feedTitle = cursor.getString(7)
                 val feedIconPath = cursor.getString(8)
-                val article = Article(id, title, url, status, point,
-                        dateLong, feedId, feedTitle, feedIconPath)
+                val favoriteId = cursor.getInt(9)
+                val article = FavoritableArticle(id, title, url, status, point,
+                        dateLong, feedId, feedTitle, feedIconPath, favoriteId > 0)
                 articles.add(article)
             }
             db.setTransactionSuccessful()
@@ -378,9 +410,9 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+    suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
         var searchKeyWord = keyword
-        val articles = arrayListOf<Article>()
+        val articles = mutableListOf<FavoritableArticle>()
         if (searchKeyWord.contains("%")) {
             searchKeyWord = searchKeyWord.replace("%", "$%")
         }
@@ -393,8 +425,11 @@ class ArticleRepository(val db: SQLiteDatabase) {
             Article.TABLE_NAME + "." + it
         }
         columns += arrayOf(Feed.TITLE, Feed.ICON_PATH).joinToString { Feed.TABLE_NAME + "." + it }
-        var sql = "select " + columns +
+        var sql = "select " + columns + ", ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID}" +
                 " from " + Article.TABLE_NAME + " inner join " + Feed.TABLE_NAME +
+                " left outer join ${FavoriteArticle.TABLE_NAME}" +
+                " on " +
+                "(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) " +
                 " where " + Article.TABLE_NAME + "." + Article.TITLE + " like '%" + searchKeyWord + "%' escape '$' and " +
                 Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
                 " order by " + Article.DATE
@@ -417,8 +452,9 @@ class ArticleRepository(val db: SQLiteDatabase) {
                 val dateLong = cursor.getLong(5)
                 val feedTitle = cursor.getString(6)
                 val feedIconPath = cursor.getString(7)
-                val article = Article(id, title, url, status, point,
-                        dateLong, 0, feedTitle, feedIconPath)
+                val favoriteId = cursor.getInt(8)
+                val article = FavoritableArticle(id, title, url, status, point,
+                        dateLong, 0, feedTitle, feedIconPath, favoriteId > 0)
                 articles.add(article)
             }
             db.setTransactionSuccessful()
@@ -432,11 +468,11 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
+    suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> {
         return getArticlesOfRss(rssId, null, isNewestArticleTop)
     }
 
-    suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
+    suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> {
         return getArticlesOfRss(rssId, Article.UNREAD, isNewestArticleTop)
     }
 
@@ -458,23 +494,32 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext count
     }
 
-    private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
-        val articles = arrayListOf<Article>()
+    private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
+        val articles = mutableListOf<FavoritableArticle>()
+        val sql = StringBuilder().apply {
+            append("select ")
+            append("${Article.TABLE_NAME}.${Article.ID},")
+            append("${Article.TABLE_NAME}.${Article.TITLE},")
+            append("${Article.TABLE_NAME}.${Article.URL},")
+            append("${Article.TABLE_NAME}.${Article.STATUS},")
+            append("${Article.TABLE_NAME}.${Article.POINT},")
+            append("${Article.TABLE_NAME}.${Article.DATE},")
+            append("${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID} ")
+            append("from ")
+            append("${Article.TABLE_NAME} ")
+            append("left outer join ${FavoriteArticle.TABLE_NAME} ")
+            append("on ")
+            append("(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
+            append("where ")
+            if (!searchStatus.isNullOrBlank()) append("${Article.TABLE_NAME}.${Article.STATUS} = \"$searchStatus\" and ")
+            append("${Article.TABLE_NAME}.${Article.FEEDID} = $rssId ")
+            append("order by ${Article.DATE} ")
+            append(if (isNewestArticleTop) "desc" else "asc")
+        }.toString()
         var cursor: Cursor? = null
-        val columns = arrayOf(
-                Article.ID,
-                Article.TITLE,
-                Article.URL,
-                Article.STATUS,
-                Article.POINT,
-                Article.DATE
-        )
-        val selection = Article.FEEDID + " = " + rssId +
-                if (searchStatus == null) "" else " and " + Article.STATUS + " = '" + searchStatus + "'"
-        val orderBy = Article.DATE + if (isNewestArticleTop) " desc" else " asc"
         try {
             db.beginTransaction()
-            cursor = db.query(Article.TABLE_NAME, columns, selection, null, null, null, orderBy)
+            cursor = db.rawQuery(sql, null)
             while (cursor.moveToNext()) {
                 val id = cursor.getInt(0)
                 val title = cursor.getString(1)
@@ -482,8 +527,9 @@ class ArticleRepository(val db: SQLiteDatabase) {
                 val status = cursor.getString(3)
                 val point = cursor.getString(4)
                 val dateLong = cursor.getLong(5)
-                val article = Article(id, title, url, status, point,
-                        dateLong, rssId, "", "")
+                val favoriteId = cursor.getInt(6)
+                val article = FavoritableArticle(id, title, url, status, point,
+                        dateLong, rssId, "", "", favoriteId > 0)
                 articles.add(article)
             }
             db.setTransactionSuccessful()

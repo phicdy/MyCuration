@@ -83,6 +83,9 @@ class EditFeedTitleTest : UiTest() {
         assertNotNull("Save button was not found", saveButton)
         saveButton.click()
 
+        // Wait for edit animation
+        Thread.sleep(2000)
+
         // Check edited title
         feedTitles = device.wait(Until.findObjects(
                 By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000)
