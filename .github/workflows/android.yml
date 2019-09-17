@@ -19,6 +19,8 @@ jobs:
         GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
       run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
     - name: Unit Test
+      env:
+        TZ: Asia/Tokyo
       run: ./gradlew testDebugUnitTest
       
   lint:
