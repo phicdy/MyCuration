@@ -10,13 +10,13 @@ class DatabaseMigration(private val oldVersion: Int, newVersion: Int) {
 
     init {
         if (oldVersion < newVersion) {
-            if (oldVersion < DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION) {
+            if (DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION in (oldVersion + 1)..newVersion) {
                 tasks.add(AddFilterFeedRegistrationTask())
             }
-            if (oldVersion < DATABASE_VERSION_FETCH_ICON) {
+            if (DATABASE_VERSION_FETCH_ICON in (oldVersion + 1)..newVersion) {
                 tasks.add(ResetIconPathTask())
             }
-            if (oldVersion < DATABASE_VERSION_FAVORITE) {
+            if (DATABASE_VERSION_FAVORITE in (oldVersion + 1)..newVersion) {
                 tasks.add(AddFavoriteTask())
             }
         }

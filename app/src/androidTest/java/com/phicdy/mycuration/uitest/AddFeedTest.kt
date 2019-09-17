@@ -92,7 +92,7 @@ class AddFeedTest : UiTest() {
 
         // Assert all article view shows
         val allArticleView = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "cl_all_unread")), 5000)
+                By.res(BuildConfig.APPLICATION_ID, "allUnreadFeed")), 5000)
         assertNotNull(allArticleView)
         device.pressBack()
     }
