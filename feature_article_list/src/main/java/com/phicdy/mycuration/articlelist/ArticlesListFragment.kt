@@ -15,6 +15,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
@@ -48,19 +49,15 @@ import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.tracker.TrackerHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
-import kotlin.coroutines.CoroutineContext
 
 
-class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.Listener {
+class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
 
     companion object {
         const val RSS_ID = "RSS_ID"
@@ -72,11 +69,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         }
     }
 
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-
-    private val rssId: Int  by lazy {
+    private val rssId: Int by lazy {
         arguments?.getInt(RSS_ID, Feed.ALL_FEED_ID) ?: Feed.ALL_FEED_ID
     }
 
@@ -120,7 +113,6 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
 
         // Set swipe direction
         val prefMgr = PreferenceHelper
@@ -153,7 +145,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
             openExternalWebView(it)
         })
         scrollPositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
-            launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 val manager = recyclerView.layoutManager as LinearLayoutManager
                 val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
                 val num = positionAfterScroll - firstPositionBeforeScroll + 1
@@ -177,7 +169,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
     }
 
     private fun runFinishActionCreator() {
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             FinishStateActionCreator(
                     dispatcher = get(),
                     preferenceHelper = get(),
@@ -201,10 +193,10 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        articlesListAdapter = ArticleListAdapter(this, this, adProvider, updateFavoriteStatusActionCreator)
+        articlesListAdapter = ArticleListAdapter(viewLifecycleOwner.lifecycleScope, this, adProvider, updateFavoriteStatusActionCreator)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             when {
                 activity?.intent?.action == Intent.ACTION_SEARCH -> searchArticleListActionCreator.run()
                 rssId == Feed.ALL_FEED_ID -> fetchAllArticleListArticleListActionCreator.run()
@@ -212,11 +204,6 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
             }
         }
         return view
-    }
-
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
     }
 
     private fun setAllListener() {
@@ -239,7 +226,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
                         direction = direction,
                         items = articlesListAdapter.currentList
                 )
-                launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     actionCreator.run()
                 }
             }
@@ -249,7 +236,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
     }
 
     fun onFabButtonClicked() {
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val manager = recyclerView.layoutManager as LinearLayoutManager
             ScrollActionCreator(
                     dispatcher = get(),
@@ -263,7 +250,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
     }
 
     fun handleAllRead() {
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             ReadAllArticlesActionCreator(
                     dispatcher = get(),
                     articleRepository = get(),
@@ -345,7 +332,7 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
                 position = position,
                 items = articles
         )
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             actionCreator.run()
         }
         val openUrlActionCreator = OpenUrlActionCreator(
@@ -353,13 +340,13 @@ class ArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.List
                 preferenceHelper = get(),
                 item = articles[position]
         )
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             openUrlActionCreator.run()
         }
     }
 
     override fun onItemLongClicked(position: Int, articles: List<ArticleItem>) {
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             ShareUrlActionCreator(
                     dispatcher = get(),
                     position = position,

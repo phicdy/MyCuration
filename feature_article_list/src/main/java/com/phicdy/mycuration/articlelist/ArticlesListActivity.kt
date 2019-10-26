@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -16,15 +17,11 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.tracker.TrackerHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import kotlin.coroutines.CoroutineContext
 
 
-class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener, CoroutineScope {
+class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
         private const val TAG_FRAGMENT = "TAG_FRAGMENT"
@@ -35,10 +32,6 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                     putExtra(RSS_ID, rssId)
                 }
     }
-
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
 
     private lateinit var searchView: SearchView
     private lateinit var fbTitle: String
@@ -61,7 +54,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                     .commit()
         }
 
-        launch {
+        lifecycleScope.launch {
             when (feedId) {
                 Feed.ALL_FEED_ID -> {
                     // All article
@@ -156,10 +149,5 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
     }
 }

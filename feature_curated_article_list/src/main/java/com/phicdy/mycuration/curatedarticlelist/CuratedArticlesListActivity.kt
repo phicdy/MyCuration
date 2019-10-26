@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
 import com.phicdy.mycuration.data.repository.CurationRepository
@@ -16,15 +17,11 @@ import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.feature_curated_article_list.R
 import com.phicdy.mycuration.tracker.TrackerHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import kotlin.coroutines.CoroutineContext
 
 
-class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFragment.OnArticlesListFragmentListener, CoroutineScope {
+class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
         private const val DEFAULT_CURATION_ID = -1
@@ -36,10 +33,6 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
                     putExtra(CURATION_ID, curationId)
                 }
     }
-
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
 
     private lateinit var searchView: SearchView
     private lateinit var fbTitle: String
@@ -62,7 +55,7 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
                     .commit()
         }
 
-        launch {
+        lifecycleScope.launch {
             title = curationRepository.getCurationNameById(curationId)
             fbTitle = getString(R.string.curation)
             TrackerHelper.sendUiEvent(fbTitle)
@@ -144,10 +137,5 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
     }
 }
