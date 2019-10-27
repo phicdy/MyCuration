@@ -13,13 +13,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.tracker.TrackerHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlin.coroutines.CoroutineContext
 
 
-class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFragment.OnArticlesListFragmentListener, CoroutineScope {
+class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
         private const val TAG_FRAGMENT = "TAG_FRAGMENT"
@@ -27,10 +23,6 @@ class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFr
         fun createIntent(context: Context) =
                 Intent(context, FavoriteArticlesListActivity::class.java)
     }
-
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
 
     private lateinit var searchView: SearchView
     private lateinit var fbTitle: String
@@ -127,10 +119,5 @@ class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFr
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
     }
 }
