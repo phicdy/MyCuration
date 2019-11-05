@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:minHeight="24dp"
+        android:ellipsize="end"
+        android:maxLines="4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Article title" />
@@ -34,7 +35,7 @@
         style="@style/AppTheme.Article.Rss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
         app:layout_constraintBottom_toBottomOf="@id/iv_feed_icon"
         app:layout_constraintStart_toEndOf="@id/iv_feed_icon"
         app:layout_constraintTop_toTopOf="@id/iv_feed_icon"
@@ -47,6 +48,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_feed_icon"
         tools:text="@string/sample_article_url" />
