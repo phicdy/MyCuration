@@ -8,21 +8,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
-import kotlin.coroutines.CoroutineContext
 
-class RssListFragment : Fragment(), RssListView, CoroutineScope {
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+class RssListFragment : Fragment(), RssListView {
 
     private val presenter: RssListPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -39,7 +33,7 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
 
     override fun onResume() {
         super.onResume()
-        launch(context = coroutineContext) {
+        viewLifecycleOwner.lifecycleScope.launch {
             presenter.resume()
         }
     }
@@ -100,14 +94,9 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         presenter.pause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
     private fun setAllListener() {
         swipeRefreshLayout.setOnRefreshListener {
-            launch(context = coroutineContext) {
+            viewLifecycleOwner.lifecycleScope.launch {
                 presenter.onRefresh()
             }
         }
@@ -142,8 +131,8 @@ class RssListFragment : Fragment(), RssListView, CoroutineScope {
         presenter.updateFeedTitle(rssId, newTitle)
     }
 
-    suspend fun deleteFeedAtPosition(position: Int) {
-        presenter.deleteFeedAtPosition(position)
+    fun removeRss(rssId: Int) {
+        presenter.removeRss(rssId)
     }
 
     interface OnFeedListFragmentListener {

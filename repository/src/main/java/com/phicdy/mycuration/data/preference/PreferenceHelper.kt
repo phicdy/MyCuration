@@ -120,7 +120,7 @@ object PreferenceHelper {
 
     fun getReviewCount(): Int = if (pref.contains(KEY_REVIEW_COUNT)) {
         pref.getInt(KEY_REVIEW_COUNT, DEFAULT_REVIEW_COUNT)
-    } else LAUNCH_TAB_DEFAULT
+    } else DEFAULT_REVIEW_COUNT
 
     fun decreaseReviewCount() {
         pref.put(KEY_REVIEW_COUNT, getReviewCount() - 1)

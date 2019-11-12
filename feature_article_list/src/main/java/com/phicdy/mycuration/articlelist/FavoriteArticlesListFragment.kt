@@ -14,6 +14,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
@@ -42,26 +43,18 @@ import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.tracker.TrackerHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.currentScope
-import kotlin.coroutines.CoroutineContext
 
 
-class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdapter.Listener {
+class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
 
     companion object {
         fun newInstance() = FavoriteArticlesListFragment()
     }
-
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
 
     private val fetchFavoriteArticleListActionCreator: FetchFavoriteArticleListActionCreator by currentScope.inject()
     private val updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator by currentScope.inject()
@@ -90,7 +83,6 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
 
         articleListStore.state.observe(this, Observer<List<ArticleItem>> {
             if (it.isEmpty()) {
@@ -112,7 +104,7 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
             openExternalWebView(it)
         })
         scrollPositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
-            launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 val manager = recyclerView.layoutManager as LinearLayoutManager
                 val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
                 val num = positionAfterScroll - firstPositionBeforeScroll + 1
@@ -136,7 +128,7 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
     }
 
     private fun runFinishActionCreator() {
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             FinishStateActionCreator(
                     dispatcher = get(),
                     preferenceHelper = get(),
@@ -160,18 +152,13 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        articlesListAdapter = ArticleListAdapter(this, this, adProvider, updateFavoriteStatusActionCreator)
+        articlesListAdapter = ArticleListAdapter(viewLifecycleOwner.lifecycleScope, this, adProvider, updateFavoriteStatusActionCreator)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             fetchFavoriteArticleListActionCreator.run()
         }
         return view
-    }
-
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
     }
 
     private fun setAllListener() {
@@ -194,7 +181,7 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
                         direction = direction,
                         items = articlesListAdapter.currentList
                 )
-                launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     actionCreator.run()
                 }
             }
@@ -204,7 +191,7 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
     }
 
     fun onFabButtonClicked() {
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val manager = recyclerView.layoutManager as LinearLayoutManager
             ScrollActionCreator(
                     dispatcher = get(),
@@ -218,7 +205,7 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
     }
 
     fun handleAllRead() {
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             ReadAllFavoriteArticlesActionCreator(
                     dispatcher = get(),
                     articleRepository = get(),
@@ -293,7 +280,7 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
                 position = position,
                 items = articles
         )
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             actionCreator.run()
         }
         val openUrlActionCreator = OpenUrlActionCreator(
@@ -301,13 +288,13 @@ class FavoriteArticlesListFragment : Fragment(), CoroutineScope, ArticleListAdap
                 preferenceHelper = get(),
                 item = articles[position]
         )
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             openUrlActionCreator.run()
         }
     }
 
     override fun onItemLongClicked(position: Int, articles: List<ArticleItem>) {
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             ShareUrlActionCreator(
                     dispatcher = get(),
                     position = position,

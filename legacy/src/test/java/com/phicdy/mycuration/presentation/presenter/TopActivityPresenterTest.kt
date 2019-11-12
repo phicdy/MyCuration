@@ -141,7 +141,7 @@ class TopActivityPresenterTest {
     @Test
     fun `when delete ok button is clicked and fails then show error toast`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(false)
-        presenter.onDeleteOkButtonClicked(0, 0)
+        presenter.onDeleteOkButtonClicked(0)
         verify(mockView, times(1)).showDeleteFailToast()
     }
 
@@ -149,7 +149,7 @@ class TopActivityPresenterTest {
     fun `when delete ok button is clicked and succeeds then show success toast`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
         presenter.resume() // init list
-        presenter.onDeleteOkButtonClicked(0, 0)
+        presenter.onDeleteOkButtonClicked(0)
         verify(mockView, times(1)).showDeleteSuccessToast()
     }
 
