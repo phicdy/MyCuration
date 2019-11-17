@@ -53,87 +53,81 @@ class RssListPresenterTest {
         presenter = RssListPresenter(view, PreferenceHelper, mockRssRepository, networkTaskManager)
     }
 
-    // For coverage
     @Test
-    fun testOnCreate() {
-        presenter.create()
-    }
-
-    @Test
-    fun `when onResume and RSS doesn't exist then hide recyclerview`() = runBlocking {
+    fun `when onCreateView and RSS doesn't exist then hide recyclerview`() = runBlocking {
         whenever(mockRssRepository.getNumOfRss()).thenReturn(0)
-        presenter.resume()
+        presenter.onCreateView()
         verify(view, times(1)).hideRecyclerView()
     }
 
     @Test
-    fun `when onResume and RSS doesn't exist then show empty view`() = runBlocking {
+    fun `when onCreateView and RSS doesn't exist then show empty view`() = runBlocking {
         whenever(mockRssRepository.getNumOfRss()).thenReturn(0)
-        presenter.resume()
+        presenter.onCreateView()
         verify(view, times(1)).showEmptyView()
     }
 
     @Test
-    fun `when onResume and RSS exist then show recyclerview`() = runBlocking {
-        presenter.resume()
+    fun `when onCreateView and RSS exist then show recyclerview`() = runBlocking {
+        presenter.onCreateView()
         verify(view, times(1)).showRecyclerView()
     }
 
     @Test
-    fun `when onResume and RSS exist then hide empty view`() = runBlocking {
-        presenter.resume()
+    fun `when onCreateView and RSS exist then hide empty view`() = runBlocking {
+        presenter.onCreateView()
         verify(view, times(1)).hideEmptyView()
     }
 
     @Test
-    fun `when onResume and RSS exist then fetch RSS from database`() {
+    fun `when onCreateView and RSS exist then fetch RSS from database`() {
         runBlocking {
-            presenter.resume()
+            presenter.onCreateView()
             verify(mockRssRepository).getAllFeedsWithNumOfUnreadArticles()
         }
     }
 
     @Test
-    fun `when onResume and RSS exist then init with hidden list`() = runBlocking {
-        presenter.resume()
+    fun `when onCreateView and RSS exist then init with hidden list`() = runBlocking {
+        presenter.onCreateView()
         verify(view, times(1)).init(presenter.unreadOnlyFeeds.toRssListItem(RssListFooterState.UNREAD_ONLY))
     }
 
     @Test
-    fun `when onResume and show all RSS and onResume then init with all list`() = runBlocking {
-        presenter.resume()
+    fun `when onCreateView and show all RSS and onCreateView then init with all list`() = runBlocking {
+        presenter.onCreateView()
         presenter.onRssFooterClicked() // call init(allFeeds)
         presenter.pause()
-        presenter.resume()
+        presenter.onCreateView()
         verify(view, times(2)).init(presenter.allFeeds.toRssListItem(RssListFooterState.ALL))
     }
 
     @Test
-    fun `when onResume and RSS exist and auto update in main UI is enabled and after interval then show refreshing view`() = runBlocking {
+    fun `when onCreateView and RSS exist and auto update in main UI is enabled and after interval then show refreshing view`() = runBlocking {
         whenever(mockPref.getBoolean(anyString(), any())).thenReturn(true)
         whenever(mockPref.getLong(anyString(), anyLong())).thenReturn(System.currentTimeMillis() - 1000 * 60)
-        presenter.resume()
+        presenter.onCreateView()
         verify(view, times(1)).setRefreshing(true)
     }
 
     @Test
-    fun `when onResume and RSS exist and auto update in main UI is enabled and before interval then show refreshing view`() = runBlocking {
+    fun `when onCreateView and RSS exist and auto update in main UI is enabled and before interval then show refreshing view`() = runBlocking {
         whenever(mockPref.getBoolean(anyString(), any())).thenReturn(true)
         whenever(mockPref.getLong(anyString(), anyLong())).thenReturn(System.currentTimeMillis())
-        presenter.resume()
+        presenter.onCreateView()
         verify(view, times(0)).setRefreshing(true)
     }
 
     @Test
-    fun `when onResume and RSS exist and auto update in main UI is disabled then not show refreshing view`() = runBlocking {
+    fun `when onCreateView and RSS exist and auto update in main UI is disabled then not show refreshing view`() = runBlocking {
         whenever(mockPref.getBoolean(anyString(), any())).thenReturn(false)
-        presenter.resume()
+        presenter.onCreateView()
         verify(view, times(0)).setRefreshing(true)
     }
 
     @Test
     fun `when first RSS is hidden then first RSS title will be second RSS`() = runBlocking {
-        presenter.resume()
+        presenter.onCreateView()
         assertThat(presenter.unreadOnlyFeeds)
                 .hasSize(1)
                 .extracting("title")
@@ -147,7 +141,7 @@ class RssListPresenterTest {
         val secondRss = Feed(SECOND_RSS_ID, SECOND_RSS_TITLE, "", "", "", 0, "")
         val alreadyReadRss = arrayListOf(firstRss, secondRss)
         whenever(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(alreadyReadRss)
-        presenter.resume()
+        presenter.onCreateView()
         assertThat(presenter.unreadOnlyFeeds)
                 .hasSize(2)
                 .extracting("title")
@@ -158,7 +152,7 @@ class RssListPresenterTest {
     @Test
     fun `when delete ok button is clicked in hidden status and succeeds then delete the RSS`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
-        presenter.resume() // init list
+        presenter.onCreateView() // init list
         presenter.removeRss(FIRST_RSS_ID)
         // Current status is hidden and size is 1, so hidden list becomes all RSS list after refresh
         assertThat(presenter.unreadOnlyFeeds)
@@ -175,7 +169,7 @@ class RssListPresenterTest {
     @Test
     fun `when delete ok button is clicked in all of RSS and succeeds then delete the RSS`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
-        presenter.resume() // init list
+        presenter.onCreateView() // init list
         presenter.onRssFooterClicked() // Change to all RSS
         presenter.removeRss(FIRST_RSS_ID)
         // Current status is all and first RSS status is read, so hidden list has no update
@@ -193,7 +187,7 @@ class RssListPresenterTest {
     @Test
     fun `when delete all of RSS then show empty view`() = runBlocking {
         whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
-        presenter.resume() // init list
+        presenter.onCreateView() // init list
         presenter.onRssFooterClicked() // Change to all RSS
         presenter.removeRss(FIRST_RSS_ID)
         presenter.removeRss(SECOND_RSS_ID)
@@ -203,7 +197,7 @@ class RssListPresenterTest {
     @Test
     fun `when refresh and RSS is empty then finish refresh`() = runBlocking {
         whenever(mockRssRepository.getAllFeedsWithNumOfUnreadArticles()).thenReturn(arrayListOf())
-        presenter.resume()
+        presenter.onCreateView()
         presenter.onRefresh()
         verify(view, times(1)).onRefreshCompleted()
     }
@@ -237,7 +231,7 @@ class RssListPresenterTest {
     @Test
     fun `when click footer twice then go back to hidden status`() {
         runBlocking {
-            presenter.resume()
+            presenter.onCreateView()
             presenter.onRssFooterClicked()
             presenter.onRssFooterClicked()
         }

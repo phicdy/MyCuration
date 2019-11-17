@@ -26,18 +26,6 @@ class RssListFragment : Fragment(), RssListView {
     private lateinit var rssFeedListAdapter: RssListAdapter
     private var mListener: OnFeedListFragmentListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.create()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewLifecycleOwner.lifecycleScope.launch {
-            presenter.resume()
-        }
-    }
-
     override fun setRefreshing(doScroll: Boolean) {
         swipeRefreshLayout.isRefreshing = doScroll
     }
@@ -109,6 +97,9 @@ class RssListFragment : Fragment(), RssListView {
         swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
         registerForContextMenu(recyclerView)
         setAllListener()
+        viewLifecycleOwner.lifecycleScope.launch {
+            presenter.onCreateView()
+        }
         return view
     }
 

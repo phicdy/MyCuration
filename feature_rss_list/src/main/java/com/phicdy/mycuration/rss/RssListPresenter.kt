@@ -23,9 +23,7 @@ class RssListPresenter(private val view: RssListView,
     private val isAfterInterval: Boolean
         get() = System.currentTimeMillis() - preferenceHelper.lastUpdateDate >= 1000 * 60
 
-    fun create() {}
-
-    suspend fun resume() = coroutineScope {
+    suspend fun onCreateView() = coroutineScope {
         if (rssRepository.getNumOfRss() == 0) {
             updateViewForEmpty()
         } else {
