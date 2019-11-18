@@ -20,18 +20,6 @@ class RssListPresenter(private val view: RssListView,
     // Manage hide feed status
     private var isHided = true
 
-    private val isAfterInterval: Boolean
-        get() = System.currentTimeMillis() - preferenceHelper.lastUpdateDate >= 1000 * 60
-
-    suspend fun onCreateView() = coroutineScope {
-        if (rssRepository.getNumOfRss() > 0) {
-            if (preferenceHelper.autoUpdateInMainUi && isAfterInterval) {
-                view.setRefreshing(true)
-                updateAllRss()
-            }
-        }
-    }
-
     private fun generateHidedFeedList() {
         if (allFeeds.isEmpty()) return
         unreadOnlyFeeds = allFeeds.filter { it.unreadAriticlesCount > 0 } as ArrayList<Feed>

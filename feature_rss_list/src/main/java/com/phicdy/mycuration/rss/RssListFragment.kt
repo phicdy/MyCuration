@@ -33,11 +33,11 @@ class RssListFragment : Fragment(), RssListView {
     private val fetchAllRssListActionCreator: FetchAllRssListActionCreator by currentScope.inject()
     private val rssListStateStore: RSSListStateStore by currentScope.inject()
 
-    override fun setRefreshing(doScroll: Boolean) {
-        swipeRefreshLayout.isRefreshing = doScroll
-    }
     private val fetchRssStartUpdateStateActionCreator: FetchRssStartUpdateStateActionCreator by currentScope.inject()
     private val rssListStartUpdateStateStore: RssListStartUpdateStateStore by currentScope.inject()
+
+    private val updateAllRssListActionCreator: UpdateAllRssActionCreator by currentScope.inject()
+    private val rssListUpdateStateStore: RssListUpdateStateStore by currentScope.inject()
 
     override fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(presenter, mListener)
@@ -107,9 +107,29 @@ class RssListFragment : Fragment(), RssListView {
             }
         })
         rssListStartUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
+            if (it.shouldStart)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    rssListStateStore.state.value?.rss?.let { rss ->
+                        updateAllRssListActionCreator.run(rss)
+                    }
+                }
+        })
+        rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                RssListUpdateState.Updating -> swipeRefreshLayout.isRefreshing = true
+                RssListUpdateState.Success -> {
+                    onRefreshCompleted()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        rssListStateStore.state.value?.mode?.let { mode ->
+                            fetchAllRssListActionCreator.run(mode)
+                        }
+                    }
+                }
+                else -> {
+                }
+            }
         })
         viewLifecycleOwner.lifecycleScope.launch {
-            presenter.onCreateView()
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
             fetchRssStartUpdateStateActionCreator.run(RssUpdateIntervalCheckDate(Date()))
         }

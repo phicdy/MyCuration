@@ -76,7 +76,9 @@ import com.phicdy.mycuration.rss.RSSListStateStore
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.rss.RssListPresenter
 import com.phicdy.mycuration.rss.RssListStartUpdateStateStore
+import com.phicdy.mycuration.rss.RssListUpdateStateStore
 import com.phicdy.mycuration.rss.RssListView
+import com.phicdy.mycuration.rss.UpdateAllRssActionCreator
 import com.phicdy.mycuration.util.log.TimberTree
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
@@ -137,8 +139,16 @@ val appModule = module {
                     preferenceHelper = get()
             )
         }
+        scoped {
+            UpdateAllRssActionCreator(
+                    dispatcher = get(),
+                    networkTaskManager = get(),
+                    preferenceHelper = get()
+            )
+        }
         viewModel { RSSListStateStore(get()) }
         viewModel { RssListStartUpdateStateStore(get()) }
+        viewModel { RssListUpdateStateStore(get()) }
     }
 
     scope(named<ArticlesListFragment>()) {
