@@ -71,9 +71,11 @@ import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.rss.FetchAllRssListActionCreator
+import com.phicdy.mycuration.rss.FetchRssStartUpdateStateActionCreator
 import com.phicdy.mycuration.rss.RSSListStateStore
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.rss.RssListPresenter
+import com.phicdy.mycuration.rss.RssListStartUpdateStateStore
 import com.phicdy.mycuration.rss.RssListView
 import com.phicdy.mycuration.util.log.TimberTree
 import kotlinx.coroutines.CoroutineScope
@@ -129,7 +131,14 @@ val appModule = module {
                     rssRepository = get()
             )
         }
+        scoped {
+            FetchRssStartUpdateStateActionCreator(
+                    dispatcher = get(),
+                    preferenceHelper = get()
+            )
+        }
         viewModel { RSSListStateStore(get()) }
+        viewModel { RssListStartUpdateStateStore(get()) }
     }
 
     scope(named<ArticlesListFragment>()) {

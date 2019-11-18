@@ -14,9 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.phicdy.mycuration.entity.RssListMode
+import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import kotlinx.coroutines.launch
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
+import java.util.Date
 
 class RssListFragment : Fragment(), RssListView {
 
@@ -34,6 +36,8 @@ class RssListFragment : Fragment(), RssListView {
     override fun setRefreshing(doScroll: Boolean) {
         swipeRefreshLayout.isRefreshing = doScroll
     }
+    private val fetchRssStartUpdateStateActionCreator: FetchRssStartUpdateStateActionCreator by currentScope.inject()
+    private val rssListStartUpdateStateStore: RssListStartUpdateStateStore by currentScope.inject()
 
     override fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(presenter, mListener)
@@ -102,9 +106,12 @@ class RssListFragment : Fragment(), RssListView {
                 init(it.item)
             }
         })
+        rssListStartUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
+        })
         viewLifecycleOwner.lifecycleScope.launch {
             presenter.onCreateView()
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
+            fetchRssStartUpdateStateActionCreator.run(RssUpdateIntervalCheckDate(Date()))
         }
         return view
     }
