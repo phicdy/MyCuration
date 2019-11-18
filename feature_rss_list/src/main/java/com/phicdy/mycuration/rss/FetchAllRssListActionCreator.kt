@@ -14,7 +14,7 @@ class FetchAllRssListActionCreator(
     override suspend fun run(arg: RssListMode) {
         val rss = rssRepository.getAllFeedsWithNumOfUnreadArticles()
         if (rss.isEmpty()) {
-            dispatcher.dispatch(RssListAction(RssListState(emptyList(), arg)))
+            dispatcher.dispatch(RssListAction(RssListState(emptyList(), emptyList(), arg)))
             return
         }
         val list = mutableListOf<RssListItem>().apply {
@@ -31,6 +31,6 @@ class FetchAllRssListActionCreator(
             }
             add(RssListItem.Footer(if (arg == RssListMode.UNREAD_ONLY) RssListFooterState.UNREAD_ONLY else RssListFooterState.ALL))
         }
-        dispatcher.dispatch(RssListAction(RssListState(list, arg)))
+        dispatcher.dispatch(RssListAction(RssListState(list, rss, arg)))
     }
 }
