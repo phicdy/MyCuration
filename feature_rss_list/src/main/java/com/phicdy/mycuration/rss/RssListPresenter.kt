@@ -24,13 +24,7 @@ class RssListPresenter(private val view: RssListView,
         get() = System.currentTimeMillis() - preferenceHelper.lastUpdateDate >= 1000 * 60
 
     suspend fun onCreateView() = coroutineScope {
-        if (rssRepository.getNumOfRss() == 0) {
-            updateViewForEmpty()
-        } else {
-            view.showRecyclerView()
-            view.hideEmptyView()
-            fetchAllRss()
-            refreshList()
+        if (rssRepository.getNumOfRss() > 0) {
             if (preferenceHelper.autoUpdateInMainUi && isAfterInterval) {
                 view.setRefreshing(true)
                 updateAllRss()

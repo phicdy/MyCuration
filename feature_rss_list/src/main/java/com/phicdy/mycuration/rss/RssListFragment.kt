@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.phicdy.mycuration.entity.RssListMode
 import kotlinx.coroutines.launch
 import org.koin.android.scope.currentScope
 import org.koin.core.parameter.parametersOf
@@ -25,6 +27,9 @@ class RssListFragment : Fragment(), RssListView {
 
     private lateinit var rssFeedListAdapter: RssListAdapter
     private var mListener: OnFeedListFragmentListener? = null
+
+    private val fetchAllRssListActionCreator: FetchAllRssListActionCreator by currentScope.inject()
+    private val rssListStateStore: RSSListStateStore by currentScope.inject()
 
     override fun setRefreshing(doScroll: Boolean) {
         swipeRefreshLayout.isRefreshing = doScroll
@@ -57,20 +62,12 @@ class RssListFragment : Fragment(), RssListView {
         rssFeedListAdapter.submitList(items)
     }
 
-    override fun showRecyclerView() {
-        recyclerView.visibility = View.VISIBLE
-    }
-
     override fun hideRecyclerView() {
         recyclerView.visibility = View.GONE
     }
 
     override fun showEmptyView() {
         emptyView.visibility = View.VISIBLE
-    }
-
-    override fun hideEmptyView() {
-        emptyView.visibility = View.GONE
     }
 
     override fun showDeleteFeedAlertDialog(rssId: Int, position: Int) {
@@ -97,8 +94,17 @@ class RssListFragment : Fragment(), RssListView {
         swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
         registerForContextMenu(recyclerView)
         setAllListener()
+        rssListStateStore.state.observe(viewLifecycleOwner, Observer {
+            if (it.item.isEmpty()) {
+                hideRecyclerView()
+                showEmptyView()
+            } else {
+                init(it.item)
+            }
+        })
         viewLifecycleOwner.lifecycleScope.launch {
             presenter.onCreateView()
+            fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
         return view
     }

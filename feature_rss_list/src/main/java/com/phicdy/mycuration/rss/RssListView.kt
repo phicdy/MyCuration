@@ -9,8 +9,6 @@ interface RssListView {
     fun showGenericAddFeedErrorToast()
     fun showInvalidUrlAddFeedErrorToast()
     fun notifyDataSetChanged(items: List<RssListItem>)
-    fun showRecyclerView()
     fun hideRecyclerView()
     fun showEmptyView()
-    fun hideEmptyView()
 }

@@ -68,18 +68,6 @@ class RssListPresenterTest {
     }
 
     @Test
-    fun `when onCreateView and RSS exist then show recyclerview`() = runBlocking {
-        presenter.onCreateView()
-        verify(view, times(1)).showRecyclerView()
-    }
-
-    @Test
-    fun `when onCreateView and RSS exist then hide empty view`() = runBlocking {
-        presenter.onCreateView()
-        verify(view, times(1)).hideEmptyView()
-    }
-
-    @Test
     fun `when onCreateView and RSS exist then fetch RSS from database`() {
         runBlocking {
             presenter.onCreateView()
