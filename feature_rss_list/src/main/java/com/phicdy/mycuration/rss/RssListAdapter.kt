@@ -189,7 +189,7 @@ private val diffCallback = object : DiffUtil.ItemCallback<RssListItem>() {
             }
             is RssListItem.All -> {
                 when (newItem) {
-                    is RssListItem.All -> true
+                    is RssListItem.All -> oldItem.unreadCount == newItem.unreadCount
                     else -> false
                 }
             }
