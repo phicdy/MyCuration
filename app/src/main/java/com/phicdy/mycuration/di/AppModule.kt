@@ -121,10 +121,7 @@ val appModule = module {
     scope(named<RssListFragment>()) {
         scoped { (view: RssListView) ->
             RssListPresenter(
-                    view = view,
-                    preferenceHelper = get(),
-                    rssRepository = get(),
-                    networkTaskManager = get()
+                    view = view
             )
         }
         scoped {

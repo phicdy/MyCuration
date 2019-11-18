@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -46,20 +45,8 @@ class RssListFragment : Fragment(), RssListView {
         rssFeedListAdapter.submitList(items)
     }
 
-    override fun onRefreshCompleted() {
+    private fun onRefreshCompleted() {
         swipeRefreshLayout.isRefreshing = false
-    }
-
-    override fun showAddFeedSuccessToast() {
-        Toast.makeText(activity, R.string.add_rss_success, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showGenericAddFeedErrorToast() {
-        Toast.makeText(activity, R.string.add_rss_error_generic, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showInvalidUrlAddFeedErrorToast() {
-        Toast.makeText(activity, R.string.add_rss_error_invalid_url, Toast.LENGTH_SHORT).show()
     }
 
     override fun notifyDataSetChanged(items: List<RssListItem>) {
@@ -74,19 +61,12 @@ class RssListFragment : Fragment(), RssListView {
         emptyView.visibility = View.VISIBLE
     }
 
-    override fun showDeleteFeedAlertDialog(rssId: Int, position: Int) {
-        mListener?.onDeleteRssClicked(rssId, position)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        presenter.pause()
-    }
-
     private fun setAllListener() {
         swipeRefreshLayout.setOnRefreshListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                presenter.onRefresh()
+                rssListStateStore.state.value?.let { value ->
+                    updateAllRssListActionCreator.run(value.rss, value.mode)
+                }
             }
         }
     }

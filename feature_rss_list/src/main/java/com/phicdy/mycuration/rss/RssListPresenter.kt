@@ -1,17 +1,9 @@
 package com.phicdy.mycuration.rss
 
-import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
 import java.util.ArrayList
 
-class RssListPresenter(private val view: RssListView,
-                       private val preferenceHelper: PreferenceHelper,
-                       private val rssRepository: RssRepository,
-                       private val networkTaskManager: NetworkTaskManager) {
+class RssListPresenter(private val view: RssListView) {
 
     var unreadOnlyFeeds = arrayListOf<Feed>()
         private set
@@ -37,8 +29,6 @@ class RssListPresenter(private val view: RssListView,
             view.init(allFeeds.toRssListItem())
         }
     }
-
-    fun pause() {}
 
     fun updateFeedTitle(feedId: Int, newTitle: String) {
         for (feed in allFeeds) {
@@ -85,37 +75,6 @@ class RssListPresenter(private val view: RssListView,
             isHided = true
             view.init(unreadOnlyFeeds.toRssListItem())
         }
-    }
-
-    suspend fun onRefresh() = coroutineScope {
-        if (allFeeds.isEmpty()) {
-            onRefreshComplete()
-            return@coroutineScope
-        }
-        updateAllRss()
-    }
-
-    private suspend fun updateAllRss() = coroutineScope {
-        try {
-            networkTaskManager.updateAll(allFeeds).collect()
-            onFinishUpdate()
-        } catch (e: Exception) {
-        }
-    }
-
-    private fun onRefreshComplete() {
-        view.onRefreshCompleted()
-    }
-
-    suspend fun onFinishUpdate() = coroutineScope {
-        fetchAllRss()
-        refreshList()
-        onRefreshComplete()
-        preferenceHelper.lastUpdateDate = System.currentTimeMillis()
-    }
-
-    private suspend fun fetchAllRss() = coroutineScope {
-        allFeeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
     }
 
     private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
