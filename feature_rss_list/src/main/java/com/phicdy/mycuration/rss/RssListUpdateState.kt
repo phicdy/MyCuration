@@ -1,5 +1,8 @@
 package com.phicdy.mycuration.rss
 
-enum class RssListUpdateState {
-    Updating, Success, Failed
+sealed class RssListUpdateState {
+    object Started : RssListUpdateState()
+    class Updating(val rss: List<RssListItem>) : RssListUpdateState()
+    object Finished : RssListUpdateState()
+    object Failed : RssListUpdateState()
 }

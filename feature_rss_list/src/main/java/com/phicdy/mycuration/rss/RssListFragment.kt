@@ -109,21 +109,19 @@ class RssListFragment : Fragment(), RssListView {
         rssListStartUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
             if (it.shouldStart)
                 viewLifecycleOwner.lifecycleScope.launch {
-                    rssListStateStore.state.value?.rss?.let { rss ->
-                        updateAllRssListActionCreator.run(rss)
+                    rssListStateStore.state.value?.let { value ->
+                        updateAllRssListActionCreator.run(value.rss, value.mode)
                     }
                 }
         })
         rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
             when (it) {
-                RssListUpdateState.Updating -> swipeRefreshLayout.isRefreshing = true
-                RssListUpdateState.Success -> {
+                RssListUpdateState.Started -> swipeRefreshLayout.isRefreshing = true
+                is RssListUpdateState.Updating -> {
+                    rssFeedListAdapter.submitList(it.rss)
+                }
+                RssListUpdateState.Finished -> {
                     onRefreshCompleted()
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        rssListStateStore.state.value?.mode?.let { mode ->
-                            fetchAllRssListActionCreator.run(mode)
-                        }
-                    }
                 }
                 else -> {
                 }

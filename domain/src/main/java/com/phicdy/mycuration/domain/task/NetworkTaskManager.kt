@@ -8,7 +8,8 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -28,18 +29,17 @@ class NetworkTaskManager(
 
     private val client: OkHttpClient by inject()
 
-    suspend fun updateAll(rssList: List<Feed>) = withContext(Dispatchers.IO) {
+    suspend fun updateAll(rssList: List<Feed>): Flow<Feed> = flow {
         rssList.filter { it.id > 0 }
-                .map { async { updateFeed(it) } }
-                .map { it.await() }
+                .map { emit(updateFeed(it)) }
     }
 
-    suspend fun updateFeed(feed: Feed) = withContext(Dispatchers.IO) {
-        if (feed.url.isEmpty()) return@withContext
+    suspend fun updateFeed(feed: Feed): Feed = withContext(Dispatchers.IO) {
+        if (feed.url.isEmpty()) return@withContext feed
         try {
             val request = Request.Builder().url(feed.url).build()
             val response = client.newCall(request).execute()
-            val inputStream = response.body()?.byteStream() ?: return@withContext
+            val inputStream = response.body()?.byteStream() ?: return@withContext feed
             val parser = RssParser()
             val articles = parser.parseArticlesFromRss(inputStream)
             val storedUrlList = articleRepository.getStoredUrlListIn(articles)
@@ -76,5 +76,6 @@ class NetworkTaskManager(
         } catch (e: RuntimeException) {
             Timber.e(e)
         }
+        return@withContext feed
     }
 }

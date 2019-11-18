@@ -5,6 +5,7 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
 import java.util.ArrayList
 
 class RssListPresenter(private val view: RssListView,
@@ -96,7 +97,7 @@ class RssListPresenter(private val view: RssListView,
 
     private suspend fun updateAllRss() = coroutineScope {
         try {
-            networkTaskManager.updateAll(allFeeds)
+            networkTaskManager.updateAll(allFeeds).collect()
             onFinishUpdate()
         } catch (e: Exception) {
         }
