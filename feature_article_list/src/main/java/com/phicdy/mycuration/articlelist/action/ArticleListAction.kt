@@ -13,7 +13,7 @@ data class SearchArticleAction(
         override val value: List<ArticleItem>
 ) : ArticleListAction<List<ArticleItem>>()
 
-data class ReadArticleAction(
+data class ReadArticlePositionAction(
         override val value: Int
 ) : ArticleListAction<Int>()
 

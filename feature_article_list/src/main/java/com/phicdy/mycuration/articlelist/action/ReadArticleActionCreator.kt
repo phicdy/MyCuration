@@ -33,7 +33,7 @@ class ReadArticleActionCreator(
                         rssRepository.updateUnreadArticleCount(article.feedId, rss.unreadAriticlesCount - 1)
                     }
                     article.status = Article.TOREAD
-                    dispatcher.dispatch(ReadArticleAction(position))
+                    dispatcher.dispatch(ReadArticlePositionAction(position))
                 }
             }
         }
