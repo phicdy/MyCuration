@@ -40,6 +40,8 @@ class RssListFragment : Fragment(), RssListView {
 
     private val changeRssListModeActionCreator: ChangeRssListModeActionCreator by currentScope.inject()
 
+    private val changeRssTitleActionCreator: ChangeRssTitleActionCreator by currentScope.inject()
+
     override fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(viewLifecycleOwner.lifecycleScope, changeRssListModeActionCreator, rssListStateStore, mListener)
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -132,7 +134,11 @@ class RssListFragment : Fragment(), RssListView {
     }
 
     fun updateFeedTitle(rssId: Int, newTitle: String) {
-        presenter.updateFeedTitle(rssId, newTitle)
+        rssListStateStore.state.value?.let {
+            viewLifecycleOwner.lifecycleScope.launch {
+                changeRssTitleActionCreator.run(rssId, newTitle, it)
+            }
+        }
     }
 
     fun removeRss(rssId: Int) {

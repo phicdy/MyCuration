@@ -30,22 +30,6 @@ class RssListPresenter(private val view: RssListView) {
         }
     }
 
-    fun updateFeedTitle(feedId: Int, newTitle: String) {
-        for (feed in allFeeds) {
-            if (feed.id == feedId) {
-                feed.title = newTitle
-                break
-            }
-        }
-        for (feed in unreadOnlyFeeds) {
-            if (feed.id == feedId) {
-                feed.title = newTitle
-                break
-            }
-        }
-        view.notifyDataSetChanged(if (isHided) unreadOnlyFeeds.toRssListItem() else allFeeds.toRssListItem())
-    }
-
     fun removeRss(rssId: Int) {
         for (i in allFeeds.indices) {
             if (allFeeds[i].id == rssId) {
