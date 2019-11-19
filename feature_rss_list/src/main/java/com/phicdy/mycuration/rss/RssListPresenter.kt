@@ -62,21 +62,6 @@ class RssListPresenter(private val view: RssListView) {
         view.showEmptyView()
     }
 
-    fun onRssFooterClicked() {
-        changeHideStatus()
-    }
-
-    private fun changeHideStatus() {
-        generateHidedFeedList()
-        if (isHided) {
-            isHided = false
-            view.init(allFeeds.toRssListItem())
-        } else {
-            isHided = true
-            view.init(unreadOnlyFeeds.toRssListItem())
-        }
-    }
-
     private fun ArrayList<Feed>.toRssListItem(): List<RssListItem> = mutableListOf<RssListItem>().apply {
         add(RssListItem.All(this@toRssListItem.sumBy { it.unreadAriticlesCount }))
         add(RssListItem.Favroite)

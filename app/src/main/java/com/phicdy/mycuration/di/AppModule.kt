@@ -70,6 +70,7 @@ import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
+import com.phicdy.mycuration.rss.ChangeRssListModeActionCreator
 import com.phicdy.mycuration.rss.FetchAllRssListActionCreator
 import com.phicdy.mycuration.rss.FetchRssStartUpdateStateActionCreator
 import com.phicdy.mycuration.rss.RSSListStateStore
@@ -143,6 +144,12 @@ val appModule = module {
                     dispatcher = get(),
                     networkTaskManager = get(),
                     preferenceHelper = get(),
+                    rssListItemFactory = RssListItemFactory()
+            )
+        }
+        scoped {
+            ChangeRssListModeActionCreator(
+                    dispatcher = get(),
                     rssListItemFactory = RssListItemFactory()
             )
         }
