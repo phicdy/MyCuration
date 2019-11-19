@@ -16,12 +16,10 @@ import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import kotlinx.coroutines.launch
 import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
 import java.util.Date
 
-class RssListFragment : Fragment(), RssListView {
+class RssListFragment : Fragment() {
 
-    private val presenter: RssListPresenter by currentScope.inject { parametersOf(this) }
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyView: TextView
@@ -42,7 +40,9 @@ class RssListFragment : Fragment(), RssListView {
 
     private val changeRssTitleActionCreator: ChangeRssTitleActionCreator by currentScope.inject()
 
-    override fun init(items: List<RssListItem>) {
+    private val deleteRssActionCreator: DeleteRssActionCreator by currentScope.inject()
+
+    private fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(viewLifecycleOwner.lifecycleScope, changeRssListModeActionCreator, rssListStateStore, mListener)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = rssFeedListAdapter
@@ -53,15 +53,11 @@ class RssListFragment : Fragment(), RssListView {
         swipeRefreshLayout.isRefreshing = false
     }
 
-    override fun notifyDataSetChanged(items: List<RssListItem>) {
-        rssFeedListAdapter.submitList(items)
-    }
-
-    override fun hideRecyclerView() {
+    private fun hideRecyclerView() {
         recyclerView.visibility = View.GONE
     }
 
-    override fun showEmptyView() {
+    private fun showEmptyView() {
         emptyView.visibility = View.VISIBLE
     }
 
@@ -142,7 +138,11 @@ class RssListFragment : Fragment(), RssListView {
     }
 
     fun removeRss(rssId: Int) {
-        presenter.removeRss(rssId)
+        rssListStateStore.state.value?.let {
+            viewLifecycleOwner.lifecycleScope.launch {
+                deleteRssActionCreator.run(rssId, it)
+            }
+        }
     }
 
     interface OnFeedListFragmentListener {
