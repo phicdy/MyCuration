@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.collect
 class UpdateAllRssActionCreator(
         private val dispatcher: Dispatcher,
         private val networkTaskManager: NetworkTaskManager,
-        private val preferenceHelper: PreferenceHelper
+        private val preferenceHelper: PreferenceHelper,
+        private val rssListItemFactory: RssListItemFactory
 ) : ActionCreator2<List<Feed>, RssListMode> {
 
     override suspend fun run(arg1: List<Feed>, arg2: RssListMode) {
@@ -25,21 +26,9 @@ class UpdateAllRssActionCreator(
                         it
                     }
                 }
-                val list = mutableListOf<RssListItem>().apply {
-                    add(RssListItem.All(replaced.sumBy { it.unreadAriticlesCount }))
-                    add(RssListItem.Favroite)
-                    replaced.map {
-                        this.add(RssListItem.Content(
-                                rssId = it.id,
-                                rssTitle = it.title,
-                                isDefaultIcon = it.iconPath.isBlank() || it.iconPath == Feed.DEDAULT_ICON_PATH,
-                                rssIconPath = it.iconPath,
-                                unreadCount = it.unreadAriticlesCount
-                        ))
-                    }
-                    add(RssListItem.Footer(if (arg2 == RssListMode.UNREAD_ONLY) RssListFooterState.UNREAD_ONLY else RssListFooterState.ALL))
+                rssListItemFactory.create(arg2, replaced).let {
+                    dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Updating(it)))
                 }
-                dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Updating(list)))
             }
             preferenceHelper.lastUpdateDate = System.currentTimeMillis()
             dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Finished))
