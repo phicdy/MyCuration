@@ -118,7 +118,7 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
             articlesListAdapter.notifyItemChanged(it)
             runFinishActionCreator()
         })
-        readAllArticlesStateStore.state.observe(this, Observer<Unit> {
+        readAllArticlesStateStore.state.observe(this, Observer {
             notifyListView()
             runFinishActionCreator()
         })
