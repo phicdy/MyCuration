@@ -160,7 +160,7 @@ val appModule = module {
                     rssListItemFactory = RssListItemFactory()
             )
         }
-        viewModel { RSSListStateStore(get()) }
+        viewModel { RSSListStateStore(get(), RssListItemFactory()) }
         viewModel { RssListStartUpdateStateStore(get()) }
         viewModel { RssListUpdateStateStore(get()) }
     }
