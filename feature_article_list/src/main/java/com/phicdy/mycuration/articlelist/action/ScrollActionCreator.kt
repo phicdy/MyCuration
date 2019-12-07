@@ -7,6 +7,7 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.entity.ReadArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -41,6 +42,7 @@ class ScrollActionCreator(
                             }
                             rss?.let {
                                 rssRepository.updateUnreadArticleCount(it.id, rss.unreadAriticlesCount - 1)
+                                dispatcher.dispatch(ReadArticleAction(ReadArticle(it.id, 1)))
                                 rss.unreadAriticlesCount -= 1
                             }
                             articleRepository.saveStatus(targetArticle.id, Article.TOREAD)

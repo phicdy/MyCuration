@@ -9,6 +9,7 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.ReadArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -39,6 +40,7 @@ class SwipeActionCreator(
                         rss?.let {
                             if (newStatus == Article.TOREAD) {
                                 rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount - 1)
+                                dispatcher.dispatch(ReadArticleAction(ReadArticle(it.id, 1)))
                             } else {
                                 rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount + 1)
                             }

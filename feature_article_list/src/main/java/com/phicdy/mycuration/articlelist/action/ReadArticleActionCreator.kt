@@ -6,6 +6,7 @@ import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Article
+import com.phicdy.mycuration.entity.ReadArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -31,6 +32,7 @@ class ReadArticleActionCreator(
                     val rss = rssRepository.getFeedById(article.feedId)
                     rss?.let {
                         rssRepository.updateUnreadArticleCount(article.feedId, rss.unreadAriticlesCount - 1)
+                        dispatcher.dispatch(ReadArticleAction(ReadArticle(rss.id, 1)))
                     }
                     article.status = Article.TOREAD
                     dispatcher.dispatch(ReadArticlePositionAction(position))
