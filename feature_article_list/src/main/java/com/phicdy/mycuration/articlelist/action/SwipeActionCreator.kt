@@ -2,6 +2,7 @@ package com.phicdy.mycuration.articlelist.action
 
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+import com.phicdy.action.articlelist.ReadArticleAction
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher

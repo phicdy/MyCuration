@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.articlelist.action
 
+import com.phicdy.action.articlelist.ReadArticleAction
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher

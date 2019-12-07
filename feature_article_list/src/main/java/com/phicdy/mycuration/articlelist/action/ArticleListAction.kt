@@ -2,7 +2,6 @@ package com.phicdy.mycuration.articlelist.action
 
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.Action
-import com.phicdy.mycuration.entity.ReadArticle
 
 sealed class ArticleListAction<out T> : Action<T>
 
@@ -49,8 +48,4 @@ data class ShareUrlAction(
 data class UpdateFavoriteAction(
         override val value: List<ArticleItem>
 ) : ArticleListAction<List<ArticleItem>>()
-
-data class ReadArticleAction(
-        override val value: ReadArticle
-) : ArticleListAction<ReadArticle>()
 
