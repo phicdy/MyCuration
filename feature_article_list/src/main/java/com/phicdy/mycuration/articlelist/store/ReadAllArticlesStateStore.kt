@@ -1,13 +1,14 @@
 package com.phicdy.mycuration.articlelist.store
 
-import com.phicdy.mycuration.articlelist.action.ReadALlArticlesAction
+import com.phicdy.action.articlelist.ReadAllArticlesAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
+import com.phicdy.mycuration.entity.ReadAllArticles
 
 class ReadAllArticlesStateStore(
         dispatcher: Dispatcher
-) : Store<Unit>(dispatcher) {
+) : Store<ReadAllArticles>(dispatcher) {
 
     init {
         dispatcher.register(this)
@@ -15,7 +16,7 @@ class ReadAllArticlesStateStore(
 
     override suspend fun notify(action: Action<*>) {
         when (action) {
-            is ReadALlArticlesAction -> _state.value = action.value
+            is ReadAllArticlesAction -> _state.value = action.value
         }
     }
 }
