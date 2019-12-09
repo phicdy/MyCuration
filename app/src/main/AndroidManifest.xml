@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.phicdy.mycuration">
     <!-- allow to connect internet -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -131,6 +132,12 @@
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
+
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="com.phicdy.mycuration.workmanager-init"
+            android:exported="false"
+            tools:node="remove" />
     </application>
 
 </manifest>

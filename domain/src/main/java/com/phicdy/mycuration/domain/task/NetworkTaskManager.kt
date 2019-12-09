@@ -67,10 +67,6 @@ class NetworkTaskManager(
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            if (feed.iconPath == Feed.DEDAULT_ICON_PATH) {
-                val iconUrl = GetFeedIconTask().execute(feed.siteUrl)
-                rssRepository.saveIconPath(feed.siteUrl, iconUrl)
-            }
         } catch (e: IOException) {
             Timber.e(e)
         } catch (e: RuntimeException) {
