@@ -107,10 +107,6 @@ class RssListFragment : Fragment() {
                 }
             }
         })
-        viewLifecycleOwner.lifecycleScope.launch {
-            fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
-            fetchRssStartUpdateStateActionCreator.run(RssUpdateIntervalCheckDate(Date()))
-        }
         return view
     }
 
@@ -124,6 +120,14 @@ class RssListFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewLifecycleOwner.lifecycleScope.launch {
+            fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
+            fetchRssStartUpdateStateActionCreator.run(RssUpdateIntervalCheckDate(Date()))
+        }
+    }
+   
     override fun onDetach() {
         super.onDetach()
         mListener = null
