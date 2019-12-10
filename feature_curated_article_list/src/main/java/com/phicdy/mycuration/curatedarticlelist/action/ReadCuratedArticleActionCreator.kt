@@ -23,16 +23,16 @@ class ReadCuratedArticleActionCreator(
                 is CuratedArticleItem.Advertisement -> return@withContext
                 is CuratedArticleItem.Content -> {
                     val oldStatus = item.value.status
-                    if (oldStatus == Article.TOREAD || oldStatus == Article.READ) {
+                    if (oldStatus == Article.READ) {
                         return@withContext
                     }
                     val article = item.value
-                    articleRepository.saveStatus(article.id, Article.TOREAD)
+                    articleRepository.saveStatus(article.id, Article.READ)
                     val rss = rssRepository.getFeedById(article.feedId)
                     rss?.let {
                         rssRepository.updateUnreadArticleCount(article.feedId, rss.unreadAriticlesCount - 1)
                     }
-                    article.status = Article.TOREAD
+                    article.status = Article.READ
                     dispatcher.dispatch(ReadArticleAction(position))
                 }
             }

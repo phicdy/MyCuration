@@ -8,8 +8,10 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -43,16 +45,21 @@ class NetworkTaskManager(
             val parser = RssParser()
             val articles = parser.parseArticlesFromRss(inputStream)
             val storedUrlList = articleRepository.getStoredUrlListIn(articles)
-            articles.filter { it.url !in storedUrlList }
+            val newArticleList = articles.filter { it.url !in storedUrlList }
+            if (newArticleList.isEmpty()) return@withContext feed
+
+            newArticleList
                     .also {
                         val savedArtices = articleRepository.saveNewArticles(it, feed.id)
                         curationRepository.saveCurationsOf(savedArtices)
                         feed.unreadAriticlesCount += it.size
                     }
                     .map {
-                        val hatenaBookmarkApi = HatenaBookmarkApi()
-                        val point = hatenaBookmarkApi.request(it.url)
-                        articleRepository.saveHatenaPoint(it.url, point)
+                        GlobalScope.launch {
+                            val hatenaBookmarkApi = HatenaBookmarkApi()
+                            val point = hatenaBookmarkApi.request(it.url)
+                            articleRepository.saveHatenaPoint(it.url, point)
+                        }
                     }
 
             FilterTask(articleRepository, filterRepository).applyFiltering(feed.id)
