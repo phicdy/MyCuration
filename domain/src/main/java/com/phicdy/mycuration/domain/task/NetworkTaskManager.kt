@@ -46,7 +46,12 @@ class NetworkTaskManager(
             val articles = parser.parseArticlesFromRss(inputStream)
             val storedUrlList = articleRepository.getStoredUrlListIn(articles)
             val newArticleList = articles.filter { it.url !in storedUrlList }
-            if (newArticleList.isEmpty()) return@withContext feed
+            if (newArticleList.isEmpty()) {
+                val size = articleRepository.getUnreadArticleCount(feed.id)
+                rssRepository.updateUnreadArticleCount(feed.id, size)
+                feed.unreadAriticlesCount = size
+                return@withContext feed
+            }
 
             newArticleList
                     .also {
@@ -65,10 +70,8 @@ class NetworkTaskManager(
             FilterTask(articleRepository, filterRepository).applyFiltering(feed.id)
 
             val size = articleRepository.getUnreadArticleCount(feed.id)
-            if (size >= 0) {
-                rssRepository.updateUnreadArticleCount(feed.id, size)
-                feed.unreadAriticlesCount = size
-            }
+            rssRepository.updateUnreadArticleCount(feed.id, size)
+            feed.unreadAriticlesCount = size
             try {
                 inputStream.close()
             } catch (e: IOException) {
