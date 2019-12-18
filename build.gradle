@@ -16,6 +16,7 @@ buildscript {
     ext.firebase_version = '16.0.9'
     ext.jacoco_version = "0.8.2"
     ext.glideVer = '4.8.0'
+    ext.work_version = '2.2.0'
 
     repositories {
         google().content {
@@ -166,6 +167,10 @@ subprojects {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
+        }
+
+        kotlinOptions {
+            jvmTarget = '1.8'
         }
 
         testOptions {

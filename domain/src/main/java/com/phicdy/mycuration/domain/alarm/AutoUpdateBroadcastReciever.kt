@@ -12,6 +12,7 @@ import com.phicdy.mycuration.domain.util.NetworkUtil
 import com.phicdy.mycuration.entity.Article
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -34,7 +35,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver(), KoinComponent {
 
     private suspend fun handleAutoUpdate(context: Context) = coroutineScope {
         val feeds = rssRepository.getAllFeedsWithNumOfUnreadArticles()
-        networkTaskManager.updateAll(feeds)
+        networkTaskManager.updateAll(feeds).collect()
         val manager = AlarmManagerTaskManager(context)
         manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context)
 

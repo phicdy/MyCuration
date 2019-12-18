@@ -9,10 +9,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.glide.GlideApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
 
 class RssListAdapter(
-        private val presenter: RssListPresenter,
+        private val coroutineScope: CoroutineScope,
+        private val changeRssListModeActionCreator: ChangeRssListModeActionCreator,
+        private val rssListStateStore: RSSListStateStore,
         private val mListener: RssListFragment.OnFeedListFragmentListener?
 ) : ListAdapter<RssListItem, RecyclerView.ViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -92,7 +96,11 @@ class RssListAdapter(
             }
             is RssFooterView -> {
                 holder.itemView.setOnClickListener {
-                    presenter.onRssFooterClicked()
+                    rssListStateStore.state.value?.let {
+                        coroutineScope.launch {
+                            changeRssListModeActionCreator.run(it)
+                        }
+                    }
                 }
                 when (val item = getItem(position)) {
                     is RssListItem.Content -> throw IllegalStateException()
@@ -189,7 +197,7 @@ private val diffCallback = object : DiffUtil.ItemCallback<RssListItem>() {
             }
             is RssListItem.All -> {
                 when (newItem) {
-                    is RssListItem.All -> true
+                    is RssListItem.All -> oldItem.unreadCount == newItem.unreadCount
                     else -> false
                 }
             }

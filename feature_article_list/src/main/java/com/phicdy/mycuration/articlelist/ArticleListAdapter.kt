@@ -100,7 +100,7 @@ class ArticleListAdapter(
                 }
 
                 // Change color if already be read
-                val color = if (article.status == Article.TOREAD || article.status == Article.READ) {
+                val color = if (article.status == Article.READ) {
                     ContextCompat.getColor(holder.itemView.context, R.color.text_read)
                 } else {
                     ContextCompat.getColor(holder.itemView.context, R.color.text_primary)

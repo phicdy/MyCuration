@@ -26,7 +26,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
             try {
                 val values = ContentValues()
                 values.put(Article.STATUS, Article.READ)
-                val condition = Article.STATUS + " = '" + Article.TOREAD + "'"
+                val condition = Article.STATUS + " = '" + Article.READ + "'"
                 db.update(Article.TABLE_NAME, values, condition, null)
                 db.setTransactionSuccessful()
             } catch (e: SQLException) {

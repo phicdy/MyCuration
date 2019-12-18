@@ -25,7 +25,6 @@ data class Article(
         const val FEEDID = "feedId"
 
         const val UNREAD = "unread"
-        const val TOREAD = "toRead"
         const val READ = "read"
 
         const val DEDAULT_HATENA_POINT = "-1"

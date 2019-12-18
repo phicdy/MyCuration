@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ReadArticleActionCreatorTest {
+class ReadArticlePositionActionCreatorTest {
 
     @Test
     fun `when read unread article then article status becomes TOREAD`() {
@@ -32,7 +32,7 @@ class ReadArticleActionCreatorTest {
                     position = 0,
                     items = listOf(ArticleItem.Content(article))
             ).run()
-            assertThat(article.status).isEqualTo(Article.TOREAD)
+            assertThat(article.status).isEqualTo(Article.READ)
         }
     }
 
@@ -43,7 +43,7 @@ class ReadArticleActionCreatorTest {
                     id = 1,
                     title = "aaa",
                     point = "1",
-                    status = Article.TOREAD,
+                    status = Article.READ,
                     postedDate = 0,
                     feedId = 0,
                     feedTitle = "bbb",
@@ -58,7 +58,7 @@ class ReadArticleActionCreatorTest {
                     position = 0,
                     items = listOf(ArticleItem.Content(article))
             ).run()
-            assertThat(article.status).isEqualTo(Article.TOREAD)
+            assertThat(article.status).isEqualTo(Article.READ)
         }
     }
 

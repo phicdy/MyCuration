@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.articlelist.action
 
+import com.phicdy.action.articlelist.ReadArticleAction
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher
@@ -7,6 +8,7 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.entity.ReadArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -35,11 +37,11 @@ class ReadAllFavoriteArticlesActionCreator(
                         }
                         rss?.let {
                             rssRepository.updateUnreadArticleCount(content.feedId, it.unreadAriticlesCount - 1)
+                            dispatcher.dispatch(ReadArticleAction(ReadArticle(content.feedId, 1)))
                         }
                     }
                 }
             }
-            dispatcher.dispatch(ReadALlArticlesAction(Unit))
         }
     }
 }
