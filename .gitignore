@@ -33,3 +33,5 @@ build/
 .idea/modules.xml
 .idea/workspace.xml
 google-services.json
+
+*.iml

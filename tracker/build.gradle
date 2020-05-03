@@ -9,5 +9,5 @@ android {
 }
 
 dependencies {
-    implementation "com.google.firebase:firebase-core:$firebase_version"
+    implementation "com.google.firebase:firebase-analytics:$firebase_analytics_version"
 }
