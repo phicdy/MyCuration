@@ -229,12 +229,14 @@ task jacocoMergedReport(type: JacocoReport, dependsOn: [tasks.jacocoMerge]) {
     subprojects.forEach {
         sources += "${it.projectDir.path}/src/main/java"
     }
-    sourceDirectories = files(sources)
-    classDirectories = fileTree(
-            dir: ".",
-            includes: ["**/build/intermediates/classes/debug/**",
-                       "**/build/tmp/kotlin-classes/debug/**"],
-            excludes: coverageExcludeFiles
+    getSourceDirectories().setFrom(files(sources))
+    getClassDirectories().setFrom(
+            fileTree(
+                dir: ".",
+                includes: ["**/build/intermediates/classes/debug/**",
+                           "**/build/tmp/kotlin-classes/debug/**"],
+                excludes: coverageExcludeFiles
+            )
     )
 
     reports {

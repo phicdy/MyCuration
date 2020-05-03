@@ -34,14 +34,15 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
         csv.enabled false
         xml.destination new File("${buildDir}/reports/jacoco/jacocoTestReport.xml")
         html.destination new File("${buildDir}/reports/jacoco/html")
-        classDirectories =
+        getClassDirectories().setFrom(
                 fileTree(dir: "${buildDir}/intermediates/classes/debug",
                         exclude: coverageExcludeFiles) +
                         fileTree(dir: "$buildDir/tmp/kotlin-classes/debug",
                                 excludes: coverageExcludeFiles)
+        )
     }
-    sourceDirectories = files(coverageSourceDirs)
-    executionData = files "${buildDir}/jacoco/testDebugUnitTest.exec"
+    getSourceDirectories().setFrom(files(coverageSourceDirs))
+    getExecutionData().setFrom(files("${buildDir}/jacoco/testDebugUnitTest.exec"))
 
     doLast {
         println "jacoco xml report has been generated to file://${buildDir}/reports/jacoco/jacocoTestReport.xml"
