@@ -24,6 +24,7 @@ buildscript {
             includeGroupByRegex 'com\\.android\\.tools.*'
             includeGroup 'androidx.databinding'
             includeGroup 'com.android.databinding'
+            includeGroup 'com.android'
             includeGroup 'com.squareup'
         }
         jcenter {
@@ -75,7 +76,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         classpath 'com.google.gms:google-services:4.2.0'
         classpath 'com.stanfy.spoon:spoon-gradle-plugin:1.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
