@@ -110,6 +110,13 @@ class RssListFragment : Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
+        }
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -123,7 +130,6 @@ class RssListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
             fetchRssStartUpdateStateActionCreator.run(RssUpdateIntervalCheckDate(Date()))
         }
     }
