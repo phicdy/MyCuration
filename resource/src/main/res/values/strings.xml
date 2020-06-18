@@ -105,7 +105,6 @@
     <string name="key_add_rss">keyAddRss</string>
     <string name="key_fix_unread_count">keyFixUnreadCount</string>
     <string name="key_review">keyReview</string>
-    <string name="key_request">keyRequest</string>
 
     <string name="all_read">全て既読にする</string>
     <string name="no_article">未読の記事がありません</string>
@@ -159,8 +158,6 @@
     <string name="review_dialog_title">レビューにご協力お願いします</string>
     <string name="review_dialog_message">いつもご利用ありがとうございます。よろしければGoogle Playにてレビューをお願い致します。</string>
     <string name="review">レビューする</string>
-    <string name="request">要望を送る</string>
-    <string name="title_activity_user_review">ご意見・ご要望</string>
 
     <!-- Google Analytics -->
     <string name="ga_not_all_title">個別RSS</string>
@@ -172,8 +169,6 @@
     <string name="tap_article_external">記事を外部ブラウザで開く</string>
     <string name="tap_go_to_google_play">レビュータップ</string>
     <string name="tap_go_to_google_play_from_setting">設定からレビュータップ</string>
-    <string name="tap_request">要望を送るタップ</string>
-    <string name="tap_request_from_setting">設定から要望を送るタップ</string>
     <string name="cancel_review">レビューキャンセル</string>
     <string name="show_review_dialog">レビューダイアログ</string>
     <string name="share_article">記事共有</string>
