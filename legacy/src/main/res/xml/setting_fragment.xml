@@ -53,9 +53,6 @@
             android:key="@string/key_review"
             android:title="@string/review_on_google_play" />
         <Preference
-            android:key="@string/key_request"
-            android:title="@string/request" />
-        <Preference
             android:key="@string/key_license"
             android:title="@string/license_info" />
     </PreferenceCategory>

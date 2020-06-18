@@ -17,7 +17,6 @@ import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.presentation.view.activity.LicenseActivity
-import com.phicdy.mycuration.presentation.view.activity.UserRequestActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
 import kotlinx.coroutines.CoroutineScope
@@ -47,17 +46,12 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     private lateinit var prefInternalBrowser: SwitchPreference
     private lateinit var prefLicense: Preference
     private lateinit var prefReview: Preference
-    private lateinit var prefRequest: Preference
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
     private lateinit var fragmentListener: OnSettingFragmentListener
 
     interface OnSettingFragmentListener {
         fun onThemeChanged(mode: Int)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -103,7 +97,6 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         prefLaunchTab = requirePreference(R.string.key_launch_tab)
         prefLicense = requirePreference(R.string.key_license)
         prefReview = requirePreference(R.string.key_review)
-        prefRequest = requirePreference(R.string.key_request)
     }
 
     private fun <T : Preference> requirePreference(key: Int): T = findPreference(getString(key))
@@ -217,12 +210,6 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                 } catch (e: Exception) {
                 }
             }
-            true
-        }
-
-        prefRequest.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            TrackerHelper.sendButtonEvent(getString(R.string.tap_request_from_setting))
-            activity?.startActivity(Intent(context, UserRequestActivity::class.java))
             true
         }
     }
