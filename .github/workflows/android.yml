@@ -28,7 +28,12 @@ jobs:
       env:
         TZ: Asia/Tokyo
       run: ./gradlew testDebugUnitTest
-      
+    - name: Create jacoco report
+      run: ./gradlew jacocoTestReport
+    - uses: codecov/codecov-action@v1
+      with:
+        file: ./*/reports/jacoco/jacocoTestReport.xml
+
   lint:
     runs-on: ubuntu-latest
     steps:

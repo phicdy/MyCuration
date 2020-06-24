@@ -31,15 +31,6 @@ jobs:
       - run:
           name: Run Tests
           command: ./gradlew testDebugUnitTest
-      - run:
-          name: Create jacoco report
-          command: ./gradlew jacocoTestReport
-      - run:
-          name: Replace report name
-          command: sed -i -e "s|report name=\"MyCuration|report name=\"app|"  build/reports/jacoco/report.xml
-      - run:
-          name: Publish to codecov
-          command: bash <(curl -s https://codecov.io/bash)
       - store_test_results:
           path: app/build/test-results
   lint:
