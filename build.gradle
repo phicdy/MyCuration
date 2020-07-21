@@ -179,6 +179,11 @@ subprojects {
         testOptions {
             unitTests.returnDefaultValues = true
         }
+
+        lintOptions {
+            // Bug in Gradle plugin 4.0.0
+            disable 'RequiredSize'
+        }
     }
 
     dependencies {
