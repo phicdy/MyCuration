@@ -14,11 +14,15 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
+import com.phicdy.mycuration.rss.databinding.FragmentRssListBinding
 import kotlinx.coroutines.launch
 import org.koin.android.scope.currentScope
 import java.util.Date
 
 class RssListFragment : Fragment() {
+
+    private var _binding: FragmentRssListBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
@@ -72,10 +76,15 @@ class RssListFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_rss_list, container, false)
-        recyclerView = view.findViewById(R.id.rv_rss)
-        emptyView = view.findViewById(R.id.emptyView) as TextView
-        swipeRefreshLayout = view.findViewById(R.id.srl_container) as SwipeRefreshLayout
+        _binding = FragmentRssListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recyclerView = binding.rvRss
+        emptyView = binding.emptyView
+        swipeRefreshLayout = binding.srlContainer
         registerForContextMenu(recyclerView)
         setAllListener()
         rssListStateStore.state.observe(viewLifecycleOwner, Observer {
@@ -107,11 +116,6 @@ class RssListFragment : Fragment() {
                 }
             }
         })
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
@@ -137,6 +141,11 @@ class RssListFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         mListener = null
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     fun updateFeedTitle(rssId: Int, newTitle: String) {
