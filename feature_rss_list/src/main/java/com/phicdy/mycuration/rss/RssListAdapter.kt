@@ -1,14 +1,15 @@
 package com.phicdy.mycuration.rss
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.phicdy.mycuration.glide.GlideApp
+import com.phicdy.mycuration.rss.databinding.ItemAllRssBinding
+import com.phicdy.mycuration.rss.databinding.ItemFavoriteBinding
+import com.phicdy.mycuration.rss.databinding.ItemRssBinding
+import com.phicdy.mycuration.rss.databinding.ItemRssFooterBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
@@ -22,24 +23,16 @@ class RssListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_ALL_RSS -> {
-                val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_all_rss, parent, false)
-                AllRssViewHolder(view)
+                AllRssViewHolder(ItemAllRssBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             }
             VIEW_TYPE_FAVORITE -> {
-                val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_favorite, parent, false)
-                FavoriteViewHolder(view)
+                FavoriteViewHolder(ItemFavoriteBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             }
             VIEW_TYPE_RSS -> {
-                val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.feeds_list, parent, false)
-                RssViewHolder(view)
+                RssViewHolder(ItemRssBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             }
             VIEW_TYPE_FOOTER -> {
-                val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.list_item_rss_footer, parent, false)
-                RssFooterView(view)
+                RssFooterView(ItemRssFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             }
             else -> throw InvalidParameterException("Invalid view type")
         }
@@ -116,23 +109,23 @@ class RssListAdapter(
     }
 
     private class AllRssViewHolder(
-            itemView: View
-    ) : RecyclerView.ViewHolder(itemView) {
+            private val binding: ItemAllRssBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun setUnreadCount(count: String) {
-            itemView.findViewById<TextView>(R.id.allUnreadCount).text = count
+            binding.allUnreadCount.text = count
         }
     }
 
     private class FavoriteViewHolder(
-            itemView: View
-    ) : RecyclerView.ViewHolder(itemView)
+            binding: ItemFavoriteBinding
+    ) : RecyclerView.ViewHolder(binding.root)
 
     private inner class RssViewHolder(
-            itemView: View
-    ) : RecyclerView.ViewHolder(itemView) {
-        private val feedIcon = itemView.findViewById(R.id.feedIcon) as ImageView
-        private val feedTitle = itemView.findViewById(R.id.feedTitle) as TextView
-        private val feedCount = itemView.findViewById(R.id.feedCount) as TextView
+            binding: ItemRssBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private val feedIcon = binding.feedIcon
+        private val feedTitle = binding.feedTitle
+        private val feedCount = binding.feedCount
 
         fun showDefaultIcon() {
             feedIcon.setImageResource(R.drawable.ic_rss)
@@ -157,9 +150,9 @@ class RssListAdapter(
     }
 
     private inner class RssFooterView(
-            itemView: View
-    ) : RecyclerView.ViewHolder(itemView), RssItemView.Footer {
-        internal val title = itemView.findViewById<TextView>(R.id.tv_rss_footer_title)
+            binding: ItemRssFooterBinding
+    ) : RecyclerView.ViewHolder(binding.root), RssItemView.Footer {
+        private val title = binding.tvRssFooterTitle
         override fun showAllView() {
             title.setText(R.string.show_all_rsses)
         }
