@@ -8,4 +8,9 @@ android {
 }
 
 dependencies {
+    implementation project(':feature_util')
+    implementation project(':resource')
+
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "com.google.android.material:material:$material_version"
 }
