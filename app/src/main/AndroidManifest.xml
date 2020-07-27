@@ -85,7 +85,7 @@
         </receiver>
 
         <activity
-            android:name=".presentation.view.activity.LicenseActivity"
+            android:name=".license.LicenseActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
