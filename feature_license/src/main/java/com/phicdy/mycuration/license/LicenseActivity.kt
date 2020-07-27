@@ -2,25 +2,26 @@ package com.phicdy.mycuration.license
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
+import com.phicdy.mycuration.license.databinding.ActivityLicenseBinding
 
 class LicenseActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityLicenseBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_license)
+        binding = ActivityLicenseBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_license)
+        val toolbar = binding.toolbarLicense
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         title = getString(R.string.license)
-        val webView = findViewById(R.id.license_web_view) as WebView
-        webView.loadUrl("file:///android_asset/license.html")
+        binding.licenseWebView.loadUrl("file:///android_asset/license.html")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
