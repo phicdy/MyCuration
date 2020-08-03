@@ -118,33 +118,33 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(rssId)
 
-        articleListStore.state.observe(this, Observer<List<ArticleItem>> {
+        articleListStore.state.observe(viewLifecycleOwner, Observer<List<ArticleItem>> {
             if (it.isEmpty()) {
                 showEmptyView()
             } else {
                 articlesListAdapter.submitList(it)
             }
         })
-        searchResultStore.state.observe(this, Observer<List<ArticleItem>> {
+        searchResultStore.state.observe(viewLifecycleOwner, Observer<List<ArticleItem>> {
             if (it.isEmpty()) {
                 showNoSearchResult()
             } else {
                 articlesListAdapter.submitList(it)
             }
         })
-        readArticlePositionStore.state.observe(this, Observer<Int> {
+        readArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
         })
-        finishStateStore.state.observe(this, Observer<Boolean> {
+        finishStateStore.state.observe(viewLifecycleOwner, Observer<Boolean> {
             if (it) listener.finish()
         })
-        openInternalWebBrowserStateStore.state.observe(this, Observer<String> { url ->
+        openInternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> { url ->
             openInternalWebView(url)
         })
-        openExternalWebBrowserStateStore.state.observe(this, Observer<String> {
+        openExternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> {
             openExternalWebView(it)
         })
-        scrollPositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
+        scrollPositionStore.state.observe(viewLifecycleOwner, Observer<Int> { positionAfterScroll ->
             viewLifecycleOwner.lifecycleScope.launch {
                 val manager = recyclerView.layoutManager as LinearLayoutManager
                 val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
@@ -155,15 +155,15 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
                 runFinishActionCreator()
             }
         })
-        swipePositionStore.state.observe(this, Observer<Int> {
+        swipePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
             runFinishActionCreator()
         })
-        readAllArticlesStateStore.state.observe(this, Observer {
+        readAllArticlesStateStore.state.observe(viewLifecycleOwner, Observer {
             notifyListView()
             runFinishActionCreator()
         })
-        shareUrlStore.state.observe(this, Observer<String> {
+        shareUrlStore.state.observe(viewLifecycleOwner, Observer<String> {
             showShareUi(it)
         })
     }

@@ -105,26 +105,26 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
         super.onCreate(savedInstanceState)
         job = Job()
 
-        curatedArticleListStore.state.observe(this, Observer<List<CuratedArticleItem>> {
+        curatedArticleListStore.state.observe(viewLifecycleOwner, Observer<List<CuratedArticleItem>> {
             if (it.isEmpty()) {
                 showEmptyView()
             } else {
                 articlesListAdapter.submitList(it)
             }
         })
-        readCuratedArticlePositionStore.state.observe(this, Observer<Int> {
+        readCuratedArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
         })
-        finishCuratedArticleStateStore.state.observe(this, Observer<Boolean> {
+        finishCuratedArticleStateStore.state.observe(viewLifecycleOwner, Observer<Boolean> {
             if (it) listener.finish()
         })
-        openCuratedArticleWithInternalWebBrowserStateStore.state.observe(this, Observer<String> { url ->
+        openCuratedArticleWithInternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> { url ->
             openInternalWebView(url)
         })
-        openCuratedArticleWithExternalWebBrowserStateStore.state.observe(this, Observer<String> {
+        openCuratedArticleWithExternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> {
             openExternalWebView(it)
         })
-        scrollCuratedArticlePositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
+        scrollCuratedArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> { positionAfterScroll ->
             launch {
                 val manager = recyclerView.layoutManager as LinearLayoutManager
                 val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
@@ -135,15 +135,15 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
                 runFinishActionCreator()
             }
         })
-        swipeCuratedArticlePositionStore.state.observe(this, Observer<Int> {
+        swipeCuratedArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
             runFinishActionCreator()
         })
-        readAllCuratedArticlesStateStore.state.observe(this, Observer<Unit> {
+        readAllCuratedArticlesStateStore.state.observe(viewLifecycleOwner, Observer<Unit> {
             notifyListView()
             runFinishActionCreator()
         })
-        shareCuratedArticleUrlStore.state.observe(this, Observer<String> {
+        shareCuratedArticleUrlStore.state.observe(viewLifecycleOwner, Observer<String> {
             showShareUi(it)
         })
     }
