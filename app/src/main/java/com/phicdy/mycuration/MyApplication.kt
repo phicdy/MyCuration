@@ -5,10 +5,9 @@ import android.content.Context
 import androidx.work.Configuration
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -18,7 +17,6 @@ import com.phicdy.mycuration.rss.IconFetchWorker
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.log.TimberTree
-import io.fabric.sdk.android.Fabric
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
@@ -64,10 +62,7 @@ class MyApplication : Application() {
             )
         }
 
-        val crashlyticsKit = Crashlytics.Builder()
-                .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-                .build()
-        Fabric.with(this, crashlyticsKit)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
 
         PreferenceHelper.setUp(this)
 
