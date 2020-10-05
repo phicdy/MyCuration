@@ -81,8 +81,8 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
         fun finish()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         articleListStore.state.observe(viewLifecycleOwner, Observer<List<ArticleItem>> {
             if (it.isEmpty()) {

@@ -67,7 +67,7 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
         }
     }
 
-    private lateinit var job: Job
+    private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
@@ -101,9 +101,8 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
         fun finish()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        job = Job()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         curatedArticleListStore.state.observe(viewLifecycleOwner, Observer<List<CuratedArticleItem>> {
             if (it.isEmpty()) {
