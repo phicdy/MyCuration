@@ -9,7 +9,7 @@ buildscript {
     ext.browser_version = '1.2.0'
     ext.recyclerview_version = '1.1.0'
     ext.constraintlayout_version = '2.0.4'
-    ext.material_version = '1.1.0'
+    ext.material_version = '1.2.1'
     ext.retrofit_version = '2.9.0'
     ext.rxjava_version = '2.2.19'
     ext.rxandroid_version = '2.2.19'
