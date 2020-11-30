@@ -38,8 +38,8 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
         val rssFragment = fragment as? SelectFilterTargetRssFragment // maybe Glide's fragment
-        val selectedList = intent.getParcelableArrayListExtra<Feed>(TARGET_RSS)
-        rssFragment?.updateSelected(selectedList)
+        val selectedList = intent.getParcelableArrayListExtra<Feed>(TARGET_RSS) ?: throw IllegalArgumentException("RSS is not selected")
+        rssFragment?.updateSelected(selectedList.toMutableList())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -66,7 +66,9 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         val bundle = Bundle()
         val manager = supportFragmentManager
         val fragment = manager.findFragmentById(R.id.f_select_target) as SelectFilterTargetRssFragment
-        bundle.putParcelableArrayList(RegisterFilterActivity.KEY_SELECTED_FEED, fragment.list())
+        val rssList = arrayListOf<Feed>()
+        fragment.list()?.forEach { rssList.add(it) }
+        bundle.putParcelableArrayList(RegisterFilterActivity.KEY_SELECTED_FEED, rssList)
         data.putExtras(bundle)
         setResult(RESULT_OK, data)
         finish()

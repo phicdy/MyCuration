@@ -6,7 +6,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
 
@@ -37,10 +36,6 @@ class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.On
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

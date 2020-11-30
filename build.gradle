@@ -108,7 +108,6 @@ allprojects {
                 includeGroup 'com.squareup.okhttp3'
                 includeGroup 'com.github.bumptech.glide'
                 includeGroup 'com.nhaarman.mockitokotlin2'
-                includeGroup 'io.github.inflationx'
                 includeGroup 'junit'
                 includeGroup 'it.unimi.dsi'
                 includeGroup 'net.sf.kxml'
@@ -149,11 +148,11 @@ subprojects {
     apply from: "$rootDir/jacoco.gradle"
 
     android {
-        compileSdkVersion 28
+        compileSdkVersion 30
 
         defaultConfig {
             minSdkVersion 21
-            targetSdkVersion 28
+            targetSdkVersion 30
             versionName "1.8.3"
             versionCode 56
 

@@ -37,7 +37,5 @@ dependencies {
         exclude group: "com.android.support"
     }
 
-    implementation 'io.github.inflationx:viewpump:1.0.0'
-
     testImplementation "androidx.arch.core:core-testing:$arch_core_testing_version"
 }
