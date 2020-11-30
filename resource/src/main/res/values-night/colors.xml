@@ -24,4 +24,6 @@
 
     <color name="fill_favorite">#ffea00</color>
     <color name="stroke_non_favorite">#ffffff</color>
+
+    <color name="splash_background">#2c2c2c</color>
 </resources>

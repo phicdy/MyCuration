@@ -16,7 +16,10 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher"
         android:theme="@style/AppTheme">
-        <activity android:name=".LaunchActivity">
+        <activity
+            android:name=".LaunchActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
