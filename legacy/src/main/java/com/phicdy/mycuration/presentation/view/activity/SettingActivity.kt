@@ -9,7 +9,6 @@ import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentListener {
 
@@ -22,10 +21,6 @@ class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentLi
         supportActionBar?.title = getString(R.string.setting)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

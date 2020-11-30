@@ -23,7 +23,7 @@ import kotlin.coroutines.CoroutineContext
 
 class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
 
-    private var selectedList: ArrayList<Feed> = ArrayList()
+    private var selectedList = mutableListOf<Feed>()
     private lateinit var recyclerView: RecyclerView
 
     private val rssRepository: RssRepository by inject()
@@ -53,15 +53,15 @@ class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
         super.onDestroy()
     }
 
-    fun list(): ArrayList<Feed>? {
+    fun list(): List<Feed>? {
         return selectedList
     }
 
-    fun updateSelected(selectedList: ArrayList<Feed>) {
+    fun updateSelected(selectedList: MutableList<Feed>) {
         this.selectedList = selectedList
     }
 
-    private inner class TargetRssListAdapter(private val feeds: ArrayList<Feed>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private inner class TargetRssListAdapter(private val feeds: List<Feed>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val itemView = LayoutInflater.from(parent.context)
                     .inflate(R.layout.filter_target_rss_list, parent, false)

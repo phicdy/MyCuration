@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.view.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -12,7 +11,6 @@ import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,10 +45,6 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun showInvalidUrlErrorToast() {

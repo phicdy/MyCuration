@@ -33,7 +33,5 @@ dependencies {
 
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0@aar'
 
-    implementation 'io.github.inflationx:viewpump:1.0.0'
-
     implementation "com.jakewharton.timber:timber:$timber_version"
 }

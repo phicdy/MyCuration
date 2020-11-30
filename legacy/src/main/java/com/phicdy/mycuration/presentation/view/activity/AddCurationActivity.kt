@@ -9,7 +9,6 @@ import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 
 class AddCurationActivity : AppCompatActivity() {
@@ -38,10 +37,6 @@ class AddCurationActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun onResume() {

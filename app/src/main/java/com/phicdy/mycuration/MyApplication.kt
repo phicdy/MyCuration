@@ -17,9 +17,6 @@ import com.phicdy.mycuration.rss.IconFetchWorker
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.log.TimberTree
-import io.github.inflationx.calligraphy3.CalligraphyConfig
-import io.github.inflationx.calligraphy3.CalligraphyInterceptor
-import io.github.inflationx.viewpump.ViewPump
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -67,15 +64,6 @@ class MyApplication : Application() {
         PreferenceHelper.setUp(this)
 
         TrackerHelper.setTracker(setUp(this))
-
-        // Font
-        ViewPump.init(ViewPump.builder()
-                .addInterceptor(CalligraphyInterceptor(
-                        CalligraphyConfig.Builder()
-                                .setDefaultFontPath("fonts/GenShinGothic-P-Regular.ttf")
-                                .setFontAttrId(R.attr.fontPath)
-                                .build()))
-                .build())
 
         // For old version under 1.6.0
         FileUtil.setUpAppPath(this)

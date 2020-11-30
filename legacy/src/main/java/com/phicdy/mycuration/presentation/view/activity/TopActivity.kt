@@ -40,7 +40,6 @@ import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -361,10 +360,6 @@ class TopActivity :
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (presenter.onKeyDown(keyCode, back.visibility == View.VISIBLE)) return true
         return super.onKeyDown(keyCode, event)
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun goToFeedSearch() {
