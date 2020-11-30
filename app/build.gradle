@@ -89,9 +89,10 @@ dependencies {
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.0'
 
-    implementation "com.google.firebase:firebase-analytics:$firebase_analytics_version"
+    implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 

@@ -9,5 +9,6 @@ android {
 }
 
 dependencies {
-    implementation "com.google.firebase:firebase-analytics:$firebase_analytics_version"
+    implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 }
