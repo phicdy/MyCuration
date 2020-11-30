@@ -17,7 +17,7 @@ buildscript {
     ext.firebase_analytics_version = '17.4.0'
     ext.jacoco_version = "0.8.5"
     ext.glideVer = '4.11.0'
-    ext.work_version = '2.3.4'
+    ext.work_version = '2.4.0'
 
     repositories {
         google().content {
