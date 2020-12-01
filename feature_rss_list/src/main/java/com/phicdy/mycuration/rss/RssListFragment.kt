@@ -37,7 +37,7 @@ class RssListFragment : Fragment() {
     private val deleteRssActionCreator: DeleteRssActionCreator by currentScope.inject()
 
     private fun init(items: List<RssListItem>) {
-        rssFeedListAdapter = RssListAdapter(viewLifecycleOwner.lifecycleScope, changeRssListModeActionCreator, rssListStateStore, mListener)
+        rssFeedListAdapter = RssListAdapter(mListener)
         binding.rvRss.layoutManager = LinearLayoutManager(activity)
         binding.rvRss.adapter = rssFeedListAdapter
         rssFeedListAdapter.submitList(items)
@@ -145,11 +145,20 @@ class RssListFragment : Fragment() {
         }
     }
 
+    fun changeRssListMode() {
+        rssListStateStore.state.value?.let {
+            viewLifecycleOwner.lifecycleScope.launch {
+                changeRssListModeActionCreator.run(it)
+            }
+        }
+    }
+
     interface OnFeedListFragmentListener {
         fun onListClicked(feedId: Int)
         fun onEditRssClicked(rssId: Int, feedTitle: String)
         fun onDeleteRssClicked(rssId: Int, position: Int)
         fun onAllUnreadClicked()
         fun onFavoriteClicked()
+        fun onFooterClicked()
     }
 }

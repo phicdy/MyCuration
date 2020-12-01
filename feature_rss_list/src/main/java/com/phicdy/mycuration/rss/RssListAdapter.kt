@@ -10,14 +10,9 @@ import com.phicdy.mycuration.rss.databinding.ItemAllRssBinding
 import com.phicdy.mycuration.rss.databinding.ItemFavoriteBinding
 import com.phicdy.mycuration.rss.databinding.ItemRssBinding
 import com.phicdy.mycuration.rss.databinding.ItemRssFooterBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
 
 class RssListAdapter(
-        private val coroutineScope: CoroutineScope,
-        private val changeRssListModeActionCreator: ChangeRssListModeActionCreator,
-        private val rssListStateStore: RSSListStateStore,
         private val mListener: RssListFragment.OnFeedListFragmentListener?
 ) : ListAdapter<RssListItem, RecyclerView.ViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -89,11 +84,7 @@ class RssListAdapter(
             }
             is RssFooterView -> {
                 holder.itemView.setOnClickListener {
-                    rssListStateStore.state.value?.let {
-                        coroutineScope.launch {
-                            changeRssListModeActionCreator.run(it)
-                        }
-                    }
+                    mListener?.onFooterClicked()
                 }
                 when (val item = getItem(position)) {
                     is RssListItem.Content -> throw IllegalStateException()
