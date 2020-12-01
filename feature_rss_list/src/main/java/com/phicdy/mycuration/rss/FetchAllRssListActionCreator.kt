@@ -12,13 +12,14 @@ class FetchAllRssListActionCreator(
 ) : ActionCreator1<RssListMode> {
 
     override suspend fun run(arg: RssListMode) {
+        dispatcher.dispatch(RssListAction(RssListState.Loading))
         val rss = rssRepository.getAllFeedsWithNumOfUnreadArticles()
         if (rss.isEmpty()) {
-            dispatcher.dispatch(RssListAction(RssListState(emptyList(), emptyList(), arg)))
+            dispatcher.dispatch(RssListAction(RssListState.Loaded(emptyList(), emptyList(), arg)))
             return
         }
         rssListItemFactory.create(arg, rss).let {
-            dispatcher.dispatch(RssListAction(RssListState(it, rss, arg)))
+            dispatcher.dispatch(RssListAction(RssListState.Loaded(it, rss, arg)))
         }
     }
 }

@@ -21,6 +21,7 @@ class RSSListStateStore(
             is RssListAction -> _state.value = action.value
             is ReadArticleAction -> {
                 state.value?.let { state ->
+                    if (state !is RssListState.Loaded) return
                     val updated = state.rss.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount - action.value.count)
@@ -28,11 +29,12 @@ class RSSListStateStore(
                             it
                         }
                     }
-                    _state.value = RssListState(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
                 }
             }
             is UnReadArticleAction -> {
                 state.value?.let { state ->
+                    if (state !is RssListState.Loaded) return
                     val updated = state.rss.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount + action.value.count)
@@ -40,11 +42,12 @@ class RSSListStateStore(
                             it
                         }
                     }
-                    _state.value = RssListState(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
                 }
             }
             is ReadAllArticlesAction -> {
                 state.value?.let { state ->
+                    if (state !is RssListState.Loaded) return
                     val updated = state.rss.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = 0)
@@ -52,7 +55,7 @@ class RSSListStateStore(
                             it
                         }
                     }
-                    _state.value = RssListState(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
                 }
             }
         }

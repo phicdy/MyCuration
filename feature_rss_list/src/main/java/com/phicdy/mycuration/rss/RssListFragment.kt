@@ -38,6 +38,7 @@ class RssListFragment : Fragment() {
 
     private fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(mListener)
+        binding.rvRss.visibility = View.VISIBLE
         binding.rvRss.layoutManager = LinearLayoutManager(activity)
         binding.rvRss.adapter = rssFeedListAdapter
         rssFeedListAdapter.submitList(items)
@@ -57,11 +58,7 @@ class RssListFragment : Fragment() {
 
     private fun setAllListener() {
         binding.srlContainer.setOnRefreshListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                rssListStateStore.state.value?.let { value ->
-                    updateAllRssListActionCreator.run(value.mode, RssUpdateIntervalCheckDate(Date()))
-                }
-            }
+            launchWhenLoaded { state -> updateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date())) }
         }
     }
 
@@ -75,11 +72,20 @@ class RssListFragment : Fragment() {
         registerForContextMenu(binding.rvRss)
         setAllListener()
         rssListStateStore.state.observe(viewLifecycleOwner, Observer { state ->
-            if (state.item.isEmpty()) {
-                hideRecyclerView()
-                showEmptyView()
-            } else {
-                init(state.item)
+            when (state) {
+                RssListState.Loading -> {
+                    binding.progressbar.visibility = View.VISIBLE
+                    hideRecyclerView()
+                }
+                is RssListState.Loaded -> {
+                    binding.progressbar.visibility = View.GONE
+                    if (state.item.isEmpty()) {
+                        hideRecyclerView()
+                        showEmptyView()
+                    } else {
+                        init(state.item)
+                    }
+                }
             }
         })
         rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer { state ->
@@ -107,16 +113,16 @@ class RssListFragment : Fragment() {
         } catch (e: ClassCastException) {
             throw ClassCastException("$context must implement OnFragmentInteractionListener")
         }
-
     }
 
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            updateAllRssListActionCreator.run(
-                    rssListStateStore.state.value?.mode ?: RssListMode.UNREAD_ONLY,
-                    RssUpdateIntervalCheckDate(Date())
-            )
+            val mode = when (val value = rssListStateStore.state.value) {
+                is RssListState.Loading, null -> RssListMode.UNREAD_ONLY
+                is RssListState.Loaded -> value.mode
+            }
+            updateAllRssListActionCreator.run(mode, RssUpdateIntervalCheckDate(Date()))
         }
     }
 
@@ -131,26 +137,24 @@ class RssListFragment : Fragment() {
     }
 
     fun updateFeedTitle(rssId: Int, newTitle: String) {
-        rssListStateStore.state.value?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                changeRssTitleActionCreator.run(rssId, newTitle, it)
-            }
-        }
+        launchWhenLoaded { state -> changeRssTitleActionCreator.run(rssId, newTitle, state) }
     }
 
     fun removeRss(rssId: Int) {
-        rssListStateStore.state.value?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                deleteRssActionCreator.run(rssId, it)
-            }
-        }
+        launchWhenLoaded { state -> deleteRssActionCreator.run(rssId, state) }
     }
 
     fun changeRssListMode() {
-        rssListStateStore.state.value?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                changeRssListModeActionCreator.run(it)
-            }
+        launchWhenLoaded { state -> changeRssListModeActionCreator.run(state) }
+    }
+
+    private fun launchWhenLoaded(block: suspend (RssListState.Loaded) -> Unit) {
+        when (val value = rssListStateStore.state.value) {
+            is RssListState.Loaded ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    block.invoke(value)
+                }
+            RssListState.Loading, null -> return
         }
     }
 
