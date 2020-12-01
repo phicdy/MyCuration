@@ -113,9 +113,10 @@ class RssListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            rssListStateStore.state.value?.let { value ->
-                updateAllRssListActionCreator.run(value.mode, RssUpdateIntervalCheckDate(Date()))
-            }
+            updateAllRssListActionCreator.run(
+                    rssListStateStore.state.value?.mode ?: RssListMode.UNREAD_ONLY,
+                    RssUpdateIntervalCheckDate(Date())
+            )
         }
     }
 
