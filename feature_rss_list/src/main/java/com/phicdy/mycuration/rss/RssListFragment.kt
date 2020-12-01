@@ -74,19 +74,19 @@ class RssListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         registerForContextMenu(binding.rvRss)
         setAllListener()
-        rssListStateStore.state.observe(viewLifecycleOwner, Observer {
-            if (it.item.isEmpty()) {
+        rssListStateStore.state.observe(viewLifecycleOwner, Observer { state ->
+            if (state.item.isEmpty()) {
                 hideRecyclerView()
                 showEmptyView()
             } else {
-                init(it.item)
+                init(state.item)
             }
         })
-        rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
-            when (it) {
+        rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer { state ->
+            when (state) {
                 RssListUpdateState.Started -> binding.srlContainer.isRefreshing = true
                 is RssListUpdateState.Updating -> {
-                    rssFeedListAdapter.submitList(it.rss)
+                    rssFeedListAdapter.submitList(state.rss)
                 }
                 RssListUpdateState.Finished -> {
                     onRefreshCompleted()
