@@ -131,7 +131,8 @@ val appModule = module {
                     dispatcher = get(),
                     networkTaskManager = get(),
                     preferenceHelper = get(),
-                    rssListItemFactory = RssListItemFactory()
+                    rssListItemFactory = RssListItemFactory(),
+                    rssRepository = get()
             )
         }
         scoped {

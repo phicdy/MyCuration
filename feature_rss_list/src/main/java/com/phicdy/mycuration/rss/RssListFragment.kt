@@ -66,7 +66,7 @@ class RssListFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 rssListStateStore.state.value?.let { value ->
-                    updateAllRssListActionCreator.run(value.rss, value.mode, RssUpdateIntervalCheckDate(Date()))
+                    updateAllRssListActionCreator.run(value.mode, RssUpdateIntervalCheckDate(Date()))
                 }
             }
         }
@@ -124,7 +124,7 @@ class RssListFragment : Fragment() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
             rssListStateStore.state.value?.let { value ->
-                updateAllRssListActionCreator.run(value.rss, value.mode, RssUpdateIntervalCheckDate(Date()))
+                updateAllRssListActionCreator.run(value.mode, RssUpdateIntervalCheckDate(Date()))
             }
         }
     }
