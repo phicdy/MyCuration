@@ -105,7 +105,7 @@ class RssListFragment : Fragment() {
         try {
             mListener = context as OnFeedListFragmentListener
         } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw ClassCastException("$context must implement OnFragmentInteractionListener")
         }
 
     }
