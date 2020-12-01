@@ -5,13 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import com.phicdy.mycuration.rss.databinding.FragmentRssListBinding
@@ -23,10 +20,6 @@ class RssListFragment : Fragment() {
 
     private var _binding: FragmentRssListBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var emptyView: TextView
 
     private lateinit var rssFeedListAdapter: RssListAdapter
     private var mListener: OnFeedListFragmentListener? = null
@@ -45,25 +38,25 @@ class RssListFragment : Fragment() {
 
     private fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(viewLifecycleOwner.lifecycleScope, changeRssListModeActionCreator, rssListStateStore, mListener)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = rssFeedListAdapter
+        binding.rvRss.layoutManager = LinearLayoutManager(activity)
+        binding.rvRss.adapter = rssFeedListAdapter
         rssFeedListAdapter.submitList(items)
     }
 
     private fun onRefreshCompleted() {
-        swipeRefreshLayout.isRefreshing = false
+        binding.srlContainer.isRefreshing = false
     }
 
     private fun hideRecyclerView() {
-        recyclerView.visibility = View.GONE
+        binding.rvRss.visibility = View.GONE
     }
 
     private fun showEmptyView() {
-        emptyView.visibility = View.VISIBLE
+        binding.emptyView.visibility = View.VISIBLE
     }
 
     private fun setAllListener() {
-        swipeRefreshLayout.setOnRefreshListener {
+        binding.srlContainer.setOnRefreshListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 rssListStateStore.state.value?.let { value ->
                     updateAllRssListActionCreator.run(value.mode, RssUpdateIntervalCheckDate(Date()))
@@ -79,10 +72,7 @@ class RssListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = binding.rvRss
-        emptyView = binding.emptyView
-        swipeRefreshLayout = binding.srlContainer
-        registerForContextMenu(recyclerView)
+        registerForContextMenu(binding.rvRss)
         setAllListener()
         rssListStateStore.state.observe(viewLifecycleOwner, Observer {
             if (it.item.isEmpty()) {
@@ -94,7 +84,7 @@ class RssListFragment : Fragment() {
         })
         rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
             when (it) {
-                RssListUpdateState.Started -> swipeRefreshLayout.isRefreshing = true
+                RssListUpdateState.Started -> binding.srlContainer.isRefreshing = true
                 is RssListUpdateState.Updating -> {
                     rssFeedListAdapter.submitList(it.rss)
                 }
