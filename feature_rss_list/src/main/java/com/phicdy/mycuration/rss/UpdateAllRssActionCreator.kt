@@ -1,11 +1,12 @@
 package com.phicdy.mycuration.rss
 
-import com.phicdy.mycuration.core.ActionCreator2
+import com.phicdy.mycuration.core.ActionCreator3
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
+import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
@@ -14,9 +15,11 @@ class UpdateAllRssActionCreator(
         private val networkTaskManager: NetworkTaskManager,
         private val preferenceHelper: PreferenceHelper,
         private val rssListItemFactory: RssListItemFactory
-) : ActionCreator2<List<Feed>, RssListMode> {
+) : ActionCreator3<List<Feed>, RssListMode, RssUpdateIntervalCheckDate> {
 
-    override suspend fun run(arg1: List<Feed>, arg2: RssListMode) {
+    override suspend fun run(arg1: List<Feed>, arg2: RssListMode, arg3: RssUpdateIntervalCheckDate) {
+        val isAfterInterval = arg3.toTime() - preferenceHelper.lastUpdateDate >= 1000 * 60
+        if (!isAfterInterval || !preferenceHelper.autoUpdateInMainUi) return
         try {
             dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Started))
             coroutineScope {

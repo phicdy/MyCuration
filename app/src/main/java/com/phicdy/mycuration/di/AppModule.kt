@@ -74,11 +74,9 @@ import com.phicdy.mycuration.rss.ChangeRssListModeActionCreator
 import com.phicdy.mycuration.rss.ChangeRssTitleActionCreator
 import com.phicdy.mycuration.rss.DeleteRssActionCreator
 import com.phicdy.mycuration.rss.FetchAllRssListActionCreator
-import com.phicdy.mycuration.rss.FetchRssStartUpdateStateActionCreator
 import com.phicdy.mycuration.rss.RSSListStateStore
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.rss.RssListItemFactory
-import com.phicdy.mycuration.rss.RssListStartUpdateStateStore
 import com.phicdy.mycuration.rss.RssListUpdateStateStore
 import com.phicdy.mycuration.rss.UpdateAllRssActionCreator
 import com.phicdy.mycuration.util.log.TimberTree
@@ -129,12 +127,6 @@ val appModule = module {
             )
         }
         scoped {
-            FetchRssStartUpdateStateActionCreator(
-                    dispatcher = get(),
-                    preferenceHelper = get()
-            )
-        }
-        scoped {
             UpdateAllRssActionCreator(
                     dispatcher = get(),
                     networkTaskManager = get(),
@@ -161,7 +153,6 @@ val appModule = module {
             )
         }
         viewModel { RSSListStateStore(get(), RssListItemFactory()) }
-        viewModel { RssListStartUpdateStateStore(get()) }
         viewModel { RssListUpdateStateStore(get()) }
     }
 

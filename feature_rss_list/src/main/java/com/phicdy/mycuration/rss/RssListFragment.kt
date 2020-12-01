@@ -34,9 +34,6 @@ class RssListFragment : Fragment() {
     private val fetchAllRssListActionCreator: FetchAllRssListActionCreator by currentScope.inject()
     private val rssListStateStore: RSSListStateStore by currentScope.inject()
 
-    private val fetchRssStartUpdateStateActionCreator: FetchRssStartUpdateStateActionCreator by currentScope.inject()
-    private val rssListStartUpdateStateStore: RssListStartUpdateStateStore by currentScope.inject()
-
     private val updateAllRssListActionCreator: UpdateAllRssActionCreator by currentScope.inject()
     private val rssListUpdateStateStore: RssListUpdateStateStore by currentScope.inject()
 
@@ -69,7 +66,7 @@ class RssListFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 rssListStateStore.state.value?.let { value ->
-                    updateAllRssListActionCreator.run(value.rss, value.mode)
+                    updateAllRssListActionCreator.run(value.rss, value.mode, RssUpdateIntervalCheckDate(Date()))
                 }
             }
         }
@@ -94,14 +91,6 @@ class RssListFragment : Fragment() {
             } else {
                 init(it.item)
             }
-        })
-        rssListStartUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
-            if (it.shouldStart)
-                viewLifecycleOwner.lifecycleScope.launch {
-                    rssListStateStore.state.value?.let { value ->
-                        updateAllRssListActionCreator.run(value.rss, value.mode)
-                    }
-                }
         })
         rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
             when (it) {
@@ -134,10 +123,12 @@ class RssListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            fetchRssStartUpdateStateActionCreator.run(RssUpdateIntervalCheckDate(Date()))
+            rssListStateStore.state.value?.let { value ->
+                updateAllRssListActionCreator.run(value.rss, value.mode, RssUpdateIntervalCheckDate(Date()))
+            }
         }
     }
-   
+
     override fun onDetach() {
         super.onDetach()
         mListener = null
