@@ -74,6 +74,7 @@ import com.phicdy.mycuration.rss.ChangeRssListModeActionCreator
 import com.phicdy.mycuration.rss.ChangeRssTitleActionCreator
 import com.phicdy.mycuration.rss.DeleteRssActionCreator
 import com.phicdy.mycuration.rss.FetchAllRssListActionCreator
+import com.phicdy.mycuration.rss.LaunchUpdateAllRssActionCreator
 import com.phicdy.mycuration.rss.RSSListStateStore
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.rss.RssListItemFactory
@@ -127,6 +128,14 @@ val appModule = module {
         }
         scoped {
             UpdateAllRssActionCreator(
+                    dispatcher = get(),
+                    networkTaskManager = get(),
+                    preferenceHelper = get(),
+                    rssRepository = get()
+            )
+        }
+        scoped {
+            LaunchUpdateAllRssActionCreator(
                     dispatcher = get(),
                     networkTaskManager = get(),
                     preferenceHelper = get(),

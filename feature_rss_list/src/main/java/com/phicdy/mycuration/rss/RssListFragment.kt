@@ -28,6 +28,7 @@ class RssListFragment : Fragment() {
     private val rssListStateStore: RSSListStateStore by currentScope.inject()
 
     private val updateAllRssListActionCreator: UpdateAllRssActionCreator by currentScope.inject()
+    private val launchUpdateAllRssListActionCreator: LaunchUpdateAllRssActionCreator by currentScope.inject()
 
     private val changeRssListModeActionCreator: ChangeRssListModeActionCreator by currentScope.inject()
 
@@ -57,7 +58,7 @@ class RssListFragment : Fragment() {
 
     private fun setAllListener() {
         binding.swiperefreshlayout.setOnRefreshListener {
-            launchWhenLoaded { state -> updateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date())) }
+            launchWhenLoaded { state -> updateAllRssListActionCreator.run(state.mode) }
         }
     }
 
@@ -110,7 +111,7 @@ class RssListFragment : Fragment() {
                 is RssListState.Loaded -> value.mode
                 else -> RssListMode.UNREAD_ONLY
             }
-            updateAllRssListActionCreator.run(mode, RssUpdateIntervalCheckDate(Date()))
+            launchUpdateAllRssListActionCreator.run(mode, RssUpdateIntervalCheckDate(Date()))
         }
     }
 
