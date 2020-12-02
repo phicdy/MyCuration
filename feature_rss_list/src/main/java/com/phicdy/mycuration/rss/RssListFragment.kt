@@ -28,7 +28,6 @@ class RssListFragment : Fragment() {
     private val rssListStateStore: RSSListStateStore by currentScope.inject()
 
     private val updateAllRssListActionCreator: UpdateAllRssActionCreator by currentScope.inject()
-    private val rssListUpdateStateStore: RssListUpdateStateStore by currentScope.inject()
 
     private val changeRssListModeActionCreator: ChangeRssListModeActionCreator by currentScope.inject()
 
@@ -73,7 +72,7 @@ class RssListFragment : Fragment() {
         setAllListener()
         rssListStateStore.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
-                RssListState.Loading -> {
+                RssListState.Initializing -> {
                     binding.progressbar.visibility = View.VISIBLE
                     hideRecyclerView()
                 }
@@ -86,19 +85,8 @@ class RssListFragment : Fragment() {
                         init(state.item)
                     }
                 }
-            }
-        })
-        rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer { state ->
-            when (state) {
-                RssListUpdateState.Started -> binding.swiperefreshlayout.isRefreshing = true
-                is RssListUpdateState.Updating -> {
-                    rssFeedListAdapter.submitList(state.rss)
-                }
-                RssListUpdateState.Finished -> {
-                    onRefreshCompleted()
-                }
-                else -> {
-                }
+                is RssListState.StartPullToRefresh -> binding.swiperefreshlayout.isRefreshing = true
+                is RssListState.FinishPullToRefresh -> onRefreshCompleted()
             }
         })
         viewLifecycleOwner.lifecycleScope.launch {
@@ -119,8 +107,8 @@ class RssListFragment : Fragment() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
             val mode = when (val value = rssListStateStore.state.value) {
-                is RssListState.Loading, null -> RssListMode.UNREAD_ONLY
                 is RssListState.Loaded -> value.mode
+                else -> RssListMode.UNREAD_ONLY
             }
             updateAllRssListActionCreator.run(mode, RssUpdateIntervalCheckDate(Date()))
         }
@@ -154,7 +142,7 @@ class RssListFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     block.invoke(value)
                 }
-            RssListState.Loading, null -> return
+            RssListState.Initializing, null -> return
         }
     }
 

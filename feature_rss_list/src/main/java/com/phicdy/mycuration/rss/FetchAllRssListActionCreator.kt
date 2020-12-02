@@ -13,7 +13,7 @@ class FetchAllRssListActionCreator(
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override suspend fun run(rssListMode: RssListMode) {
-        dispatcher.dispatch(RssListAction(RssListState.Loading))
+        dispatcher.dispatch(RssListAction(RssListState.Initializing))
         val rss = rssRepository.getAllFeedsWithNumOfUnreadArticles()
         if (rss.isEmpty()) {
             dispatcher.dispatch(RssListAction(RssListState.Loaded(emptyList(), emptyList(), rssListMode)))
