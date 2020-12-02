@@ -15,14 +15,14 @@
         apps:layout_constraintTop_toTopOf="parent" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/srl_container"
+        android:id="@+id/swiperefreshlayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         apps:layout_constraintBottom_toBottomOf="parent"
         apps:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_rss"
+            android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:drawSelectorOnTop="true" />

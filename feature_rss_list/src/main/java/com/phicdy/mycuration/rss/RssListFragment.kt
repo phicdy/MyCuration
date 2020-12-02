@@ -22,7 +22,7 @@ class RssListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var rssFeedListAdapter: RssListAdapter
-    private var mListener: OnFeedListFragmentListener? = null
+    private var listener: OnFeedListFragmentListener? = null
 
     private val fetchAllRssListActionCreator: FetchAllRssListActionCreator by currentScope.inject()
     private val rssListStateStore: RSSListStateStore by currentScope.inject()
@@ -37,19 +37,19 @@ class RssListFragment : Fragment() {
     private val deleteRssActionCreator: DeleteRssActionCreator by currentScope.inject()
 
     private fun init(items: List<RssListItem>) {
-        rssFeedListAdapter = RssListAdapter(mListener)
-        binding.rvRss.visibility = View.VISIBLE
-        binding.rvRss.layoutManager = LinearLayoutManager(activity)
-        binding.rvRss.adapter = rssFeedListAdapter
+        rssFeedListAdapter = RssListAdapter(listener)
+        binding.recyclerview.visibility = View.VISIBLE
+        binding.recyclerview.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerview.adapter = rssFeedListAdapter
         rssFeedListAdapter.submitList(items)
     }
 
     private fun onRefreshCompleted() {
-        binding.srlContainer.isRefreshing = false
+        binding.swiperefreshlayout.isRefreshing = false
     }
 
     private fun hideRecyclerView() {
-        binding.rvRss.visibility = View.GONE
+        binding.recyclerview.visibility = View.GONE
     }
 
     private fun showEmptyView() {
@@ -57,7 +57,7 @@ class RssListFragment : Fragment() {
     }
 
     private fun setAllListener() {
-        binding.srlContainer.setOnRefreshListener {
+        binding.swiperefreshlayout.setOnRefreshListener {
             launchWhenLoaded { state -> updateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date())) }
         }
     }
@@ -69,7 +69,7 @@ class RssListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        registerForContextMenu(binding.rvRss)
+        registerForContextMenu(binding.recyclerview)
         setAllListener()
         rssListStateStore.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
@@ -90,7 +90,7 @@ class RssListFragment : Fragment() {
         })
         rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
-                RssListUpdateState.Started -> binding.srlContainer.isRefreshing = true
+                RssListUpdateState.Started -> binding.swiperefreshlayout.isRefreshing = true
                 is RssListUpdateState.Updating -> {
                     rssFeedListAdapter.submitList(state.rss)
                 }
@@ -109,7 +109,7 @@ class RssListFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            mListener = context as OnFeedListFragmentListener
+            listener = context as OnFeedListFragmentListener
         } catch (e: ClassCastException) {
             throw ClassCastException("$context must implement OnFragmentInteractionListener")
         }
@@ -128,7 +128,7 @@ class RssListFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        mListener = null
+        listener = null
     }
 
     override fun onDestroyView() {
