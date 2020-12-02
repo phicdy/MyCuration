@@ -7,22 +7,23 @@ import com.phicdy.mycuration.entity.RssListMode
 class ChangeRssListModeActionCreator(
         private val dispatcher: Dispatcher,
         private val rssListItemFactory: RssListItemFactory
-) : ActionCreator1<RssListState> {
+) : ActionCreator1<RssListState.Loaded> {
 
-    override suspend fun run(arg: RssListState) {
-        when (arg.mode) {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(state: RssListState.Loaded) {
+        when (state.mode) {
             RssListMode.UNREAD_ONLY -> {
-                RssListState(
-                        item = rssListItemFactory.create(RssListMode.ALL, arg.rss),
+                RssListState.Loaded(
+                        item = rssListItemFactory.create(RssListMode.ALL, state.rawRssList),
                         mode = RssListMode.ALL,
-                        rss = arg.rss
+                        rawRssList = state.rawRssList
                 )
             }
             RssListMode.ALL -> {
-                RssListState(
-                        item = rssListItemFactory.create(RssListMode.UNREAD_ONLY, arg.rss),
+                RssListState.Loaded(
+                        item = rssListItemFactory.create(RssListMode.UNREAD_ONLY, state.rawRssList),
                         mode = RssListMode.UNREAD_ONLY,
-                        rss = arg.rss
+                        rawRssList = state.rawRssList
                 )
             }
         }.let {

@@ -21,38 +21,70 @@ class RSSListStateStore(
             is RssListAction -> _state.value = action.value
             is ReadArticleAction -> {
                 state.value?.let { state ->
-                    val updated = state.rss.map {
+                    if (state !is RssListState.Loaded) return
+                    val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount - action.value.count)
                         } else {
                             it
                         }
                     }
-                    _state.value = RssListState(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
                 }
             }
             is UnReadArticleAction -> {
                 state.value?.let { state ->
-                    val updated = state.rss.map {
+                    if (state !is RssListState.Loaded) return
+                    val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount + action.value.count)
                         } else {
                             it
                         }
                     }
-                    _state.value = RssListState(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
                 }
             }
             is ReadAllArticlesAction -> {
                 state.value?.let { state ->
-                    val updated = state.rss.map {
+                    if (state !is RssListState.Loaded) return
+                    val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = 0)
                         } else {
                             it
                         }
                     }
-                    _state.value = RssListState(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                }
+            }
+            is RssListUpdateAction -> {
+                state.value?.let { state ->
+                    when (val value = action.value) {
+                        is RssListUpdateState.Updating -> {
+                            if (state !is RssListState.Loaded) return
+                            val updated = state.rawRssList.map { rss ->
+                                if (rss.id == value.updated.id) {
+                                    rss.copy(unreadAriticlesCount = value.updated.unreadAriticlesCount)
+                                } else {
+                                    rss
+                                }
+                            }
+                            _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                        }
+                        is RssListUpdateState.Started -> {
+                            if (state !is RssListState.Loaded) return
+                            val loaded = state.copy()
+                            _state.value = RssListState.StartPullToRefresh
+                            _state.value = loaded
+                        }
+                        is RssListUpdateState.Finished, RssListUpdateState.Failed -> {
+                            if (state !is RssListState.Loaded) return
+                            val loaded = state.copy()
+                            _state.value = RssListState.FinishPullToRefresh
+                            _state.value = loaded
+                        }
+                    }
                 }
             }
         }

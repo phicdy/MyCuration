@@ -445,6 +445,13 @@ class TopActivity :
         startActivity(FavoriteArticlesListActivity.createIntent(this))
     }
 
+    override fun onFooterClicked() {
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
+        if (fragment is RssListFragment) {
+            fragment.changeRssListMode()
+        }
+    }
+
     override fun onCurationListClicked(curationId: Int) {
         startActivity(CuratedArticlesListActivity.createIntent(this, curationId))
     }

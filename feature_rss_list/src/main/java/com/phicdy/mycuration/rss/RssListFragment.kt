@@ -5,13 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import com.phicdy.mycuration.rss.databinding.FragmentRssListBinding
@@ -24,21 +21,14 @@ class RssListFragment : Fragment() {
     private var _binding: FragmentRssListBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var emptyView: TextView
-
     private lateinit var rssFeedListAdapter: RssListAdapter
-    private var mListener: OnFeedListFragmentListener? = null
+    private var listener: OnFeedListFragmentListener? = null
 
     private val fetchAllRssListActionCreator: FetchAllRssListActionCreator by currentScope.inject()
     private val rssListStateStore: RSSListStateStore by currentScope.inject()
 
-    private val fetchRssStartUpdateStateActionCreator: FetchRssStartUpdateStateActionCreator by currentScope.inject()
-    private val rssListStartUpdateStateStore: RssListStartUpdateStateStore by currentScope.inject()
-
     private val updateAllRssListActionCreator: UpdateAllRssActionCreator by currentScope.inject()
-    private val rssListUpdateStateStore: RssListUpdateStateStore by currentScope.inject()
+    private val launchUpdateAllRssListActionCreator: LaunchUpdateAllRssActionCreator by currentScope.inject()
 
     private val changeRssListModeActionCreator: ChangeRssListModeActionCreator by currentScope.inject()
 
@@ -47,73 +37,57 @@ class RssListFragment : Fragment() {
     private val deleteRssActionCreator: DeleteRssActionCreator by currentScope.inject()
 
     private fun init(items: List<RssListItem>) {
-        rssFeedListAdapter = RssListAdapter(viewLifecycleOwner.lifecycleScope, changeRssListModeActionCreator, rssListStateStore, mListener)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = rssFeedListAdapter
+        rssFeedListAdapter = RssListAdapter(listener)
+        binding.recyclerview.visibility = View.VISIBLE
+        binding.recyclerview.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerview.adapter = rssFeedListAdapter
         rssFeedListAdapter.submitList(items)
     }
 
     private fun onRefreshCompleted() {
-        swipeRefreshLayout.isRefreshing = false
+        binding.swiperefreshlayout.isRefreshing = false
     }
 
     private fun hideRecyclerView() {
-        recyclerView.visibility = View.GONE
+        binding.recyclerview.visibility = View.GONE
     }
 
     private fun showEmptyView() {
-        emptyView.visibility = View.VISIBLE
+        binding.emptyView.visibility = View.VISIBLE
     }
 
     private fun setAllListener() {
-        swipeRefreshLayout.setOnRefreshListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                rssListStateStore.state.value?.let { value ->
-                    updateAllRssListActionCreator.run(value.rss, value.mode)
-                }
-            }
+        binding.swiperefreshlayout.setOnRefreshListener {
+            launchWhenLoaded { state -> updateAllRssListActionCreator.run(state.mode) }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRssListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = binding.rvRss
-        emptyView = binding.emptyView
-        swipeRefreshLayout = binding.srlContainer
-        registerForContextMenu(recyclerView)
+        registerForContextMenu(binding.recyclerview)
         setAllListener()
-        rssListStateStore.state.observe(viewLifecycleOwner, Observer {
-            if (it.item.isEmpty()) {
-                hideRecyclerView()
-                showEmptyView()
-            } else {
-                init(it.item)
-            }
-        })
-        rssListStartUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
-            if (it.shouldStart)
-                viewLifecycleOwner.lifecycleScope.launch {
-                    rssListStateStore.state.value?.let { value ->
-                        updateAllRssListActionCreator.run(value.rss, value.mode)
+        rssListStateStore.state.observe(viewLifecycleOwner, Observer { state ->
+            when (state) {
+                RssListState.Initializing -> {
+                    binding.progressbar.visibility = View.VISIBLE
+                    hideRecyclerView()
+                }
+                is RssListState.Loaded -> {
+                    binding.progressbar.visibility = View.GONE
+                    if (state.item.isEmpty()) {
+                        hideRecyclerView()
+                        showEmptyView()
+                    } else {
+                        init(state.item)
                     }
                 }
-        })
-        rssListUpdateStateStore.state.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                RssListUpdateState.Started -> swipeRefreshLayout.isRefreshing = true
-                is RssListUpdateState.Updating -> {
-                    rssFeedListAdapter.submitList(it.rss)
-                }
-                RssListUpdateState.Finished -> {
-                    onRefreshCompleted()
-                }
-                else -> {
-                }
+                is RssListState.StartPullToRefresh -> binding.swiperefreshlayout.isRefreshing = true
+                is RssListState.FinishPullToRefresh -> onRefreshCompleted()
             }
         })
         viewLifecycleOwner.lifecycleScope.launch {
@@ -124,23 +98,26 @@ class RssListFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            mListener = context as OnFeedListFragmentListener
+            listener = context as OnFeedListFragmentListener
         } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw ClassCastException("$context must implement OnFragmentInteractionListener")
         }
-
     }
 
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            fetchRssStartUpdateStateActionCreator.run(RssUpdateIntervalCheckDate(Date()))
+            val mode = when (val value = rssListStateStore.state.value) {
+                is RssListState.Loaded -> value.mode
+                else -> RssListMode.UNREAD_ONLY
+            }
+            launchUpdateAllRssListActionCreator.run(mode, RssUpdateIntervalCheckDate(Date()))
         }
     }
-   
+
     override fun onDetach() {
         super.onDetach()
-        mListener = null
+        listener = null
     }
 
     override fun onDestroyView() {
@@ -149,18 +126,24 @@ class RssListFragment : Fragment() {
     }
 
     fun updateFeedTitle(rssId: Int, newTitle: String) {
-        rssListStateStore.state.value?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                changeRssTitleActionCreator.run(rssId, newTitle, it)
-            }
-        }
+        launchWhenLoaded { state -> changeRssTitleActionCreator.run(rssId, newTitle, state) }
     }
 
     fun removeRss(rssId: Int) {
-        rssListStateStore.state.value?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
-                deleteRssActionCreator.run(rssId, it)
-            }
+        launchWhenLoaded { state -> deleteRssActionCreator.run(rssId, state) }
+    }
+
+    fun changeRssListMode() {
+        launchWhenLoaded { state -> changeRssListModeActionCreator.run(state) }
+    }
+
+    private fun launchWhenLoaded(block: suspend (RssListState.Loaded) -> Unit) {
+        when (val value = rssListStateStore.state.value) {
+            is RssListState.Loaded ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    block.invoke(value)
+                }
+            RssListState.Initializing, null -> return
         }
     }
 
@@ -170,5 +153,6 @@ class RssListFragment : Fragment() {
         fun onDeleteRssClicked(rssId: Int, position: Int)
         fun onAllUnreadClicked()
         fun onFavoriteClicked()
+        fun onFooterClicked()
     }
 }
