@@ -9,20 +9,21 @@ class ChangeRssListModeActionCreator(
         private val rssListItemFactory: RssListItemFactory
 ) : ActionCreator1<RssListState.Loaded> {
 
-    override suspend fun run(arg: RssListState.Loaded) {
-        when (arg.mode) {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(state: RssListState.Loaded) {
+        when (state.mode) {
             RssListMode.UNREAD_ONLY -> {
                 RssListState.Loaded(
-                        item = rssListItemFactory.create(RssListMode.ALL, arg.rss),
+                        item = rssListItemFactory.create(RssListMode.ALL, state.rawRssList),
                         mode = RssListMode.ALL,
-                        rss = arg.rss
+                        rawRssList = state.rawRssList
                 )
             }
             RssListMode.ALL -> {
                 RssListState.Loaded(
-                        item = rssListItemFactory.create(RssListMode.UNREAD_ONLY, arg.rss),
+                        item = rssListItemFactory.create(RssListMode.UNREAD_ONLY, state.rawRssList),
                         mode = RssListMode.UNREAD_ONLY,
-                        rss = arg.rss
+                        rawRssList = state.rawRssList
                 )
             }
         }.let {

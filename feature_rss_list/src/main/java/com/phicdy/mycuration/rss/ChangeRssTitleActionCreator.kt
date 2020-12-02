@@ -8,20 +8,21 @@ class ChangeRssTitleActionCreator(
         private val rssListItemFactory: RssListItemFactory
 ) : ActionCreator3<Int, String, RssListState.Loaded> {
 
-    override suspend fun run(arg1: Int, arg2: String, arg3: RssListState.Loaded) {
-        val updated = arg3.rss.map {
-            if (it.id == arg1) {
-                it.copy(title = arg2)
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(rssId: Int, rssTitle: String, state: RssListState.Loaded) {
+        val updated = state.rawRssList.map { rss ->
+            if (rss.id == rssId) {
+                rss.copy(title = rssTitle)
             } else {
-                it
+                rss
             }
         }
-        RssListState.Loaded(
-                item = rssListItemFactory.create(arg3.mode, updated),
-                mode = arg3.mode,
-                rss = updated
-        ).let {
-            dispatcher.dispatch(RssListAction(it))
-        }
+        dispatcher.dispatch(RssListAction(
+                RssListState.Loaded(
+                        item = rssListItemFactory.create(state.mode, updated),
+                        mode = state.mode,
+                        rawRssList = updated
+                )
+        ))
     }
 }

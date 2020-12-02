@@ -11,15 +11,16 @@ class FetchAllRssListActionCreator(
         private val rssListItemFactory: RssListItemFactory
 ) : ActionCreator1<RssListMode> {
 
-    override suspend fun run(arg: RssListMode) {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(rssListMode: RssListMode) {
         dispatcher.dispatch(RssListAction(RssListState.Loading))
         val rss = rssRepository.getAllFeedsWithNumOfUnreadArticles()
         if (rss.isEmpty()) {
-            dispatcher.dispatch(RssListAction(RssListState.Loaded(emptyList(), emptyList(), arg)))
+            dispatcher.dispatch(RssListAction(RssListState.Loaded(emptyList(), emptyList(), rssListMode)))
             return
         }
-        rssListItemFactory.create(arg, rss).let {
-            dispatcher.dispatch(RssListAction(RssListState.Loaded(it, rss, arg)))
+        rssListItemFactory.create(rssListMode, rss).let {
+            dispatcher.dispatch(RssListAction(RssListState.Loaded(it, rss, rssListMode)))
         }
     }
 }

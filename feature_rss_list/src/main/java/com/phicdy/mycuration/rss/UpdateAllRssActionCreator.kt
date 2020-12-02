@@ -18,24 +18,25 @@ class UpdateAllRssActionCreator(
         private val rssRepository: RssRepository
 ) : ActionCreator2<RssListMode, RssUpdateIntervalCheckDate> {
 
-    override suspend fun run(arg1: RssListMode, arg2: RssUpdateIntervalCheckDate) {
-        val isAfterInterval = arg2.toTime() - preferenceHelper.lastUpdateDate >= 1000 * 60
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(rssListMode: RssListMode, rssUpdateIntervalCheckDate: RssUpdateIntervalCheckDate) {
+        val isAfterInterval = rssUpdateIntervalCheckDate.toTime() - preferenceHelper.lastUpdateDate >= 1000 * 60
         if (!isAfterInterval || !preferenceHelper.autoUpdateInMainUi) return
         try {
             dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Started))
             val rssList = rssRepository.getAllFeedsWithNumOfUnreadArticles()
             coroutineScope {
-                rssList.map { async { networkTaskManager.updateFeed(it) } }
-                        .map { rss ->
+                rssList.map { rss -> async { networkTaskManager.updateFeed(rss) } }
+                        .map { deferred ->
                             //            networkTaskManager.updateAll(rss).collect { rss ->
-                            val replaced = rssList.map {
-                                if (it.id == rss.await().id) {
-                                    rss.await()
+                            val replaced = rssList.map { rss ->
+                                if (rss.id == deferred.await().id) {
+                                    deferred.await()
                                 } else {
-                                    it
+                                    rss
                                 }
                             }
-                            rssListItemFactory.create(arg1, replaced).let {
+                            rssListItemFactory.create(rssListMode, replaced).let {
                                 dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Updating(it)))
                             }
                         }

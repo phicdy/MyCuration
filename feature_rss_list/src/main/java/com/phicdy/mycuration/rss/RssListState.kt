@@ -7,7 +7,7 @@ sealed class RssListState {
     object Loading : RssListState()
     data class Loaded(
             val item: List<RssListItem>,
-            val rss: List<Feed>,
+            val rawRssList: List<Feed>,
             val mode: RssListMode
     ) : RssListState()
 }

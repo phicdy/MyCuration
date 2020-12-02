@@ -22,7 +22,7 @@ class RSSListStateStore(
             is ReadArticleAction -> {
                 state.value?.let { state ->
                     if (state !is RssListState.Loaded) return
-                    val updated = state.rss.map {
+                    val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount - action.value.count)
                         } else {
@@ -35,7 +35,7 @@ class RSSListStateStore(
             is UnReadArticleAction -> {
                 state.value?.let { state ->
                     if (state !is RssListState.Loaded) return
-                    val updated = state.rss.map {
+                    val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount + action.value.count)
                         } else {
@@ -48,7 +48,7 @@ class RSSListStateStore(
             is ReadAllArticlesAction -> {
                 state.value?.let { state ->
                     if (state !is RssListState.Loaded) return
-                    val updated = state.rss.map {
+                    val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = 0)
                         } else {
