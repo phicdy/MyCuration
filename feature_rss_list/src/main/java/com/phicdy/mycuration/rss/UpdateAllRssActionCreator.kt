@@ -18,12 +18,12 @@ class UpdateAllRssActionCreator(
     override suspend fun run(rssListMode: RssListMode) {
         try {
             dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Started))
+            preferenceHelper.lastUpdateDate = System.currentTimeMillis()
             val rssList = rssRepository.getAllFeedsWithNumOfUnreadArticles()
             rssList.map { rss ->
                 val updated = networkTaskManager.updateFeed(rss)
                 dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Updating(updated)))
             }
-            preferenceHelper.lastUpdateDate = System.currentTimeMillis()
             dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Finished))
         } catch (e: Exception) {
             dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Failed))
