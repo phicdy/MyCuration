@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.presentation.view.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -17,24 +18,29 @@ import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 
+@AndroidEntryPoint
 class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, CoroutineScope {
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: RegisterFilterPresenter by currentScope.inject {
-        parametersOf(this, intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID))
-    }
+    @Inject
+    lateinit var presenter: RegisterFilterPresenter
 
     private lateinit var etTitle: TextInputEditText
     private lateinit var etKeyword: TextInputEditText
@@ -174,5 +180,17 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
         const val KEY_SELECTED_FEED = "keySelectedFeed"
         private const val NEW_FILTER_ID = -1
         private const val TARGET_FEED_SELECT_REQUEST = 1000
+    }
+
+    @Module
+    @InstallIn(ActivityComponent::class)
+    object RegisterFilterModule {
+        @Provides
+        fun provideEditFilterId(@ActivityContext activity: Context): Int =
+                (activity as AppCompatActivity).intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID)
+
+        @Provides
+        fun provideRegisterFilterView(@ActivityContext activity: Context): RegisterFilterView =
+                activity as RegisterFilterView
     }
 }
