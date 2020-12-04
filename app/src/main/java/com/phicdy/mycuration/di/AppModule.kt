@@ -54,18 +54,15 @@ import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.presenter.RegisterFilterPresenter
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
-import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import com.phicdy.mycuration.presentation.view.SettingView
-import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.presentation.view.activity.FeedSearchActivity
 import com.phicdy.mycuration.presentation.view.activity.FeedUrlHookActivity
 import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity
-import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
@@ -106,17 +103,6 @@ val appModule = module {
     single<AdProvider> { AdmobProvider() }
 
     single { TimberTree() }
-
-    scope(named<TopActivity>()) {
-        scoped { (view: TopActivityView) ->
-            TopActivityPresenter(
-                    view = view,
-                    articleRepository = get(),
-                    rssRepository = get(),
-                    helper = get()
-            )
-        }
-    }
 
     scope(named<RssListFragment>()) {
         scoped {

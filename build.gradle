@@ -116,6 +116,7 @@ allprojects {
                 includeGroup 'it.unimi.dsi'
                 includeGroup 'net.sf.kxml'
                 includeGroup 'net.bytebuddy'
+                includeGroup 'net.ltgt.gradle.incap'
                 includeGroup 'org.jsoup'
                 includeGroup 'org.sonatype.oss'
                 includeGroup 'org.koin'

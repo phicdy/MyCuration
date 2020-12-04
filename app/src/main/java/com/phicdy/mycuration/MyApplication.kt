@@ -17,6 +17,7 @@ import com.phicdy.mycuration.rss.IconFetchWorker
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.log.TimberTree
+import dagger.hilt.android.HiltAndroidApp
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -27,6 +28,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 
+@HiltAndroidApp
 class MyApplication : Application() {
 
     // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
