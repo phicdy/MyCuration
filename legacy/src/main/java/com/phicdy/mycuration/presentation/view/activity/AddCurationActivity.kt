@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.view.activity
 
-import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
