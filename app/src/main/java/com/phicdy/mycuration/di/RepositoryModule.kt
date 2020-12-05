@@ -5,8 +5,10 @@ import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +46,19 @@ object RepositoryModule {
 
     @Singleton
     @Provides
+    fun provideCurationRepository(sqLiteDatabase: SQLiteDatabase): CurationRepository =
+            CurationRepository(sqLiteDatabase)
+
+    @Singleton
+    @Provides
     fun providePreferenceHelper(): PreferenceHelper = PreferenceHelper
+
+    @Singleton
+    @Provides
+    fun provideNetworkTaskManager(
+            articleRepository: ArticleRepository,
+            rssRepository: RssRepository,
+            curationRepository: CurationRepository,
+            filterRepository: FilterRepository
+    ): NetworkTaskManager = NetworkTaskManager(articleRepository, rssRepository, curationRepository, filterRepository)
 }

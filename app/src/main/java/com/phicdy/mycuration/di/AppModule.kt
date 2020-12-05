@@ -50,16 +50,13 @@ import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
-import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.FeedSearchView
-import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.presentation.view.activity.FeedSearchActivity
-import com.phicdy.mycuration.presentation.view.activity.FeedUrlHookActivity
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
@@ -251,21 +248,6 @@ val appModule = module {
                     networkTaskManager = get(),
                     coroutineScope = coroutineScope,
                     executor = RssParseExecutor(RssParser(), get())
-            )
-        }
-    }
-
-    scope(named<FeedUrlHookActivity>()) {
-        scoped { (view: FeedUrlHookView, action: String, dataString: String, extrasText: String, coroutineScoe: CoroutineScope) ->
-            FeedUrlHookPresenter(
-                    view = view,
-                    rssRepository = get(),
-                    networkTaskManager = get(),
-                    action = action,
-                    dataString = dataString,
-                    extrasText = extrasText,
-                    coroutineScope = coroutineScoe,
-                    parser = RssParser()
             )
         }
     }

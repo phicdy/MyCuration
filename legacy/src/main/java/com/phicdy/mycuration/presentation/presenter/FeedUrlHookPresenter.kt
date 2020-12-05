@@ -11,13 +11,16 @@ import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.util.UrlUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FeedUrlHookPresenter(private val view: FeedUrlHookView,
-                           private val rssUrlHookIntentData: RssUrlHookIntentData,
-                           private val rssRepository: RssRepository,
-                           private val networkTaskManager: NetworkTaskManager,
-                           private val coroutineScope: CoroutineScope,
-                           private val parser: RssParser) {
+class FeedUrlHookPresenter @Inject constructor(
+        private val view: FeedUrlHookView,
+        private val rssUrlHookIntentData: RssUrlHookIntentData,
+        private val rssRepository: RssRepository,
+        private val networkTaskManager: NetworkTaskManager,
+        private val coroutineScope: CoroutineScope,
+        private val parser: RssParser
+) {
 
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {

@@ -22,4 +22,6 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.10.2'
 
     implementation "com.jakewharton.timber:timber:$timber_version"
+
+    implementation 'javax.inject:javax.inject:1'
 }
