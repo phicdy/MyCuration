@@ -5,6 +5,7 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
+import com.phicdy.mycuration.domain.rss.RssUrlHookIntentData
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.util.UrlUtil
@@ -12,9 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class FeedUrlHookPresenter(private val view: FeedUrlHookView,
-                           private val action: String,
-                           private val dataString: String,
-                           private val extrasText: CharSequence,
+                           private val rssUrlHookIntentData: RssUrlHookIntentData,
                            private val rssRepository: RssRepository,
                            private val networkTaskManager: NetworkTaskManager,
                            private val coroutineScope: CoroutineScope,
@@ -44,19 +43,19 @@ class FeedUrlHookPresenter(private val view: FeedUrlHookView,
     }
 
     suspend fun create() {
-        if (action != Intent.ACTION_VIEW && action != Intent.ACTION_SEND) {
+        if (rssUrlHookIntentData.action != Intent.ACTION_VIEW && rssUrlHookIntentData.action != Intent.ACTION_SEND) {
             view.finishView()
             return
         }
         var url: String? = null
-        if (action == Intent.ACTION_VIEW) {
-            url = dataString
-        } else if (action == Intent.ACTION_SEND) {
+        if (rssUrlHookIntentData.action == Intent.ACTION_VIEW) {
+            url = rssUrlHookIntentData.dataString
+        } else if (rssUrlHookIntentData.action == Intent.ACTION_SEND) {
             // For Chrome
-            url = extrasText.toString()
+            url = rssUrlHookIntentData.extrasText.toString()
         }
         if (url != null) {
-            handle(action, url)
+            handle(rssUrlHookIntentData.action, url)
         }
     }
 

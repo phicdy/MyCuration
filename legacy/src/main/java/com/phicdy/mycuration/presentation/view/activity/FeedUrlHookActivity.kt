@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
+import com.phicdy.mycuration.domain.rss.RssUrlHookIntentData
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
@@ -28,10 +29,11 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
     private val presenter: FeedUrlHookPresenter by currentScope.inject {
         parametersOf(
                 this,
-                if (intent.action == null) "" else intent.action,
-                if (intent.dataString == null) "" else intent.dataString,
-                if (intent.extras == null) "" else intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "")
-                        ?: "",
+                RssUrlHookIntentData(
+                        action = intent.action ?: "",
+                        dataString = intent.dataString ?: "",
+                        extrasText = intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "") ?: ""
+                ),
                 this
         )
     }
