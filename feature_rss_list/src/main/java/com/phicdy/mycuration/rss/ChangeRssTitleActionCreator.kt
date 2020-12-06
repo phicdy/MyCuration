@@ -2,8 +2,9 @@ package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.core.ActionCreator3
 import com.phicdy.mycuration.core.Dispatcher
+import javax.inject.Inject
 
-class ChangeRssTitleActionCreator(
+class ChangeRssTitleActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val rssListItemFactory: RssListItemFactory
 ) : ActionCreator3<Int, String, RssListState.Loaded> {

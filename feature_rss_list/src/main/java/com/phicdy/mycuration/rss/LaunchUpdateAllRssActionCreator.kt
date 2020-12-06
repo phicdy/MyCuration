@@ -7,8 +7,9 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
+import javax.inject.Inject
 
-class LaunchUpdateAllRssActionCreator(
+class LaunchUpdateAllRssActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val networkTaskManager: NetworkTaskManager,
         private val preferenceHelper: PreferenceHelper,
