@@ -14,19 +14,22 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.legacy.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
 
     private var selectedList = mutableListOf<Feed>()
     private lateinit var recyclerView: RecyclerView
 
-    private val rssRepository: RssRepository by inject()
+    @Inject
+    lateinit var rssRepository: RssRepository
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
