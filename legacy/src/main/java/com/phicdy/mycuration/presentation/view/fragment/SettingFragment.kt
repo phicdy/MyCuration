@@ -28,6 +28,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -282,6 +283,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     @Module
     @InstallIn(FragmentComponent::class)
     object SettingModule {
+        @FragmentScoped
         @Provides
         fun provideSettingInitialData(@ApplicationContext context: Context): SettingInitialData {
             val updateIntervalHourItems = context.resources.getStringArray(R.array.update_interval_items_values)

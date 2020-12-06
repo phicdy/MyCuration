@@ -24,6 +24,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -185,10 +186,12 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
     @Module
     @InstallIn(ActivityComponent::class)
     object RegisterFilterModule {
+        @ActivityScoped
         @Provides
         fun provideEditFilterId(@ActivityContext activity: Context): Int =
                 (activity as AppCompatActivity).intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID)
 
+        @ActivityScoped
         @Provides
         fun provideRegisterFilterView(@ActivityContext activity: Context): RegisterFilterView =
                 activity as RegisterFilterView

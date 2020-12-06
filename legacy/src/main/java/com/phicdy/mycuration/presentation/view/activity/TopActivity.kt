@@ -46,6 +46,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -530,6 +531,7 @@ class TopActivity :
     @Module
     @InstallIn(ActivityComponent::class)
     object TopModule {
+        @ActivityScoped
         @Provides
         fun provideTopActivityView(@ActivityContext activity: Context): TopActivityView = activity as TopActivityView
     }
