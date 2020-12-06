@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.curatedarticlelist.action
 
-import com.phicdy.mycuration.core.ActionCreator
+import com.phicdy.mycuration.core.ActionCreator2
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.curatedarticlelist.CuratedArticleItem
 import com.phicdy.mycuration.data.repository.ArticleRepository
@@ -8,16 +8,16 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Article
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class ReadCuratedArticleActionCreator(
+class ReadCuratedArticleActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val articleRepository: ArticleRepository,
-        private val rssRepository: RssRepository,
-        private val position: Int,
-        private val items: List<CuratedArticleItem>
-) : ActionCreator {
+        private val rssRepository: RssRepository
+) : ActionCreator2<Int, List<CuratedArticleItem>> {
 
-    override suspend fun run() {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(position: Int, items: List<CuratedArticleItem>) {
         withContext(Dispatchers.IO) {
             when (val item = items[position]) {
                 is CuratedArticleItem.Advertisement -> return@withContext
