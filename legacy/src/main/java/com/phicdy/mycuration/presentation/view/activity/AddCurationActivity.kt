@@ -8,8 +8,10 @@ import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class AddCurationActivity : AppCompatActivity() {
 
     private var wordListFragment: AddCurationFragment? = null
