@@ -13,8 +13,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.tracker.TrackerHelper
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
