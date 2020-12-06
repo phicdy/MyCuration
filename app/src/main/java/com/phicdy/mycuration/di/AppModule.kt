@@ -44,6 +44,7 @@ import com.phicdy.mycuration.data.repository.FavoriteRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
+import com.phicdy.mycuration.domain.setting.SettingInitialData
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.SettingView
@@ -232,16 +233,18 @@ val appModule = module {
                     view = view,
                     helper = get(),
                     addtionalSettingApi = get(),
-                    updateIntervalHourItems = updateIntervalHourItems,
-                    updateIntervalStringItems = updateIntervalStringItems,
-                    themeItems = themeItems,
-                    themeStringItems = themeStringItems,
-                    allReadBehaviorStringItems = allReadBehaviorStringItems,
-                    allReadBehaviorItems = allReadBehaviorItems,
-                    launchTabItems = launchTabItems,
-                    launchTabStringItems = launchTabStringItems,
-                    swipeDirectionItems = swipeDirectionItems,
-                    swipeDirectionStringItems = swipeDirectionStringItems
+                    settingInitialData = SettingInitialData(
+                            updateIntervalHourItems = updateIntervalHourItems,
+                            updateIntervalStringItems = updateIntervalStringItems,
+                            themeItems = themeItems,
+                            themeStringItems = themeStringItems,
+                            allReadBehaviorStringItems = allReadBehaviorStringItems,
+                            allReadBehaviorItems = allReadBehaviorItems,
+                            launchTabItems = launchTabItems,
+                            launchTabStringItems = launchTabStringItems,
+                            swipeDirectionItems = swipeDirectionItems,
+                            swipeDirectionStringItems = swipeDirectionStringItems
+                    )
             )
         }
     }
