@@ -18,8 +18,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
-    implementation "org.koin:koin-android-scope:$koin_version"
-
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 
     implementation 'org.jsoup:jsoup:1.10.2'
