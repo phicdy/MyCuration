@@ -50,7 +50,6 @@ import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
-import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.presentation.view.CurationListView
@@ -59,7 +58,6 @@ import com.phicdy.mycuration.presentation.view.SettingView
 import com.phicdy.mycuration.presentation.view.activity.FeedSearchActivity
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
-import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.rss.ChangeRssListModeActionCreator
 import com.phicdy.mycuration.rss.ChangeRssTitleActionCreator
@@ -248,16 +246,6 @@ val appModule = module {
                     networkTaskManager = get(),
                     coroutineScope = coroutineScope,
                     executor = RssParseExecutor(RssParser(), get())
-            )
-        }
-    }
-
-    scope(named<FilterListFragment>()) {
-        scoped { (view: FilterListFragment) ->
-            FilterListPresenter(
-                    view = view,
-                    rssRepository = get(),
-                    filterRepository = get()
             )
         }
     }
