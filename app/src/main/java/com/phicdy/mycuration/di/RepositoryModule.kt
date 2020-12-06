@@ -17,6 +17,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
@@ -62,8 +63,9 @@ object RepositoryModule {
             articleRepository: ArticleRepository,
             rssRepository: RssRepository,
             curationRepository: CurationRepository,
-            filterRepository: FilterRepository
-    ): NetworkTaskManager = NetworkTaskManager(articleRepository, rssRepository, curationRepository, filterRepository)
+            filterRepository: FilterRepository,
+            okHttpClient: OkHttpClient
+    ): NetworkTaskManager = NetworkTaskManager(articleRepository, rssRepository, curationRepository, filterRepository, okHttpClient)
 
     @Singleton
     @Provides
@@ -71,4 +73,8 @@ object RepositoryModule {
             rssRepository: RssRepository,
             alarmManagerTaskManager: AlarmManagerTaskManager
     ): AdditionalSettingApi = AdditionalSettingRepository(rssRepository, alarmManagerTaskManager)
+
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient()
 }

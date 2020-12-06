@@ -70,7 +70,7 @@ val appModule = module {
     single { FilterRepository(get()) }
     single { FavoriteRepository(get()) }
     single { PreferenceHelper }
-    single { NetworkTaskManager(get(), get(), get(), get()) }
+    single { NetworkTaskManager(get(), get(), get(), get(), get()) }
     single<AdditionalSettingApi> { AdditionalSettingRepository(get(), get()) }
     single { AlarmManagerTaskManager(androidContext()) }
     single { Dispatcher() }
