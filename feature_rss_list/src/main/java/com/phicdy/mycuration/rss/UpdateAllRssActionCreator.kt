@@ -6,8 +6,9 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.RssListMode
+import javax.inject.Inject
 
-class UpdateAllRssActionCreator(
+class UpdateAllRssActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val networkTaskManager: NetworkTaskManager,
         private val preferenceHelper: PreferenceHelper,

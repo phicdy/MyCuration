@@ -11,22 +11,19 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.di.appModule
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.rss.IconFetchWorker
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.log.TimberTree
-import org.koin.android.ext.android.get
-import org.koin.android.ext.android.inject
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
+@HiltAndroidApp
 class MyApplication : Application() {
 
     // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
@@ -36,21 +33,20 @@ class MyApplication : Application() {
         }
     }
 
-    private val adProvider by inject<AdProvider>()
+    @Inject
+    lateinit var adProvider: AdProvider
 
-    private val rssRepository by inject<RssRepository>()
+    @Inject
+    lateinit var rssRepository: RssRepository
+
+    @Inject
+    lateinit var timberTree: TimberTree
 
     override fun onCreate() {
         super.onCreate()
 
-        startKoin {
-            if (BuildConfig.DEBUG) androidLogger()
-            androidContext(this@MyApplication)
-            modules(listOf(appModule))
-        }
-
         if (BuildConfig.DEBUG) {
-            Timber.plant(get<TimberTree>())
+            Timber.plant(timberTree)
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))

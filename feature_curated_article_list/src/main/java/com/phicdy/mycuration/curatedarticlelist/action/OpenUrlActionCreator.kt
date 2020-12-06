@@ -1,19 +1,20 @@
 package com.phicdy.mycuration.curatedarticlelist.action
 
-import com.phicdy.mycuration.core.ActionCreator
+import com.phicdy.mycuration.core.ActionCreator1
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.curatedarticlelist.CuratedArticleItem
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class OpenUrlActionCreator(
+class OpenUrlActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
-        private val preferenceHelper: PreferenceHelper,
-        private val item: CuratedArticleItem
-) : ActionCreator {
+        private val preferenceHelper: PreferenceHelper
+) : ActionCreator1<CuratedArticleItem> {
 
-    override suspend fun run() {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(item: CuratedArticleItem) {
         if (item is CuratedArticleItem.Advertisement) return
         withContext(Dispatchers.IO) {
             when (item) {

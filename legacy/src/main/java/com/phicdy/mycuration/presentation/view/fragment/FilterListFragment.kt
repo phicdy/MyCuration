@@ -10,20 +10,23 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.view.FilterListView
 import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
 
     companion object {
@@ -36,7 +39,14 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FilterListPresenter by currentScope.inject { parametersOf(this) }
+    private lateinit var presenter: FilterListPresenter
+
+    @Inject
+    lateinit var rssRepository: RssRepository
+
+    @Inject
+    lateinit var filterRepository: FilterRepository
+
     private lateinit var filtersListAdapter: FiltersListAdapter
     private lateinit var filtersRecyclerView: RecyclerView
     private lateinit var emptyView: TextView
@@ -47,6 +57,7 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        presenter = FilterListPresenter(this, rssRepository, filterRepository)
         activity?.let {
             filtersRecyclerView = it.findViewById(R.id.rv_filter) as RecyclerView
             emptyView = it.findViewById(R.id.filter_emptyView) as TextView

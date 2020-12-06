@@ -17,10 +17,11 @@ import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.feature_curated_article_list.R
 import com.phicdy.mycuration.tracker.TrackerHelper
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
@@ -38,7 +39,8 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
     private lateinit var fbTitle: String
     private lateinit var fab: FloatingActionButton
 
-    private val curationRepository: CurationRepository by inject()
+    @Inject
+    lateinit var curationRepository: CurationRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -13,7 +13,9 @@ import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.SelectFilterTargetRssPresenter
 import com.phicdy.mycuration.presentation.view.SelectTargetRssView
 import com.phicdy.mycuration.presentation.view.fragment.SelectFilterTargetRssFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
 
     companion object {

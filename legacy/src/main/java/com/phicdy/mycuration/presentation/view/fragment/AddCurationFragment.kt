@@ -14,21 +14,23 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
+import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     companion object {
@@ -39,7 +41,11 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: AddCurationPresenter by currentScope.inject { parametersOf(this) }
+    private lateinit var presenter: AddCurationPresenter
+
+    @Inject
+    lateinit var curationRepository: CurationRepository
+
     private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
     private lateinit var etName: TextInputEditText
@@ -49,6 +55,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = AddCurationPresenter(this, curationRepository)
         presenter.create()
     }
 
@@ -92,7 +99,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     override fun refreshList(addedWords: ArrayList<String>) {
         curationWordListAdapter = CurationWordListAdapter(addedWords)
         curationWordRecyclerView.adapter = curationWordListAdapter
-        curationWordRecyclerView.layoutManager = LinearLayoutManager(activity!!)
+        curationWordRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
         curationWordListAdapter.notifyDataSetChanged()
     }
 
@@ -204,5 +211,4 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
             presenter.onAddMenuClicked()
         }
     }
-
 }

@@ -17,10 +17,11 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.tracker.TrackerHelper
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
@@ -37,7 +38,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
     private lateinit var fbTitle: String
     private lateinit var fab: FloatingActionButton
 
-    private val rssRepository: RssRepository by inject()
+    @Inject
+    lateinit var rssRepository: RssRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

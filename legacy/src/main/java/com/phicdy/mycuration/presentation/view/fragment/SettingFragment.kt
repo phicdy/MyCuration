@@ -11,30 +11,48 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.preference.PreferenceHelper
+import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
+import com.phicdy.mycuration.domain.setting.SettingInitialData
 import com.phicdy.mycuration.legacy.BuildConfig
 import com.phicdy.mycuration.legacy.R
+import com.phicdy.mycuration.license.LicenseActivity
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.SettingView
-import com.phicdy.mycuration.license.LicenseActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-
+@AndroidEntryPoint
 class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope {
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: SettingPresenter by currentScope.inject { parametersOf(this) }
+    private lateinit var presenter: SettingPresenter
+
+    @Inject
+    lateinit var settingInitialData: SettingInitialData
+
+    @Inject
+    lateinit var preferenceHelper: PreferenceHelper
+
+    @Inject
+    lateinit var additionalSettingApi: AdditionalSettingApi
 
     private lateinit var prefUpdateInterval: ListPreference
     private lateinit var prefLaunchTab: ListPreference
@@ -73,6 +91,12 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        presenter = SettingPresenter(
+                this,
+                preferenceHelper,
+                additionalSettingApi,
+                settingInitialData
+        )
         presenter.activityCreate()
     }
 
@@ -255,5 +279,35 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     override fun startLicenseActivity() {
         startActivity(Intent(activity, LicenseActivity::class.java))
     }
-}
 
+    @Module
+    @InstallIn(FragmentComponent::class)
+    object SettingModule {
+        @FragmentScoped
+        @Provides
+        fun provideSettingInitialData(@ApplicationContext context: Context): SettingInitialData {
+            val updateIntervalHourItems = context.resources.getStringArray(R.array.update_interval_items_values)
+            val updateIntervalStringItems = context.resources.getStringArray(R.array.update_interval_items)
+            val themeItems = context.resources.getStringArray(R.array.theme_items_values)
+            val themeStringItems = context.resources.getStringArray(R.array.theme_items)
+            val allReadBehaviorItems = context.resources.getStringArray(R.array.all_read_behavior_values)
+            val allReadBehaviorStringItems = context.resources.getStringArray(R.array.all_read_behavior)
+            val launchTabItems = context.resources.getStringArray(R.array.launch_tab_items_values)
+            val launchTabStringItems = context.resources.getStringArray(R.array.launch_tab_items)
+            val swipeDirectionItems = context.resources.getStringArray(R.array.swipe_direction_items_values)
+            val swipeDirectionStringItems = context.resources.getStringArray(R.array.swipe_direction_items)
+            return SettingInitialData(
+                    updateIntervalHourItems = updateIntervalHourItems,
+                    updateIntervalStringItems = updateIntervalStringItems,
+                    themeItems = themeItems,
+                    themeStringItems = themeStringItems,
+                    allReadBehaviorStringItems = allReadBehaviorStringItems,
+                    allReadBehaviorItems = allReadBehaviorItems,
+                    launchTabItems = launchTabItems,
+                    launchTabStringItems = launchTabStringItems,
+                    swipeDirectionItems = swipeDirectionItems,
+                    swipeDirectionStringItems = swipeDirectionStringItems
+            )
+        }
+    }
+}

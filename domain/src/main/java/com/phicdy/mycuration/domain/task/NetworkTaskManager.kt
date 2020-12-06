@@ -15,8 +15,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.koin.core.KoinComponent
-import org.koin.core.inject
 import timber.log.Timber
 import java.io.IOException
 
@@ -24,12 +22,11 @@ class NetworkTaskManager(
         private val articleRepository: ArticleRepository,
         private val rssRepository: RssRepository,
         private val curationRepository: CurationRepository,
-        private val filterRepository: FilterRepository
-) : KoinComponent {
+        private val filterRepository: FilterRepository,
+        private val client: OkHttpClient
+) {
 
     val isUpdatingFeed: Boolean get() = false
-
-    private val client: OkHttpClient by inject()
 
     suspend fun updateAll(rssList: List<Feed>): Flow<Feed> = flow {
         rssList.filter { it.id > 0 }

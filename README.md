@@ -41,7 +41,7 @@ Set status to read automatically by user settings
 ## Credits
 
 * [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
-* [Koin](https://github.com/InsertKoinIO/koin)
+* [Dagger Hilt](https://dagger.dev/hilt/)
 * [RecyclerView](https://dl.google.com/dl/android/maven2/index.html)
 * [Retrofit](https://github.com/square/retrofit)
 * [Glide](https://github.com/bumptech/glide)

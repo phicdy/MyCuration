@@ -7,8 +7,9 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class FetchAllArticleListActionCreator(
+class FetchAllArticleListActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val articleRepository: ArticleRepository,
         private val preferenceHelper: PreferenceHelper

@@ -4,8 +4,9 @@ import com.phicdy.mycuration.core.ActionCreator1
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.RssListMode
+import javax.inject.Inject
 
-class FetchAllRssListActionCreator(
+class FetchAllRssListActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val rssRepository: RssRepository,
         private val rssListItemFactory: RssListItemFactory

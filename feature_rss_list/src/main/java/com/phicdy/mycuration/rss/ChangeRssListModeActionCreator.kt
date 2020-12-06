@@ -3,8 +3,9 @@ package com.phicdy.mycuration.rss
 import com.phicdy.mycuration.core.ActionCreator1
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.entity.RssListMode
+import javax.inject.Inject
 
-class ChangeRssListModeActionCreator(
+class ChangeRssListModeActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val rssListItemFactory: RssListItemFactory
 ) : ActionCreator1<RssListState.Loaded> {

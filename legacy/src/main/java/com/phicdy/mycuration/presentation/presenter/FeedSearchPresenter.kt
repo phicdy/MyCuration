@@ -10,12 +10,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
+import javax.inject.Inject
 
-class FeedSearchPresenter(private val view: FeedSearchView,
-                          private val networkTaskManager: NetworkTaskManager,
-                          private val rssRepository: RssRepository,
-                          private val coroutineScope: CoroutineScope,
-                          private val executor: RssParseExecutor) : Presenter {
+class FeedSearchPresenter @Inject constructor(
+        private val view: FeedSearchView,
+        private val networkTaskManager: NetworkTaskManager,
+        private val rssRepository: RssRepository,
+        private val coroutineScope: CoroutineScope,
+        private val executor: RssParseExecutor
+) : Presenter {
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {
             onFinishAddFeed(rssUrl, RssParseResult.FailedReason.NOT_FAILED)

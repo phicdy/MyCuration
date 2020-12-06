@@ -2,8 +2,9 @@ package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
+import javax.inject.Inject
 
-class RssListItemFactory {
+class RssListItemFactory @Inject constructor() {
 
     fun create(mode: RssListMode, allRss: List<Feed>) = mutableListOf<RssListItem>().apply {
         add(RssListItem.All(allRss.sumBy { it.unreadAriticlesCount }))

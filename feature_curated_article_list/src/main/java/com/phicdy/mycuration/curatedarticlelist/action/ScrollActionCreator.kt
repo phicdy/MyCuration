@@ -1,6 +1,6 @@
 package com.phicdy.mycuration.curatedarticlelist.action
 
-import com.phicdy.mycuration.core.ActionCreator
+import com.phicdy.mycuration.core.ActionCreator3
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.curatedarticlelist.CuratedArticleItem
 import com.phicdy.mycuration.data.repository.ArticleRepository
@@ -9,17 +9,16 @@ import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class ScrollActionCreator(
+class ScrollActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val articleRepository: ArticleRepository,
-        private val rssRepository: RssRepository,
-        private val firstVisiblePosition: Int,
-        private val lastVisiblePosition: Int,
-        private val items: List<CuratedArticleItem>
-) : ActionCreator {
+        private val rssRepository: RssRepository
+) : ActionCreator3<Int, Int, List<CuratedArticleItem>> {
 
-    override suspend fun run() {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(firstVisiblePosition: Int, lastVisiblePosition: Int, items: List<CuratedArticleItem>) {
         withContext(Dispatchers.IO) {
             if (items.isEmpty()) return@withContext
 

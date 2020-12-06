@@ -9,22 +9,24 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.data.repository.CurationRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-
+@AndroidEntryPoint
 class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
     companion object {
@@ -36,7 +38,14 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: CurationListPresenter by currentScope.inject { parametersOf(this) }
+    private lateinit var presenter: CurationListPresenter
+
+    @Inject
+    lateinit var rssRepository: RssRepository
+
+    @Inject
+    lateinit var curationRepository: CurationRepository
+   
     private lateinit var curationListAdapter: CurationListAdapter
     private var mListener: OnCurationListFragmentListener? = null
     private lateinit var curationRecyclerView: RecyclerView
@@ -45,6 +54,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         job = Job()
+        presenter = CurationListPresenter(this, rssRepository, curationRepository)
     }
 
     override fun onResume() {

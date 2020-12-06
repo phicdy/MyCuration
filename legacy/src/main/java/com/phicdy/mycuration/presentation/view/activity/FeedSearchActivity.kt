@@ -29,17 +29,24 @@ import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.tracker.TrackerHelper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
 
     companion object {
@@ -50,7 +57,8 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FeedSearchPresenter by currentScope.inject { parametersOf(this, this) }
+    @Inject
+    lateinit var presenter: FeedSearchPresenter
     private lateinit var searchView: SearchView
     private lateinit var webView: WebView
     private lateinit var fab: FloatingActionButton
@@ -250,5 +258,15 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
     @UiThread
     private fun showToastOnUiThread(@StringRes res: Int, toastLength: Int) {
         runOnUiThread { Toast.makeText(applicationContext, res, toastLength).show() }
+    }
+
+    @Module
+    @InstallIn(ActivityComponent::class)
+    object FeedSearchModule {
+
+        @ActivityScoped
+        @Provides
+        fun provideFeedSearchView(@ActivityContext activity: Context): FeedSearchView =
+                activity as FeedSearchView
     }
 }

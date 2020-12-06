@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -43,39 +44,63 @@ import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.tracker.TrackerHelper
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.get
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.currentScope
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
 
     companion object {
         fun newInstance() = FavoriteArticlesListFragment()
     }
 
-    private val fetchFavoriteArticleListActionCreator: FetchFavoriteArticleListActionCreator by currentScope.inject()
-    private val updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator by currentScope.inject()
+    @Inject
+    lateinit var fetchFavoriteArticleListActionCreator: FetchFavoriteArticleListActionCreator
 
-    private val articleListStore: ArticleListStore by currentScope.inject()
-    private val finishStateStore: FinishStateStore by currentScope.inject()
-    private val readArticlePositionStore: ReadArticlePositionStore by currentScope.inject()
-    private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by currentScope.inject()
-    private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by currentScope.inject()
-    private val scrollPositionStore: ScrollPositionStore by currentScope.inject()
-    private val swipePositionStore: SwipePositionStore by currentScope.inject()
-    private val readAllArticlesStateStore: ReadAllArticlesStateStore by currentScope.inject()
-    private val shareUrlStore: ShareUrlStore by currentScope.inject()
+    @Inject
+    lateinit var updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator
+
+    @Inject
+    lateinit var finishStateActionCreator: FinishStateActionCreator
+
+    @Inject
+    lateinit var swipeActionCreator: SwipeActionCreator
+
+    @Inject
+    lateinit var scrollActionCreator: ScrollActionCreator
+
+    @Inject
+    lateinit var readAllFavoriteArticlesActionCreator: ReadAllFavoriteArticlesActionCreator
+
+    @Inject
+    lateinit var readArticleActionCreator: ReadArticleActionCreator
+
+    @Inject
+    lateinit var openUrlActionCreator: OpenUrlActionCreator
+
+    @Inject
+    lateinit var shareUrlActionCreator: ShareUrlActionCreator
+
+    @Inject
+    lateinit var adProvider: AdProvider
+
+    private val articleListStore: ArticleListStore by viewModels()
+    private val finishStateStore: FinishStateStore by viewModels()
+    private val readArticlePositionStore: ReadArticlePositionStore by viewModels()
+    private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by viewModels()
+    private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by viewModels()
+    private val scrollPositionStore: ScrollPositionStore by viewModels()
+    private val swipePositionStore: SwipePositionStore by viewModels()
+    private val readAllArticlesStateStore: ReadAllArticlesStateStore by viewModels()
+    private val shareUrlStore: ShareUrlStore by viewModels()
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
 
     private lateinit var listener: OnArticlesListFragmentListener
     private lateinit var emptyView: TextView
-
-    private val adProvider by inject<AdProvider>()
 
     interface OnArticlesListFragmentListener {
         fun finish()
@@ -129,11 +154,7 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
 
     private fun runFinishActionCreator() {
         viewLifecycleOwner.lifecycleScope.launch {
-            FinishStateActionCreator(
-                    dispatcher = get(),
-                    preferenceHelper = get(),
-                    items = articlesListAdapter.currentList
-            ).run()
+            finishStateActionCreator.run(articlesListAdapter.currentList)
         }
     }
 
@@ -172,17 +193,8 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val actionCreator = SwipeActionCreator(
-                        dispatcher = get(),
-                        articleRepository = get(),
-                        rssRepository = get(),
-                        preferenceHelper = get(),
-                        position = viewHolder.adapterPosition,
-                        direction = direction,
-                        items = articlesListAdapter.currentList
-                )
                 viewLifecycleOwner.lifecycleScope.launch {
-                    actionCreator.run()
+                    swipeActionCreator.run(viewHolder.adapterPosition, direction, articlesListAdapter.currentList)
                 }
             }
         })
@@ -193,25 +205,17 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
     fun onFabButtonClicked() {
         viewLifecycleOwner.lifecycleScope.launch {
             val manager = recyclerView.layoutManager as LinearLayoutManager
-            ScrollActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    rssRepository = get(),
+            scrollActionCreator.run(
                     firstVisiblePosition = manager.findFirstVisibleItemPosition(),
                     lastVisiblePosition = manager.findLastCompletelyVisibleItemPosition(),
                     items = articlesListAdapter.currentList
-            ).run()
+            )
         }
     }
 
     fun handleAllRead() {
         viewLifecycleOwner.lifecycleScope.launch {
-            ReadAllFavoriteArticlesActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    rssRepository = get(),
-                    items = articlesListAdapter.currentList
-            ).run()
+            readAllFavoriteArticlesActionCreator.run(items = articlesListAdapter.currentList)
         }
     }
 
@@ -273,33 +277,21 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
     }
 
     override fun onItemClicked(position: Int, articles: List<ArticleItem>) {
-        val actionCreator = ReadArticleActionCreator(
-                dispatcher = get(),
-                articleRepository = get(),
-                rssRepository = get(),
-                position = position,
-                items = articles
-        )
         viewLifecycleOwner.lifecycleScope.launch {
-            actionCreator.run()
-        }
-        val openUrlActionCreator = OpenUrlActionCreator(
-                dispatcher = get(),
-                preferenceHelper = get(),
-                item = articles[position]
-        )
-        viewLifecycleOwner.lifecycleScope.launch {
-            openUrlActionCreator.run()
+            readArticleActionCreator.run(
+                    position = position,
+                    items = articles
+            )
+            openUrlActionCreator.run(item = articles[position])
         }
     }
 
     override fun onItemLongClicked(position: Int, articles: List<ArticleItem>) {
         viewLifecycleOwner.lifecycleScope.launch {
-            ShareUrlActionCreator(
-                    dispatcher = get(),
+            shareUrlActionCreator.run(
                     position = position,
                     items = articles
-            ).run()
+            )
         }
     }
 }

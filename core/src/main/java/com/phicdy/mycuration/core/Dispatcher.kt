@@ -1,8 +1,9 @@
 package com.phicdy.mycuration.core
 
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class Dispatcher {
+class Dispatcher @Inject constructor() {
 
     private val stores = mutableListOf<Store<*>>()
 
