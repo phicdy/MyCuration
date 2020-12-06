@@ -99,7 +99,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     override fun refreshList(addedWords: ArrayList<String>) {
         curationWordListAdapter = CurationWordListAdapter(addedWords)
         curationWordRecyclerView.adapter = curationWordListAdapter
-        curationWordRecyclerView.layoutManager = LinearLayoutManager(activity!!)
+        curationWordRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
         curationWordListAdapter.notifyDataSetChanged()
     }
 
