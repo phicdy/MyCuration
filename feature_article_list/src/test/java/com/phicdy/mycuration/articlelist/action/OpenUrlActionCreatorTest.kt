@@ -35,9 +35,8 @@ class OpenUrlActionCreatorTest {
             }
             OpenUrlActionCreator(
                     dispatcher = dispatcher,
-                    preferenceHelper = preferenceHelper,
-                    item = ArticleItem.Content(article)
-            ).run()
+                    preferenceHelper = preferenceHelper
+            ).run(item = ArticleItem.Content(article))
         }
         runBlocking {
             argumentCaptor<OpenInternalBrowserAction> {
@@ -63,9 +62,8 @@ class OpenUrlActionCreatorTest {
             }
             OpenUrlActionCreator(
                     dispatcher = dispatcher,
-                    preferenceHelper = preferenceHelper,
-                    item = ArticleItem.Content(article)
-            ).run()
+                    preferenceHelper = preferenceHelper
+            ).run(item = ArticleItem.Content(article))
         }
         runBlocking {
             argumentCaptor<OpenExternalBrowserAction> {

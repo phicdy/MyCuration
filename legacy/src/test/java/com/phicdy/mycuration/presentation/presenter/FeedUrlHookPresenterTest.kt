@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
+import com.phicdy.mycuration.domain.rss.RssUrlHookIntentData
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import kotlinx.coroutines.runBlocking
@@ -28,7 +29,7 @@ class FeedUrlHookPresenterTest {
 
     @Test
     fun `when empty action then finish`() = runBlocking {
-        val presenter = FeedUrlHookPresenter(view, "", "", "", rssRepository,
+        val presenter = FeedUrlHookPresenter(view, RssUrlHookIntentData("", "", ""), rssRepository,
                 networkTaskManager, this, parser)
         presenter.create()
         verify(view, times(1)).finishView()
@@ -36,7 +37,7 @@ class FeedUrlHookPresenterTest {
 
     @Test
     fun `when invalid action comes then finish`() = runBlocking {
-        val presenter = FeedUrlHookPresenter(view, "hogehoge", "http://www.google.com", "",
+        val presenter = FeedUrlHookPresenter(view, RssUrlHookIntentData("hogehoge", "http://www.google.com", ""),
                 rssRepository, networkTaskManager, this, parser)
         presenter.create()
         verify(view, times(1)).finishView()
@@ -44,7 +45,7 @@ class FeedUrlHookPresenterTest {
 
     @Test
     fun `when action view and invalid url comes then toast shows`() = runBlocking {
-        val presenter = FeedUrlHookPresenter(view, Intent.ACTION_VIEW, "hogehoge", "",
+        val presenter = FeedUrlHookPresenter(view, RssUrlHookIntentData(Intent.ACTION_VIEW, "hogehoge", ""),
                 rssRepository, networkTaskManager, this, parser)
         presenter.create()
         verify(view, times(1)).showInvalidUrlErrorToast()
@@ -52,7 +53,7 @@ class FeedUrlHookPresenterTest {
 
     @Test
     fun `when action send and invalid url comes then toast shows`() = runBlocking {
-        val presenter = FeedUrlHookPresenter(view, Intent.ACTION_SEND, "", "hogehoge",
+        val presenter = FeedUrlHookPresenter(view, RssUrlHookIntentData(Intent.ACTION_SEND, "", "hogehoge"),
                 rssRepository, networkTaskManager, this, parser)
         presenter.create()
         verify(view, times(1)).showInvalidUrlErrorToast()
@@ -60,7 +61,7 @@ class FeedUrlHookPresenterTest {
 
     @Test
     fun `when finish add feed action comes then view finishes`() = runBlocking {
-        val presenter = FeedUrlHookPresenter(view, "", "", "", rssRepository,
+        val presenter = FeedUrlHookPresenter(view, RssUrlHookIntentData("", "", ""), rssRepository,
                 networkTaskManager, this, parser)
         presenter.callback.failed(RssParseResult.FailedReason.NOT_FOUND, "")
         verify(view, times(1)).finishView()
@@ -68,7 +69,7 @@ class FeedUrlHookPresenterTest {
 
     @Test
     fun `when finish add feed action comes with not RSS html error then toast shows`() = runBlocking {
-        val presenter = FeedUrlHookPresenter(view, "", "", "", rssRepository,
+        val presenter = FeedUrlHookPresenter(view, RssUrlHookIntentData("", "", ""), rssRepository,
                 networkTaskManager, this, parser)
         presenter.create()
         presenter.callback.failed(RssParseResult.FailedReason.NON_RSS_HTML, "")
@@ -77,7 +78,7 @@ class FeedUrlHookPresenterTest {
 
     @Test
     fun `when finish add feed action comes with invalid url error then toast shows`() = runBlocking {
-        val presenter = FeedUrlHookPresenter(view, "", "", "", rssRepository,
+        val presenter = FeedUrlHookPresenter(view, RssUrlHookIntentData("", "", ""), rssRepository,
                 networkTaskManager, this, parser)
         presenter.create()
         presenter.callback.failed(RssParseResult.FailedReason.INVALID_URL, "")
@@ -86,7 +87,7 @@ class FeedUrlHookPresenterTest {
 
     @Test
     fun `when failed then the url will be tracked`() = runBlocking {
-        val presenter = FeedUrlHookPresenter(view, "", "", "", rssRepository,
+        val presenter = FeedUrlHookPresenter(view, RssUrlHookIntentData("", "", ""), rssRepository,
                 networkTaskManager, this, parser)
         presenter.create()
         val failUrl = "http://www.google.com"
