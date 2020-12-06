@@ -27,8 +27,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
     implementation "androidx.preference:preference:$preference_version"
 
-    implementation "org.koin:koin-android-scope:$koin_version"
-
     implementation("com.github.bumptech.glide:glide:$glideVer") {
         exclude group: "com.android.support"
     }
