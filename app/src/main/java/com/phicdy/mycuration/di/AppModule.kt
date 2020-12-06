@@ -3,12 +3,8 @@ package com.phicdy.mycuration.di
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.admob.AdmobProvider
 import com.phicdy.mycuration.advertisement.AdProvider
-import com.phicdy.mycuration.articlelist.ArticlesListFragment
 import com.phicdy.mycuration.articlelist.FavoriteArticlesListFragment
-import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
-import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchFavoriteArticleListActionCreator
-import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
 import com.phicdy.mycuration.articlelist.store.FinishStateStore
@@ -17,7 +13,6 @@ import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.ReadAllArticlesStateStore
 import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
-import com.phicdy.mycuration.articlelist.store.SearchResultStore
 import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.core.Dispatcher
@@ -122,48 +117,6 @@ val appModule = module {
             )
         }
         viewModel { RSSListStateStore(get(), RssListItemFactory()) }
-    }
-
-    scope(named<ArticlesListFragment>()) {
-        scoped { (rssId: Int) ->
-            FetchArticleListOfRssActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    preferenceHelper = get(),
-                    rssId = rssId
-            )
-        }
-        scoped {
-            FetchAllArticleListActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    preferenceHelper = get()
-            )
-        }
-        scoped { (query: String) ->
-            SearchArticleListActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    preferenceHelper = get(),
-                    query = query
-            )
-        }
-        scoped {
-            UpdateFavoriteStatusActionCreator(
-                    dispatcher = get(),
-                    favoriteRepository = get()
-            )
-        }
-        viewModel { ArticleListStore(get()) }
-        viewModel { SearchResultStore(get()) }
-        viewModel { FinishStateStore(get()) }
-        viewModel { ReadArticlePositionStore(get()) }
-        viewModel { OpenInternalWebBrowserStateStore(get()) }
-        viewModel { OpenExternalWebBrowserStateStore(get()) }
-        viewModel { ScrollPositionStore(get()) }
-        viewModel { SwipePositionStore(get()) }
-        viewModel { ReadAllArticlesStateStore(get()) }
-        viewModel { ShareUrlStore(get()) }
     }
 
     scope(named<FavoriteArticlesListFragment>()) {

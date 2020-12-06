@@ -1,12 +1,13 @@
 package com.phicdy.mycuration.articlelist.store
 
+import androidx.hilt.lifecycle.ViewModelInject
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.articlelist.action.SearchArticleAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 
-class SearchResultStore(
+class SearchResultStore @ViewModelInject constructor(
         dispatcher: Dispatcher
 ) : Store<List<ArticleItem>>(dispatcher) {
 

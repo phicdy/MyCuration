@@ -131,9 +131,8 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
         viewLifecycleOwner.lifecycleScope.launch {
             FinishStateActionCreator(
                     dispatcher = get(),
-                    preferenceHelper = get(),
-                    items = articlesListAdapter.currentList
-            ).run()
+                    preferenceHelper = get()
+            ).run(articlesListAdapter.currentList)
         }
     }
 
@@ -176,13 +175,10 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
                         dispatcher = get(),
                         articleRepository = get(),
                         rssRepository = get(),
-                        preferenceHelper = get(),
-                        position = viewHolder.adapterPosition,
-                        direction = direction,
-                        items = articlesListAdapter.currentList
+                        preferenceHelper = get()
                 )
                 viewLifecycleOwner.lifecycleScope.launch {
-                    actionCreator.run()
+                    actionCreator.run(viewHolder.adapterPosition, direction, articlesListAdapter.currentList)
                 }
             }
         })
@@ -196,11 +192,12 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
             ScrollActionCreator(
                     dispatcher = get(),
                     articleRepository = get(),
-                    rssRepository = get(),
+                    rssRepository = get()
+            ).run(
                     firstVisiblePosition = manager.findFirstVisibleItemPosition(),
                     lastVisiblePosition = manager.findLastCompletelyVisibleItemPosition(),
                     items = articlesListAdapter.currentList
-            ).run()
+            )
         }
     }
 
@@ -276,30 +273,31 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
         val actionCreator = ReadArticleActionCreator(
                 dispatcher = get(),
                 articleRepository = get(),
-                rssRepository = get(),
-                position = position,
-                items = articles
+                rssRepository = get()
         )
         viewLifecycleOwner.lifecycleScope.launch {
-            actionCreator.run()
+            actionCreator.run(
+                    position = position,
+                    items = articles
+            )
         }
         val openUrlActionCreator = OpenUrlActionCreator(
                 dispatcher = get(),
-                preferenceHelper = get(),
-                item = articles[position]
+                preferenceHelper = get()
         )
         viewLifecycleOwner.lifecycleScope.launch {
-            openUrlActionCreator.run()
+            openUrlActionCreator.run(item = articles[position])
         }
     }
 
     override fun onItemLongClicked(position: Int, articles: List<ArticleItem>) {
         viewLifecycleOwner.lifecycleScope.launch {
             ShareUrlActionCreator(
-                    dispatcher = get(),
+                    dispatcher = get()
+            ).run(
                     position = position,
                     items = articles
-            ).run()
+            )
         }
     }
 }

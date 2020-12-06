@@ -1,11 +1,12 @@
 package com.phicdy.mycuration.articlelist.store
 
+import androidx.hilt.lifecycle.ViewModelInject
 import com.phicdy.mycuration.articlelist.action.SwipeAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 
-class SwipePositionStore(
+class SwipePositionStore @ViewModelInject constructor(
         dispatcher: Dispatcher
 ) : Store<Int>(dispatcher) {
 
