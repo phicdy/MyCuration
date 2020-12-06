@@ -19,6 +19,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -76,14 +77,12 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
     @InstallIn(ActivityComponent::class)
     object FeedUrlHookModule {
 
+        @ActivityScoped
         @Provides
         fun provideFeedUrlHookView(@ActivityContext activity: Context): FeedUrlHookView =
                 activity as FeedUrlHookView
 
-        @Provides
-        fun provideCoroutineScope(@ActivityContext activity: Context): CoroutineScope =
-                activity as CoroutineScope
-
+        @ActivityScoped
         @Provides
         fun provideRssUrlHookIntentData(@ActivityContext activity: Context): RssUrlHookIntentData =
                 RssUrlHookIntentData(

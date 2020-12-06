@@ -44,18 +44,13 @@ import com.phicdy.mycuration.data.repository.FavoriteRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
-import com.phicdy.mycuration.domain.rss.RssParseExecutor
-import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
-import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.presentation.view.CurationListView
-import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.presentation.view.SettingView
-import com.phicdy.mycuration.presentation.view.activity.FeedSearchActivity
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
@@ -69,7 +64,6 @@ import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.rss.RssListItemFactory
 import com.phicdy.mycuration.rss.UpdateAllRssActionCreator
 import com.phicdy.mycuration.util.log.TimberTree
-import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
@@ -234,18 +228,6 @@ val appModule = module {
                     view = view,
                     rssRepository = get(),
                     curationRepository = get()
-            )
-        }
-    }
-
-    scope(named<FeedSearchActivity>()) {
-        scoped { (view: FeedSearchView, coroutineScope: CoroutineScope) ->
-            FeedSearchPresenter(
-                    view = view,
-                    rssRepository = get(),
-                    networkTaskManager = get(),
-                    coroutineScope = coroutineScope,
-                    executor = RssParseExecutor(RssParser(), get())
             )
         }
     }
