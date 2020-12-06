@@ -1,8 +1,6 @@
 package com.phicdy.mycuration.di
 
-import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.R
 import com.phicdy.mycuration.admob.AdmobProvider
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.ArticlesListFragment
@@ -44,11 +42,7 @@ import com.phicdy.mycuration.data.repository.FavoriteRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
-import com.phicdy.mycuration.domain.setting.SettingInitialData
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
-import com.phicdy.mycuration.presentation.presenter.SettingPresenter
-import com.phicdy.mycuration.presentation.view.SettingView
-import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.rss.ChangeRssListModeActionCreator
 import com.phicdy.mycuration.rss.ChangeRssTitleActionCreator
 import com.phicdy.mycuration.rss.DeleteRssActionCreator
@@ -215,37 +209,5 @@ val appModule = module {
         viewModel { SwipeCuratedArticlePositionStore(get()) }
         viewModel { ReadAllCuratedArticlesStateStore(get()) }
         viewModel { ShareCuratedArticleUrlStore(get()) }
-    }
-
-    scope(named<SettingFragment>()) {
-        scoped { (view: SettingView) ->
-            val updateIntervalHourItems = get<Context>().resources.getStringArray(R.array.update_interval_items_values)
-            val updateIntervalStringItems = get<Context>().resources.getStringArray(R.array.update_interval_items)
-            val themeItems = get<Context>().resources.getStringArray(R.array.theme_items_values)
-            val themeStringItems = get<Context>().resources.getStringArray(R.array.theme_items)
-            val allReadBehaviorItems = get<Context>().resources.getStringArray(R.array.all_read_behavior_values)
-            val allReadBehaviorStringItems = get<Context>().resources.getStringArray(R.array.all_read_behavior)
-            val launchTabItems = get<Context>().resources.getStringArray(R.array.launch_tab_items_values)
-            val launchTabStringItems = get<Context>().resources.getStringArray(R.array.launch_tab_items)
-            val swipeDirectionItems = get<Context>().resources.getStringArray(R.array.swipe_direction_items_values)
-            val swipeDirectionStringItems = get<Context>().resources.getStringArray(R.array.swipe_direction_items)
-            SettingPresenter(
-                    view = view,
-                    helper = get(),
-                    addtionalSettingApi = get(),
-                    settingInitialData = SettingInitialData(
-                            updateIntervalHourItems = updateIntervalHourItems,
-                            updateIntervalStringItems = updateIntervalStringItems,
-                            themeItems = themeItems,
-                            themeStringItems = themeStringItems,
-                            allReadBehaviorStringItems = allReadBehaviorStringItems,
-                            allReadBehaviorItems = allReadBehaviorItems,
-                            launchTabItems = launchTabItems,
-                            launchTabStringItems = launchTabStringItems,
-                            swipeDirectionItems = swipeDirectionItems,
-                            swipeDirectionStringItems = swipeDirectionStringItems
-                    )
-            )
-        }
     }
 }

@@ -4,10 +4,13 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
+import com.phicdy.mycuration.data.repository.AdditionalSettingApi
+import com.phicdy.mycuration.data.repository.AdditionalSettingRepository
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import dagger.Module
 import dagger.Provides
@@ -61,4 +64,11 @@ object RepositoryModule {
             curationRepository: CurationRepository,
             filterRepository: FilterRepository
     ): NetworkTaskManager = NetworkTaskManager(articleRepository, rssRepository, curationRepository, filterRepository)
+
+    @Singleton
+    @Provides
+    fun provideAdditionalSettingApi(
+            rssRepository: RssRepository,
+            alarmManagerTaskManager: AlarmManagerTaskManager
+    ): AdditionalSettingApi = AdditionalSettingRepository(rssRepository, alarmManagerTaskManager)
 }

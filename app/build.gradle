@@ -85,6 +85,7 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
+    implementation "androidx.preference:preference:$preference_version"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
