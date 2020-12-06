@@ -39,7 +39,7 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter = FilterListPresenter(this, rssRepository, filterRepository)
+    private lateinit var presenter: FilterListPresenter
 
     @Inject
     lateinit var rssRepository: RssRepository
@@ -57,6 +57,7 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        presenter = FilterListPresenter(this, rssRepository, filterRepository)
         activity?.let {
             filtersRecyclerView = it.findViewById(R.id.rv_filter) as RecyclerView
             emptyView = it.findViewById(R.id.filter_emptyView) as TextView
