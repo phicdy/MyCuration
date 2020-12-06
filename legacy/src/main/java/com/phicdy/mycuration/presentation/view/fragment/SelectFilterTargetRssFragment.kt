@@ -56,7 +56,7 @@ class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
         super.onDestroy()
     }
 
-    fun list(): List<Feed>? {
+    fun list(): List<Feed> {
         return selectedList
     }
 

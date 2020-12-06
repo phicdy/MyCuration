@@ -45,11 +45,8 @@ import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
-import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.presenter.SettingPresenter
-import com.phicdy.mycuration.presentation.view.CurationListView
 import com.phicdy.mycuration.presentation.view.SettingView
-import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import com.phicdy.mycuration.rss.ChangeRssListModeActionCreator
 import com.phicdy.mycuration.rss.ChangeRssTitleActionCreator
@@ -217,16 +214,6 @@ val appModule = module {
         viewModel { SwipeCuratedArticlePositionStore(get()) }
         viewModel { ReadAllCuratedArticlesStateStore(get()) }
         viewModel { ShareCuratedArticleUrlStore(get()) }
-    }
-
-    scope(named<CurationListFragment>()) {
-        scoped { (view: CurationListView) ->
-            CurationListPresenter(
-                    view = view,
-                    rssRepository = get(),
-                    curationRepository = get()
-            )
-        }
     }
 
     scope(named<SettingFragment>()) {
