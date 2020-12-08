@@ -7,6 +7,7 @@ import com.phicdy.action.articlelist.UnReadArticleAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
+import com.phicdy.mycuration.entity.RssListMode
 
 class RSSListStateStore @ViewModelInject constructor(
         dispatcher: Dispatcher,
@@ -30,7 +31,8 @@ class RSSListStateStore @ViewModelInject constructor(
                             it
                         }
                     }
-                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    val (mode, item) = rssListItemFactory.create(state.mode, updated)
+                    _state.value = RssListState.Loaded(item, updated, mode)
                 }
             }
             is UnReadArticleAction -> {
@@ -43,7 +45,8 @@ class RSSListStateStore @ViewModelInject constructor(
                             it
                         }
                     }
-                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    val (mode, item) = rssListItemFactory.create(state.mode, updated)
+                    _state.value = RssListState.Loaded(item, updated, mode)
                 }
             }
             is ReadAllArticlesAction -> {
@@ -56,7 +59,8 @@ class RSSListStateStore @ViewModelInject constructor(
                             it
                         }
                     }
-                    _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
+                    val (mode, item) = rssListItemFactory.create(state.mode, updated)
+                    _state.value = RssListState.Loaded(item, updated, mode)
                 }
             }
             is RssListUpdateAction -> {
@@ -71,7 +75,8 @@ class RSSListStateStore @ViewModelInject constructor(
                         is RssListUpdateState.Finished -> {
                             if (state !is RssListState.Loaded) return
                             _state.value = RssListState.FinishPullToRefresh
-                            _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, value.updated), value.updated, state.mode)
+                            val (mode, item) = rssListItemFactory.create(RssListMode.UNREAD_ONLY, value.updated)
+                            _state.value = RssListState.Loaded(item, value.updated, mode)
                         }
                         is RssListUpdateState.Failed -> {
                             if (state !is RssListState.Loaded) return
