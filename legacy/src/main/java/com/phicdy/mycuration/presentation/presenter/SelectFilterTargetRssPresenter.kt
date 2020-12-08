@@ -4,8 +4,9 @@ import android.view.MenuItem
 import com.phicdy.mycuration.legacy.R
 
 import com.phicdy.mycuration.presentation.view.SelectTargetRssView
+import javax.inject.Inject
 
-class SelectFilterTargetRssPresenter(private val view: SelectTargetRssView) : Presenter {
+class SelectFilterTargetRssPresenter @Inject constructor(private val view: SelectTargetRssView) : Presenter {
 
     override fun create() {}
 

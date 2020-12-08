@@ -16,7 +16,12 @@ import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,14 +43,15 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private lateinit var presenter: CurationListPresenter
+    @Inject
+    lateinit var presenter: CurationListPresenter
 
     @Inject
     lateinit var rssRepository: RssRepository
 
     @Inject
     lateinit var curationRepository: CurationRepository
-   
+
     private lateinit var curationListAdapter: CurationListAdapter
     private var mListener: OnCurationListFragmentListener? = null
     private lateinit var curationRecyclerView: RecyclerView
@@ -54,7 +60,6 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         job = Job()
-        presenter = CurationListPresenter(this, rssRepository, curationRepository)
     }
 
     override fun onResume() {
@@ -189,5 +194,13 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
                 curationCount.text = count
             }
         }
+    }
+
+    @Module
+    @InstallIn(FragmentComponent::class)
+    object CurationListModule {
+        @FragmentScoped
+        @Provides
+        fun provideCurationListView(fragment: Fragment): CurationListView = fragment as CurationListView
     }
 }
