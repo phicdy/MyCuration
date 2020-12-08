@@ -77,7 +77,7 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         val manager = supportFragmentManager
         val fragment = manager.findFragmentById(R.id.f_select_target) as SelectFilterTargetRssFragment
         val rssList = arrayListOf<Feed>()
-        fragment.list()?.forEach { rssList.add(it) }
+        fragment.list().forEach { rssList.add(it) }
         bundle.putParcelableArrayList(RegisterFilterActivity.KEY_SELECTED_FEED, rssList)
         data.putExtras(bundle)
         setResult(RESULT_OK, data)
