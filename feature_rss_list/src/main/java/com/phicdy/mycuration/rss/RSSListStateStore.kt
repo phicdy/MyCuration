@@ -62,24 +62,18 @@ class RSSListStateStore @ViewModelInject constructor(
             is RssListUpdateAction -> {
                 state.value?.let { state ->
                     when (val value = action.value) {
-                        is RssListUpdateState.Updating -> {
-                            if (state !is RssListState.Loaded) return
-                            val updated = state.rawRssList.map { rss ->
-                                if (rss.id == value.updated.id) {
-                                    rss.copy(unreadAriticlesCount = value.updated.unreadAriticlesCount)
-                                } else {
-                                    rss
-                                }
-                            }
-                            _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, updated), updated, state.mode)
-                        }
                         is RssListUpdateState.Started -> {
                             if (state !is RssListState.Loaded) return
                             val loaded = state.copy()
                             _state.value = RssListState.StartPullToRefresh
                             _state.value = loaded
                         }
-                        is RssListUpdateState.Finished, RssListUpdateState.Failed -> {
+                        is RssListUpdateState.Finished -> {
+                            if (state !is RssListState.Loaded) return
+                            _state.value = RssListState.FinishPullToRefresh
+                            _state.value = RssListState.Loaded(rssListItemFactory.create(state.mode, value.updated), value.updated, state.mode)
+                        }
+                        is RssListUpdateState.Failed -> {
                             if (state !is RssListState.Loaded) return
                             val loaded = state.copy()
                             _state.value = RssListState.FinishPullToRefresh

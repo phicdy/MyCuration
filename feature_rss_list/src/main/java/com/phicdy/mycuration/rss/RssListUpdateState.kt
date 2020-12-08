@@ -4,7 +4,6 @@ import com.phicdy.mycuration.entity.Feed
 
 sealed class RssListUpdateState {
     object Started : RssListUpdateState()
-    class Updating(val updated: Feed) : RssListUpdateState()
-    object Finished : RssListUpdateState()
+    data class Finished(val updated: List<Feed>) : RssListUpdateState()
     object Failed : RssListUpdateState()
 }
