@@ -14,15 +14,17 @@ class ChangeRssListModeActionCreator @Inject constructor(
     override suspend fun run(state: RssListState.Loaded) {
         when (state.mode) {
             RssListMode.UNREAD_ONLY -> {
+                val (_, item) = rssListItemFactory.create(RssListMode.ALL, state.rawRssList)
                 RssListState.Loaded(
-                        item = rssListItemFactory.create(RssListMode.ALL, state.rawRssList),
+                        item = item,
                         mode = RssListMode.ALL,
                         rawRssList = state.rawRssList
                 )
             }
             RssListMode.ALL -> {
+                val (_, item) = rssListItemFactory.create(RssListMode.UNREAD_ONLY, state.rawRssList)
                 RssListState.Loaded(
-                        item = rssListItemFactory.create(RssListMode.UNREAD_ONLY, state.rawRssList),
+                        item = item,
                         mode = RssListMode.UNREAD_ONLY,
                         rawRssList = state.rawRssList
                 )

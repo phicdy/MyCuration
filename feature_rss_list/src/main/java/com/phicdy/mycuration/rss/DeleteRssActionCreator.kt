@@ -12,9 +12,10 @@ class DeleteRssActionCreator @Inject constructor(
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override suspend fun run(rssId: Int, state: RssListState.Loaded) {
         val updated = state.rawRssList.filter { it.id != rssId }
+        val (mode, item) = rssListItemFactory.create(state.mode, updated)
         RssListState.Loaded(
-                item = rssListItemFactory.create(state.mode, updated),
-                mode = state.mode,
+                item = item,
+                mode = mode,
                 rawRssList = updated
         ).let {
             dispatcher.dispatch(RssListAction(it))

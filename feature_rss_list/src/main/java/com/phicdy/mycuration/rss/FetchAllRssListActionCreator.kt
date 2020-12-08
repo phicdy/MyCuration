@@ -20,8 +20,7 @@ class FetchAllRssListActionCreator @Inject constructor(
             dispatcher.dispatch(RssListAction(RssListState.Loaded(emptyList(), emptyList(), rssListMode)))
             return
         }
-        rssListItemFactory.create(rssListMode, rss).let {
-            dispatcher.dispatch(RssListAction(RssListState.Loaded(it, rss, rssListMode)))
-        }
+        val (mode, item) = rssListItemFactory.create(rssListMode, rss)
+        dispatcher.dispatch(RssListAction(RssListState.Loaded(item, rss, mode)))
     }
 }
