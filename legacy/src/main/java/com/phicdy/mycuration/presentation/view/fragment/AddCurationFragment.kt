@@ -20,7 +20,12 @@ import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -41,7 +46,8 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private lateinit var presenter: AddCurationPresenter
+    @Inject
+    lateinit var presenter: AddCurationPresenter
 
     @Inject
     lateinit var curationRepository: CurationRepository
@@ -55,7 +61,6 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = AddCurationPresenter(this, curationRepository)
         presenter.create()
     }
 
@@ -210,5 +215,13 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
             delay(5000)
             presenter.onAddMenuClicked()
         }
+    }
+
+    @Module
+    @InstallIn(FragmentComponent::class)
+    object AddCurationModule {
+        @FragmentScoped
+        @Provides
+        fun provideAddCurationView(fragment: Fragment): AddCurationView = fragment as AddCurationView
     }
 }

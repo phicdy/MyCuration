@@ -7,10 +7,13 @@ import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import kotlinx.coroutines.coroutineScope
 import java.util.ArrayList
+import javax.inject.Inject
 
-class CurationListPresenter(private val view: CurationListView,
-                            private val rssRepository: RssRepository,
-                            private val curationRepository: CurationRepository) {
+class CurationListPresenter @Inject constructor(
+        private val view: CurationListView,
+        private val rssRepository: RssRepository,
+        private val curationRepository: CurationRepository
+) {
     private var allCurations: ArrayList<Curation> = arrayListOf()
 
 

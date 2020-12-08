@@ -8,8 +8,9 @@ import com.phicdy.mycuration.domain.setting.SettingInitialData
 import com.phicdy.mycuration.presentation.view.SettingView
 import kotlinx.coroutines.coroutineScope
 import java.io.File
+import javax.inject.Inject
 
-class SettingPresenter(
+class SettingPresenter @Inject constructor(
         private val view: SettingView,
         private val helper: PreferenceHelper,
         private val addtionalSettingApi: AdditionalSettingApi,

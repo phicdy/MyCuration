@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -43,7 +44,8 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private lateinit var presenter: SettingPresenter
+    @Inject
+    lateinit var presenter: SettingPresenter
 
     @Inject
     lateinit var settingInitialData: SettingInitialData
@@ -91,12 +93,6 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        presenter = SettingPresenter(
-                this,
-                preferenceHelper,
-                additionalSettingApi,
-                settingInitialData
-        )
         presenter.activityCreate()
     }
 
@@ -309,5 +305,9 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     swipeDirectionStringItems = swipeDirectionStringItems
             )
         }
+
+        @FragmentScoped
+        @Provides
+        fun provideSettingView(fragment: Fragment): SettingView = fragment as SettingView
     }
 }

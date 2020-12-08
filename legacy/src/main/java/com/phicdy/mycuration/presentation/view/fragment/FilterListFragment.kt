@@ -17,7 +17,12 @@ import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.view.FilterListView
 import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,7 +44,8 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private lateinit var presenter: FilterListPresenter
+    @Inject
+    lateinit var presenter: FilterListPresenter
 
     @Inject
     lateinit var rssRepository: RssRepository
@@ -57,7 +63,6 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        presenter = FilterListPresenter(this, rssRepository, filterRepository)
         activity?.let {
             filtersRecyclerView = it.findViewById(R.id.rv_filter) as RecyclerView
             emptyView = it.findViewById(R.id.filter_emptyView) as TextView
@@ -185,5 +190,13 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
             internal val filterUrl = itemView.findViewById(R.id.filterUrl) as TextView
             internal val filterEnabled = itemView.findViewById(R.id.sw_filter_enable) as Switch
         }
+    }
+
+    @Module
+    @InstallIn(FragmentComponent::class)
+    object FilterListModule {
+        @FragmentScoped
+        @Provides
+        fun provideFilterListView(fragment: Fragment): FilterListView = fragment as FilterListView
     }
 }
