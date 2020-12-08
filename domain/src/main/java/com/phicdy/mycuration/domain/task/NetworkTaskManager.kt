@@ -35,6 +35,7 @@ class NetworkTaskManager(
 
     suspend fun updateFeed(feed: Feed): Feed = withContext(Dispatchers.IO) {
         if (feed.url.isEmpty()) return@withContext feed
+        Timber.d("start update rss: ${feed.title}")
         try {
             val request = Request.Builder().url(feed.url).build()
             val response = client.newCall(request).execute()
@@ -47,6 +48,7 @@ class NetworkTaskManager(
                 val size = articleRepository.getUnreadArticleCount(feed.id)
                 rssRepository.updateUnreadArticleCount(feed.id, size)
                 feed.unreadAriticlesCount = size
+                Timber.d("finish update rss ${feed.title}, no update")
                 return@withContext feed
             }
 
@@ -79,6 +81,7 @@ class NetworkTaskManager(
         } catch (e: RuntimeException) {
             Timber.e(e)
         }
+        Timber.d("finish update rss ${feed.title}")
         return@withContext feed
     }
 }

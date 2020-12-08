@@ -6,6 +6,10 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.RssListMode
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import timber.log.Timber
 import javax.inject.Inject
 
 class UpdateAllRssActionCreator @Inject constructor(
@@ -20,14 +24,21 @@ class UpdateAllRssActionCreator @Inject constructor(
         try {
             dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Started))
             preferenceHelper.lastUpdateDate = System.currentTimeMillis()
+            Timber.d("start update rss")
+            val now = System.currentTimeMillis()
             val rssList = rssRepository.getAllFeedsWithNumOfUnreadArticles()
-            rssList.map { rss ->
-                val updated = networkTaskManager.updateFeed(rss)
-                dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Updating(updated)))
+            coroutineScope {
+                val deferred = rssList.map { rss ->
+                    async { networkTaskManager.updateFeed(rss) }
+                }
+                val result = deferred.awaitAll()
+                dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Finished(result)))
+                val time = System.currentTimeMillis() - now
+                Timber.d("fnish update rss, time: $time millisec")
             }
-            dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Finished))
         } catch (e: Exception) {
             dispatcher.dispatch(RssListUpdateAction(RssListUpdateState.Failed))
+            Timber.d("fnish update rss, error")
         }
     }
 }
