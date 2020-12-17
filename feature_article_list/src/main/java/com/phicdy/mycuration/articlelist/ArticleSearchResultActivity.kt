@@ -1,12 +1,13 @@
 package com.phicdy.mycuration.articlelist
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
 
     private lateinit var fragment: ArticlesListFragment
