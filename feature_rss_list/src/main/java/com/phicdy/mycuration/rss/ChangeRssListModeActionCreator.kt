@@ -8,14 +8,14 @@ import javax.inject.Inject
 class ChangeRssListModeActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val rssListItemFactory: RssListItemFactory
-) : ActionCreator1<RssListState.Loaded> {
+) : ActionCreator1<RssListState.Updated> {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-    override suspend fun run(state: RssListState.Loaded) {
+    override suspend fun run(state: RssListState.Updated) {
         when (state.mode) {
             RssListMode.UNREAD_ONLY -> {
                 val (_, item) = rssListItemFactory.create(RssListMode.ALL, state.rawRssList)
-                RssListState.Loaded(
+                RssListState.Updated(
                         item = item,
                         mode = RssListMode.ALL,
                         rawRssList = state.rawRssList
@@ -23,7 +23,7 @@ class ChangeRssListModeActionCreator @Inject constructor(
             }
             RssListMode.ALL -> {
                 val (_, item) = rssListItemFactory.create(RssListMode.UNREAD_ONLY, state.rawRssList)
-                RssListState.Loaded(
+                RssListState.Updated(
                         item = item,
                         mode = RssListMode.UNREAD_ONLY,
                         rawRssList = state.rawRssList

@@ -20,10 +20,12 @@ class RSSListStateStore @ViewModelInject constructor(
 
     override suspend fun notify(action: Action<*>) {
         when (action) {
-            is RssListAction -> _state.value = action.value
+            is RssListAction -> {
+                _state.value = action.value
+            }
             is ReadArticleAction -> {
                 state.value?.let { state ->
-                    if (state !is RssListState.Loaded) return
+                    if (state !is RssListState.Updated) return
                     val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount - action.value.count)
@@ -32,12 +34,12 @@ class RSSListStateStore @ViewModelInject constructor(
                         }
                     }
                     val (mode, item) = rssListItemFactory.create(state.mode, updated)
-                    _state.value = RssListState.Loaded(item, updated, mode)
+                    _state.value = RssListState.Updated(item, updated, mode)
                 }
             }
             is UnReadArticleAction -> {
                 state.value?.let { state ->
-                    if (state !is RssListState.Loaded) return
+                    if (state !is RssListState.Updated) return
                     val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount + action.value.count)
@@ -46,12 +48,12 @@ class RSSListStateStore @ViewModelInject constructor(
                         }
                     }
                     val (mode, item) = rssListItemFactory.create(state.mode, updated)
-                    _state.value = RssListState.Loaded(item, updated, mode)
+                    _state.value = RssListState.Updated(item, updated, mode)
                 }
             }
             is ReadAllArticlesAction -> {
                 state.value?.let { state ->
-                    if (state !is RssListState.Loaded) return
+                    if (state !is RssListState.Updated) return
                     val updated = state.rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = 0)
@@ -60,30 +62,20 @@ class RSSListStateStore @ViewModelInject constructor(
                         }
                     }
                     val (mode, item) = rssListItemFactory.create(state.mode, updated)
-                    _state.value = RssListState.Loaded(item, updated, mode)
+                    _state.value = RssListState.Updated(item, updated, mode)
                 }
             }
             is RssListUpdateAction -> {
-                state.value?.let { state ->
-                    when (val value = action.value) {
-                        is RssListUpdateState.Started -> {
-                            if (state !is RssListState.Loaded) return
-                            val loaded = state.copy()
-                            _state.value = RssListState.StartPullToRefresh
-                            _state.value = loaded
-                        }
-                        is RssListUpdateState.Finished -> {
-                            if (state !is RssListState.Loaded) return
-                            _state.value = RssListState.FinishPullToRefresh
-                            val (mode, item) = rssListItemFactory.create(RssListMode.UNREAD_ONLY, value.updated)
-                            _state.value = RssListState.Loaded(item, value.updated, mode)
-                        }
-                        is RssListUpdateState.Failed -> {
-                            if (state !is RssListState.Loaded) return
-                            val loaded = state.copy()
-                            _state.value = RssListState.FinishPullToRefresh
-                            _state.value = loaded
-                        }
+                when (val value = action.value) {
+                    is RssListUpdateState.Started -> {
+                        _state.value = RssListState.StartUpdate
+                    }
+                    is RssListUpdateState.Finished -> {
+                        val (mode, item) = rssListItemFactory.create(RssListMode.UNREAD_ONLY, value.updated)
+                        _state.value = RssListState.Updated(item, value.updated, mode)
+                    }
+                    is RssListUpdateState.Failed -> {
+                        _state.value = RssListState.FailedToUpdate
                     }
                 }
             }
