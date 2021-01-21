@@ -115,7 +115,21 @@ class RssListFragment : Fragment() {
         })
         viewLifecycleOwner.lifecycleScope.launch {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
+        }
+    }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = context as OnFeedListFragmentListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must implement OnFragmentInteractionListener")
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewLifecycleOwner.lifecycleScope.launch {
             when (val state = rssListStateStore.state.value) {
                 is RssListState.Initialized -> {
                     launchUpdateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date()))
@@ -131,15 +145,6 @@ class RssListFragment : Fragment() {
                     // loading
                 }
             }
-        }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            listener = context as OnFeedListFragmentListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException("$context must implement OnFragmentInteractionListener")
         }
     }
 
