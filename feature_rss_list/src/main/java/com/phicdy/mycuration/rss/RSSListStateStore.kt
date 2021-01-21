@@ -7,6 +7,7 @@ import com.phicdy.action.articlelist.UnReadArticleAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
+import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
 
 class RSSListStateStore @ViewModelInject constructor(
@@ -18,6 +19,22 @@ class RSSListStateStore @ViewModelInject constructor(
         dispatcher.register(this)
     }
 
+    private fun RssListState.getRawList(): List<Feed> {
+        return when (this) {
+            is RssListState.Updated -> rawRssList
+            is RssListState.Initialized -> rawRssList
+            else -> emptyList()
+        }
+    }
+
+    private fun RssListState.getMode(): RssListMode {
+        return when (this) {
+            is RssListState.Updated -> mode
+            is RssListState.Initialized -> mode
+            else -> RssListMode.UNREAD_ONLY
+        }
+    }
+
     override suspend fun notify(action: Action<*>) {
         when (action) {
             is RssListAction -> {
@@ -25,43 +42,46 @@ class RSSListStateStore @ViewModelInject constructor(
             }
             is ReadArticleAction -> {
                 state.value?.let { state ->
-                    if (state !is RssListState.Updated) return
-                    val updated = state.rawRssList.map {
+                    val rawRssList = state.getRawList()
+                    if (rawRssList.isEmpty()) return
+                    val updated = rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount - action.value.count)
                         } else {
                             it
                         }
                     }
-                    val (mode, item) = rssListItemFactory.create(state.mode, updated)
+                    val (mode, item) = rssListItemFactory.create(state.getMode(), updated)
                     _state.value = RssListState.Updated(item, updated, mode)
                 }
             }
             is UnReadArticleAction -> {
                 state.value?.let { state ->
-                    if (state !is RssListState.Updated) return
-                    val updated = state.rawRssList.map {
+                    val rawRssList = state.getRawList()
+                    if (rawRssList.isEmpty()) return
+                    val updated = rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = it.unreadAriticlesCount + action.value.count)
                         } else {
                             it
                         }
                     }
-                    val (mode, item) = rssListItemFactory.create(state.mode, updated)
+                    val (mode, item) = rssListItemFactory.create(state.getMode(), updated)
                     _state.value = RssListState.Updated(item, updated, mode)
                 }
             }
             is ReadAllArticlesAction -> {
                 state.value?.let { state ->
-                    if (state !is RssListState.Updated) return
-                    val updated = state.rawRssList.map {
+                    val rawRssList = state.getRawList()
+                    if (rawRssList.isEmpty()) return
+                    val updated = rawRssList.map {
                         if (it.id == action.value.rssId) {
                             it.copy(unreadAriticlesCount = 0)
                         } else {
                             it
                         }
                     }
-                    val (mode, item) = rssListItemFactory.create(state.mode, updated)
+                    val (mode, item) = rssListItemFactory.create(state.getMode(), updated)
                     _state.value = RssListState.Updated(item, updated, mode)
                 }
             }
