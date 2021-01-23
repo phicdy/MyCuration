@@ -1,12 +1,14 @@
 package com.phicdy.mycuration.articlelist.store
 
-import androidx.hilt.lifecycle.ViewModelInject
 import com.phicdy.mycuration.articlelist.action.ScrollAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ScrollPositionStore @ViewModelInject constructor(
+@HiltViewModel
+class ScrollPositionStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<Int>(dispatcher) {
 

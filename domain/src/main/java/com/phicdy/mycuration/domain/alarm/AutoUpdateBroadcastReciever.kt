@@ -13,7 +13,7 @@ import com.phicdy.mycuration.entity.Article
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class AutoUpdateBroadcastReciever : BroadcastReceiver() {
 
     @EntryPoint
-    @InstallIn(ApplicationComponent::class)
+    @InstallIn(SingletonComponent::class)
     interface AutoUpdateEntryPoint {
         fun provideRssRepository(): RssRepository
         fun provideArticleRepository(): ArticleRepository

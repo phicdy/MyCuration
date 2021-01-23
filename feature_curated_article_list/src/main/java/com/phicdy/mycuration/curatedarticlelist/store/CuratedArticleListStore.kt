@@ -1,13 +1,15 @@
 package com.phicdy.mycuration.curatedarticlelist.store
 
-import androidx.hilt.lifecycle.ViewModelInject
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.CuratedArticleItem
 import com.phicdy.mycuration.curatedarticlelist.action.FetchArticleAction
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class CuratedArticleListStore @ViewModelInject constructor(
+@HiltViewModel
+class CuratedArticleListStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<List<CuratedArticleItem>>(dispatcher) {
 
