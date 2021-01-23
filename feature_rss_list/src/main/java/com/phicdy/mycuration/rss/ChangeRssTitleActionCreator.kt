@@ -7,10 +7,10 @@ import javax.inject.Inject
 class ChangeRssTitleActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val rssListItemFactory: RssListItemFactory
-) : ActionCreator3<Int, String, RssListState.Loaded> {
+) : ActionCreator3<Int, String, RssListState.Updated> {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-    override suspend fun run(rssId: Int, rssTitle: String, state: RssListState.Loaded) {
+    override suspend fun run(rssId: Int, rssTitle: String, state: RssListState.Updated) {
         val updated = state.rawRssList.map { rss ->
             if (rss.id == rssId) {
                 rss.copy(title = rssTitle)
@@ -20,7 +20,7 @@ class ChangeRssTitleActionCreator @Inject constructor(
         }
         val (mode, item) = rssListItemFactory.create(state.mode, updated)
         dispatcher.dispatch(RssListAction(
-                RssListState.Loaded(
+                RssListState.Updated(
                         item = item,
                         mode = mode,
                         rawRssList = updated

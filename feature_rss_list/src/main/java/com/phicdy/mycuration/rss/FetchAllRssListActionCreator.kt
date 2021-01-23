@@ -17,10 +17,10 @@ class FetchAllRssListActionCreator @Inject constructor(
         dispatcher.dispatch(RssListAction(RssListState.Initializing))
         val rss = rssRepository.getAllFeedsWithNumOfUnreadArticles()
         if (rss.isEmpty()) {
-            dispatcher.dispatch(RssListAction(RssListState.Loaded(emptyList(), emptyList(), rssListMode)))
+            dispatcher.dispatch(RssListAction(RssListState.Initialized(emptyList(), emptyList(), rssListMode)))
             return
         }
         val (mode, item) = rssListItemFactory.create(rssListMode, rss)
-        dispatcher.dispatch(RssListAction(RssListState.Loaded(item, rss, mode)))
+        dispatcher.dispatch(RssListAction(RssListState.Initialized(item, rss, mode)))
     }
 }

@@ -54,10 +54,6 @@ class RssListFragment : Fragment() {
         rssFeedListAdapter.submitList(items)
     }
 
-    private fun onRefreshCompleted() {
-        binding.swiperefreshlayout.isRefreshing = false
-    }
-
     private fun hideRecyclerView() {
         binding.recyclerview.visibility = View.GONE
     }
@@ -87,7 +83,7 @@ class RssListFragment : Fragment() {
                     binding.progressbar.visibility = View.VISIBLE
                     hideRecyclerView()
                 }
-                is RssListState.Loaded -> {
+                is RssListState.Initialized -> {
                     binding.progressbar.visibility = View.GONE
                     if (state.item.isEmpty()) {
                         hideRecyclerView()
@@ -95,9 +91,26 @@ class RssListFragment : Fragment() {
                     } else {
                         init(state.item)
                     }
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        launchUpdateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date()))
+                    }
                 }
-                is RssListState.StartPullToRefresh -> binding.swiperefreshlayout.isRefreshing = true
-                is RssListState.FinishPullToRefresh -> onRefreshCompleted()
+                RssListState.StartUpdate -> {
+                    binding.swiperefreshlayout.isRefreshing = true
+                }
+                is RssListState.Updated -> {
+                    binding.progressbar.visibility = View.GONE
+                    if (state.item.isEmpty()) {
+                        hideRecyclerView()
+                        showEmptyView()
+                    } else {
+                        init(state.item)
+                    }
+                    binding.swiperefreshlayout.isRefreshing = false
+                }
+                RssListState.FailedToUpdate -> {
+                    binding.swiperefreshlayout.isRefreshing = false
+                }
             }
         })
         viewLifecycleOwner.lifecycleScope.launch {
@@ -117,11 +130,21 @@ class RssListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            val mode = when (val value = rssListStateStore.state.value) {
-                is RssListState.Loaded -> value.mode
-                else -> RssListMode.UNREAD_ONLY
+            when (val state = rssListStateStore.state.value) {
+                is RssListState.Initialized -> {
+                    launchUpdateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date()))
+                }
+                is RssListState.Updated -> {
+                    launchUpdateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date()))
+                }
+                RssListState.FailedToUpdate -> {
+                    launchUpdateAllRssListActionCreator.run(RssListMode.UNREAD_ONLY, RssUpdateIntervalCheckDate(Date()))
+                }
+                RssListState.StartUpdate,
+                RssListState.Initializing -> {
+                    // loading
+                }
             }
-            launchUpdateAllRssListActionCreator.run(mode, RssUpdateIntervalCheckDate(Date()))
         }
     }
 
@@ -147,9 +170,9 @@ class RssListFragment : Fragment() {
         launchWhenLoaded { state -> changeRssListModeActionCreator.run(state) }
     }
 
-    private fun launchWhenLoaded(block: suspend (RssListState.Loaded) -> Unit) {
+    private fun launchWhenLoaded(block: suspend (RssListState.Updated) -> Unit) {
         when (val value = rssListStateStore.state.value) {
-            is RssListState.Loaded ->
+            is RssListState.Updated ->
                 viewLifecycleOwner.lifecycleScope.launch {
                     block.invoke(value)
                 }
