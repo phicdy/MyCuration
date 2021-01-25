@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.rss
 
-import androidx.hilt.lifecycle.ViewModelInject
 import com.phicdy.action.articlelist.ReadAllArticlesAction
 import com.phicdy.action.articlelist.ReadArticleAction
 import com.phicdy.action.articlelist.UnReadArticleAction
@@ -9,8 +8,11 @@ import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class RSSListStateStore @ViewModelInject constructor(
+@HiltViewModel
+class RSSListStateStore @Inject constructor(
         dispatcher: Dispatcher,
         private val rssListItemFactory: RssListItemFactory
 ) : Store<RssListState>(dispatcher) {

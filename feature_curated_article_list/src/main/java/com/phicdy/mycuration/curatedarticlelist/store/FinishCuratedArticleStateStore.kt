@@ -1,13 +1,15 @@
 package com.phicdy.mycuration.curatedarticlelist.store
 
-import androidx.hilt.lifecycle.ViewModelInject
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.action.FinishAction
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 
-class FinishCuratedArticleStateStore @ViewModelInject constructor(
+@HiltViewModel
+class FinishCuratedArticleStateStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<Boolean>(dispatcher), CoroutineScope {
 

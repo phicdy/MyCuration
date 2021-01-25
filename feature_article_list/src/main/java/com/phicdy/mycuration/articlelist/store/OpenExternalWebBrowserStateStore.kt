@@ -1,12 +1,14 @@
 package com.phicdy.mycuration.articlelist.store
 
-import androidx.hilt.lifecycle.ViewModelInject
 import com.phicdy.mycuration.articlelist.action.OpenExternalBrowserAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class OpenExternalWebBrowserStateStore @ViewModelInject constructor(
+@HiltViewModel
+class OpenExternalWebBrowserStateStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<String>(dispatcher) {
 

@@ -1,12 +1,14 @@
 package com.phicdy.mycuration.curatedarticlelist.store
 
-import androidx.hilt.lifecycle.ViewModelInject
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.action.SwipeAction
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SwipeCuratedArticlePositionStore @ViewModelInject constructor(
+@HiltViewModel
+class SwipeCuratedArticlePositionStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<Int>(dispatcher) {
 
