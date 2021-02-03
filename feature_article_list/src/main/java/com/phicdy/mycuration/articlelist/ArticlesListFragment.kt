@@ -37,14 +37,7 @@ import com.phicdy.mycuration.articlelist.action.ShareUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
 import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.articlelist.store.ArticleListStore
-import com.phicdy.mycuration.articlelist.store.FinishStateStore
-import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
-import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
-import com.phicdy.mycuration.articlelist.store.ReadAllArticlesStateStore
-import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
 import com.phicdy.mycuration.articlelist.store.SearchResultStore
-import com.phicdy.mycuration.articlelist.store.ShareUrlStore
-import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Feed
@@ -107,13 +100,6 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
 
     private val articleListStore: ArticleListStore by viewModels()
     private val searchResultStore: SearchResultStore by viewModels()
-    private val finishStateStore: FinishStateStore by viewModels()
-    private val readArticlePositionStore: ReadArticlePositionStore by viewModels()
-    private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by viewModels()
-    private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by viewModels()
-    private val swipePositionStore: SwipePositionStore by viewModels()
-    private val readAllArticlesStateStore: ReadAllArticlesStateStore by viewModels()
-    private val shareUrlStore: ShareUrlStore by viewModels()
 
     private val viewModel: ArticleListViewModel by viewModels()
 
@@ -151,29 +137,6 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
                 articlesListAdapter.submitList(it)
             }
         })
-        readArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
-            articlesListAdapter.notifyItemChanged(it)
-        })
-        finishStateStore.state.observe(viewLifecycleOwner, Observer<Boolean> {
-            if (it) listener.finish()
-        })
-        openInternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> { url ->
-            openInternalWebView(url)
-        })
-        openExternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> {
-            openExternalWebView(it)
-        })
-        swipePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
-            articlesListAdapter.notifyItemChanged(it)
-            runFinishActionCreator()
-        })
-        readAllArticlesStateStore.state.observe(viewLifecycleOwner, Observer {
-            notifyListView()
-            runFinishActionCreator()
-        })
-        shareUrlStore.state.observe(viewLifecycleOwner, Observer<String> {
-            showShareUi(it)
-        })
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.interationChannel.collect { interation ->
                 when (interation) {
@@ -188,6 +151,19 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
                             runFinishActionCreator()
                         }
                     }
+                    is Interation.OpenInternalWebBrowser -> openInternalWebView(interation.url)
+                    is Interation.OpenExternalWebBrowser -> openExternalWebView(interation.url)
+                    is Interation.Share -> showShareUi(interation.url)
+                    is Interation.ReadArticle -> articlesListAdapter.notifyItemChanged(interation.position)
+                    is Interation.SwipeArtilce -> {
+                        articlesListAdapter.notifyItemChanged(interation.position)
+                        runFinishActionCreator()
+                    }
+                    Interation.ReadAllOfArticles -> {
+                        notifyListView()
+                        runFinishActionCreator()
+                    }
+                    Interation.Finish -> finish()
                 }
             }
         }
