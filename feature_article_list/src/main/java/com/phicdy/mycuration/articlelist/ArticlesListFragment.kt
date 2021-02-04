@@ -15,7 +15,6 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
@@ -36,8 +35,6 @@ import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.ShareUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
 import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
-import com.phicdy.mycuration.articlelist.store.ArticleListStore
-import com.phicdy.mycuration.articlelist.store.SearchResultStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Feed
@@ -98,9 +95,6 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
     @Inject
     lateinit var shareUrlActionCreator: ShareUrlActionCreator
 
-    private val articleListStore: ArticleListStore by viewModels()
-    private val searchResultStore: SearchResultStore by viewModels()
-
     private val viewModel: ArticleListViewModel by viewModels()
 
     private lateinit var recyclerView: ArticleRecyclerView
@@ -123,20 +117,30 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(rssId)
 
-        articleListStore.state.observe(viewLifecycleOwner, Observer<List<ArticleItem>> {
-            if (it.isEmpty()) {
-                showEmptyView()
-            } else {
-                articlesListAdapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.binding.collect { uiBinding ->
+                when (uiBinding) {
+                    ArticleListUiBinding.Init -> {
+                        // do nothing
+                    }
+                    is ArticleListUiBinding.Loaded -> {
+                        if (uiBinding.list.isEmpty()) {
+                            showEmptyView()
+                        } else {
+                            articlesListAdapter.submitList(uiBinding.list)
+                        }
+                    }
+                    is ArticleListUiBinding.Searched -> {
+                        if (uiBinding.list.isEmpty()) {
+                            showNoSearchResult()
+                        } else {
+                            articlesListAdapter.submitList(uiBinding.list)
+                        }
+                    }
+                }
             }
-        })
-        searchResultStore.state.observe(viewLifecycleOwner, Observer<List<ArticleItem>> {
-            if (it.isEmpty()) {
-                showNoSearchResult()
-            } else {
-                articlesListAdapter.submitList(it)
-            }
-        })
+        }
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.interationChannel.collect { interation ->
                 when (interation) {

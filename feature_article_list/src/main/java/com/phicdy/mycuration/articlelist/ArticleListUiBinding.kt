@@ -1,5 +1,7 @@
 package com.phicdy.mycuration.articlelist
 
-class ArticleListUiBinding {
-
+sealed class ArticleListUiBinding {
+    object Init : ArticleListUiBinding()
+    data class Loaded(val list: List<ArticleItem>) : ArticleListUiBinding()
+    data class Searched(val list: List<ArticleItem>) : ArticleListUiBinding()
 }

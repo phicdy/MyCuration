@@ -1,7 +1,5 @@
 package com.phicdy.mycuration.articlelist
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
@@ -9,6 +7,8 @@ import com.phicdy.mycuration.core.Dispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,10 +20,10 @@ class ArticleListViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _channel = Channel<Interation>(Channel.UNLIMITED)
-    val interationChannel : Flow<Interation> = _channel.receiveAsFlow()
+    val interationChannel: Flow<Interation> = _channel.receiveAsFlow()
 
-    private val _binding = MutableLiveData<ArticleListUiBinding>()
-    val binding : LiveData<ArticleListUiBinding> = _binding
+    private val _binding = MutableStateFlow<ArticleListUiBinding>(ArticleListUiBinding.Init)
+    val binding: StateFlow<ArticleListUiBinding> = _binding
 
     private val reducer = ArticleListReducer(viewModelScope, _channel, _binding)
 
