@@ -159,8 +159,8 @@ subprojects {
         defaultConfig {
             minSdkVersion 21
             targetSdkVersion 30
-            versionName "1.8.3"
-            versionCode 56
+            versionName "1.8.4"
+            versionCode 57
 
             testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         }
