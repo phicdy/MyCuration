@@ -18,7 +18,7 @@ class LaunchUpdateAllRssActionCreator @Inject constructor(
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override suspend fun run(rssListMode: RssListMode, rssUpdateIntervalCheckDate: RssUpdateIntervalCheckDate) {
-        val isAfterInterval = rssUpdateIntervalCheckDate.toTime() - preferenceHelper.lastUpdateDate >= 1000 * 60
+        val isAfterInterval = rssUpdateIntervalCheckDate.toTime() - preferenceHelper.lastUpdateDate >= 5000 * 60
         if (!preferenceHelper.autoUpdateInMainUi || !isAfterInterval) {
             return
         }

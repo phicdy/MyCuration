@@ -15,7 +15,6 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
@@ -36,22 +35,13 @@ import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.ShareUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
 import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
-import com.phicdy.mycuration.articlelist.store.ArticleListStore
-import com.phicdy.mycuration.articlelist.store.FinishStateStore
-import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
-import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
-import com.phicdy.mycuration.articlelist.store.ReadAllArticlesStateStore
-import com.phicdy.mycuration.articlelist.store.ReadArticlePositionStore
-import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
-import com.phicdy.mycuration.articlelist.store.SearchResultStore
-import com.phicdy.mycuration.articlelist.store.ShareUrlStore
-import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -104,17 +94,8 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
 
     @Inject
     lateinit var shareUrlActionCreator: ShareUrlActionCreator
-   
-    private val articleListStore: ArticleListStore by viewModels()
-    private val searchResultStore: SearchResultStore by viewModels()
-    private val finishStateStore: FinishStateStore by viewModels()
-    private val readArticlePositionStore: ReadArticlePositionStore by viewModels()
-    private val openInternalWebBrowserStateStore: OpenInternalWebBrowserStateStore by viewModels()
-    private val openExternalWebBrowserStateStore: OpenExternalWebBrowserStateStore by viewModels()
-    private val scrollPositionStore: ScrollPositionStore by viewModels()
-    private val swipePositionStore: SwipePositionStore by viewModels()
-    private val readAllArticlesStateStore: ReadAllArticlesStateStore by viewModels()
-    private val shareUrlStore: ShareUrlStore by viewModels()
+
+    private val viewModel: ArticleListViewModel by viewModels()
 
     private lateinit var recyclerView: ArticleRecyclerView
     private lateinit var articlesListAdapter: ArticleListAdapter
@@ -136,54 +117,60 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(rssId)
 
-        articleListStore.state.observe(viewLifecycleOwner, Observer<List<ArticleItem>> {
-            if (it.isEmpty()) {
-                showEmptyView()
-            } else {
-                articlesListAdapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.binding.collect { uiBinding ->
+                when (uiBinding) {
+                    ArticleListUiBinding.Init -> {
+                        // do nothing
+                    }
+                    is ArticleListUiBinding.Loaded -> {
+                        if (uiBinding.list.isEmpty()) {
+                            showEmptyView()
+                        } else {
+                            articlesListAdapter.submitList(uiBinding.list)
+                        }
+                    }
+                    is ArticleListUiBinding.Searched -> {
+                        if (uiBinding.list.isEmpty()) {
+                            showNoSearchResult()
+                        } else {
+                            articlesListAdapter.submitList(uiBinding.list)
+                        }
+                    }
+                }
             }
-        })
-        searchResultStore.state.observe(viewLifecycleOwner, Observer<List<ArticleItem>> {
-            if (it.isEmpty()) {
-                showNoSearchResult()
-            } else {
-                articlesListAdapter.submitList(it)
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.interationChannel.collect { interation ->
+                when (interation) {
+                    is Interation.Scroll -> {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            val manager = recyclerView.layoutManager as LinearLayoutManager
+                            val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
+                            val num = interation.positionAfterScroll - firstPositionBeforeScroll + 1
+                            scrollTo(interation.positionAfterScroll)
+                            delay(250) // Wait for scroll
+                            articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), num)
+                            runFinishActionCreator()
+                        }
+                    }
+                    is Interation.OpenInternalWebBrowser -> openInternalWebView(interation.url)
+                    is Interation.OpenExternalWebBrowser -> openExternalWebView(interation.url)
+                    is Interation.Share -> showShareUi(interation.url)
+                    is Interation.ReadArticle -> articlesListAdapter.notifyItemChanged(interation.position)
+                    is Interation.SwipeArtilce -> {
+                        articlesListAdapter.notifyItemChanged(interation.position)
+                        runFinishActionCreator()
+                    }
+                    Interation.ReadAllOfArticles -> {
+                        notifyListView()
+                        runFinishActionCreator()
+                    }
+                    Interation.Finish -> finish()
+                }
             }
-        })
-        readArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
-            articlesListAdapter.notifyItemChanged(it)
-        })
-        finishStateStore.state.observe(viewLifecycleOwner, Observer<Boolean> {
-            if (it) listener.finish()
-        })
-        openInternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> { url ->
-            openInternalWebView(url)
-        })
-        openExternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> {
-            openExternalWebView(it)
-        })
-        scrollPositionStore.state.observe(viewLifecycleOwner, Observer<Int> { positionAfterScroll ->
-            viewLifecycleOwner.lifecycleScope.launch {
-                val manager = recyclerView.layoutManager as LinearLayoutManager
-                val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
-                val num = positionAfterScroll - firstPositionBeforeScroll + 1
-                scrollTo(positionAfterScroll)
-                delay(250) // Wait for scroll
-                articlesListAdapter.notifyItemRangeChanged(manager.findFirstVisibleItemPosition(), num)
-                runFinishActionCreator()
-            }
-        })
-        swipePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
-            articlesListAdapter.notifyItemChanged(it)
-            runFinishActionCreator()
-        })
-        readAllArticlesStateStore.state.observe(viewLifecycleOwner, Observer {
-            notifyListView()
-            runFinishActionCreator()
-        })
-        shareUrlStore.state.observe(viewLifecycleOwner, Observer<String> {
-            showShareUi(it)
-        })
+        }
     }
 
     private fun runFinishActionCreator() {
@@ -244,14 +231,12 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
     }
 
     fun onFabButtonClicked() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val manager = recyclerView.layoutManager as LinearLayoutManager
-            scrollActionCreator.run(
-                    manager.findFirstVisibleItemPosition(),
-                    manager.findLastCompletelyVisibleItemPosition(),
-                    articlesListAdapter.currentList
-            )
-        }
+        val manager = recyclerView.layoutManager as LinearLayoutManager
+        viewModel.onFabButtonClicked(
+                manager.findFirstVisibleItemPosition(),
+                manager.findLastCompletelyVisibleItemPosition(),
+                articlesListAdapter.currentList
+        )
     }
 
     fun handleAllRead() {
