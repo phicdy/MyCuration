@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import com.phicdy.mycuration.rss.databinding.FragmentRssListBinding
@@ -64,7 +64,7 @@ class RssListFragment : Fragment() {
 
     private fun setAllListener() {
         binding.swiperefreshlayout.setOnRefreshListener {
-            launchWhenLoaded { state -> updateAllRssListActionCreator.run(state.mode) }
+            launchWhenInitializedOrUpdated { _, mode -> updateAllRssListActionCreator.run(mode) }
         }
     }
 
@@ -77,7 +77,7 @@ class RssListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         registerForContextMenu(binding.recyclerview)
         setAllListener()
-        rssListStateStore.state.observe(viewLifecycleOwner, Observer { state ->
+        rssListStateStore.state.observe(viewLifecycleOwner, { state ->
             when (state) {
                 RssListState.Initializing -> {
                     binding.progressbar.visibility = View.VISIBLE
@@ -159,24 +159,32 @@ class RssListFragment : Fragment() {
     }
 
     fun updateFeedTitle(rssId: Int, newTitle: String) {
-        launchWhenLoaded { state -> changeRssTitleActionCreator.run(rssId, newTitle, state) }
+        launchWhenInitializedOrUpdated { rawRssList, mode -> changeRssTitleActionCreator.run(rssId, newTitle, rawRssList, mode) }
     }
 
     fun removeRss(rssId: Int) {
-        launchWhenLoaded { state -> deleteRssActionCreator.run(rssId, state) }
+        launchWhenInitializedOrUpdated { rawRssList, mode -> deleteRssActionCreator.run(rssId, rawRssList, mode) }
     }
 
     fun changeRssListMode() {
-        launchWhenLoaded { state -> changeRssListModeActionCreator.run(state) }
+        launchWhenInitializedOrUpdated { rawRssList, mode -> changeRssListModeActionCreator.run(rawRssList, mode) }
     }
 
-    private fun launchWhenLoaded(block: suspend (RssListState.Updated) -> Unit) {
+    private fun launchWhenInitializedOrUpdated(block: suspend (List<Feed>, RssListMode) -> Unit) {
         when (val value = rssListStateStore.state.value) {
-            is RssListState.Updated ->
+            is RssListState.Updated -> {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    block.invoke(value)
+                    block.invoke(value.rawRssList, value.mode)
                 }
+            }
+            is RssListState.Initialized -> {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    block.invoke(value.rawRssList, value.mode)
+                }
+            }
             RssListState.Initializing, null -> return
+            RssListState.StartUpdate -> return
+            RssListState.FailedToUpdate -> return
         }
     }
 
