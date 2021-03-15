@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.di
 
-import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -27,8 +26,7 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideSQLiteDatabase(@ApplicationContext context: Context): SQLiteDatabase =
-            DatabaseHelper(context = context).writableDatabase
+    fun provideSQLiteDatabase(databaseHelper: DatabaseHelper): SQLiteDatabase = databaseHelper.writableDatabase
 
     @Singleton
     @Provides

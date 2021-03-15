@@ -1,30 +1,23 @@
 package com.phicdy.mycuration.data.db
 
 import android.database.sqlite.SQLiteDatabase
+import javax.inject.Inject
 
-import java.util.ArrayList
+class DatabaseMigration @Inject constructor(
+        private val resetIconPathTask: ResetIconPathTask
+) {
 
-class DatabaseMigration(private val oldVersion: Int, newVersion: Int) {
-
-    private val tasks = ArrayList<DatabaseMigrationTask>()
-
-    init {
+    fun migrate(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < newVersion) {
             if (oldVersion < DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION) {
-                tasks.add(AddFilterFeedRegistrationTask())
+                AddFilterFeedRegistrationTask().execute(db, oldVersion)
             }
             if (oldVersion < DATABASE_VERSION_FETCH_ICON) {
-                tasks.add(ResetIconPathTask())
+                resetIconPathTask.execute(db, oldVersion)
             }
             if (oldVersion < DATABASE_VERSION_FAVORITE) {
-                tasks.add(AddFavoriteTask())
+                AddFavoriteTask().execute(db, oldVersion)
             }
-        }
-    }
-
-    fun migrate(db: SQLiteDatabase) {
-        for (task in tasks) {
-            task.execute(db, oldVersion)
         }
     }
 
