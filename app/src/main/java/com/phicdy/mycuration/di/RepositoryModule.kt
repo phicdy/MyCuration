@@ -15,7 +15,6 @@ import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
@@ -37,15 +36,6 @@ object RepositoryModule {
     @Provides
     fun provideFilterRepository(sqLiteDatabase: SQLiteDatabase): FilterRepository =
             FilterRepository(sqLiteDatabase)
-
-    @Singleton
-    @Provides
-    fun provideRssRepository(
-            sqLiteDatabase: SQLiteDatabase,
-            articleRepository: ArticleRepository,
-            filterRepository: FilterRepository
-    ): RssRepository =
-            RssRepository(sqLiteDatabase, articleRepository, filterRepository)
 
     @Singleton
     @Provides
