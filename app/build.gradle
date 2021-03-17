@@ -77,7 +77,6 @@ dependencies {
     implementation project(':feature_rss_list')
     implementation project(':legacy')
     implementation project(':repository')
-    implementation project(':repository_impl')
     implementation project(':resource')
     implementation project(':util')
     implementation project(':tracker')
