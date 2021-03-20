@@ -6,7 +6,7 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.phicdy.mycuration.TestCoroutineDispatcherProvider
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -16,8 +16,6 @@ import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -26,6 +24,7 @@ import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.ArrayList
@@ -34,9 +33,8 @@ import java.util.ArrayList
 @RunWith(AndroidJUnit4::class)
 class DatabaseMigrationTest {
 
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private lateinit var db: SQLiteDatabase
     private lateinit var rssRepository: RssRepository
@@ -46,15 +44,14 @@ class DatabaseMigrationTest {
     fun setUp() {
         val helper = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask()))
         db = helper.writableDatabase
-        filterRepository = FilterRepository(db, testDispatcherProvider)
-        rssRepository = RssRepository(db, ArticleRepository(db, testDispatcherProvider), filterRepository, testCoroutineScope, testDispatcherProvider)
+        filterRepository = FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        rssRepository = RssRepository(db, ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider), filterRepository, coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
     }
 
     @After
     fun tearDown() {
         val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
         deleteAll(db)
-        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Suppress("Deprecation")

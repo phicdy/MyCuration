@@ -1,18 +1,13 @@
 package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.mycuration.TestCoroutineDispatcherProvider
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.db.DatabaseMigration
 import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.deleteAll
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -20,14 +15,14 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class CurationRepositoryTest {
 
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private lateinit var curationRepository: CurationRepository
 
@@ -35,16 +30,13 @@ class CurationRepositoryTest {
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-        curationRepository = CurationRepository(db, testDispatcherProvider)
+        curationRepository = CurationRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
         deleteAll(db)
     }
 
     @After
     fun tearDown() {
         deleteAll(db)
-        Dispatchers.resetMain()
-        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test

@@ -1,18 +1,13 @@
 package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.mycuration.TestCoroutineDispatcherProvider
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.db.DatabaseMigration
 import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.deleteAll
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertNotNull
@@ -21,14 +16,14 @@ import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class RssRepositoryTest {
 
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private lateinit var rssRepository: RssRepository
     private lateinit var articleRepository: ArticleRepository
@@ -38,22 +33,19 @@ class RssRepositoryTest {
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-        articleRepository = ArticleRepository(db, testDispatcherProvider)
-        filterRepository = FilterRepository(db, testDispatcherProvider)
-        rssRepository = RssRepository(db, articleRepository, filterRepository, testCoroutineScope, testDispatcherProvider)
+        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        filterRepository = FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        rssRepository = RssRepository(db, articleRepository, filterRepository, coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
         deleteAll(db)
     }
 
     @After
     fun tearDown() {
         deleteAll(db)
-        Dispatchers.resetMain()
-        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test
-    fun whenDeleteRSSThenTheRSSAndRelatedArticlesAndFiltersAreDeleted() = testCoroutineScope.runBlockingTest {
+    fun whenDeleteRSSThenTheRSSAndRelatedArticlesAndFiltersAreDeleted() = coroutineTestRule.testCoroutineScope.runBlockingTest {
         val rss = rssRepository.store("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
         rss?.let {
             val rssList = arrayListOf(rss)

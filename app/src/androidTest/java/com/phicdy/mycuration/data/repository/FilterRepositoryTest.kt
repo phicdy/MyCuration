@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.mycuration.TestCoroutineDispatcherProvider
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.db.DatabaseMigration
 import com.phicdy.mycuration.data.db.ResetIconPathTask
@@ -9,21 +9,19 @@ import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class FilterRepositoryTest {
 
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private lateinit var rssRepository: RssRepository
     private lateinit var articleRepository: ArticleRepository
@@ -33,16 +31,15 @@ class FilterRepositoryTest {
 
     @Before
     fun setUp() {
-        articleRepository = ArticleRepository(db, testDispatcherProvider)
-        filterRepository = FilterRepository(db, testDispatcherProvider)
-        rssRepository = RssRepository(db, articleRepository, filterRepository, testCoroutineScope, testDispatcherProvider)
+        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        filterRepository = FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        rssRepository = RssRepository(db, articleRepository, filterRepository, coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
         deleteAll(db)
     }
 
     @After
     fun tearDown() {
         deleteAll(db)
-        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test

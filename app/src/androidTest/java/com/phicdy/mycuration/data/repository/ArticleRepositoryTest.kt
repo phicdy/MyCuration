@@ -1,15 +1,13 @@
 package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.mycuration.TestCoroutineDispatcherProvider
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.db.DatabaseMigration
 import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Article
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -17,6 +15,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.theories.DataPoints
 import org.junit.experimental.theories.Theories
@@ -28,9 +27,8 @@ import java.util.Date
 @RunWith(Theories::class)
 class ArticleRepositoryTest {
 
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private lateinit var articleRepository: ArticleRepository
     private lateinit var rssRepository: RssRepository
@@ -42,26 +40,25 @@ class ArticleRepositoryTest {
 
     @Before
     fun setUp() {
-        articleRepository = ArticleRepository(db, testDispatcherProvider)
+        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
         rssRepository = RssRepository(
                 db,
                 articleRepository,
-                FilterRepository(db, testDispatcherProvider),
-                testCoroutineScope,
-                testDispatcherProvider
+                FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider),
+                coroutineTestRule.testCoroutineScope,
+                coroutineTestRule.testCoroutineDispatcherProvider
         )
-        curationRepository = CurationRepository(db, testDispatcherProvider)
+        curationRepository = CurationRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
         deleteAll(db)
     }
 
     @After
     fun tearDown() {
         deleteAll(db)
-        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Theory
-    fun whenSearchJapaneseArticle_ThenReturnTheArticle(title: String) = testCoroutineScope.runBlockingTest {
+    fun whenSearchJapaneseArticle_ThenReturnTheArticle(title: String) = coroutineTestRule.testCoroutineScope.runBlockingTest {
         val rss = rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         rss?.let {
             val testUnreadArticles = arrayListOf(Article(1, title,
@@ -76,7 +73,7 @@ class ArticleRepositoryTest {
 
 
     @Test
-    fun testSaveNewArticles() = testCoroutineScope.runBlockingTest {
+    fun testSaveNewArticles() = coroutineTestRule.testCoroutineScope.runBlockingTest {
         // Reset data and insert curation at first
         val curationId = insertTestCurationForArticle1()
         insertTestData()
@@ -101,7 +98,7 @@ class ArticleRepositoryTest {
     }
 
     @Test
-    fun testGetAllArticlesOfCuration() = testCoroutineScope.runBlockingTest {
+    fun testGetAllArticlesOfCuration() = coroutineTestRule.testCoroutineScope.runBlockingTest {
         insertTestData()
         val curationId = insertTestCurationForArticle1()
 
@@ -118,7 +115,7 @@ class ArticleRepositoryTest {
     }
 
 
-    private fun insertTestData() = testCoroutineScope.runBlockingTest {
+    private fun insertTestData() = coroutineTestRule.testCoroutineScope.runBlockingTest {
         rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         val id = rssRepository.getFeedByUrl(TEST_FEED_URL)?.id ?: -1
 
