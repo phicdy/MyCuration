@@ -5,12 +5,14 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
+import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -20,11 +22,12 @@ import javax.inject.Singleton
 @Singleton
 class ArticleRepository @Inject constructor(
         val db: SQLiteDatabase,
-        private val coroutineDispatcherProvider: CoroutineDispatcherProvider
+        private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+        @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
 ) {
 
-    suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = coroutineScope {
-        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
+    suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
+        return withContext(coroutineDispatcherProvider.io()) {
             val articles = ArrayList<Article>()
             var cursor: Cursor? = null
             try {
@@ -57,40 +60,42 @@ class ArticleRepository @Inject constructor(
         }
     }
 
-    suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int): Int = coroutineScope {
-        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
-            // If articles are hit in condition, Set articles status to "read"
-            val value = ContentValues().apply {
-                put(Article.STATUS, Article.READ)
-            }
-            var updatedCount = 0
-            for ((id, _, keyword, url) in filterList) {
-                try {
-                    // If keyword or url exists, add condition
-                    if (keyword.isBlank() && url.isBlank()) {
-                        Timber.w("Set filtering conditon, keyword and url don't exist fileter ID =$id")
-                        continue
-                    }
-
-                    db.beginTransaction()
-                    // Initialize condition
-                    var condition = Article.FEEDID + " = $rssId and " + Article.STATUS + " = '" + Article.UNREAD + "'"
-                    if (keyword.isNotBlank()) {
-                        condition = "$condition and title like '%$keyword%'"
-                    }
-                    if (url.isNotBlank()) {
-                        condition = "$condition and url like '%$url%'"
-                    }
-                    updatedCount += db.update(Article.TABLE_NAME, value, condition, null)
-                    db.setTransactionSuccessful()
-                } catch (e: Exception) {
-                    Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
-                    Timber.e(e)
-                } finally {
-                    db.endTransaction()
+    suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int): Int {
+        return withContext(coroutineDispatcherProvider.io()) {
+            withContext(applicationCoroutineScope.coroutineContext) {
+                // If articles are hit in condition, Set articles status to "read"
+                val value = ContentValues().apply {
+                    put(Article.STATUS, Article.READ)
                 }
+                var updatedCount = 0
+                for ((id, _, keyword, url) in filterList) {
+                    try {
+                        // If keyword or url exists, add condition
+                        if (keyword.isBlank() && url.isBlank()) {
+                            Timber.w("Set filtering conditon, keyword and url don't exist fileter ID =$id")
+                            continue
+                        }
+
+                        db.beginTransaction()
+                        // Initialize condition
+                        var condition = Article.FEEDID + " = $rssId and " + Article.STATUS + " = '" + Article.UNREAD + "'"
+                        if (keyword.isNotBlank()) {
+                            condition = "$condition and title like '%$keyword%'"
+                        }
+                        if (url.isNotBlank()) {
+                            condition = "$condition and url like '%$url%'"
+                        }
+                        updatedCount += db.update(Article.TABLE_NAME, value, condition, null)
+                        db.setTransactionSuccessful()
+                    } catch (e: Exception) {
+                        Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
+                        Timber.e(e)
+                    } finally {
+                        db.endTransaction()
+                    }
+                }
+                updatedCount
             }
-            return@withContext updatedCount
         }
     }
 
@@ -100,43 +105,46 @@ class ArticleRepository @Inject constructor(
      * @param articles Article array to save
      * @param feedId Feed ID of the articles
      */
-    suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> = coroutineScope {
-        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
-            if (articles.isEmpty()) {
-                return@withContext emptyList<Article>()
-            }
-            val insertArticleSt = db.compileStatement(
-                    "insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);")
-            val result = arrayListOf<Article>()
-            try {
-                db.beginTransaction()
-                articles.forEach { article ->
-                    insertArticleSt.bindString(1, article.title)
-                    insertArticleSt.bindString(2, article.url)
-                    insertArticleSt.bindString(3, article.status)
-                    insertArticleSt.bindString(4, article.point)
-                    insertArticleSt.bindLong(5, article.postedDate)
-                    insertArticleSt.bindString(6, feedId.toString())
-                    val id = insertArticleSt.executeInsert().toInt()
-                    result.add(Article(
-                            id = id,
-                            title = article.title,
-                            url = article.url,
-                            status = article.status,
-                            point = article.point,
-                            feedIconPath = article.feedIconPath,
-                            postedDate = article.postedDate,
-                            feedId = article.feedId,
-                            feedTitle = article.feedTitle)
-                    )
+    suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> {
+        return withContext(coroutineDispatcherProvider.io()) {
+            withContext(applicationCoroutineScope.coroutineContext) {
+                if (articles.isEmpty()) {
+                    emptyList()
+                } else {
+                    val insertArticleSt = db.compileStatement(
+                            "insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);")
+                    val result = arrayListOf<Article>()
+                    try {
+                        db.beginTransaction()
+                        articles.forEach { article ->
+                            insertArticleSt.bindString(1, article.title)
+                            insertArticleSt.bindString(2, article.url)
+                            insertArticleSt.bindString(3, article.status)
+                            insertArticleSt.bindString(4, article.point)
+                            insertArticleSt.bindLong(5, article.postedDate)
+                            insertArticleSt.bindString(6, feedId.toString())
+                            val id = insertArticleSt.executeInsert().toInt()
+                            result.add(Article(
+                                    id = id,
+                                    title = article.title,
+                                    url = article.url,
+                                    status = article.status,
+                                    point = article.point,
+                                    feedIconPath = article.feedIconPath,
+                                    postedDate = article.postedDate,
+                                    feedId = article.feedId,
+                                    feedTitle = article.feedTitle)
+                            )
+                        }
+                        db.setTransactionSuccessful()
+                    } catch (e: SQLException) {
+                        e.printStackTrace()
+                    } finally {
+                        db.endTransaction()
+                    }
+                    result
                 }
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
             }
-            return@withContext result
         }
     }
 
@@ -209,18 +217,20 @@ class ArticleRepository @Inject constructor(
      * @param rssId RSS ID for articles to change status to read
      */
     suspend fun saveStatusToRead(rssId: Int) = withContext(coroutineDispatcherProvider.io()) {
-        try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Article.STATUS, Article.READ)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                db.beginTransaction()
+                val values = ContentValues().apply {
+                    put(Article.STATUS, Article.READ)
+                }
+                val whereClause = Article.FEEDID + " = " + rssId
+                db.update(Article.TABLE_NAME, values, whereClause, null)
+                db.setTransactionSuccessful()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                db.endTransaction()
             }
-            val whereClause = Article.FEEDID + " = " + rssId
-            db.update(Article.TABLE_NAME, values, whereClause, null)
-            db.setTransactionSuccessful()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
@@ -228,17 +238,19 @@ class ArticleRepository @Inject constructor(
      * Update method for all of the articles to read status.
      */
     suspend fun saveAllStatusToRead() = withContext(coroutineDispatcherProvider.io()) {
-        try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Article.STATUS, Article.READ)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                db.beginTransaction()
+                val values = ContentValues().apply {
+                    put(Article.STATUS, Article.READ)
+                }
+                db.update(Article.TABLE_NAME, values, null, null)
+                db.setTransactionSuccessful()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                db.endTransaction()
             }
-            db.update(Article.TABLE_NAME, values, null, null)
-            db.setTransactionSuccessful()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
@@ -249,17 +261,19 @@ class ArticleRepository @Inject constructor(
      * @param status New status
      */
     suspend fun saveStatus(articleId: Int, status: String) = withContext(coroutineDispatcherProvider.io()) {
-        try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Article.STATUS, status)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                db.beginTransaction()
+                val values = ContentValues().apply {
+                    put(Article.STATUS, status)
+                }
+                db.update(Article.TABLE_NAME, values, Article.ID + " = " + articleId, null)
+                db.setTransactionSuccessful()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                db.endTransaction()
             }
-            db.update(Article.TABLE_NAME, values, Article.ID + " = " + articleId, null)
-            db.setTransactionSuccessful()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
@@ -270,17 +284,19 @@ class ArticleRepository @Inject constructor(
      * @param point New hatena point
      */
     suspend fun saveHatenaPoint(url: String, point: String) = withContext(coroutineDispatcherProvider.io()) {
-        try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Article.POINT, point)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                db.beginTransaction()
+                val values = ContentValues().apply {
+                    put(Article.POINT, point)
+                }
+                db.update(Article.TABLE_NAME, values, Article.URL + " = '" + url + "'", null)
+                db.setTransactionSuccessful()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                db.endTransaction()
             }
-            db.update(Article.TABLE_NAME, values, Article.URL + " = '" + url + "'", null)
-            db.setTransactionSuccessful()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 

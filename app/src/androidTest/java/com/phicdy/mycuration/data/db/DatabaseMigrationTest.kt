@@ -45,7 +45,7 @@ class DatabaseMigrationTest {
         val helper = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask()))
         db = helper.writableDatabase
         filterRepository = FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
-        rssRepository = RssRepository(db, ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider), filterRepository, coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
+        rssRepository = RssRepository(db, ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope), filterRepository, coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
     }
 
     @After

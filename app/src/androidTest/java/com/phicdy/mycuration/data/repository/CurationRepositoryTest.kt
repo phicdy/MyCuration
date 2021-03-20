@@ -30,7 +30,7 @@ class CurationRepositoryTest {
 
     @Before
     fun setUp() {
-        curationRepository = CurationRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        curationRepository = CurationRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope)
         deleteAll(db)
     }
 

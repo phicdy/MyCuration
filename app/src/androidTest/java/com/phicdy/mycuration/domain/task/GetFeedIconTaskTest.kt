@@ -2,7 +2,7 @@ package com.phicdy.mycuration.domain.task
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.phicdy.mycuration.TestCoroutineDispatcherProvider
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.db.DatabaseMigration
 import com.phicdy.mycuration.data.db.ResetIconPathTask
@@ -12,12 +12,10 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -25,21 +23,15 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class GetFeedIconTaskTest {
 
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private lateinit var rssRepository: RssRepository
 
     @Before
     fun setup() {
         val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
-        rssRepository = RssRepository(db, ArticleRepository(db, testDispatcherProvider), FilterRepository(db, testDispatcherProvider), testCoroutineScope, testDispatcherProvider)
-    }
-
-    @After
-    fun tearDown() {
-        testCoroutineScope.cleanupTestCoroutines()
+        rssRepository = RssRepository(db, ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope), FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider), coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
     }
 
     @Test

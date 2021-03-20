@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.domain.rss
 
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.mycuration.TestCoroutineDispatcherProvider
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.db.DatabaseMigration
 import com.phicdy.mycuration.data.db.ResetIconPathTask
@@ -14,21 +14,19 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.util.UrlUtil
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class RssParserTest {
 
-    private val testCoroutineScope = TestCoroutineScope()
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private val callback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {}
@@ -46,10 +44,10 @@ class RssParserTest {
         parser = RssParser()
         rssRepository = RssRepository(
                 db,
-                ArticleRepository(db, testDispatcherProvider),
-                FilterRepository(db, testDispatcherProvider),
-                testCoroutineScope,
-                testDispatcherProvider
+                ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope),
+                FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider),
+                coroutineTestRule.testCoroutineScope,
+                coroutineTestRule.testCoroutineDispatcherProvider
         )
         deleteAll(db)
     }
@@ -57,7 +55,7 @@ class RssParserTest {
     @After
     fun tearDown() {
         deleteAll(db)
-        testCoroutineScope.cleanupTestCoroutines()
+        coroutineTestRule.testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test

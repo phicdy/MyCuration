@@ -5,10 +5,12 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
+import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.entity.CurationCondition
 import com.phicdy.mycuration.entity.CurationSelection
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -19,7 +21,8 @@ import javax.inject.Singleton
 @Singleton
 class CurationRepository @Inject constructor(
         private val db: SQLiteDatabase,
-        private val coroutineDispatcherProvider: CoroutineDispatcherProvider
+        private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+        @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
 ) {
 
     suspend fun calcNumOfAllUnreadArticlesOfCuration(curationId: Int): Int = withContext(coroutineDispatcherProvider.io()) {

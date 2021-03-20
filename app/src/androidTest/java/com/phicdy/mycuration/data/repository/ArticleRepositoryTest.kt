@@ -40,7 +40,7 @@ class ArticleRepositoryTest {
 
     @Before
     fun setUp() {
-        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope)
         rssRepository = RssRepository(
                 db,
                 articleRepository,
@@ -48,7 +48,7 @@ class ArticleRepositoryTest {
                 coroutineTestRule.testCoroutineScope,
                 coroutineTestRule.testCoroutineDispatcherProvider
         )
-        curationRepository = CurationRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        curationRepository = CurationRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope)
         deleteAll(db)
     }
 

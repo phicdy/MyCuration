@@ -33,7 +33,7 @@ class RssRepositoryTest {
 
     @Before
     fun setUp() {
-        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope)
         filterRepository = FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
         rssRepository = RssRepository(db, articleRepository, filterRepository, coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
         deleteAll(db)
