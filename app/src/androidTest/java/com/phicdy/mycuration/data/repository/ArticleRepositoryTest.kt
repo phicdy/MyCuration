@@ -89,35 +89,7 @@ class ArticleRepositoryTest {
     }
 
     @Test
-    fun testSaveAllStatusToReadFromToRead() = runBlocking {
-        insertTestData()
-        val id = rssRepository.getFeedByUrl(TEST_FEED_URL)?.id ?: -1
-
-        val articles = ArrayList<Article>()
-        val now = System.currentTimeMillis()
-        val toReadArticle = Article(1, "toread_article",
-                "http://www.google.com", Article.READ, "", now + 1, id, "", "")
-        val toReadArticle2 = Article(1, "toread_article2",
-                "http://www.google.com/hogehoge", Article.READ, "", now + 2, id, "", "")
-        articles.add(toReadArticle)
-        articles.add(toReadArticle2)
-        articleRepository.saveNewArticles(articles, id)
-
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
-        val repository = ArticleRepository(db)
-        repository.saveAllStatusToReadFromToRead()
-        val changedArticles = articleRepository.getTop300Articles(true)
-        var existToReadArticle = false
-        for ((_, _, _, status) in changedArticles) {
-            if (status == Article.READ) {
-                existToReadArticle = true
-            }
-        }
-        assertEquals(false, existToReadArticle)
-    }
-
-    @Test
-    fun testGetAllArticlesOfCuration() = runBlocking {
+    fun testGetAllArticlesOfCuration() = testCoroutineScope.runBlockingTest {
         insertTestData()
         val curationId = insertTestCurationForArticle1()
 

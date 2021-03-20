@@ -17,26 +17,6 @@ import timber.log.Timber
 
 class ArticleRepository(val db: SQLiteDatabase) {
 
-    /**
-     * Update method from "to read" to "read" for all of the articles.
-     */
-    suspend fun saveAllStatusToReadFromToRead() = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
-            db.beginTransaction()
-            try {
-                val values = ContentValues()
-                values.put(Article.STATUS, Article.READ)
-                val condition = Article.STATUS + " = '" + Article.READ + "'"
-                db.update(Article.TABLE_NAME, values, condition, null)
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
-            }
-        }
-    }
-
     suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = coroutineScope {
         return@coroutineScope withContext(Dispatchers.IO) {
             val articles = ArrayList<Article>()
