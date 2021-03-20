@@ -29,21 +29,6 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideArticleRepository(sqLiteDatabase: SQLiteDatabase): ArticleRepository =
-            ArticleRepository(sqLiteDatabase)
-
-    @Singleton
-    @Provides
-    fun provideFilterRepository(sqLiteDatabase: SQLiteDatabase): FilterRepository =
-            FilterRepository(sqLiteDatabase)
-
-    @Singleton
-    @Provides
-    fun provideCurationRepository(sqLiteDatabase: SQLiteDatabase): CurationRepository =
-            CurationRepository(sqLiteDatabase)
-
-    @Singleton
-    @Provides
     fun provideFavoriteRepository(sqLiteDatabase: SQLiteDatabase): FavoriteRepository =
             FavoriteRepository(sqLiteDatabase)
 

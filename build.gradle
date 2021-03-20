@@ -119,6 +119,7 @@ allprojects {
                 includeGroup 'net.sf.kxml'
                 includeGroup 'net.bytebuddy'
                 includeGroup 'net.ltgt.gradle.incap'
+                includeGroup 'net.java.dev.jna'
                 includeGroup 'org.jsoup'
                 includeGroup 'org.sonatype.oss'
                 includeGroup 'org.junit'

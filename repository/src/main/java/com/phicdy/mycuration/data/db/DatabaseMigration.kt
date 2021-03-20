@@ -12,10 +12,10 @@ class DatabaseMigration @Inject constructor(
             if (oldVersion < DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION) {
                 AddFilterFeedRegistrationTask().execute(db, oldVersion)
             }
-            if (oldVersion < DATABASE_VERSION_FETCH_ICON) {
+            if (oldVersion < DATABASE_VERSION_FETCH_ICON && newVersion >= DATABASE_VERSION_FETCH_ICON) {
                 resetIconPathTask.execute(db, oldVersion)
             }
-            if (oldVersion < DATABASE_VERSION_FAVORITE) {
+            if (oldVersion < DATABASE_VERSION_FAVORITE && newVersion >= DATABASE_VERSION_FAVORITE) {
                 AddFavoriteTask().execute(db, oldVersion)
             }
         }

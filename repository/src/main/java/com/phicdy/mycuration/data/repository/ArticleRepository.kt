@@ -4,21 +4,27 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
+import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ArticleRepository(val db: SQLiteDatabase) {
+@Singleton
+class ArticleRepository @Inject constructor(
+        val db: SQLiteDatabase,
+        private val coroutineDispatcherProvider: CoroutineDispatcherProvider
+) {
 
     suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             val articles = ArrayList<Article>()
             var cursor: Cursor? = null
             try {
@@ -52,7 +58,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
     }
 
     suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int): Int = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             // If articles are hit in condition, Set articles status to "read"
             val value = ContentValues().apply {
                 put(Article.STATUS, Article.READ)
@@ -95,7 +101,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param feedId Feed ID of the articles
      */
     suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             if (articles.isEmpty()) {
                 return@withContext emptyList<Article>()
             }
@@ -140,7 +146,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param rssId RSS ID to check
      * @return `true` if exists.
      */
-    suspend fun isExistArticleOf(rssId: Int? = null): Boolean = withContext(Dispatchers.IO) {
+    suspend fun isExistArticleOf(rssId: Int? = null): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var isExist = false
         db.beginTransaction()
         var cursor: Cursor? = null
@@ -162,7 +168,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * Get article URLs that were stored in database from argument articles
      *
      */
-    suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(Dispatchers.IO) {
+    suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(coroutineDispatcherProvider.io()) {
         val urls = mutableListOf<String>()
         db.beginTransaction()
         var cursor: Cursor? = null
@@ -202,7 +208,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
      *
      * @param rssId RSS ID for articles to change status to read
      */
-    suspend fun saveStatusToRead(rssId: Int) = withContext(Dispatchers.IO) {
+    suspend fun saveStatusToRead(rssId: Int) = withContext(coroutineDispatcherProvider.io()) {
         try {
             db.beginTransaction()
             val values = ContentValues().apply {
@@ -221,7 +227,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
     /**
      * Update method for all of the articles to read status.
      */
-    suspend fun saveAllStatusToRead() = withContext(Dispatchers.IO) {
+    suspend fun saveAllStatusToRead() = withContext(coroutineDispatcherProvider.io()) {
         try {
             db.beginTransaction()
             val values = ContentValues().apply {
@@ -242,7 +248,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param articleId Artilce ID to change status
      * @param status New status
      */
-    suspend fun saveStatus(articleId: Int, status: String) = withContext(Dispatchers.IO) {
+    suspend fun saveStatus(articleId: Int, status: String) = withContext(coroutineDispatcherProvider.io()) {
         try {
             db.beginTransaction()
             val values = ContentValues().apply {
@@ -263,7 +269,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param url Article URL to update
      * @param point New hatena point
      */
-    suspend fun saveHatenaPoint(url: String, point: String) = withContext(Dispatchers.IO) {
+    suspend fun saveHatenaPoint(url: String, point: String) = withContext(coroutineDispatcherProvider.io()) {
         try {
             db.beginTransaction()
             val values = ContentValues().apply {
@@ -278,7 +284,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         }
     }
 
-    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
+    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         val articles = mutableListOf<FavoritableArticle>()
         var cursor: Cursor? = null
         try {
@@ -334,7 +340,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
+    suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         val articles = mutableListOf<FavoritableArticle>()
         var cursor: Cursor? = null
         try {
@@ -390,7 +396,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
+    suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         var searchKeyWord = keyword
         val articles = mutableListOf<FavoritableArticle>()
         if (searchKeyWord.contains("%")) {
@@ -456,7 +462,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return getArticlesOfRss(rssId, Article.UNREAD, isNewestArticleTop)
     }
 
-    suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(Dispatchers.IO) {
+    suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
         var cursor: Cursor? = null
         var count = -1
         try {
@@ -474,7 +480,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext count
     }
 
-    private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
+    private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         val articles = mutableListOf<FavoritableArticle>()
         val sql = StringBuilder().apply {
             append("select ")
@@ -523,7 +529,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+    suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(coroutineDispatcherProvider.io()) {
         val articles = arrayListOf<Article>()
         var sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
                 Article.TABLE_NAME + "." + Article.TITLE + "," +
@@ -575,7 +581,7 @@ class ArticleRepository(val db: SQLiteDatabase) {
         return@withContext articles
     }
 
-    suspend fun getAllArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
+    suspend fun getAllArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(coroutineDispatcherProvider.io()) {
         val articles = arrayListOf<Article>()
         var sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
                 Article.TABLE_NAME + "." + Article.TITLE + "," +

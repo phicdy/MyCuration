@@ -1,10 +1,16 @@
 package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
+import com.phicdy.mycuration.TestCoroutineDispatcherProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseMigration
+import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Article
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -18,8 +24,13 @@ import org.junit.experimental.theories.Theory
 import org.junit.runner.RunWith
 import java.util.Date
 
+@ExperimentalCoroutinesApi
 @RunWith(Theories::class)
 class ArticleRepositoryTest {
+
+    private val testCoroutineScope = TestCoroutineScope()
+    private val testDispatcher = TestCoroutineDispatcher()
+    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
 
     private lateinit var articleRepository: ArticleRepository
     private lateinit var rssRepository: RssRepository
@@ -27,27 +38,30 @@ class ArticleRepositoryTest {
     private val testUnreadArticles = ArrayList<Article>()
     private val testReadArticles = ArrayList<Article>()
 
+    private val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
+
     @Before
     fun setUp() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
-        articleRepository = ArticleRepository(db)
+        articleRepository = ArticleRepository(db, testDispatcherProvider)
         rssRepository = RssRepository(
                 db,
                 articleRepository,
-                FilterRepository(db)
+                FilterRepository(db, testDispatcherProvider),
+                testCoroutineScope,
+                testDispatcherProvider
         )
-        curationRepository = CurationRepository(db)
+        curationRepository = CurationRepository(db, testDispatcherProvider)
         deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
+        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Theory
-    fun whenSearchJapaneseArticle_ThenReturnTheArticle(title: String) = runBlocking {
+    fun whenSearchJapaneseArticle_ThenReturnTheArticle(title: String) = testCoroutineScope.runBlockingTest {
         val rss = rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         rss?.let {
             val testUnreadArticles = arrayListOf(Article(1, title,
@@ -62,25 +76,23 @@ class ArticleRepositoryTest {
 
 
     @Test
-    fun testSaveNewArticles() = runBlocking {
+    fun testSaveNewArticles() = testCoroutineScope.runBlockingTest {
         // Reset data and insert curation at first
         val curationId = insertTestCurationForArticle1()
         insertTestData()
 
         val savedArticles = articleRepository.getTop300Articles(false)
-        if (savedArticles.size != 0) {
-            val (_, title, _, status) = savedArticles[0]
-            assertEquals(TEST_ARTICLE1_TITLE, title)
-            assertEquals(Article.UNREAD, status)
+        val (_, title, _, status) = savedArticles[0]
+        assertEquals(TEST_ARTICLE1_TITLE, title)
+        assertEquals(Article.UNREAD, status)
 
-            val (_, title1, _, status1) = savedArticles[1]
-            assertEquals(TEST_ARTICLE2_TITLE, title1)
-            assertEquals(Article.UNREAD, status1)
+        val (_, title1, _, status1) = savedArticles[1]
+        assertEquals(TEST_ARTICLE2_TITLE, title1)
+        assertEquals(Article.UNREAD, status1)
 
-            val (_, title2, _, status2) = savedArticles[2]
-            assertEquals(TEST_ARTICLE3_TITLE, title2)
-            assertEquals(Article.UNREAD, status2)
-        }
+        val (_, title2, _, status2) = savedArticles[2]
+        assertEquals(TEST_ARTICLE3_TITLE, title2)
+        assertEquals(Article.UNREAD, status2)
 
         val articles = articleRepository.getAllArticlesOfCuration(curationId, true)
         assertNotNull(articles)
@@ -106,7 +118,7 @@ class ArticleRepositoryTest {
     }
 
 
-    private fun insertTestData() = runBlocking {
+    private fun insertTestData() = testCoroutineScope.runBlockingTest {
         rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         val id = rssRepository.getFeedByUrl(TEST_FEED_URL)?.id ?: -1
 
@@ -118,7 +130,7 @@ class ArticleRepositoryTest {
         val doubleQuotationTitle = Article(1, TEST_ARTICLE3_TITLE,
                 "http://www.google.com", Article.UNREAD, "", now + 2, id, "", "")
         val japaneseTitle = Article(1, "記事1abdｄｆｇ",
-                "http://www.google.com", Article.UNREAD, "", now + 2, id, "", "")
+                "http://www.google.com", Article.UNREAD, "", now + 3, id, "", "")
 
         testUnreadArticles.apply {
             clear()
@@ -132,14 +144,14 @@ class ArticleRepositoryTest {
         rssRepository.updateUnreadArticleCount(id, testUnreadArticles.size)
 
         val readArticle = Article(1, "readArticle", "http://www.google.com/read",
-                Article.READ, "", now, id, "", "")
+                Article.READ, "", now + 4, id, "", "")
         testReadArticles.clear()
         testReadArticles.add(readArticle)
         val savedArtices = articleRepository.saveNewArticles(testReadArticles, id)
         curationRepository.saveCurationsOf(savedArtices)
     }
 
-    private fun insertTestCurationForArticle1(): Int = runBlocking {
+    private suspend fun insertTestCurationForArticle1(): Int {
         val words = ArrayList<String>().apply {
             add(TEST_ARTICLE1_TITLE)
             add(TEST_WORD2)
@@ -147,7 +159,7 @@ class ArticleRepositoryTest {
         }
         val id = curationRepository.store(TEST_CURATION_NAME, words).toInt()
         assertTrue(id > 0)
-        return@runBlocking id
+        return id
     }
 
 

@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import androidx.annotation.VisibleForTesting
+import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.CurationSelection
@@ -13,7 +14,6 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -26,11 +26,12 @@ class RssRepository @Inject constructor(
         private val db: SQLiteDatabase,
         private val articleRepository: ArticleRepository,
         private val filterRepository: FilterRepository,
-        @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope
+        @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
+        private val coroutineDispatcherProvider: CoroutineDispatcherProvider
 ) {
 
     suspend fun getNumOfRss(): Int = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             var num: Int
             var cursor: Cursor? = null
             try {
@@ -57,7 +58,7 @@ class RssRepository @Inject constructor(
      * @return Num of updated rss
      */
     suspend fun saveNewTitle(rssId: Int, newTitle: String): Int {
-        return withContext(Dispatchers.IO) {
+        return withContext(coroutineDispatcherProvider.io()) {
             withContext(applicationCoroutineScope.coroutineContext) {
                 var numOfUpdated = 0
                 db.beginTransaction()
@@ -84,7 +85,7 @@ class RssRepository @Inject constructor(
      * @return result of delete
      */
     suspend fun deleteRss(rssId: Int): Boolean {
-        return withContext(Dispatchers.IO) {
+        return withContext(coroutineDispatcherProvider.io()) {
             withContext(applicationCoroutineScope.coroutineContext) {
                 var numOfDeleted = 0
                 try {
@@ -126,7 +127,7 @@ class RssRepository @Inject constructor(
      * @return Feed array with unread count of articles
      */
     suspend fun getAllFeedsWithNumOfUnreadArticles(): ArrayList<Feed> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             var feedList = ArrayList<Feed>()
             db.beginTransaction()
             var cursor: Cursor? = null
@@ -166,7 +167,7 @@ class RssRepository @Inject constructor(
      * @return Feed array without unread count of articles
      */
     suspend fun getAllFeedsWithoutNumOfUnreadArticles(): ArrayList<Feed> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             val feedList = ArrayList<Feed>()
             val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL)
             val orderBy = Feed.TITLE
@@ -202,7 +203,7 @@ class RssRepository @Inject constructor(
      * @param feedId Feed ID to change
      * @param unreadCount New article unread count
      */
-    suspend fun updateUnreadArticleCount(feedId: Int, unreadCount: Int) = withContext(Dispatchers.IO) {
+    suspend fun updateUnreadArticleCount(feedId: Int, unreadCount: Int) = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
             try {
                 db.beginTransaction()
@@ -269,7 +270,7 @@ class RssRepository @Inject constructor(
      * @param siteUrl Site URL of the feed to change
      * @param iconPath New icon path
      */
-    suspend fun saveIconPath(siteUrl: String, iconPath: String) = withContext(Dispatchers.IO) {
+    suspend fun saveIconPath(siteUrl: String, iconPath: String) = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
             try {
                 db.beginTransaction()
@@ -289,7 +290,7 @@ class RssRepository @Inject constructor(
     /**
      * @return Stored RSS or null if failed or same RSS exist
      */
-    suspend fun store(feedTitle: String, feedUrl: String, format: String, siteUrl: String): Feed? = withContext(Dispatchers.IO) {
+    suspend fun store(feedTitle: String, feedUrl: String, format: String, siteUrl: String): Feed? = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
             var rss: Feed? = null
             var isBeginTransaction = false
@@ -329,13 +330,13 @@ class RssRepository @Inject constructor(
         }
     }
 
-    suspend fun getFeedByUrl(feedUrl: String): Feed? = withContext(Dispatchers.IO) {
+    suspend fun getFeedByUrl(feedUrl: String): Feed? = withContext(coroutineDispatcherProvider.io()) {
         val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
         val selection = Feed.URL + " = \"" + feedUrl + "\""
         return@withContext query(columns, selection)
     }
 
-    suspend fun getFeedById(feedId: Int): Feed? = withContext(Dispatchers.IO) {
+    suspend fun getFeedById(feedId: Int): Feed? = withContext(coroutineDispatcherProvider.io()) {
         val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
         val selection = Feed.ID + " = " + feedId
         return@withContext query(columns, selection)

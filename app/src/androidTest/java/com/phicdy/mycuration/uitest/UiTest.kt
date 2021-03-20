@@ -12,6 +12,8 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseMigration
+import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.deleteAll
 import com.squareup.spoon.Spoon
@@ -42,7 +44,8 @@ abstract class UiTest {
     }
 
     private fun deleteAllData() {
-        deleteAll(DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase)
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
+        deleteAll(db)
     }
 
     internal fun takeScreenshot(device: UiDevice) {

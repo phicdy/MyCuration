@@ -1,9 +1,18 @@
 package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
+import com.phicdy.mycuration.TestCoroutineDispatcherProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseMigration
+import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.deleteAll
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertNotNull
@@ -14,29 +23,37 @@ import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class RssRepositoryTest {
+
+    private val testCoroutineScope = TestCoroutineScope()
+    private val testDispatcher = TestCoroutineDispatcher()
+    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
 
     private lateinit var rssRepository: RssRepository
     private lateinit var articleRepository: ArticleRepository
     private lateinit var filterRepository: FilterRepository
 
+    private val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
+
     @Before
     fun setUp() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
-        articleRepository = ArticleRepository(db)
-        filterRepository = FilterRepository(db)
-        rssRepository = RssRepository(db, articleRepository, filterRepository)
+        Dispatchers.setMain(testDispatcher)
+        articleRepository = ArticleRepository(db, testDispatcherProvider)
+        filterRepository = FilterRepository(db, testDispatcherProvider)
+        rssRepository = RssRepository(db, articleRepository, filterRepository, testCoroutineScope, testDispatcherProvider)
         deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
+        Dispatchers.resetMain()
+        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test
-    fun whenDeleteRSSThenTheRSSAndRelatedArticlesAndFiltersAreDeleted() = runBlocking {
+    fun whenDeleteRSSThenTheRSSAndRelatedArticlesAndFiltersAreDeleted() = testCoroutineScope.runBlockingTest {
         val rss = rssRepository.store("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
         rss?.let {
             val rssList = arrayListOf(rss)

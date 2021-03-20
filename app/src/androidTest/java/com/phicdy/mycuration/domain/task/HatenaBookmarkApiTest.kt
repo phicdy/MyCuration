@@ -1,14 +1,20 @@
 package com.phicdy.mycuration.domain.task
 
 import androidx.test.core.app.ApplicationProvider
+import com.phicdy.mycuration.TestCoroutineDispatcherProvider
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseMigration
+import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Article
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat
@@ -16,23 +22,29 @@ import org.junit.Before
 import org.junit.Test
 import java.util.ArrayList
 
+@ExperimentalCoroutinesApi
 class HatenaBookmarkApiTest {
+
+    private val testCoroutineScope = TestCoroutineScope()
+    private val testDispatcher = TestCoroutineDispatcher()
+    private val testDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
 
     private lateinit var articleRepository: ArticleRepository
     private lateinit var rssRepository: RssRepository
 
+    private val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
+
     @Before
     fun setup() {
-        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext())
-        articleRepository = ArticleRepository(helper.writableDatabase)
-        rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase))
-        deleteAll(helper.writableDatabase)
+        articleRepository = ArticleRepository(db, testDispatcherProvider)
+        rssRepository = RssRepository(db, articleRepository, FilterRepository(db, testDispatcherProvider), testCoroutineScope, testDispatcherProvider)
+        deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
+        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test

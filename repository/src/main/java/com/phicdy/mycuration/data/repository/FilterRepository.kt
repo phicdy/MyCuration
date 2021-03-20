@@ -4,15 +4,21 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
+import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FilterRepository(private val db: SQLiteDatabase) {
+@Singleton
+class FilterRepository @Inject constructor(
+        private val db: SQLiteDatabase,
+        private val coroutineDispatcherProvider: CoroutineDispatcherProvider
+) {
 
     /**
      * Helper method to retrieve all of the filters.
@@ -20,7 +26,7 @@ class FilterRepository(private val db: SQLiteDatabase) {
      * @return all of the filters in the database
      */
     suspend fun getAllFilters(): ArrayList<Filter> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             val filters = ArrayList<Filter>()
             val columns = arrayOf(
                     Filter.TABLE_NAME + "." + Filter.ID,
@@ -85,7 +91,7 @@ class FilterRepository(private val db: SQLiteDatabase) {
         }
     }
 
-    suspend fun getEnabledFiltersOfFeed(feedId: Int): ArrayList<Filter> = withContext(Dispatchers.IO) {
+    suspend fun getEnabledFiltersOfFeed(feedId: Int): ArrayList<Filter> = withContext(coroutineDispatcherProvider.io()) {
         val filterList = arrayListOf<Filter>()
         var cur: Cursor? = null
         try {
@@ -122,7 +128,7 @@ class FilterRepository(private val db: SQLiteDatabase) {
         return@withContext filterList
     }
 
-    suspend fun getFilterById(filterId: Int): Filter? = withContext(Dispatchers.IO) {
+    suspend fun getFilterById(filterId: Int): Filter? = withContext(coroutineDispatcherProvider.io()) {
         var filter: Filter? = null
         val columns = arrayOf(
                 Filter.TABLE_NAME + "." + Filter.ID,
@@ -178,7 +184,7 @@ class FilterRepository(private val db: SQLiteDatabase) {
      *
      * @param filterId Filter ID to delete
      */
-    suspend fun deleteFilter(filterId: Int) = withContext(Dispatchers.IO) {
+    suspend fun deleteFilter(filterId: Int) = withContext(coroutineDispatcherProvider.io()) {
         try {
             db.beginTransaction()
             val relationWhere = FilterFeedRegistration.FILTER_ID + " = " + filterId
@@ -204,7 +210,7 @@ class FilterRepository(private val db: SQLiteDatabase) {
      * @return result of all of the database insert
      */
     suspend fun saveNewFilter(title: String, selectedFeeds: ArrayList<Feed>,
-                              keyword: String, filterUrl: String): Boolean = withContext(Dispatchers.IO) {
+                              keyword: String, filterUrl: String): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var result = true
         db.beginTransaction()
         var cur: Cursor? = null
@@ -258,7 +264,7 @@ class FilterRepository(private val db: SQLiteDatabase) {
      * @param feeds New feeds to filter
      * @return update result
      */
-    suspend fun updateFilter(filterId: Int, title: String, keyword: String, url: String, feeds: ArrayList<Feed>): Boolean = withContext(Dispatchers.IO) {
+    suspend fun updateFilter(filterId: Int, title: String, keyword: String, url: String, feeds: ArrayList<Feed>): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var result: Boolean
         try {
             val values = ContentValues().apply {
@@ -332,7 +338,7 @@ class FilterRepository(private val db: SQLiteDatabase) {
         return@coroutineScope result
     }
 
-    suspend fun updateEnabled(id: Int, isEnabled: Boolean) = withContext(Dispatchers.IO) {
+    suspend fun updateEnabled(id: Int, isEnabled: Boolean) = withContext(coroutineDispatcherProvider.io()) {
         try {
             val values = ContentValues().apply {
                 put(Filter.ENABLED, if (isEnabled) Filter.TRUE else Filter.FALSE)
