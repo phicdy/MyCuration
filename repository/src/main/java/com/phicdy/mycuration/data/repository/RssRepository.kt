@@ -5,24 +5,33 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import androidx.annotation.VisibleForTesting
+import com.phicdy.mycuration.core.CoroutineDispatcherProvider
+import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.ArrayList
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RssRepository(private val db: SQLiteDatabase,
-                    private val articleRepository: ArticleRepository,
-                    private val filterRepository: FilterRepository) {
+@Singleton
+class RssRepository @Inject constructor(
+        private val db: SQLiteDatabase,
+        private val articleRepository: ArticleRepository,
+        private val filterRepository: FilterRepository,
+        @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
+        private val coroutineDispatcherProvider: CoroutineDispatcherProvider
+) {
 
     suspend fun getNumOfRss(): Int = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             var num: Int
             var cursor: Cursor? = null
             try {
@@ -48,22 +57,24 @@ class RssRepository(private val db: SQLiteDatabase,
      * @param newTitle New rss title
      * @return Num of updated rss
      */
-    suspend fun saveNewTitle(rssId: Int, newTitle: String): Int = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
-            var numOfUpdated = 0
-            db.beginTransaction()
-            try {
-                val values = ContentValues().apply {
-                    put(Feed.TITLE, newTitle)
+    suspend fun saveNewTitle(rssId: Int, newTitle: String): Int {
+        return withContext(coroutineDispatcherProvider.io()) {
+            withContext(applicationCoroutineScope.coroutineContext) {
+                var numOfUpdated = 0
+                db.beginTransaction()
+                try {
+                    val values = ContentValues().apply {
+                        put(Feed.TITLE, newTitle)
+                    }
+                    numOfUpdated = db.update(Feed.TABLE_NAME, values, Feed.ID + " = " + rssId, null)
+                    db.setTransactionSuccessful()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                } finally {
+                    db.endTransaction()
                 }
-                numOfUpdated = db.update(Feed.TABLE_NAME, values, Feed.ID + " = " + rssId, null)
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
+                numOfUpdated
             }
-            return@withContext numOfUpdated
         }
     }
 
@@ -73,38 +84,40 @@ class RssRepository(private val db: SQLiteDatabase,
      * @param rssId Feed ID to delete
      * @return result of delete
      */
-    suspend fun deleteRss(rssId: Int): Boolean = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
-            var numOfDeleted = 0
-            try {
-                db.beginTransaction()
+    suspend fun deleteRss(rssId: Int): Boolean {
+        return withContext(coroutineDispatcherProvider.io()) {
+            withContext(applicationCoroutineScope.coroutineContext) {
+                var numOfDeleted = 0
+                try {
+                    db.beginTransaction()
 
-                val allArticlesInRss = articleRepository.getAllArticlesInRss(rssId, true)
-                for (article in allArticlesInRss) {
-                    db.delete(CurationSelection.TABLE_NAME, CurationSelection.ARTICLE_ID + " = " + article.id, null)
-                    db.delete(FavoriteArticle.TABLE_NAME, FavoriteArticle.ARTICLE_ID + " = " + article.id, null)
-                }
-                db.delete(Article.TABLE_NAME, Article.FEEDID + " = " + rssId, null)
-
-                // Delete related filter
-                db.delete(FilterFeedRegistration.TABLE_NAME, FilterFeedRegistration.FEED_ID + " = " + rssId, null)
-                val filters = filterRepository.getAllFilters()
-                for (filter in filters) {
-                    val rsss = filter.feeds
-                    if (rsss.size == 1 && rsss.get(0).id == rssId) {
-                        // This filter had relation with this rss only
-                        db.delete(Filter.TABLE_NAME, Filter.ID + " = " + filter.id, null)
+                    val allArticlesInRss = articleRepository.getAllArticlesInRss(rssId, true)
+                    for (article in allArticlesInRss) {
+                        db.delete(CurationSelection.TABLE_NAME, CurationSelection.ARTICLE_ID + " = " + article.id, null)
+                        db.delete(FavoriteArticle.TABLE_NAME, FavoriteArticle.ARTICLE_ID + " = " + article.id, null)
                     }
-                }
+                    db.delete(Article.TABLE_NAME, Article.FEEDID + " = " + rssId, null)
 
-                numOfDeleted = db.delete(Feed.TABLE_NAME, Feed.ID + " = " + rssId, null)
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
+                    // Delete related filter
+                    db.delete(FilterFeedRegistration.TABLE_NAME, FilterFeedRegistration.FEED_ID + " = " + rssId, null)
+                    val filters = filterRepository.getAllFilters()
+                    for (filter in filters) {
+                        val rsss = filter.feeds
+                        if (rsss.size == 1 && rsss.get(0).id == rssId) {
+                            // This filter had relation with this rss only
+                            db.delete(Filter.TABLE_NAME, Filter.ID + " = " + filter.id, null)
+                        }
+                    }
+
+                    numOfDeleted = db.delete(Feed.TABLE_NAME, Feed.ID + " = " + rssId, null)
+                    db.setTransactionSuccessful()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                } finally {
+                    db.endTransaction()
+                }
+                numOfDeleted == 1
             }
-            return@withContext numOfDeleted == 1
         }
     }
 
@@ -114,7 +127,7 @@ class RssRepository(private val db: SQLiteDatabase,
      * @return Feed array with unread count of articles
      */
     suspend fun getAllFeedsWithNumOfUnreadArticles(): ArrayList<Feed> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             var feedList = ArrayList<Feed>()
             db.beginTransaction()
             var cursor: Cursor? = null
@@ -154,7 +167,7 @@ class RssRepository(private val db: SQLiteDatabase,
      * @return Feed array without unread count of articles
      */
     suspend fun getAllFeedsWithoutNumOfUnreadArticles(): ArrayList<Feed> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             val feedList = ArrayList<Feed>()
             val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL)
             val orderBy = Feed.TITLE
@@ -190,19 +203,21 @@ class RssRepository(private val db: SQLiteDatabase,
      * @param feedId Feed ID to change
      * @param unreadCount New article unread count
      */
-    suspend fun updateUnreadArticleCount(feedId: Int, unreadCount: Int) = withContext(Dispatchers.IO) {
-        try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Feed.UNREAD_ARTICLE, unreadCount)
+    suspend fun updateUnreadArticleCount(feedId: Int, unreadCount: Int) = withContext(coroutineDispatcherProvider.io()) {
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                db.beginTransaction()
+                val values = ContentValues().apply {
+                    put(Feed.UNREAD_ARTICLE, unreadCount)
+                }
+                db.update(Feed.TABLE_NAME, values, Feed.ID + " = $feedId", null)
+                db.setTransactionSuccessful()
+                Timber.d("Finished to update unread article count to $unreadCount in DB. RSS ID is $feedId")
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                db.endTransaction()
             }
-            db.update(Feed.TABLE_NAME, values, Feed.ID + " = $feedId", null)
-            db.setTransactionSuccessful()
-            Timber.d("Finished to update unread article count to $unreadCount in DB. RSS ID is $feedId")
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
@@ -255,69 +270,73 @@ class RssRepository(private val db: SQLiteDatabase,
      * @param siteUrl Site URL of the feed to change
      * @param iconPath New icon path
      */
-    suspend fun saveIconPath(siteUrl: String, iconPath: String) = withContext(Dispatchers.IO) {
-        try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Feed.ICON_PATH, iconPath)
+    suspend fun saveIconPath(siteUrl: String, iconPath: String) = withContext(coroutineDispatcherProvider.io()) {
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                db.beginTransaction()
+                val values = ContentValues().apply {
+                    put(Feed.ICON_PATH, iconPath)
+                }
+                db.update(Feed.TABLE_NAME, values, Feed.SITE_URL + " = '" + siteUrl + "'", null)
+                db.setTransactionSuccessful()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                db.endTransaction()
             }
-            db.update(Feed.TABLE_NAME, values, Feed.SITE_URL + " = '" + siteUrl + "'", null)
-            db.setTransactionSuccessful()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
     /**
      * @return Stored RSS or null if failed or same RSS exist
      */
-    suspend fun store(feedTitle: String, feedUrl: String, format: String, siteUrl: String): Feed? = withContext(Dispatchers.IO) {
-        var rss: Feed? = null
-        var isBeginTransaction = false
-        try {
-            // Get same feeds from DB
-            val selection = Feed.TITLE + "=\"$feedTitle\" and " + Feed.URL + "=\"$feedUrl\" and " +
-                    Feed.FORMAT + "=\"$format\""
-            val stored = query(arrayOf(Feed.ID), selection)
-            if (stored != null) return@withContext null
+    suspend fun store(feedTitle: String, feedUrl: String, format: String, siteUrl: String): Feed? = withContext(coroutineDispatcherProvider.io()) {
+        withContext(applicationCoroutineScope.coroutineContext) {
+            var rss: Feed? = null
+            var isBeginTransaction = false
+            try {
+                // Get same feeds from DB
+                val selection = Feed.TITLE + "=\"$feedTitle\" and " + Feed.URL + "=\"$feedUrl\" and " +
+                        Feed.FORMAT + "=\"$format\""
+                val stored = query(arrayOf(Feed.ID), selection)
+                if (stored == null) {
+                    // If there aren't same feeds in DB,Insert into DB
+                    db.beginTransaction()
+                    isBeginTransaction = true
+                    val values = ContentValues()
+                    values.put(Feed.TITLE, feedTitle)
+                    values.put(Feed.URL, feedUrl)
+                    values.put(Feed.FORMAT, format)
+                    values.put(Feed.ICON_PATH, Feed.DEDAULT_ICON_PATH)
+                    values.put(Feed.SITE_URL, siteUrl)
+                    values.put(Feed.UNREAD_ARTICLE, 0)
+                    val id = db.insert(Feed.TABLE_NAME, null, values)
+                    rss = Feed(
+                            id = id.toInt(),
+                            title = feedTitle,
+                            url = feedUrl,
+                            format = format,
+                            siteUrl = siteUrl
+                    )
+                    db.setTransactionSuccessful()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                if (isBeginTransaction) db.endTransaction()
+            }
 
-            // If there aren't same feeds in DB,Insert into DB
-            db.beginTransaction()
-            isBeginTransaction = true
-            val values = ContentValues()
-            values.put(Feed.TITLE, feedTitle)
-            values.put(Feed.URL, feedUrl)
-            values.put(Feed.FORMAT, format)
-            values.put(Feed.ICON_PATH, Feed.DEDAULT_ICON_PATH)
-            values.put(Feed.SITE_URL, siteUrl)
-            values.put(Feed.UNREAD_ARTICLE, 0)
-            val id = db.insert(Feed.TABLE_NAME, null, values)
-            rss = Feed(
-                    id = id.toInt(),
-                    title = feedTitle,
-                    url = feedUrl,
-                    format = format,
-                    siteUrl = siteUrl
-            )
-            db.setTransactionSuccessful()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            if (isBeginTransaction) db.endTransaction()
+            rss
         }
-
-        return@withContext rss
     }
 
-    suspend fun getFeedByUrl(feedUrl: String): Feed? = withContext(Dispatchers.IO) {
+    suspend fun getFeedByUrl(feedUrl: String): Feed? = withContext(coroutineDispatcherProvider.io()) {
         val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
         val selection = Feed.URL + " = \"" + feedUrl + "\""
         return@withContext query(columns, selection)
     }
 
-    suspend fun getFeedById(feedId: Int): Feed? = withContext(Dispatchers.IO) {
+    suspend fun getFeedById(feedId: Int): Feed? = withContext(coroutineDispatcherProvider.io()) {
         val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
         val selection = Feed.ID + " = " + feedId
         return@withContext query(columns, selection)

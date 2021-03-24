@@ -21,14 +21,18 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseMigration
+import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -42,8 +46,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class SearchArticleTest : UiTest() {
+
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     companion object {
         private const val testRssTitle = "testRss"
@@ -64,15 +72,16 @@ class SearchArticleTest : UiTest() {
 
     @Before
     fun setup() {
-        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext())
-        articleRepository = ArticleRepository(helper.writableDatabase)
-        rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase))
+        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask()))
+        articleRepository = ArticleRepository(helper.writableDatabase, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope)
+        rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase, coroutineTestRule.testCoroutineDispatcherProvider), coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
         deleteAll(helper.writableDatabase)
     }
 
     @After
     public override fun tearDown() {
         super.tearDown()
+        coroutineTestRule.testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test

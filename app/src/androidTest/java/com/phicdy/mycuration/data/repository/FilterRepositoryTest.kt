@@ -1,35 +1,44 @@
 package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.data.db.DatabaseMigration
+import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Feed
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class FilterRepositoryTest {
+
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private lateinit var rssRepository: RssRepository
     private lateinit var articleRepository: ArticleRepository
     private lateinit var filterRepository: FilterRepository
 
+    private val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
+
     @Before
     fun setUp() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
-        articleRepository = ArticleRepository(db)
-        filterRepository = FilterRepository(db)
-        rssRepository = RssRepository(db, articleRepository, filterRepository)
+        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope)
+        filterRepository = FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        rssRepository = RssRepository(db, articleRepository, filterRepository, coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
         deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
     }
 

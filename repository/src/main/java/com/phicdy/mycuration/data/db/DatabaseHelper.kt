@@ -11,8 +11,15 @@ import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+@Singleton
+class DatabaseHelper @Inject constructor(
+        @ApplicationContext context: Context,
+        private val databaseMigration: DatabaseMigration
+) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     //onCreate() is called when database is created
     override fun onCreate(db: SQLiteDatabase) {
@@ -38,7 +45,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     //onUpgrade() is called when database version changes
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        DatabaseMigration(oldVersion, newVersion).migrate(db)
+        databaseMigration.migrate(db, oldVersion, newVersion)
     }
 
     companion object {

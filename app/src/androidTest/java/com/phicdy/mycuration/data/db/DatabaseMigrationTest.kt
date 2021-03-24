@@ -6,6 +6,7 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -13,6 +14,7 @@ import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -22,12 +24,17 @@ import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.ArrayList
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class DatabaseMigrationTest {
+
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private lateinit var db: SQLiteDatabase
     private lateinit var rssRepository: RssRepository
@@ -35,15 +42,15 @@ class DatabaseMigrationTest {
 
     @Before
     fun setUp() {
-        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext())
+        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask()))
         db = helper.writableDatabase
-        filterRepository = FilterRepository(db)
-        rssRepository = RssRepository(db, ArticleRepository(db), filterRepository)
+        filterRepository = FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider)
+        rssRepository = RssRepository(db, ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope), filterRepository, coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
     }
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
+        val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
         deleteAll(db)
     }
 
@@ -64,11 +71,8 @@ class DatabaseMigrationTest {
         val filterId = db.insert(Filter.TABLE_NAME, null, values)
         assertNotEquals(filterId, -1)
 
-        val migration = DatabaseMigration(
-                DatabaseMigration.FIRST_VERSION,
-                DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION
-        )
-        migration.migrate(db)
+        val migration = DatabaseMigration(ResetIconPathTask())
+        migration.migrate(db, DatabaseMigration.FIRST_VERSION, DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION)
 
         var cursor: Cursor? = null
         try {
@@ -111,11 +115,8 @@ class DatabaseMigrationTest {
         }
         val filterId = db.insert(Filter.TABLE_NAME, null, values)
         assertNotEquals(filterId, -1)
-        val migration = DatabaseMigration(
-                DatabaseMigration.DATABASE_VERSION_ADD_ENABLED_TO_FILTER,
-                DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION
-        )
-        migration.migrate(db)
+        val migration = DatabaseMigration(ResetIconPathTask())
+        migration.migrate(db, DatabaseMigration.DATABASE_VERSION_ADD_ENABLED_TO_FILTER, DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION)
 
         var cursor: Cursor? = null
         try {
@@ -146,11 +147,8 @@ class DatabaseMigrationTest {
     fun migrationFrom3To4() = runBlocking {
         val rss = rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, Feed.ATOM, TEST_FEED_URL)
         rssRepository.saveIconPath(TEST_FEED_URL, "$TEST_FEED_URL/icon")
-        val migration = DatabaseMigration(
-                oldVersion = DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION,
-                newVersion = DatabaseMigration.DATABASE_VERSION_FETCH_ICON
-        )
-        migration.migrate(db)
+        val migration = DatabaseMigration(ResetIconPathTask())
+        migration.migrate(db, DatabaseMigration.DATABASE_VERSION_ADD_FILTER_FEED_REGISTRATION, DatabaseMigration.DATABASE_VERSION_FETCH_ICON)
         rss?.let {
             val migratedRss = rssRepository.getFeedById(rss.id)
             assertThat(migratedRss?.iconPath, `is`(Feed.DEDAULT_ICON_PATH))

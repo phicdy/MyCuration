@@ -4,19 +4,28 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
+import com.phicdy.mycuration.core.CoroutineDispatcherProvider
+import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.entity.CurationCondition
 import com.phicdy.mycuration.entity.CurationSelection
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.ArrayList
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CurationRepository(private val db: SQLiteDatabase) {
+@Singleton
+class CurationRepository @Inject constructor(
+        private val db: SQLiteDatabase,
+        private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+        @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
+) {
 
-    suspend fun calcNumOfAllUnreadArticlesOfCuration(curationId: Int): Int = withContext(Dispatchers.IO) {
+    suspend fun calcNumOfAllUnreadArticlesOfCuration(curationId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
         var num = 0
         val sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
                 Article.TABLE_NAME + "." + Article.TITLE + "," +
@@ -46,7 +55,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext num
     }
 
-    suspend fun getAllCurationWords(): HashMap<Int, ArrayList<String>> = withContext(Dispatchers.IO) {
+    suspend fun getAllCurationWords(): HashMap<Int, ArrayList<String>> = withContext(coroutineDispatcherProvider.io()) {
         val curationWordsMap = hashMapOf<Int, ArrayList<String>>()
         val sql = "select " + Curation.TABLE_NAME + "." + Curation.ID + "," +
                 CurationCondition.TABLE_NAME + "." + CurationCondition.WORD +
@@ -86,7 +95,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
     }
 
     suspend fun saveCurationsOf(articles: List<Article>) = coroutineScope {
-        withContext(Dispatchers.IO) {
+        withContext(coroutineDispatcherProvider.io()) {
             val curationWordMap = getAllCurationWords()
             val insertCurationSelectionSt = db.compileStatement(
                     "insert into " + CurationSelection.TABLE_NAME +
@@ -118,7 +127,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         }
     }
 
-    suspend fun update(curationId: Int, name: String, words: ArrayList<String>): Boolean = withContext(Dispatchers.IO) {
+    suspend fun update(curationId: Int, name: String, words: ArrayList<String>): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var result = true
         try {
             // Update curation name
@@ -147,7 +156,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext result
     }
 
-    suspend fun store(name: String, words: ArrayList<String>): Long = withContext(Dispatchers.IO) {
+    suspend fun store(name: String, words: ArrayList<String>): Long = withContext(coroutineDispatcherProvider.io()) {
         if (words.isEmpty()) return@withContext -1L
         var addedCurationId = -1L
         try {
@@ -172,7 +181,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext addedCurationId
     }
 
-    suspend fun adaptToArticles(curationId: Int, words: ArrayList<String>): Boolean = withContext(Dispatchers.IO) {
+    suspend fun adaptToArticles(curationId: Int, words: ArrayList<String>): Boolean = withContext(coroutineDispatcherProvider.io()) {
         if (curationId == NOT_FOUND_ID) return@withContext false
 
         var result = true
@@ -211,7 +220,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext result
     }
 
-    suspend fun getAllCurations(): ArrayList<Curation> = withContext(Dispatchers.IO) {
+    suspend fun getAllCurations(): ArrayList<Curation> = withContext(coroutineDispatcherProvider.io()) {
         val curationList = arrayListOf<Curation>()
         var cursor: Cursor? = null
         try {
@@ -237,7 +246,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext curationList
     }
 
-    suspend fun delete(curationId: Int): Boolean = withContext(Dispatchers.IO) {
+    suspend fun delete(curationId: Int): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var numOfDeleted = 0
         try {
             db.beginTransaction()
@@ -253,7 +262,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext numOfDeleted == 1
     }
 
-    suspend fun isExist(name: String): Boolean = withContext(Dispatchers.IO) {
+    suspend fun isExist(name: String): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var num = 0
         var cursor: Cursor? = null
         try {
@@ -274,7 +283,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext num > 0
     }
 
-    suspend fun getCurationNameById(curationId: Int): String = withContext(Dispatchers.IO) {
+    suspend fun getCurationNameById(curationId: Int): String = withContext(coroutineDispatcherProvider.io()) {
         var name = ""
         val columns = arrayOf(Curation.NAME)
         val selection = Curation.ID + " = ?"
@@ -296,7 +305,7 @@ class CurationRepository(private val db: SQLiteDatabase) {
         return@withContext name
     }
 
-    suspend fun getCurationWords(curationId: Int): ArrayList<String> = withContext(Dispatchers.IO) {
+    suspend fun getCurationWords(curationId: Int): ArrayList<String> = withContext(coroutineDispatcherProvider.io()) {
         val words = arrayListOf<String>()
         val columns = arrayOf(CurationCondition.WORD)
         val selection = CurationCondition.CURATION_ID + " = ?"

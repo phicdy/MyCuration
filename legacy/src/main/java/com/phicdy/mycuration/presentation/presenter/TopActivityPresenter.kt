@@ -35,7 +35,6 @@ class TopActivityPresenter @Inject constructor(
                 helper.decreaseReviewCount()
             }
         }
-        articleRepository.saveAllStatusToReadFromToRead()
         view.closeSearchView()
     }
 
