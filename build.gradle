@@ -19,7 +19,7 @@ buildscript {
     ext.jacoco_version = "0.8.5"
     ext.glideVer = '4.11.0'
     ext.work_version = '2.4.0'
-    ext.dagger_hilt_version = '2.33-beta'
+    ext.dagger_hilt_version = '2.35.1'
 
     repositories {
         google().content {
