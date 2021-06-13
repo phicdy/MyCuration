@@ -20,6 +20,8 @@ buildscript {
     ext.glideVer = '4.11.0'
     ext.work_version = '2.4.0'
     ext.dagger_hilt_version = '2.35.1'
+    ext.sql_delight_version = '1.5.0'
+    ext.sqlite_version = '2.1.0'
 
     repositories {
         google().content {
@@ -30,6 +32,9 @@ buildscript {
             includeGroup 'com.android'
             includeGroup 'com.squareup'
         }
+        mavenCentral()
+        maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
+        maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
         jcenter {
             content {
                 includeGroupByRegex 'net\\.sf.*'
@@ -82,6 +87,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
         classpath "com.google.dagger:hilt-android-gradle-plugin:$dagger_hilt_version"
+        classpath 'com.squareup.sqldelight:gradle-plugin:1.5.0'
     }
 }
 
