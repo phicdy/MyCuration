@@ -1,0 +1,15 @@
+DROP TABLE filters;
+CREATE TABLE filters (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    keyword TEXT,
+    url TEXT,
+    title TEXT,
+    enabled INTEGER
+);
+CREATE TABLE filterFeedRegistrations (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filterId INTEGER,
+    feedId INTEGER,
+    FOREIGN KEY(filterId) REFERENCES filters(_id),
+    FOREIGN KEY(feedId) REFERENCES feeds(_id)
+);

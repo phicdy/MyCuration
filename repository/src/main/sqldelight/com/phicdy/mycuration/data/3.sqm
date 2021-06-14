@@ -1,0 +1,2 @@
+UPDATE feeds
+SET iconPath = "defaultIconPath";
