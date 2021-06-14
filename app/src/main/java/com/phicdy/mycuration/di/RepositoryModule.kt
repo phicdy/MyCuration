@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.di
 
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -12,9 +13,12 @@ import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
+import com.phicdy.mycuration.repository.Database
+import com.squareup.sqldelight.android.AndroidSqliteDriver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
@@ -22,6 +26,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
+
+    @Singleton
+    @Provides
+    fun provideDatabase(
+            @ApplicationContext context: Context,
+    ): Database = Database(
+            AndroidSqliteDriver(
+                    schema = Database.Schema,
+                    context = context,
+                    name = "rss_manage"
+            )
+    )
 
     @Singleton
     @Provides

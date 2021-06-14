@@ -46,15 +46,6 @@ data class Feed(
         const val RSS_2 = "RSS2.0"
         const val ATOM = "ATOM"
 
-        const val CREATE_TABLE_SQL = "create table " + TABLE_NAME + "(" +
-                ID + " integer primary key autoincrement," +
-                TITLE + " text," +
-                URL + " text," +
-                FORMAT + " text," +
-                SITE_URL + " text," +
-                ICON_PATH + " text," +
-                UNREAD_ARTICLE + " integer)"
-
         @Suppress("unused")
         @JvmField
         val CREATOR: Parcelable.Creator<Feed> = object : Parcelable.Creator<Feed> {

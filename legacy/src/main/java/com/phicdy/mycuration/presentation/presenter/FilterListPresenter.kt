@@ -5,6 +5,7 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.presentation.view.FilterListView
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class FilterListPresenter @Inject constructor(
@@ -13,9 +14,11 @@ class FilterListPresenter @Inject constructor(
         private val filterRepository: FilterRepository
 ) {
 
-    suspend fun onActivityCreated() = coroutineScope {
-        if (rssRepository.getNumOfRss() == 0) {
-            view.setRssEmptyMessage()
+    suspend fun onActivityCreated() {
+        rssRepository.getNumOfRss().collect { num ->
+            if (num == 0L) {
+                view.setRssEmptyMessage()
+            }
         }
     }
 

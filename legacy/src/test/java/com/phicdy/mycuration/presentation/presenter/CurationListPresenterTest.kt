@@ -10,6 +10,7 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -90,7 +91,7 @@ class CurationListPresenterTest {
 
     @Test
     fun `when rss is empty then no rss view is set`() = runBlocking {
-        whenever(rssRepository.getNumOfRss()).thenReturn(0)
+        whenever(rssRepository.getNumOfRss()).thenReturn(flow { emit(0L) })
         presenter.activityCreated()
         verify(view, times(1)).setNoRssTextToEmptyView()
     }

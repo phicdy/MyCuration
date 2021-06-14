@@ -13,8 +13,12 @@ import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
+import com.phicdy.mycuration.repository.Database
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.ArrayList
@@ -24,31 +28,17 @@ import javax.inject.Singleton
 @Singleton
 class RssRepository @Inject constructor(
         private val db: SQLiteDatabase,
+        private val database: Database,
         private val articleRepository: ArticleRepository,
         private val filterRepository: FilterRepository,
         @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
         private val coroutineDispatcherProvider: CoroutineDispatcherProvider
 ) {
 
-    suspend fun getNumOfRss(): Int = coroutineScope {
-        return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
-            var num: Int
-            var cursor: Cursor? = null
-            try {
-                db.beginTransaction()
-                cursor = db.query(Feed.TABLE_NAME, arrayOf(Feed.ID), "", emptyArray(), "", "", "")
-                num = cursor.count
-                db.setTransactionSuccessful()
-            } catch (e: Exception) {
-                num = -1
-            } finally {
-                cursor?.close()
-                db.endTransaction()
-            }
-
-            return@withContext num
-        }
-    }
+    fun getNumOfRss(): Flow<Long> =
+            database.feedQueries.getNumOfRss()
+                    .asFlow()
+                    .mapToOne(coroutineDispatcherProvider.io())
 
     /**
      * Update method for rss title.

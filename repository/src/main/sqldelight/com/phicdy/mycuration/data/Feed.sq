@@ -1,0 +1,14 @@
+CREATE TABLE feeds (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    url TEXT,
+    format TEXT,
+    siteUrl TEXT,
+    iconPath TEXT,
+    unreadArticle INTEGER
+);
+
+getNumOfRss:
+SELECT COUNT(*)
+FROM feeds;
+

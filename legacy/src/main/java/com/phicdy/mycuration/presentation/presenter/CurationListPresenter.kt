@@ -6,6 +6,7 @@ import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
 import java.util.ArrayList
 import javax.inject.Inject
 
@@ -43,9 +44,11 @@ class CurationListPresenter @Inject constructor(
         }
     }
 
-    suspend fun activityCreated() = coroutineScope {
-        if (rssRepository.getNumOfRss() == 0) {
-            view.setNoRssTextToEmptyView()
+    suspend fun activityCreated() {
+        rssRepository.getNumOfRss().collect { num ->
+            if (num == 0L) {
+                view.setNoRssTextToEmptyView()
+            }
         }
     }
 
