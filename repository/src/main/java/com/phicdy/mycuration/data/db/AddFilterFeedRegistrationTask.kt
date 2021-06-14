@@ -19,7 +19,16 @@ internal class AddFilterFeedRegistrationTask : DatabaseMigrationTask {
         val filters = getOldAllFilters(db, oldVersion)
         val sql = "DROP TABLE " + Filter.TABLE_NAME
         db.execSQL(sql)
-        db.execSQL(Filter.CREATE_TABLE_SQL)
+        db.execSQL("""
+                CREATE TABLE filters (
+                    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    keyword TEXT,
+                    url TEXT,
+                    title TEXT,
+                    enabled INTEGER
+                )
+                """.trimIndent()
+        )
 
         // Insert all of the filters
         insertFilters(db, filters)

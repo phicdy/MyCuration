@@ -8,7 +8,6 @@ import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.entity.CurationCondition
 import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.entity.FavoriteArticle
-import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -24,7 +23,6 @@ class DatabaseHelper @Inject constructor(
     override fun onCreate(db: SQLiteDatabase) {
         db.apply {
             execSQL(Article.CREATE_TABLE_SQL)
-            execSQL(Filter.CREATE_TABLE_SQL)
             execSQL(FilterFeedRegistration.CREATE_TABLE_SQL)
             execSQL(Curation.CREATE_TABLE_SQL)
             execSQL(CurationSelection.CREATE_TABLE_SQL)
