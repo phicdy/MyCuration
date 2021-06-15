@@ -4,7 +4,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.phicdy.mycuration.entity.CurationCondition
-import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.entity.FavoriteArticle
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -19,7 +18,6 @@ class DatabaseHelper @Inject constructor(
     //onCreate() is called when database is created
     override fun onCreate(db: SQLiteDatabase) {
         db.apply {
-            execSQL(CurationSelection.CREATE_TABLE_SQL)
             execSQL(CurationCondition.CREATE_TABLE_SQL)
             execSQL(FavoriteArticle.CREATE_TABLE_SQL)
         }

@@ -1,0 +1,7 @@
+CREATE TABLE curationSelections (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    curationId INTEGER,
+    articleId INTEGER,
+    FOREIGN KEY(curationId) REFERENCES curations(_id),
+    FOREIGN KEY(articleId) REFERENCES articles(_id)
+);
