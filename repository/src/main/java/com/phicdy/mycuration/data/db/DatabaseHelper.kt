@@ -3,7 +3,6 @@ package com.phicdy.mycuration.data.db
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.entity.CurationCondition
 import com.phicdy.mycuration.entity.CurationSelection
@@ -22,7 +21,6 @@ class DatabaseHelper @Inject constructor(
     //onCreate() is called when database is created
     override fun onCreate(db: SQLiteDatabase) {
         db.apply {
-            execSQL(Article.CREATE_TABLE_SQL)
             execSQL(FilterFeedRegistration.CREATE_TABLE_SQL)
             execSQL(Curation.CREATE_TABLE_SQL)
             execSQL(CurationSelection.CREATE_TABLE_SQL)

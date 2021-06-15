@@ -1,0 +1,10 @@
+CREATE TABLE articles (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    url TEXT,
+    status TEXT DEFAULT "unread",
+    point TEXT,
+    date TEXT,
+    feedId INTEGER,
+    FOREIGN KEY(feedId) REFERENCES feeds(_id)
+);
