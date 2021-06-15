@@ -1,0 +1,6 @@
+CREATE TABLE curationConditions (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    word TEXT,
+    curationId INTEGER,
+    FOREIGN KEY(curationId) REFERENCES curations(_id)
+);
