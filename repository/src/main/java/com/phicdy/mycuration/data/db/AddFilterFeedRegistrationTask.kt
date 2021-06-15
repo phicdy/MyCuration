@@ -34,7 +34,17 @@ internal class AddFilterFeedRegistrationTask : DatabaseMigrationTask {
         insertFilters(db, filters)
 
         // Migration feed and filter relation
-        db.execSQL(FilterFeedRegistration.CREATE_TABLE_SQL)
+        db.execSQL(
+                """
+                CREATE TABLE filterFeedRegistrations (
+                    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    filterId INTEGER,
+                    feedId INTEGER,
+                    FOREIGN KEY(filterId) REFERENCES filters(_id),
+                    FOREIGN KEY(feedId) REFERENCES feeds(_id)
+                )
+                """.trimIndent()
+        )
         insertFilterFeedRegistration(db, filters)
     }
 

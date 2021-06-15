@@ -7,7 +7,6 @@ import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.entity.CurationCondition
 import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.entity.FavoriteArticle
-import com.phicdy.mycuration.entity.FilterFeedRegistration
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,7 +20,6 @@ class DatabaseHelper @Inject constructor(
     //onCreate() is called when database is created
     override fun onCreate(db: SQLiteDatabase) {
         db.apply {
-            execSQL(FilterFeedRegistration.CREATE_TABLE_SQL)
             execSQL(Curation.CREATE_TABLE_SQL)
             execSQL(CurationSelection.CREATE_TABLE_SQL)
             execSQL(CurationCondition.CREATE_TABLE_SQL)
