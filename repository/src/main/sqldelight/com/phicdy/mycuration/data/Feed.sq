@@ -22,6 +22,11 @@ UPDATE feeds
 SET title = ?
 WHERE _id = ?;
 
+updateUnreadArticle:
+UPDATE feeds
+SET unreadArticle = ?
+WHERE _id = ?;
+
 selectChanges:
 SELECT changes();
 

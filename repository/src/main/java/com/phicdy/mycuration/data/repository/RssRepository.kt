@@ -113,18 +113,9 @@ class RssRepository @Inject constructor(
      */
     suspend fun updateUnreadArticleCount(feedId: Int, unreadCount: Int) = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
-            try {
-                db.beginTransaction()
-                val values = ContentValues().apply {
-                    put(Feed.UNREAD_ARTICLE, unreadCount)
-                }
-                db.update(Feed.TABLE_NAME, values, Feed.ID + " = $feedId", null)
-                db.setTransactionSuccessful()
+            database.transaction {
+                database.feedQueries.updateUnreadArticle(unreadCount.toLong(), feedId.toLong())
                 Timber.d("Finished to update unread article count to $unreadCount in DB. RSS ID is $feedId")
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
             }
         }
     }
