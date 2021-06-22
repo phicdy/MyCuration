@@ -7,12 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.annotation.VisibleForTesting
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
-import com.phicdy.mycuration.entity.Article
-import com.phicdy.mycuration.entity.CurationSelection
-import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.entity.Filter
-import com.phicdy.mycuration.entity.FilterFeedRegistration
 import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -63,36 +58,28 @@ class RssRepository @Inject constructor(
     suspend fun deleteRss(rssId: Int): Boolean {
         return withContext(coroutineDispatcherProvider.io()) {
             withContext(applicationCoroutineScope.coroutineContext) {
-                var numOfDeleted = 0
-                try {
-                    db.beginTransaction()
-
-                    val allArticlesInRss = articleRepository.getAllArticlesInRss(rssId, true)
+                val allArticlesInRss = articleRepository.getAllArticlesInRss(rssId, true)
+                val filters = filterRepository.getAllFilters()
+                database.transactionWithResult {
                     for (article in allArticlesInRss) {
-                        db.delete(CurationSelection.TABLE_NAME, CurationSelection.ARTICLE_ID + " = " + article.id, null)
-                        db.delete(FavoriteArticle.TABLE_NAME, FavoriteArticle.ARTICLE_ID + " = " + article.id, null)
+                        database.curationSelectionQueries.delete(article.id.toLong())
+                        database.favoriteArticleQueries.delete(article.id.toLong())
                     }
-                    db.delete(Article.TABLE_NAME, Article.FEEDID + " = " + rssId, null)
+                    database.articleQueries.deleteByFeedId(rssId.toLong())
 
                     // Delete related filter
-                    db.delete(FilterFeedRegistration.TABLE_NAME, FilterFeedRegistration.FEED_ID + " = " + rssId, null)
-                    val filters = filterRepository.getAllFilters()
+                    database.filterFeedRegistrationQueries.deleteByFeedId(rssId.toLong())
                     for (filter in filters) {
                         val rsss = filter.feeds
-                        if (rsss.size == 1 && rsss.get(0).id == rssId) {
+                        if (rsss.size == 1 && rsss[0].id == rssId) {
                             // This filter had relation with this rss only
-                            db.delete(Filter.TABLE_NAME, Filter.ID + " = " + filter.id, null)
+                            database.filtersQueries.delete(filter.id.toLong())
                         }
                     }
 
-                    numOfDeleted = db.delete(Feed.TABLE_NAME, Feed.ID + " = " + rssId, null)
-                    db.setTransactionSuccessful()
-                } catch (e: SQLException) {
-                    e.printStackTrace()
-                } finally {
-                    db.endTransaction()
+                    database.feedQueries.delete(rssId.toLong())
+                    database.feedQueries.selectChanges().executeAsOne().toInt() == 1
                 }
-                numOfDeleted == 1
             }
         }
     }

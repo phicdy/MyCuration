@@ -8,3 +8,7 @@ CREATE TABLE articles (
     feedId INTEGER,
     FOREIGN KEY(feedId) REFERENCES feeds(_id)
 );
+
+deleteByFeedId:
+DELETE FROM articles
+WHERE feedId = ?;

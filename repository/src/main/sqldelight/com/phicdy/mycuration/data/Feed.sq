@@ -24,3 +24,7 @@ WHERE _id = ?;
 
 selectChanges:
 SELECT changes();
+
+delete:
+DELETE FROM feeds
+WHERE _id = ?;

@@ -5,3 +5,7 @@ CREATE TABLE curationSelections (
     FOREIGN KEY(curationId) REFERENCES curations(_id),
     FOREIGN KEY(articleId) REFERENCES articles(_id)
 );
+
+delete:
+DELETE FROM curationSelections
+WHERE articleId = ?;

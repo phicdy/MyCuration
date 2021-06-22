@@ -5,3 +5,7 @@ CREATE TABLE filterFeedRegistrations (
     FOREIGN KEY(filterId) REFERENCES filters(_id),
     FOREIGN KEY(feedId) REFERENCES feeds(_id)
 );
+
+deleteByFeedId:
+DELETE FROM filterFeedRegistrations
+WHERE feedId = ?;

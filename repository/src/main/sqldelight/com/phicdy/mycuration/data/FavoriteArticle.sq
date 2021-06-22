@@ -3,3 +3,7 @@ CREATE TABLE favoriteArticles (
     articleId INTEGER,
     FOREIGN KEY(articleId) REFERENCES articles(_id)
 );
+
+delete:
+DELETE FROM favoriteArticles
+WHERE articleId = ?;

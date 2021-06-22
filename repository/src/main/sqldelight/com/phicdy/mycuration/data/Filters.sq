@@ -5,3 +5,7 @@ CREATE TABLE filters (
     title TEXT,
     enabled INTEGER
 );
+
+delete:
+DELETE FROM filters
+WHERE _id = ?;
