@@ -26,7 +26,7 @@ class UpdateAllRssActionCreator @Inject constructor(
             preferenceHelper.lastUpdateDate = System.currentTimeMillis()
             Timber.d("start update rss")
             val now = System.currentTimeMillis()
-            val rssList = rssRepository.getAllFeedsWithNumOfUnreadArticles()
+            val rssList = rssRepository.getAllFeeds()
             coroutineScope {
                 val deferred = rssList.map { rss ->
                     async { networkTaskManager.updateFeed(rss) }

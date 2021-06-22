@@ -1,14 +1,18 @@
 CREATE TABLE feeds (
     _id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT,
-    url TEXT,
-    format TEXT,
-    siteUrl TEXT,
-    iconPath TEXT,
-    unreadArticle INTEGER
+    title TEXT NOT NULL,
+    url TEXT NOT NULL,
+    format TEXT NOT NULL,
+    siteUrl TEXT NOT NULL,
+    iconPath TEXT NOT NULL,
+    unreadArticle INTEGER NOT NULL
 );
 
 getNumOfRss:
 SELECT COUNT(*)
 FROM feeds;
 
+getAllFeeds:
+SELECT *
+FROM feeds
+ORDER BY title;

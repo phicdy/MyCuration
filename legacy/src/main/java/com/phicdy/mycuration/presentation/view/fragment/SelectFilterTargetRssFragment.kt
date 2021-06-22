@@ -43,7 +43,7 @@ class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
         super.onActivityCreated(savedInstanceState)
         activity?.let {
             launch {
-                val adapter = TargetRssListAdapter(rssRepository.getAllFeedsWithoutNumOfUnreadArticles())
+                val adapter = TargetRssListAdapter(rssRepository.getAllFeeds())
                 recyclerView = it.findViewById(R.id.rv_fiter_target) as RecyclerView
                 recyclerView.adapter = adapter
                 recyclerView.layoutManager = LinearLayoutManager(activity)

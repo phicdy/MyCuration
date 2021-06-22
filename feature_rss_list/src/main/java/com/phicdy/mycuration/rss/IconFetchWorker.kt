@@ -16,7 +16,7 @@ class IconFetchWorker(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        rssRepository.getAllFeedsWithoutNumOfUnreadArticles().forEach {
+        rssRepository.getAllFeeds().forEach {
             if (it.iconPath.isEmpty() || it.iconPath == Feed.DEDAULT_ICON_PATH) {
                 val iconUrl = GetFeedIconTask().execute(it.siteUrl)
                 rssRepository.saveIconPath(it.siteUrl, iconUrl)
