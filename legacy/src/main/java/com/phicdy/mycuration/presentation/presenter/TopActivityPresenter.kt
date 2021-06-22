@@ -8,7 +8,6 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class TopActivityPresenter @Inject constructor(
@@ -43,15 +42,14 @@ class TopActivityPresenter @Inject constructor(
         view.startFabAnimation()
     }
 
-    suspend fun fabCurationClicked() {
+    fun fabCurationClicked() {
         view.closeAddFab()
-        rssRepository.getNumOfRss().collect { num ->
-            if (num == 0L) {
-                view.goToFeedSearch()
-                return@collect
-            }
-            view.goToAddCuration()
+        val num = rssRepository.getNumOfRss()
+        if (num == 0L) {
+            view.goToFeedSearch()
+            return
         }
+        view.goToAddCuration()
     }
 
     fun fabRssClicked() {
@@ -61,13 +59,12 @@ class TopActivityPresenter @Inject constructor(
 
     suspend fun fabFilterClicked() = coroutineScope {
         view.closeAddFab()
-        rssRepository.getNumOfRss().collect { num ->
-            if (num == 0L) {
-                view.goToFeedSearch()
-                return@collect
-            }
-            view.goToAddFilter()
+        val num = rssRepository.getNumOfRss()
+        if (num == 0L) {
+            view.goToFeedSearch()
+            return@coroutineScope
         }
+        view.goToAddFilter()
     }
 
     fun addBackgroundClicked() {

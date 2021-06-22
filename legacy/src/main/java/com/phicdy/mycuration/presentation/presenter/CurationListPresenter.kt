@@ -6,8 +6,6 @@ import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
-import java.util.ArrayList
 import javax.inject.Inject
 
 class CurationListPresenter @Inject constructor(
@@ -15,8 +13,7 @@ class CurationListPresenter @Inject constructor(
         private val rssRepository: RssRepository,
         private val curationRepository: CurationRepository
 ) {
-    private var allCurations: ArrayList<Curation> = arrayListOf()
-
+    private var allCurations: List<Curation> = arrayListOf()
 
     suspend fun resume() = coroutineScope {
         view.registerContextMenu()
@@ -44,11 +41,10 @@ class CurationListPresenter @Inject constructor(
         }
     }
 
-    suspend fun activityCreated() {
-        rssRepository.getNumOfRss().collect { num ->
-            if (num == 0L) {
-                view.setNoRssTextToEmptyView()
-            }
+    fun activityCreated() {
+        val num = rssRepository.getNumOfRss()
+        if (num == 0L) {
+            view.setNoRssTextToEmptyView()
         }
     }
 

@@ -140,9 +140,7 @@ class TopActivity :
 
     override fun initFab() {
         fun onAddCurationClicked() {
-            launch(context = coroutineContext) {
-                presenter.fabCurationClicked()
-            }
+            presenter.fabCurationClicked()
         }
 
         fun onAddRssClicked() {

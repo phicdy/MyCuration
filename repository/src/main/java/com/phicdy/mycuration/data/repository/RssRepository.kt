@@ -14,11 +14,8 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.entity.FilterFeedRegistration
 import com.phicdy.mycuration.repository.Database
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.ArrayList
@@ -35,10 +32,9 @@ class RssRepository @Inject constructor(
         private val coroutineDispatcherProvider: CoroutineDispatcherProvider
 ) {
 
-    fun getNumOfRss(): Flow<Long> =
+    fun getNumOfRss(): Long =
             database.feedQueries.getNumOfRss()
-                    .asFlow()
-                    .mapToOne(coroutineDispatcherProvider.io())
+                    .executeAsOne()
 
     /**
      * Update method for rss title.
