@@ -10,6 +10,7 @@ import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.entity.CurationCondition
 import com.phicdy.mycuration.entity.CurationSelection
+import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -21,6 +22,7 @@ import javax.inject.Singleton
 @Singleton
 class CurationRepository @Inject constructor(
         private val db: SQLiteDatabase,
+        private val database: Database,
         private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
         @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
 ) {
@@ -220,30 +222,17 @@ class CurationRepository @Inject constructor(
         return@withContext result
     }
 
-    suspend fun getAllCurations(): ArrayList<Curation> = withContext(coroutineDispatcherProvider.io()) {
-        val curationList = arrayListOf<Curation>()
-        var cursor: Cursor? = null
-        try {
-            val columns = arrayOf(Curation.ID, Curation.NAME)
-            val orderBy = Curation.NAME
-            db.beginTransaction()
-            cursor = db.query(Curation.TABLE_NAME, columns, null, null, null, null, orderBy)
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    val id = cursor.getInt(0)
-                    val name = cursor.getString(1)
-                    curationList.add(Curation(id, name))
-                }
-            }
-            db.setTransactionSuccessful()
-        } catch (e: SQLException) {
-            Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
+    suspend fun getAllCurations(): List<Curation> = withContext(coroutineDispatcherProvider.io()) {
+        return@withContext database.transactionWithResult<List<Curation>> {
+            database.curationQueries.getAll()
+                    .executeAsList()
+                    .map {
+                        Curation(
+                                id = it._id.toInt(),
+                                name = it.name
+                        )
+                    }
         }
-
-        return@withContext curationList
     }
 
     suspend fun delete(curationId: Int): Boolean = withContext(coroutineDispatcherProvider.io()) {

@@ -1,4 +1,9 @@
 CREATE TABLE curations (
     _id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT
+    name TEXT NOT NULL
 );
+
+getAll:
+SELECT *
+FROM curations
+ORDER BY name;
