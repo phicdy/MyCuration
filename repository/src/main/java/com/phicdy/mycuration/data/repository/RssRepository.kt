@@ -46,20 +46,10 @@ class RssRepository @Inject constructor(
     suspend fun saveNewTitle(rssId: Int, newTitle: String): Int {
         return withContext(coroutineDispatcherProvider.io()) {
             withContext(applicationCoroutineScope.coroutineContext) {
-                var numOfUpdated = 0
-                db.beginTransaction()
-                try {
-                    val values = ContentValues().apply {
-                        put(Feed.TITLE, newTitle)
-                    }
-                    numOfUpdated = db.update(Feed.TABLE_NAME, values, Feed.ID + " = " + rssId, null)
-                    db.setTransactionSuccessful()
-                } catch (e: SQLException) {
-                    e.printStackTrace()
-                } finally {
-                    db.endTransaction()
+                database.transactionWithResult {
+                    database.feedQueries.updateTitle(newTitle, rssId.toLong())
+                    database.feedQueries.selectChanges().executeAsOne().toInt()
                 }
-                numOfUpdated
             }
         }
     }

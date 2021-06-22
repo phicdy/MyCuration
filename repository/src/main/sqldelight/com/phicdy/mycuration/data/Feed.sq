@@ -16,3 +16,11 @@ getAllFeeds:
 SELECT *
 FROM feeds
 ORDER BY title;
+
+updateTitle:
+UPDATE feeds
+SET title = ?
+WHERE _id = ?;
+
+selectChanges:
+SELECT changes();
