@@ -34,6 +34,11 @@ SELECT *
 FROM feeds
 WHERE _id = ?;
 
+getFeedByTitleAndUrlAndFormat:
+SELECT *
+FROM feeds
+WHERE title = ? AND url = ? AND format = ?;
+
 updateTitle:
 UPDATE feeds
 SET title = ?
