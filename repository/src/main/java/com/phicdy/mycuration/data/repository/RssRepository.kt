@@ -4,6 +4,7 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
+import com.phicdy.mycuration.data.Feeds
 import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.repository.Database
@@ -162,9 +163,9 @@ class RssRepository @Inject constructor(
     }
 
     suspend fun getFeedByUrl(feedUrl: String): Feed? = withContext(coroutineDispatcherProvider.io()) {
-        val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
-        val selection = Feed.URL + " = \"" + feedUrl + "\""
-        return@withContext query(columns, selection)
+        return@withContext database.transactionWithResult<Feed?> {
+            database.feedQueries.getFeedByUrl(feedUrl).executeAsOneOrNull()?.toFeed()
+        }
     }
 
     suspend fun getFeedById(feedId: Int): Feed? = withContext(coroutineDispatcherProvider.io()) {
@@ -208,4 +209,15 @@ class RssRepository @Inject constructor(
         }
         return@coroutineScope feed
     }
+
+    private fun Feeds.toFeed(): Feed =
+            Feed(
+                    id = _id.toInt(),
+                    title = title,
+                    url = url,
+                    iconPath = iconPath,
+                    format = format,
+                    unreadAriticlesCount = unreadArticle.toInt(),
+                    siteUrl = siteUrl
+            )
 }

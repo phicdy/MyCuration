@@ -24,6 +24,11 @@ SELECT *
 FROM feeds
 ORDER BY title;
 
+getFeedByUrl:
+SELECT *
+FROM feeds
+WHERE url = ?;
+
 updateTitle:
 UPDATE feeds
 SET title = ?
