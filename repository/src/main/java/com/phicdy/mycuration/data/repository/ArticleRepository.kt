@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
+import com.phicdy.mycuration.data.Articles
 import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.CurationSelection
@@ -12,6 +13,7 @@ import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
+import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -22,41 +24,24 @@ import javax.inject.Singleton
 @Singleton
 class ArticleRepository @Inject constructor(
         val db: SQLiteDatabase,
+        private val database: Database,
         private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
         @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
 ) {
 
-    suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> {
+    suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): List<Article> {
         return withContext(coroutineDispatcherProvider.io()) {
-            val articles = ArrayList<Article>()
-            var cursor: Cursor? = null
-            try {
-                db.beginTransaction()
-                // Get unread articles
-                val sql = ("select " + Article.ID + ", " + Article.TITLE + ", " + Article.URL + ", " + Article.STATUS + "" +
-                        ", " + Article.POINT + ", " + Article.DATE + " from " + Article.TABLE_NAME + " where " + Article.FEEDID + " = "
-                        + rssId + " order by " + Article.DATE) + if (isNewestArticleTop) " desc" else " asc"
-                cursor = db.rawQuery(sql, null)
-                while (cursor.moveToNext()) {
-                    val id = cursor.getInt(0)
-                    val title = cursor.getString(1)
-                    val url = cursor.getString(2)
-                    val status = cursor.getString(3)
-                    val point = cursor.getString(4)
-                    val dateLong = cursor.getLong(5)
-                    val article = Article(id, title, url, status, point,
-                            dateLong, rssId, "", "")
-                    articles.add(article)
+            database.transactionWithResult {
+                if (isNewestArticleTop) {
+                    database.articleQueries.getAllInRssOrderByDateDesc(rssId.toLong())
+                            .executeAsList()
+                            .map { it.toArticle() }
+                } else {
+                    database.articleQueries.getAllInRssOrderByDateAsc(rssId.toLong())
+                            .executeAsList()
+                            .map { it.toArticle() }
                 }
-                db.setTransactionSuccessful()
-            } catch (e: Exception) {
-                return@withContext articles
-            } finally {
-                db.endTransaction()
-                cursor?.close()
             }
-
-            return@withContext articles
         }
     }
 
@@ -647,4 +632,16 @@ class ArticleRepository @Inject constructor(
 
         return@withContext articles
     }
+
+    private fun Articles.toArticle(): Article = Article(
+            id = _id.toInt(),
+            title = title,
+            url = url,
+            status = status,
+            point = point,
+            postedDate = date,
+            feedId = feedId.toInt(),
+            feedTitle = "",
+            feedIconPath = ""
+    )
 }

@@ -1,13 +1,24 @@
 CREATE TABLE articles (
     _id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT,
-    url TEXT,
-    status TEXT DEFAULT "unread",
-    point TEXT,
-    date TEXT,
-    feedId INTEGER,
-    FOREIGN KEY(feedId) REFERENCES feeds(_id)
+    title TEXT NOT NULL,
+    url TEXT NOT NULL,
+    status TEXT DEFAULT "unread" NOT NULL,
+    point TEXT NOT NULL,
+    date INTEGER NOT NULL,
+    feedId INTEGER NOT NULL
 );
+
+getAllInRssOrderByDateDesc:
+SELECT *
+FROM articles
+WHERE feedId = ?
+ORDER BY date DESC;
+
+getAllInRssOrderByDateAsc:
+SELECT *
+FROM articles
+WHERE feedId = ?
+ORDER BY date ASC;
 
 deleteByFeedId:
 DELETE FROM articles
