@@ -128,17 +128,8 @@ class RssRepository @Inject constructor(
      */
     suspend fun saveIconPath(siteUrl: String, iconPath: String) = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
-            try {
-                db.beginTransaction()
-                val values = ContentValues().apply {
-                    put(Feed.ICON_PATH, iconPath)
-                }
-                db.update(Feed.TABLE_NAME, values, Feed.SITE_URL + " = '" + siteUrl + "'", null)
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
+            database.transaction {
+                database.feedQueries.updateIconPath(iconPath, siteUrl)
             }
         }
     }

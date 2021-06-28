@@ -27,6 +27,11 @@ UPDATE feeds
 SET unreadArticle = ?
 WHERE _id = ?;
 
+updateIconPath:
+UPDATE feeds
+SET iconPath = ?
+WHERE siteUrl = ?;
+
 selectChanges:
 SELECT changes();
 
