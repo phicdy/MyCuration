@@ -169,9 +169,9 @@ class RssRepository @Inject constructor(
     }
 
     suspend fun getFeedById(feedId: Int): Feed? = withContext(coroutineDispatcherProvider.io()) {
-        val columns = arrayOf(Feed.ID, Feed.TITLE, Feed.URL, Feed.ICON_PATH, Feed.SITE_URL, Feed.UNREAD_ARTICLE)
-        val selection = Feed.ID + " = " + feedId
-        return@withContext query(columns, selection)
+        return@withContext database.transactionWithResult<Feed?> {
+            database.feedQueries.getFeedById(feedId.toLong()).executeAsOneOrNull()?.toFeed()
+        }
     }
 
     private suspend fun query(columns: Array<String>, selection: String? = null): Feed? = coroutineScope {

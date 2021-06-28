@@ -29,6 +29,11 @@ SELECT *
 FROM feeds
 WHERE url = ?;
 
+getFeedById:
+SELECT *
+FROM feeds
+WHERE _id = ?;
+
 updateTitle:
 UPDATE feeds
 SET title = ?
