@@ -8,6 +8,13 @@ CREATE TABLE feeds (
     unreadArticle INTEGER NOT NULL
 );
 
+insert:
+INSERT INTO feeds(title, url, format, iconPath, siteUrl, unreadArticle)
+VALUES (?, ?, ?, ?, ?, ?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
 getNumOfRss:
 SELECT COUNT(*)
 FROM feeds;

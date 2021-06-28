@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.data.repository
 
-import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
@@ -139,41 +138,26 @@ class RssRepository @Inject constructor(
      */
     suspend fun store(feedTitle: String, feedUrl: String, format: String, siteUrl: String): Feed? = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
-            var rss: Feed? = null
-            var isBeginTransaction = false
-            try {
-                // Get same feeds from DB
-                val selection = Feed.TITLE + "=\"$feedTitle\" and " + Feed.URL + "=\"$feedUrl\" and " +
-                        Feed.FORMAT + "=\"$format\""
-                val stored = query(arrayOf(Feed.ID), selection)
-                if (stored == null) {
-                    // If there aren't same feeds in DB,Insert into DB
-                    db.beginTransaction()
-                    isBeginTransaction = true
-                    val values = ContentValues()
-                    values.put(Feed.TITLE, feedTitle)
-                    values.put(Feed.URL, feedUrl)
-                    values.put(Feed.FORMAT, format)
-                    values.put(Feed.ICON_PATH, Feed.DEDAULT_ICON_PATH)
-                    values.put(Feed.SITE_URL, siteUrl)
-                    values.put(Feed.UNREAD_ARTICLE, 0)
-                    val id = db.insert(Feed.TABLE_NAME, null, values)
-                    rss = Feed(
+            // Get same feeds from DB
+            val selection = Feed.TITLE + "=\"$feedTitle\" and " + Feed.URL + "=\"$feedUrl\" and " +
+                    Feed.FORMAT + "=\"$format\""
+            val stored = query(arrayOf(Feed.ID), selection)
+            if (stored != null) {
+                // If there aren't same feeds in DB,Insert into DB
+                database.transactionWithResult<Feed> {
+                    database.feedQueries.insert(feedTitle, feedUrl, format, Feed.DEDAULT_ICON_PATH, siteUrl, 0)
+                    val id = database.feedQueries.selectLastInsertRowId().executeAsOne()
+                    Feed(
                             id = id.toInt(),
                             title = feedTitle,
                             url = feedUrl,
                             format = format,
                             siteUrl = siteUrl
                     )
-                    db.setTransactionSuccessful()
                 }
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                if (isBeginTransaction) db.endTransaction()
+            } else {
+                null
             }
-
-            rss
         }
     }
 
