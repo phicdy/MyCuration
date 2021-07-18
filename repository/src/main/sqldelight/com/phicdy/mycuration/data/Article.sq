@@ -8,6 +8,13 @@ CREATE TABLE articles (
     feedId INTEGER NOT NULL
 );
 
+insert:
+INSERT INTO articles(title, url, status, point, date, feedId)
+VALUES (?, ?, ?, ?, ?, ?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
 getAllInRssOrderByDateDesc:
 SELECT *
 FROM articles

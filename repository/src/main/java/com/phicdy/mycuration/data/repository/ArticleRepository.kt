@@ -75,11 +75,11 @@ class ArticleRepository @Inject constructor(
                         updatedCount = database.articleQueries.selectChanges().executeAsOne().toInt()
                     }
                 } catch (e: Exception) {
-                        Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
-                        Timber.e(e)
-                    }
+                    Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
+                    Timber.e(e)
                 }
-                updatedCount
+            }
+            updatedCount
         }
     }
 
@@ -90,45 +90,30 @@ class ArticleRepository @Inject constructor(
      * @param feedId Feed ID of the articles
      */
     suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> {
-        return withContext(coroutineDispatcherProvider.io()) {
-            withContext(applicationCoroutineScope.coroutineContext) {
-                if (articles.isEmpty()) {
-                    emptyList()
-                } else {
-                    val insertArticleSt = db.compileStatement(
-                            "insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);")
-                    val result = arrayListOf<Article>()
-                    try {
-                        db.beginTransaction()
-                        articles.forEach { article ->
-                            insertArticleSt.bindString(1, article.title)
-                            insertArticleSt.bindString(2, article.url)
-                            insertArticleSt.bindString(3, article.status)
-                            insertArticleSt.bindString(4, article.point)
-                            insertArticleSt.bindLong(5, article.postedDate)
-                            insertArticleSt.bindString(6, feedId.toString())
-                            val id = insertArticleSt.executeInsert().toInt()
-                            result.add(Article(
-                                    id = id,
-                                    title = article.title,
-                                    url = article.url,
-                                    status = article.status,
-                                    point = article.point,
-                                    feedIconPath = article.feedIconPath,
-                                    postedDate = article.postedDate,
-                                    feedId = article.feedId,
-                                    feedTitle = article.feedTitle)
-                            )
-                        }
-                        db.setTransactionSuccessful()
-                    } catch (e: SQLException) {
-                        e.printStackTrace()
-                    } finally {
-                        db.endTransaction()
+        return withContext(applicationCoroutineScope.coroutineContext) {
+            val result = arrayListOf<Article>()
+            try {
+                database.transaction {
+                    articles.forEach { article ->
+                        database.articleQueries.insert(article.title, article.url, article.status, article.point, article.postedDate, feedId.toLong())
+                        val id = database.articleQueries.selectLastInsertRowId().executeAsOne().toInt()
+                        result.add(Article(
+                                id = id,
+                                title = article.title,
+                                url = article.url,
+                                status = article.status,
+                                point = article.point,
+                                feedIconPath = article.feedIconPath,
+                                postedDate = article.postedDate,
+                                feedId = article.feedId,
+                                feedTitle = article.feedTitle)
+                        )
                     }
-                    result
                 }
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
+            result
         }
     }
 
