@@ -15,7 +15,6 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -123,12 +122,12 @@ class ArticleRepository @Inject constructor(
      * @param rssId RSS ID to check
      * @return `true` if exists.
      */
-    suspend fun isExistArticleOf(rssId: Int? = null): Boolean = withContext(coroutineDispatcherProvider.io()) {
+    suspend fun isExistArticleOf(rssId: Int): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var isExist = false
         db.beginTransaction()
         var cursor: Cursor? = null
         try {
-            val selection = if (rssId == null) null else Article.FEEDID + " = " + rssId
+            val selection = Article.FEEDID + " = " + rssId
             cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
             isExist = cursor.count > 0
             db.setTransactionSuccessful()
@@ -169,15 +168,6 @@ class ArticleRepository @Inject constructor(
             db.endTransaction()
         }
         return@withContext urls
-    }
-
-    /**
-     * Check method of article existence.
-     *
-     * @return `true` if there is an article or more.
-     */
-    suspend fun isExistArticle(): Boolean = coroutineScope {
-        return@coroutineScope isExistArticleOf(null)
     }
 
     /**

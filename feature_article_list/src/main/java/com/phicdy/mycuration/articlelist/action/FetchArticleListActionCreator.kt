@@ -17,8 +17,8 @@ class FetchAllArticleListActionCreator @Inject constructor(
 
     override suspend fun run() {
         withContext(Dispatchers.IO) {
-            val allArticles = articleRepository.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
-            if (allArticles.isEmpty() && articleRepository.isExistArticle()) {
+            val allUnreadArticles = articleRepository.getAllUnreadArticles(preferenceHelper.sortNewArticleTop)
+            if (allUnreadArticles.isEmpty()) {
                 mutableListOf<ArticleItem>().apply {
                     add(ArticleItem.Advertisement)
                     articleRepository.getTop300Articles(preferenceHelper.sortNewArticleTop)
@@ -28,7 +28,7 @@ class FetchAllArticleListActionCreator @Inject constructor(
             } else {
                 mutableListOf<ArticleItem>().apply {
                     add(ArticleItem.Advertisement)
-                    allArticles.map { ArticleItem.Content(it) }
+                    allUnreadArticles.map { ArticleItem.Content(it) }
                             .let(::addAll)
                 }.let { dispatcher.dispatch(FetchArticleAction(it)) }
             }
