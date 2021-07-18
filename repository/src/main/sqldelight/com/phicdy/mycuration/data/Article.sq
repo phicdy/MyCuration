@@ -71,5 +71,10 @@ UPDATE articles
 SET status = ?
 WHERE _id = ?;
 
+updatePointByUrl:
+UPDATE articles
+SET point = ?
+WHERE url = ?;
+
 selectChanges:
 SELECT changes();

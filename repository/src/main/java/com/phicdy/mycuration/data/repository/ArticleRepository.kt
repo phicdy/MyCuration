@@ -200,20 +200,13 @@ class ArticleRepository @Inject constructor(
      * @param url Article URL to update
      * @param point New hatena point
      */
-    suspend fun saveHatenaPoint(url: String, point: String) = withContext(coroutineDispatcherProvider.io()) {
-        withContext(applicationCoroutineScope.coroutineContext) {
-            try {
-                db.beginTransaction()
-                val values = ContentValues().apply {
-                    put(Article.POINT, point)
-                }
-                db.update(Article.TABLE_NAME, values, Article.URL + " = '" + url + "'", null)
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
+    suspend fun saveHatenaPoint(url: String, point: String) = withContext(applicationCoroutineScope.coroutineContext) {
+        try {
+            database.transaction {
+                database.articleQueries.updatePointByUrl(point, url)
             }
+        } catch (e: SQLException) {
+            e.printStackTrace()
         }
     }
 
