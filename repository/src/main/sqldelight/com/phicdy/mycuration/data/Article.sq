@@ -27,6 +27,11 @@ FROM articles
 WHERE feedId = ?
 ORDER BY date ASC;
 
+getCount:
+SELECT COUNT(*)
+FROM articles
+WHERE feedId = ?;
+
 deleteByFeedId:
 DELETE FROM articles
 WHERE feedId = ?;

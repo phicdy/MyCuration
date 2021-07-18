@@ -124,18 +124,13 @@ class ArticleRepository @Inject constructor(
      */
     suspend fun isExistArticleOf(rssId: Int): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var isExist = false
-        db.beginTransaction()
-        var cursor: Cursor? = null
         try {
-            val selection = Article.FEEDID + " = " + rssId
-            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
-            isExist = cursor.count > 0
-            db.setTransactionSuccessful()
+            val count = database.transactionWithResult<Long> {
+                database.articleQueries.getCount(rssId.toLong()).executeAsOne()
+            }
+            isExist = count > 0
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
         return@withContext isExist
     }
