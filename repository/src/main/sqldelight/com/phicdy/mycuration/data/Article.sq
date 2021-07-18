@@ -57,5 +57,10 @@ UPDATE articles
 SET status = "read"
 WHERE feedId = ? AND status = ? AND title LIKE ? AND url LIKE ?;
 
+updateReadStatusByFeedId:
+UPDATE articles
+SET status = "read"
+WHERE feedId = ?;
+
 selectChanges:
 SELECT changes();
