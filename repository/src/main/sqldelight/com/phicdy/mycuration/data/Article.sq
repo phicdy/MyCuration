@@ -27,6 +27,12 @@ FROM articles
 WHERE feedId = ?
 ORDER BY date ASC;
 
+getAllInUrl:
+SELECT url
+FROM articles
+WHERE url IN ?
+ORDER BY date ASC;
+
 getCount:
 SELECT COUNT(*)
 FROM articles

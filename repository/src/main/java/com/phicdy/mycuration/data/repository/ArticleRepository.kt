@@ -140,29 +140,14 @@ class ArticleRepository @Inject constructor(
      *
      */
     suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(coroutineDispatcherProvider.io()) {
-        val urls = mutableListOf<String>()
-        db.beginTransaction()
-        var cursor: Cursor? = null
         try {
-            val selection = StringBuffer().apply {
-                append(Article.URL)
-                append(" in (")
-                articles.map { append("'" + it.url + "', ") }
-                delete(length - 2, length)
-                append(")")
-            }.toString()
-            cursor = db.query(true, Article.TABLE_NAME, arrayOf(Article.URL), selection, null, null, null, null, null)
-            while (cursor.moveToNext()) {
-                urls.add(cursor.getString(0))
+            return@withContext database.transactionWithResult<List<String>> {
+                database.articleQueries.getAllInUrl(articles.map { it.url }).executeAsList()
             }
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
-        return@withContext urls
+        return@withContext emptyList()
     }
 
     /**
