@@ -184,20 +184,13 @@ class ArticleRepository @Inject constructor(
      * @param articleId Artilce ID to change status
      * @param status New status
      */
-    suspend fun saveStatus(articleId: Int, status: String) = withContext(coroutineDispatcherProvider.io()) {
-        withContext(applicationCoroutineScope.coroutineContext) {
-            try {
-                db.beginTransaction()
-                val values = ContentValues().apply {
-                    put(Article.STATUS, status)
-                }
-                db.update(Article.TABLE_NAME, values, Article.ID + " = " + articleId, null)
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
+    suspend fun saveStatus(articleId: Int, status: String) = withContext(applicationCoroutineScope.coroutineContext) {
+        try {
+            database.transaction {
+                database.articleQueries.updateReadStatusById(status, articleId.toLong())
             }
+        } catch (e: SQLException) {
+            e.printStackTrace()
         }
     }
 

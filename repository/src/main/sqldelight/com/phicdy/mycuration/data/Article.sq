@@ -66,5 +66,10 @@ updateAllReadStatus:
 UPDATE articles
 SET status = "read";
 
+updateReadStatusById:
+UPDATE articles
+SET status = ?
+WHERE _id = ?;
+
 selectChanges:
 SELECT changes();
