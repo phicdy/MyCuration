@@ -51,6 +51,26 @@ ON (articles._id = favoriteArticles.articleId)
 WHERE articles.status = "unread" AND articles.feedId = feeds._id
 ORDER BY date ASC;
 
+getTop300OrderByDateDesc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = feeds._id
+ORDER BY date DESC
+LIMIT 300;
+
+getTop300OrderByDateAsc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = feeds._id
+ORDER BY date ASC
+LIMIT 300;
+
 getCount:
 SELECT COUNT(*)
 FROM articles

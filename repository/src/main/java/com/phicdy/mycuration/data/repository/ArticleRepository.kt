@@ -235,59 +235,26 @@ class ArticleRepository @Inject constructor(
     }
 
     suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
-        val articles = mutableListOf<FavoritableArticle>()
-        var cursor: Cursor? = null
         try {
-            // Get unread articles
-            val sql = StringBuilder().apply {
-                append("select ")
-                append("${Article.TABLE_NAME}.${Article.ID},")
-                append("${Article.TABLE_NAME}.${Article.TITLE},")
-                append("${Article.TABLE_NAME}.${Article.URL},")
-                append("${Article.TABLE_NAME}.${Article.STATUS},")
-                append("${Article.TABLE_NAME}.${Article.POINT},")
-                append("${Article.TABLE_NAME}.${Article.DATE},")
-                append("${Article.TABLE_NAME}.${Article.FEEDID},")
-                append("${Feed.TABLE_NAME}.${Feed.TITLE},")
-                append("${Feed.TABLE_NAME}.${Feed.ICON_PATH},")
-                append("${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID} ")
-                append("from ")
-                append("${Article.TABLE_NAME} ")
-                append("inner join ${Feed.TABLE_NAME} ")
-                append("left outer join ${FavoriteArticle.TABLE_NAME} ")
-                append("on ")
-                append("(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
-                append("where ")
-                append("${Article.TABLE_NAME}.${Article.FEEDID} = ${Feed.TABLE_NAME}.${Feed.ID} ")
-                append("order by ${Article.DATE} ")
-                append(if (isNewestArticleTop) "desc " else "asc ")
-                append("limit 300")
-            }.toString()
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val feedId = cursor.getInt(6)
-                val feedTitle = cursor.getString(7)
-                val feedIconPath = cursor.getString(8)
-                val favoriteId = cursor.getInt(9)
-                val article = FavoritableArticle(id, title, url, status, point,
-                        dateLong, feedId, feedTitle, feedIconPath, favoriteId > 0)
-                articles.add(article)
+            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+                if (isNewestArticleTop) {
+                    database.articleQueries.getTop300OrderByDateDesc().executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                } else {
+                    database.articleQueries.getTop300OrderByDateAsc().executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
-        return@withContext articles
+        return@withContext emptyList()
     }
 
     suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
