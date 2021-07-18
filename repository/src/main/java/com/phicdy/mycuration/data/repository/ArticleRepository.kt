@@ -168,20 +168,13 @@ class ArticleRepository @Inject constructor(
     /**
      * Update method for all of the articles to read status.
      */
-    suspend fun saveAllStatusToRead() = withContext(coroutineDispatcherProvider.io()) {
-        withContext(applicationCoroutineScope.coroutineContext) {
-            try {
-                db.beginTransaction()
-                val values = ContentValues().apply {
-                    put(Article.STATUS, Article.READ)
-                }
-                db.update(Article.TABLE_NAME, values, null, null)
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
+    suspend fun saveAllStatusToRead() = withContext(applicationCoroutineScope.coroutineContext) {
+        try {
+            database.transaction {
+                database.articleQueries.updateAllReadStatus()
             }
+        } catch (e: SQLException) {
+            e.printStackTrace()
         }
     }
 

@@ -62,5 +62,9 @@ UPDATE articles
 SET status = "read"
 WHERE feedId = ?;
 
+updateAllReadStatus:
+UPDATE articles
+SET status = "read";
+
 selectChanges:
 SELECT changes();
