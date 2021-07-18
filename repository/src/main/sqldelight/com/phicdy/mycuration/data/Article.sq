@@ -33,6 +33,24 @@ FROM articles
 WHERE url IN ?
 ORDER BY date ASC;
 
+getAllUnreadArticlesOrderByDateDesc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.status = "unread" AND articles.feedId = feeds._id
+ORDER BY date DESC;
+
+getAllUnreadArticlesOrderByDateAsc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.status = "unread" AND articles.feedId = feeds._id
+ORDER BY date ASC;
+
 getCount:
 SELECT COUNT(*)
 FROM articles
