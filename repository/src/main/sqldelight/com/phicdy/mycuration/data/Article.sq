@@ -23,3 +23,21 @@ ORDER BY date ASC;
 deleteByFeedId:
 DELETE FROM articles
 WHERE feedId = ?;
+
+updateReadStatusByTitle:
+UPDATE articles
+SET status = "read"
+WHERE feedId = ? AND status = ? AND title LIKE ?;
+
+updateReadStatusByUrl:
+UPDATE articles
+SET status = "read"
+WHERE feedId = ? AND status = ? AND url LIKE ?;
+
+updateReadStatusByTitleAndUrl:
+UPDATE articles
+SET status = "read"
+WHERE feedId = ? AND status = ? AND title LIKE ? AND url LIKE ?;
+
+selectChanges:
+SELECT changes();

@@ -46,41 +46,40 @@ class ArticleRepository @Inject constructor(
     }
 
     suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int): Int {
-        return withContext(coroutineDispatcherProvider.io()) {
-            withContext(applicationCoroutineScope.coroutineContext) {
-                // If articles are hit in condition, Set articles status to "read"
-                val value = ContentValues().apply {
-                    put(Article.STATUS, Article.READ)
-                }
-                var updatedCount = 0
-                for ((id, _, keyword, url) in filterList) {
-                    try {
-                        // If keyword or url exists, add condition
-                        if (keyword.isBlank() && url.isBlank()) {
-                            Timber.w("Set filtering conditon, keyword and url don't exist fileter ID =$id")
-                            continue
-                        }
+        return withContext(applicationCoroutineScope.coroutineContext) {
+            // If articles are hit in condition, Set articles status to "read"
+            val value = ContentValues().apply {
+                put(Article.STATUS, Article.READ)
+            }
+            var updatedCount = 0
+            for ((id, _, keyword, url) in filterList) {
+                try {
+                    // If keyword or url exists, add condition
+                    if (keyword.isBlank() && url.isBlank()) {
+                        Timber.w("Set filtering conditon, keyword and url don't exist fileter ID =$id")
+                        continue
+                    }
 
-                        db.beginTransaction()
-                        // Initialize condition
-                        var condition = Article.FEEDID + " = $rssId and " + Article.STATUS + " = '" + Article.UNREAD + "'"
+                    database.transaction {
                         if (keyword.isNotBlank()) {
-                            condition = "$condition and title like '%$keyword%'"
+                            if (url.isNotBlank()) {
+                                database.articleQueries.updateReadStatusByTitleAndUrl(rssId.toLong(), Article.UNREAD, "%$keyword%", "%$url%")
+                            } else {
+                                database.articleQueries.updateReadStatusByTitle(rssId.toLong(), Article.UNREAD, "%$keyword%")
+                            }
+                        } else {
+                            if (url.isNotBlank()) {
+                                database.articleQueries.updateReadStatusByUrl(rssId.toLong(), Article.UNREAD, "%$url%")
+                            }
                         }
-                        if (url.isNotBlank()) {
-                            condition = "$condition and url like '%$url%'"
-                        }
-                        updatedCount += db.update(Article.TABLE_NAME, value, condition, null)
-                        db.setTransactionSuccessful()
-                    } catch (e: Exception) {
+                        updatedCount = database.articleQueries.selectChanges().executeAsOne().toInt()
+                    }
+                } catch (e: Exception) {
                         Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
                         Timber.e(e)
-                    } finally {
-                        db.endTransaction()
                     }
                 }
                 updatedCount
-            }
         }
     }
 
