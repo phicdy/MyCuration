@@ -10,7 +10,6 @@ import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.entity.FavoritableArticle
-import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.repository.Database
@@ -288,12 +287,40 @@ class ArticleRepository @Inject constructor(
         return@withContext emptyList()
     }
 
-    suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> {
-        return getArticlesOfRss(rssId, null, isNewestArticleTop)
+    suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
+        return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            if (isNewestArticleTop) {
+                database.articleQueries.getArticlesOfFeedsDesc(rssId.toLong()).executeAsList().map {
+                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                }
+            } else {
+                database.articleQueries.getArticlesOfFeedsAsc(rssId.toLong()).executeAsList().map {
+                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                }
+            }
+        }
     }
 
-    suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> {
-        return getArticlesOfRss(rssId, Article.UNREAD, isNewestArticleTop)
+    suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
+        return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            if (isNewestArticleTop) {
+                database.articleQueries.getUnreadArticlesOfFeedsDesc(rssId.toLong()).executeAsList().map {
+                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                }
+            } else {
+                database.articleQueries.getUnreadArticlesOfFeedsAsc(rssId.toLong()).executeAsList().map {
+                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                }
+            }
+        }
     }
 
     suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
@@ -305,55 +332,6 @@ class ArticleRepository @Inject constructor(
             e.printStackTrace()
         }
         return@withContext -1
-    }
-
-    private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
-        val articles = mutableListOf<FavoritableArticle>()
-        val sql = StringBuilder().apply {
-            append("select ")
-            append("${Article.TABLE_NAME}.${Article.ID},")
-            append("${Article.TABLE_NAME}.${Article.TITLE},")
-            append("${Article.TABLE_NAME}.${Article.URL},")
-            append("${Article.TABLE_NAME}.${Article.STATUS},")
-            append("${Article.TABLE_NAME}.${Article.POINT},")
-            append("${Article.TABLE_NAME}.${Article.DATE},")
-            append("${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID} ")
-            append("from ")
-            append("${Article.TABLE_NAME} ")
-            append("left outer join ${FavoriteArticle.TABLE_NAME} ")
-            append("on ")
-            append("(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
-            append("where ")
-            if (!searchStatus.isNullOrBlank()) append("${Article.TABLE_NAME}.${Article.STATUS} = \"$searchStatus\" and ")
-            append("${Article.TABLE_NAME}.${Article.FEEDID} = $rssId ")
-            append("order by ${Article.DATE} ")
-            append(if (isNewestArticleTop) "desc" else "asc")
-        }.toString()
-        var cursor: Cursor? = null
-        try {
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val favoriteId = cursor.getInt(6)
-                val article = FavoritableArticle(id, title, url, status, point,
-                        dateLong, rssId, "", "", favoriteId > 0)
-                articles.add(article)
-            }
-            db.setTransactionSuccessful()
-        } catch (e: Exception) {
-            Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
-        }
-
-        return@withContext articles
     }
 
     suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(coroutineDispatcherProvider.io()) {

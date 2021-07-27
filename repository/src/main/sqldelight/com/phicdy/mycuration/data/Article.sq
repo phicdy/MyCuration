@@ -89,6 +89,38 @@ ON (articles._id = favoriteArticles.articleId)
 WHERE articles.title LIKE ? ESCAPE '$' AND articles.feedId = feeds._id
 ORDER BY date ASC;
 
+getArticlesOfFeedsDesc:
+SELECT *
+FROM articles
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = ?
+ORDER BY date DESC;
+
+getArticlesOfFeedsAsc:
+SELECT *
+FROM articles
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = ?
+ORDER BY date ASC;
+
+getUnreadArticlesOfFeedsDesc:
+SELECT *
+FROM articles
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = ? AND articles.status = "unread"
+ORDER BY date DESC;
+
+getUnreadArticlesOfFeedsAsc:
+SELECT *
+FROM articles
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = ? AND articles.status = "unread"
+ORDER BY date ASC;
+
 getCount:
 SELECT COUNT(*)
 FROM articles
