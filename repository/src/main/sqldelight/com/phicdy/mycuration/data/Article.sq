@@ -94,6 +94,11 @@ SELECT COUNT(*)
 FROM articles
 WHERE feedId = ?;
 
+getUnreadCount:
+SELECT COUNT(*)
+FROM articles
+WHERE feedId = ? AND status = "unread";
+
 deleteByFeedId:
 DELETE FROM articles
 WHERE feedId = ?;

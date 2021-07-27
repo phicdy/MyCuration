@@ -297,21 +297,14 @@ class ArticleRepository @Inject constructor(
     }
 
     suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
-        var cursor: Cursor? = null
-        var count = -1
         try {
-            val selection = "${Article.FEEDID} = $rssId and ${Article.STATUS} = '${Article.UNREAD}'"
-            db.beginTransaction()
-            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null)
-            count = cursor.count
-            db.setTransactionSuccessful()
+            return@withContext database.transactionWithResult<Int> {
+                database.articleQueries.getUnreadCount(rssId.toLong()).executeAsOne().toInt()
+            }
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
-        return@withContext count
+        return@withContext -1
     }
 
     private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
