@@ -259,60 +259,33 @@ class ArticleRepository @Inject constructor(
 
     suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         var searchKeyWord = keyword
-        val articles = mutableListOf<FavoritableArticle>()
         if (searchKeyWord.contains("%")) {
             searchKeyWord = searchKeyWord.replace("%", "$%")
         }
         if (searchKeyWord.contains("_")) {
             searchKeyWord = searchKeyWord.replace("_", "$" + "_")
         }
-        var columns = arrayOf(
-                Article.ID, Article.TITLE, Article.URL, Article.STATUS, Article.POINT, Article.DATE
-        ).joinToString(postfix = ", ") {
-            Article.TABLE_NAME + "." + it
-        }
-        columns += arrayOf(Feed.TITLE, Feed.ICON_PATH).joinToString { Feed.TABLE_NAME + "." + it }
-        var sql = "select " + columns + ", ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID}" +
-                " from " + Article.TABLE_NAME + " inner join " + Feed.TABLE_NAME +
-                " left outer join ${FavoriteArticle.TABLE_NAME}" +
-                " on " +
-                "(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) " +
-                " where " + Article.TABLE_NAME + "." + Article.TITLE + " like '%" + searchKeyWord + "%' escape '$' and " +
-                Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
-                " order by " + Article.DATE
-        sql += if (isNewestArticleTop) {
-            " desc"
-        } else {
-            " asc"
-        }
-
-        var cursor: Cursor? = null
         try {
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val feedTitle = cursor.getString(6)
-                val feedIconPath = cursor.getString(7)
-                val favoriteId = cursor.getInt(8)
-                val article = FavoritableArticle(id, title, url, status, point,
-                        dateLong, 0, feedTitle, feedIconPath, favoriteId > 0)
-                articles.add(article)
+            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+                if (isNewestArticleTop) {
+                    database.articleQueries.searchArticleOrderByDateDesc("%$searchKeyWord%").executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                } else {
+                    database.articleQueries.searchArticleOrderByDateAsc("%$searchKeyWord%").executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext articles
+        return@withContext emptyList()
     }
 
     suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> {

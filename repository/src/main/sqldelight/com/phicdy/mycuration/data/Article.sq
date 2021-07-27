@@ -71,6 +71,24 @@ WHERE articles.feedId = feeds._id
 ORDER BY date ASC
 LIMIT 300;
 
+searchArticleOrderByDateDesc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.title LIKE ? ESCAPE '$' AND articles.feedId = feeds._id
+ORDER BY date DESC;
+
+searchArticleOrderByDateAsc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.title LIKE ? ESCAPE '$' AND articles.feedId = feeds._id
+ORDER BY date ASC;
+
 getCount:
 SELECT COUNT(*)
 FROM articles
