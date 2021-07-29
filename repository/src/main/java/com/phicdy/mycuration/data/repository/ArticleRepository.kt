@@ -334,56 +334,24 @@ class ArticleRepository @Inject constructor(
         return@withContext -1
     }
 
-    suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(coroutineDispatcherProvider.io()) {
-        val articles = arrayListOf<Article>()
-        var sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
-                Article.TABLE_NAME + "." + Article.TITLE + "," +
-                Article.TABLE_NAME + "." + Article.URL + "," +
-                Article.TABLE_NAME + "." + Article.STATUS + "," +
-                Article.TABLE_NAME + "." + Article.POINT + "," +
-                Article.TABLE_NAME + "." + Article.DATE + "," +
-                Article.TABLE_NAME + "." + Article.FEEDID + "," +
-                Feed.TABLE_NAME + "." + Feed.TITLE + "," +
-                Feed.TABLE_NAME + "." + Feed.ICON_PATH +
-                " from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-                " on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-                Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
-                Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
-                " inner join " + Feed.TABLE_NAME +
-                " on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
-                " order by " + Article.DATE
-        sql += if (isNewestArticleTop) {
-            " desc"
-        } else {
-            " asc"
-        }
-        var cursor: Cursor? = null
+    suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): List<Article> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val feedId = cursor.getInt(6)
-                val feedTitle = cursor.getString(7)
-                val feedIconPath = cursor.getString(8)
-                val article = Article(id, title, url, status, point,
-                        dateLong, feedId, feedTitle, feedIconPath)
-                articles.add(article)
+            return@withContext if (isNewestArticleTop) {
+                database.articleQueries.getUnreadArticlesOfCurationDesc(curationId.toLong()).executeAsList().map {
+                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
+                }
+            } else {
+                database.articleQueries.getUnreadArticlesOfCurationAsc(curationId.toLong()).executeAsList().map {
+                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext articles
+        return@withContext emptyList()
     }
 
     suspend fun getAllArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(coroutineDispatcherProvider.io()) {
