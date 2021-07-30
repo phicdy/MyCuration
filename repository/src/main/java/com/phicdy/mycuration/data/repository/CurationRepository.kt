@@ -28,33 +28,15 @@ class CurationRepository @Inject constructor(
 ) {
 
     suspend fun calcNumOfAllUnreadArticlesOfCuration(curationId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
-        var num = 0
-        val sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
-                Article.TABLE_NAME + "." + Article.TITLE + "," +
-                Article.TABLE_NAME + "." + Article.URL + "," +
-                Article.TABLE_NAME + "." + Article.STATUS + "," +
-                Article.TABLE_NAME + "." + Article.POINT + "," +
-                Article.TABLE_NAME + "." + Article.DATE + "," +
-                Article.TABLE_NAME + "." + Article.FEEDID +
-                " from " + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-                " where " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-                Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
-                Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID +
-                " order by " + Article.DATE
-        var cursor: Cursor? = null
         try {
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            num = cursor.count
-            db.setTransactionSuccessful()
+            return@withContext database.transactionWithResult<Long> {
+                database.curationQueries.getCountOfAllUnreadArticlesOfCuration(curationId.toLong()).executeAsOne()
+            }.toInt()
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext num
+        return@withContext 0
     }
 
     suspend fun getAllCurationWords(): HashMap<Int, ArrayList<String>> = withContext(coroutineDispatcherProvider.io()) {

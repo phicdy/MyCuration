@@ -7,3 +7,11 @@ getAll:
 SELECT *
 FROM curations
 ORDER BY name;
+
+getCountOfAllUnreadArticlesOfCuration:
+SELECT COUNT(*)
+FROM articles
+INNER JOIN curationSelections
+WHERE curationSelections.curationId = ? AND articles.status = "unread" AND articles._id = curationSelections.articleId
+ORDER BY date;
+
