@@ -139,6 +139,24 @@ INNER JOIN feeds
 ON (articles.feedId = feeds._id)
 ORDER BY date ASC;
 
+getArticlesOfCurationDesc:
+SELECT *
+FROM articles
+INNER JOIN curationSelections
+ON (curationSelections.curationId = ? AND articles._id =  curationSelections.articleId)
+INNER JOIN feeds
+ON (articles.feedId = feeds._id)
+ORDER BY date DESC;
+
+getArticlesOfCurationAsc:
+SELECT *
+FROM articles
+INNER JOIN curationSelections
+ON (curationSelections.curationId = ? AND articles._id =  curationSelections.articleId)
+INNER JOIN feeds
+ON (articles.feedId = feeds._id)
+ORDER BY date ASC;
+
 getCount:
 SELECT COUNT(*)
 FROM articles
