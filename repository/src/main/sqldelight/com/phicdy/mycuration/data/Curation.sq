@@ -20,6 +20,11 @@ SELECT *
 FROM curations
 ORDER BY name;
 
+getCountByName:
+SELECT COUNT(*)
+FROM curations
+WHERE name = ?;
+
 getCountOfAllUnreadArticlesOfCuration:
 SELECT COUNT(*)
 FROM articles

@@ -198,24 +198,15 @@ class CurationRepository @Inject constructor(
     }
 
     suspend fun isExist(name: String): Boolean = withContext(coroutineDispatcherProvider.io()) {
-        var num = 0
-        var cursor: Cursor? = null
         try {
-            val columns = arrayOf(Curation.ID)
-            val selection = Curation.NAME + " = ?"
-            val selectionArgs = arrayOf(name)
-            db.beginTransaction()
-            cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null)
-            num = cursor.count
-            db.setTransactionSuccessful()
+            return@withContext database.transactionWithResult<Boolean> {
+                database.curationQueries.getCountByName(name).executeAsOne() > 0
+            }
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext num > 0
+        return@withContext false
     }
 
     suspend fun getCurationNameById(curationId: Int): String = withContext(coroutineDispatcherProvider.io()) {
