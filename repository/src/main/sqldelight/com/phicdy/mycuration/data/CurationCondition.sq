@@ -9,6 +9,11 @@ insert:
 INSERT INTO curationConditions(curationId, word)
 VALUES (?, ?);
 
+getAll:
+SELECT *
+FROM curationConditions
+WHERE curationId = ?;
+
 delete:
 DELETE FROM curationConditions
 WHERE curationId = ?;

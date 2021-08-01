@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.data.repository
 
-import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
@@ -8,7 +7,6 @@ import com.phicdy.mycuration.data.GetAllCurationWords
 import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Curation
-import com.phicdy.mycuration.entity.CurationCondition
 import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.CoroutineScope
@@ -222,27 +220,18 @@ class CurationRepository @Inject constructor(
         return@withContext ""
     }
 
-    suspend fun getCurationWords(curationId: Int): ArrayList<String> = withContext(coroutineDispatcherProvider.io()) {
-        val words = arrayListOf<String>()
-        val columns = arrayOf(CurationCondition.WORD)
-        val selection = CurationCondition.CURATION_ID + " = ?"
-        val selectionArgs = arrayOf(curationId.toString())
-        var cursor: Cursor? = null
+    suspend fun getCurationWords(curationId: Int): List<String> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            db.beginTransaction()
-            cursor = db.query(CurationCondition.TABLE_NAME, columns, selection, selectionArgs, null, null, null)
-            while (cursor.moveToNext()) {
-                words.add(cursor.getString(0))
+            return@withContext database.transactionWithResult<List<String>> {
+                database.curationConditionQueries.getAll(curationId.toLong()).executeAsList().map {
+                    it.word
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext words
+        return@withContext emptyList()
     }
 
     companion object {
