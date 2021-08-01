@@ -6,6 +6,13 @@ CREATE TABLE filters (
     enabled INTEGER
 );
 
+getAll:
+SELECT *
+FROM filters
+INNER JOIN filterFeedRegistrations
+INNER JOIN feeds
+WHERE filters._id = filterFeedRegistrations.filterId AND filterFeedRegistrations.feedId = feeds._id;
+
 delete:
 DELETE FROM filters
 WHERE _id = ?;
