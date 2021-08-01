@@ -1,13 +1,11 @@
 package com.phicdy.mycuration.data.repository
 
 import android.database.SQLException
-import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import com.phicdy.mycuration.data.GetAllCurationWords
 import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Curation
-import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -19,7 +17,6 @@ import javax.inject.Singleton
 
 @Singleton
 class CurationRepository @Inject constructor(
-        private val db: SQLiteDatabase,
         private val database: Database,
         private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
         @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
@@ -112,8 +109,6 @@ class CurationRepository @Inject constructor(
         } catch (e: SQLException) {
             Timber.e(e)
             result = false
-        } finally {
-            db.endTransaction()
         }
         return@withContext result
     }
@@ -142,7 +137,6 @@ class CurationRepository @Inject constructor(
         try {
             database.transaction {
                 // Delete old curation selection
-                db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null)
                 database.curationSelectionQueries.deleteByCurationId(curationId.toLong())
 
                 // Get all articles
