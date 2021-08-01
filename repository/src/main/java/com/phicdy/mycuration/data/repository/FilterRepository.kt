@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
-import com.phicdy.mycuration.entity.FilterFeedRegistration
 import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -219,27 +218,22 @@ class FilterRepository @Inject constructor(
         if (filterId < MIN_TABLE_ID) return@coroutineScope false
         var result = true
         try {
-            db.beginTransaction()
-            for ((feedId) in feeds) {
-                if (feedId < MIN_TABLE_ID) {
-                    result = false
-                    break
-                }
-                val contentValues = ContentValues().apply {
-                    put(FilterFeedRegistration.FEED_ID, feedId)
-                    put(FilterFeedRegistration.FILTER_ID, filterId)
-                }
-                val id = db.insert(FilterFeedRegistration.TABLE_NAME, null, contentValues)
-                if (id == INSERT_ERROR_ID.toLong()) {
-                    result = false
-                    break
+            database.transaction {
+                for ((feedId) in feeds) {
+                    if (feedId < MIN_TABLE_ID) {
+                        result = false
+                        break
+                    }
+                    database.filterFeedRegistrationQueries.insert(filterId, feedId.toLong())
+                    val id = database.filterFeedRegistrationQueries.selectLastInsertRowId().executeAsOne()
+                    if (id == INSERT_ERROR_ID.toLong()) {
+                        result = false
+                        break
+                    }
                 }
             }
         } catch (e: SQLException) {
             Timber.e(e)
-        } finally {
-            if (result) db.setTransactionSuccessful()
-            db.endTransaction()
         }
         return@coroutineScope result
     }

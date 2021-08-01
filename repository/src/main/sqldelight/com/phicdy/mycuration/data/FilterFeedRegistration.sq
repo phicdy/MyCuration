@@ -6,6 +6,13 @@ CREATE TABLE filterFeedRegistrations (
     FOREIGN KEY(feedId) REFERENCES feeds(_id)
 );
 
+insert:
+INSERT INTO filterFeedRegistrations(filterId, feedId)
+VALUES (?, ?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
 deleteByFeedId:
 DELETE FROM filterFeedRegistrations
 WHERE feedId = ?;
