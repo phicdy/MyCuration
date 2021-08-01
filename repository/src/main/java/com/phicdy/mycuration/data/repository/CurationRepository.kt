@@ -102,23 +102,16 @@ class CurationRepository @Inject constructor(
     suspend fun update(curationId: Int, name: String, words: ArrayList<String>): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var result = true
         try {
-            // Update curation name
-            val values = ContentValues().apply {
-                put(Curation.NAME, name)
-            }
-            db.beginTransaction()
-            db.update(Curation.TABLE_NAME, values, Curation.ID + " = " + curationId, null)
+            database.transaction {
+                database.curationQueries.updateNmae(name, curationId.toLong())
 
-            // Delete old curation conditions and insert new one
-            db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null)
-            for (word in words) {
-                val condtionValue = ContentValues().apply {
-                    put(CurationCondition.CURATION_ID, curationId)
-                    put(CurationCondition.WORD, word)
+                // Delete old curation conditions and insert new one
+                database.curationConditionQueries.delete(curationId.toLong())
+
+                for (word in words) {
+                    database.curationConditionQueries.insert(curationId.toLong(), word)
                 }
-                db.insert(CurationCondition.TABLE_NAME, null, condtionValue)
             }
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             Timber.e(e)
             result = false

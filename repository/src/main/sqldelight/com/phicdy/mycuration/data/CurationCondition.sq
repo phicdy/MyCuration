@@ -4,3 +4,11 @@ CREATE TABLE curationConditions (
     curationId INTEGER NOT NULL,
     FOREIGN KEY(curationId) REFERENCES curations(_id)
 );
+
+insert:
+INSERT INTO curationConditions(curationId, word)
+VALUES (?, ?);
+
+delete:
+DELETE FROM curationConditions
+WHERE curationId = ?;

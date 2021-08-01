@@ -3,6 +3,11 @@ CREATE TABLE curations (
     name TEXT NOT NULL
 );
 
+updateNmae:
+UPDATE curations
+SET name = ?
+WHERE _id = ?;
+
 getAll:
 SELECT *
 FROM curations
