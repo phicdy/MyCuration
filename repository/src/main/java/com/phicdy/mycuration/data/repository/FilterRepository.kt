@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
 import android.content.ContentValues
-import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
@@ -148,47 +147,27 @@ class FilterRepository @Inject constructor(
      */
     suspend fun saveNewFilter(title: String, selectedFeeds: ArrayList<Feed>,
                               keyword: String, filterUrl: String): Boolean = withContext(coroutineDispatcherProvider.io()) {
-        var result = true
-        db.beginTransaction()
-        var cur: Cursor? = null
-        var newFilterId = INSERT_ERROR_ID.toLong()
         try {
-            // Check same filter exists in DB
-            val columns = arrayOf(Filter.ID)
-            val condition = Filter.TITLE + " = '" + title + "' and " +
-                    Filter.KEYWORD + " = '" + keyword + "' and " +
-                    Filter.URL + " = '" + filterUrl + "'"
-            val table = Filter.TABLE_NAME
-            cur = db.query(table, columns, condition, null, null, null, null)
-            if (cur.count != 0) {
-                Timber.i("Same Filter Exist")
-            } else {
-                // Register filter
-                val filterVal = ContentValues().apply {
-                    put(Filter.TITLE, title)
-                    put(Filter.URL, filterUrl)
-                    put(Filter.KEYWORD, keyword)
-                    put(Filter.ENABLED, true)
-                }
-                newFilterId = db.insert(Filter.TABLE_NAME, null, filterVal)
-                if (newFilterId == INSERT_ERROR_ID.toLong()) {
-                    result = false
+            var newFilterId = INSERT_ERROR_ID.toLong()
+            val result = database.transactionWithResult<Boolean> {
+                // Check same filter exists in DB
+                val sameFilter = database.filtersQueries.getByTitleAndKeywordAndUrl(title, keyword, filterUrl).executeAsOneOrNull()
+                if (sameFilter != null) {
+                    Timber.i("Same Filter Exist")
+                    false
                 } else {
-                    db.setTransactionSuccessful()
+                    database.filtersQueries.insert(keyword, filterUrl, title, 1)
+                    newFilterId = database.filtersQueries.selectLastInsertRowId().executeAsOne()
+                    newFilterId != INSERT_ERROR_ID.toLong()
                 }
+            }
+            if (result) {
+                return@withContext saveFilterFeedRegistration(newFilterId, selectedFeeds)
             }
         } catch (e: Exception) {
             Timber.e("Failed to save new filter %s", e.message)
-            result = false
-        } finally {
-            cur?.close()
-            db.endTransaction()
         }
-        if (result) {
-            result = saveFilterFeedRegistration(newFilterId, selectedFeeds)
-        }
-
-        return@withContext result
+        return@withContext false
     }
 
     /**
