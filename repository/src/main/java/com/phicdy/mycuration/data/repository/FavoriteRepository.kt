@@ -34,17 +34,15 @@ class FavoriteRepository @Inject constructor(
     }
 
     suspend fun delete(articleId: Int): Boolean = withContext(Dispatchers.IO) {
-        var numOfDeleted = 0
         try {
-            db.beginTransaction()
-            numOfDeleted = db.delete(FavoriteArticle.TABLE_NAME, FavoriteArticle.ARTICLE_ID + " = " + articleId, null)
-            db.setTransactionSuccessful()
+            database.transactionWithResult<Boolean> {
+                database.favoriteArticleQueries.delete(articleId.toLong())
+                database.favoriteArticleQueries.selectChanges().executeAsOne() == 1L
+            }
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
-        return@withContext numOfDeleted == 1
+        return@withContext false
     }
 
     suspend fun fetchAll(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
