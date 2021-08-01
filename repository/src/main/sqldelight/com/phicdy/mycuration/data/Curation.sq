@@ -15,3 +15,9 @@ INNER JOIN curationSelections
 WHERE curationSelections.curationId = ? AND articles.status = "unread" AND articles._id = curationSelections.articleId
 ORDER BY date;
 
+getAllCurationWords:
+SELECT *
+FROM curations
+INNER JOIN curationConditions
+WHERE curations._id = curationConditions.curationId
+ORDER BY curations._id;

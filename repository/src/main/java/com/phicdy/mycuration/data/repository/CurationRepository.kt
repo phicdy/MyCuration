@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
+import com.phicdy.mycuration.data.GetAllCurationWords
 import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Curation
@@ -41,19 +42,16 @@ class CurationRepository @Inject constructor(
 
     suspend fun getAllCurationWords(): HashMap<Int, ArrayList<String>> = withContext(coroutineDispatcherProvider.io()) {
         val curationWordsMap = hashMapOf<Int, ArrayList<String>>()
-        val sql = "select " + Curation.TABLE_NAME + "." + Curation.ID + "," +
-                CurationCondition.TABLE_NAME + "." + CurationCondition.WORD +
-                " from " + Curation.TABLE_NAME + " inner join " + CurationCondition.TABLE_NAME +
-                " where " + Curation.TABLE_NAME + "." + Curation.ID + " = " + CurationCondition.TABLE_NAME + "." + CurationCondition.CURATION_ID +
-                " order by " + Curation.TABLE_NAME + "." + Curation.ID
-        var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery(sql, null)
             val defaultCurationId = -1
             var curationId = defaultCurationId
             var words = ArrayList<String>()
-            while (cursor.moveToNext()) {
-                val newCurationId = cursor.getInt(0)
+            val results = database.transactionWithResult<List<GetAllCurationWords>> {
+                database.curationQueries.getAllCurationWords().executeAsList()
+            }
+            for (result in results) {
+                val word = result.word ?: continue
+                val newCurationId = result.curationId?.toInt() ?: continue
                 if (curationId == defaultCurationId) {
                     curationId = newCurationId
                 }
@@ -63,7 +61,6 @@ class CurationRepository @Inject constructor(
                     curationId = newCurationId
                     words = ArrayList()
                 }
-                val word = cursor.getString(1)
                 words.add(word)
             }
             // Add last words of curation
@@ -72,8 +69,6 @@ class CurationRepository @Inject constructor(
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
         }
         return@withContext curationWordsMap
     }
