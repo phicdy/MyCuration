@@ -76,29 +76,22 @@ class CurationRepository @Inject constructor(
     suspend fun saveCurationsOf(articles: List<Article>) = coroutineScope {
         withContext(coroutineDispatcherProvider.io()) {
             val curationWordMap = getAllCurationWords()
-            val insertCurationSelectionSt = db.compileStatement(
-                    "insert into " + CurationSelection.TABLE_NAME +
-                            "(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?,?);")
             for (curationId in curationWordMap.keys) {
                 val words = curationWordMap[curationId]
-                words?.forEach { word ->
-                    for (article in articles) {
-                        if (article.title.contains(word)) {
-                            try {
-                                db.beginTransaction()
-                                insertCurationSelectionSt.bindString(1, article.id.toString())
-                                insertCurationSelectionSt.bindString(2, curationId.toString())
-                                insertCurationSelectionSt.executeInsert()
-                                db.setTransactionSuccessful()
-                            } catch (e: SQLException) {
-                                Timber.e(e.toString())
-                                Timber.e("article ID: %s, curatation ID: %s", article.id, curationId)
-                                Timber.e(curationWordMap.toString())
-                                Timber.e(article.toString())
-                            } finally {
-                                db.endTransaction()
+                database.transaction {
+                    words?.forEach { word ->
+                        for (article in articles) {
+                            if (article.title.contains(word)) {
+                                try {
+                                    database.curationSelectionQueries.insert(article.id.toLong(), curationId.toLong())
+                                } catch (e: SQLException) {
+                                    Timber.e(e.toString())
+                                    Timber.e("article ID: %s, curatation ID: %s", article.id, curationId)
+                                    Timber.e(curationWordMap.toString())
+                                    Timber.e(article.toString())
+                                }
+                                break
                             }
-                            break
                         }
                     }
                 }
