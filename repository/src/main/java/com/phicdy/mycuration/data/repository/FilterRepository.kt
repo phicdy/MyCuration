@@ -1,8 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
-import android.content.ContentValues
 import android.database.SQLException
-import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
@@ -15,7 +13,6 @@ import javax.inject.Singleton
 
 @Singleton
 class FilterRepository @Inject constructor(
-        private val db: SQLiteDatabase,
         private val database: Database,
         private val coroutineDispatcherProvider: CoroutineDispatcherProvider
 ) {
@@ -31,13 +28,13 @@ class FilterRepository @Inject constructor(
             try {
                 database.transaction {
                     val results = database.filtersQueries.getAll().executeAsList()
-                    if (results.size > 0) {
+                    if (results.isNotEmpty()) {
                         var rssList = ArrayList<Feed>()
                         var filterId = results[0]._id
-                        var title = results[0].title ?: ""
+                        var title = results[0].title
                         var keyword = results[0].keyword ?: ""
                         var url = results[0].url ?: ""
-                        var enabled = results[0].enabled?.toInt() ?: 0
+                        var enabled = results[0].enabled.toInt()
                         var rssId = results[0]._id__.toInt()
                         var rssTitle = results[0].title_
                         rssList.add(Feed(rssId, rssTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
@@ -50,10 +47,10 @@ class FilterRepository @Inject constructor(
                                 filterId = cursorFilterId
                                 rssList = ArrayList()
                             }
-                            title = results[0].title ?: ""
+                            title = results[0].title
                             keyword = results[0].keyword ?: ""
                             url = results[0].url ?: ""
-                            enabled = results[0].enabled?.toInt() ?: 0
+                            enabled = results[0].enabled.toInt()
                             rssId = results[0]._id__.toInt()
                             rssTitle = results[0].title_
                             rssList.add(Feed(rssId, rssTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
@@ -240,16 +237,11 @@ class FilterRepository @Inject constructor(
 
     suspend fun updateEnabled(id: Int, isEnabled: Boolean) = withContext(coroutineDispatcherProvider.io()) {
         try {
-            val values = ContentValues().apply {
-                put(Filter.ENABLED, if (isEnabled) Filter.TRUE else Filter.FALSE)
+            database.transaction {
+                database.filtersQueries.updateEnabled(if (isEnabled) Filter.TRUE.toLong() else Filter.FALSE.toLong(), id.toLong())
             }
-            db.beginTransaction()
-            db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + id, null)
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             Timber.e(e)
-        } finally {
-            db.endTransaction()
         }
     }
 

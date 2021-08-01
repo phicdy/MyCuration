@@ -43,6 +43,11 @@ UPDATE filters
 SET keyword = ?, url = ?, title = ?
 WHERE _id = ?;
 
+updateEnabled:
+UPDATE filters
+SET enabled = ?
+WHERE _id = ?;
+
 delete:
 DELETE FROM filters
 WHERE _id = ?;
