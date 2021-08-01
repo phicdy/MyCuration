@@ -11,6 +11,24 @@ VALUES (?);
 selectLastInsertRowId:
 SELECT last_insert_rowid();
 
+getAllOrderByAsc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = feeds._id
+ORDER BY date ASC;
+
+getAllOrderByDesc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = feeds._id
+ORDER BY date DESC;
+
 delete:
 DELETE FROM favoriteArticles
 WHERE articleId = ?;
