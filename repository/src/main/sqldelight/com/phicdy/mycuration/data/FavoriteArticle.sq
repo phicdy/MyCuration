@@ -4,6 +4,13 @@ CREATE TABLE favoriteArticles (
     FOREIGN KEY(articleId) REFERENCES articles(_id)
 );
 
+insert:
+INSERT INTO favoriteArticles(articleId)
+VALUES (?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
 delete:
 DELETE FROM favoriteArticles
 WHERE articleId = ?;

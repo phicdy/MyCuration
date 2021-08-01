@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.data.repository
 
-import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
@@ -8,24 +7,27 @@ import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.FavoriteArticle
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FavoriteRepository(val db: SQLiteDatabase) {
+@Singleton
+class FavoriteRepository @Inject constructor(
+        val db: SQLiteDatabase,
+        private val database: Database,
+) {
 
     suspend fun store(articleId: Int): Long = withContext(Dispatchers.IO) {
         var id = -1L
         try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(FavoriteArticle.ARTICLE_ID, articleId)
+            database.transaction {
+                database.favoriteArticleQueries.insert(articleId.toLong())
+                id = database.favoriteArticleQueries.selectLastInsertRowId().executeAsOne()
             }
-            id = db.insert(FavoriteArticle.TABLE_NAME, null, values)
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
 
         return@withContext id

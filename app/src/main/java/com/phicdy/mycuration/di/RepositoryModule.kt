@@ -8,7 +8,6 @@ import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.data.repository.AdditionalSettingRepository
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
-import com.phicdy.mycuration.data.repository.FavoriteRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
@@ -42,11 +41,6 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideSQLiteDatabase(databaseHelper: DatabaseHelper): SQLiteDatabase = databaseHelper.writableDatabase
-
-    @Singleton
-    @Provides
-    fun provideFavoriteRepository(sqLiteDatabase: SQLiteDatabase): FavoriteRepository =
-            FavoriteRepository(sqLiteDatabase)
 
     @Singleton
     @Provides
