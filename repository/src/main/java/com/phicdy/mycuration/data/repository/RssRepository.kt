@@ -55,7 +55,7 @@ class RssRepository @Inject constructor(
                 val filters = filterRepository.getAllFilters()
                 database.transactionWithResult {
                     for (article in allArticlesInRss) {
-                        database.curationSelectionQueries.delete(article.id.toLong())
+                        database.curationSelectionQueries.deleteByArticleId(article.id.toLong())
                         database.favoriteArticleQueries.delete(article.id.toLong())
                     }
                     database.articleQueries.deleteByFeedId(rssId.toLong())

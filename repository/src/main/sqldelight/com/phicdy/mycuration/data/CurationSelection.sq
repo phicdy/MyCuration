@@ -10,6 +10,10 @@ insert:
 INSERT INTO curationSelections(articleId, curationId)
 VALUES (?, ?);
 
-delete:
+deleteByArticleId:
 DELETE FROM curationSelections
 WHERE articleId = ?;
+
+deleteByCurationId:
+DELETE FROM curationSelections
+WHERE curationId = ?;

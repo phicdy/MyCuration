@@ -15,6 +15,10 @@ VALUES (?, ?, ?, ?, ?, ?);
 selectLastInsertRowId:
 SELECT last_insert_rowid();
 
+getAll:
+SELECT *
+FROM articles;
+
 getAllInRssOrderByDateDesc:
 SELECT *
 FROM articles

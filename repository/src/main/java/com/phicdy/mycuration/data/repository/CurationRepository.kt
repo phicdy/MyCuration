@@ -141,37 +141,30 @@ class CurationRepository @Inject constructor(
         if (curationId == NOT_FOUND_ID) return@withContext false
 
         var result = true
-        var cursor: Cursor? = null
         try {
-            val insertSt = db.compileStatement("insert into " + CurationSelection.TABLE_NAME +
-                    "(" + CurationSelection.ARTICLE_ID + "," + CurationSelection.CURATION_ID + ") values (?," + curationId + ");")
-            db.beginTransaction()
-            // Delete old curation selection
-            db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null)
+            database.transaction {
+                // Delete old curation selection
+                db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null)
+                database.curationSelectionQueries.deleteByCurationId(curationId.toLong())
 
-            // Get all articles
-            val columns = arrayOf(Article.ID, Article.TITLE)
-            cursor = db.query(Article.TABLE_NAME, columns, null, null, null, null, null)
+                // Get all articles
+                val allArticles = database.articleQueries.getAll().executeAsList()
 
-            // Adapt
-            while (cursor!!.moveToNext()) {
-                val articleId = cursor.getInt(0)
-                val articleTitle = cursor.getString(1)
-                for (word in words) {
-                    if (articleTitle.contains(word)) {
-                        insertSt.bindString(1, articleId.toString())
-                        insertSt.executeInsert()
-                        break
+                // Adapt
+                for (article in allArticles) {
+                    val articleId = article._id
+                    val articleTitle = article.title
+                    for (word in words) {
+                        if (articleTitle.contains(word)) {
+                            database.curationSelectionQueries.insert(articleId, curationId.toLong())
+                            break
+                        }
                     }
                 }
             }
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             Timber.e(e)
             result = false
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
         return@withContext result
     }
