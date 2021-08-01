@@ -210,25 +210,16 @@ class CurationRepository @Inject constructor(
     }
 
     suspend fun getCurationNameById(curationId: Int): String = withContext(coroutineDispatcherProvider.io()) {
-        var name = ""
-        val columns = arrayOf(Curation.NAME)
-        val selection = Curation.ID + " = ?"
-        val selectionArgs = arrayOf(curationId.toString())
-        var cursor: Cursor? = null
         try {
-            db.beginTransaction()
-            cursor = db.query(Curation.TABLE_NAME, columns, selection, selectionArgs, null, null, null)
-            cursor.moveToFirst()
-            name = cursor.getString(0)
-            db.setTransactionSuccessful()
+            return@withContext database.transactionWithResult<String> {
+                database.curationQueries.getById(curationId.toLong()).executeAsList().firstOrNull()?.name
+                        ?: ""
+            }
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext name
+        return@withContext ""
     }
 
     suspend fun getCurationWords(curationId: Int): ArrayList<String> = withContext(coroutineDispatcherProvider.io()) {
