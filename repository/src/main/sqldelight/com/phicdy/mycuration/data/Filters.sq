@@ -38,6 +38,14 @@ SELECT *
 FROM filters
 WHERE filters.title = ? AND keyword = ? AND url = ?;
 
+update:
+UPDATE filters
+SET keyword = ?, url = ?, title = ?
+WHERE _id = ?;
+
 delete:
 DELETE FROM filters
 WHERE _id = ?;
+
+selectChanges:
+SELECT changes();

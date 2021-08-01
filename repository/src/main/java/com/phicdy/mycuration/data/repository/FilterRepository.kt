@@ -181,39 +181,29 @@ class FilterRepository @Inject constructor(
      * @return update result
      */
     suspend fun updateFilter(filterId: Int, title: String, keyword: String, url: String, feeds: ArrayList<Feed>): Boolean = withContext(coroutineDispatcherProvider.io()) {
-        var result: Boolean
         try {
-            val values = ContentValues().apply {
-                put(Filter.ID, filterId)
-                put(Filter.KEYWORD, keyword)
-                put(Filter.URL, url)
-                put(Filter.TITLE, title)
-            }
-            db.beginTransaction()
-            var affectedNum = db.update(Filter.TABLE_NAME, values, Filter.ID + " = " + filterId, null)
-            // Same ID filter should not exist and 0 means fail to update
-            result = affectedNum == 1
-
-            // Delete existing relation between filter and feed
-            if (result) {
-                val where = FilterFeedRegistration.FILTER_ID + " = " + filterId
-                affectedNum = db.delete(FilterFeedRegistration.TABLE_NAME, where, null)
-                result = affectedNum > 0
+            val result = database.transactionWithResult<Boolean> {
+                database.filtersQueries.update(keyword, url, title, filterId.toLong())
+                var affectedNum = database.filtersQueries.selectChanges().executeAsOne()
+                // Same ID filter should not exist and 0 means fail to update
+                // Delete existing relation between filter and feed
+                if (affectedNum == 1L) {
+                    database.filterFeedRegistrationQueries.deleteByFilterId(filterId.toLong())
+                    affectedNum = database.filtersQueries.selectChanges().executeAsOne()
+                    affectedNum > 0
+                } else {
+                    false
+                }
             }
 
             // Insert new relations
             if (result) {
-                result = saveFilterFeedRegistration(filterId.toLong(), feeds)
+                return@withContext saveFilterFeedRegistration(filterId.toLong(), feeds)
             }
-
-            if (result) db.setTransactionSuccessful()
         } catch (e: SQLException) {
             Timber.e(e)
-            result = false
-        } finally {
-            db.endTransaction()
         }
-        return@withContext result
+        return@withContext false
     }
 
     /**
