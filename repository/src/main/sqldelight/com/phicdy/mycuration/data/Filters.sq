@@ -19,6 +19,13 @@ FROM filters
 INNER JOIN filterFeedRegistrations
 WHERE filterFeedRegistrations.feedId = ? AND filterFeedRegistrations.filterId = filters._id AND filters.enabled = 1;
 
+getById:
+SELECT *
+FROM filters
+INNER JOIN filterFeedRegistrations
+INNER JOIN feeds
+WHERE filters._id = ? AND filters._id = filterFeedRegistrations.filterId AND filterFeedRegistrations.feedId = feeds._id;
+
 delete:
 DELETE FROM filters
 WHERE _id = ?;
