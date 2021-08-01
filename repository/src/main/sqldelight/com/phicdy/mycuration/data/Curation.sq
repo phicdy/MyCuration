@@ -33,3 +33,10 @@ FROM curations
 INNER JOIN curationConditions
 WHERE curations._id = curationConditions.curationId
 ORDER BY curations._id;
+
+delete:
+DELETE FROM curations
+WHERE _id = ?;
+
+selectChanges:
+SELECT changes();

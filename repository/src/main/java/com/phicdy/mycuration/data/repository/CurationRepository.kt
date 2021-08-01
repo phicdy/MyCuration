@@ -185,15 +185,14 @@ class CurationRepository @Inject constructor(
     suspend fun delete(curationId: Int): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var numOfDeleted = 0
         try {
-            db.beginTransaction()
-            db.delete(CurationCondition.TABLE_NAME, CurationCondition.CURATION_ID + " = " + curationId, null)
-            db.delete(CurationSelection.TABLE_NAME, CurationSelection.CURATION_ID + " = " + curationId, null)
-            numOfDeleted = db.delete(Curation.TABLE_NAME, Curation.ID + " = " + curationId, null)
-            db.setTransactionSuccessful()
+            database.transaction {
+                database.curationConditionQueries.delete(curationId.toLong())
+                database.curationSelectionQueries.deleteByCurationId(curationId.toLong())
+                database.curationQueries.delete(curationId.toLong())
+                numOfDeleted = database.curationQueries.selectChanges().executeAsOne().toInt()
+            }
         } catch (e: SQLException) {
             Timber.e(e)
-        } finally {
-            db.endTransaction()
         }
         return@withContext numOfDeleted == 1
     }
