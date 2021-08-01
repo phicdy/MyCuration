@@ -3,6 +3,13 @@ CREATE TABLE curations (
     name TEXT NOT NULL
 );
 
+insert:
+INSERT INTO curations(name)
+VALUES (?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
 updateNmae:
 UPDATE curations
 SET name = ?

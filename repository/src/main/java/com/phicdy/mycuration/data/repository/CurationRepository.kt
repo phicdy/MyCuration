@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.data.repository
 
-import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
@@ -125,23 +124,15 @@ class CurationRepository @Inject constructor(
         if (words.isEmpty()) return@withContext -1L
         var addedCurationId = -1L
         try {
-            val values = ContentValues().apply {
-                put(Curation.NAME, name)
-            }
-            db.beginTransaction()
-            addedCurationId = db.insert(Curation.TABLE_NAME, null, values)
-            for (word in words) {
-                val condtionValue = ContentValues().apply {
-                    put(CurationCondition.CURATION_ID, addedCurationId)
-                    put(CurationCondition.WORD, word)
+            database.transaction {
+                database.curationQueries.insert(name)
+                addedCurationId = database.curationQueries.selectLastInsertRowId().executeAsOne()
+                for (word in words) {
+                    database.curationConditionQueries.insert(addedCurationId, word)
                 }
-                db.insert(CurationCondition.TABLE_NAME, null, condtionValue)
             }
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             Timber.e(e)
-        } finally {
-            db.endTransaction()
         }
         return@withContext addedCurationId
     }
