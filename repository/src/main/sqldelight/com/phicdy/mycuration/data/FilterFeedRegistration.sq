@@ -9,3 +9,7 @@ CREATE TABLE filterFeedRegistrations (
 deleteByFeedId:
 DELETE FROM filterFeedRegistrations
 WHERE feedId = ?;
+
+deleteByFilterId:
+DELETE FROM filterFeedRegistrations
+WHERE filterId = ?;

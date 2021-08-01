@@ -127,16 +127,12 @@ class FilterRepository @Inject constructor(
      */
     suspend fun deleteFilter(filterId: Int) = withContext(coroutineDispatcherProvider.io()) {
         try {
-            db.beginTransaction()
-            val relationWhere = FilterFeedRegistration.FILTER_ID + " = " + filterId
-            db.delete(FilterFeedRegistration.TABLE_NAME, relationWhere, null)
-            val filterWhere = Filter.ID + " = " + filterId
-            db.delete(Filter.TABLE_NAME, filterWhere, null)
-            db.setTransactionSuccessful()
+            database.transaction {
+                database.filterFeedRegistrationQueries.deleteByFilterId(filterId.toLong())
+                database.filtersQueries.delete(filterId.toLong())
+            }
         } catch (e: SQLException) {
             Timber.e(e)
-        } finally {
-            db.endTransaction()
         }
     }
 
