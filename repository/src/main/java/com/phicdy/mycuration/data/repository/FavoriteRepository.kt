@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
 import android.database.SQLException
-import android.database.sqlite.SQLiteDatabase
 import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FavoriteRepository @Inject constructor(
-        val db: SQLiteDatabase,
-        private val database: Database,
+        private val database: Database
 ) {
 
     suspend fun store(articleId: Int): Long = withContext(Dispatchers.IO) {
