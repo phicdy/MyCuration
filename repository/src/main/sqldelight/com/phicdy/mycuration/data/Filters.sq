@@ -2,8 +2,8 @@ CREATE TABLE filters (
     _id INTEGER PRIMARY KEY AUTOINCREMENT,
     keyword TEXT,
     url TEXT,
-    title TEXT,
-    enabled INTEGER
+    title TEXT NOT NULL,
+    enabled INTEGER NOT NULL
 );
 
 getAll:
@@ -12,6 +12,12 @@ FROM filters
 INNER JOIN filterFeedRegistrations
 INNER JOIN feeds
 WHERE filters._id = filterFeedRegistrations.filterId AND filterFeedRegistrations.feedId = feeds._id;
+
+getAllEnabled:
+SELECT *
+FROM filters
+INNER JOIN filterFeedRegistrations
+WHERE filterFeedRegistrations.feedId = ? AND filterFeedRegistrations.filterId = filters._id AND filters.enabled = 1;
 
 delete:
 DELETE FROM filters

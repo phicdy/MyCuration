@@ -71,41 +71,19 @@ class FilterRepository @Inject constructor(
         }
     }
 
-    suspend fun getEnabledFiltersOfFeed(feedId: Int): ArrayList<Filter> = withContext(coroutineDispatcherProvider.io()) {
-        val filterList = arrayListOf<Filter>()
-        var cur: Cursor? = null
+    suspend fun getEnabledFiltersOfFeed(feedId: Int): List<Filter> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            // Get all filters which feed ID is "feedId"
-            val columns = arrayOf(
-                    Filter.TABLE_NAME + "." + Filter.ID,
-                    Filter.TABLE_NAME + "." + Filter.TITLE,
-                    Filter.TABLE_NAME + "." + Filter.KEYWORD,
-                    Filter.TABLE_NAME + "." + Filter.URL,
-                    Filter.TABLE_NAME + "." + Filter.ENABLED
-            )
-            val condition = FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FEED_ID + " = " + feedId + " and " +
-                    FilterFeedRegistration.TABLE_NAME + "." + FilterFeedRegistration.FILTER_ID + " = " + Filter.TABLE_NAME + "." + Filter.ID + " and " +
-                    Filter.TABLE_NAME + "." + Filter.ENABLED + " = " + Filter.TRUE
-            db.beginTransaction()
-            cur = db.query(Filter.TABLE_NAME + " inner join " + FilterFeedRegistration.TABLE_NAME, columns, condition, null, null, null, null)
-            // Change to ArrayList
-            while (cur.moveToNext()) {
-                val id = cur.getInt(0)
-                val title = cur.getString(1)
-                val keyword = cur.getString(2)
-                val url = cur.getString(3)
-                val enabled = cur.getInt(4)
-                filterList.add(Filter(id, title, keyword, url, ArrayList(), -1, enabled))
+            return@withContext database.transactionWithResult<List<Filter>> {
+                database.filtersQueries.getAllEnabled(feedId.toLong()).executeAsList().map {
+                    Filter(it._id.toInt(), it.title, it.keyword ?: "", it.url
+                            ?: "", arrayListOf(), -1, it.enabled.toInt())
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cur?.close()
-            db.endTransaction()
         }
 
-        return@withContext filterList
+        return@withContext emptyList()
     }
 
     suspend fun getFilterById(filterId: Int): Filter? = withContext(coroutineDispatcherProvider.io()) {
