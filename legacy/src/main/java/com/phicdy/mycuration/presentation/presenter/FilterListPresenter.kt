@@ -27,7 +27,7 @@ class FilterListPresenter @Inject constructor(
                 view.showEmptyView()
             } else {
                 view.hideEmptyView()
-                view.showFilterList(it)
+                view.showFilterList(ArrayList(it))
             }
         }
 

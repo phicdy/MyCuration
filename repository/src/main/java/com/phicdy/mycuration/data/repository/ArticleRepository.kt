@@ -37,7 +37,7 @@ class ArticleRepository @Inject constructor(
         }
     }
 
-    suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int): Int {
+    suspend fun applyFiltersOfRss(filterList: List<Filter>, rssId: Int): Int {
         return withContext(applicationCoroutineScope.coroutineContext) {
             // If articles are hit in condition, Set articles status to "read"
             var updatedCount = 0
