@@ -26,7 +26,7 @@ FROM articles
 INNER JOIN feeds
 LEFT OUTER JOIN favoriteArticles
 ON (articles._id = favoriteArticles.articleId)
-WHERE articles.feedId = feeds._id
+WHERE articles._id = favoriteArticles.articleId AND articles.feedId = feeds._id
 ORDER BY date DESC;
 
 delete:
