@@ -52,5 +52,8 @@ delete:
 DELETE FROM filters
 WHERE _id = ?;
 
+deleteAll:
+DELETE FROM filters;
+
 selectChanges:
 SELECT changes();

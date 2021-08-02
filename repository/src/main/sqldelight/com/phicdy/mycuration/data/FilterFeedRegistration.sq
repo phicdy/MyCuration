@@ -20,3 +20,7 @@ WHERE feedId = ?;
 deleteByFilterId:
 DELETE FROM filterFeedRegistrations
 WHERE filterId = ?;
+
+deleteAll:
+DELETE FROM filterFeedRegistrations;
+

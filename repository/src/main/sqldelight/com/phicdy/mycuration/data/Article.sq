@@ -211,3 +211,7 @@ WHERE url = ?;
 
 selectChanges:
 SELECT changes();
+
+deleteAll:
+DELETE FROM articles;
+

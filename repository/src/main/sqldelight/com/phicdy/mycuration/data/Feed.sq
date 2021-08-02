@@ -60,3 +60,7 @@ SELECT changes();
 delete:
 DELETE FROM feeds
 WHERE _id = ?;
+
+deleteAll:
+DELETE FROM feeds;
+

@@ -17,3 +17,7 @@ WHERE articleId = ?;
 deleteByCurationId:
 DELETE FROM curationSelections
 WHERE curationId = ?;
+
+deleteAll:
+DELETE FROM curationSelections;
+

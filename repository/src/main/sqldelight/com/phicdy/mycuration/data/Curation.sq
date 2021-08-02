@@ -48,5 +48,8 @@ delete:
 DELETE FROM curations
 WHERE _id = ?;
 
+deleteAll:
+DELETE FROM curations;
+
 selectChanges:
 SELECT changes();

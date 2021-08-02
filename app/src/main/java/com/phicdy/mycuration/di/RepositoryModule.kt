@@ -1,8 +1,6 @@
 package com.phicdy.mycuration.di
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.data.repository.AdditionalSettingRepository
@@ -37,10 +35,6 @@ object RepositoryModule {
                     name = "rss_manage"
             )
     )
-
-    @Singleton
-    @Provides
-    fun provideSQLiteDatabase(databaseHelper: DatabaseHelper): SQLiteDatabase = databaseHelper.writableDatabase
 
     @Singleton
     @Provides
