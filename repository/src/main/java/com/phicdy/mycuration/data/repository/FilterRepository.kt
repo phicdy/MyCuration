@@ -47,12 +47,12 @@ class FilterRepository @Inject constructor(
                                 filterId = cursorFilterId
                                 rssList = ArrayList()
                             }
-                            title = results[0].title
-                            keyword = results[0].keyword ?: ""
-                            url = results[0].url ?: ""
-                            enabled = results[0].enabled.toInt()
-                            rssId = results[0]._id__.toInt()
-                            rssTitle = results[0].title_
+                            title = result.title
+                            keyword = result.keyword ?: ""
+                            url = result.url ?: ""
+                            enabled = result.enabled.toInt()
+                            rssId = result._id__.toInt()
+                            rssTitle = result.title_
                             rssList.add(Feed(rssId, rssTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
                         }
                         val filter = Filter(filterId.toInt(), title, keyword, url, rssList, -1, enabled)
