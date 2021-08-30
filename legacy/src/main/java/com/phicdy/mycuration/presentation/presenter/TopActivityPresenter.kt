@@ -42,11 +42,12 @@ class TopActivityPresenter @Inject constructor(
         view.startFabAnimation()
     }
 
-    suspend fun fabCurationClicked() = coroutineScope {
+    fun fabCurationClicked() {
         view.closeAddFab()
-        if (rssRepository.getNumOfRss() == 0) {
+        val num = rssRepository.getNumOfRss()
+        if (num == 0L) {
             view.goToFeedSearch()
-            return@coroutineScope
+            return
         }
         view.goToAddCuration()
     }
@@ -58,7 +59,8 @@ class TopActivityPresenter @Inject constructor(
 
     suspend fun fabFilterClicked() = coroutineScope {
         view.closeAddFab()
-        if (rssRepository.getNumOfRss() == 0) {
+        val num = rssRepository.getNumOfRss()
+        if (num == 0L) {
             view.goToFeedSearch()
             return@coroutineScope
         }

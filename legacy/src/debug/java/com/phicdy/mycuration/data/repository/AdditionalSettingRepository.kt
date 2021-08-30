@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
 import android.os.Environment
-import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.util.FileUtil
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +44,7 @@ class AdditionalSettingRepository(
                 } else {
                     Timber.d("Failed to make directory")
                 }
-                val backupDb = File(backupStrage, backupDbFolderPath + DatabaseHelper.DATABASE_NAME)
+                val backupDb = File(backupStrage, backupDbFolderPath + DATABASE_NAME)
 
                 // Copy database
                 val src = FileInputStream(currentDb).channel
@@ -55,7 +54,7 @@ class AdditionalSettingRepository(
                 dst.close()
 
                 val walFile = File(currentDb.path + "-wal")
-                val backupWal = File(backupStrage, backupDbFolderPath + DatabaseHelper.DATABASE_NAME + "-wal")
+                val backupWal = File(backupStrage, backupDbFolderPath + DATABASE_NAME + "-wal")
                 if (walFile.exists()) {
                     val walSrc = FileInputStream(walFile).channel
                     val walDst = FileOutputStream(backupWal).channel
@@ -65,7 +64,7 @@ class AdditionalSettingRepository(
                 }
 
                 val shmFile = File(currentDb.path + "-shm")
-                val backupShm = File(backupStrage, backupDbFolderPath + DatabaseHelper.DATABASE_NAME + "-shm")
+                val backupShm = File(backupStrage, backupDbFolderPath + DATABASE_NAME + "-shm")
                 if (shmFile.exists()) {
                     val shmSrc = FileInputStream(shmFile).channel
                     val shmDst = FileOutputStream(backupShm).channel
@@ -97,7 +96,7 @@ class AdditionalSettingRepository(
             if (backupStrage.canRead()) {
                 Timber.d("Backup storage is readable")
 
-                val backupDbPath = BACKUP_FOLDER + "/" + DatabaseHelper.DATABASE_NAME
+                val backupDbPath = BACKUP_FOLDER + "/" + DATABASE_NAME
                 val newDb = File(backupStrage, backupDbPath)
                 if (!newDb.exists()) return
                 val src = FileInputStream(newDb).channel
@@ -173,5 +172,6 @@ class AdditionalSettingRepository(
 
     companion object {
         private const val BACKUP_FOLDER = "filfeed_backup"
+        private const val DATABASE_NAME = "rss_manage"
     }
 }

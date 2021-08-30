@@ -31,7 +31,7 @@ class AddCurationPresenter @Inject constructor(
     suspend fun resume() = coroutineScope {
         if (editCurationid != NOT_EDIT_CURATION_ID) {
             view.setCurationName(repository.getCurationNameById(editCurationid))
-            addedWords = repository.getCurationWords(editCurationid)
+            addedWords = ArrayList(repository.getCurationWords(editCurationid))
             view.refreshList(addedWords)
         }
         view.refreshList(addedWords)

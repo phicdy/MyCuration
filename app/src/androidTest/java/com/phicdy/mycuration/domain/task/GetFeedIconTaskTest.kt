@@ -3,13 +3,12 @@ package com.phicdy.mycuration.domain.task
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.phicdy.mycuration.CoroutineTestRule
-import com.phicdy.mycuration.data.db.DatabaseHelper
-import com.phicdy.mycuration.data.db.DatabaseMigration
-import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.repository.Database
+import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
@@ -30,7 +29,13 @@ class GetFeedIconTaskTest {
 
     @Before
     fun setup() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
+        val db = Database(
+                AndroidSqliteDriver(
+                        schema = Database.Schema,
+                        context = ApplicationProvider.getApplicationContext(),
+                        name = "rss_manage"
+                )
+        )
         rssRepository = RssRepository(db, ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope), FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider), coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
     }
 

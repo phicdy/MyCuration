@@ -23,15 +23,14 @@ import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.R
-import com.phicdy.mycuration.data.db.DatabaseHelper
-import com.phicdy.mycuration.data.db.DatabaseMigration
-import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import com.phicdy.mycuration.repository.Database
+import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Description
@@ -72,10 +71,17 @@ class SearchArticleTest : UiTest() {
 
     @Before
     fun setup() {
-        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask()))
-        articleRepository = ArticleRepository(helper.writableDatabase, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope)
-        rssRepository = RssRepository(helper.writableDatabase, articleRepository, FilterRepository(helper.writableDatabase, coroutineTestRule.testCoroutineDispatcherProvider), coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
-        deleteAll(helper.writableDatabase)
+        val db = Database(
+                AndroidSqliteDriver(
+                        schema = Database.Schema,
+                        context = ApplicationProvider.getApplicationContext(),
+                        name = "rss_manage"
+                )
+        )
+
+        articleRepository = ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope)
+        rssRepository = RssRepository(db, articleRepository, FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider), coroutineTestRule.testCoroutineScope, coroutineTestRule.testCoroutineDispatcherProvider)
+        deleteAll(db)
     }
 
     @After

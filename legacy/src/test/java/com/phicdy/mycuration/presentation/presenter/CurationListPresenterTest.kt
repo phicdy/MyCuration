@@ -90,7 +90,7 @@ class CurationListPresenterTest {
 
     @Test
     fun `when rss is empty then no rss view is set`() = runBlocking {
-        whenever(rssRepository.getNumOfRss()).thenReturn(0)
+        whenever(rssRepository.getNumOfRss()).thenReturn(0L)
         presenter.activityCreated()
         verify(view, times(1)).setNoRssTextToEmptyView()
     }

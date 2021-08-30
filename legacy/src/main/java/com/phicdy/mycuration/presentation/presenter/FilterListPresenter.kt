@@ -13,8 +13,9 @@ class FilterListPresenter @Inject constructor(
         private val filterRepository: FilterRepository
 ) {
 
-    suspend fun onActivityCreated() = coroutineScope {
-        if (rssRepository.getNumOfRss() == 0) {
+    fun onActivityCreated() {
+        val num = rssRepository.getNumOfRss()
+        if (num == 0L) {
             view.setRssEmptyMessage()
         }
     }
@@ -26,7 +27,7 @@ class FilterListPresenter @Inject constructor(
                 view.showEmptyView()
             } else {
                 view.hideEmptyView()
-                view.showFilterList(it)
+                view.showFilterList(ArrayList(it))
             }
         }
 

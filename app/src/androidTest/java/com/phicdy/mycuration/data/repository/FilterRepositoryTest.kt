@@ -2,11 +2,10 @@ package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
 import com.phicdy.mycuration.CoroutineTestRule
-import com.phicdy.mycuration.data.db.DatabaseHelper
-import com.phicdy.mycuration.data.db.DatabaseMigration
-import com.phicdy.mycuration.data.db.ResetIconPathTask
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.repository.Database
+import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
@@ -27,7 +26,13 @@ class FilterRepositoryTest {
     private lateinit var articleRepository: ArticleRepository
     private lateinit var filterRepository: FilterRepository
 
-    private val db = DatabaseHelper(ApplicationProvider.getApplicationContext(), DatabaseMigration(ResetIconPathTask())).writableDatabase
+    private val db = Database(
+            AndroidSqliteDriver(
+                    schema = Database.Schema,
+                    context = ApplicationProvider.getApplicationContext(),
+                    name = "rss_manage"
+            )
+    )
 
     @Before
     fun setUp() {

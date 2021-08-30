@@ -29,7 +29,7 @@ class ReadAllArticlesActionCreator @Inject constructor(
             if (feedId == Feed.ALL_FEED_ID) {
                 articleRepository.saveAllStatusToRead()
 
-                val allRss = rssRepository.getAllFeedsWithNumOfUnreadArticles()
+                val allRss = rssRepository.getAllFeeds()
                 allRss.forEach { rss ->
                     val readCount = unread.filter { rss.id == it.value.feedId }.size
                     if (readCount == 0) return@forEach

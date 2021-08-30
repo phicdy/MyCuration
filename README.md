@@ -42,6 +42,7 @@ Set status to read automatically by user settings
 
 * [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
 * [Dagger Hilt](https://dagger.dev/hilt/)
+* [SQLDelight](https://github.com/cashapp/sqldelight)
 * [RecyclerView](https://dl.google.com/dl/android/maven2/index.html)
 * [Retrofit](https://github.com/square/retrofit)
 * [Glide](https://github.com/bumptech/glide)

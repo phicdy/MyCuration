@@ -1,0 +1,23 @@
+CREATE TABLE curationSelections (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    curationId INTEGER,
+    articleId INTEGER,
+    FOREIGN KEY(curationId) REFERENCES curations(_id),
+    FOREIGN KEY(articleId) REFERENCES articles(_id)
+);
+
+insert:
+INSERT INTO curationSelections(articleId, curationId)
+VALUES (?, ?);
+
+deleteByArticleId:
+DELETE FROM curationSelections
+WHERE articleId = ?;
+
+deleteByCurationId:
+DELETE FROM curationSelections
+WHERE curationId = ?;
+
+deleteAll:
+DELETE FROM curationSelections;
+
