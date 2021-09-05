@@ -3,7 +3,7 @@ buildscript {
     ext.kotlin_version = '1.5.21'
     ext.timber_version = '4.7.1'
     ext.coroutine_version = '1.5.0'
-    ext.lifecycle_version = '2.2.0'
+    ext.lifecycle_version = '2.3.1'
     ext.arch_core_testing_version = '2.1.0'
     ext.appcompat_version = '1.2.0'
     ext.fragment_ktx_version = '1.2.5'
