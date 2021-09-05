@@ -24,61 +24,11 @@ buildscript {
     ext.sqlite_version = '2.1.0'
 
     repositories {
-        google().content {
-            includeGroupByRegex 'com\\.google.*'
-            includeGroupByRegex 'com\\.android\\.tools.*'
-            includeGroup 'androidx.databinding'
-            includeGroup 'com.android.databinding'
-            includeGroup 'com.android'
-            includeGroup 'com.squareup'
-        }
+        google()
         mavenCentral()
         maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
         maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
-        jcenter {
-            content {
-                includeGroupByRegex 'net\\.sf.*'
-                includeGroupByRegex 'com\\.squareup.*'
-                includeGroupByRegex 'com\\.googlecode.*'
-                includeGroupByRegex 'com\\.google.*'
-                includeGroupByRegex 'org\\.apache.*'
-                includeGroupByRegex 'org\\.jetbrains.*'
-                includeGroupByRegex 'org\\.ow2.*'
-                includeGroupByRegex 'commons-.*'
-                includeGroupByRegex 'javax.*'
-                includeGroupByRegex 'com\\.sun.*'
-                includeGroup 'commons-validator'
-                includeGroup 'commons-logging'
-                includeGroup 'commons-codec'
-                includeGroup 'com.stanfy.spoon'
-                includeGroup 'com.github.spullara.mustache.java'
-                includeGroup 'com.github.gundy'
-                includeGroup 'com.beust'
-                includeGroup 'com.madgag'
-                includeGroup 'de.undercouch'
-                includeGroup 'it.unimi.dsi'
-                includeGroup 'junit'
-                includeGroup 'net.java'
-                includeGroup 'org.lesscss'
-                includeGroup 'org.mozilla'
-                includeGroup 'org.glassfish.jaxb'
-                includeGroup 'org.codehaus.plexus'
-                includeGroup 'org.javassist'
-                includeGroup 'org.jvnet.staxex'
-                includeGroup 'org.codehaus.mojo'
-                includeGroup 'org.sonatype.oss'
-                includeGroup 'org.jdom'
-                includeGroup 'org.jacoco'
-                includeGroup 'org.antlr'
-                includeGroup 'org.codehaus'
-                includeGroup 'org.checkerframework'
-                includeGroup 'org.bouncycastle'
-                includeGroup 'org.json'
-                includeGroup 'oro'
-                includeGroup 'xerces'
-                includeGroup 'xml-apis'
-            }
-        }
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.0'
@@ -93,54 +43,9 @@ buildscript {
 
 allprojects {
     repositories {
-        google().content {
-            includeGroupByRegex 'androidx.*'
-            includeGroupByRegex 'com\\.google\\.android.*'
-            includeGroupByRegex 'com\\.android\\.tools.*'
-            includeGroup 'com.crashlytics.sdk.android'
-            includeGroup 'com.google.firebase'
-            includeGroup 'com.android.tools.lint'
-            includeGroup 'com.android'
-        }
-        jcenter {
-            content {
-                includeGroupByRegex 'org\\.jetbrains.*'
-                includeGroupByRegex 'com\\.squareup.*'
-                includeGroupByRegex 'com\\.sun.*'
-                includeGroupByRegex 'net\\.sf.*'
-                includeGroupByRegex 'com\\.google.*'
-                includeGroupByRegex 'org\\.apache.*'
-                includeGroupByRegex 'org\\.codehaus.*'
-                includeGroupByRegex 'org\\.ow2.*'
-                includeGroupByRegex 'commons-.*'
-                includeGroupByRegex 'javax.*'
-                includeGroup 'com.jakewharton.retrofit'
-                includeGroup 'com.jakewharton.timber'
-                includeGroup 'com.facebook.stetho'
-                includeGroup 'com.squareup.okhttp3'
-                includeGroup 'com.github.bumptech.glide'
-                includeGroup 'com.nhaarman.mockitokotlin2'
-                includeGroup 'junit'
-                includeGroup 'it.unimi.dsi'
-                includeGroup 'net.sf.kxml'
-                includeGroup 'net.bytebuddy'
-                includeGroup 'net.ltgt.gradle.incap'
-                includeGroup 'net.java.dev.jna'
-                includeGroup 'org.jsoup'
-                includeGroup 'org.sonatype.oss'
-                includeGroup 'org.junit'
-                includeGroup 'org.jvnet.staxex'
-                includeGroup 'org.checkerframework'
-                includeGroup 'org.reactivestreams'
-                includeGroup 'org.hamcrest'
-                includeGroup 'org.jacoco'
-                includeGroup 'org.glassfish.jaxb'
-                includeGroup 'org.assertj'
-                includeGroup 'org.mockito'
-                includeGroup 'org.bouncycastle'
-                includeGroup 'org.objenesis'
-            }
-        }
+        google()
+        mavenCentral()
+        jcenter()
         maven {
             url "https://jitpack.io"
             content {
