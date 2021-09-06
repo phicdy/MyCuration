@@ -80,6 +80,7 @@ dependencies {
     implementation project(':entity')
     implementation project(':feature_article_list')
     implementation project(':feature_curated_article_list')
+    implementation project(':feature_license')
     implementation project(':feature_rss_list')
     implementation project(':legacy')
     implementation project(':repository')
