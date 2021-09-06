@@ -1,11 +1,11 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.nhaarman.mockitokotlin2.mock
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.presentation.view.RegisterFilterView
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.mock
 import java.util.ArrayList
 
 class RegisterFilterPresenterTest {

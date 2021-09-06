@@ -1,8 +1,6 @@
 package com.phicdy.mycuration.articlelist.action
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.core.Dispatcher
@@ -13,6 +11,8 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 @ExperimentalCoroutinesApi
 class ShareUrlActionCreatorTest {

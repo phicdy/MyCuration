@@ -1,12 +1,12 @@
 package com.phicdy.mycuration.articlelist.action
 
-import com.nhaarman.mockitokotlin2.mock
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.FavoritableArticle
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.mockito.kotlin.mock
 
 class ReadArticlePositionActionCreatorTest {
 
