@@ -1,13 +1,13 @@
 package com.phicdy.mycuration.presentation.presenter
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.ArrayList
 
 
