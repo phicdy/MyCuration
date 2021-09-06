@@ -16,7 +16,7 @@ buildscript {
     ext.rxjava_version = '2.2.21'
     ext.rxandroid_version = '2.2.21'
     ext.firebase_bom_version = '28.4.0'
-    ext.jacoco_version = "0.8.5"
+    ext.jacoco_version = "0.8.7"
     ext.glideVer = '4.12.0'
     ext.work_version = '2.6.0'
     ext.dagger_hilt_version = '2.38.1'
