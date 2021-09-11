@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
@@ -25,25 +26,17 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 @AndroidEntryPoint
-class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
+class AddCurationFragment : Fragment(), AddCurationView {
 
     companion object {
         const val EDIT_CURATION_ID = "editCurationId"
     }
-
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
 
     @Inject
     lateinit var presenter: AddCurationPresenter
@@ -62,14 +55,9 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     override fun onResume() {
         super.onResume()
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             presenter.resume()
         }
-    }
-
-    override fun onDestroy() {
-        job.cancel()
-        super.onDestroy()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -207,7 +195,7 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     fun onAddMenuClicked() {
         showProgressDialog()
-        launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             delay(5000)
             presenter.onAddMenuClicked()
         }
