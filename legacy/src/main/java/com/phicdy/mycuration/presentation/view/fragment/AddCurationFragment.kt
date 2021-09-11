@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
-import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
@@ -48,9 +47,6 @@ class AddCurationFragment : Fragment(), AddCurationView, CoroutineScope {
 
     @Inject
     lateinit var presenter: AddCurationPresenter
-
-    @Inject
-    lateinit var curationRepository: CurationRepository
 
     private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
