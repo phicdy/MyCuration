@@ -22,31 +22,24 @@ import com.phicdy.mycuration.feature.addcuration.AddCurationStateStore
 import com.phicdy.mycuration.feature.addcuration.AddCurationWordActionCreator
 import com.phicdy.mycuration.feature.addcuration.DeleteCurationWordActionCreator
 import com.phicdy.mycuration.feature.addcuration.InitializeAddCurationActionCreator
+import com.phicdy.mycuration.feature.addcuration.StoreCurationActionCreator
+import com.phicdy.mycuration.feature.addcuration.StoreCurationState
+import com.phicdy.mycuration.feature.addcuration.StoreCurationStateStore
 import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
-import com.phicdy.mycuration.presentation.view.AddCurationView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.FragmentComponent
-import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddCurationFragment : Fragment(), AddCurationView {
+class AddCurationFragment : Fragment() {
 
     companion object {
         const val EDIT_CURATION_ID = "editCurationId"
     }
-
-    @Inject
-    lateinit var presenter: AddCurationPresenter
 
     @Inject
     lateinit var initializeAddCurationActionCreator: InitializeAddCurationActionCreator
@@ -58,6 +51,11 @@ class AddCurationFragment : Fragment(), AddCurationView {
 
     @Inject
     lateinit var deleteCurationWordActionCreator: DeleteCurationWordActionCreator
+
+    @Inject
+    lateinit var storeCurationActionCreator: StoreCurationActionCreator
+
+    private val storeCurationStateStore: StoreCurationStateStore by viewModels()
 
     private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
@@ -93,6 +91,16 @@ class AddCurationFragment : Fragment(), AddCurationView {
                 }
             }
         }
+        storeCurationStateStore.state.observe(viewLifecycleOwner, { state ->
+            when (state) {
+                StoreCurationState.EmptyNameError -> handleEmptyCurationNameError()
+                StoreCurationState.EmptyWordError -> handleEmptyWordError()
+                StoreCurationState.Loading -> showProgressDialog()
+                StoreCurationState.SameNameExitError -> handleSameNameCurationError()
+                StoreCurationState.SucceedToAdd -> handleAddSuccess()
+                StoreCurationState.SucceedToEdit -> handleEditSuccess()
+            }
+        })
         val id = activity?.intent?.getIntExtra(EDIT_CURATION_ID, -1) ?: -1
         viewLifecycleOwner.lifecycleScope.launch {
             initializeAddCurationActionCreator.run(id)
@@ -124,46 +132,54 @@ class AddCurationFragment : Fragment(), AddCurationView {
         curationWordListAdapter.notifyDataSetChanged()
     }
 
-    override fun curationName(): String {
-        return etName.text.toString()
-    }
-
     private fun setCurationName(name: String) {
         etName.setText(name)
     }
 
-    override fun resetInputWord() {
+    private fun resetInputWord() {
         etInput.setText("")
     }
 
-    override fun handleEmptyCurationNameError() {
-        presenter.handleInsertResultMessage(false, getString(R.string.empty_curation_name))
+    private fun handleEmptyCurationNameError() {
+        handleInsertResultMessage(false, getString(R.string.empty_curation_name))
     }
 
-    override fun handleEmptyWordError() {
-        presenter.handleInsertResultMessage(false, getString(R.string.empty_word_list))
+    private fun handleEmptyWordError() {
+        handleInsertResultMessage(false, getString(R.string.empty_word_list))
     }
 
-    override fun handleSameNameCurationError() {
+    private fun handleSameNameCurationError() {
         TrackerHelper.sendButtonEvent(getString(R.string.add_same_curation_name))
-        presenter.handleInsertResultMessage(false, getString(R.string.duplicate_curation_name))
+        handleInsertResultMessage(false, getString(R.string.duplicate_curation_name))
     }
 
-    override fun handleAddSuccess() {
+    private fun handleAddSuccess() {
         TrackerHelper.sendButtonEvent(getString(R.string.add_new_curation))
-        presenter.handleInsertResultMessage(true, "")
+        handleInsertResultMessage(true, "")
     }
 
-    override fun handleEditSuccess() {
+    private fun handleEditSuccess() {
         TrackerHelper.sendButtonEvent(getString(R.string.update_curation))
-        presenter.handleInsertResultMessage(true, "")
+        handleInsertResultMessage(true, "")
     }
 
-    override fun showSuccessToast() {
+    private fun handleInsertResultMessage(result: Boolean, errorMessage: String) {
+        if (result) {
+            showSuccessToast()
+            dismissProgressDialog()
+            finish()
+        } else {
+            showToast(errorMessage)
+            showErrorToast()
+            dismissProgressDialog()
+        }
+    }
+
+    private fun showSuccessToast() {
         ToastHelper.showToast(activity, getString(R.string.curation_added_success), Toast.LENGTH_SHORT)
     }
 
-    override fun showErrorToast() {
+    private fun showErrorToast() {
         ToastHelper.showToast(activity, getString(R.string.curation_added_error), Toast.LENGTH_SHORT)
     }
 
@@ -175,22 +191,22 @@ class AddCurationFragment : Fragment(), AddCurationView {
         Toast.makeText(activity, getString(R.string.duplicate_word), Toast.LENGTH_SHORT).show()
     }
 
-    override fun showToast(text: String) {
+    private fun showToast(text: String) {
         ToastHelper.showToast(activity, text, Toast.LENGTH_SHORT)
     }
 
-    override fun showProgressDialog() {
+    private fun showProgressDialog() {
         progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_curation))
         activity?.supportFragmentManager?.let {
             progressDialog.show(it, null)
         }
     }
 
-    override fun dismissProgressDialog() {
+    private fun dismissProgressDialog() {
         progressDialog.dismiss()
     }
 
-    override fun finish() {
+    private fun finish() {
         activity?.finish()
     }
 
@@ -223,18 +239,23 @@ class AddCurationFragment : Fragment(), AddCurationView {
     }
 
     fun onAddMenuClicked() {
-        showProgressDialog()
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(5000)
-            presenter.onAddMenuClicked()
+        val current = addCurationStateStore.state.value
+        val id = activity?.intent?.getIntExtra(EDIT_CURATION_ID, -1) ?: -1
+        when (current) {
+            is AddCurationState.Deleted -> {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(5000)
+                    storeCurationActionCreator.run(current.name, current.words, id)
+                }
+            }
+            is AddCurationState.Loaded -> {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(5000)
+                    storeCurationActionCreator.run(current.name, current.words, id)
+                }
+            }
+            else -> {
+            }
         }
-    }
-
-    @Module
-    @InstallIn(FragmentComponent::class)
-    object AddCurationModule {
-        @FragmentScoped
-        @Provides
-        fun provideAddCurationView(fragment: Fragment): AddCurationView = fragment as AddCurationView
     }
 }
