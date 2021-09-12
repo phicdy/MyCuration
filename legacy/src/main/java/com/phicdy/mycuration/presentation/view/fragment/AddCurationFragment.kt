@@ -20,6 +20,7 @@ import com.phicdy.mycuration.feature.addcuration.AddCurationErrorEvent
 import com.phicdy.mycuration.feature.addcuration.AddCurationState
 import com.phicdy.mycuration.feature.addcuration.AddCurationStateStore
 import com.phicdy.mycuration.feature.addcuration.AddCurationWordActionCreator
+import com.phicdy.mycuration.feature.addcuration.DeleteCurationWordActionCreator
 import com.phicdy.mycuration.feature.addcuration.InitializeAddCurationActionCreator
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
@@ -55,6 +56,9 @@ class AddCurationFragment : Fragment(), AddCurationView {
     @Inject
     lateinit var addCurationWordActionCreator: AddCurationWordActionCreator
 
+    @Inject
+    lateinit var deleteCurationWordActionCreator: DeleteCurationWordActionCreator
+
     private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
     private lateinit var etName: TextInputEditText
@@ -75,6 +79,9 @@ class AddCurationFragment : Fragment(), AddCurationView {
                     setCurationName(state.name)
                     refreshList(state.words)
                     resetInputWord()
+                }
+                is AddCurationState.Deleted -> {
+                    refreshList(state.words)
                 }
             }
         })
@@ -202,7 +209,9 @@ class AddCurationFragment : Fragment(), AddCurationView {
             if (holder is ViewHolder) {
                 holder.tvWord.text = word
                 holder.deleteIcon.setOnClickListener {
-                    presenter.onDeleteButtonClicked(position)
+                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                        deleteCurationWordActionCreator.run(position)
+                    }
                 }
             }
         }

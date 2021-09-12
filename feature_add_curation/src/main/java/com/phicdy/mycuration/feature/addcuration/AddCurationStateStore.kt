@@ -40,6 +40,14 @@ class AddCurationStateStore @Inject constructor(
                     _state.value = value.copy(words = newList)
                 }
             }
+            is DeleteCurationWordAction -> {
+                val value = state.value
+                if (value is AddCurationState.Loaded) {
+                    val newList = ArrayList(value.words)
+                    newList.removeAt(action.value)
+                    _state.value = AddCurationState.Deleted(value.name, newList, action.value)
+                }
+            }
         }
     }
 }

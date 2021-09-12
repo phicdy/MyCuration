@@ -62,9 +62,4 @@ class AddCurationPresenter @Inject constructor(
             }
         }
     }
-
-    fun onDeleteButtonClicked(position: Int) {
-        addedWords.removeAt(position)
-        view.refreshList(addedWords)
-    }
 }
