@@ -31,20 +31,6 @@ class AddCurationPresenter @Inject constructor(
         }
     }
 
-    fun onAddWordButtonClicked(word: String) {
-        if (word == "") {
-            view.showWordEmptyErrorToast()
-            return
-        }
-        if (addedWords.contains(word)) {
-            view.showDupulicatedWordToast()
-            return
-        }
-        addedWords.add(word)
-        view.refreshList(addedWords)
-        view.resetInputWord()
-    }
-
     suspend fun onAddMenuClicked() = coroutineScope {
         val curationName = view.curationName()
         if (curationName.isEmpty()) {

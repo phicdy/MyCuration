@@ -16,8 +16,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
+import com.phicdy.mycuration.feature.addcuration.AddCurationErrorEvent
 import com.phicdy.mycuration.feature.addcuration.AddCurationState
 import com.phicdy.mycuration.feature.addcuration.AddCurationStateStore
+import com.phicdy.mycuration.feature.addcuration.AddCurationWordActionCreator
 import com.phicdy.mycuration.feature.addcuration.InitializeAddCurationActionCreator
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
@@ -31,6 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,6 +51,9 @@ class AddCurationFragment : Fragment(), AddCurationView {
     lateinit var initializeAddCurationActionCreator: InitializeAddCurationActionCreator
 
     private val addCurationStateStore: AddCurationStateStore by viewModels()
+
+    @Inject
+    lateinit var addCurationWordActionCreator: AddCurationWordActionCreator
 
     private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
@@ -68,9 +74,18 @@ class AddCurationFragment : Fragment(), AddCurationView {
                     initView()
                     setCurationName(state.name)
                     refreshList(state.words)
+                    resetInputWord()
                 }
             }
         })
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            addCurationStateStore.event.collect { event ->
+                when (event) {
+                    AddCurationErrorEvent.Duplicated -> showDupulicatedWordToast()
+                    AddCurationErrorEvent.Empty -> showWordEmptyErrorToast()
+                }
+            }
+        }
         val id = activity?.intent?.getIntExtra(EDIT_CURATION_ID, -1) ?: -1
         viewLifecycleOwner.lifecycleScope.launch {
             initializeAddCurationActionCreator.run(id)
@@ -82,7 +97,9 @@ class AddCurationFragment : Fragment(), AddCurationView {
             etInput = it.findViewById<TextInputEditText>(R.id.et_curation_word)
             etInput.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE && event?.action != KeyEvent.ACTION_UP) {
-                    presenter.onAddWordButtonClicked(v.text.toString())
+                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                        addCurationWordActionCreator.run(v.text.toString())
+                    }
                     return@setOnEditorActionListener true
                 }
 
@@ -143,11 +160,11 @@ class AddCurationFragment : Fragment(), AddCurationView {
         ToastHelper.showToast(activity, getString(R.string.curation_added_error), Toast.LENGTH_SHORT)
     }
 
-    override fun showWordEmptyErrorToast() {
+    private fun showWordEmptyErrorToast() {
         ToastHelper.showToast(activity, getString(R.string.empty_word), Toast.LENGTH_SHORT)
     }
 
-    override fun showDupulicatedWordToast() {
+    private fun showDupulicatedWordToast() {
         Toast.makeText(activity, getString(R.string.duplicate_word), Toast.LENGTH_SHORT).show()
     }
 
