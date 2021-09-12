@@ -11,10 +11,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
+import com.phicdy.mycuration.feature.addcuration.AddCurationState
+import com.phicdy.mycuration.feature.addcuration.AddCurationStateStore
+import com.phicdy.mycuration.feature.addcuration.InitializeAddCurationActionCreator
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.AddCurationPresenter
 import com.phicdy.mycuration.presentation.view.AddCurationView
@@ -28,7 +32,6 @@ import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.ArrayList
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,35 +44,40 @@ class AddCurationFragment : Fragment(), AddCurationView {
     @Inject
     lateinit var presenter: AddCurationPresenter
 
+    @Inject
+    lateinit var initializeAddCurationActionCreator: InitializeAddCurationActionCreator
+
+    private val addCurationStateStore: AddCurationStateStore by viewModels()
+
     private lateinit var curationWordRecyclerView: RecyclerView
     private lateinit var etInput: EditText
     private lateinit var etName: TextInputEditText
     private lateinit var curationWordListAdapter: CurationWordListAdapter
     private lateinit var progressDialog: MyProgressDialogFragment
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.create()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewLifecycleOwner.lifecycleScope.launch {
-            presenter.resume()
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_curation_word_list, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        presenter.activityCreated()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addCurationStateStore.state.observe(viewLifecycleOwner, { state ->
+            when (state) {
+                AddCurationState.Loading -> TODO()
+                is AddCurationState.Loaded -> {
+                    initView()
+                    setCurationName(state.name)
+                    refreshList(state.words)
+                }
+            }
+        })
+        val id = activity?.intent?.getIntExtra(EDIT_CURATION_ID, -1) ?: -1
+        viewLifecycleOwner.lifecycleScope.launch {
+            initializeAddCurationActionCreator.run(id)
+        }
     }
 
-    override fun initView() {
+    private fun initView() {
         activity?.let {
             etInput = it.findViewById<TextInputEditText>(R.id.et_curation_word)
             etInput.setOnEditorActionListener { v, actionId, event ->
@@ -85,23 +93,18 @@ class AddCurationFragment : Fragment(), AddCurationView {
         }
     }
 
-    override fun refreshList(addedWords: ArrayList<String>) {
+    private fun refreshList(addedWords: List<String>) {
         curationWordListAdapter = CurationWordListAdapter(addedWords)
         curationWordRecyclerView.adapter = curationWordListAdapter
         curationWordRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
         curationWordListAdapter.notifyDataSetChanged()
     }
 
-    override fun editCurationId(): Int {
-        return activity?.intent?.getIntExtra(EDIT_CURATION_ID, AddCurationPresenter.NOT_EDIT_CURATION_ID)
-                ?: AddCurationPresenter.NOT_EDIT_CURATION_ID
-    }
-
     override fun curationName(): String {
         return etName.text.toString()
     }
 
-    override fun setCurationName(name: String) {
+    private fun setCurationName(name: String) {
         etName.setText(name)
     }
 
@@ -167,7 +170,7 @@ class AddCurationFragment : Fragment(), AddCurationView {
         activity?.finish()
     }
 
-    private inner class CurationWordListAdapter(private val words: ArrayList<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private inner class CurationWordListAdapter(private val words: List<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.curation_word_list, parent, false)
             return ViewHolder(itemView)

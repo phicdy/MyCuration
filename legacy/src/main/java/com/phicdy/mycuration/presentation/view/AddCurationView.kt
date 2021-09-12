@@ -1,12 +1,8 @@
 package com.phicdy.mycuration.presentation.view
 
 interface AddCurationView {
-    fun initView()
-    fun editCurationId(): Int
     fun curationName(): String
-    fun setCurationName(name: String)
     fun resetInputWord()
-    fun refreshList(addedWords: ArrayList<String>)
     fun handleEmptyCurationNameError()
     fun handleEmptyWordError()
     fun handleSameNameCurationError()

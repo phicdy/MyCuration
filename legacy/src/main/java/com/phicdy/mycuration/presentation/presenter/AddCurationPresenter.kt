@@ -19,24 +19,6 @@ class AddCurationPresenter @Inject constructor(
     private var editCurationid = NOT_EDIT_CURATION_ID
     private var addedWords = ArrayList<String>()
 
-    fun create() {
-        editCurationid = view.editCurationId()
-    }
-
-    fun activityCreated() {
-        view.initView()
-        view.refreshList(addedWords)
-    }
-
-    suspend fun resume() = coroutineScope {
-        if (editCurationid != NOT_EDIT_CURATION_ID) {
-            view.setCurationName(repository.getCurationNameById(editCurationid))
-            addedWords = ArrayList(repository.getCurationWords(editCurationid))
-            view.refreshList(addedWords)
-        }
-        view.refreshList(addedWords)
-    }
-
     fun handleInsertResultMessage(result: Boolean, errorMessage: String) {
         if (result) {
             view.showSuccessToast()

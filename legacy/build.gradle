@@ -5,8 +5,10 @@ android {
 }
 
 dependencies {
+    implementation project(':core')
     implementation project(':domain')
     implementation project(':entity')
+    implementation project(':feature_add_curation')
     implementation project(':feature_article_list')
     implementation project(':feature_curated_article_list')
     implementation project(':feature_rss_list')
@@ -26,6 +28,8 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
     implementation "androidx.preference:preference:$preference_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
 
     implementation("com.github.bumptech.glide:glide:$glideVer") {
         exclude group: "com.android.support"
