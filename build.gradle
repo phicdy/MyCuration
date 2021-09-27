@@ -78,6 +78,14 @@ subprojects {
             testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         }
 
+        buildFeatures {
+            compose true
+        }
+
+        composeOptions {
+            kotlinCompilerExtensionVersion jetpack_compose_version
+        }
+
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_11
             targetCompatibility JavaVersion.VERSION_11
