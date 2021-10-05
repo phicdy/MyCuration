@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/di_common" />
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/entity" />
+            <option value="$PROJECT_DIR$/feature_add_curation" />
             <option value="$PROJECT_DIR$/feature_article_list" />
             <option value="$PROJECT_DIR$/feature_curated_article_list" />
             <option value="$PROJECT_DIR$/feature_license" />
