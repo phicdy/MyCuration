@@ -38,7 +38,6 @@ import com.phicdy.mycuration.resource.MyCurationTheme
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -276,18 +275,17 @@ class AddCurationActivity : AppCompatActivity() {
 
     private fun onAddMenuClicked() {
         val current = addCurationStateStore.state.value
+        val name = etName.text.toString()
         val id = intent?.getIntExtra(EDIT_CURATION_ID, -1) ?: -1
         when (current) {
             is AddCurationState.Deleted -> {
                 lifecycleScope.launch {
-                    delay(5000)
-                    storeCurationActionCreator.run(current.name, current.words, id)
+                    storeCurationActionCreator.run(name, current.words, id)
                 }
             }
             is AddCurationState.Loaded -> {
                 lifecycleScope.launch {
-                    delay(5000)
-                    storeCurationActionCreator.run(current.name, current.words, id)
+                    storeCurationActionCreator.run(name, current.words, id)
                 }
             }
             else -> {
