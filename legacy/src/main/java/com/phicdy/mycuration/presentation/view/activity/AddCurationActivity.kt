@@ -1,5 +1,7 @@
 package com.phicdy.mycuration.presentation.view.activity
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -15,9 +17,30 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.compose.material.TextField
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -299,14 +322,93 @@ class AddCurationActivity : AppCompatActivity() {
 }
 
 @Composable
-fun AddCurationFragmentScreen() {
-    TextField(value = "aaa", onValueChange = {})
+fun AddCurationFragmentScreen(
+    onBackIconClicked: () -> Unit = {},
+    onCheckIconClicked: () -> Unit = {},
+    onCloseClicked: (Int) -> Unit = {},
+    words: List<String> = emptyList()
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(id = R.string.title_activity_add_curation)) },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBackIconClicked
+                    ) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "")
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = onCheckIconClicked
+                    ) {
+                        Icon(Icons.Filled.Check, contentDescription = "")
+                    }
+                },
+                backgroundColor = MaterialTheme.colors.primary
+            )
+        }
+    ) {
+        Column {
+            OutlinedTextField(
+                value = stringResource(R.string.curation_title),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 12.dp, end = 16.dp),
+                onValueChange = {}
+            )
+            OutlinedTextField(
+                value = stringResource(R.string.word_setting),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 12.dp, end = 16.dp),
+                onValueChange = {}
+            )
+            LazyColumn(modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp)) {
+                itemsIndexed(words) { index, word ->
+                    WordRow(word) {
+                        onCloseClicked(index)
+                    }
+                }
+            }
+        }
+    }
 }
 
-@Preview
 @Composable
-fun AddCurationPreview() {
+fun WordRow(
+    word: String,
+    onCloseClicked: () -> Unit = {}
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = word,
+            modifier = Modifier
+                .weight(1f),
+            fontSize = 18.sp
+        )
+        IconButton(onClick = onCloseClicked) {
+            Icon(
+                Icons.Filled.Close,
+                contentDescription = "",
+            )
+        }
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_NO)
+@Composable
+fun AddCurationLightPreview() {
     MyCurationTheme {
-        AddCurationFragmentScreen()
+        AddCurationFragmentScreen(words = listOf("aaa", "bbb"))
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun AddCurationDarkPreview() {
+    MyCurationTheme {
+        AddCurationFragmentScreen(words = listOf("aaa", "bbb"))
     }
 }
