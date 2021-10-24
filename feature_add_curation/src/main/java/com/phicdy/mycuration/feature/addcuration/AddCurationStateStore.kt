@@ -17,8 +17,8 @@ class AddCurationStateStore @Inject constructor(
         dispatcher.register(this)
     }
 
-    private val _event = MutableSharedFlow<AddCurationErrorEvent>()
-    val event: SharedFlow<AddCurationErrorEvent> = _event
+    private val _event = MutableSharedFlow<AddCurationEvent>()
+    val event: SharedFlow<AddCurationEvent> = _event
 
     override suspend fun notify(action: Action<*>) {
         when (action) {
@@ -27,17 +27,18 @@ class AddCurationStateStore @Inject constructor(
             }
             is AddCurationWordAction -> {
                 if (action.value.isBlank()) {
-                    _event.emit(AddCurationErrorEvent.Empty)
+                    _event.emit(AddCurationEvent.Empty)
                     return
                 }
                 val value = state.value
                 if (value is AddCurationState.Loaded) {
                     if (value.words.contains(action.value)) {
-                        _event.emit(AddCurationErrorEvent.Duplicated)
+                        _event.emit(AddCurationEvent.Duplicated)
                         return
                     }
                     val newList = ArrayList(value.words + action.value)
                     _state.value = value.copy(words = newList)
+                    _event.emit(AddCurationEvent.ResetWordInput)
                 }
             }
             is DeleteCurationWordAction -> {
@@ -45,7 +46,7 @@ class AddCurationStateStore @Inject constructor(
                 if (value is AddCurationState.Loaded) {
                     val newList = ArrayList(value.words)
                     newList.removeAt(action.value)
-                    _state.value = AddCurationState.Deleted(value.name, newList, action.value)
+                    _state.value = AddCurationState.Loaded(value.name, newList)
                 }
             }
         }

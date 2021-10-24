@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -35,6 +36,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,7 +49,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
-import com.phicdy.mycuration.feature.addcuration.AddCurationErrorEvent
+import com.phicdy.mycuration.feature.addcuration.AddCurationEvent
 import com.phicdy.mycuration.feature.addcuration.AddCurationState
 import com.phicdy.mycuration.feature.addcuration.AddCurationStateStore
 import com.phicdy.mycuration.feature.addcuration.AddCurationWordActionCreator
@@ -101,12 +105,7 @@ class AddCurationActivity : AppCompatActivity() {
             when (state) {
                 AddCurationState.Loading -> TODO()
                 is AddCurationState.Loaded -> {
-                    initView()
                     setCurationName(state.name)
-                    refreshList(state.words)
-                    resetInputWord()
-                }
-                is AddCurationState.Deleted -> {
                     refreshList(state.words)
                 }
             }
@@ -114,8 +113,9 @@ class AddCurationActivity : AppCompatActivity() {
         lifecycleScope.launchWhenStarted {
             addCurationStateStore.event.collect { event ->
                 when (event) {
-                    AddCurationErrorEvent.Duplicated -> showDupulicatedWordToast()
-                    AddCurationErrorEvent.Empty -> showWordEmptyErrorToast()
+                    AddCurationEvent.Duplicated -> showDupulicatedWordToast()
+                    AddCurationEvent.Empty -> showWordEmptyErrorToast()
+                    AddCurationEvent.ResetWordInput -> resetInputWord()
                 }
             }
         }
@@ -301,11 +301,6 @@ class AddCurationActivity : AppCompatActivity() {
         val name = etName.text.toString()
         val id = intent?.getIntExtra(EDIT_CURATION_ID, -1) ?: -1
         when (current) {
-            is AddCurationState.Deleted -> {
-                lifecycleScope.launch {
-                    storeCurationActionCreator.run(name, current.words, id)
-                }
-            }
             is AddCurationState.Loaded -> {
                 lifecycleScope.launch {
                     storeCurationActionCreator.run(name, current.words, id)
@@ -324,10 +319,14 @@ class AddCurationActivity : AppCompatActivity() {
 @Composable
 fun AddCurationFragmentScreen(
     onBackIconClicked: () -> Unit = {},
-    onCheckIconClicked: () -> Unit = {},
+    onCheckIconClicked: (String, List<String>) -> Unit = { _, _ -> },
     onCloseClicked: (Int) -> Unit = {},
+    onWordSent: (String) -> Unit = {},
     words: List<String> = emptyList()
 ) {
+    val title: MutableState<String> = rememberSaveable {
+        mutableStateOf("")
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -341,7 +340,7 @@ fun AddCurationFragmentScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = onCheckIconClicked
+                        onClick = { onCheckIconClicked(title.value, words) }
                     ) {
                         Icon(Icons.Filled.Check, contentDescription = "")
                     }
@@ -352,18 +351,26 @@ fun AddCurationFragmentScreen(
     ) {
         Column {
             OutlinedTextField(
-                value = stringResource(R.string.curation_title),
+                value = title.value,
+                label = { Text(stringResource(R.string.curation_title)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, top = 12.dp, end = 16.dp),
-                onValueChange = {}
+                onValueChange = { title.value = it }
             )
+            val currentWord: MutableState<String> = rememberSaveable {
+                mutableStateOf("")
+            }
             OutlinedTextField(
-                value = stringResource(R.string.word_setting),
+                value = currentWord.value,
+                label = { Text(stringResource(R.string.word_setting)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, top = 12.dp, end = 16.dp),
-                onValueChange = {}
+                onValueChange = { currentWord.value = it },
+                keyboardActions = KeyboardActions(onSend = {
+                    onWordSent(currentWord.value)
+                })
             )
             LazyColumn(modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp)) {
                 itemsIndexed(words) { index, word ->
