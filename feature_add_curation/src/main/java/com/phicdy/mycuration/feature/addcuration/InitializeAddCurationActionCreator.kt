@@ -14,9 +14,9 @@ class InitializeAddCurationActionCreator @Inject constructor(
         if (arg != NOT_EDIT_CURATION_ID) {
             val curationName = repository.getCurationNameById(arg)
             val words = repository.getCurationWords(arg)
-            dispatcher.dispatch(InitializeAddCurationAction(AddCurationState.Loaded(curationName, words)))
+            dispatcher.dispatch(InitializeAddCurationAction(AddCurationState.Loaded(curationName, words, curationName, "")))
         } else {
-            dispatcher.dispatch(InitializeAddCurationAction(AddCurationState.Loaded("", emptyList())))
+            dispatcher.dispatch(InitializeAddCurationAction(AddCurationState.Loaded("", emptyList(), "", "")))
         }
     }
 

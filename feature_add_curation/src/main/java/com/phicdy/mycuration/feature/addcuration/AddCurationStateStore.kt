@@ -46,8 +46,20 @@ class AddCurationStateStore @Inject constructor(
                 if (value is AddCurationState.Loaded) {
                     val newList = ArrayList(value.words)
                     newList.removeAt(action.value)
-                    _state.value = AddCurationState.Loaded(value.name, newList)
+                    _state.value = value.copy(words = newList)
                 }
+            }
+            is UpdateTextFieldAction -> {
+                val value = state.value
+                if (value is AddCurationState.Loaded)
+                    when (action.value.type) {
+                        AddCurationTextFieldType.TITLE -> {
+                            _state.value = value.copy(titleField = action.value.value)
+                        }
+                        AddCurationTextFieldType.WORD -> {
+                            _state.value = value.copy(wordField = action.value.value)
+                        }
+                    }
             }
         }
     }

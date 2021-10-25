@@ -30,6 +30,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -37,6 +38,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -322,11 +324,11 @@ fun AddCurationFragmentScreen(
     onCheckIconClicked: (String, List<String>) -> Unit = { _, _ -> },
     onCloseClicked: (Int) -> Unit = {},
     onWordSent: (String) -> Unit = {},
-    words: List<String> = emptyList()
+    onTitleFieldChanged: (String) -> Unit = {},
+    onWordFieldChanged: (String) -> Unit = {},
+    store: AddCurationStateStore = viewModel()
 ) {
-    val title: MutableState<String> = rememberSaveable {
-        mutableStateOf("")
-    }
+    val state = store.state.observeAsState().value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -340,7 +342,11 @@ fun AddCurationFragmentScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { onCheckIconClicked(title.value, words) }
+                        onClick = {
+                            if (state is AddCurationState.Loaded) {
+                                onCheckIconClicked(state.name, state.words)
+                            }
+                        }
                     ) {
                         Icon(Icons.Filled.Check, contentDescription = "")
                     }
@@ -351,7 +357,7 @@ fun AddCurationFragmentScreen(
     ) {
         Column {
             OutlinedTextField(
-                value = title.value,
+                value = if (state is AddCurationState.Loaded) state.titleField else "",
                 label = { Text(stringResource(R.string.curation_title)) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -366,7 +372,7 @@ fun AddCurationFragmentScreen(
                 mutableStateOf("")
             }
             OutlinedTextField(
-                value = currentWord.value,
+                value = if (state is AddCurationState.Loaded) state.wordField else "",
                 label = { Text(stringResource(R.string.word_setting)) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -378,12 +384,15 @@ fun AddCurationFragmentScreen(
                 ),
                 keyboardActions = KeyboardActions(onSend = {
                     onWordSent(currentWord.value)
+                    currentWord.value = ""
                 })
             )
-            LazyColumn(modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp)) {
-                itemsIndexed(words) { index, word ->
-                    WordRow(word) {
-                        onCloseClicked(index)
+            if (state is AddCurationState.Loaded && state.words.isNotEmpty()) {
+                LazyColumn(modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp)) {
+                    itemsIndexed(state.words) { index, word ->
+                        WordRow(word) {
+                            onCloseClicked(index)
+                        }
                     }
                 }
             }
@@ -416,7 +425,7 @@ fun WordRow(
 @Composable
 fun AddCurationLightPreview() {
     MyCurationTheme {
-        AddCurationFragmentScreen(words = listOf("aaa", "bbb"))
+        AddCurationFragmentScreen(store = AddCurationStateStore(Dispatcher()))
     }
 }
 
@@ -424,6 +433,6 @@ fun AddCurationLightPreview() {
 @Composable
 fun AddCurationDarkPreview() {
     MyCurationTheme {
-        AddCurationFragmentScreen(words = listOf("aaa", "bbb"))
+        AddCurationFragmentScreen(store = AddCurationStateStore(Dispatcher()))
     }
 }
