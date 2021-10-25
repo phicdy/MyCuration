@@ -24,6 +24,7 @@ class Dispatcher @Inject constructor() {
     }
 
     fun register(store: Store<*>) {
+        if (stores.contains(store)) return
         stores.add(store)
     }
 
