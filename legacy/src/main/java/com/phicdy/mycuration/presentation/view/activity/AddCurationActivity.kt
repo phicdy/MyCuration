@@ -356,7 +356,11 @@ fun AddCurationFragmentScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, top = 12.dp, end = 16.dp),
-                onValueChange = { title.value = it }
+                onValueChange = onTitleFieldChanged,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Black900,
+                    focusedLabelColor = Black900
+                )
             )
             val currentWord: MutableState<String> = rememberSaveable {
                 mutableStateOf("")
@@ -367,7 +371,11 @@ fun AddCurationFragmentScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, top = 12.dp, end = 16.dp),
-                onValueChange = { currentWord.value = it },
+                onValueChange = onWordFieldChanged,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Black900,
+                    focusedLabelColor = Black900
+                ),
                 keyboardActions = KeyboardActions(onSend = {
                     onWordSent(currentWord.value)
                 })
