@@ -13,12 +13,12 @@ class AddCurationStateStore @Inject constructor(
         dispatcher: Dispatcher,
 ) : Store<AddCurationState>(dispatcher) {
 
-    init {
-        dispatcher.register(this)
-    }
-
     private val _event = MutableSharedFlow<AddCurationEvent>()
     val event: SharedFlow<AddCurationEvent> = _event
+
+    fun register() {
+        dispatcher.register(this)
+    }
 
     override suspend fun notify(action: Action<*>) {
         when (action) {

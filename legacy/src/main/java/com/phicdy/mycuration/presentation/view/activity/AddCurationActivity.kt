@@ -131,6 +131,7 @@ class AddCurationActivity : AppCompatActivity() {
                 StoreCurationState.SucceedToEdit -> handleEditSuccess()
             }
         })
+        addCurationStateStore.register()
         val id = intent.getIntExtra(EDIT_CURATION_ID, -1)
         lifecycleScope.launch {
             initializeAddCurationActionCreator.run(id)
