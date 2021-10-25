@@ -31,6 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -260,6 +262,7 @@ fun AddCurationFragmentScreen(
         }
     ) {
         Column {
+            val localFocusManager = LocalFocusManager.current
             OutlinedTextField(
                 value = if (state is AddCurationState.Loaded) state.titleField else "",
                 label = { Text(stringResource(R.string.curation_title)) },
@@ -270,7 +273,11 @@ fun AddCurationFragmentScreen(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = MaterialTheme.colors.onPrimary,
                     focusedLabelColor = MaterialTheme.colors.onPrimary
-                )
+                ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = {
+                    localFocusManager.moveFocus(FocusDirection.Down)
+                }),
             )
             OutlinedTextField(
                 value = if (state is AddCurationState.Loaded) state.wordField else "",
