@@ -117,7 +117,6 @@ class AddCurationActivity : AppCompatActivity() {
                 when (event) {
                     AddCurationEvent.Duplicated -> showDupulicatedWordToast()
                     AddCurationEvent.Empty -> showWordEmptyErrorToast()
-                    AddCurationEvent.ResetWordInput -> resetInputWord()
                 }
             }
         }
@@ -369,9 +368,6 @@ fun AddCurationFragmentScreen(
                     focusedLabelColor = Black900
                 )
             )
-            val currentWord: MutableState<String> = rememberSaveable {
-                mutableStateOf("")
-            }
             OutlinedTextField(
                 value = if (state is AddCurationState.Loaded) state.wordField else "",
                 label = { Text(stringResource(R.string.word_setting)) },
@@ -383,9 +379,9 @@ fun AddCurationFragmentScreen(
                     focusedBorderColor = Black900,
                     focusedLabelColor = Black900
                 ),
-                keyboardActions = KeyboardActions(onSend = {
-                    onWordSent(currentWord.value)
-                    currentWord.value = ""
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {
+                    onWordSent(if (state is AddCurationState.Loaded) state.wordField else "")
                 })
             )
             if (state is AddCurationState.Loaded && state.words.isNotEmpty()) {

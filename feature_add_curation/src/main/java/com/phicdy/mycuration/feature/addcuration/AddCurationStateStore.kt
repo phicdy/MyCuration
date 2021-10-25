@@ -37,8 +37,7 @@ class AddCurationStateStore @Inject constructor(
                         return
                     }
                     val newList = ArrayList(value.words + action.value)
-                    _state.value = value.copy(words = newList)
-                    _event.emit(AddCurationEvent.ResetWordInput)
+                    _state.value = value.copy(words = newList, wordField = "")
                 }
             }
             is DeleteCurationWordAction -> {
