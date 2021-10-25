@@ -326,13 +326,14 @@ fun AddCurationFragmentScreen(
     onWordSent: (String) -> Unit = {},
     onTitleFieldChanged: (String) -> Unit = {},
     onWordFieldChanged: (String) -> Unit = {},
+    isEdit: Boolean = false,
     store: AddCurationStateStore = viewModel()
 ) {
     val state = store.state.observeAsState().value
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(id = R.string.title_activity_add_curation)) },
+                title = { Text(stringResource(id = if (isEdit) R.string.title_activity_edit_curation else R.string.title_activity_add_curation)) },
                 navigationIcon = {
                     IconButton(
                         onClick = onBackIconClicked
