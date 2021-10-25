@@ -53,7 +53,6 @@ import com.phicdy.mycuration.feature.addcuration.UpdateTextFieldActionCreator
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.fragment.MyProgressDialogFragment
-import com.phicdy.mycuration.resource.Black900
 import com.phicdy.mycuration.resource.MyCurationTheme
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
@@ -269,8 +268,8 @@ fun AddCurationFragmentScreen(
                     .padding(start = 16.dp, top = 12.dp, end = 16.dp),
                 onValueChange = onTitleFieldChanged,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Black900,
-                    focusedLabelColor = Black900
+                    focusedBorderColor = MaterialTheme.colors.onPrimary,
+                    focusedLabelColor = MaterialTheme.colors.onPrimary
                 )
             )
             OutlinedTextField(
@@ -281,8 +280,8 @@ fun AddCurationFragmentScreen(
                     .padding(start = 16.dp, top = 12.dp, end = 16.dp),
                 onValueChange = onWordFieldChanged,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Black900,
-                    focusedLabelColor = Black900
+                    focusedBorderColor = MaterialTheme.colors.onPrimary,
+                    focusedLabelColor = MaterialTheme.colors.onPrimary
                 ),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
