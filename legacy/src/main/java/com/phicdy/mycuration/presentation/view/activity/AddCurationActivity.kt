@@ -272,7 +272,8 @@ fun AddCurationFragmentScreen(
                 onValueChange = onTitleFieldChanged,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = MaterialTheme.colors.onPrimary,
-                    focusedLabelColor = MaterialTheme.colors.onPrimary
+                    focusedLabelColor = MaterialTheme.colors.onPrimary,
+                    cursorColor = MaterialTheme.colors.onPrimary,
                 ),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(onNext = {
@@ -288,7 +289,8 @@ fun AddCurationFragmentScreen(
                 onValueChange = onWordFieldChanged,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = MaterialTheme.colors.onPrimary,
-                    focusedLabelColor = MaterialTheme.colors.onPrimary
+                    focusedLabelColor = MaterialTheme.colors.onPrimary,
+                    cursorColor = MaterialTheme.colors.onPrimary,
                 ),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
