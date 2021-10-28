@@ -78,6 +78,7 @@ dependencies {
     implementation project(':di_common')
     implementation project(':domain')
     implementation project(':entity')
+    implementation project(':feature_add_curation')
     implementation project(':feature_article_list')
     implementation project(':feature_curated_article_list')
     implementation project(':feature_license')

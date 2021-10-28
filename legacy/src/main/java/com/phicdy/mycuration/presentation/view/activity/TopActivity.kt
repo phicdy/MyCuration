@@ -35,7 +35,6 @@ import com.phicdy.mycuration.legacy.BuildConfig
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
-import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.rss.RssListFragment
@@ -465,7 +464,7 @@ class TopActivity :
     override fun startEditCurationActivity(editCurationId: Int) {
         val intent = Intent()
         intent.setClass(this, AddCurationActivity::class.java)
-        intent.putExtra(AddCurationFragment.EDIT_CURATION_ID, editCurationId)
+        intent.putExtra(AddCurationActivity.EDIT_CURATION_ID, editCurationId)
         startActivity(intent)
     }
 

@@ -93,7 +93,7 @@ class CurationRepository @Inject constructor(
         }
     }
 
-    suspend fun update(curationId: Int, name: String, words: ArrayList<String>): Boolean = withContext(coroutineDispatcherProvider.io()) {
+    suspend fun update(curationId: Int, name: String, words: List<String>): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var result = true
         try {
             database.transaction {
@@ -113,7 +113,7 @@ class CurationRepository @Inject constructor(
         return@withContext result
     }
 
-    suspend fun store(name: String, words: ArrayList<String>): Long = withContext(coroutineDispatcherProvider.io()) {
+    suspend fun store(name: String, words: List<String>): Long = withContext(coroutineDispatcherProvider.io()) {
         if (words.isEmpty()) return@withContext -1L
         var addedCurationId = -1L
         try {
@@ -130,7 +130,7 @@ class CurationRepository @Inject constructor(
         return@withContext addedCurationId
     }
 
-    suspend fun adaptToArticles(curationId: Int, words: ArrayList<String>): Boolean = withContext(coroutineDispatcherProvider.io()) {
+    suspend fun adaptToArticles(curationId: Int, words: List<String>): Boolean = withContext(coroutineDispatcherProvider.io()) {
         if (curationId == NOT_FOUND_ID) return@withContext false
 
         var result = true
