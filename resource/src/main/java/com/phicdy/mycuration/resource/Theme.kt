@@ -14,6 +14,8 @@ private val LightThemeColors = lightColors(
     surface = White,
     onPrimary = Black,
     onSecondary = White,
+    onSurface = Black,
+    onBackground = Black
 )
 
 private val DarkThemeColors = darkColors(
@@ -24,6 +26,8 @@ private val DarkThemeColors = darkColors(
     surface = Black,
     onPrimary = White,
     onSecondary = Black,
+    onSurface = White,
+    onBackground = White
 )
 
 @Composable
