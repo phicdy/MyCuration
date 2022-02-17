@@ -13,7 +13,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.ArrayList
 import javax.inject.Inject
 
 class RssParser @Inject constructor() {
@@ -210,6 +209,7 @@ class RssParser @Inject constructor() {
                                             try {
                                                 article.url = parser.text
                                             } catch (ignored: IllegalStateException) {
+                                            } catch (ignored: NullPointerException) {
                                             }
                                         }
                                     }

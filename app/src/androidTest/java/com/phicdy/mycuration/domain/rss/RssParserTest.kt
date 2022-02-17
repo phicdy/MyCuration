@@ -429,17 +429,36 @@ class RssParserTest {
     fun parserAtom() {
         val articles = parser.parseArticlesFromRss(Atom().text().byteInputStream())
         assertThat(articles[0].url)
-                .isEqualTo("http://feedproxy.google.com/~r/AndroidDagashi/~3/saI5mOCH5sg/57-2019-03-03")
+            .isEqualTo("http://feedproxy.google.com/~r/AndroidDagashi/~3/saI5mOCH5sg/57-2019-03-03")
     }
 
     @Test
     fun parserAtomAndroidDeveloperBlog() {
-        val articles = parser.parseArticlesFromRss(AtomAndroidDeveloperBlog().text.byteInputStream())
+        val articles =
+            parser.parseArticlesFromRss(AtomAndroidDeveloperBlog().text.byteInputStream())
         assertThat(articles[0].url)
-                .isEqualTo("http://feedproxy.google.com/~r/blogspot/hsDu/~3/X3CHRsxGnbE/google-mobile-developer-day-at-game.html")
+            .isEqualTo("http://feedproxy.google.com/~r/blogspot/hsDu/~3/X3CHRsxGnbE/google-mobile-developer-day-at-game.html")
     }
 
-    private fun addNewFeedAndCheckResult(testUrl: String, expectedFeedUrl: String, expectedSiteUrl: String) = runBlocking {
+    @Test
+    fun parseFeedBurnerAndroidDeveloperBlog() {
+        val result = parser.parseRssXml("http://feeds.feedburner.com/blogspot/hsDu", false)
+        assertEquals("http://feeds.feedburner.com/blogspot/hsDu", result.feed?.url)
+    }
+
+    @Test
+    fun parseArticlesOfFeedBurnerAndroidDeveloperBlog() {
+        val articles =
+            parser.parseArticlesFromRss(FeedBurnerAndroidDeveloperBlog().text.byteInputStream())
+        assertThat(articles[0].url)
+            .isEqualTo("http://android-developers.googleblog.com/2022/02/write-better-tests-with-new-testing.html")
+    }
+
+    private fun addNewFeedAndCheckResult(
+        testUrl: String,
+        expectedFeedUrl: String,
+        expectedSiteUrl: String
+    ) = runBlocking {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)
