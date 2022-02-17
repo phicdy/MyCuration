@@ -3,13 +3,13 @@ package com.phicdy.mycuration.domain.rss
 class FeedBurnerAndroidDeveloperBlog {
     val text = """<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/atom10full.xsl"?>
-<?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?>
-<feed xmlns="http://www.w3.org/2005/Atom"
-    xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
-    xmlns:blogger="http://schemas.google.com/blogger/2008"
-    xmlns:georss="http://www.georss.org/georss"
-    xmlns:gd="http://schemas.google.com/g/2005"
-    xmlns:thr="http://purl.org/syndication/thread/1.0">
+<?xml-stylesheet type="text/css" media="screen" href="https://feeds.feedburner.com/~d/styles/itemcontent.css"?>
+<feed xmlns="https://www.w3.org/2005/Atom"
+    xmlns:openSearch="https://a9.com/-/spec/opensearchrss/1.0/"
+    xmlns:blogger="https://schemas.google.com/blogger/2008"
+    xmlns:georss="https://www.georss.org/georss"
+    xmlns:gd="https://schemas.google.com/g/2005"
+    xmlns:thr="https://purl.org/syndication/thread/1.0">
     <id>tag:blogger.com,1999:blog-6755709643044947179</id>
     <updated>2022-02-16T13:24:22.291-08:00</updated>
     <category term="Featured" />
@@ -20,31 +20,31 @@ class FeedBurnerAndroidDeveloperBlog {
     <category term="wellness" />
     <title type="text">Android Developers Blog</title>
     <subtitle type="html">An Open Handset Alliance Project.</subtitle>
-    <link rel="alternate" type="text/html" href="http://android-developers.googleblog.com/" />
-    <link rel="next" type="application/atom+xml" href="http://www.blogger.com/feeds/6755709643044947179/posts/default?start-index=26&amp;max-results=25&amp;redirect=false" />
+    <link rel="alternate" type="text/html" href="https://android-developers.googleblog.com/" />
+    <link rel="next" type="application/atom+xml" href="https://www.blogger.com/feeds/6755709643044947179/posts/default?start-index=26&amp;max-results=25&amp;redirect=false" />
     <author>
         <name>Ian Lake</name>
-        <uri>http://www.blogger.com/profile/17415160793077313560</uri>
+        <uri>https://www.blogger.com/profile/17415160793077313560</uri>
         <email>noreply@blogger.com</email>
-        <gd:image rel="http://schemas.google.com/g/2005#thumbnail" width="16" height="16" src="https://img1.blogblog.com/img/b16-rounded.gif" />
+        <gd:image rel="https://schemas.google.com/g/2005#thumbnail" width="16" height="16" src="https://img1.blogblog.com/img/b16-rounded.gif" />
     </author>
-    <generator version="7.00" uri="http://www.blogger.com">Blogger</generator>
+    <generator version="7.00" uri="https://www.blogger.com">Blogger</generator>
     <openSearch:totalResults>1319</openSearch:totalResults>
     <openSearch:startIndex>1</openSearch:startIndex>
     <openSearch:itemsPerPage>25</openSearch:itemsPerPage>
-    <atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="self" type="application/atom+xml" href="http://feeds.feedburner.com/blogspot/hsDu" />
-    <feedburner:info xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0" uri="blogspot/hsdu" />
-    <atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="hub" href="http://pubsubhubbub.appspot.com/" />
+    <atom10:link xmlns:atom10="https://www.w3.org/2005/Atom" rel="self" type="application/atom+xml" href="https://feeds.feedburner.com/blogspot/hsDu" />
+    <feedburner:info xmlns:feedburner="https://rssnamespace.org/feedburner/ext/1.0" uri="blogspot/hsdu" />
+    <atom10:link xmlns:atom10="https://www.w3.org/2005/Atom" rel="hub" href="https://pubsubhubbub.appspot.com/" />
     <entry>
         <id>tag:blogger.com,1999:blog-6755709643044947179.post-3155562637345734734</id>
         <published>2022-02-11T10:05:00.003-08:00</published>
         <updated>2022-02-15T08:16:27.664-08:00</updated>
-        <category scheme="http://www.blogger.com/atom/ns#" term="Android" />
-        <category scheme="http://www.blogger.com/atom/ns#" term="documentation" />
-        <category scheme="http://www.blogger.com/atom/ns#" term="Featured" />
-        <category scheme="http://www.blogger.com/atom/ns#" term="latest" />
-        <category scheme="http://www.blogger.com/atom/ns#" term="Testing" />
-        <category scheme="http://www.blogger.com/atom/ns#" term="Tools" />
+        <category scheme="https://www.blogger.com/atom/ns#" term="Android" />
+        <category scheme="https://www.blogger.com/atom/ns#" term="documentation" />
+        <category scheme="https://www.blogger.com/atom/ns#" term="Featured" />
+        <category scheme="https://www.blogger.com/atom/ns#" term="latest" />
+        <category scheme="https://www.blogger.com/atom/ns#" term="Testing" />
+        <category scheme="https://www.blogger.com/atom/ns#" term="Tools" />
         <title type="text">Write better tests with the new testing guidance</title>
         <content type="html">&lt;meta name="twitter:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEijqPilH8ZItDxsIE5xhn5FozKBwNZGPnfzcvdJmumZp0fI8UmN0aKMqCHNHjopTW3uqUlroMP3IFV9LrUoQ2aqXbgpDaqkrjqoQJEuBE6Smt88Q5nz-NgAlGWXjq8eXz0ERxVtfrrx7v6MhNoL1OV43oCVgHPSfmrSu4_YWAIUKzwz8k59ErcCplII"&gt;
 &lt;img style="display:none" src="https://blogger.googleusercontent.com/img/a/AVvXsEijqPilH8ZItDxsIE5xhn5FozKBwNZGPnfzcvdJmumZp0fI8UmN0aKMqCHNHjopTW3uqUlroMP3IFV9LrUoQ2aqXbgpDaqkrjqoQJEuBE6Smt88Q5nz-NgAlGWXjq8eXz0ERxVtfrrx7v6MhNoL1OV43oCVgHPSfmrSu4_YWAIUKzwz8k59ErcCplII"&gt;
@@ -105,18 +105,18 @@ These two new sections should give you a general notion of how and where to test
 &lt;p&gt;
 Sadly, machines can't automatically verify the correctness of our documentation, so if you find errors or have suggestions, please file a bug on our &lt;a href="https://issuetracker.google.com/issues/new?component=192697&amp;template=845603&amp;pli=1"&gt;documentation issue tracker&lt;/a&gt;. 
 &lt;/p&gt;&lt;div class="feedflare"&gt;
-&lt;a href="http://feeds.feedburner.com/~ff/blogspot/hsDu?a=R3A-3W_MDRk:7xl18cBzn0Q:yIl2AUoC8zA"&gt;&lt;img src="http://feeds.feedburner.com/~ff/blogspot/hsDu?d=yIl2AUoC8zA" border="0"&gt;&lt;/img&gt;&lt;/a&gt; &lt;a href="http://feeds.feedburner.com/~ff/blogspot/hsDu?a=R3A-3W_MDRk:7xl18cBzn0Q:-BTjWOF_DHI"&gt;&lt;img src="http://feeds.feedburner.com/~ff/blogspot/hsDu?i=R3A-3W_MDRk:7xl18cBzn0Q:-BTjWOF_DHI" border="0"&gt;&lt;/img&gt;&lt;/a&gt;
+&lt;a href="https://feeds.feedburner.com/~ff/blogspot/hsDu?a=R3A-3W_MDRk:7xl18cBzn0Q:yIl2AUoC8zA"&gt;&lt;img src="https://feeds.feedburner.com/~ff/blogspot/hsDu?d=yIl2AUoC8zA" border="0"&gt;&lt;/img&gt;&lt;/a&gt; &lt;a href="https://feeds.feedburner.com/~ff/blogspot/hsDu?a=R3A-3W_MDRk:7xl18cBzn0Q:-BTjWOF_DHI"&gt;&lt;img src="https://feeds.feedburner.com/~ff/blogspot/hsDu?i=R3A-3W_MDRk:7xl18cBzn0Q:-BTjWOF_DHI" border="0"&gt;&lt;/img&gt;&lt;/a&gt;
 &lt;/div&gt;</content>
-        <link rel="edit" type="application/atom+xml" href="http://www.blogger.com/feeds/6755709643044947179/posts/default/3155562637345734734" />
-        <link rel="self" type="application/atom+xml" href="http://www.blogger.com/feeds/6755709643044947179/posts/default/3155562637345734734" />
-        <link rel="alternate" type="text/html" href="http://android-developers.googleblog.com/2022/02/write-better-tests-with-new-testing.html" title="Write better tests with the new testing guidance" />
+        <link rel="edit" type="application/atom+xml" href="https://www.blogger.com/feeds/6755709643044947179/posts/default/3155562637345734734" />
+        <link rel="self" type="application/atom+xml" href="https://www.blogger.com/feeds/6755709643044947179/posts/default/3155562637345734734" />
+        <link rel="alternate" type="text/html" href="https://android-developers.googleblog.com/2022/02/write-better-tests-with-new-testing.html" title="Write better tests with the new testing guidance" />
         <author>
             <name>Android Developers</name>
-            <uri>http://www.blogger.com/profile/08588467489110681140</uri>
+            <uri>https://www.blogger.com/profile/08588467489110681140</uri>
             <email>noreply@blogger.com</email>
-            <gd:image rel="http://schemas.google.com/g/2005#thumbnail" width="16" height="16" src="https://img1.blogblog.com/img/b16-rounded.gif" />
+            <gd:image rel="https://schemas.google.com/g/2005#thumbnail" width="16" height="16" src="https://img1.blogblog.com/img/b16-rounded.gif" />
         </author>
-        <media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://blogger.googleusercontent.com/img/a/AVvXsEijqPilH8ZItDxsIE5xhn5FozKBwNZGPnfzcvdJmumZp0fI8UmN0aKMqCHNHjopTW3uqUlroMP3IFV9LrUoQ2aqXbgpDaqkrjqoQJEuBE6Smt88Q5nz-NgAlGWXjq8eXz0ERxVtfrrx7v6MhNoL1OV43oCVgHPSfmrSu4_YWAIUKzwz8k59ErcCplII=s72-c" height="72" width="72" />
+        <media:thumbnail xmlns:media="https://search.yahoo.com/mrss/" url="https://blogger.googleusercontent.com/img/a/AVvXsEijqPilH8ZItDxsIE5xhn5FozKBwNZGPnfzcvdJmumZp0fI8UmN0aKMqCHNHjopTW3uqUlroMP3IFV9LrUoQ2aqXbgpDaqkrjqoQJEuBE6Smt88Q5nz-NgAlGWXjq8eXz0ERxVtfrrx7v6MhNoL1OV43oCVgHPSfmrSu4_YWAIUKzwz8k59ErcCplII=s72-c" height="72" width="72" />
     </entry>
 </feed>
 """
