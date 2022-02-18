@@ -36,7 +36,7 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.10'
         classpath 'com.stanfy.spoon:spoon-gradle-plugin:1.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
         classpath "com.google.dagger:hilt-android-gradle-plugin:$dagger_hilt_version"
         classpath 'com.squareup.sqldelight:gradle-plugin:1.5.0'
     }
