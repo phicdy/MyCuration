@@ -71,7 +71,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation 'org.assertj:assertj-core:3.11.1'
+    androidTestImplementation 'org.assertj:assertj-core:3.22.0'
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
 
     implementation project(':core')
