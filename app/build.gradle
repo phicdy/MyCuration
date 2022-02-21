@@ -101,7 +101,7 @@ dependencies {
 
     implementation 'com.facebook.stetho:stetho:1.6.0'
 
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.4.1'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.8'
 
     implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
     implementation 'com.google.firebase:firebase-analytics-ktx'
