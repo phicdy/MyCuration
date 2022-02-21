@@ -118,7 +118,7 @@ subprojects {
         implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
 
         testImplementation 'junit:junit:4.13.2'
-        testImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
+        testImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
         testImplementation 'org.assertj:assertj-core:3.22.0'
     }
 }
