@@ -50,7 +50,7 @@ class RssParser @Inject constructor() {
                 val links = document.getElementsByTag("link")
                 var siteUrl = ""
                 links.forEach { element ->
-                    if (element.parent().tag().toString() == "channel") {
+                    if (element.parent()?.tag().toString() == "channel") {
                         siteUrl = element.text()
                         return@forEach
                     }
@@ -66,7 +66,7 @@ class RssParser @Inject constructor() {
                 val links = document.getElementsByTag("link")
                 var siteUrl = ""
                 links.forEach { element ->
-                    if (element.parent().tag().toString() == "channel") {
+                    if (element.parent()?.tag().toString() == "channel") {
                         siteUrl = element.text()
                         return@forEach
                     }
