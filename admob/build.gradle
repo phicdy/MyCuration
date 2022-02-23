@@ -20,7 +20,7 @@ android {
 dependencies {
     implementation project(':advertisement')
 
-    implementation 'com.google.firebase:firebase-ads:18.3.0'
+    implementation 'com.google.firebase:firebase-ads:20.6.0'
 
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
