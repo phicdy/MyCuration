@@ -20,12 +20,10 @@ android {
 dependencies {
     implementation project(':advertisement')
 
-    implementation 'com.google.firebase:firebase-ads:18.3.0'
+    implementation libs.firebase.ads
 
-    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
+    implementation libs.recyclerview
+    implementation libs.constraintlayout
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
-    implementation 'javax.inject:javax.inject:1'
+    implementation libs.javax.inject
 }
