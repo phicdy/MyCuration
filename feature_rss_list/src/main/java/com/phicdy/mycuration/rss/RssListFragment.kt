@@ -62,13 +62,21 @@ class RssListFragment : Fragment() {
         binding.emptyView.visibility = View.VISIBLE
     }
 
+    private fun hideEmptyView() {
+        binding.emptyView.visibility = View.GONE
+    }
+
     private fun setAllListener() {
         binding.swiperefreshlayout.setOnRefreshListener {
             launchWhenInitializedOrUpdated { _, mode -> updateAllRssListActionCreator.run(mode) }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentRssListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -90,6 +98,7 @@ class RssListFragment : Fragment() {
                         showEmptyView()
                     } else {
                         init(state.item)
+                        hideEmptyView()
                     }
                     viewLifecycleOwner.lifecycleScope.launch {
                         launchUpdateAllRssListActionCreator.run(
@@ -108,6 +117,7 @@ class RssListFragment : Fragment() {
                         showEmptyView()
                     } else {
                         init(state.item)
+                        hideEmptyView()
                     }
                     binding.swiperefreshlayout.isRefreshing = false
                 }
