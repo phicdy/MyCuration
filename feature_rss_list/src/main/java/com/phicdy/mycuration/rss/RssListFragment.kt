@@ -191,6 +191,12 @@ class RssListFragment : Fragment() {
         }
     }
 
+    fun reload() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
+        }
+    }
+
     interface OnFeedListFragmentListener {
         fun onListClicked(feedId: Int)
         fun onEditRssClicked(rssId: Int, feedTitle: String)
