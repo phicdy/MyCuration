@@ -6,13 +6,12 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.setting.SettingInitialData
 import com.phicdy.mycuration.legacy.BuildConfig
@@ -33,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -45,15 +45,6 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     @Inject
     lateinit var presenter: SettingPresenter
-
-    @Inject
-    lateinit var settingInitialData: SettingInitialData
-
-    @Inject
-    lateinit var preferenceHelper: PreferenceHelper
-
-    @Inject
-    lateinit var additionalSettingApi: AdditionalSettingApi
 
     private lateinit var prefUpdateInterval: ListPreference
     private lateinit var prefLaunchTab: ListPreference
@@ -68,6 +59,21 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
     private lateinit var fragmentListener: OnSettingFragmentListener
+
+    private val openDocument =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            launch {
+                val inputStream = withContext(Dispatchers.IO) {
+                    requireContext().contentResolver.openInputStream(uri)
+                } ?: return@launch
+                activity?.let {
+                    presenter.onImportDatabaseSelected(
+                        it.getDatabasePath(DATABASE_NAME),
+                        inputStream
+                    )
+                }
+            }
+        }
 
     interface OnSettingFragmentListener {
         fun onThemeChanged(mode: Int)
@@ -183,9 +189,12 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
             activity?.let { activity ->
                 prefImport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
-                        val currentDb = activity.getDatabasePath(DATABASE_NAME)
-                        presenter.onImportDatabaseClicked(currentDb)
-                        ToastHelper.showToast(activity, getString(R.string.import_db), Toast.LENGTH_SHORT)
+                        openDocument.launch("*/*")
+                        ToastHelper.showToast(
+                            activity,
+                            getString(R.string.import_db),
+                            Toast.LENGTH_SHORT
+                        )
                     }
                     true
                 }
@@ -281,27 +290,33 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         @FragmentScoped
         @Provides
         fun provideSettingInitialData(@ApplicationContext context: Context): SettingInitialData {
-            val updateIntervalHourItems = context.resources.getStringArray(R.array.update_interval_items_values)
-            val updateIntervalStringItems = context.resources.getStringArray(R.array.update_interval_items)
+            val updateIntervalHourItems =
+                context.resources.getStringArray(R.array.update_interval_items_values)
+            val updateIntervalStringItems =
+                context.resources.getStringArray(R.array.update_interval_items)
             val themeItems = context.resources.getStringArray(R.array.theme_items_values)
             val themeStringItems = context.resources.getStringArray(R.array.theme_items)
-            val allReadBehaviorItems = context.resources.getStringArray(R.array.all_read_behavior_values)
-            val allReadBehaviorStringItems = context.resources.getStringArray(R.array.all_read_behavior)
+            val allReadBehaviorItems =
+                context.resources.getStringArray(R.array.all_read_behavior_values)
+            val allReadBehaviorStringItems =
+                context.resources.getStringArray(R.array.all_read_behavior)
             val launchTabItems = context.resources.getStringArray(R.array.launch_tab_items_values)
             val launchTabStringItems = context.resources.getStringArray(R.array.launch_tab_items)
-            val swipeDirectionItems = context.resources.getStringArray(R.array.swipe_direction_items_values)
-            val swipeDirectionStringItems = context.resources.getStringArray(R.array.swipe_direction_items)
+            val swipeDirectionItems =
+                context.resources.getStringArray(R.array.swipe_direction_items_values)
+            val swipeDirectionStringItems =
+                context.resources.getStringArray(R.array.swipe_direction_items)
             return SettingInitialData(
-                    updateIntervalHourItems = updateIntervalHourItems,
-                    updateIntervalStringItems = updateIntervalStringItems,
-                    themeItems = themeItems,
-                    themeStringItems = themeStringItems,
-                    allReadBehaviorStringItems = allReadBehaviorStringItems,
-                    allReadBehaviorItems = allReadBehaviorItems,
-                    launchTabItems = launchTabItems,
-                    launchTabStringItems = launchTabStringItems,
-                    swipeDirectionItems = swipeDirectionItems,
-                    swipeDirectionStringItems = swipeDirectionStringItems
+                updateIntervalHourItems = updateIntervalHourItems,
+                updateIntervalStringItems = updateIntervalStringItems,
+                themeItems = themeItems,
+                themeStringItems = themeStringItems,
+                allReadBehaviorStringItems = allReadBehaviorStringItems,
+                allReadBehaviorItems = allReadBehaviorItems,
+                launchTabItems = launchTabItems,
+                launchTabStringItems = launchTabStringItems,
+                swipeDirectionItems = swipeDirectionItems,
+                swipeDirectionStringItems = swipeDirectionStringItems
             )
         }
 

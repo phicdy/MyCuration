@@ -8,6 +8,7 @@ import com.phicdy.mycuration.domain.setting.SettingInitialData
 import com.phicdy.mycuration.presentation.view.SettingView
 import kotlinx.coroutines.coroutineScope
 import java.io.File
+import java.io.InputStream
 import javax.inject.Inject
 
 class SettingPresenter @Inject constructor(
@@ -178,8 +179,8 @@ class SettingPresenter @Inject constructor(
         addtionalSettingApi.addDebugRss()
     }
 
-    suspend fun onImportDatabaseClicked(currentDb: File) = coroutineScope {
-        addtionalSettingApi.importDb(currentDb)
+    suspend fun onImportDatabaseSelected(currentDb: File, uri: InputStream) {
+        addtionalSettingApi.importDb(currentDb, uri)
     }
 
     suspend fun onExportDatabaseClicked(currentDb: File) = coroutineScope {

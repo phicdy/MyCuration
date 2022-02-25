@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.data.repository
 
+import android.os.Build
 import android.os.Environment
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.util.FileUtil
@@ -9,6 +10,9 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 
 class AdditionalSettingRepository(
@@ -81,7 +85,7 @@ class AdditionalSettingRepository(
         }
     }
 
-    override suspend fun importDb(currentDb: File) {
+    override suspend fun importDb(currentDb: File, importDb: InputStream) {
         try {
             val backupStrage: File
             val sdcardRootPath = FileUtil.sdCardRootPath
@@ -96,33 +100,10 @@ class AdditionalSettingRepository(
             if (backupStrage.canRead()) {
                 Timber.d("Backup storage is readable")
 
-                val backupDbPath = BACKUP_FOLDER + "/" + DATABASE_NAME
-                val newDb = File(backupStrage, backupDbPath)
-                if (!newDb.exists()) return
-                val src = FileInputStream(newDb).channel
-                val dst = FileOutputStream(currentDb).channel
-                dst.transferFrom(src, 0, src.size())
-                src.close()
-                dst.close()
-
-                val newWalDb = File(backupStrage, "$backupDbPath-wal")
-                if (newWalDb.exists()) {
-                    val walSrc = FileInputStream(newWalDb).channel
-                    val currentWalDb = File(currentDb.path + "-wal")
-                    val walDst = FileOutputStream(currentWalDb).channel
-                    walDst.transferFrom(walSrc, 0, walSrc.size())
-                    walSrc.close()
-                    walDst.close()
-                }
-
-                val newShmDb = File(backupStrage, "$backupDbPath-shm")
-                if (newShmDb.exists()) {
-                    val shmSrc = FileInputStream(newShmDb).channel
-                    val currentShmDb = File(currentDb.path + "-shm")
-                    val shmDst = FileOutputStream(currentShmDb).channel
-                    shmDst.transferFrom(shmSrc, 0, shmSrc.size())
-                    shmSrc.close()
-                    shmDst.close()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Files.copy(importDb, currentDb.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                } else {
+                    return
                 }
             } else {
                 // TODO Runtime Permission
