@@ -77,7 +77,7 @@ class RssListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         registerForContextMenu(binding.recyclerview)
         setAllListener()
-        rssListStateStore.state.observe(viewLifecycleOwner, { state ->
+        rssListStateStore.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 RssListState.Initializing -> {
                     binding.progressbar.visibility = View.VISIBLE
@@ -92,7 +92,10 @@ class RssListFragment : Fragment() {
                         init(state.item)
                     }
                     viewLifecycleOwner.lifecycleScope.launch {
-                        launchUpdateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date()))
+                        launchUpdateAllRssListActionCreator.run(
+                            state.mode,
+                            RssUpdateIntervalCheckDate(Date())
+                        )
                     }
                 }
                 RssListState.StartUpdate -> {
@@ -112,7 +115,7 @@ class RssListFragment : Fragment() {
                     binding.swiperefreshlayout.isRefreshing = false
                 }
             }
-        })
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
