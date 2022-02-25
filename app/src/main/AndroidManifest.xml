@@ -18,6 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LaunchActivity"
+            android:exported="true"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -53,6 +54,7 @@
         <activity
             android:name=".presentation.view.activity.FeedUrlHookActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -112,6 +114,7 @@
 
         <activity
             android:name=".presentation.view.activity.FeedSearchActivity"
+            android:exported="false"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
