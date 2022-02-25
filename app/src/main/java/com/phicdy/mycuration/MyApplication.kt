@@ -69,7 +69,7 @@ class MyApplication : Application() {
         FileUtil.setUpAppPath(this)
         File(FileUtil.iconSaveFolder()).let { dir ->
             if (dir.exists() && dir.isDirectory) {
-                dir.listFiles().forEach { icon ->
+                dir.listFiles()?.forEach { icon ->
                     icon.delete()
                 }
                 dir.delete()
