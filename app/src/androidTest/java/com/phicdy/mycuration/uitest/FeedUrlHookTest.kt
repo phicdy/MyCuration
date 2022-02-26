@@ -59,7 +59,7 @@ class FeedUrlHookTest : UiTest() {
         val urlBar = device.wait(Until.findObject(
                 By.res("com.android.browser", "url")), 5000)
         urlBar.click()
-        urlBar.text = "http://news.yahoo.co.jp/pickup/rss.xml"
+        urlBar.text = "https://news.yahoo.co.jp/rss/topics/top-picks.xml"
         device.pressEnter()
 
         // Open share menu
