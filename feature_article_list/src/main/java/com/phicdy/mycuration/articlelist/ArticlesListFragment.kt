@@ -171,6 +171,17 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            when {
+                activity?.intent?.action == Intent.ACTION_SEARCH -> {
+                    val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
+                    searchArticleListActionCreator.run(query)
+                }
+                rssId == Feed.ALL_FEED_ID -> fetchAllArticleListArticleListActionCreator.run()
+                else -> fetchArticleListOfRssActionCreator.run(rssId)
+            }
+        }
     }
 
     private fun runFinishActionCreator() {
@@ -197,16 +208,6 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
         articlesListAdapter = ArticleListAdapter(viewLifecycleOwner.lifecycleScope, this, adProvider, updateFavoriteStatusActionCreator)
         recyclerView.adapter = articlesListAdapter
         setAllListener()
-        viewLifecycleOwner.lifecycleScope.launch {
-            when {
-                activity?.intent?.action == Intent.ACTION_SEARCH -> {
-                    val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
-                    searchArticleListActionCreator.run(query)
-                }
-                rssId == Feed.ALL_FEED_ID -> fetchAllArticleListArticleListActionCreator.run()
-                else -> fetchArticleListOfRssActionCreator.run(rssId)
-            }
-        }
         return view
     }
 
