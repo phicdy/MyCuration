@@ -172,7 +172,7 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             when {
                 activity?.intent?.action == Intent.ACTION_SEARCH -> {
                     val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""
