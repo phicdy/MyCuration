@@ -8,10 +8,10 @@ import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -113,53 +113,59 @@ class CurationRepository @Inject constructor(
         return@withContext result
     }
 
-    suspend fun store(name: String, words: List<String>): Long = withContext(coroutineDispatcherProvider.io()) {
-        if (words.isEmpty()) return@withContext -1L
-        var addedCurationId = -1L
-        try {
-            database.transaction {
-                database.curationQueries.insert(name)
-                addedCurationId = database.curationQueries.selectLastInsertRowId().executeAsOne()
-                for (word in words) {
-                    database.curationConditionQueries.insert(addedCurationId, word)
-                }
-            }
-        } catch (e: SQLException) {
-            Timber.e(e)
-        }
-        return@withContext addedCurationId
-    }
-
-    suspend fun adaptToArticles(curationId: Int, words: List<String>): Boolean = withContext(coroutineDispatcherProvider.io()) {
-        if (curationId == NOT_FOUND_ID) return@withContext false
-
-        var result = true
-        try {
-            database.transaction {
-                // Delete old curation selection
-                database.curationSelectionQueries.deleteByCurationId(curationId.toLong())
-
-                // Get all articles
-                val allArticles = database.articleQueries.getAll().executeAsList()
-
-                // Adapt
-                for (article in allArticles) {
-                    val articleId = article._id
-                    val articleTitle = article.title
+    suspend fun store(name: String, words: List<String>): Long =
+        applicationCoroutineScope.async(coroutineDispatcherProvider.io()) {
+            if (words.isEmpty()) return@async -1L
+            var addedCurationId = -1L
+            try {
+                database.transaction {
+                    database.curationQueries.insert(name)
+                    addedCurationId =
+                        database.curationQueries.selectLastInsertRowId().executeAsOne()
                     for (word in words) {
-                        if (articleTitle.contains(word)) {
-                            database.curationSelectionQueries.insert(articleId, curationId.toLong())
-                            break
+                        database.curationConditionQueries.insert(addedCurationId, word)
+                    }
+                }
+            } catch (e: SQLException) {
+                Timber.e(e)
+            }
+            return@async addedCurationId
+        }.await()
+
+    suspend fun adaptToArticles(curationId: Int, words: List<String>): Boolean =
+        applicationCoroutineScope.async(coroutineDispatcherProvider.io()) {
+            if (curationId == NOT_FOUND_ID) return@async false
+
+            var result = true
+            try {
+                database.transaction {
+                    // Delete old curation selection
+                    database.curationSelectionQueries.deleteByCurationId(curationId.toLong())
+
+                    // Get all articles
+                    val allArticles = database.articleQueries.getAll().executeAsList()
+
+                    // Adapt
+                    for (article in allArticles) {
+                        val articleId = article._id
+                        val articleTitle = article.title
+                        for (word in words) {
+                            if (articleTitle.contains(word)) {
+                                database.curationSelectionQueries.insert(
+                                    articleId,
+                                    curationId.toLong()
+                                )
+                                break
+                            }
                         }
                     }
                 }
+            } catch (e: SQLException) {
+                Timber.e(e)
+                result = false
             }
-        } catch (e: SQLException) {
-            Timber.e(e)
-            result = false
-        }
-        return@withContext result
-    }
+            return@async result
+        }.await()
 
     suspend fun getAllCurations(): List<Curation> = withContext(coroutineDispatcherProvider.io()) {
         return@withContext database.transactionWithResult<List<Curation>> {
