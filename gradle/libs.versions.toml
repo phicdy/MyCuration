@@ -19,7 +19,7 @@ work = "2.7.1"
 dagger_hilt = "2.41"
 sql_delight = "1.5.1"
 sqlite = "2.2.0"
-timber = "4.7.1"
+timber = "5.0.1"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
