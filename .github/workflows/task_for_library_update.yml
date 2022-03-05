@@ -1,0 +1,63 @@
+name: Task for library update
+
+on:
+  pull_request:
+    types: [synchronize]
+    branches:
+      - develop
+    paths:
+      - 'gradle/libs.versions.toml'
+
+jobs:
+  upload_dependency_list:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
+        run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
+      - name: Create dependency list
+        env:
+          TZ: Asia/Tokyo
+        run: ./gradlew app:dependencies > depend.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Dependency list
+          path: depend.txt
+
+  android_test:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level:
+          - 21
+          - 31
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
+        run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
+      - name: Run androidTest
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          script: ./gradlew connectedCheck
