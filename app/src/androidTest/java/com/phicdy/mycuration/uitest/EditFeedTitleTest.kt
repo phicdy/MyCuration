@@ -52,7 +52,7 @@ class EditFeedTitleTest : UiTest() {
         val urlEditText = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000)
         assertNotNull("URL edit text was not found", urlEditText)
-        val url = "http://news.yahoo.co.jp/pickup/rss.xml"
+        val url = "https://news.yahoo.co.jp/rss/topics/top-picks.xml"
         urlEditText.text = url
         device.pressEnter()
         device.wait(Until.gone(By.text("RSSを追加しています。")), 5000)

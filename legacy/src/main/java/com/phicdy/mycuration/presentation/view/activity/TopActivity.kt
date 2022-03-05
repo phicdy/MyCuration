@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -88,6 +89,13 @@ class TopActivity :
     private lateinit var navigationView: BottomNavigationView
 
     private var searchView: SearchView? = null
+
+    private val openFeedSearch =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            when (val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)) {
+                is RssListFragment -> fragment.reload()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -369,7 +377,7 @@ class TopActivity :
 
     override fun goToFeedSearch() {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_add_rss))
-        startActivity(Intent(this@TopActivity, FeedSearchActivity::class.java))
+        openFeedSearch.launch(Intent(this@TopActivity, FeedSearchActivity::class.java))
     }
 
     override fun goToAddCuration() {

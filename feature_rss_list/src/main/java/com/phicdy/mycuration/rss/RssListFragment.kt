@@ -62,13 +62,21 @@ class RssListFragment : Fragment() {
         binding.emptyView.visibility = View.VISIBLE
     }
 
+    private fun hideEmptyView() {
+        binding.emptyView.visibility = View.GONE
+    }
+
     private fun setAllListener() {
         binding.swiperefreshlayout.setOnRefreshListener {
             launchWhenInitializedOrUpdated { _, mode -> updateAllRssListActionCreator.run(mode) }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentRssListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -77,7 +85,7 @@ class RssListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         registerForContextMenu(binding.recyclerview)
         setAllListener()
-        rssListStateStore.state.observe(viewLifecycleOwner, { state ->
+        rssListStateStore.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 RssListState.Initializing -> {
                     binding.progressbar.visibility = View.VISIBLE
@@ -90,9 +98,13 @@ class RssListFragment : Fragment() {
                         showEmptyView()
                     } else {
                         init(state.item)
+                        hideEmptyView()
                     }
                     viewLifecycleOwner.lifecycleScope.launch {
-                        launchUpdateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date()))
+                        launchUpdateAllRssListActionCreator.run(
+                            state.mode,
+                            RssUpdateIntervalCheckDate(Date())
+                        )
                     }
                 }
                 RssListState.StartUpdate -> {
@@ -105,6 +117,7 @@ class RssListFragment : Fragment() {
                         showEmptyView()
                     } else {
                         init(state.item)
+                        hideEmptyView()
                     }
                     binding.swiperefreshlayout.isRefreshing = false
                 }
@@ -112,7 +125,7 @@ class RssListFragment : Fragment() {
                     binding.swiperefreshlayout.isRefreshing = false
                 }
             }
-        })
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
@@ -185,6 +198,12 @@ class RssListFragment : Fragment() {
             RssListState.Initializing, null -> return
             RssListState.StartUpdate -> return
             RssListState.FailedToUpdate -> return
+        }
+    }
+
+    fun reload() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
     }
 

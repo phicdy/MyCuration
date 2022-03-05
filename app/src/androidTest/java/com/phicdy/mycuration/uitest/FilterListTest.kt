@@ -194,7 +194,7 @@ class FilterListTest : UiTest() {
         var urlEditText = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000)
         assertNotNull("URL edit text was not found", urlEditText)
-        urlEditText.text = "http://news.yahoo.co.jp/pickup/rss.xml"
+        urlEditText.text = "https://news.yahoo.co.jp/rss/topics/top-picks.xml"
         device.pressEnter()
 
         TopActivityControl.clickAddRssButton()
@@ -208,7 +208,7 @@ class FilterListTest : UiTest() {
         urlEditText = device.wait(Until.findObject(
                 By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000)
         assertNotNull("URL edit text was not found", urlEditText)
-        urlEditText.text = "http://news.yahoo.co.jp/pickup/world/rss.xml"
+        urlEditText.text = "https://news.yahoo.co.jp/rss/topics/world.xml"
         device.pressEnter()
 
         TopActivityControl.goToFilterTab()

@@ -43,7 +43,10 @@ class AddFeedTest : UiTest() {
     @Test
     fun addYahooNews() {
         // RSS 2.0
-        addAndCheckUrl("http://news.yahoo.co.jp/pickup/rss.xml", "Yahoo!ニュース・トピックス - 主要")
+        addAndCheckUrl(
+            "https://news.yahoo.co.jp/rss/topics/top-picks.xml",
+            "Yahoo!ニュース・トピックス - 主要"
+        )
     }
 
     @Test
@@ -91,8 +94,11 @@ class AddFeedTest : UiTest() {
         assertTrue(Integer.valueOf(feedUnreadCountList[0].text) >= -1)
 
         // Assert all article view shows
-        val allArticleView = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "cl_all_unread")), 5000)
+        val allArticleView = device.wait(
+            Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "tv_rss_footer_title")
+            ), 5000
+        )
         assertNotNull(allArticleView)
         device.pressBack()
     }
