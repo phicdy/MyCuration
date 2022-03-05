@@ -37,8 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         api-level:
-          - 21
-          - 31
+          - 30
     steps:
       - uses: actions/checkout@v2
       - name: set up JDK 11
@@ -60,4 +59,4 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          script: ./gradlew connectedCheck
+          script: ./gradlew connectedDebugAndroidTest
