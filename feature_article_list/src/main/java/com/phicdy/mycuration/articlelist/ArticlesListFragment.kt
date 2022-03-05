@@ -249,9 +249,10 @@ class ArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
     private fun openInternalWebView(url: String) {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_internal))
         val intent = Intent(Intent.ACTION_SEND)
-                .setType("text/plain")
-                .putExtra(Intent.EXTRA_TEXT, url)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            .setType("text/plain")
+            .putExtra(Intent.EXTRA_TEXT, url)
+        val pendingIntent =
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         activity?.let { activity ->
             val icon = bitmapFrom(activity, R.drawable.ic_share)
             icon?.let {
