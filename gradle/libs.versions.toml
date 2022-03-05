@@ -1,5 +1,5 @@
 [versions]
-jetpack_compose = "1.0.5"
+jetpack_compose = "1.1.1"
 kotlin = "1.5.31"
 coroutine = "1.5.2"
 lifecycle = "2.4.1"
