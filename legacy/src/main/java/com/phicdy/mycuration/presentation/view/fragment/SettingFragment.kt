@@ -62,6 +62,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     private val openDocument =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri ?: return@registerForActivityResult
             launch {
                 val inputStream = withContext(Dispatchers.IO) {
                     requireContext().contentResolver.openInputStream(uri)
