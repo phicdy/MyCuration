@@ -12,6 +12,7 @@ dependencies {
     implementation project(':feature_article_list')
     implementation project(':feature_curated_article_list')
     implementation project(':feature_rss_list')
+    implementation project(':feature_setting')
     implementation project(':feature_license')
     implementation project(':feature_util')
     implementation project(':glide')

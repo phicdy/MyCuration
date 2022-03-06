@@ -1,28 +1,21 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.setting
 
 import androidx.appcompat.app.AppCompatDelegate
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.setting.SettingInitialData
-import com.phicdy.mycuration.presentation.view.SettingView
 import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.io.InputStream
 import javax.inject.Inject
 
 class SettingPresenter @Inject constructor(
-        private val view: SettingView,
-        private val helper: PreferenceHelper,
-        private val addtionalSettingApi: AdditionalSettingApi,
-        private val settingInitialData: SettingInitialData
-) : Presenter {
-
-    override fun create() {}
-
-    override fun resume() {}
-
-    override fun pause() {}
+    private val view: SettingView,
+    private val helper: PreferenceHelper,
+    private val addtionalSettingApi: AdditionalSettingApi,
+    private val settingInitialData: SettingInitialData
+) {
 
     fun activityCreate() {
         view.initView()

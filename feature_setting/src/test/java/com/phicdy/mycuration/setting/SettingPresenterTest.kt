@@ -1,10 +1,9 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.setting
 
 import android.content.Context
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.setting.SettingInitialData
-import com.phicdy.mycuration.presentation.view.SettingView
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
