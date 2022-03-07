@@ -39,6 +39,7 @@ import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.rss.RssListFragment
+import com.phicdy.mycuration.setting.SettingActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.Module
 import dagger.Provides

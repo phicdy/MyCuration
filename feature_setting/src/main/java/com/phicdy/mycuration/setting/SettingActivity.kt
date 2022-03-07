@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.activity
+package com.phicdy.mycuration.setting
 
 
 import android.os.Bundle
@@ -6,8 +6,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
-import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

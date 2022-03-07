@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/fr_setting"
-        android:name="com.phicdy.mycuration.presentation.view.fragment.SettingFragment"
+        android:name="com.phicdy.mycuration.setting.SettingFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize" />

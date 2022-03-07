@@ -15,12 +15,19 @@ android {
 
 dependencies {
     implementation project(':domain')
+    implementation project(':feature_license')
+    implementation project(':feature_util')
     implementation project(':repository')
+    implementation project(':resource')
+    implementation project(':util')
+    implementation project(':tracker')
 
     implementation libs.coroutines.core
     implementation libs.coroutines.android
-    
+
     implementation libs.appcompat
+    implementation libs.preference
+    implementation libs.material
 
     implementation libs.dagger.hilt
     kapt libs.dagger.hilt.compiler

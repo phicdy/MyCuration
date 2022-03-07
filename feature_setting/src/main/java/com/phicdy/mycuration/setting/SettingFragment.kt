@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.fragment
+package com.phicdy.mycuration.setting
 
 import android.content.Context
 import android.content.Intent
@@ -14,11 +14,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.setting.SettingInitialData
-import com.phicdy.mycuration.legacy.BuildConfig
-import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.license.LicenseActivity
-import com.phicdy.mycuration.setting.SettingPresenter
-import com.phicdy.mycuration.setting.SettingView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
 import dagger.Module
