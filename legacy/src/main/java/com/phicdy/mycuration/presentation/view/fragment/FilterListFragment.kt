@@ -36,7 +36,6 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     companion object {
         private const val EDIT_FILTER_MENU_ID = 2000
         private const val DELETE_FILTER_MENU_ID = 2001
-        const val KEY_EDIT_FILTER_ID = "editFilterId"
     }
 
     private val job = Job()
@@ -115,7 +114,7 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
 
     override fun startEditActivity(filterId: Int) {
         val intent = Intent(activity, RegisterFilterActivity::class.java)
-        intent.putExtra(KEY_EDIT_FILTER_ID, filterId)
+        intent.putExtra(RegisterFilterActivity.KEY_EDIT_FILTER_ID, filterId)
         startActivity(intent)
     }
 

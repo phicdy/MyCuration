@@ -13,7 +13,6 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.feature.util.changeTheme
-import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.Module
 import dagger.Provides
@@ -174,7 +173,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
     }
 
     companion object {
-
+        const val KEY_EDIT_FILTER_ID = "editFilterId"
         const val KEY_SELECTED_FEED = "keySelectedFeed"
         private const val NEW_FILTER_ID = -1
         private const val TARGET_FEED_SELECT_REQUEST = 1000
@@ -186,7 +185,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
         @ActivityScoped
         @Provides
         fun provideEditFilterId(@ActivityContext activity: Context): Int =
-                (activity as AppCompatActivity).intent.getIntExtra(FilterListFragment.KEY_EDIT_FILTER_ID, NEW_FILTER_ID)
+            (activity as AppCompatActivity).intent.getIntExtra(KEY_EDIT_FILTER_ID, NEW_FILTER_ID)
 
         @ActivityScoped
         @Provides
