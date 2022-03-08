@@ -24,6 +24,7 @@
             <option value="$PROJECT_DIR$/feature_add_curation" />
             <option value="$PROJECT_DIR$/feature_article_list" />
             <option value="$PROJECT_DIR$/feature_curated_article_list" />
+            <option value="$PROJECT_DIR$/feature_feed_search" />
             <option value="$PROJECT_DIR$/feature_feed_url_hook" />
             <option value="$PROJECT_DIR$/feature_license" />
             <option value="$PROJECT_DIR$/feature_rss_list" />
