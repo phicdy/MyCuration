@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.activity
+package com.phicdy.mycuration.feedurlhook
 
 import android.content.Context
 import android.content.Intent
@@ -9,9 +9,6 @@ import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import com.phicdy.mycuration.domain.rss.RssUrlHookIntentData
 import com.phicdy.mycuration.feature.util.changeTheme
-import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
-import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.Module
 import dagger.Provides
@@ -28,7 +25,8 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 @AndroidEntryPoint
-class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope {
+class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView,
+    CoroutineScope {
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
@@ -80,7 +78,7 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
         @ActivityScoped
         @Provides
         fun provideFeedUrlHookView(@ActivityContext activity: Context): FeedUrlHookView =
-                activity as FeedUrlHookView
+            activity as FeedUrlHookView
 
         @ActivityScoped
         @Provides

@@ -24,6 +24,7 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
+import com.phicdy.mycuration.feedurlhook.FeedUrlHookActivity
 import com.phicdy.mycuration.legacy.BuildConfig
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FeedSearchPresenter

@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.feedurlhook
 
 import android.content.Intent
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -7,19 +7,18 @@ import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.rss.RssUrlHookIntentData
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
-import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.util.UrlUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FeedUrlHookPresenter @Inject constructor(
-        private val view: FeedUrlHookView,
-        private val rssUrlHookIntentData: RssUrlHookIntentData,
-        private val rssRepository: RssRepository,
-        private val networkTaskManager: NetworkTaskManager,
-        private val coroutineScope: CoroutineScope,
-        private val parser: RssParser
+    private val view: FeedUrlHookView,
+    private val rssUrlHookIntentData: RssUrlHookIntentData,
+    private val rssRepository: RssRepository,
+    private val networkTaskManager: NetworkTaskManager,
+    private val coroutineScope: CoroutineScope,
+    private val parser: RssParser
 ) {
 
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
