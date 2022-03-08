@@ -9,13 +9,13 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.curationlist.CurationItem
+import com.phicdy.mycuration.curationlist.CurationListPresenter
+import com.phicdy.mycuration.curationlist.CurationListView
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
-import com.phicdy.mycuration.presentation.view.CurationItem
-import com.phicdy.mycuration.presentation.view.CurationListView
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +27,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.ArrayList
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 

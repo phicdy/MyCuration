@@ -12,4 +12,16 @@ android {
 }
 
 dependencies {
+    implementation project(':domain')
+    implementation project(':entity')
+    implementation project(':repository')
+    implementation project(':resource')
+
+    implementation libs.coroutines.core
+    implementation libs.coroutines.android
+
+    implementation libs.appcompat
+
+    implementation libs.dagger.hilt
+    kapt libs.dagger.hilt.compiler
 }

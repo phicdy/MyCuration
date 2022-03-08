@@ -11,6 +11,7 @@ dependencies {
     implementation project(':feature_add_curation')
     implementation project(':feature_article_list')
     implementation project(':feature_curated_article_list')
+    implementation project(':feature_curation_list')
     implementation project(':feature_feed_url_hook')
     implementation project(':feature_feed_search')
     implementation project(':feature_rss_list')

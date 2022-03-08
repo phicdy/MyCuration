@@ -1,10 +1,8 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.curationlist
 
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Curation
-import com.phicdy.mycuration.presentation.view.CurationItem
-import com.phicdy.mycuration.presentation.view.CurationListView
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -13,7 +11,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.ArrayList
 
 class CurationListPresenterTest {
 
