@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.activity
+package com.phicdy.feature_register_filter
 
 import android.content.Context
 import android.content.Intent
@@ -10,10 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.feature.util.changeTheme
-import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.presenter.SelectFilterTargetRssPresenter
-import com.phicdy.mycuration.presentation.view.SelectTargetRssView
-import com.phicdy.mycuration.presentation.view.fragment.SelectFilterTargetRssFragment
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,8 +37,6 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
-        presenter.create()
     }
 
     override fun onAttachFragment(fragment: Fragment) {

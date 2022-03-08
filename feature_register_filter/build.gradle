@@ -1,5 +1,7 @@
 plugins {
     id 'com.android.library'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -12,4 +14,25 @@ android {
 }
 
 dependencies {
+    implementation project(':domain')
+    implementation project(':entity')
+    implementation project(':feature_util')
+    implementation project(':glide')
+    implementation project(':repository')
+    implementation project(':resource')
+    implementation project(':tracker')
+    implementation project(':util')
+
+    implementation libs.coroutines.core
+    implementation libs.coroutines.android
+
+    implementation libs.appcompat
+    implementation libs.recyclerview
+    implementation libs.material
+
+    implementation libs.dagger.hilt
+    kapt libs.dagger.hilt.compiler
+
+    implementation libs.glide
+    kapt libs.glide.compiler
 }

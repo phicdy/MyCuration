@@ -24,6 +24,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.phicdy.feature_register_filter.RegisterFilterActivity
 import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
 import com.phicdy.mycuration.articlelist.ArticlesListActivity
 import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
