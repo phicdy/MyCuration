@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.feedsearch
 
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
@@ -6,7 +6,6 @@ import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.presentation.view.FeedSearchView
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -29,20 +28,6 @@ class FeedSearchPresenterTest {
         parser = mock()
         executor = mock()
         view = mock()
-    }
-
-    @Test
-    fun testOnCreate() = runBlocking {
-        // For coverage
-        val presenter = FeedSearchPresenter(view, networkTaskManager, rssRepository, this, executor)
-        presenter.create()
-    }
-
-    @Test
-    fun testOnResume() = runBlocking {
-        // For coverage
-        val presenter = FeedSearchPresenter(view, networkTaskManager, rssRepository, this, executor)
-        presenter.resume()
     }
 
     @Test
@@ -170,8 +155,6 @@ class FeedSearchPresenterTest {
     fun `when not found error occurs then toast shows`() {
         runBlocking {
             val presenter = FeedSearchPresenter(view, networkTaskManager, rssRepository, this, executor)
-            presenter.create()
-            presenter.resume()
             val testUrl = "http://hogeagj.com"
             presenter.onFinishAddFeed(testUrl, RssParseResult.FailedReason.NOT_FOUND)
         }

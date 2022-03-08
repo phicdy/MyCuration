@@ -1,10 +1,9 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.feedsearch
 
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParseExecutor
 import com.phicdy.mycuration.domain.rss.RssParseResult
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
-import com.phicdy.mycuration.presentation.view.FeedSearchView
 import com.phicdy.mycuration.util.UrlUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -13,12 +12,12 @@ import java.net.URLEncoder
 import javax.inject.Inject
 
 class FeedSearchPresenter @Inject constructor(
-        private val view: FeedSearchView,
-        private val networkTaskManager: NetworkTaskManager,
-        private val rssRepository: RssRepository,
-        private val coroutineScope: CoroutineScope,
-        private val executor: RssParseExecutor
-) : Presenter {
+    private val view: FeedSearchView,
+    private val networkTaskManager: NetworkTaskManager,
+    private val rssRepository: RssRepository,
+    private val coroutineScope: CoroutineScope,
+    private val executor: RssParseExecutor
+) {
     var callback: RssParseExecutor.RssParseCallback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {
             onFinishAddFeed(rssUrl, RssParseResult.FailedReason.NOT_FAILED)
@@ -28,12 +27,6 @@ class FeedSearchPresenter @Inject constructor(
             onFinishAddFeed(url, reason)
         }
     }
-
-    override fun create() {}
-
-    override fun resume() {}
-
-    override fun pause() {}
 
     fun onFabClicked(url: String) {
         if (url == "") return
