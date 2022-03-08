@@ -28,6 +28,7 @@
             <option value="$PROJECT_DIR$/feature_feed_search" />
             <option value="$PROJECT_DIR$/feature_feed_url_hook" />
             <option value="$PROJECT_DIR$/feature_license" />
+            <option value="$PROJECT_DIR$/feature_register_filter" />
             <option value="$PROJECT_DIR$/feature_rss_list" />
             <option value="$PROJECT_DIR$/feature_setting" />
             <option value="$PROJECT_DIR$/feature_util" />
