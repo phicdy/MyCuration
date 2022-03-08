@@ -28,6 +28,7 @@ import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
 import com.phicdy.mycuration.articlelist.ArticlesListActivity
 import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
 import com.phicdy.mycuration.curatedarticlelist.CuratedArticlesListActivity
+import com.phicdy.mycuration.curationlist.CurationListFragment
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.feature.util.changeTheme
@@ -37,7 +38,6 @@ import com.phicdy.mycuration.legacy.BuildConfig
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
 import com.phicdy.mycuration.presentation.view.TopActivityView
-import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.setting.SettingActivity

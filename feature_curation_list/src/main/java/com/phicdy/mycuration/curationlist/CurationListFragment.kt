@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.fragment
+package com.phicdy.mycuration.curationlist
 
 import android.content.Context
 import android.os.Bundle
@@ -9,13 +9,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.phicdy.mycuration.curationlist.CurationItem
-import com.phicdy.mycuration.curationlist.CurationListPresenter
-import com.phicdy.mycuration.curationlist.CurationListView
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Curation
-import com.phicdy.mycuration.legacy.R
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
