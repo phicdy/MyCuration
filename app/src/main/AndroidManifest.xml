@@ -113,7 +113,7 @@
         </receiver>
 
         <activity
-            android:name=".presentation.view.activity.FeedSearchActivity"
+            android:name=".feedsearch.FeedSearchActivity"
             android:exported="false"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">

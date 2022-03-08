@@ -32,6 +32,7 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
+import com.phicdy.mycuration.feedsearch.FeedSearchActivity
 import com.phicdy.mycuration.legacy.BuildConfig
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter

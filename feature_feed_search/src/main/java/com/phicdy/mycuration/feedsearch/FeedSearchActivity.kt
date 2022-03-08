@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.activity
+package com.phicdy.mycuration.feedsearch
 
 import android.annotation.SuppressLint
 import android.app.SearchManager
@@ -24,11 +24,7 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
-import com.phicdy.mycuration.feedsearch.FeedSearchPresenter
-import com.phicdy.mycuration.feedsearch.FeedSearchView
 import com.phicdy.mycuration.feedurlhook.FeedUrlHookActivity
-import com.phicdy.mycuration.legacy.BuildConfig
-import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.Module
 import dagger.Provides
@@ -193,11 +189,6 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        presenter.pause()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
