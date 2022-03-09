@@ -1,8 +1,9 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.feature_filter_list
 
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.entity.Filter
-import com.phicdy.mycuration.presentation.view.FilterListView
+import com.phicdy.mycuration.filterlist.FilterListPresenter
+import com.phicdy.mycuration.filterlist.FilterListView
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -12,7 +13,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.ArrayList
 
 class FilterListPresenterTest {
 

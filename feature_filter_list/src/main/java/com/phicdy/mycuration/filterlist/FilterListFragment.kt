@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.fragment
+package com.phicdy.mycuration.filterlist
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,9 +14,6 @@ import com.phicdy.feature_register_filter.RegisterFilterActivity
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Filter
-import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
-import com.phicdy.mycuration.presentation.view.FilterListView
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

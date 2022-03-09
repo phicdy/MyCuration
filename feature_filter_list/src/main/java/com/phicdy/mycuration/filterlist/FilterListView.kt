@@ -1,8 +1,6 @@
-package com.phicdy.mycuration.presentation.view
+package com.phicdy.mycuration.filterlist
 
 import com.phicdy.mycuration.entity.Filter
-
-import java.util.ArrayList
 
 interface FilterListView {
     fun remove(position: Int)

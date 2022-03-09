@@ -1,16 +1,15 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.filterlist
 
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Filter
-import com.phicdy.mycuration.presentation.view.FilterListView
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class FilterListPresenter @Inject constructor(
-        private val view: FilterListView,
-        private val rssRepository: RssRepository,
-        private val filterRepository: FilterRepository
+    private val view: FilterListView,
+    private val rssRepository: RssRepository,
+    private val filterRepository: FilterRepository
 ) {
 
     fun onActivityCreated() {
