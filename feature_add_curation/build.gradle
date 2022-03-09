@@ -13,7 +13,15 @@ android {
 dependencies {
     implementation project(':core')
     implementation project(':domain')
+    implementation project(':feature_util')
     implementation project(':repository')
+    implementation project(':resource')
+    implementation project(':tracker')
+    implementation project(':util')
+
+    implementation libs.appcompat
+    implementation libs.fragment
+    implementation libs.bundles.lifecycle
 
     implementation libs.dagger.hilt
     kapt libs.dagger.hilt.compiler

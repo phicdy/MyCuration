@@ -1,10 +1,11 @@
-package com.phicdy.mycuration.presentation.view.fragment
+package com.phicdy.mycuration.feature.addcuration
 
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.os.Bundle
+import androidx.fragment.app.DialogFragment
 
-class MyProgressDialogFragment : androidx.fragment.app.DialogFragment() {
+class MyProgressDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (progressDialog != null) return progressDialog as ProgressDialog

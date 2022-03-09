@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.activity
+package com.phicdy.mycuration.feature.addcuration
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -41,20 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.phicdy.mycuration.core.Dispatcher
-import com.phicdy.mycuration.feature.addcuration.AddCurationEvent
-import com.phicdy.mycuration.feature.addcuration.AddCurationState
-import com.phicdy.mycuration.feature.addcuration.AddCurationStateStore
-import com.phicdy.mycuration.feature.addcuration.AddCurationTextFieldType
-import com.phicdy.mycuration.feature.addcuration.AddCurationWordActionCreator
-import com.phicdy.mycuration.feature.addcuration.DeleteCurationWordActionCreator
-import com.phicdy.mycuration.feature.addcuration.InitializeAddCurationActionCreator
-import com.phicdy.mycuration.feature.addcuration.StoreCurationActionCreator
-import com.phicdy.mycuration.feature.addcuration.StoreCurationState
-import com.phicdy.mycuration.feature.addcuration.StoreCurationStateStore
-import com.phicdy.mycuration.feature.addcuration.UpdateTextFieldActionCreator
 import com.phicdy.mycuration.feature.util.changeTheme
-import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.view.fragment.MyProgressDialogFragment
 import com.phicdy.mycuration.resource.MyCurationTheme
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
