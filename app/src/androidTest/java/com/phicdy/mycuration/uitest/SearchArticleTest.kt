@@ -28,8 +28,8 @@ import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Article
-import com.phicdy.mycuration.presentation.view.activity.TopActivity
 import com.phicdy.mycuration.repository.Database
+import com.phicdy.mycuration.top.TopActivity
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking

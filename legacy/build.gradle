@@ -18,6 +18,7 @@ dependencies {
     implementation project(':feature_register_filter')
     implementation project(':feature_rss_list')
     implementation project(':feature_setting')
+    implementation project(':feature_top')
     implementation project(':feature_license')
     implementation project(':feature_util')
     implementation project(':glide')

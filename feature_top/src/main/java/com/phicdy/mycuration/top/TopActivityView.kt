@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view
+package com.phicdy.mycuration.top
 
 
 interface TopActivityView {

@@ -13,7 +13,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.phicdy.mycuration.BuildConfig
-import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import com.phicdy.mycuration.top.TopActivity
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import junit.framework.Assert.fail

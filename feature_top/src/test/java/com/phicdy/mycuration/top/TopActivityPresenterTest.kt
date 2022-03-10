@@ -1,8 +1,7 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.top
 
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test

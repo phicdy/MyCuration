@@ -1,20 +1,18 @@
-package com.phicdy.mycuration.presentation.presenter
+package com.phicdy.mycuration.top
 
 import android.view.KeyEvent
 import android.view.MenuItem
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class TopActivityPresenter @Inject constructor(
-        private val view: TopActivityView,
-        private val articleRepository: ArticleRepository,
-        private val rssRepository: RssRepository,
-        private val helper: PreferenceHelper
+    private val view: TopActivityView,
+    private val articleRepository: ArticleRepository,
+    private val rssRepository: RssRepository,
+    private val helper: PreferenceHelper
 ) {
 
     fun create() {

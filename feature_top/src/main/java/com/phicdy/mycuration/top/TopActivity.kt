@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.presentation.view.activity
+package com.phicdy.mycuration.top
 
 import android.app.SearchManager
 import android.content.Context
@@ -32,14 +32,11 @@ import com.phicdy.mycuration.curatedarticlelist.CuratedArticlesListActivity
 import com.phicdy.mycuration.curationlist.CurationListFragment
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
+import com.phicdy.mycuration.feature.addcuration.AddCurationActivity
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.feedsearch.FeedSearchActivity
 import com.phicdy.mycuration.filterlist.FilterListFragment
-import com.phicdy.mycuration.legacy.BuildConfig
-import com.phicdy.mycuration.legacy.R
-import com.phicdy.mycuration.presentation.presenter.TopActivityPresenter
-import com.phicdy.mycuration.presentation.view.TopActivityView
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.setting.SettingActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
@@ -61,11 +58,11 @@ import kotlin.coroutines.CoroutineContext
 
 @AndroidEntryPoint
 class TopActivity :
-        AppCompatActivity(),
-        RssListFragment.OnFeedListFragmentListener,
-        CurationListFragment.OnCurationListFragmentListener,
-        TopActivityView,
-        CoroutineScope {
+    AppCompatActivity(),
+    RssListFragment.OnFeedListFragmentListener,
+    CurationListFragment.OnCurationListFragmentListener,
+    TopActivityView,
+    CoroutineScope {
 
     companion object {
         private const val SHOWCASE_ID = "tutorialAddRss"
