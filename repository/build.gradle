@@ -14,6 +14,8 @@ dependencies {
     implementation project(':core')
     implementation project(':entity')
     implementation project(':di_common')
+    implementation project(':domain')
+    implementation project(':util')
 
     implementation libs.annotation
 

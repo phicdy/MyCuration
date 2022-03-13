@@ -16,8 +16,8 @@ import java.nio.file.StandardCopyOption
 
 
 class AdditionalSettingRepository(
-        private val rssRepository: RssRepository,
-        private val alarmManagerTaskManager: AlarmManagerTaskManager
+    private val rssRepository: RssRepository,
+    private val alarmManagerTaskManager: AlarmManagerTaskManager
 ) : AdditionalSettingApi {
 
     override suspend fun exportDb(currentDb: File) = withContext(Dispatchers.IO) {
