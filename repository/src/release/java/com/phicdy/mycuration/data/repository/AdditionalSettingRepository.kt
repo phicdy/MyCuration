@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.data.repository
 
 import java.io.File
+import java.io.InputStream
 
 class AdditionalSettingRepository(
     private val rssRepository: RssRepository
@@ -8,7 +9,7 @@ class AdditionalSettingRepository(
     override suspend fun exportDb(currentDb: File) {
     }
 
-    override suspend fun importDb(currentDb: File) {
+    override suspend fun importDb(currentDb: File, importDb: InputStream) {
     }
 
     override suspend fun addDebugRss() {
