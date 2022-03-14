@@ -83,6 +83,7 @@ dependencies {
     implementation project(':feature_curated_article_list')
     implementation project(':feature_curation_list')
     implementation project(':feature_feed_search')
+    implementation project(':feature_feed_url_hook')
     implementation project(':feature_filter_list')
     implementation project(':feature_license')
     implementation project(':feature_register_filter')
