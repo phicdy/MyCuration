@@ -21,7 +21,6 @@ include ':app',
         ':feature_license',
         ':glide',
         ':repository',
-        ':legacy',
         ':resource',
         ':tracker',
         ':util'
