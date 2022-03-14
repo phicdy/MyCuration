@@ -11,7 +11,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import com.phicdy.mycuration.BuildConfig
-import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import com.phicdy.mycuration.top.TopActivity
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertNotNull

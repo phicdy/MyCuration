@@ -8,5 +8,4 @@ interface AdditionalSettingApi {
     suspend fun exportDb(currentDb: File)
     suspend fun importDb(currentDb: File, importDb: InputStream)
     suspend fun addDebugRss()
-    suspend fun fixUnreadCount()
 }

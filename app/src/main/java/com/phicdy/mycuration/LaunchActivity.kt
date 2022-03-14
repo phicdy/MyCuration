@@ -9,7 +9,7 @@ import android.view.WindowInsets
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.phicdy.mycuration.databinding.ActivityLaunchBinding
-import com.phicdy.mycuration.presentation.view.activity.TopActivity
+import com.phicdy.mycuration.top.TopActivity
 
 class LaunchActivity : AppCompatActivity() {
 

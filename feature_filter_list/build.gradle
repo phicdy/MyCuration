@@ -1,0 +1,26 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':entity')
+    implementation project(':feature_register_filter')
+    implementation project(':repository')
+    implementation project(':resource')
+
+    implementation libs.recyclerview
+
+    implementation libs.dagger.hilt
+    kapt libs.dagger.hilt.compiler
+}
