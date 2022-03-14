@@ -68,8 +68,5 @@
         <Preference
             android:key="@string/key_add_rss"
             android:title="@string/add_test_rss" />
-        <Preference
-            android:key="@string/key_fix_unread_count"
-            android:title="@string/fix_unread_count" />
     </PreferenceCategory>
 </PreferenceScreen>

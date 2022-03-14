@@ -8,7 +8,6 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
@@ -53,9 +52,8 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideAdditionalSettingApi(
-            rssRepository: RssRepository,
-            alarmManagerTaskManager: AlarmManagerTaskManager
-    ): AdditionalSettingApi = AdditionalSettingRepository(rssRepository, alarmManagerTaskManager)
+        rssRepository: RssRepository,
+    ): AdditionalSettingApi = AdditionalSettingRepository(rssRepository)
 
     @Singleton
     @Provides
