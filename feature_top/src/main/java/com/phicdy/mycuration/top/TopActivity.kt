@@ -100,7 +100,10 @@ class TopActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
-        presenter.create()
+        initViewPager()
+        initFab()
+        initToolbar()
+        setAlarmManager()
         if (savedInstanceState == null) {
             changeTab(PreferenceHelper.launchTab)
         } else {
@@ -114,7 +117,7 @@ class TopActivity :
         }
     }
 
-    override fun initViewPager() {
+    private fun initViewPager() {
         navigationView = findViewById(R.id.navigation)
         navigationView.setOnNavigationItemSelectedListener { item ->
             replaceFragmentWith(item.itemId)
@@ -145,7 +148,7 @@ class TopActivity :
         }
     }
 
-    override fun initFab() {
+    private fun initFab() {
         fun onAddCurationClicked() {
             presenter.fabCurationClicked()
         }
@@ -199,7 +202,7 @@ class TopActivity :
         }
     }
 
-    override fun initToolbar() {
+    private fun initToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_top)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -362,7 +365,7 @@ class TopActivity :
         return super.onOptionsItemSelected(item)
     }
 
-    override fun setAlarmManager() {
+    private fun setAlarmManager() {
         // Start auto update alarmmanager
         val manager = AlarmManagerTaskManager(this)
         val helper = PreferenceHelper
@@ -541,4 +544,3 @@ class TopActivity :
         fun provideTopActivityView(@ActivityContext activity: Context): TopActivityView = activity as TopActivityView
     }
 }
-

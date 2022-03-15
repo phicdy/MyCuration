@@ -2,10 +2,6 @@ package com.phicdy.mycuration.top
 
 
 interface TopActivityView {
-    fun initViewPager()
-    fun initFab()
-    fun initToolbar()
-    fun setAlarmManager()
     fun startFabAnimation()
     fun closeAddFab()
     fun closeSearchView()

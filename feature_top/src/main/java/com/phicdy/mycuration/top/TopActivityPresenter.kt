@@ -15,13 +15,6 @@ class TopActivityPresenter @Inject constructor(
     private val helper: PreferenceHelper
 ) {
 
-    fun create() {
-        view.initViewPager()
-        view.initFab()
-        view.initToolbar()
-        view.setAlarmManager()
-    }
-
     suspend fun resume() = coroutineScope {
         if (!helper.isReviewed() && helper.getReviewCount() - 1 <= 0) {
             view.showRateDialog()

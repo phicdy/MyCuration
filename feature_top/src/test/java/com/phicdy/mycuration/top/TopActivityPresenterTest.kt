@@ -29,24 +29,6 @@ class TopActivityPresenterTest {
     }
 
     @Test
-    fun `initViewPager is called when onCreate`() {
-        presenter.create()
-        verify(mockView, times(1)).initViewPager()
-    }
-
-    @Test
-    fun `initToolbar is called when onCreate`() {
-        presenter.create()
-        verify(mockView, times(1)).initToolbar()
-    }
-
-    @Test
-    fun `setAlarmManager is called when onCreate`() {
-        presenter.create()
-        verify(mockView, times(1)).setAlarmManager()
-    }
-
-    @Test
     fun `not go to artcile search result when query is null`() {
         presenter.queryTextSubmit(null)
         verify(mockView, times(0)).goToArticleSearchResult(null.toString())
