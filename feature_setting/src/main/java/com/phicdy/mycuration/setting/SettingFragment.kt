@@ -100,12 +100,12 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     override fun onResume() {
         super.onResume()
-        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(listener)
     }
 
     override fun onPause() {
         super.onPause()
-        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        preferenceScreen.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
     override fun initView() {
