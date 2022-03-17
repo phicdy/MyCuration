@@ -25,7 +25,7 @@ class TopActivityPresenterTest {
         mockView = mock()
         mockArticleRepository = mock()
         mockRssRepository = mock()
-        presenter = TopActivityPresenter(mockView, mockRssRepository, mock())
+        presenter = TopActivityPresenter(mockView, mockRssRepository)
     }
 
     @Test
@@ -48,15 +48,6 @@ class TopActivityPresenterTest {
     }
 
     @Test
-    fun `when edit ok button is clicked and succeeds then the title will be updated`() = runBlocking {
-        whenever(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(1)
-        presenter.resume() // init list
-        presenter.onEditFeedOkButtonClicked("newTitle", 0)
-        verify(mockView, times(1)).showEditFeedSuccessToast()
-        verify(mockView, times(1)).updateFeedTitle(0, "newTitle")
-    }
-
-    @Test
     fun `when edit ok button is clicked and fails then show error toast`() = runBlocking {
         whenever(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(0)
         presenter.onEditFeedOkButtonClicked("newTitle", 0)
@@ -69,13 +60,4 @@ class TopActivityPresenterTest {
         presenter.onDeleteOkButtonClicked(0)
         verify(mockView, times(1)).showDeleteFailToast()
     }
-
-    @Test
-    fun `when delete ok button is clicked and succeeds then show success toast`() = runBlocking {
-        whenever(mockRssRepository.deleteRss(anyInt())).thenReturn(true)
-        presenter.resume() // init list
-        presenter.onDeleteOkButtonClicked(0)
-        verify(mockView, times(1)).showDeleteSuccessToast()
-    }
-
 }

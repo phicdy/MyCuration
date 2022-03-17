@@ -73,6 +73,12 @@ class TopActivity :
     lateinit var initializeTopActionCreator: InitializeTopActionCreator
 
     @Inject
+    lateinit var checkReviewRequestActionCreator: CheckReviewRequestActionCreator
+
+    @Inject
+    lateinit var closeRateDialogActionCreator: CloseRateDialogActionCreator
+
+    @Inject
     lateinit var helper: PreferenceHelper
 
     private val topStateStore: TopStateStore by viewModels()
@@ -119,6 +125,12 @@ class TopActivity :
         }
         lifecycleScope.launch {
             initializeTopActionCreator.run()
+        }
+
+        topStateStore.state.observe(this) { state ->
+            if (state.showRateDialog) {
+                showRateDialog()
+            }
         }
     }
 
@@ -310,8 +322,9 @@ class TopActivity :
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
-            presenter.resume()
+            checkReviewRequestActionCreator.run()
         }
+        closeSearchView()
         navigationView.setOnNavigationItemReselectedListener { }
         changeTheme()
     }
@@ -521,6 +534,9 @@ class TopActivity :
                 .setNegativeButton(R.string.cancel) { _, _ ->
                     TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))
                     helper.resetReviewCount()
+                    lifecycleScope.launchWhenStarted {
+                        closeRateDialogActionCreator.run()
+                    }
                 }
                 .show()
     }

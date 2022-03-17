@@ -1,29 +1,13 @@
 package com.phicdy.mycuration.top
 
-import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class TopActivityPresenter @Inject constructor(
     private val view: TopActivityView,
-    private val rssRepository: RssRepository,
-    private val helper: PreferenceHelper
+    private val rssRepository: RssRepository
 ) {
-
-    suspend fun resume() = coroutineScope {
-        if (!helper.isReviewed() && helper.getReviewCount() - 1 <= 0) {
-            view.showRateDialog()
-            helper.resetReviewCount()
-        } else {
-            if (helper.getReviewCount() <= 0) {
-                helper.resetReviewCount()
-            } else {
-                helper.decreaseReviewCount()
-            }
-        }
-        view.closeSearchView()
-    }
 
     suspend fun onEditFeedOkButtonClicked(newTitle: String, rssId: Int) = coroutineScope {
         if (newTitle.isBlank()) {
