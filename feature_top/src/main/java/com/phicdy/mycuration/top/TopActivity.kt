@@ -81,6 +81,9 @@ class TopActivity :
     @Inject
     lateinit var initializeTopActionCreator: InitializeTopActionCreator
 
+    @Inject
+    lateinit var helper: PreferenceHelper
+
     private val topStateStore: TopStateStore by viewModels()
 
     private lateinit var fab: FloatingActionButton
@@ -393,7 +396,6 @@ class TopActivity :
     private fun setAlarmManager() {
         // Start auto update alarmmanager
         val manager = AlarmManagerTaskManager(this)
-        val helper = PreferenceHelper
         val intervalSec = helper.autoUpdateIntervalSecond
         manager.setNewAlarm(intervalSec)
     }
@@ -527,11 +529,12 @@ class TopActivity :
                 .setTitle(R.string.review_dialog_title)
                 .setMessage(R.string.review_dialog_message)
                 .setPositiveButton(R.string.review) { _, _ ->
-                    presenter.onReviewClicked()
+                    helper.setReviewed()
+                    goToGooglePlay()
                 }
                 .setNegativeButton(R.string.cancel) { _, _ ->
                     TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))
-                    presenter.onCancelClicked()
+                    helper.resetReviewCount()
                 }
                 .show()
     }

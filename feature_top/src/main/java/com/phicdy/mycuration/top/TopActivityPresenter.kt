@@ -25,19 +25,6 @@ class TopActivityPresenter @Inject constructor(
         view.closeSearchView()
     }
 
-    fun onReviewClicked() {
-        helper.setReviewed()
-        view.goToGooglePlay()
-    }
-
-    fun onRequestClicked() {
-        helper.setReviewed()
-    }
-
-    fun onCancelClicked() {
-        helper.resetReviewCount()
-    }
-
     suspend fun onEditFeedOkButtonClicked(newTitle: String, rssId: Int) = coroutineScope {
         if (newTitle.isBlank()) {
             view.showEditFeedTitleEmptyErrorToast()
