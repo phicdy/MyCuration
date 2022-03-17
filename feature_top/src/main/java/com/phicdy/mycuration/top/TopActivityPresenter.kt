@@ -3,14 +3,12 @@ package com.phicdy.mycuration.top
 import android.view.KeyEvent
 import android.view.MenuItem
 import com.phicdy.mycuration.data.preference.PreferenceHelper
-import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class TopActivityPresenter @Inject constructor(
     private val view: TopActivityView,
-    private val articleRepository: ArticleRepository,
     private val rssRepository: RssRepository,
     private val helper: PreferenceHelper
 ) {
@@ -31,31 +29,6 @@ class TopActivityPresenter @Inject constructor(
 
     fun fabClicked() {
         view.startFabAnimation()
-    }
-
-    fun fabCurationClicked() {
-        view.closeAddFab()
-        val num = rssRepository.getNumOfRss()
-        if (num == 0L) {
-            view.goToFeedSearch()
-            return
-        }
-        view.goToAddCuration()
-    }
-
-    fun fabRssClicked() {
-        view.closeAddFab()
-        view.goToFeedSearch()
-    }
-
-    suspend fun fabFilterClicked() = coroutineScope {
-        view.closeAddFab()
-        val num = rssRepository.getNumOfRss()
-        if (num == 0L) {
-            view.goToFeedSearch()
-            return@coroutineScope
-        }
-        view.goToAddFilter()
     }
 
     fun addBackgroundClicked() {

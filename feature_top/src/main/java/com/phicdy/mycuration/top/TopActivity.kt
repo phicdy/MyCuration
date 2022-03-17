@@ -18,10 +18,12 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.feature_register_filter.RegisterFilterActivity
@@ -75,6 +77,12 @@ class TopActivity :
 
     @Inject
     lateinit var presenter: TopActivityPresenter
+
+    @Inject
+    lateinit var initializeTopActionCreator: InitializeTopActionCreator
+
+    private val topStateStore: TopStateStore by viewModels()
+
     private lateinit var fab: FloatingActionButton
     private lateinit var fabAddCuration: FloatingActionButton
     private lateinit var fabAddRss: FloatingActionButton
@@ -115,6 +123,9 @@ class TopActivity :
             }
 
         }
+        lifecycleScope.launch {
+            initializeTopActionCreator.run()
+        }
     }
 
     private fun initViewPager() {
@@ -150,17 +161,28 @@ class TopActivity :
 
     private fun initFab() {
         fun onAddCurationClicked() {
-            presenter.fabCurationClicked()
+            closeAddFab()
+            val num = topStateStore.state.value?.numOfRss
+            if (num == 0L) {
+                goToFeedSearch()
+                return
+            }
+            goToAddCuration()
         }
 
         fun onAddRssClicked() {
-            presenter.fabRssClicked()
+            closeAddFab()
+            goToFeedSearch()
         }
 
         fun onAddFilterClicked() {
-            launch(context = coroutineContext) {
-                presenter.fabFilterClicked()
+            closeAddFab()
+            val num = topStateStore.state.value?.numOfRss
+            if (num == 0L) {
+                goToFeedSearch()
+                return
             }
+            goToAddFilter()
         }
 
         fab = findViewById(R.id.fab_top)

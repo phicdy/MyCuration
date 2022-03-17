@@ -25,7 +25,7 @@ class TopActivityPresenterTest {
         mockView = mock()
         mockArticleRepository = mock()
         mockRssRepository = mock()
-        presenter = TopActivityPresenter(mockView, mockArticleRepository, mockRssRepository, mock())
+        presenter = TopActivityPresenter(mockView, mockRssRepository, mock())
     }
 
     @Test
@@ -38,50 +38,6 @@ class TopActivityPresenterTest {
     fun `go to artcile search result when query is not null`() {
         presenter.queryTextSubmit("query")
         verify(mockView, times(1)).goToArticleSearchResult("query")
-    }
-
-    @Test
-    fun `when curation fab is clicked then close add fab`() = runBlocking {
-        whenever(mockRssRepository.getNumOfRss()).thenReturn(1L)
-        presenter.fabCurationClicked()
-        verify(mockView, times(1)).closeAddFab()
-    }
-
-    @Test
-    fun `when curation fab is clicked and RSS is empty then open RSS search mockView`() = runBlocking {
-        whenever(mockRssRepository.getNumOfRss()).thenReturn(0L)
-        presenter.fabCurationClicked()
-        verify(mockView, times(1)).goToFeedSearch()
-    }
-
-    @Test
-    fun `when curation fab is clicked and RSS is not empty then open add curation mockView`() = runBlocking {
-        whenever(mockRssRepository.getNumOfRss()).thenReturn(1L)
-        presenter.fabCurationClicked()
-        verify(mockView, times(0)).goToFeedSearch()
-        verify(mockView, times(1)).goToAddCuration()
-    }
-
-    @Test
-    fun `when filter fab is clicked then close add fab`() = runBlocking {
-        whenever(mockRssRepository.getNumOfRss()).thenReturn(1L)
-        presenter.fabFilterClicked()
-        verify(mockView, times(1)).closeAddFab()
-    }
-
-    @Test
-    fun `when filter fab is clicked and RSS is empty then open RSS search mockView`() = runBlocking {
-        whenever(mockRssRepository.getNumOfRss()).thenReturn(0L)
-        presenter.fabFilterClicked()
-        verify(mockView, times(1)).goToFeedSearch()
-    }
-
-    @Test
-    fun `when filter fab is clicked and RSS is not empty then open add filter mockView`() = runBlocking {
-        whenever(mockRssRepository.getNumOfRss()).thenReturn(1L)
-        presenter.fabFilterClicked()
-        verify(mockView, times(0)).goToFeedSearch()
-        verify(mockView, times(1)).goToAddFilter()
     }
 
     @Test
