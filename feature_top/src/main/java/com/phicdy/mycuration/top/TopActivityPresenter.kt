@@ -1,7 +1,5 @@
 package com.phicdy.mycuration.top
 
-import android.view.KeyEvent
-import android.view.MenuItem
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import kotlinx.coroutines.coroutineScope
@@ -25,37 +23,6 @@ class TopActivityPresenter @Inject constructor(
             }
         }
         view.closeSearchView()
-    }
-
-    fun fabClicked() {
-        view.startFabAnimation()
-    }
-
-    fun addBackgroundClicked() {
-        view.closeAddFab()
-    }
-
-    private fun settingMenuClicked() {
-        view.goToSetting()
-    }
-
-    fun optionItemClicked(item: MenuItem) {
-        when (item.itemId) {
-            R.id.setting_top_activity -> settingMenuClicked()
-        }
-    }
-
-    fun onKeyDown(keyCode: Int, isShowAddFabs: Boolean): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && isShowAddFabs) {
-            view.closeAddFab()
-            return true
-        }
-        return false
-    }
-
-    fun queryTextSubmit(query: String?) {
-        if (query == null) return
-        view.goToArticleSearchResult(query)
     }
 
     fun onReviewClicked() {

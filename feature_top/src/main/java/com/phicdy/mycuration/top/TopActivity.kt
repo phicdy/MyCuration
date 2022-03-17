@@ -186,11 +186,11 @@ class TopActivity :
         }
 
         fab = findViewById(R.id.fab_top)
-        fab.setOnClickListener { presenter.fabClicked() }
+        fab.setOnClickListener { startFabAnimation() }
 
         back = findViewById(R.id.fl_add_background)
         back.setOnClickListener {
-            presenter.addBackgroundClicked()
+            closeAddFab()
         }
 
         llAddCuration = findViewById(R.id.ll_add_curation)
@@ -346,7 +346,8 @@ class TopActivity :
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                presenter.queryTextSubmit(query)
+                if (query == null) return false
+                goToArticleSearchResult(query)
                 return false
             }
         })
@@ -383,7 +384,9 @@ class TopActivity :
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        presenter.optionItemClicked(item)
+        when (item.itemId) {
+            R.id.setting_top_activity -> goToSetting()
+        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -396,7 +399,10 @@ class TopActivity :
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (presenter.onKeyDown(keyCode, back.visibility == View.VISIBLE)) return true
+        if (keyCode == KeyEvent.KEYCODE_BACK && back.visibility == View.VISIBLE) {
+            closeAddFab()
+            return true
+        }
         return super.onKeyDown(keyCode, event)
     }
 

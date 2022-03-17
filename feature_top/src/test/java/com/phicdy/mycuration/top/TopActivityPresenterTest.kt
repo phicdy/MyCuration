@@ -29,18 +29,6 @@ class TopActivityPresenterTest {
     }
 
     @Test
-    fun `not go to artcile search result when query is null`() {
-        presenter.queryTextSubmit(null)
-        verify(mockView, times(0)).goToArticleSearchResult(null.toString())
-    }
-
-    @Test
-    fun `go to artcile search result when query is not null`() {
-        presenter.queryTextSubmit("query")
-        verify(mockView, times(1)).goToArticleSearchResult("query")
-    }
-
-    @Test
     fun `when edit ok button is clicked and new title is empty then show error toast`() = runBlocking {
         presenter.onEditFeedOkButtonClicked("", 0)
         verify(mockView, times(1)).showEditFeedTitleEmptyErrorToast()
