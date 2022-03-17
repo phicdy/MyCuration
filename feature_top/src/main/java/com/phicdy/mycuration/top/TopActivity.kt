@@ -49,31 +49,22 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 @AndroidEntryPoint
 class TopActivity :
     AppCompatActivity(),
     RssListFragment.OnFeedListFragmentListener,
     CurationListFragment.OnCurationListFragmentListener,
-    TopActivityView,
-    CoroutineScope {
+    TopActivityView {
 
     companion object {
         private const val SHOWCASE_ID = "tutorialAddRss"
         private const val FRAGMENT_TAG = "FRAGMENT_TAG"
     }
-
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
 
     @Inject
     lateinit var presenter: TopActivityPresenter
@@ -318,16 +309,11 @@ class TopActivity :
 
     override fun onResume() {
         super.onResume()
-        launch(context = coroutineContext) {
+        lifecycleScope.launch {
             presenter.resume()
         }
         navigationView.setOnNavigationItemReselectedListener { }
         changeTheme()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -450,7 +436,7 @@ class TopActivity :
                 .setView(addView)
                 .setPositiveButton(R.string.save) { _, _ ->
                     val newTitle = editTitleView.text.toString()
-                    launch(context = coroutineContext) {
+                    lifecycleScope.launchWhenStarted {
                         presenter.onEditFeedOkButtonClicked(newTitle, rssId)
                     }
                 }.setNegativeButton(R.string.cancel, null).show()
@@ -460,7 +446,7 @@ class TopActivity :
         AlertDialog.Builder(this)
                 .setTitle(R.string.delete_rss_alert)
                 .setPositiveButton(R.string.delete) { _, _ ->
-                    launch {
+                    lifecycleScope.launchWhenStarted {
                         presenter.onDeleteOkButtonClicked(rssId)
                     }
                 }
