@@ -13,10 +13,8 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -28,8 +26,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.feature_register_filter.RegisterFilterActivity
 import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
-import com.phicdy.mycuration.articlelist.ArticlesListActivity
-import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
 import com.phicdy.mycuration.curatedarticlelist.CuratedArticlesListActivity
 import com.phicdy.mycuration.curationlist.CurationListFragment
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -57,7 +53,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TopActivity :
     AppCompatActivity(),
-    RssListFragment.OnFeedListFragmentListener,
     CurationListFragment.OnCurationListFragmentListener,
     TopActivityView {
 
@@ -65,9 +60,6 @@ class TopActivity :
         private const val SHOWCASE_ID = "tutorialAddRss"
         private const val FRAGMENT_TAG = "FRAGMENT_TAG"
     }
-
-    @Inject
-    lateinit var presenter: TopActivityPresenter
 
     @Inject
     lateinit var initializeTopActionCreator: InitializeTopActionCreator
@@ -435,65 +427,10 @@ class TopActivity :
         startActivity(intent)
     }
 
-    override fun onListClicked(feedId: Int) {
-        startActivity(ArticlesListActivity.createIntent(this, feedId))
-    }
-
-    override fun onEditRssClicked(rssId: Int, feedTitle: String) {
-        val addView = View.inflate(this, R.layout.edit_feed_title, null)
-        val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
-        editTitleView.setText(feedTitle)
-
-        AlertDialog.Builder(this)
-                .setTitle(R.string.edit_rss_title)
-                .setView(addView)
-                .setPositiveButton(R.string.save) { _, _ ->
-                    val newTitle = editTitleView.text.toString()
-                    lifecycleScope.launchWhenStarted {
-                        presenter.onEditFeedOkButtonClicked(newTitle, rssId)
-                    }
-                }.setNegativeButton(R.string.cancel, null).show()
-    }
-
-    override fun onDeleteRssClicked(rssId: Int, position: Int) {
-        AlertDialog.Builder(this)
-                .setTitle(R.string.delete_rss_alert)
-                .setPositiveButton(R.string.delete) { _, _ ->
-                    lifecycleScope.launchWhenStarted {
-                        presenter.onDeleteOkButtonClicked(rssId)
-                    }
-                }
-                .setNegativeButton(R.string.cancel, null).show()
-    }
-
     override suspend fun removeRss(rssId: Int) {
         val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
         if (fragment is RssListFragment) {
             fragment.removeRss(rssId)
-        }
-    }
-
-    override fun showDeleteSuccessToast() {
-        Toast.makeText(this, getString(R.string.finish_delete_rss_success), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showDeleteFailToast() {
-        Toast.makeText(this, getString(R.string.finish_delete_rss_fail), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onAllUnreadClicked() {
-        val intent = Intent(applicationContext, ArticlesListActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onFavoriteClicked() {
-        startActivity(FavoriteArticlesListActivity.createIntent(this))
-    }
-
-    override fun onFooterClicked() {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
-        if (fragment is RssListFragment) {
-            fragment.changeRssListMode()
         }
     }
 
@@ -548,18 +485,6 @@ class TopActivity :
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         } catch (e: Exception) {
         }
-    }
-
-    override fun showEditFeedTitleEmptyErrorToast() {
-        Toast.makeText(this, getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showEditFeedFailToast() {
-        Toast.makeText(this, getString(R.string.edit_rss_title_error), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showEditFeedSuccessToast() {
-        Toast.makeText(this, getString(R.string.edit_rss_title_success), Toast.LENGTH_SHORT).show()
     }
 
     override fun updateFeedTitle(rssId: Int, newTitle: String) {

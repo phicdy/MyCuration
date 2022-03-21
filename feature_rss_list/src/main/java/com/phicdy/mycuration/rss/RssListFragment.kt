@@ -1,14 +1,20 @@
 package com.phicdy.mycuration.rss
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.phicdy.mycuration.articlelist.ArticlesListActivity
+import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
@@ -19,7 +25,7 @@ import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RssListFragment : Fragment() {
+class RssListFragment : Fragment(), OnFeedListFragmentListener {
 
     private var _binding: FragmentRssListBinding? = null
     private val binding get() = _binding!!
@@ -45,6 +51,9 @@ class RssListFragment : Fragment() {
 
     @Inject
     lateinit var deleteRssActionCreator: DeleteRssActionCreator
+
+    @Inject
+    lateinit var presenter: RssListFragmentPresenter
 
     private fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(listener)
@@ -207,12 +216,84 @@ class RssListFragment : Fragment() {
         }
     }
 
-    interface OnFeedListFragmentListener {
-        fun onListClicked(feedId: Int)
-        fun onEditRssClicked(rssId: Int, feedTitle: String)
-        fun onDeleteRssClicked(rssId: Int, position: Int)
-        fun onAllUnreadClicked()
-        fun onFavoriteClicked()
-        fun onFooterClicked()
+    override fun onListClicked(feedId: Int) {
+        startActivity(ArticlesListActivity.createIntent(requireContext(), feedId))
+    }
+
+    override fun onEditRssClicked(rssId: Int, feedTitle: String) {
+        val addView = View.inflate(requireContext(), R.layout.edit_feed_title, null)
+        val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
+        editTitleView.setText(feedTitle)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.edit_rss_title)
+            .setView(addView)
+            .setPositiveButton(R.string.save) { _, _ ->
+                val newTitle = editTitleView.text.toString()
+                lifecycleScope.launchWhenStarted {
+                    presenter.onEditFeedOkButtonClicked(newTitle, rssId)
+                }
+            }.setNegativeButton(R.string.cancel, null).show()
+    }
+
+    override fun onDeleteRssClicked(rssId: Int, position: Int) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.delete_rss_alert)
+            .setPositiveButton(R.string.delete) { _, _ ->
+                lifecycleScope.launchWhenStarted {
+                    presenter.onDeleteOkButtonClicked(rssId)
+                }
+            }
+            .setNegativeButton(R.string.cancel, null).show()
+    }
+
+    override fun onAllUnreadClicked() {
+        val intent = Intent(requireContext(), ArticlesListActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onFavoriteClicked() {
+        startActivity(FavoriteArticlesListActivity.createIntent(requireContext()))
+    }
+
+    override fun onFooterClicked() {
+        changeRssListMode()
+    }
+
+    fun showEditFeedTitleEmptyErrorToast() {
+        Toast.makeText(requireContext(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
+    }
+
+    fun showEditFeedFailToast() {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.edit_rss_title_error),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    fun showEditFeedSuccessToast() {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.edit_rss_title_success),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    fun showDeleteSuccessToast() {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.finish_delete_rss_success),
+            Toast.LENGTH_SHORT
+        )
+            .show()
+    }
+
+    fun showDeleteFailToast() {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.finish_delete_rss_fail),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

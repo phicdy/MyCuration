@@ -1,4 +1,4 @@
-package com.phicdy.mycuration.top
+package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -13,19 +13,19 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 
-class TopActivityPresenterTest {
+class RssListFragmentPresenterTest {
 
-    private lateinit var mockView: TopActivityView
+    private lateinit var mockView: RssListFragment
     private lateinit var mockArticleRepository: ArticleRepository
     private lateinit var mockRssRepository: RssRepository
-    private lateinit var presenter: TopActivityPresenter
+    private lateinit var presenter: RssListFragmentPresenter
 
     @Before
     fun setup() {
         mockView = mock()
         mockArticleRepository = mock()
         mockRssRepository = mock()
-        presenter = TopActivityPresenter(mockView, mockRssRepository)
+        presenter = RssListFragmentPresenter(mockView, mockRssRepository)
     }
 
     @Test

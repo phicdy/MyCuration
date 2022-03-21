@@ -1,11 +1,11 @@
-package com.phicdy.mycuration.top
+package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.data.repository.RssRepository
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
-class TopActivityPresenter @Inject constructor(
-    private val view: TopActivityView,
+class RssListFragmentPresenter @Inject constructor(
+    private val view: RssListFragment,
     private val rssRepository: RssRepository
 ) {
 
