@@ -38,13 +38,7 @@ import com.phicdy.mycuration.filterlist.FilterListFragment
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.setting.SettingActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.launch
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
@@ -53,8 +47,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TopActivity :
     AppCompatActivity(),
-    CurationListFragment.OnCurationListFragmentListener,
-    TopActivityView {
+    CurationListFragment.OnCurationListFragmentListener {
 
     companion object {
         private const val SHOWCASE_ID = "tutorialAddRss"
@@ -228,7 +221,7 @@ class TopActivity :
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    override fun startFabAnimation() {
+    private fun startFabAnimation() {
         back.visibility = View.VISIBLE
 
         val animation = AnimationUtils.loadAnimation(this, R.anim.fab_rotation)
@@ -253,7 +246,7 @@ class TopActivity :
         llAddFilter.startAnimation(fadeInFilter)
     }
 
-    override fun closeAddFab() {
+    private fun closeAddFab() {
         back.visibility = View.GONE
 
         val animation = AnimationUtils.loadAnimation(this, R.anim.fab_rotation_back)
@@ -399,39 +392,32 @@ class TopActivity :
         return super.onKeyDown(keyCode, event)
     }
 
-    override fun goToFeedSearch() {
+    private fun goToFeedSearch() {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_add_rss))
         openFeedSearch.launch(Intent(this@TopActivity, FeedSearchActivity::class.java))
     }
 
-    override fun goToAddCuration() {
+    private fun goToAddCuration() {
         val intent = Intent(applicationContext, AddCurationActivity::class.java)
         startActivity(intent)
         TrackerHelper.sendButtonEvent(getString(R.string.tap_add_curation))
     }
 
-    override fun goToAddFilter() {
+    private fun goToAddFilter() {
         val intent = Intent(applicationContext, RegisterFilterActivity::class.java)
         startActivity(intent)
         TrackerHelper.sendButtonEvent(getString(R.string.tap_add_filter))
     }
 
-    override fun goToSetting() {
+    private fun goToSetting() {
         startActivity(Intent(applicationContext, SettingActivity::class.java))
     }
 
-    override fun goToArticleSearchResult(query: String) {
+    private fun goToArticleSearchResult(query: String) {
         val intent = Intent(this@TopActivity, ArticleSearchResultActivity::class.java)
         intent.action = Intent.ACTION_SEARCH
         intent.putExtra(SearchManager.QUERY, query)
         startActivity(intent)
-    }
-
-    override suspend fun removeRss(rssId: Int) {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
-        if (fragment is RssListFragment) {
-            fragment.removeRss(rssId)
-        }
     }
 
     override fun onCurationListClicked(curationId: Int) {
@@ -445,7 +431,7 @@ class TopActivity :
         startActivity(intent)
     }
 
-    override fun closeSearchView() {
+    private fun closeSearchView() {
         if (searchView != null) {
             searchView!!.onActionViewCollapsed()
             searchView!!.setQuery("", false)
@@ -459,46 +445,31 @@ class TopActivity :
         }
     }
 
-    override fun showRateDialog() {
+    private fun showRateDialog() {
         TrackerHelper.sendUiEvent(getString(R.string.show_review_dialog))
         AlertDialog.Builder(this)
-                .setTitle(R.string.review_dialog_title)
-                .setMessage(R.string.review_dialog_message)
-                .setPositiveButton(R.string.review) { _, _ ->
-                    helper.setReviewed()
-                    goToGooglePlay()
+            .setTitle(R.string.review_dialog_title)
+            .setMessage(R.string.review_dialog_message)
+            .setPositiveButton(R.string.review) { _, _ ->
+                helper.setReviewed()
+                goToGooglePlay()
+            }
+            .setNegativeButton(R.string.cancel) { _, _ ->
+                TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))
+                helper.resetReviewCount()
+                lifecycleScope.launchWhenStarted {
+                    closeRateDialogActionCreator.run()
                 }
-                .setNegativeButton(R.string.cancel) { _, _ ->
-                    TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))
-                    helper.resetReviewCount()
-                    lifecycleScope.launchWhenStarted {
-                        closeRateDialogActionCreator.run()
-                    }
-                }
+            }
                 .show()
     }
 
-    override fun goToGooglePlay() {
+    private fun goToGooglePlay() {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_go_to_google_play))
         try {
             val uri = Uri.parse("market://details?id=$packageName")
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         } catch (e: Exception) {
         }
-    }
-
-    override fun updateFeedTitle(rssId: Int, newTitle: String) {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
-        if (fragment is RssListFragment) {
-            fragment.updateFeedTitle(rssId, newTitle)
-        }
-    }
-
-    @Module
-    @InstallIn(ActivityComponent::class)
-    object TopModule {
-        @ActivityScoped
-        @Provides
-        fun provideTopActivityView(@ActivityContext activity: Context): TopActivityView = activity as TopActivityView
     }
 }
