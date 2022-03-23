@@ -27,6 +27,8 @@ jobs:
         run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
       - name: Build
         run: ./gradlew app:assembleDebug
+      - name: Install Firebase CLI
+        run: curl -sL https://firebase.tools | bash
       - name: Deploy to Firebase App Distribution
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
