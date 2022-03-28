@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.phicdy.mycuration.articlelist.ArticlesListActivity
 import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
-import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import com.phicdy.mycuration.rss.databinding.FragmentRssListBinding
@@ -77,7 +76,10 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
 
     private fun setAllListener() {
         binding.swiperefreshlayout.setOnRefreshListener {
-            launchWhenInitializedOrUpdated { _, mode -> updateAllRssListActionCreator.run(mode) }
+            val state = rssListStateStore.state.value ?: return@setOnRefreshListener
+            lifecycleScope.launchWhenStarted {
+                updateAllRssListActionCreator.run(state.mode)
+            }
         }
     }
 
@@ -95,44 +97,28 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
         registerForContextMenu(binding.recyclerview)
         setAllListener()
         rssListStateStore.state.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                RssListState.Initializing -> {
-                    binding.progressbar.visibility = View.VISIBLE
+            if (state.isInitializing) {
+                binding.progressbar.visibility = View.VISIBLE
+                hideRecyclerView()
+            } else {
+                binding.progressbar.visibility = View.GONE
+                binding.swiperefreshlayout.isRefreshing = false
+                if (state.item.isEmpty()) {
                     hideRecyclerView()
+                    showEmptyView()
+                } else {
+                    init(state.item)
+                    hideEmptyView()
                 }
-                is RssListState.Initialized -> {
-                    binding.progressbar.visibility = View.GONE
-                    if (state.item.isEmpty()) {
-                        hideRecyclerView()
-                        showEmptyView()
-                    } else {
-                        init(state.item)
-                        hideEmptyView()
-                    }
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        launchUpdateAllRssListActionCreator.run(
-                            state.mode,
-                            RssUpdateIntervalCheckDate(Date())
-                        )
-                    }
+                viewLifecycleOwner.lifecycleScope.launch {
+                    launchUpdateAllRssListActionCreator.run(
+                        state.mode,
+                        RssUpdateIntervalCheckDate(Date())
+                    )
                 }
-                RssListState.StartUpdate -> {
-                    binding.swiperefreshlayout.isRefreshing = true
-                }
-                is RssListState.Updated -> {
-                    binding.progressbar.visibility = View.GONE
-                    if (state.item.isEmpty()) {
-                        hideRecyclerView()
-                        showEmptyView()
-                    } else {
-                        init(state.item)
-                        hideEmptyView()
-                    }
-                    binding.swiperefreshlayout.isRefreshing = false
-                }
-                RssListState.FailedToUpdate -> {
-                    binding.swiperefreshlayout.isRefreshing = false
-                }
+            }
+            if (state.isRefreshing) {
+                binding.swiperefreshlayout.isRefreshing = true
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -152,21 +138,11 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            when (val state = rssListStateStore.state.value) {
-                is RssListState.Initialized -> {
-                    launchUpdateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date()))
-                }
-                is RssListState.Updated -> {
-                    launchUpdateAllRssListActionCreator.run(state.mode, RssUpdateIntervalCheckDate(Date()))
-                }
-                RssListState.FailedToUpdate -> {
-                    launchUpdateAllRssListActionCreator.run(RssListMode.UNREAD_ONLY, RssUpdateIntervalCheckDate(Date()))
-                }
-                RssListState.StartUpdate,
-                RssListState.Initializing -> {
-                    // loading
-                }
-            }
+            val state = rssListStateStore.state.value ?: return@launch
+            launchUpdateAllRssListActionCreator.run(
+                state.mode,
+                RssUpdateIntervalCheckDate(Date())
+            )
         }
     }
 
@@ -181,32 +157,35 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     }
 
     fun updateFeedTitle(rssId: Int, newTitle: String) {
-        launchWhenInitializedOrUpdated { rawRssList, mode -> changeRssTitleActionCreator.run(rssId, newTitle, rawRssList, mode) }
+        val state = rssListStateStore.state.value ?: return
+        lifecycleScope.launchWhenStarted {
+            changeRssTitleActionCreator.run(
+                rssId,
+                newTitle,
+                state.rawRssList,
+                state.mode
+            )
+        }
     }
 
     fun removeRss(rssId: Int) {
-        launchWhenInitializedOrUpdated { rawRssList, mode -> deleteRssActionCreator.run(rssId, rawRssList, mode) }
+        val state = rssListStateStore.state.value ?: return
+        lifecycleScope.launchWhenStarted {
+            deleteRssActionCreator.run(
+                rssId,
+                state.rawRssList,
+                state.mode
+            )
+        }
     }
 
     fun changeRssListMode() {
-        launchWhenInitializedOrUpdated { rawRssList, mode -> changeRssListModeActionCreator.run(rawRssList, mode) }
-    }
-
-    private fun launchWhenInitializedOrUpdated(block: suspend (List<Feed>, RssListMode) -> Unit) {
-        when (val value = rssListStateStore.state.value) {
-            is RssListState.Updated -> {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    block.invoke(value.rawRssList, value.mode)
-                }
-            }
-            is RssListState.Initialized -> {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    block.invoke(value.rawRssList, value.mode)
-                }
-            }
-            RssListState.Initializing, null -> return
-            RssListState.StartUpdate -> return
-            RssListState.FailedToUpdate -> return
+        val state = rssListStateStore.state.value ?: return
+        lifecycleScope.launchWhenStarted {
+            changeRssListModeActionCreator.run(
+                state.rawRssList,
+                state.mode
+            )
         }
     }
 

@@ -22,10 +22,12 @@ class ChangeRssTitleActionCreator @Inject constructor(
         }
         val (newMode, item) = rssListItemFactory.create(mode, updated)
         dispatcher.dispatch(RssListAction(
-                RssListState.Updated(
-                        item = item,
-                        mode = newMode,
-                        rawRssList = updated
+                RssListState(
+                    item = item,
+                    mode = newMode,
+                    rawRssList = updated,
+                    isInitializing = false,
+                    isRefreshing = false
                 )
         ))
     }

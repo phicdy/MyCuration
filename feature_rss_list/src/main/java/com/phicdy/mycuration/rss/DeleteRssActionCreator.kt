@@ -15,12 +15,16 @@ class DeleteRssActionCreator @Inject constructor(
     override suspend fun run(rssId: Int, rawRssList: List<Feed>, mode: RssListMode) {
         val updated = rawRssList.filter { it.id != rssId }
         val (newMode, item) = rssListItemFactory.create(mode, updated)
-        RssListState.Updated(
-                item = item,
-                mode = newMode,
-                rawRssList = updated
-        ).let {
-            dispatcher.dispatch(RssListAction(it))
-        }
+        dispatcher.dispatch(
+            RssListAction(
+                RssListState(
+                    item = item,
+                    mode = newMode,
+                    rawRssList = updated,
+                    isInitializing = false,
+                    isRefreshing = false
+                )
+            )
+        )
     }
 }

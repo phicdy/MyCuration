@@ -16,18 +16,22 @@ class ChangeRssListModeActionCreator @Inject constructor(
         when (mode) {
             RssListMode.UNREAD_ONLY -> {
                 val (_, item) = rssListItemFactory.create(RssListMode.ALL, rawRssList)
-                RssListState.Updated(
-                        item = item,
-                        mode = RssListMode.ALL,
-                        rawRssList = rawRssList
+                RssListState(
+                    item = item,
+                    mode = RssListMode.ALL,
+                    rawRssList = rawRssList,
+                    isInitializing = false,
+                    isRefreshing = false
                 )
             }
             RssListMode.ALL -> {
                 val (_, item) = rssListItemFactory.create(RssListMode.UNREAD_ONLY, rawRssList)
-                RssListState.Updated(
-                        item = item,
-                        mode = RssListMode.UNREAD_ONLY,
-                        rawRssList = rawRssList
+                RssListState(
+                    item = item,
+                    mode = RssListMode.UNREAD_ONLY,
+                    rawRssList = rawRssList,
+                    isInitializing = false,
+                    isRefreshing = false
                 )
             }
         }.let {
