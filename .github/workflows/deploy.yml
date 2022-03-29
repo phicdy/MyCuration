@@ -18,11 +18,12 @@ jobs:
       - name: Install NDK r17c
         run: |
           yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
-          $ANDROID_HOME/tools/bin/sdkmanager --install "ndk;17.2.4988734"
+          $ANDROID_HOME/tools/bin/sdkmanager --install "ndk;17.2.4988734" >/dev/null
           echo "ndk.dir=$ANDROID_HOME/ndk/17.2.4988734" >> ./local.properties
           export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/17.2.4988734
-          echo ./local.properties
+          cat ./local.properties
           echo $ANDROID_NDK_HOME
+          ls $ANDROID_NDK_HOME/
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
