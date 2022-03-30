@@ -42,5 +42,11 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-        run: firebase appdistribution:distribute "app/build/outputs/apk/debug/app-debug.apk" --app $FIREBASE_APP_ID --release-notes "Build"
+        run: |
+         firebase appdistribution:distribute "app/build/outputs/apk/debug/app-debug.apk" \
+         --app $FIREBASE_APP_ID \
+         --release-notes "Build \\n\
+         Fuga \\n\
+         BASE_REF: $GITHUB_BASE_REF \\n\
+         HEAD_REF: $GITHUB_HEAD_REF"
 
