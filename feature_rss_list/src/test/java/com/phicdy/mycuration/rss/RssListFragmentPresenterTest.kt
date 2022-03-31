@@ -6,7 +6,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -26,32 +25,6 @@ class RssListFragmentPresenterTest {
         mockArticleRepository = mock()
         mockRssRepository = mock()
         presenter = RssListFragmentPresenter(mockView, mockRssRepository)
-    }
-
-    @Test
-    fun `when edit ok button is clicked and new title is empty then show error toast`() = runBlocking {
-        presenter.onEditFeedOkButtonClicked("", 0)
-        verify(mockView, times(1)).showEditFeedTitleEmptyErrorToast()
-    }
-
-    @Test
-    fun `when edit ok button is clicked and new title is blank then show error toast`() = runBlocking {
-        presenter.onEditFeedOkButtonClicked("   ", 0)
-        verify(mockView, times(1)).showEditFeedTitleEmptyErrorToast()
-    }
-
-    @Test
-    fun `when edit ok button is clicked and succeeds then show success toast`() = runBlocking {
-        whenever(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(1)
-        presenter.onEditFeedOkButtonClicked("newTitle", 0)
-        verify(mockView, times(1)).showEditFeedSuccessToast()
-    }
-
-    @Test
-    fun `when edit ok button is clicked and fails then show error toast`() = runBlocking {
-        whenever(mockRssRepository.saveNewTitle(anyInt(), anyString())).thenReturn(0)
-        presenter.onEditFeedOkButtonClicked("newTitle", 0)
-        verify(mockView, times(1)).showEditFeedFailToast()
     }
 
     @Test

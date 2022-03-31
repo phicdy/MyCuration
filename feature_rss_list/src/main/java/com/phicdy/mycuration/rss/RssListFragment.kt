@@ -52,6 +52,12 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     lateinit var deleteRssActionCreator: DeleteRssActionCreator
 
     @Inject
+    lateinit var editRssTitleActionCreator: EditRssTitleActionCreator
+
+    @Inject
+    lateinit var consumeRssListMessageActionCreator: ConsumeRssListMessageActionCreator
+
+    @Inject
     lateinit var presenter: RssListFragmentPresenter
 
     private fun init(items: List<RssListItem>) {
@@ -119,6 +125,16 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
             }
             if (state.isRefreshing) {
                 binding.swiperefreshlayout.isRefreshing = true
+            }
+            state.messageList.firstOrNull()?.let { message ->
+                when (message.type) {
+                    RssListMessage.Type.SUCCEED_TO_EDIT_RSS -> showEditFeedSuccessToast()
+                    RssListMessage.Type.ERROR_EMPTY_RSS_TITLE_EDIT -> showEditFeedTitleEmptyErrorToast()
+                    RssListMessage.Type.ERROR_SAVE_RSS_TITLE -> showEditFeedFailToast()
+                }
+                lifecycleScope.launchWhenStarted {
+                    consumeRssListMessageActionCreator.run(message)
+                }
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -210,7 +226,7 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
             .setPositiveButton(R.string.save) { _, _ ->
                 val newTitle = editTitleView.text.toString()
                 lifecycleScope.launchWhenStarted {
-                    presenter.onEditFeedOkButtonClicked(newTitle, rssId)
+                    editRssTitleActionCreator.run(newTitle, rssId)
                 }
             }.setNegativeButton(R.string.cancel, null).show()
     }

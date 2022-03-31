@@ -8,6 +8,7 @@ import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.entity.RssListMode
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -104,6 +105,27 @@ class RSSListStateStore @Inject constructor(
                     }
                 }
             }
+            is EditRssTitleSuccessAction -> {
+                appendToMessageList(RssListMessage.Type.SUCCEED_TO_EDIT_RSS)
+            }
+            is EditRssTitleErrorAction -> {
+                appendToMessageList(action.value)
+            }
+            is ConsumeRssListMessageAction -> {
+                val current = _state.value ?: return
+                val messageList = current.messageList.filterNot { it.id == action.value.id }
+                _state.value = _state.value?.copy(messageList = messageList)
+            }
         }
+    }
+
+    private fun appendToMessageList(type: RssListMessage.Type) {
+        val current = _state.value ?: return
+        val messageList =
+            current.messageList + RssListMessage(
+                UUID.randomUUID().mostSignificantBits,
+                type
+            )
+        _state.value = _state.value?.copy(messageList = messageList)
     }
 }
