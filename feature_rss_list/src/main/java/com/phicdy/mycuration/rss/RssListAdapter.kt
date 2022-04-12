@@ -13,7 +13,7 @@ import com.phicdy.mycuration.rss.databinding.ItemRssFooterBinding
 import java.security.InvalidParameterException
 
 class RssListAdapter(
-        private val mListener: RssListFragment.OnFeedListFragmentListener?
+    private val mListener: OnFeedListFragmentListener?
 ) : ListAdapter<RssListItem, RecyclerView.ViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {

@@ -14,13 +14,43 @@ class FetchAllRssListActionCreator @Inject constructor(
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override suspend fun run(rssListMode: RssListMode) {
-        dispatcher.dispatch(RssListAction(RssListState.Initializing))
+        dispatcher.dispatch(
+            RssListAction(
+                RssListState(
+                    item = emptyList(),
+                    rawRssList = emptyList(),
+                    mode = rssListMode,
+                    isInitializing = true,
+                    isRefreshing = false
+                )
+            )
+        )
         val rss = rssRepository.getAllFeeds()
         if (rss.isEmpty()) {
-            dispatcher.dispatch(RssListAction(RssListState.Initialized(emptyList(), emptyList(), rssListMode)))
+            dispatcher.dispatch(
+                RssListAction(
+                    RssListState(
+                        item = emptyList(),
+                        rawRssList = emptyList(),
+                        mode = rssListMode,
+                        isInitializing = false,
+                        isRefreshing = false
+                    )
+                )
+            )
             return
         }
         val (mode, item) = rssListItemFactory.create(rssListMode, rss)
-        dispatcher.dispatch(RssListAction(RssListState.Initialized(item, rss, mode)))
+        dispatcher.dispatch(
+            RssListAction(
+                RssListState(
+                    item = item,
+                    rawRssList = rss,
+                    mode = mode,
+                    isInitializing = false,
+                    isRefreshing = false
+                )
+            )
+        )
     }
 }

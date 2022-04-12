@@ -14,6 +14,7 @@ android {
 }
 
 dependencies {
+    implementation project(':core')
     implementation project(':domain')
     implementation project(':feature_add_curation')
     implementation project(':feature_article_list')

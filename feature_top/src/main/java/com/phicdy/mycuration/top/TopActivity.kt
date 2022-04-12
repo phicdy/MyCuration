@@ -13,21 +13,19 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.feature_register_filter.RegisterFilterActivity
 import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
-import com.phicdy.mycuration.articlelist.ArticlesListActivity
-import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
 import com.phicdy.mycuration.curatedarticlelist.CuratedArticlesListActivity
 import com.phicdy.mycuration.curationlist.CurationListFragment
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -40,41 +38,36 @@ import com.phicdy.mycuration.filterlist.FilterListFragment
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.setting.SettingActivity
 import com.phicdy.mycuration.tracker.TrackerHelper
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.scopes.ActivityScoped
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 @AndroidEntryPoint
 class TopActivity :
     AppCompatActivity(),
-    RssListFragment.OnFeedListFragmentListener,
-    CurationListFragment.OnCurationListFragmentListener,
-    TopActivityView,
-    CoroutineScope {
+    CurationListFragment.OnCurationListFragmentListener {
 
     companion object {
         private const val SHOWCASE_ID = "tutorialAddRss"
         private const val FRAGMENT_TAG = "FRAGMENT_TAG"
     }
 
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+    @Inject
+    lateinit var initializeTopActionCreator: InitializeTopActionCreator
 
     @Inject
-    lateinit var presenter: TopActivityPresenter
+    lateinit var checkReviewRequestActionCreator: CheckReviewRequestActionCreator
+
+    @Inject
+    lateinit var closeRateDialogActionCreator: CloseRateDialogActionCreator
+
+    @Inject
+    lateinit var helper: PreferenceHelper
+
+    private val topStateStore: TopStateStore by viewModels()
+
     private lateinit var fab: FloatingActionButton
     private lateinit var fabAddCuration: FloatingActionButton
     private lateinit var fabAddRss: FloatingActionButton
@@ -100,7 +93,10 @@ class TopActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
-        presenter.create()
+        initViewPager()
+        initFab()
+        initToolbar()
+        setAlarmManager()
         if (savedInstanceState == null) {
             changeTab(PreferenceHelper.launchTab)
         } else {
@@ -112,9 +108,18 @@ class TopActivity :
             }
 
         }
+        lifecycleScope.launch {
+            initializeTopActionCreator.run()
+        }
+
+        topStateStore.state.observe(this) { state ->
+            if (state.showRateDialog) {
+                showRateDialog()
+            }
+        }
     }
 
-    override fun initViewPager() {
+    private fun initViewPager() {
         navigationView = findViewById(R.id.navigation)
         navigationView.setOnNavigationItemSelectedListener { item ->
             replaceFragmentWith(item.itemId)
@@ -145,27 +150,38 @@ class TopActivity :
         }
     }
 
-    override fun initFab() {
+    private fun initFab() {
         fun onAddCurationClicked() {
-            presenter.fabCurationClicked()
+            closeAddFab()
+            val num = topStateStore.state.value?.numOfRss
+            if (num == 0L) {
+                goToFeedSearch()
+                return
+            }
+            goToAddCuration()
         }
 
         fun onAddRssClicked() {
-            presenter.fabRssClicked()
+            closeAddFab()
+            goToFeedSearch()
         }
 
         fun onAddFilterClicked() {
-            launch(context = coroutineContext) {
-                presenter.fabFilterClicked()
+            closeAddFab()
+            val num = topStateStore.state.value?.numOfRss
+            if (num == 0L) {
+                goToFeedSearch()
+                return
             }
+            goToAddFilter()
         }
 
         fab = findViewById(R.id.fab_top)
-        fab.setOnClickListener { presenter.fabClicked() }
+        fab.setOnClickListener { startFabAnimation() }
 
         back = findViewById(R.id.fl_add_background)
         back.setOnClickListener {
-            presenter.addBackgroundClicked()
+            closeAddFab()
         }
 
         llAddCuration = findViewById(R.id.ll_add_curation)
@@ -199,13 +215,13 @@ class TopActivity :
         }
     }
 
-    override fun initToolbar() {
+    private fun initToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_top)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    override fun startFabAnimation() {
+    private fun startFabAnimation() {
         back.visibility = View.VISIBLE
 
         val animation = AnimationUtils.loadAnimation(this, R.anim.fab_rotation)
@@ -230,7 +246,7 @@ class TopActivity :
         llAddFilter.startAnimation(fadeInFilter)
     }
 
-    override fun closeAddFab() {
+    private fun closeAddFab() {
         back.visibility = View.GONE
 
         val animation = AnimationUtils.loadAnimation(this, R.anim.fab_rotation_back)
@@ -290,16 +306,12 @@ class TopActivity :
 
     override fun onResume() {
         super.onResume()
-        launch(context = coroutineContext) {
-            presenter.resume()
+        lifecycleScope.launch {
+            checkReviewRequestActionCreator.run()
         }
+        closeSearchView()
         navigationView.setOnNavigationItemReselectedListener { }
         changeTheme()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -321,7 +333,8 @@ class TopActivity :
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                presenter.queryTextSubmit(query)
+                if (query == null) return false
+                goToArticleSearchResult(query)
                 return false
             }
         })
@@ -358,111 +371,53 @@ class TopActivity :
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        presenter.optionItemClicked(item)
+        when (item.itemId) {
+            R.id.setting_top_activity -> goToSetting()
+        }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun setAlarmManager() {
+    private fun setAlarmManager() {
         // Start auto update alarmmanager
         val manager = AlarmManagerTaskManager(this)
-        val helper = PreferenceHelper
         val intervalSec = helper.autoUpdateIntervalSecond
         manager.setNewAlarm(intervalSec)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (presenter.onKeyDown(keyCode, back.visibility == View.VISIBLE)) return true
+        if (keyCode == KeyEvent.KEYCODE_BACK && back.visibility == View.VISIBLE) {
+            closeAddFab()
+            return true
+        }
         return super.onKeyDown(keyCode, event)
     }
 
-    override fun goToFeedSearch() {
+    private fun goToFeedSearch() {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_add_rss))
         openFeedSearch.launch(Intent(this@TopActivity, FeedSearchActivity::class.java))
     }
 
-    override fun goToAddCuration() {
+    private fun goToAddCuration() {
         val intent = Intent(applicationContext, AddCurationActivity::class.java)
         startActivity(intent)
         TrackerHelper.sendButtonEvent(getString(R.string.tap_add_curation))
     }
 
-    override fun goToAddFilter() {
+    private fun goToAddFilter() {
         val intent = Intent(applicationContext, RegisterFilterActivity::class.java)
         startActivity(intent)
         TrackerHelper.sendButtonEvent(getString(R.string.tap_add_filter))
     }
 
-    override fun goToSetting() {
+    private fun goToSetting() {
         startActivity(Intent(applicationContext, SettingActivity::class.java))
     }
 
-    override fun goToArticleSearchResult(query: String) {
+    private fun goToArticleSearchResult(query: String) {
         val intent = Intent(this@TopActivity, ArticleSearchResultActivity::class.java)
         intent.action = Intent.ACTION_SEARCH
         intent.putExtra(SearchManager.QUERY, query)
         startActivity(intent)
-    }
-
-    override fun onListClicked(feedId: Int) {
-        startActivity(ArticlesListActivity.createIntent(this, feedId))
-    }
-
-    override fun onEditRssClicked(rssId: Int, feedTitle: String) {
-        val addView = View.inflate(this, R.layout.edit_feed_title, null)
-        val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
-        editTitleView.setText(feedTitle)
-
-        AlertDialog.Builder(this)
-                .setTitle(R.string.edit_rss_title)
-                .setView(addView)
-                .setPositiveButton(R.string.save) { _, _ ->
-                    val newTitle = editTitleView.text.toString()
-                    launch(context = coroutineContext) {
-                        presenter.onEditFeedOkButtonClicked(newTitle, rssId)
-                    }
-                }.setNegativeButton(R.string.cancel, null).show()
-    }
-
-    override fun onDeleteRssClicked(rssId: Int, position: Int) {
-        AlertDialog.Builder(this)
-                .setTitle(R.string.delete_rss_alert)
-                .setPositiveButton(R.string.delete) { _, _ ->
-                    launch {
-                        presenter.onDeleteOkButtonClicked(rssId)
-                    }
-                }
-                .setNegativeButton(R.string.cancel, null).show()
-    }
-
-    override suspend fun removeRss(rssId: Int) {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
-        if (fragment is RssListFragment) {
-            fragment.removeRss(rssId)
-        }
-    }
-
-    override fun showDeleteSuccessToast() {
-        Toast.makeText(this, getString(R.string.finish_delete_rss_success), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showDeleteFailToast() {
-        Toast.makeText(this, getString(R.string.finish_delete_rss_fail), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onAllUnreadClicked() {
-        val intent = Intent(applicationContext, ArticlesListActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onFavoriteClicked() {
-        startActivity(FavoriteArticlesListActivity.createIntent(this))
-    }
-
-    override fun onFooterClicked() {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
-        if (fragment is RssListFragment) {
-            fragment.changeRssListMode()
-        }
     }
 
     override fun onCurationListClicked(curationId: Int) {
@@ -476,7 +431,7 @@ class TopActivity :
         startActivity(intent)
     }
 
-    override fun closeSearchView() {
+    private fun closeSearchView() {
         if (searchView != null) {
             searchView!!.onActionViewCollapsed()
             searchView!!.setQuery("", false)
@@ -490,22 +445,26 @@ class TopActivity :
         }
     }
 
-    override fun showRateDialog() {
+    private fun showRateDialog() {
         TrackerHelper.sendUiEvent(getString(R.string.show_review_dialog))
         AlertDialog.Builder(this)
-                .setTitle(R.string.review_dialog_title)
-                .setMessage(R.string.review_dialog_message)
-                .setPositiveButton(R.string.review) { _, _ ->
-                    presenter.onReviewClicked()
+            .setTitle(R.string.review_dialog_title)
+            .setMessage(R.string.review_dialog_message)
+            .setPositiveButton(R.string.review) { _, _ ->
+                helper.setReviewed()
+                goToGooglePlay()
+            }
+            .setNegativeButton(R.string.cancel) { _, _ ->
+                TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))
+                helper.resetReviewCount()
+                lifecycleScope.launchWhenStarted {
+                    closeRateDialogActionCreator.run()
                 }
-                .setNegativeButton(R.string.cancel) { _, _ ->
-                    TrackerHelper.sendButtonEvent(getString(R.string.cancel_review))
-                    presenter.onCancelClicked()
-                }
+            }
                 .show()
     }
 
-    override fun goToGooglePlay() {
+    private fun goToGooglePlay() {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_go_to_google_play))
         try {
             val uri = Uri.parse("market://details?id=$packageName")
@@ -513,32 +472,4 @@ class TopActivity :
         } catch (e: Exception) {
         }
     }
-
-    override fun showEditFeedTitleEmptyErrorToast() {
-        Toast.makeText(this, getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showEditFeedFailToast() {
-        Toast.makeText(this, getString(R.string.edit_rss_title_error), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showEditFeedSuccessToast() {
-        Toast.makeText(this, getString(R.string.edit_rss_title_success), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun updateFeedTitle(rssId: Int, newTitle: String) {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
-        if (fragment is RssListFragment) {
-            fragment.updateFeedTitle(rssId, newTitle)
-        }
-    }
-
-    @Module
-    @InstallIn(ActivityComponent::class)
-    object TopModule {
-        @ActivityScoped
-        @Provides
-        fun provideTopActivityView(@ActivityContext activity: Context): TopActivityView = activity as TopActivityView
-    }
 }
-
