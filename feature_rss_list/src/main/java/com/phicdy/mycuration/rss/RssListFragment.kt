@@ -168,7 +168,7 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
         _binding = null
     }
 
-    fun changeRssListMode() {
+    private fun changeRssListMode() {
         val state = rssListStateStore.state.value ?: return
         lifecycleScope.launchWhenStarted {
             changeRssListModeActionCreator.run(
@@ -235,11 +235,11 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
         changeRssListMode()
     }
 
-    fun showEditFeedTitleEmptyErrorToast() {
+    private fun showEditFeedTitleEmptyErrorToast() {
         Toast.makeText(requireContext(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
     }
 
-    fun showEditFeedFailToast() {
+    private fun showEditFeedFailToast() {
         Toast.makeText(
             requireContext(),
             getString(R.string.edit_rss_title_error),
@@ -247,7 +247,7 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
         ).show()
     }
 
-    fun showEditFeedSuccessToast() {
+    private fun showEditFeedSuccessToast() {
         Toast.makeText(
             requireContext(),
             getString(R.string.edit_rss_title_success),
