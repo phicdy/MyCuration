@@ -46,9 +46,6 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     lateinit var changeRssListModeActionCreator: ChangeRssListModeActionCreator
 
     @Inject
-    lateinit var changeRssTitleActionCreator: ChangeRssTitleActionCreator
-
-    @Inject
     lateinit var deleteRssActionCreator: DeleteRssActionCreator
 
     @Inject
@@ -169,18 +166,6 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun updateFeedTitle(rssId: Int, newTitle: String) {
-        val state = rssListStateStore.state.value ?: return
-        lifecycleScope.launchWhenStarted {
-            changeRssTitleActionCreator.run(
-                rssId,
-                newTitle,
-                state.rawRssList,
-                state.mode
-            )
-        }
     }
 
     fun changeRssListMode() {
