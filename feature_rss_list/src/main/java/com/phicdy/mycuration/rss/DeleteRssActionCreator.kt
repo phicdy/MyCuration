@@ -2,29 +2,22 @@ package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.core.ActionCreator3
 import com.phicdy.mycuration.core.Dispatcher
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
 import javax.inject.Inject
 
 class DeleteRssActionCreator @Inject constructor(
-        private val dispatcher: Dispatcher,
-        private val rssListItemFactory: RssListItemFactory
+    private val dispatcher: Dispatcher,
+    private val rssRepository: RssRepository
 ) : ActionCreator3<Int, List<Feed>, RssListMode> {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override suspend fun run(rssId: Int, rawRssList: List<Feed>, mode: RssListMode) {
-        val updated = rawRssList.filter { it.id != rssId }
-        val (newMode, item) = rssListItemFactory.create(mode, updated)
-        dispatcher.dispatch(
-            RssListAction(
-                RssListState(
-                    item = item,
-                    mode = newMode,
-                    rawRssList = updated,
-                    isInitializing = false,
-                    isRefreshing = false
-                )
-            )
-        )
+        if (rssRepository.deleteRss(rssId)) {
+            dispatcher.dispatch(DeleteRssAction(rssId))
+        } else {
+            dispatcher.dispatch(DeleteRssFailedAction(Unit))
+        }
     }
 }

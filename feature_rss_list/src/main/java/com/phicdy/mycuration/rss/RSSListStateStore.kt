@@ -111,6 +111,25 @@ class RSSListStateStore @Inject constructor(
             is EditRssTitleErrorAction -> {
                 appendToMessageList(action.value)
             }
+            is DeleteRssAction -> {
+                val current = _state.value ?: return
+                val updated = current.rawRssList.filter { it.id != action.value }
+                val (newMode, item) = rssListItemFactory.create(current.mode, updated)
+                val messageList =
+                    current.messageList + RssListMessage(
+                        UUID.randomUUID().mostSignificantBits,
+                        RssListMessage.Type.SUCCEED_TO_DELETE_RSS
+                    )
+                _state.value = _state.value?.copy(
+                    mode = newMode,
+                    item = item,
+                    rawRssList = updated,
+                    messageList = messageList
+                )
+            }
+            is DeleteRssFailedAction -> {
+                appendToMessageList(RssListMessage.Type.ERROR_DELETE_RSS)
+            }
             is ConsumeRssListMessageAction -> {
                 val current = _state.value ?: return
                 val messageList = current.messageList.filterNot { it.id == action.value.id }

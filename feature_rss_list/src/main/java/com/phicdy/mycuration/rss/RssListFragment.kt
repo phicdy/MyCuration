@@ -57,9 +57,6 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     @Inject
     lateinit var consumeRssListMessageActionCreator: ConsumeRssListMessageActionCreator
 
-    @Inject
-    lateinit var presenter: RssListFragmentPresenter
-
     private fun init(items: List<RssListItem>) {
         rssFeedListAdapter = RssListAdapter(listener)
         binding.recyclerview.visibility = View.VISIBLE
@@ -131,6 +128,8 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
                     RssListMessage.Type.SUCCEED_TO_EDIT_RSS -> showEditFeedSuccessToast()
                     RssListMessage.Type.ERROR_EMPTY_RSS_TITLE_EDIT -> showEditFeedTitleEmptyErrorToast()
                     RssListMessage.Type.ERROR_SAVE_RSS_TITLE -> showEditFeedFailToast()
+                    RssListMessage.Type.SUCCEED_TO_DELETE_RSS -> showDeleteSuccessToast()
+                    RssListMessage.Type.ERROR_DELETE_RSS -> showDeleteFailToast()
                 }
                 lifecycleScope.launchWhenStarted {
                     consumeRssListMessageActionCreator.run(message)
@@ -184,17 +183,6 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
         }
     }
 
-    fun removeRss(rssId: Int) {
-        val state = rssListStateStore.state.value ?: return
-        lifecycleScope.launchWhenStarted {
-            deleteRssActionCreator.run(
-                rssId,
-                state.rawRssList,
-                state.mode
-            )
-        }
-    }
-
     fun changeRssListMode() {
         val state = rssListStateStore.state.value ?: return
         lifecycleScope.launchWhenStarted {
@@ -236,7 +224,14 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
             .setTitle(R.string.delete_rss_alert)
             .setPositiveButton(R.string.delete) { _, _ ->
                 lifecycleScope.launchWhenStarted {
-                    presenter.onDeleteOkButtonClicked(rssId)
+                    val state = rssListStateStore.state.value ?: return@launchWhenStarted
+                    lifecycleScope.launchWhenStarted {
+                        deleteRssActionCreator.run(
+                            rssId,
+                            state.rawRssList,
+                            state.mode
+                        )
+                    }
                 }
             }
             .setNegativeButton(R.string.cancel, null).show()
@@ -275,7 +270,7 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
         ).show()
     }
 
-    fun showDeleteSuccessToast() {
+    private fun showDeleteSuccessToast() {
         Toast.makeText(
             requireContext(),
             getString(R.string.finish_delete_rss_success),
@@ -284,7 +279,7 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
             .show()
     }
 
-    fun showDeleteFailToast() {
+    private fun showDeleteFailToast() {
         Toast.makeText(
             requireContext(),
             getString(R.string.finish_delete_rss_fail),
