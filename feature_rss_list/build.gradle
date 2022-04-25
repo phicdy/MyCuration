@@ -32,6 +32,10 @@ dependencies {
     implementation libs.work
     implementation libs.swiperefreshlayout
     implementation libs.fragment
+    implementation libs.accompanist
+    debugImplementation "androidx.customview:customview:1.2.0-alpha01"
+    debugImplementation "androidx.customview:customview-poolingcontainer:1.0.0-alpha01"
+
 
     implementation libs.coroutines.core
     implementation libs.coroutines.android

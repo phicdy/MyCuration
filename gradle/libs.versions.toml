@@ -2,6 +2,7 @@
 jetpack_compose = "1.1.1"
 kotlin = "1.6.10"
 coroutine = "1.6.1"
+accompanist = "0.24.7-alpha"
 lifecycle = "2.4.1"
 arch_core_testing = "2.1.0"
 appcompat = "1.4.2"
@@ -36,6 +37,7 @@ compose-material = { module = "androidx.compose.material:material", version.ref 
 compose-material-icons = { module = "androidx.compose.material:material-icons-core", version.ref = "jetpack_compose" }
 compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "jetpack_compose" }
 compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "jetpack_compose" }
+accompanist = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 
 firebase-ads = { module = "com.google.firebase:firebase-ads", version = "21.0.0" }
 

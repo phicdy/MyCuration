@@ -7,19 +7,40 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.phicdy.mycuration.articlelist.ArticlesListActivity
 import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
+import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import com.phicdy.mycuration.rss.databinding.FragmentRssListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -254,4 +275,182 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
             Toast.LENGTH_SHORT
         ).show()
     }
+}
+
+@Composable
+fun RssListScreen(store: RSSListStateStore) {
+    val value = store.state.observeAsState().value ?: return
+    RssListScreen(
+        item = value.item,
+        rawRssList = value.rawRssList,
+        mode = value.mode,
+        isInitializing = value.isInitializing,
+        isRefreshing = value.isRefreshing,
+        messageList = value.messageList
+    )
+}
+
+@Composable
+fun RssListScreen(
+    item: List<RssListItem>,
+    rawRssList: List<Feed>,
+    mode: RssListMode,
+    isInitializing: Boolean,
+    isRefreshing: Boolean,
+    messageList: List<RssListMessage> = emptyList(),
+    onRefresh: () -> Unit = {},
+) {
+    if (isInitializing) {
+        CircularProgressIndicator()
+    } else {
+        if (item.isEmpty()) {
+            RssEmptyText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            )
+        } else {
+            SwipeRefreshRssList(
+                isRefreshing = isRefreshing,
+            )
+        }
+    }
+}
+
+@Composable
+fun RssEmptyText(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(id = com.phicdy.mycuration.resource.R.string.no_rss_message),
+        textAlign = TextAlign.Center,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun SwipeRefreshRssList(
+    modifier: Modifier = Modifier,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit = {},
+    items: List<RssListItem> = emptyList(),
+    onRssClicked: () -> Unit = {}
+) {
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+        onRefresh = onRefresh,
+        modifier = modifier
+    ) {
+        LazyColumn {
+            items(items) { item ->
+                when (item) {
+                    is RssListItem.All -> AllRssHeader(unreadCount = item.unreadCount)
+                    is RssListItem.Content -> RssContent(
+                        title = item.rssTitle,
+                        unreadCount = item.unreadCount,
+                        onRssClicked = onRssClicked
+                    )
+                    RssListItem.Favroite -> TODO()
+                    is RssListItem.Footer -> TODO()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AllRssHeader(unreadCount: Int) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_view_headline_black_24dp),
+            contentDescription = ""
+        )
+        Text(
+            text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
+            fontSize = 18.sp,
+            modifier = Modifier
+                .padding(start = 16.dp)
+        )
+        Spacer(modifier = Modifier.weight(1.0f))
+        Text(
+            text = unreadCount.toString(),
+            fontSize = 16.sp,
+            modifier = Modifier.padding(end = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun RssContent(
+    @DrawableRes iconDrawable: Int = com.phicdy.mycuration.resource.R.drawable.ic_rss,
+    title: String,
+    unreadCount: Int,
+    onRssClicked: () -> Unit = {}
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onRssClicked() }
+    ) {
+        Image(
+            painter = painterResource(id = iconDrawable),
+            modifier = Modifier
+                .width(32.dp)
+                .height(32.dp)
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
+            contentDescription = ""
+        )
+        Text(
+            text = title,
+            fontSize = 16.sp,
+            modifier = Modifier
+                .padding(start = 16.dp)
+        )
+        Spacer(modifier = Modifier.weight(1.0f))
+        Text(
+            text = unreadCount.toString(),
+            fontSize = 16.sp,
+            modifier = Modifier.padding(end = 16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewLoadingRssListScreen() {
+    RssListScreen(
+        item = emptyList(),
+        rawRssList = emptyList(),
+        mode = RssListMode.UNREAD_ONLY,
+        isInitializing = true,
+        isRefreshing = false,
+        messageList = emptyList()
+    )
+}
+
+@Preview
+@Composable
+fun PreviewEmptyRssListScreen() {
+    RssListScreen(
+        item = emptyList(),
+        rawRssList = emptyList(),
+        mode = RssListMode.UNREAD_ONLY,
+        isInitializing = false,
+        isRefreshing = false,
+        messageList = emptyList()
+    )
+}
+
+@Preview
+@Composable
+fun PreviewAllRssHeader() {
+    AllRssHeader(unreadCount = 10)
+}
+
+@Preview
+@Composable
+fun PreviewRssContent() {
+    RssContent(title = "title", unreadCount = 10)
 }
