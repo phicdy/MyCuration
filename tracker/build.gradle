@@ -9,6 +9,6 @@ android {
 }
 
 dependencies {
-    implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
+    implementation platform(libs.firebase.bom)
     implementation 'com.google.firebase:firebase-analytics-ktx'
 }
