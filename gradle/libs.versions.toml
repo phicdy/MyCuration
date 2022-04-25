@@ -1,6 +1,6 @@
 [versions]
 jetpack_compose = "1.1.1"
-kotlin = "1.6.10"
+kotlin = "1.6.21"
 coroutine = "1.6.1"
 lifecycle = "2.4.1"
 arch_core_testing = "2.1.0"
