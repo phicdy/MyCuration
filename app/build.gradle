@@ -39,7 +39,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        viewBinding true
     }
 
     lintOptions {
@@ -107,7 +107,7 @@ dependencies {
 
     implementation libs.stetho
 
-    implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
+    implementation platform(libs.firebase.bom)
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
 

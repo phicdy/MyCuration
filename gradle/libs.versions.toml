@@ -80,6 +80,8 @@ glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = 
 
 materialshowcaseview = { module = "com.github.deano2390:MaterialShowcaseView", version = "1.3.4" }
 
+firebase_bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom" }
+
 [bundles]
 lifecycle = ["lifecycle-viewmodel", "lifecycle-livedata"]
 compose = ["compose-ui", "compose-ui-tooling", "compose-foundation", "compose-material", "compose-material-icons", "compose-material-icons-extended", "compose-livedata"]
