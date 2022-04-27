@@ -11,7 +11,13 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
@@ -40,7 +46,7 @@ import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import com.phicdy.mycuration.rss.databinding.FragmentRssListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -299,6 +305,10 @@ fun RssListScreen(
     isRefreshing: Boolean,
     messageList: List<RssListMessage> = emptyList(),
     onRefresh: () -> Unit = {},
+    items: List<RssListItem> = emptyList(),
+    onRssClicked: () -> Unit = {},
+    onFavoriteClicked: () -> Unit = {},
+    onFooterClicked: () -> Unit = {},
 ) {
     if (isInitializing) {
         CircularProgressIndicator()
@@ -312,6 +322,11 @@ fun RssListScreen(
         } else {
             SwipeRefreshRssList(
                 isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                items = items,
+                onRssClicked = onRssClicked,
+                onFavoriteClicked = onFavoriteClicked,
+                onFooterClicked = onFooterClicked
             )
         }
     }
@@ -370,13 +385,13 @@ fun AllRssHeader(unreadCount: Int) {
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_view_headline_black_24dp),
+            modifier = Modifier
+                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
             contentDescription = ""
         )
         Text(
             text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
             fontSize = 18.sp,
-            modifier = Modifier
-                .padding(start = 16.dp)
         )
         Spacer(modifier = Modifier.weight(1.0f))
         Text(
@@ -411,8 +426,6 @@ fun RssContent(
         Text(
             text = title,
             fontSize = 16.sp,
-            modifier = Modifier
-                .padding(start = 16.dp)
         )
         Spacer(modifier = Modifier.weight(1.0f))
         Text(
@@ -459,6 +472,7 @@ fun Footer(
         fontSize = 16.sp,
         modifier = Modifier
             .padding(start = 16.dp)
+            .clickable { onFooterClicked() }
     )
 }
 
