@@ -332,7 +332,8 @@ fun SwipeRefreshRssList(
     isRefreshing: Boolean,
     onRefresh: () -> Unit = {},
     items: List<RssListItem> = emptyList(),
-    onRssClicked: () -> Unit = {}
+    onRssClicked: () -> Unit = {},
+    onFavoriteClicked: () -> Unit = {},
 ) {
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
@@ -348,7 +349,9 @@ fun SwipeRefreshRssList(
                         unreadCount = item.unreadCount,
                         onRssClicked = onRssClicked
                     )
-                    RssListItem.Favroite -> TODO()
+                    RssListItem.Favroite -> FavoriteContent(
+                        onFavoriteClicked = onFavoriteClicked,
+                    )
                     is RssListItem.Footer -> TODO()
                 }
             }
@@ -413,6 +416,33 @@ fun RssContent(
             text = unreadCount.toString(),
             fontSize = 16.sp,
             modifier = Modifier.padding(end = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun FavoriteContent(
+    onFavoriteClicked: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onFavoriteClicked() }
+    ) {
+        Image(
+            painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
+            modifier = Modifier
+                .width(32.dp)
+                .height(32.dp)
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
+            contentDescription = ""
+        )
+        Text(
+            text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
+            fontSize = 16.sp,
+            modifier = Modifier
+                .padding(start = 16.dp)
         )
     }
 }
