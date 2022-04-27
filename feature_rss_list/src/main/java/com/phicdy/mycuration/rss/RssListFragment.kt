@@ -334,6 +334,7 @@ fun SwipeRefreshRssList(
     items: List<RssListItem> = emptyList(),
     onRssClicked: () -> Unit = {},
     onFavoriteClicked: () -> Unit = {},
+    onFooterClicked: () -> Unit = {},
 ) {
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
@@ -352,7 +353,9 @@ fun SwipeRefreshRssList(
                     RssListItem.Favroite -> FavoriteContent(
                         onFavoriteClicked = onFavoriteClicked,
                     )
-                    is RssListItem.Footer -> TODO()
+                    is RssListItem.Footer -> Footer(
+                        onFooterClicked = onFooterClicked
+                    )
                 }
             }
         }
@@ -445,6 +448,18 @@ fun FavoriteContent(
                 .padding(start = 16.dp)
         )
     }
+}
+
+@Composable
+fun Footer(
+    onFooterClicked: () -> Unit,
+) {
+    Text(
+        text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
+        fontSize = 16.sp,
+        modifier = Modifier
+            .padding(start = 16.dp)
+    )
 }
 
 @Preview
