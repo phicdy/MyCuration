@@ -284,7 +284,13 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
 }
 
 @Composable
-fun RssListScreen(store: RSSListStateStore) {
+fun RssListScreen(
+    store: RSSListStateStore,
+    onRefresh: () -> Unit = {},
+    onRssClicked: () -> Unit = {},
+    onFavoriteClicked: () -> Unit = {},
+    onFooterClicked: () -> Unit = {},
+) {
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
         items = value.item,
@@ -292,7 +298,11 @@ fun RssListScreen(store: RSSListStateStore) {
         mode = value.mode,
         isInitializing = value.isInitializing,
         isRefreshing = value.isRefreshing,
-        messageList = value.messageList
+        messageList = value.messageList,
+        onRefresh = onRefresh,
+        onRssClicked = onRssClicked,
+        onFavoriteClicked = onFavoriteClicked,
+        onFooterClicked = onFooterClicked,
     )
 }
 
