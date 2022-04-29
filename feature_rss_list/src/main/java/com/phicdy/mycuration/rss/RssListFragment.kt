@@ -287,7 +287,7 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
 fun RssListScreen(store: RSSListStateStore) {
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
-        item = value.item,
+        items = value.item,
         rawRssList = value.rawRssList,
         mode = value.mode,
         isInitializing = value.isInitializing,
@@ -298,14 +298,13 @@ fun RssListScreen(store: RSSListStateStore) {
 
 @Composable
 fun RssListScreen(
-    item: List<RssListItem>,
+    items: List<RssListItem> = emptyList(),
     rawRssList: List<Feed>,
     mode: RssListMode,
     isInitializing: Boolean,
     isRefreshing: Boolean,
     messageList: List<RssListMessage> = emptyList(),
     onRefresh: () -> Unit = {},
-    items: List<RssListItem> = emptyList(),
     onRssClicked: () -> Unit = {},
     onFavoriteClicked: () -> Unit = {},
     onFooterClicked: () -> Unit = {},
@@ -313,7 +312,7 @@ fun RssListScreen(
     if (isInitializing) {
         CircularProgressIndicator()
     } else {
-        if (item.isEmpty()) {
+        if (items.isEmpty()) {
             RssEmptyText(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -480,7 +479,7 @@ fun Footer(
 @Composable
 fun PreviewLoadingRssListScreen() {
     RssListScreen(
-        item = emptyList(),
+        items = emptyList(),
         rawRssList = emptyList(),
         mode = RssListMode.UNREAD_ONLY,
         isInitializing = true,
@@ -493,7 +492,7 @@ fun PreviewLoadingRssListScreen() {
 @Composable
 fun PreviewEmptyRssListScreen() {
     RssListScreen(
-        item = emptyList(),
+        items = emptyList(),
         rawRssList = emptyList(),
         mode = RssListMode.UNREAD_ONLY,
         isInitializing = false,
