@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.phicdy.mycuration.articlelist.ArticlesListActivity
@@ -43,19 +43,14 @@ import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
-import com.phicdy.mycuration.rss.databinding.FragmentRssListBinding
+import com.phicdy.mycuration.resource.MyCurationTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RssListFragment : Fragment(), OnFeedListFragmentListener {
-
-    private var _binding: FragmentRssListBinding? = null
-    private val binding get() = _binding!!
-
-    private val rssFeedListAdapter = RssListAdapter(this)
+class RssListFragment : Fragment() {
 
     @Inject
     lateinit var fetchAllRssListActionCreator: FetchAllRssListActionCreator
@@ -79,84 +74,78 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     @Inject
     lateinit var consumeRssListMessageActionCreator: ConsumeRssListMessageActionCreator
 
-    private fun init(items: List<RssListItem>) {
-        binding.recyclerview.visibility = View.VISIBLE
-        binding.recyclerview.layoutManager = LinearLayoutManager(activity)
-        binding.recyclerview.adapter = rssFeedListAdapter
-        rssFeedListAdapter.submitList(items)
-    }
-
-    private fun hideRecyclerView() {
-        binding.recyclerview.visibility = View.GONE
-    }
-
-    private fun showEmptyView() {
-        binding.emptyView.visibility = View.VISIBLE
-    }
-
-    private fun hideEmptyView() {
-        binding.emptyView.visibility = View.GONE
-    }
-
-    private fun setAllListener() {
-        binding.swiperefreshlayout.setOnRefreshListener {
-            val state = rssListStateStore.state.value ?: return@setOnRefreshListener
-            lifecycleScope.launchWhenStarted {
-                updateAllRssListActionCreator.run(state.mode)
-            }
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentRssListBinding.inflate(inflater, container, false)
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                MyCurationTheme {
+                    RssListScreen(
+                            store = rssListStateStore,
+                            onRefresh = {
+                                val state = rssListStateStore.state.value ?: return@RssListScreen
+                                lifecycleScope.launchWhenStarted {
+                                    updateAllRssListActionCreator.run(state.mode)
+                                }
+                            },
+                            onRssClicked = { id ->
+                                startActivity(ArticlesListActivity.createIntent(requireContext(), id))
+                            },
+                            onFavoriteClicked = {
+                                startActivity(FavoriteArticlesListActivity.createIntent(requireContext()))
+                            },
+                            onFooterClicked = {
+                                changeRssListMode()
+                            }
+                    )
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        registerForContextMenu(binding.recyclerview)
-        setAllListener()
-        rssListStateStore.state.observe(viewLifecycleOwner) { state ->
-            if (state.isInitializing) {
-                binding.progressbar.visibility = View.VISIBLE
-                hideRecyclerView()
-            } else {
-                binding.progressbar.visibility = View.GONE
-                binding.swiperefreshlayout.isRefreshing = false
-                if (state.item.isEmpty()) {
-                    hideRecyclerView()
-                    showEmptyView()
-                } else {
-                    init(state.item)
-                    hideEmptyView()
-                }
-                viewLifecycleOwner.lifecycleScope.launch {
-                    launchUpdateAllRssListActionCreator.run(
-                        state.mode,
-                        RssUpdateIntervalCheckDate(Date())
-                    )
-                }
-            }
-            if (state.isRefreshing) {
-                binding.swiperefreshlayout.isRefreshing = true
-            }
-            state.messageList.firstOrNull()?.let { message ->
-                when (message.type) {
-                    RssListMessage.Type.SUCCEED_TO_EDIT_RSS -> showEditFeedSuccessToast()
-                    RssListMessage.Type.ERROR_EMPTY_RSS_TITLE_EDIT -> showEditFeedTitleEmptyErrorToast()
-                    RssListMessage.Type.ERROR_SAVE_RSS_TITLE -> showEditFeedFailToast()
-                    RssListMessage.Type.SUCCEED_TO_DELETE_RSS -> showDeleteSuccessToast()
-                    RssListMessage.Type.ERROR_DELETE_RSS -> showDeleteFailToast()
-                }
-                lifecycleScope.launchWhenStarted {
-                    consumeRssListMessageActionCreator.run(message)
-                }
-            }
-        }
+//        registerForContextMenu(binding.recyclerview)
+//        setAllListener()
+//        rssListStateStore.state.observe(viewLifecycleOwner) { state ->
+//            if (state.isInitializing) {
+//                binding.progressbar.visibility = View.VISIBLE
+//                hideRecyclerView()
+//            } else {
+//                binding.progressbar.visibility = View.GONE
+//                binding.swiperefreshlayout.isRefreshing = false
+//                if (state.item.isEmpty()) {
+//                    hideRecyclerView()
+//                    showEmptyView()
+//                } else {
+//                    init(state.item)
+//                    hideEmptyView()
+//                }
+//                viewLifecycleOwner.lifecycleScope.launch {
+//                    launchUpdateAllRssListActionCreator.run(
+//                        state.mode,
+//                        RssUpdateIntervalCheckDate(Date())
+//                    )
+//                }
+//            }
+//            if (state.isRefreshing) {
+//                binding.swiperefreshlayout.isRefreshing = true
+//            }
+//            state.messageList.firstOrNull()?.let { message ->
+//                when (message.type) {
+//                    RssListMessage.Type.SUCCEED_TO_EDIT_RSS -> showEditFeedSuccessToast()
+//                    RssListMessage.Type.ERROR_EMPTY_RSS_TITLE_EDIT -> showEditFeedTitleEmptyErrorToast()
+//                    RssListMessage.Type.ERROR_SAVE_RSS_TITLE -> showEditFeedFailToast()
+//                    RssListMessage.Type.SUCCEED_TO_DELETE_RSS -> showDeleteSuccessToast()
+//                    RssListMessage.Type.ERROR_DELETE_RSS -> showDeleteFailToast()
+//                }
+//                lifecycleScope.launchWhenStarted {
+//                    consumeRssListMessageActionCreator.run(message)
+//                }
+//            }
+//        }
         viewLifecycleOwner.lifecycleScope.launch {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
@@ -171,11 +160,6 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
                 RssUpdateIntervalCheckDate(Date())
             )
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun changeRssListMode() {
@@ -194,37 +178,33 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
         }
     }
 
-    override fun onListClicked(feedId: Int) {
-        startActivity(ArticlesListActivity.createIntent(requireContext(), feedId))
-    }
-
-    override fun onEditRssClicked(rssId: Int, feedTitle: String) {
+    fun onEditRssClicked(rssId: Int, feedTitle: String) {
         val addView = View.inflate(requireContext(), R.layout.edit_feed_title, null)
         val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
         editTitleView.setText(feedTitle)
 
         AlertDialog.Builder(requireContext())
-            .setTitle(R.string.edit_rss_title)
-            .setView(addView)
-            .setPositiveButton(R.string.save) { _, _ ->
-                val newTitle = editTitleView.text.toString()
-                lifecycleScope.launchWhenStarted {
+                .setTitle(R.string.edit_rss_title)
+                .setView(addView)
+                .setPositiveButton(R.string.save) { _, _ ->
+                    val newTitle = editTitleView.text.toString()
+                    lifecycleScope.launchWhenStarted {
                     editRssTitleActionCreator.run(newTitle, rssId)
                 }
             }.setNegativeButton(R.string.cancel, null).show()
     }
 
-    override fun onDeleteRssClicked(rssId: Int, position: Int) {
+    fun onDeleteRssClicked(rssId: Int, position: Int) {
         AlertDialog.Builder(requireContext())
-            .setTitle(R.string.delete_rss_alert)
-            .setPositiveButton(R.string.delete) { _, _ ->
-                lifecycleScope.launchWhenStarted {
-                    val state = rssListStateStore.state.value ?: return@launchWhenStarted
+                .setTitle(R.string.delete_rss_alert)
+                .setPositiveButton(R.string.delete) { _, _ ->
                     lifecycleScope.launchWhenStarted {
-                        deleteRssActionCreator.run(
-                            rssId,
-                            state.rawRssList,
-                            state.mode
+                        val state = rssListStateStore.state.value ?: return@launchWhenStarted
+                        lifecycleScope.launchWhenStarted {
+                            deleteRssActionCreator.run(
+                                    rssId,
+                                    state.rawRssList,
+                                    state.mode
                         )
                     }
                 }
@@ -232,17 +212,9 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
             .setNegativeButton(R.string.cancel, null).show()
     }
 
-    override fun onAllUnreadClicked() {
+    fun onAllUnreadClicked() {
         val intent = Intent(requireContext(), ArticlesListActivity::class.java)
         startActivity(intent)
-    }
-
-    override fun onFavoriteClicked() {
-        startActivity(FavoriteArticlesListActivity.createIntent(requireContext()))
-    }
-
-    override fun onFooterClicked() {
-        changeRssListMode()
     }
 
     private fun showEditFeedTitleEmptyErrorToast() {
@@ -285,11 +257,11 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
 
 @Composable
 fun RssListScreen(
-    store: RSSListStateStore,
-    onRefresh: () -> Unit = {},
-    onRssClicked: () -> Unit = {},
-    onFavoriteClicked: () -> Unit = {},
-    onFooterClicked: () -> Unit = {},
+        store: RSSListStateStore,
+        onRefresh: () -> Unit = {},
+        onRssClicked: (Int) -> Unit = {},
+        onFavoriteClicked: () -> Unit = {},
+        onFooterClicked: () -> Unit = {},
 ) {
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
@@ -308,16 +280,16 @@ fun RssListScreen(
 
 @Composable
 fun RssListScreen(
-    items: List<RssListItem> = emptyList(),
-    rawRssList: List<Feed>,
-    mode: RssListMode,
-    isInitializing: Boolean,
-    isRefreshing: Boolean,
-    messageList: List<RssListMessage> = emptyList(),
-    onRefresh: () -> Unit = {},
-    onRssClicked: () -> Unit = {},
-    onFavoriteClicked: () -> Unit = {},
-    onFooterClicked: () -> Unit = {},
+        items: List<RssListItem> = emptyList(),
+        rawRssList: List<Feed>,
+        mode: RssListMode,
+        isInitializing: Boolean,
+        isRefreshing: Boolean,
+        messageList: List<RssListMessage> = emptyList(),
+        onRefresh: () -> Unit = {},
+        onRssClicked: (Int) -> Unit = {},
+        onFavoriteClicked: () -> Unit = {},
+        onFooterClicked: () -> Unit = {},
 ) {
     if (isInitializing) {
         CircularProgressIndicator()
@@ -325,8 +297,8 @@ fun RssListScreen(
         if (items.isEmpty()) {
             RssEmptyText(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
+                        .fillMaxWidth()
+                        .fillMaxHeight()
             )
         } else {
             SwipeRefreshRssList(
@@ -352,13 +324,13 @@ fun RssEmptyText(modifier: Modifier = Modifier) {
 
 @Composable
 fun SwipeRefreshRssList(
-    modifier: Modifier = Modifier,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit = {},
-    items: List<RssListItem> = emptyList(),
-    onRssClicked: () -> Unit = {},
-    onFavoriteClicked: () -> Unit = {},
-    onFooterClicked: () -> Unit = {},
+        modifier: Modifier = Modifier,
+        isRefreshing: Boolean,
+        onRefresh: () -> Unit = {},
+        items: List<RssListItem> = emptyList(),
+        onRssClicked: (Int) -> Unit = {},
+        onFavoriteClicked: () -> Unit = {},
+        onFooterClicked: () -> Unit = {},
 ) {
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
@@ -370,9 +342,10 @@ fun SwipeRefreshRssList(
                 when (item) {
                     is RssListItem.All -> AllRssHeader(unreadCount = item.unreadCount)
                     is RssListItem.Content -> RssContent(
-                        title = item.rssTitle,
-                        unreadCount = item.unreadCount,
-                        onRssClicked = onRssClicked
+                            id = item.rssId,
+                            title = item.rssTitle,
+                            unreadCount = item.unreadCount,
+                            onRssClicked = onRssClicked
                     )
                     RssListItem.Favroite -> FavoriteContent(
                         onFavoriteClicked = onFavoriteClicked,
@@ -413,23 +386,24 @@ fun AllRssHeader(unreadCount: Int) {
 
 @Composable
 fun RssContent(
-    @DrawableRes iconDrawable: Int = com.phicdy.mycuration.resource.R.drawable.ic_rss,
-    title: String,
-    unreadCount: Int,
-    onRssClicked: () -> Unit = {}
+        id: Int,
+        @DrawableRes iconDrawable: Int = com.phicdy.mycuration.resource.R.drawable.ic_rss,
+        title: String,
+        unreadCount: Int,
+        onRssClicked: (Int) -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onRssClicked() }
+                .fillMaxWidth()
+                .clickable { onRssClicked(id) }
     ) {
         Image(
             painter = painterResource(id = iconDrawable),
             modifier = Modifier
-                .width(32.dp)
-                .height(32.dp)
-                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
+                    .width(32.dp)
+                    .height(32.dp)
+                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
             contentDescription = ""
         )
         Text(
@@ -452,15 +426,15 @@ fun FavoriteContent(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onFavoriteClicked() }
+                .fillMaxWidth()
+                .clickable { onFavoriteClicked() }
     ) {
         Image(
             painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
             modifier = Modifier
-                .width(32.dp)
-                .height(32.dp)
-                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
+                    .width(32.dp)
+                    .height(32.dp)
+                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
             contentDescription = ""
         )
         Text(
@@ -480,8 +454,8 @@ fun Footer(
         text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
         fontSize = 16.sp,
         modifier = Modifier
-            .padding(start = 16.dp)
-            .clickable { onFooterClicked() }
+                .padding(start = 16.dp)
+                .clickable { onFooterClicked() }
     )
 }
 
@@ -520,5 +494,5 @@ fun PreviewAllRssHeader() {
 @Preview
 @Composable
 fun PreviewRssContent() {
-    RssContent(title = "title", unreadCount = 10)
+    RssContent(id = 0, title = "title", unreadCount = 10)
 }
