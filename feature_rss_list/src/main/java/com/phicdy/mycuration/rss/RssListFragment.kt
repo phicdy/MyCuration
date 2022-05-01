@@ -418,26 +418,31 @@ fun SwipeRefreshRssList(
 
 @Composable
 fun AllRssHeader(unreadCount: Int) {
-    Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-    ) {
-        Image(
-                painter = painterResource(id = R.drawable.ic_view_headline_black_24dp),
-                modifier = Modifier
-                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-                contentDescription = ""
-        )
-        Text(
-                text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
-                fontSize = 18.sp,
-        )
-        Spacer(modifier = Modifier.weight(1.0f))
-        Text(
-                text = unreadCount.toString(),
-                fontSize = 16.sp,
-                modifier = Modifier.padding(end = 16.dp)
-        )
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                    painter = painterResource(id = R.drawable.ic_view_headline_black_24dp),
+                    modifier = Modifier
+                            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
+                            .width(32.dp)
+                            .height(32.dp),
+                    contentDescription = ""
+            )
+            Text(
+                    text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
+                    fontSize = 18.sp,
+            )
+            Spacer(modifier = Modifier.weight(1.0f))
+            Text(
+                    text = unreadCount.toString(),
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(end = 16.dp)
+            )
+        }
+        Divider(modifier = Modifier.padding(start = 64.dp))
     }
 }
 
