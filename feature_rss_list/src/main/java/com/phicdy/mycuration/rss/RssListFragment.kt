@@ -125,7 +125,11 @@ class RssListFragment : Fragment() {
                                 lifecycleScope.launchWhenStarted {
                                     hideDropdownMenuActionCreator.run()
                                 }
-                            }
+                            },
+                            onHeaderClicked = {
+                                val intent = Intent(requireContext(), ArticlesListActivity::class.java)
+                                startActivity(intent)
+                            },
                     )
                 }
             }
@@ -239,11 +243,6 @@ class RssListFragment : Fragment() {
                 .setNegativeButton(R.string.cancel, null).show()
     }
 
-    fun onAllUnreadClicked() {
-        val intent = Intent(requireContext(), ArticlesListActivity::class.java)
-        startActivity(intent)
-    }
-
     private fun showEditFeedTitleEmptyErrorToast() {
         Toast.makeText(requireContext(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
     }
@@ -286,6 +285,7 @@ class RssListFragment : Fragment() {
 fun RssListScreen(
         store: RSSListStateStore,
         onRefresh: () -> Unit = {},
+        onHeaderClicked: () -> Unit = {},
         onRssClicked: (Int) -> Unit = {},
         onRssLongClicked: (Int) -> Unit = {},
         onFavoriteClicked: () -> Unit = {},
@@ -304,6 +304,7 @@ fun RssListScreen(
             messageList = value.messageList,
             showDropdownMenuId = value.showDropdownMenuId,
             onRefresh = onRefresh,
+            onHeaderClicked = onHeaderClicked,
             onRssClicked = onRssClicked,
             onRssLongClicked = onRssLongClicked,
             onFavoriteClicked = onFavoriteClicked,
@@ -324,6 +325,7 @@ fun RssListScreen(
         messageList: List<RssListMessage> = emptyList(),
         showDropdownMenuId: Int? = null,
         onRefresh: () -> Unit = {},
+        onHeaderClicked: () -> Unit = {},
         onRssClicked: (Int) -> Unit = {},
         onRssLongClicked: (Int) -> Unit = {},
         onFavoriteClicked: () -> Unit = {},
@@ -347,6 +349,7 @@ fun RssListScreen(
                     onRefresh = onRefresh,
                     items = items,
                     showDropdownMenuId = showDropdownMenuId,
+                    onHeaderClicked = onHeaderClicked,
                     onRssClicked = onRssClicked,
                     onRssLongClicked = onRssLongClicked,
                     onFavoriteClicked = onFavoriteClicked,
@@ -375,6 +378,7 @@ fun SwipeRefreshRssList(
         onRefresh: () -> Unit = {},
         items: List<RssListItem> = emptyList(),
         showDropdownMenuId: Int?,
+        onHeaderClicked: () -> Unit = {},
         onRssClicked: (Int) -> Unit = {},
         onRssLongClicked: (Int) -> Unit = {},
         onFavoriteClicked: () -> Unit = {},
@@ -391,7 +395,10 @@ fun SwipeRefreshRssList(
         LazyColumn {
             items(items) { item ->
                 when (item) {
-                    is RssListItem.All -> AllRssHeader(unreadCount = item.unreadCount)
+                    is RssListItem.All -> AllRssHeader(
+                            unreadCount = item.unreadCount,
+                            onHeaderClicked = onHeaderClicked
+                    )
                     is RssListItem.Content -> RssContent(
                             id = item.rssId,
                             title = item.rssTitle,
@@ -417,8 +424,14 @@ fun SwipeRefreshRssList(
 }
 
 @Composable
-fun AllRssHeader(unreadCount: Int) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun AllRssHeader(
+        unreadCount: Int,
+        onHeaderClicked: () -> Unit = {}
+) {
+    Column(modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onHeaderClicked() }
+    ) {
         Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
