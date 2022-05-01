@@ -536,7 +536,7 @@ fun FavoriteContent(
 @Composable
 fun Footer(
     footerState: RssListFooterState,
-    onFooterClicked: () -> Unit,
+    onFooterClicked: () -> Unit = {},
 ) {
     val text = when (footerState) {
         RssListFooterState.ALL -> stringResource(id = com.phicdy.mycuration.resource.R.string.hide_rsses)
@@ -587,4 +587,10 @@ fun PreviewAllRssHeader() {
 @Composable
 fun PreviewRssContent() {
     RssContent(id = 0, title = "title", unreadCount = 10, showDropdownMenu = true)
+}
+
+@Preview(name = "Footer")
+@Composable
+fun PreviewFooter() {
+    Footer(footerState = RssListFooterState.UNREAD_ONLY)
 }
