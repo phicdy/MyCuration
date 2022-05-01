@@ -551,7 +551,7 @@ fun Footer(
     )
 }
 
-@Preview
+@Preview(name = "Loading Screen")
 @Composable
 fun PreviewLoadingRssListScreen() {
     RssListScreen(
@@ -564,7 +564,7 @@ fun PreviewLoadingRssListScreen() {
     )
 }
 
-@Preview
+@Preview(name = "Empty Screen")
 @Composable
 fun PreviewEmptyRssListScreen() {
     RssListScreen(
@@ -577,13 +577,13 @@ fun PreviewEmptyRssListScreen() {
     )
 }
 
-@Preview
+@Preview(name = "Header")
 @Composable
 fun PreviewAllRssHeader() {
     AllRssHeader(unreadCount = 10)
 }
 
-@Preview
+@Preview(name = "RSS Content")
 @Composable
 fun PreviewRssContent() {
     RssContent(id = 0, title = "title", unreadCount = 10, showDropdownMenu = true)
