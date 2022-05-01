@@ -503,28 +503,29 @@ fun RssContent(
 
 @Composable
 fun FavoriteContent(
-        onFavoriteClicked: () -> Unit,
+        onFavoriteClicked: () -> Unit = {},
 ) {
-    Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onFavoriteClicked() }
-    ) {
-        Image(
-                painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                        .width(32.dp)
-                        .height(32.dp)
-                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
-                contentDescription = ""
-        )
-        Text(
-                text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
-                fontSize = 16.sp,
-                modifier = Modifier
-                        .padding(start = 16.dp)
-        )
+                        .fillMaxWidth()
+                        .clickable { onFavoriteClicked() }
+        ) {
+            Image(
+                    painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
+                    modifier = Modifier
+                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
+                            .width(32.dp)
+                            .height(32.dp),
+                    contentDescription = ""
+            )
+            Text(
+                    text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
+                    fontSize = 16.sp,
+            )
+        }
+        Divider(modifier = Modifier.padding(start = 64.dp))
     }
 }
 
@@ -580,6 +581,12 @@ fun PreviewEmptyRssListScreen() {
 @Composable
 fun PreviewAllRssHeader() {
     AllRssHeader(unreadCount = 10)
+}
+
+@Preview(name = "Favorite")
+@Composable
+fun PreviewFavorite() {
+    FavoriteContent()
 }
 
 @Preview(name = "RSS Content")
