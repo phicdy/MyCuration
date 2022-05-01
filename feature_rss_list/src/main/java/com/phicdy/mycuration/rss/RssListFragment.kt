@@ -111,32 +111,22 @@ class RssListFragment : Fragment() {
                             },
                             onFooterClicked = {
                                 changeRssListMode()
+                            },
+                            onRssLongClicked = { id ->
+                                lifecycleScope.launchWhenStarted {
+                                    showDropdownMenuActionCreator.run(id)
+                                }
+                            },
+                            onEditTitleMenuClicked = { id ->
+                            },
+                            onDeleteMenuClicked = { id ->
+                            },
+                            onDismissDropdownMenu = {
+                                lifecycleScope.launchWhenStarted {
+                                    hideDropdownMenuActionCreator.run()
+                                }
                             }
-                },
-                onRssClicked = { id ->
-                    startActivity(ArticlesListActivity.createIntent(requireContext(), id))
-                },
-                onRssLongClicked = { id ->
-                    lifecycleScope.launchWhenStarted {
-                        showDropdownMenuActionCreator.run(id)
-                    }
-                },
-                onFavoriteClicked = {
-                    startActivity(FavoriteArticlesListActivity.createIntent(requireContext()))
-                },
-                onFooterClicked = {
-                    changeRssListMode()
-                },
-                onEditTitleMenuClicked = { id ->
-                },
-                onDeleteMenuClicked = { id ->
-                },
-                onDismissDropdownMenu = {
-                    lifecycleScope.launchWhenStarted {
-                        hideDropdownMenuActionCreator.run()
-                    }
-                }
-                )
+                    )
                 }
             }
         }
@@ -193,8 +183,8 @@ class RssListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val state = rssListStateStore.state.value ?: return@launch
             launchUpdateAllRssListActionCreator.run(
-                state.mode,
-                RssUpdateIntervalCheckDate(Date())
+                    state.mode,
+                    RssUpdateIntervalCheckDate(Date())
             )
         }
     }
@@ -203,8 +193,8 @@ class RssListFragment : Fragment() {
         val state = rssListStateStore.state.value ?: return
         lifecycleScope.launchWhenStarted {
             changeRssListModeActionCreator.run(
-                state.rawRssList,
-                state.mode
+                    state.rawRssList,
+                    state.mode
             )
         }
     }
@@ -226,9 +216,9 @@ class RssListFragment : Fragment() {
                 .setPositiveButton(R.string.save) { _, _ ->
                     val newTitle = editTitleView.text.toString()
                     lifecycleScope.launchWhenStarted {
-                    editRssTitleActionCreator.run(newTitle, rssId)
-                }
-            }.setNegativeButton(R.string.cancel, null).show()
+                        editRssTitleActionCreator.run(newTitle, rssId)
+                    }
+                }.setNegativeButton(R.string.cancel, null).show()
     }
 
     fun onDeleteRssClicked(rssId: Int, position: Int) {
@@ -242,11 +232,11 @@ class RssListFragment : Fragment() {
                                     rssId,
                                     state.rawRssList,
                                     state.mode
-                        )
+                            )
+                        }
                     }
                 }
-            }
-            .setNegativeButton(R.string.cancel, null).show()
+                .setNegativeButton(R.string.cancel, null).show()
     }
 
     fun onAllUnreadClicked() {
@@ -260,34 +250,34 @@ class RssListFragment : Fragment() {
 
     private fun showEditFeedFailToast() {
         Toast.makeText(
-            requireContext(),
-            getString(R.string.edit_rss_title_error),
-            Toast.LENGTH_SHORT
+                requireContext(),
+                getString(R.string.edit_rss_title_error),
+                Toast.LENGTH_SHORT
         ).show()
     }
 
     private fun showEditFeedSuccessToast() {
         Toast.makeText(
-            requireContext(),
-            getString(R.string.edit_rss_title_success),
-            Toast.LENGTH_SHORT
+                requireContext(),
+                getString(R.string.edit_rss_title_success),
+                Toast.LENGTH_SHORT
         ).show()
     }
 
     private fun showDeleteSuccessToast() {
         Toast.makeText(
-            requireContext(),
-            getString(R.string.finish_delete_rss_success),
-            Toast.LENGTH_SHORT
+                requireContext(),
+                getString(R.string.finish_delete_rss_success),
+                Toast.LENGTH_SHORT
         )
-            .show()
+                .show()
     }
 
     private fun showDeleteFailToast() {
         Toast.makeText(
-            requireContext(),
-            getString(R.string.finish_delete_rss_fail),
-            Toast.LENGTH_SHORT
+                requireContext(),
+                getString(R.string.finish_delete_rss_fail),
+                Toast.LENGTH_SHORT
         ).show()
     }
 }
@@ -347,9 +337,9 @@ fun RssListScreen(
     } else {
         if (items.isEmpty()) {
             RssEmptyText(
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
+                    modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
             )
         } else {
             SwipeRefreshRssList(
@@ -372,9 +362,9 @@ fun RssListScreen(
 @Composable
 fun RssEmptyText(modifier: Modifier = Modifier) {
     Text(
-        text = stringResource(id = com.phicdy.mycuration.resource.R.string.no_rss_message),
-        textAlign = TextAlign.Center,
-        modifier = modifier
+            text = stringResource(id = com.phicdy.mycuration.resource.R.string.no_rss_message),
+            textAlign = TextAlign.Center,
+            modifier = modifier
     )
 }
 
@@ -394,9 +384,9 @@ fun SwipeRefreshRssList(
         onDismissDropdownMenu: () -> Unit = {},
 ) {
     SwipeRefresh(
-        state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-        onRefresh = onRefresh,
-        modifier = modifier
+            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+            onRefresh = onRefresh,
+            modifier = modifier
     ) {
         LazyColumn {
             items(items) { item ->
@@ -414,11 +404,11 @@ fun SwipeRefreshRssList(
                             onDismissDropdownMenu = onDismissDropdownMenu,
                     )
                     RssListItem.Favroite -> FavoriteContent(
-                        onFavoriteClicked = onFavoriteClicked,
+                            onFavoriteClicked = onFavoriteClicked,
                     )
                     is RssListItem.Footer -> Footer(
-                        footerState = item.state,
-                        onFooterClicked = onFooterClicked
+                            footerState = item.state,
+                            onFooterClicked = onFooterClicked
                     )
                 }
             }
@@ -429,24 +419,24 @@ fun SwipeRefreshRssList(
 @Composable
 fun AllRssHeader(unreadCount: Int) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_view_headline_black_24dp),
-            modifier = Modifier
-                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-            contentDescription = ""
+                painter = painterResource(id = R.drawable.ic_view_headline_black_24dp),
+                modifier = Modifier
+                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+                contentDescription = ""
         )
         Text(
-            text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
-            fontSize = 18.sp,
+                text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
+                fontSize = 18.sp,
         )
         Spacer(modifier = Modifier.weight(1.0f))
         Text(
-            text = unreadCount.toString(),
-            fontSize = 16.sp,
-            modifier = Modifier.padding(end = 16.dp)
+                text = unreadCount.toString(),
+                fontSize = 16.sp,
+                modifier = Modifier.padding(end = 16.dp)
         )
     }
 }
@@ -465,80 +455,83 @@ fun RssContent(
         onDeleteMenuClicked: (Int) -> Unit = {},
         onDismissDropdownMenu: () -> Unit = {},
 ) {
-    Box {
-        Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                                onClick = { onRssClicked(id) },
-                                onLongClick = { onRssLongClicked(id) }
-                        )
-        ) {
-            Image(
-                    painter = painterResource(id = iconDrawable),
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Box {
+            Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
-                            .width(32.dp)
-                            .height(32.dp),
-                    contentDescription = ""
-            )
-            Text(
-                    text = title,
-                    fontSize = 16.sp,
-            )
-            Spacer(modifier = Modifier.weight(1.0f))
-            Text(
-                    text = unreadCount.toString(),
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(end = 16.dp)
-            )
-        }
-        DropdownMenu(
-                expanded = showDropdownMenu,
-                onDismissRequest = { onDismissDropdownMenu() },
-        ) {
-            DropdownMenuItem(onClick = { onEditTitleMenuClicked(id) }) {
-                Text(text = stringResource(id = R.string.edit_rss_title))
+                            .fillMaxWidth()
+                            .combinedClickable(
+                                    onClick = { onRssClicked(id) },
+                                    onLongClick = { onRssLongClicked(id) }
+                            )
+            ) {
+                Image(
+                        painter = painterResource(id = iconDrawable),
+                        modifier = Modifier
+                                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
+                                .width(32.dp)
+                                .height(32.dp),
+                        contentDescription = ""
+                )
+                Text(
+                        text = title,
+                        fontSize = 16.sp,
+                )
+                Spacer(modifier = Modifier.weight(1.0f))
+                Text(
+                        text = unreadCount.toString(),
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(end = 16.dp)
+                )
             }
-            DropdownMenuItem(onClick = { onDeleteMenuClicked(id) }) {
-                Text(text = stringResource(id = R.string.delete))
+            DropdownMenu(
+                    expanded = showDropdownMenu,
+                    onDismissRequest = { onDismissDropdownMenu() },
+            ) {
+                DropdownMenuItem(onClick = { onEditTitleMenuClicked(id) }) {
+                    Text(text = stringResource(id = R.string.edit_rss_title))
+                }
+                DropdownMenuItem(onClick = { onDeleteMenuClicked(id) }) {
+                    Text(text = stringResource(id = R.string.delete))
+                }
             }
         }
+        Divider(modifier = Modifier.padding(start = 64.dp))
     }
 }
 
 @Composable
 fun FavoriteContent(
-    onFavoriteClicked: () -> Unit,
+        onFavoriteClicked: () -> Unit,
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onFavoriteClicked() }
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onFavoriteClicked() }
     ) {
         Image(
-            painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
-            modifier = Modifier
-                    .width(32.dp)
-                    .height(32.dp)
-                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
-            contentDescription = ""
+                painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
+                modifier = Modifier
+                        .width(32.dp)
+                        .height(32.dp)
+                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
+                contentDescription = ""
         )
         Text(
-            text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
-            fontSize = 16.sp,
-            modifier = Modifier
-                .padding(start = 16.dp)
+                text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
+                fontSize = 16.sp,
+                modifier = Modifier
+                        .padding(start = 16.dp)
         )
     }
 }
 
 @Composable
 fun Footer(
-    footerState: RssListFooterState,
-    onFooterClicked: () -> Unit = {},
+        footerState: RssListFooterState,
+        onFooterClicked: () -> Unit = {},
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val text = when (footerState) {
@@ -553,7 +546,7 @@ fun Footer(
                         .padding(start = 72.dp, top = 20.dp, bottom = 20.dp)
                         .clickable { onFooterClicked() }
         )
-        Divider(modifier = Modifier.padding(start = 72.dp))
+        Divider(modifier = Modifier.padding(start = 64.dp))
     }
 }
 
@@ -561,12 +554,12 @@ fun Footer(
 @Composable
 fun PreviewLoadingRssListScreen() {
     RssListScreen(
-        items = emptyList(),
-        rawRssList = emptyList(),
-        mode = RssListMode.UNREAD_ONLY,
-        isInitializing = true,
-        isRefreshing = false,
-        messageList = emptyList()
+            items = emptyList(),
+            rawRssList = emptyList(),
+            mode = RssListMode.UNREAD_ONLY,
+            isInitializing = true,
+            isRefreshing = false,
+            messageList = emptyList()
     )
 }
 
@@ -574,12 +567,12 @@ fun PreviewLoadingRssListScreen() {
 @Composable
 fun PreviewEmptyRssListScreen() {
     RssListScreen(
-        items = emptyList(),
-        rawRssList = emptyList(),
-        mode = RssListMode.UNREAD_ONLY,
-        isInitializing = false,
-        isRefreshing = false,
-        messageList = emptyList()
+            items = emptyList(),
+            rawRssList = emptyList(),
+            mode = RssListMode.UNREAD_ONLY,
+            isInitializing = false,
+            isRefreshing = false,
+            messageList = emptyList()
     )
 }
 
