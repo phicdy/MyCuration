@@ -415,6 +415,7 @@ fun SwipeRefreshRssList(
                         onFavoriteClicked = onFavoriteClicked,
                     )
                     is RssListItem.Footer -> Footer(
+                        footerState = item.state,
                         onFooterClicked = onFooterClicked
                     )
                 }
@@ -534,10 +535,15 @@ fun FavoriteContent(
 
 @Composable
 fun Footer(
+    footerState: RssListFooterState,
     onFooterClicked: () -> Unit,
 ) {
+    val text = when (footerState) {
+        RssListFooterState.ALL -> stringResource(id = com.phicdy.mycuration.resource.R.string.hide_rsses)
+        RssListFooterState.UNREAD_ONLY -> stringResource(id = com.phicdy.mycuration.resource.R.string.show_all_rsses)
+    }
     Text(
-        text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
+        text = text,
         fontSize = 16.sp,
         modifier = Modifier
                 .padding(start = 16.dp)
