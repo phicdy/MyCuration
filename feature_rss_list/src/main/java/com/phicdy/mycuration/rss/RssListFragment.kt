@@ -455,7 +455,7 @@ fun AllRssHeader(
                     modifier = Modifier.padding(end = 16.dp)
             )
         }
-        Divider(modifier = Modifier.padding(start = 64.dp))
+        RssListDivider()
     }
 }
 
@@ -515,7 +515,7 @@ fun RssContent(
                 }
             }
         }
-        Divider(modifier = Modifier.padding(start = 64.dp))
+        RssListDivider()
     }
 }
 
@@ -543,7 +543,7 @@ fun FavoriteContent(
                     fontSize = 16.sp,
             )
         }
-        Divider(modifier = Modifier.padding(start = 64.dp))
+        RssListDivider()
     }
 }
 
@@ -565,8 +565,13 @@ fun Footer(
                         .padding(start = 72.dp, top = 20.dp, bottom = 20.dp)
                         .clickable { onFooterClicked() }
         )
-        Divider(modifier = Modifier.padding(start = 64.dp))
+        RssListDivider()
     }
+}
+
+@Composable
+fun RssListDivider() {
+    Divider(modifier = Modifier.padding(start = 64.dp))
 }
 
 @Preview(name = "Loading Screen")
