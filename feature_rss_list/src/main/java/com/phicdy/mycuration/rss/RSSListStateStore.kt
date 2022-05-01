@@ -135,6 +135,12 @@ class RSSListStateStore @Inject constructor(
                 val messageList = current.messageList.filterNot { it.id == action.value.id }
                 _state.value = _state.value?.copy(messageList = messageList)
             }
+            is ShowDropdownMenuAction -> {
+                _state.value = _state.value?.copy(showDropdownMenuId = action.value)
+            }
+            is HideDropdownMenuAction -> {
+                _state.value = _state.value?.copy(showDropdownMenuId = null)
+            }
         }
     }
 

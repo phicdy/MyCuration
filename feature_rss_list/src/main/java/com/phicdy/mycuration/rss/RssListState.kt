@@ -9,5 +9,6 @@ data class RssListState(
     val mode: RssListMode,
     val isInitializing: Boolean,
     val isRefreshing: Boolean,
-    val messageList: List<RssListMessage> = emptyList()
+    val messageList: List<RssListMessage> = emptyList(),
+    val showDropdownMenuId: Int?,
 )

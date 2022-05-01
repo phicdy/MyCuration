@@ -21,7 +21,8 @@ class FetchAllRssListActionCreator @Inject constructor(
                     rawRssList = emptyList(),
                     mode = rssListMode,
                     isInitializing = true,
-                    isRefreshing = false
+                    isRefreshing = false,
+                    showDropdownMenuId = null,
                 )
             )
         )
@@ -34,7 +35,8 @@ class FetchAllRssListActionCreator @Inject constructor(
                         rawRssList = emptyList(),
                         mode = rssListMode,
                         isInitializing = false,
-                        isRefreshing = false
+                        isRefreshing = false,
+                        showDropdownMenuId = null,
                     )
                 )
             )
@@ -48,7 +50,8 @@ class FetchAllRssListActionCreator @Inject constructor(
                     rawRssList = rss,
                     mode = mode,
                     isInitializing = false,
-                    isRefreshing = false
+                    isRefreshing = false,
+                    showDropdownMenuId = null,
                 )
             )
         )

@@ -9,8 +9,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,6 +24,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -74,10 +79,16 @@ class RssListFragment : Fragment() {
     @Inject
     lateinit var consumeRssListMessageActionCreator: ConsumeRssListMessageActionCreator
 
+    @Inject
+    lateinit var showDropdownMenuActionCreator: ShowDropdownMenuActionCreator
+
+    @Inject
+    lateinit var hideDropdownMenuActionCreator: HideDropdownMenuActionCreator
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
@@ -99,7 +110,31 @@ class RssListFragment : Fragment() {
                             onFooterClicked = {
                                 changeRssListMode()
                             }
-                    )
+                },
+                onRssClicked = { id ->
+                    startActivity(ArticlesListActivity.createIntent(requireContext(), id))
+                },
+                onRssLongClicked = { id ->
+                    lifecycleScope.launchWhenStarted {
+                        showDropdownMenuActionCreator.run(id)
+                    }
+                },
+                onFavoriteClicked = {
+                    startActivity(FavoriteArticlesListActivity.createIntent(requireContext()))
+                },
+                onFooterClicked = {
+                    changeRssListMode()
+                },
+                onEditTitleMenuClicked = { id ->
+                },
+                onDeleteMenuClicked = { id ->
+                },
+                onDismissDropdownMenu = {
+                    lifecycleScope.launchWhenStarted {
+                        hideDropdownMenuActionCreator.run()
+                    }
+                }
+                )
                 }
             }
         }
@@ -260,21 +295,30 @@ fun RssListScreen(
         store: RSSListStateStore,
         onRefresh: () -> Unit = {},
         onRssClicked: (Int) -> Unit = {},
+        onRssLongClicked: (Int) -> Unit = {},
         onFavoriteClicked: () -> Unit = {},
         onFooterClicked: () -> Unit = {},
+        onEditTitleMenuClicked: (Int) -> Unit = {},
+        onDeleteMenuClicked: (Int) -> Unit = {},
+        onDismissDropdownMenu: () -> Unit = {},
 ) {
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
-        items = value.item,
-        rawRssList = value.rawRssList,
-        mode = value.mode,
-        isInitializing = value.isInitializing,
-        isRefreshing = value.isRefreshing,
-        messageList = value.messageList,
-        onRefresh = onRefresh,
-        onRssClicked = onRssClicked,
-        onFavoriteClicked = onFavoriteClicked,
-        onFooterClicked = onFooterClicked,
+            items = value.item,
+            rawRssList = value.rawRssList,
+            mode = value.mode,
+            isInitializing = value.isInitializing,
+            isRefreshing = value.isRefreshing,
+            messageList = value.messageList,
+            showDropdownMenuId = value.showDropdownMenuId,
+            onRefresh = onRefresh,
+            onRssClicked = onRssClicked,
+            onRssLongClicked = onRssLongClicked,
+            onFavoriteClicked = onFavoriteClicked,
+            onFooterClicked = onFooterClicked,
+            onEditTitleMenuClicked = onEditTitleMenuClicked,
+            onDeleteMenuClicked = onDeleteMenuClicked,
+            onDismissDropdownMenu = onDismissDropdownMenu,
     )
 }
 
@@ -286,10 +330,15 @@ fun RssListScreen(
         isInitializing: Boolean,
         isRefreshing: Boolean,
         messageList: List<RssListMessage> = emptyList(),
+        showDropdownMenuId: Int? = null,
         onRefresh: () -> Unit = {},
         onRssClicked: (Int) -> Unit = {},
+        onRssLongClicked: (Int) -> Unit = {},
         onFavoriteClicked: () -> Unit = {},
         onFooterClicked: () -> Unit = {},
+        onEditTitleMenuClicked: (Int) -> Unit = {},
+        onDeleteMenuClicked: (Int) -> Unit = {},
+        onDismissDropdownMenu: () -> Unit = {},
 ) {
     if (isInitializing) {
         CircularProgressIndicator()
@@ -302,12 +351,17 @@ fun RssListScreen(
             )
         } else {
             SwipeRefreshRssList(
-                isRefreshing = isRefreshing,
-                onRefresh = onRefresh,
-                items = items,
-                onRssClicked = onRssClicked,
-                onFavoriteClicked = onFavoriteClicked,
-                onFooterClicked = onFooterClicked
+                    isRefreshing = isRefreshing,
+                    onRefresh = onRefresh,
+                    items = items,
+                    showDropdownMenuId = showDropdownMenuId,
+                    onRssClicked = onRssClicked,
+                    onRssLongClicked = onRssLongClicked,
+                    onFavoriteClicked = onFavoriteClicked,
+                    onFooterClicked = onFooterClicked,
+                    onEditTitleMenuClicked = onEditTitleMenuClicked,
+                    onDeleteMenuClicked = onDeleteMenuClicked,
+                    onDismissDropdownMenu = onDismissDropdownMenu,
             )
         }
     }
@@ -328,9 +382,14 @@ fun SwipeRefreshRssList(
         isRefreshing: Boolean,
         onRefresh: () -> Unit = {},
         items: List<RssListItem> = emptyList(),
+        showDropdownMenuId: Int?,
         onRssClicked: (Int) -> Unit = {},
+        onRssLongClicked: (Int) -> Unit = {},
         onFavoriteClicked: () -> Unit = {},
         onFooterClicked: () -> Unit = {},
+        onEditTitleMenuClicked: (Int) -> Unit = {},
+        onDeleteMenuClicked: (Int) -> Unit = {},
+        onDismissDropdownMenu: () -> Unit = {},
 ) {
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
@@ -345,7 +404,12 @@ fun SwipeRefreshRssList(
                             id = item.rssId,
                             title = item.rssTitle,
                             unreadCount = item.unreadCount,
-                            onRssClicked = onRssClicked
+                            onRssClicked = onRssClicked,
+                            onRssLongClicked = onRssLongClicked,
+                            showDropdownMenu = item.rssId == showDropdownMenuId,
+                            onEditTitleMenuClicked = onEditTitleMenuClicked,
+                            onDeleteMenuClicked = onDeleteMenuClicked,
+                            onDismissDropdownMenu = onDismissDropdownMenu,
                     )
                     RssListItem.Favroite -> FavoriteContent(
                         onFavoriteClicked = onFavoriteClicked,
@@ -385,37 +449,59 @@ fun AllRssHeader(unreadCount: Int) {
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 fun RssContent(
         id: Int,
         @DrawableRes iconDrawable: Int = com.phicdy.mycuration.resource.R.drawable.ic_rss,
         title: String,
         unreadCount: Int,
-        onRssClicked: (Int) -> Unit = {}
+        onRssClicked: (Int) -> Unit = {},
+        onRssLongClicked: (Int) -> Unit = {},
+        showDropdownMenu: Boolean,
+        onEditTitleMenuClicked: (Int) -> Unit = {},
+        onDeleteMenuClicked: (Int) -> Unit = {},
+        onDismissDropdownMenu: () -> Unit = {},
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onRssClicked(id) }
-    ) {
-        Image(
-            painter = painterResource(id = iconDrawable),
-            modifier = Modifier
-                    .width(32.dp)
-                    .height(32.dp)
-                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
-            contentDescription = ""
-        )
-        Text(
-            text = title,
-            fontSize = 16.sp,
-        )
-        Spacer(modifier = Modifier.weight(1.0f))
-        Text(
-            text = unreadCount.toString(),
-            fontSize = 16.sp,
-            modifier = Modifier.padding(end = 16.dp)
-        )
+    Box {
+        Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .combinedClickable(
+                                onClick = { onRssClicked(id) },
+                                onLongClick = { onRssLongClicked(id) }
+                        )
+        ) {
+            Image(
+                    painter = painterResource(id = iconDrawable),
+                    modifier = Modifier
+                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
+                            .width(32.dp)
+                            .height(32.dp),
+                    contentDescription = ""
+            )
+            Text(
+                    text = title,
+                    fontSize = 16.sp,
+            )
+            Spacer(modifier = Modifier.weight(1.0f))
+            Text(
+                    text = unreadCount.toString(),
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(end = 16.dp)
+            )
+        }
+        DropdownMenu(
+                expanded = showDropdownMenu,
+                onDismissRequest = { onDismissDropdownMenu() },
+        ) {
+            DropdownMenuItem(onClick = { onEditTitleMenuClicked(id) }) {
+                Text(text = stringResource(id = R.string.edit_rss_title))
+            }
+            DropdownMenuItem(onClick = { onDeleteMenuClicked(id) }) {
+                Text(text = stringResource(id = R.string.delete))
+            }
+        }
     }
 }
 
@@ -494,5 +580,5 @@ fun PreviewAllRssHeader() {
 @Preview
 @Composable
 fun PreviewRssContent() {
-    RssContent(id = 0, title = "title", unreadCount = 10)
+    RssContent(id = 0, title = "title", unreadCount = 10, showDropdownMenu = true)
 }
