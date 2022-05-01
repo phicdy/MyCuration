@@ -14,6 +14,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
@@ -538,17 +540,21 @@ fun Footer(
     footerState: RssListFooterState,
     onFooterClicked: () -> Unit = {},
 ) {
-    val text = when (footerState) {
-        RssListFooterState.ALL -> stringResource(id = com.phicdy.mycuration.resource.R.string.hide_rsses)
-        RssListFooterState.UNREAD_ONLY -> stringResource(id = com.phicdy.mycuration.resource.R.string.show_all_rsses)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        val text = when (footerState) {
+            RssListFooterState.ALL -> stringResource(id = com.phicdy.mycuration.resource.R.string.hide_rsses)
+            RssListFooterState.UNREAD_ONLY -> stringResource(id = com.phicdy.mycuration.resource.R.string.show_all_rsses)
+        }
+        Text(
+                text = text,
+                fontSize = 16.sp,
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 72.dp, top = 20.dp, bottom = 20.dp)
+                        .clickable { onFooterClicked() }
+        )
+        Divider(modifier = Modifier.padding(start = 72.dp))
     }
-    Text(
-        text = text,
-        fontSize = 16.sp,
-        modifier = Modifier
-                .padding(start = 16.dp)
-                .clickable { onFooterClicked() }
-    )
 }
 
 @Preview(name = "Loading Screen")
