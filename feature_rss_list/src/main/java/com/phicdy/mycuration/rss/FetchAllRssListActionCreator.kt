@@ -23,6 +23,7 @@ class FetchAllRssListActionCreator @Inject constructor(
                     isInitializing = true,
                     isRefreshing = false,
                     showDropdownMenuId = null,
+                    showDeleteRssDialogId = null
                 )
             )
         )
@@ -37,6 +38,7 @@ class FetchAllRssListActionCreator @Inject constructor(
                         isInitializing = false,
                         isRefreshing = false,
                         showDropdownMenuId = null,
+                        showDeleteRssDialogId = null
                     )
                 )
             )
@@ -52,6 +54,7 @@ class FetchAllRssListActionCreator @Inject constructor(
                     isInitializing = false,
                     isRefreshing = false,
                     showDropdownMenuId = null,
+                    showDeleteRssDialogId = null
                 )
             )
         )

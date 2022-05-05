@@ -24,11 +24,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -87,6 +89,12 @@ class RssListFragment : Fragment() {
     @Inject
     lateinit var hideDropdownMenuActionCreator: HideDropdownMenuActionCreator
 
+    @Inject
+    lateinit var showDeleteRssAlertDialogActionCreator: ShowDeleteRssAlertDialogActionCreator
+
+    @Inject
+    lateinit var hideDeleteRssAlertDialogActionCreator: HideDeleteRssAlertDialogActionCreator
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -103,8 +111,17 @@ class RssListFragment : Fragment() {
                                     updateAllRssListActionCreator.run(state.mode)
                                 }
                             },
+                            onHeaderClicked = {
+                                val intent = Intent(requireContext(), ArticlesListActivity::class.java)
+                                startActivity(intent)
+                            },
                             onRssClicked = { id ->
                                 startActivity(ArticlesListActivity.createIntent(requireContext(), id))
+                            },
+                            onRssLongClicked = { id ->
+                                lifecycleScope.launchWhenStarted {
+                                    showDropdownMenuActionCreator.run(id)
+                                }
                             },
                             onFavoriteClicked = {
                                 startActivity(FavoriteArticlesListActivity.createIntent(requireContext()))
@@ -112,24 +129,42 @@ class RssListFragment : Fragment() {
                             onFooterClicked = {
                                 changeRssListMode()
                             },
-                            onRssLongClicked = { id ->
-                                lifecycleScope.launchWhenStarted {
-                                    showDropdownMenuActionCreator.run(id)
-                                }
-                            },
                             onEditTitleMenuClicked = { id ->
                             },
                             onDeleteMenuClicked = { id ->
+                                lifecycleScope.launchWhenStarted {
+                                    hideDropdownMenuActionCreator.run()
+                                    showDeleteRssAlertDialogActionCreator.run(id)
+                                }
                             },
                             onDismissDropdownMenu = {
                                 lifecycleScope.launchWhenStarted {
                                     hideDropdownMenuActionCreator.run()
                                 }
                             },
-                            onHeaderClicked = {
-                                val intent = Intent(requireContext(), ArticlesListActivity::class.java)
-                                startActivity(intent)
+                            onDismissDeleteRssDialog = {
+                                lifecycleScope.launchWhenStarted {
+                                    hideDeleteRssAlertDialogActionCreator.run()
+                                }
                             },
+                            onDeleteRssClicked = { id ->
+                                lifecycleScope.launchWhenStarted {
+                                    val state =
+                                            rssListStateStore.state.value
+                                                    ?: return@launchWhenStarted
+                                    deleteRssActionCreator.run(
+                                            id,
+                                            state.rawRssList,
+                                            state.mode
+                                    )
+                                    hideDeleteRssAlertDialogActionCreator.run()
+                                }
+                            },
+                            onCancelDeleteRssClicked = {
+                                lifecycleScope.launchWhenStarted {
+                                    hideDeleteRssAlertDialogActionCreator.run()
+                                }
+                            }
                     )
                 }
             }
@@ -293,6 +328,9 @@ fun RssListScreen(
         onEditTitleMenuClicked: (Int) -> Unit = {},
         onDeleteMenuClicked: (Int) -> Unit = {},
         onDismissDropdownMenu: () -> Unit = {},
+        onDismissDeleteRssDialog: () -> Unit = {},
+        onDeleteRssClicked: (Int) -> Unit = {},
+        onCancelDeleteRssClicked: () -> Unit = {},
 ) {
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
@@ -312,6 +350,10 @@ fun RssListScreen(
             onEditTitleMenuClicked = onEditTitleMenuClicked,
             onDeleteMenuClicked = onDeleteMenuClicked,
             onDismissDropdownMenu = onDismissDropdownMenu,
+            showDeleteRssDialogId = value.showDeleteRssDialogId,
+            onDismissDeleteRssDialog = onDismissDeleteRssDialog,
+            onDeleteRssClicked = onDeleteRssClicked,
+            onCancelDeleteRssClicked = onCancelDeleteRssClicked,
     )
 }
 
@@ -333,6 +375,10 @@ fun RssListScreen(
         onEditTitleMenuClicked: (Int) -> Unit = {},
         onDeleteMenuClicked: (Int) -> Unit = {},
         onDismissDropdownMenu: () -> Unit = {},
+        showDeleteRssDialogId: Int? = null,
+        onDismissDeleteRssDialog: () -> Unit = {},
+        onDeleteRssClicked: (Int) -> Unit = {},
+        onCancelDeleteRssClicked: () -> Unit = {},
 ) {
     if (isInitializing) {
         CircularProgressIndicator()
@@ -359,6 +405,14 @@ fun RssListScreen(
                     onDismissDropdownMenu = onDismissDropdownMenu,
             )
         }
+    }
+    if (showDeleteRssDialogId != null) {
+        DeleteRssAlertDialog(
+                rssId = showDeleteRssDialogId,
+                onDismissDeleteRssDialog = onDismissDeleteRssDialog,
+                onDeleteRssClicked = onDeleteRssClicked,
+                onCancelDeleteRssClicked = onCancelDeleteRssClicked,
+        )
     }
 }
 
@@ -574,6 +628,33 @@ fun RssListDivider() {
     Divider(modifier = Modifier.padding(start = 64.dp))
 }
 
+@Composable
+fun DeleteRssAlertDialog(
+        rssId: Int,
+        onDismissDeleteRssDialog: () -> Unit = {},
+        onDeleteRssClicked: (Int) -> Unit = {},
+        onCancelDeleteRssClicked: () -> Unit = {},
+) {
+    AlertDialog(
+            onDismissRequest = { onDismissDeleteRssDialog() },
+            confirmButton = {
+                TextButton(
+                        onClick = { onDeleteRssClicked(rssId) },
+                ) {
+                    Text(text = stringResource(id = R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onCancelDeleteRssClicked() }) {
+                    Text(text = stringResource(id = R.string.cancel))
+                }
+            },
+            title = {
+                Text(text = stringResource(id = R.string.delete_rss_alert))
+            }
+    )
+}
+
 @Preview(name = "Loading Screen")
 @Composable
 fun PreviewLoadingRssListScreen() {
@@ -622,4 +703,10 @@ fun PreviewRssContent() {
 @Composable
 fun PreviewFooter() {
     Footer(footerState = RssListFooterState.UNREAD_ONLY)
+}
+
+@Preview(name = "Delete alert dialog")
+@Composable
+fun PreviewDeleteAlertDialog() {
+    DeleteRssAlertDialog(rssId = 0)
 }

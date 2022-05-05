@@ -23,6 +23,7 @@ class ChangeRssListModeActionCreator @Inject constructor(
                     isInitializing = false,
                     isRefreshing = false,
                     showDropdownMenuId = null,
+                    showDeleteRssDialogId = null
                 )
             }
             RssListMode.ALL -> {
@@ -34,6 +35,7 @@ class ChangeRssListModeActionCreator @Inject constructor(
                     isInitializing = false,
                     isRefreshing = false,
                     showDropdownMenuId = null,
+                    showDeleteRssDialogId = null
                 )
             }
         }.let {

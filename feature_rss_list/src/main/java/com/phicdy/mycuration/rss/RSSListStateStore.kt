@@ -141,6 +141,12 @@ class RSSListStateStore @Inject constructor(
             is HideDropdownMenuAction -> {
                 _state.value = _state.value?.copy(showDropdownMenuId = null)
             }
+            is ShowDeleteRssAlertDialogAction -> {
+                _state.value = _state.value?.copy(showDeleteRssDialogId = action.value)
+            }
+            is HideDeleteRssAlertDialogAction -> {
+                _state.value = _state.value?.copy(showDeleteRssDialogId = null)
+            }
         }
     }
 
