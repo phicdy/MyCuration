@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,11 +43,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.feature.util.changeTheme
+import com.phicdy.mycuration.resource.Black900
 import com.phicdy.mycuration.resource.MyCurationTheme
+import com.phicdy.mycuration.resource.White
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -244,7 +246,7 @@ fun AddCurationFragmentScreen(
                         Icon(Icons.Filled.Check, contentDescription = "")
                     }
                 },
-                backgroundColor = MaterialTheme.colors.primary
+                backgroundColor = if (isSystemInDarkTheme()) Black900 else White
             )
         }
     ) {
