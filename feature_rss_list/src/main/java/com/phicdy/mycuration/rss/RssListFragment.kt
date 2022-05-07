@@ -41,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -419,7 +420,7 @@ fun RssListScreen(
 
 @Composable
 fun RssEmptyText(modifier: Modifier = Modifier) {
-    Text(
+    RssListText(
             text = stringResource(id = com.phicdy.mycuration.resource.R.string.no_rss_message),
             textAlign = TextAlign.Center,
             modifier = modifier
@@ -499,17 +500,17 @@ fun AllRssHeader(
                             .height(32.dp),
                     contentDescription = ""
             )
-            Text(
+            RssListText(
                     text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
-                    color = MaterialTheme.colors.primary,
                     fontSize = 18.sp,
+                    textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.weight(1.0f))
-            Text(
+            RssListText(
                     text = unreadCount.toString(),
-                    color = MaterialTheme.colors.primary,
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(end = 16.dp)
+                    modifier = Modifier.padding(end = 16.dp),
+                    textAlign = TextAlign.Center
             )
         }
         RssListDivider()
@@ -549,17 +550,17 @@ fun RssContent(
                                 .height(32.dp),
                         contentDescription = ""
                 )
-                Text(
+                RssListText(
                         text = title,
-                        color = MaterialTheme.colors.primary,
                         fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
-                Text(
+                RssListText(
                         text = unreadCount.toString(),
-                        color = MaterialTheme.colors.primary,
                         fontSize = 16.sp,
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier.padding(end = 16.dp),
+                        textAlign = TextAlign.Center
                 )
             }
             DropdownMenu(
@@ -597,10 +598,10 @@ fun FavoriteContent(
                             .height(32.dp),
                     contentDescription = ""
             )
-            Text(
+            RssListText(
                     text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
-                    color = MaterialTheme.colors.primary,
                     fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
             )
         }
         RssListDivider()
@@ -617,14 +618,14 @@ fun Footer(
             RssListFooterState.ALL -> stringResource(id = com.phicdy.mycuration.resource.R.string.hide_rsses)
             RssListFooterState.UNREAD_ONLY -> stringResource(id = com.phicdy.mycuration.resource.R.string.show_all_rsses)
         }
-        Text(
+        RssListText(
                 text = text,
-                color = MaterialTheme.colors.primary,
                 fontSize = 16.sp,
                 modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 72.dp, top = 20.dp, bottom = 20.dp)
-                        .clickable { onFooterClicked() }
+                        .clickable { onFooterClicked() },
+                textAlign = TextAlign.Center
         )
         RssListDivider()
     }
@@ -659,6 +660,22 @@ fun DeleteRssAlertDialog(
             title = {
                 Text(text = stringResource(id = R.string.delete_rss_alert))
             }
+    )
+}
+
+@Composable
+fun RssListText(
+        modifier: Modifier = Modifier,
+        text: String,
+        fontSize: TextUnit = TextUnit.Unspecified,
+        textAlign: TextAlign? = null
+) {
+    Text(
+            text = text,
+            color = MaterialTheme.colors.primary,
+            fontSize = fontSize,
+            modifier = modifier,
+            textAlign = textAlign
     )
 }
 
