@@ -29,6 +29,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -500,11 +501,13 @@ fun AllRssHeader(
             )
             Text(
                     text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
+                    color = MaterialTheme.colors.primary,
                     fontSize = 18.sp,
             )
             Spacer(modifier = Modifier.weight(1.0f))
             Text(
                     text = unreadCount.toString(),
+                    color = MaterialTheme.colors.primary,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(end = 16.dp)
             )
@@ -548,11 +551,13 @@ fun RssContent(
                 )
                 Text(
                         text = title,
+                        color = MaterialTheme.colors.primary,
                         fontSize = 16.sp,
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
                 Text(
                         text = unreadCount.toString(),
+                        color = MaterialTheme.colors.primary,
                         fontSize = 16.sp,
                         modifier = Modifier.padding(end = 16.dp)
                 )
@@ -594,6 +599,7 @@ fun FavoriteContent(
             )
             Text(
                     text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
+                    color = MaterialTheme.colors.primary,
                     fontSize = 16.sp,
             )
         }
@@ -613,6 +619,7 @@ fun Footer(
         }
         Text(
                 text = text,
+                color = MaterialTheme.colors.primary,
                 fontSize = 16.sp,
                 modifier = Modifier
                         .fillMaxWidth()
@@ -658,51 +665,63 @@ fun DeleteRssAlertDialog(
 @Preview(name = "Loading Screen")
 @Composable
 fun PreviewLoadingRssListScreen() {
-    RssListScreen(
-            items = emptyList(),
-            rawRssList = emptyList(),
-            mode = RssListMode.UNREAD_ONLY,
-            isInitializing = true,
-            isRefreshing = false,
-            messageList = emptyList()
-    )
+    MyCurationTheme {
+        RssListScreen(
+                items = emptyList(),
+                rawRssList = emptyList(),
+                mode = RssListMode.UNREAD_ONLY,
+                isInitializing = true,
+                isRefreshing = false,
+                messageList = emptyList()
+        )
+    }
 }
 
 @Preview(name = "Empty Screen")
 @Composable
 fun PreviewEmptyRssListScreen() {
-    RssListScreen(
-            items = emptyList(),
-            rawRssList = emptyList(),
-            mode = RssListMode.UNREAD_ONLY,
-            isInitializing = false,
-            isRefreshing = false,
-            messageList = emptyList()
-    )
+    MyCurationTheme {
+        RssListScreen(
+                items = emptyList(),
+                rawRssList = emptyList(),
+                mode = RssListMode.UNREAD_ONLY,
+                isInitializing = false,
+                isRefreshing = false,
+                messageList = emptyList()
+        )
+    }
 }
 
 @Preview(name = "Header")
 @Composable
 fun PreviewAllRssHeader() {
-    AllRssHeader(unreadCount = 10)
+    MyCurationTheme {
+        AllRssHeader(unreadCount = 10)
+    }
 }
 
 @Preview(name = "Favorite")
 @Composable
 fun PreviewFavorite() {
-    FavoriteContent()
+    MyCurationTheme {
+        FavoriteContent()
+    }
 }
 
 @Preview(name = "RSS Content")
 @Composable
 fun PreviewRssContent() {
-    RssContent(id = 0, title = "title", unreadCount = 10, showDropdownMenu = true)
+    MyCurationTheme {
+        RssContent(id = 0, title = "title", unreadCount = 10, showDropdownMenu = true)
+    }
 }
 
 @Preview(name = "Footer")
 @Composable
 fun PreviewFooter() {
-    Footer(footerState = RssListFooterState.UNREAD_ONLY)
+    MyCurationTheme {
+        Footer(footerState = RssListFooterState.UNREAD_ONLY)
+    }
 }
 
 @Preview(name = "Delete alert dialog")
