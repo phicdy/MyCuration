@@ -627,9 +627,8 @@ fun Footer(
                 fontSize = 16.sp,
                 modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 72.dp, top = 20.dp, bottom = 20.dp)
+                        .padding(start = 64.dp, top = 20.dp, bottom = 20.dp)
                         .clickable { onFooterClicked() },
-                textAlign = TextAlign.Center
         )
         RssListDivider()
     }
