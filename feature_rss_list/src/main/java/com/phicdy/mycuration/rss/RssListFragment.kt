@@ -489,20 +489,20 @@ fun AllRssHeader(
         onHeaderClicked: () -> Unit = {}
 ) {
     Column(modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onHeaderClicked() }
+        .fillMaxWidth()
+        .clickable { onHeaderClicked() }
     ) {
         Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Image(
-                    painter = painterResource(id = R.drawable.ic_view_headline_black_24dp),
-                    modifier = Modifier
-                            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
-                            .width(32.dp)
-                            .height(32.dp),
-                    contentDescription = ""
+                painter = painterResource(id = R.drawable.ic_view_headline_black_24dp),
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 12.dp)
+                    .width(32.dp)
+                    .height(32.dp),
+                contentDescription = ""
             )
             RssListText(
                     text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
@@ -540,19 +540,19 @@ fun RssContent(
             Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                    onClick = { onRssClicked(id) },
-                                    onLongClick = { onRssLongClicked(id) }
-                            )
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            onClick = { onRssClicked(id) },
+                            onLongClick = { onRssLongClicked(id) }
+                        )
             ) {
                 Image(
-                        painter = painterResource(id = iconDrawable),
-                        modifier = Modifier
-                                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
-                                .width(32.dp)
-                                .height(32.dp),
-                        contentDescription = ""
+                    painter = painterResource(id = iconDrawable),
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = 16.dp)
+                        .width(32.dp)
+                        .height(32.dp),
+                    contentDescription = ""
                 )
                 RssListText(
                         text = title,
@@ -591,16 +591,16 @@ fun FavoriteContent(
         Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onFavoriteClicked() }
+                    .fillMaxWidth()
+                    .clickable { onFavoriteClicked() }
         ) {
             Image(
-                    painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
-                    modifier = Modifier
-                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
-                            .width(32.dp)
-                            .height(32.dp),
-                    contentDescription = ""
+                painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = 16.dp)
+                    .width(32.dp)
+                    .height(32.dp),
+                contentDescription = ""
             )
             RssListText(
                     text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
@@ -623,12 +623,12 @@ fun Footer(
             RssListFooterState.UNREAD_ONLY -> stringResource(id = com.phicdy.mycuration.resource.R.string.show_all_rsses)
         }
         RssListText(
-                text = text,
-                fontSize = 16.sp,
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 64.dp, top = 20.dp, bottom = 20.dp)
-                        .clickable { onFooterClicked() },
+            text = text,
+            fontSize = 16.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 64.dp, top = 20.dp, bottom = 20.dp)
+                .clickable { onFooterClicked() },
         )
         RssListDivider()
     }
