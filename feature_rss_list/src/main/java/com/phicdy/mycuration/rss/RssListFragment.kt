@@ -1,6 +1,8 @@
 package com.phicdy.mycuration.rss
 
 import android.content.Intent
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +32,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -97,76 +100,110 @@ class RssListFragment : Fragment() {
     @Inject
     lateinit var hideDeleteRssAlertDialogActionCreator: HideDeleteRssAlertDialogActionCreator
 
+    @Inject
+    lateinit var showEditRssTitleAlertDialogActionCreator: ShowEditRssTitleAlertDialogActionCreator
+
+    @Inject
+    lateinit var hideEditRssTitleAlertDialogActionCreator: HideEditRssTitleAlertDialogActionCreator
+
+    @Inject
+    lateinit var newRssTitleChangeActionCreator: NewRssTitleChangeActionCreator
+
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
                 MyCurationTheme {
                     RssListScreen(
-                            store = rssListStateStore,
-                            onRefresh = {
-                                val state = rssListStateStore.state.value ?: return@RssListScreen
-                                lifecycleScope.launchWhenStarted {
-                                    updateAllRssListActionCreator.run(state.mode)
-                                }
-                            },
-                            onHeaderClicked = {
-                                val intent = Intent(requireContext(), ArticlesListActivity::class.java)
-                                startActivity(intent)
-                            },
-                            onRssClicked = { id ->
-                                startActivity(ArticlesListActivity.createIntent(requireContext(), id))
-                            },
-                            onRssLongClicked = { id ->
-                                lifecycleScope.launchWhenStarted {
-                                    showDropdownMenuActionCreator.run(id)
-                                }
-                            },
-                            onFavoriteClicked = {
-                                startActivity(FavoriteArticlesListActivity.createIntent(requireContext()))
-                            },
-                            onFooterClicked = {
-                                changeRssListMode()
-                            },
-                            onEditTitleMenuClicked = { id ->
-                            },
-                            onDeleteMenuClicked = { id ->
-                                lifecycleScope.launchWhenStarted {
-                                    hideDropdownMenuActionCreator.run()
-                                    showDeleteRssAlertDialogActionCreator.run(id)
-                                }
-                            },
-                            onDismissDropdownMenu = {
-                                lifecycleScope.launchWhenStarted {
-                                    hideDropdownMenuActionCreator.run()
-                                }
-                            },
-                            onDismissDeleteRssDialog = {
-                                lifecycleScope.launchWhenStarted {
-                                    hideDeleteRssAlertDialogActionCreator.run()
-                                }
-                            },
-                            onDeleteRssClicked = { id ->
-                                lifecycleScope.launchWhenStarted {
-                                    val state =
-                                            rssListStateStore.state.value
-                                                    ?: return@launchWhenStarted
-                                    deleteRssActionCreator.run(
-                                            id,
-                                            state.rawRssList,
-                                            state.mode
-                                    )
-                                    hideDeleteRssAlertDialogActionCreator.run()
-                                }
-                            },
-                            onCancelDeleteRssClicked = {
-                                lifecycleScope.launchWhenStarted {
-                                    hideDeleteRssAlertDialogActionCreator.run()
-                                }
+                        store = rssListStateStore,
+                        onRefresh = {
+                            val state = rssListStateStore.state.value ?: return@RssListScreen
+                            lifecycleScope.launchWhenStarted {
+                                updateAllRssListActionCreator.run(state.mode)
                             }
+                        },
+                        onHeaderClicked = {
+                            val intent = Intent(requireContext(), ArticlesListActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onRssClicked = { id ->
+                            startActivity(ArticlesListActivity.createIntent(requireContext(), id))
+                        },
+                        onRssLongClicked = { id ->
+                            lifecycleScope.launchWhenStarted {
+                                showDropdownMenuActionCreator.run(id)
+                            }
+                        },
+                        onFavoriteClicked = {
+                            startActivity(FavoriteArticlesListActivity.createIntent(requireContext()))
+                        },
+                        onFooterClicked = {
+                            changeRssListMode()
+                        },
+                        onDeleteMenuClicked = { id ->
+                            lifecycleScope.launchWhenStarted {
+                                hideDropdownMenuActionCreator.run()
+                                showDeleteRssAlertDialogActionCreator.run(id)
+                            }
+                        },
+                        onDismissDropdownMenu = {
+                            lifecycleScope.launchWhenStarted {
+                                hideDropdownMenuActionCreator.run()
+                            }
+                        },
+                        onDismissDeleteRssDialog = {
+                            lifecycleScope.launchWhenStarted {
+                                hideDeleteRssAlertDialogActionCreator.run()
+                            }
+                        },
+                        onDeleteRssClicked = { id ->
+                            lifecycleScope.launchWhenStarted {
+                                val state =
+                                    rssListStateStore.state.value
+                                        ?: return@launchWhenStarted
+                                deleteRssActionCreator.run(
+                                    id,
+                                    state.rawRssList,
+                                    state.mode
+                                )
+                                hideDeleteRssAlertDialogActionCreator.run()
+                            }
+                        },
+                        onCancelDeleteRssClicked = {
+                            lifecycleScope.launchWhenStarted {
+                                hideDeleteRssAlertDialogActionCreator.run()
+                            }
+                        },
+                        onEditTitleMenuClicked = { id, title ->
+                            lifecycleScope.launchWhenStarted {
+                                hideDropdownMenuActionCreator.run()
+                                showEditRssTitleAlertDialogActionCreator.run(id, title)
+                            }
+                        },
+                        onDismissEditRssTitleDialog = {
+                            lifecycleScope.launchWhenStarted {
+                                hideEditRssTitleAlertDialogActionCreator.run()
+                            }
+                        },
+                        onEditRssTitleClicked = { newTitle, rssId ->
+                            lifecycleScope.launchWhenStarted {
+                                hideEditRssTitleAlertDialogActionCreator.run()
+                                editRssTitleActionCreator.run(newTitle, rssId)
+                            }
+                        },
+                        onCancelEditRssTitleClicked = {
+                            lifecycleScope.launchWhenStarted {
+                                hideEditRssTitleAlertDialogActionCreator.run()
+                            }
+                        },
+                        onNewRssTitleChanged = { newTitle ->
+                            lifecycleScope.launchWhenStarted {
+                                newRssTitleChangeActionCreator.run(newTitle)
+                            }
+                        }
                     )
                 }
             }
@@ -320,67 +357,83 @@ class RssListFragment : Fragment() {
 
 @Composable
 fun RssListScreen(
-        store: RSSListStateStore,
-        onRefresh: () -> Unit = {},
-        onHeaderClicked: () -> Unit = {},
-        onRssClicked: (Int) -> Unit = {},
-        onRssLongClicked: (Int) -> Unit = {},
-        onFavoriteClicked: () -> Unit = {},
-        onFooterClicked: () -> Unit = {},
-        onEditTitleMenuClicked: (Int) -> Unit = {},
-        onDeleteMenuClicked: (Int) -> Unit = {},
-        onDismissDropdownMenu: () -> Unit = {},
-        onDismissDeleteRssDialog: () -> Unit = {},
-        onDeleteRssClicked: (Int) -> Unit = {},
-        onCancelDeleteRssClicked: () -> Unit = {},
+    store: RSSListStateStore,
+    onRefresh: () -> Unit = {},
+    onHeaderClicked: () -> Unit = {},
+    onRssClicked: (Int) -> Unit = {},
+    onRssLongClicked: (Int) -> Unit = {},
+    onFavoriteClicked: () -> Unit = {},
+    onFooterClicked: () -> Unit = {},
+    onEditTitleMenuClicked: (Int, String) -> Unit = { _, _ -> },
+    onDeleteMenuClicked: (Int) -> Unit = {},
+    onDismissDropdownMenu: () -> Unit = {},
+    onDismissDeleteRssDialog: () -> Unit = {},
+    onDeleteRssClicked: (Int) -> Unit = {},
+    onCancelDeleteRssClicked: () -> Unit = {},
+    onDismissEditRssTitleDialog: () -> Unit = {},
+    onEditRssTitleClicked: (String, Int) -> Unit = { _, _ -> },
+    onCancelEditRssTitleClicked: () -> Unit = {},
+    onNewRssTitleChanged: (String) -> Unit = {}
 ) {
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
-            items = value.item,
-            rawRssList = value.rawRssList,
-            mode = value.mode,
-            isInitializing = value.isInitializing,
-            isRefreshing = value.isRefreshing,
-            messageList = value.messageList,
-            showDropdownMenuId = value.showDropdownMenuId,
-            onRefresh = onRefresh,
-            onHeaderClicked = onHeaderClicked,
-            onRssClicked = onRssClicked,
-            onRssLongClicked = onRssLongClicked,
-            onFavoriteClicked = onFavoriteClicked,
-            onFooterClicked = onFooterClicked,
-            onEditTitleMenuClicked = onEditTitleMenuClicked,
-            onDeleteMenuClicked = onDeleteMenuClicked,
-            onDismissDropdownMenu = onDismissDropdownMenu,
-            showDeleteRssDialogId = value.showDeleteRssDialogId,
-            onDismissDeleteRssDialog = onDismissDeleteRssDialog,
-            onDeleteRssClicked = onDeleteRssClicked,
-            onCancelDeleteRssClicked = onCancelDeleteRssClicked,
+        items = value.item,
+        rawRssList = value.rawRssList,
+        mode = value.mode,
+        isInitializing = value.isInitializing,
+        isRefreshing = value.isRefreshing,
+        messageList = value.messageList,
+        showDropdownMenuId = value.showDropdownMenuId,
+        onRefresh = onRefresh,
+        onHeaderClicked = onHeaderClicked,
+        onRssClicked = onRssClicked,
+        onRssLongClicked = onRssLongClicked,
+        onFavoriteClicked = onFavoriteClicked,
+        onFooterClicked = onFooterClicked,
+        onEditTitleMenuClicked = onEditTitleMenuClicked,
+        onDeleteMenuClicked = onDeleteMenuClicked,
+        onDismissDropdownMenu = onDismissDropdownMenu,
+        showDeleteRssDialogId = value.showDeleteRssDialogId,
+        onDismissDeleteRssDialog = onDismissDeleteRssDialog,
+        onDeleteRssClicked = onDeleteRssClicked,
+        onCancelDeleteRssClicked = onCancelDeleteRssClicked,
+        showEditRssTitleDialogId = value.showEditRssTitleDialogId,
+        showEditRssTitleDialogTitle = value.showEditRssTitleDialogTitle,
+        onDismissEditRssTitleDialog = onDismissEditRssTitleDialog,
+        onEditRssTitleClicked = onEditRssTitleClicked,
+        onCancelEditRssTitleClicked = onCancelEditRssTitleClicked,
+        onNewRssTitleChanged = onNewRssTitleChanged
     )
 }
 
 @Composable
 fun RssListScreen(
-        items: List<RssListItem> = emptyList(),
-        rawRssList: List<Feed>,
-        mode: RssListMode,
-        isInitializing: Boolean,
-        isRefreshing: Boolean,
-        messageList: List<RssListMessage> = emptyList(),
-        showDropdownMenuId: Int? = null,
-        onRefresh: () -> Unit = {},
-        onHeaderClicked: () -> Unit = {},
-        onRssClicked: (Int) -> Unit = {},
-        onRssLongClicked: (Int) -> Unit = {},
-        onFavoriteClicked: () -> Unit = {},
-        onFooterClicked: () -> Unit = {},
-        onEditTitleMenuClicked: (Int) -> Unit = {},
-        onDeleteMenuClicked: (Int) -> Unit = {},
-        onDismissDropdownMenu: () -> Unit = {},
-        showDeleteRssDialogId: Int? = null,
-        onDismissDeleteRssDialog: () -> Unit = {},
-        onDeleteRssClicked: (Int) -> Unit = {},
-        onCancelDeleteRssClicked: () -> Unit = {},
+    items: List<RssListItem> = emptyList(),
+    rawRssList: List<Feed>,
+    mode: RssListMode,
+    isInitializing: Boolean,
+    isRefreshing: Boolean,
+    messageList: List<RssListMessage> = emptyList(),
+    showDropdownMenuId: Int? = null,
+    onRefresh: () -> Unit = {},
+    onHeaderClicked: () -> Unit = {},
+    onRssClicked: (Int) -> Unit = {},
+    onRssLongClicked: (Int) -> Unit = {},
+    onFavoriteClicked: () -> Unit = {},
+    onFooterClicked: () -> Unit = {},
+    onEditTitleMenuClicked: (Int, String) -> Unit = { _, _ -> },
+    onDeleteMenuClicked: (Int) -> Unit = {},
+    onDismissDropdownMenu: () -> Unit = {},
+    showDeleteRssDialogId: Int? = null,
+    onDismissDeleteRssDialog: () -> Unit = {},
+    onDeleteRssClicked: (Int) -> Unit = {},
+    onCancelDeleteRssClicked: () -> Unit = {},
+    showEditRssTitleDialogId: Int? = null,
+    showEditRssTitleDialogTitle: String? = null,
+    onDismissEditRssTitleDialog: () -> Unit = {},
+    onEditRssTitleClicked: (String, Int) -> Unit = { _, _ -> },
+    onCancelEditRssTitleClicked: () -> Unit = {},
+    onNewRssTitleChanged: (String) -> Unit = {}
 ) {
     if (isInitializing) {
         CircularProgressIndicator()
@@ -413,10 +466,20 @@ fun RssListScreen(
     }
     if (showDeleteRssDialogId != null) {
         DeleteRssAlertDialog(
-                rssId = showDeleteRssDialogId,
-                onDismissDeleteRssDialog = onDismissDeleteRssDialog,
-                onDeleteRssClicked = onDeleteRssClicked,
-                onCancelDeleteRssClicked = onCancelDeleteRssClicked,
+            rssId = showDeleteRssDialogId,
+            onDismissDeleteRssDialog = onDismissDeleteRssDialog,
+            onDeleteRssClicked = onDeleteRssClicked,
+            onCancelDeleteRssClicked = onCancelDeleteRssClicked,
+        )
+    }
+    if (showEditRssTitleDialogId != null && showEditRssTitleDialogTitle != null) {
+        EditRssTitleAlertDialog(
+            rssId = showEditRssTitleDialogId,
+            title = showEditRssTitleDialogTitle,
+            onDismissEditRssTitleDialog = onDismissEditRssTitleDialog,
+            onEditRssTitleClicked = onEditRssTitleClicked,
+            onCancelEditRssTitleClicked = onCancelEditRssTitleClicked,
+            onNewRssTitleChanged = onNewRssTitleChanged
         )
     }
 }
@@ -433,19 +496,19 @@ fun RssEmptyText(modifier: Modifier = Modifier) {
 
 @Composable
 fun SwipeRefreshRssList(
-        modifier: Modifier = Modifier,
-        isRefreshing: Boolean,
-        onRefresh: () -> Unit = {},
-        items: List<RssListItem> = emptyList(),
-        showDropdownMenuId: Int?,
-        onHeaderClicked: () -> Unit = {},
-        onRssClicked: (Int) -> Unit = {},
-        onRssLongClicked: (Int) -> Unit = {},
-        onFavoriteClicked: () -> Unit = {},
-        onFooterClicked: () -> Unit = {},
-        onEditTitleMenuClicked: (Int) -> Unit = {},
-        onDeleteMenuClicked: (Int) -> Unit = {},
-        onDismissDropdownMenu: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit = {},
+    items: List<RssListItem> = emptyList(),
+    showDropdownMenuId: Int?,
+    onHeaderClicked: () -> Unit = {},
+    onRssClicked: (Int) -> Unit = {},
+    onRssLongClicked: (Int) -> Unit = {},
+    onFavoriteClicked: () -> Unit = {},
+    onFooterClicked: () -> Unit = {},
+    onEditTitleMenuClicked: (Int, String) -> Unit = { _, _ -> },
+    onDeleteMenuClicked: (Int) -> Unit = {},
+    onDismissDropdownMenu: () -> Unit = {},
 ) {
     SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
@@ -524,16 +587,16 @@ fun AllRssHeader(
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun RssContent(
-        id: Int,
-        @DrawableRes iconDrawable: Int = com.phicdy.mycuration.resource.R.drawable.ic_rss,
-        title: String,
-        unreadCount: Int,
-        onRssClicked: (Int) -> Unit = {},
-        onRssLongClicked: (Int) -> Unit = {},
-        showDropdownMenu: Boolean,
-        onEditTitleMenuClicked: (Int) -> Unit = {},
-        onDeleteMenuClicked: (Int) -> Unit = {},
-        onDismissDropdownMenu: () -> Unit = {},
+    id: Int,
+    @DrawableRes iconDrawable: Int = com.phicdy.mycuration.resource.R.drawable.ic_rss,
+    title: String,
+    unreadCount: Int,
+    onRssClicked: (Int) -> Unit = {},
+    onRssLongClicked: (Int) -> Unit = {},
+    showDropdownMenu: Boolean,
+    onEditTitleMenuClicked: (Int, String) -> Unit = { _, _ -> },
+    onDeleteMenuClicked: (Int) -> Unit = {},
+    onDismissDropdownMenu: () -> Unit = {},
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Box {
@@ -571,7 +634,7 @@ fun RssContent(
                     expanded = showDropdownMenu,
                     onDismissRequest = { onDismissDropdownMenu() },
             ) {
-                DropdownMenuItem(onClick = { onEditTitleMenuClicked(id) }) {
+                DropdownMenuItem(onClick = { onEditTitleMenuClicked(id, title) }) {
                     Text(text = stringResource(id = R.string.edit_rss_title))
                 }
                 DropdownMenuItem(onClick = { onDeleteMenuClicked(id) }) {
@@ -647,38 +710,85 @@ fun DeleteRssAlertDialog(
         onCancelDeleteRssClicked: () -> Unit = {},
 ) {
     AlertDialog(
-            onDismissRequest = { onDismissDeleteRssDialog() },
-            confirmButton = {
-                TextButton(
-                        onClick = { onDeleteRssClicked(rssId) },
-                ) {
-                    Text(text = stringResource(id = R.string.delete))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onCancelDeleteRssClicked() }) {
-                    Text(text = stringResource(id = R.string.cancel))
-                }
-            },
-            title = {
-                Text(text = stringResource(id = R.string.delete_rss_alert))
+        onDismissRequest = { onDismissDeleteRssDialog() },
+        confirmButton = {
+            TextButton(
+                onClick = { onDeleteRssClicked(rssId) },
+            ) {
+                Text(text = stringResource(id = R.string.delete))
             }
+        },
+        dismissButton = {
+            TextButton(onClick = { onCancelDeleteRssClicked() }) {
+                Text(text = stringResource(id = R.string.cancel))
+            }
+        },
+        title = {
+            Text(text = stringResource(id = R.string.delete_rss_alert))
+        }
+    )
+}
+
+@Composable
+fun EditRssTitleAlertDialog(
+    rssId: Int,
+    title: String,
+    onDismissEditRssTitleDialog: () -> Unit = {},
+    onEditRssTitleClicked: (String, Int) -> Unit = { _, _ -> },
+    onCancelEditRssTitleClicked: () -> Unit = {},
+    onNewRssTitleChanged: (String) -> Unit = {}
+) {
+    AlertDialog(
+        onDismissRequest = { onDismissEditRssTitleDialog() },
+        confirmButton = {
+            TextButton(
+                onClick = { onEditRssTitleClicked(title, rssId) },
+            ) {
+                Text(text = stringResource(id = R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { onCancelEditRssTitleClicked() }) {
+                Text(text = stringResource(id = R.string.cancel))
+            }
+        },
+        title = null,
+        text = {
+            Column {
+                Text(
+                    text = stringResource(id = R.string.edit_rss_title),
+                    style = MaterialTheme.typography.subtitle1
+                )
+                Spacer(Modifier.height(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(text = stringResource(id = R.string.new_title))
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = onNewRssTitleChanged,
+                        modifier = Modifier.padding(start = 8.dp),
+                        maxLines = 1
+                    )
+                }
+            }
+        }
     )
 }
 
 @Composable
 fun RssListText(
-        modifier: Modifier = Modifier,
-        text: String,
-        fontSize: TextUnit = TextUnit.Unspecified,
-        textAlign: TextAlign? = null
+    modifier: Modifier = Modifier,
+    text: String,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    textAlign: TextAlign? = null
 ) {
     Text(
-            text = text,
-            color = MaterialTheme.colors.primary,
-            fontSize = fontSize,
-            modifier = modifier,
-            textAlign = textAlign
+        text = text,
+        color = MaterialTheme.colors.primary,
+        fontSize = fontSize,
+        modifier = modifier,
+        textAlign = textAlign
     )
 }
 
@@ -748,4 +858,13 @@ fun PreviewFooter() {
 @Composable
 fun PreviewDeleteAlertDialog() {
     DeleteRssAlertDialog(rssId = 0)
+}
+
+@Preview(name = "Edit title alert dialog in dark", uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "Edit title alert dialog in light", uiMode = UI_MODE_NIGHT_NO)
+@Composable
+fun PreviewEditRssTitleAlertDialog() {
+    MyCurationTheme {
+        EditRssTitleAlertDialog(rssId = 0, title = "title")
+    }
 }

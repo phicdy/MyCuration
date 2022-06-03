@@ -12,4 +12,6 @@ data class RssListState(
     val messageList: List<RssListMessage> = emptyList(),
     val showDropdownMenuId: Int?,
     val showDeleteRssDialogId: Int?,
+    val showEditRssTitleDialogId: Int?,
+    val showEditRssTitleDialogTitle: String?,
 )
