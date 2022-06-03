@@ -40,6 +40,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -202,6 +203,11 @@ class RssListFragment : Fragment() {
                         onNewRssTitleChanged = { newTitle ->
                             lifecycleScope.launchWhenStarted {
                                 newRssTitleChangeActionCreator.run(newTitle)
+                            }
+                        },
+                        onMessageConsumed = { message ->
+                            lifecycleScope.launchWhenStarted {
+                                consumeRssListMessageActionCreator.run(message)
                             }
                         }
                     )
@@ -373,7 +379,8 @@ fun RssListScreen(
     onDismissEditRssTitleDialog: () -> Unit = {},
     onEditRssTitleClicked: (String, Int) -> Unit = { _, _ -> },
     onCancelEditRssTitleClicked: () -> Unit = {},
-    onNewRssTitleChanged: (String) -> Unit = {}
+    onNewRssTitleChanged: (String) -> Unit = {},
+    onMessageConsumed: (RssListMessage) -> Unit = {}
 ) {
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
@@ -402,7 +409,8 @@ fun RssListScreen(
         onDismissEditRssTitleDialog = onDismissEditRssTitleDialog,
         onEditRssTitleClicked = onEditRssTitleClicked,
         onCancelEditRssTitleClicked = onCancelEditRssTitleClicked,
-        onNewRssTitleChanged = onNewRssTitleChanged
+        onNewRssTitleChanged = onNewRssTitleChanged,
+        onMessageConsumed = onMessageConsumed
     )
 }
 
@@ -433,7 +441,8 @@ fun RssListScreen(
     onDismissEditRssTitleDialog: () -> Unit = {},
     onEditRssTitleClicked: (String, Int) -> Unit = { _, _ -> },
     onCancelEditRssTitleClicked: () -> Unit = {},
-    onNewRssTitleChanged: (String) -> Unit = {}
+    onNewRssTitleChanged: (String) -> Unit = {},
+    onMessageConsumed: (RssListMessage) -> Unit = {}
 ) {
     if (isInitializing) {
         CircularProgressIndicator()
@@ -481,6 +490,28 @@ fun RssListScreen(
             onCancelEditRssTitleClicked = onCancelEditRssTitleClicked,
             onNewRssTitleChanged = onNewRssTitleChanged
         )
+    }
+    for (message in messageList) {
+        val context = LocalContext.current
+        val toastText = when (message.type) {
+            RssListMessage.Type.SUCCEED_TO_EDIT_RSS -> {
+                context.getString(R.string.edit_rss_title_success)
+            }
+            RssListMessage.Type.SUCCEED_TO_DELETE_RSS -> {
+                context.getString(R.string.finish_delete_rss_success)
+            }
+            RssListMessage.Type.ERROR_EMPTY_RSS_TITLE_EDIT -> {
+                context.getString(R.string.empty_title)
+            }
+            RssListMessage.Type.ERROR_SAVE_RSS_TITLE -> {
+                context.getString(R.string.edit_rss_title_error)
+            }
+            RssListMessage.Type.ERROR_DELETE_RSS -> {
+                context.getString(R.string.finish_delete_rss_fail)
+            }
+        }
+        Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
+        onMessageConsumed(message)
     }
 }
 
