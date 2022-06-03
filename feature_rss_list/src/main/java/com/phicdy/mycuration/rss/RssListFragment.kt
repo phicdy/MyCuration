@@ -7,10 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.DrawableRes
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -55,7 +53,6 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.phicdy.mycuration.articlelist.ArticlesListActivity
 import com.phicdy.mycuration.articlelist.FavoriteArticlesListActivity
-import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.RssListMode
 import com.phicdy.mycuration.entity.RssUpdateIntervalCheckDate
 import com.phicdy.mycuration.resource.MyCurationTheme
@@ -218,45 +215,6 @@ class RssListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        registerForContextMenu(binding.recyclerview)
-//        setAllListener()
-//        rssListStateStore.state.observe(viewLifecycleOwner) { state ->
-//            if (state.isInitializing) {
-//                binding.progressbar.visibility = View.VISIBLE
-//                hideRecyclerView()
-//            } else {
-//                binding.progressbar.visibility = View.GONE
-//                binding.swiperefreshlayout.isRefreshing = false
-//                if (state.item.isEmpty()) {
-//                    hideRecyclerView()
-//                    showEmptyView()
-//                } else {
-//                    init(state.item)
-//                    hideEmptyView()
-//                }
-//                viewLifecycleOwner.lifecycleScope.launch {
-//                    launchUpdateAllRssListActionCreator.run(
-//                        state.mode,
-//                        RssUpdateIntervalCheckDate(Date())
-//                    )
-//                }
-//            }
-//            if (state.isRefreshing) {
-//                binding.swiperefreshlayout.isRefreshing = true
-//            }
-//            state.messageList.firstOrNull()?.let { message ->
-//                when (message.type) {
-//                    RssListMessage.Type.SUCCEED_TO_EDIT_RSS -> showEditFeedSuccessToast()
-//                    RssListMessage.Type.ERROR_EMPTY_RSS_TITLE_EDIT -> showEditFeedTitleEmptyErrorToast()
-//                    RssListMessage.Type.ERROR_SAVE_RSS_TITLE -> showEditFeedFailToast()
-//                    RssListMessage.Type.SUCCEED_TO_DELETE_RSS -> showDeleteSuccessToast()
-//                    RssListMessage.Type.ERROR_DELETE_RSS -> showDeleteFailToast()
-//                }
-//                lifecycleScope.launchWhenStarted {
-//                    consumeRssListMessageActionCreator.run(message)
-//                }
-//            }
-//        }
         viewLifecycleOwner.lifecycleScope.launch {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
@@ -288,77 +246,6 @@ class RssListFragment : Fragment() {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
     }
-
-    fun onEditRssClicked(rssId: Int, feedTitle: String) {
-        val addView = View.inflate(requireContext(), R.layout.edit_feed_title, null)
-        val editTitleView = addView.findViewById(R.id.editFeedTitle) as EditText
-        editTitleView.setText(feedTitle)
-
-        AlertDialog.Builder(requireContext())
-                .setTitle(R.string.edit_rss_title)
-                .setView(addView)
-                .setPositiveButton(R.string.save) { _, _ ->
-                    val newTitle = editTitleView.text.toString()
-                    lifecycleScope.launchWhenStarted {
-                        editRssTitleActionCreator.run(newTitle, rssId)
-                    }
-                }.setNegativeButton(R.string.cancel, null).show()
-    }
-
-    fun onDeleteRssClicked(rssId: Int, position: Int) {
-        AlertDialog.Builder(requireContext())
-                .setTitle(R.string.delete_rss_alert)
-                .setPositiveButton(R.string.delete) { _, _ ->
-                    lifecycleScope.launchWhenStarted {
-                        val state = rssListStateStore.state.value ?: return@launchWhenStarted
-                        lifecycleScope.launchWhenStarted {
-                            deleteRssActionCreator.run(
-                                    rssId,
-                                    state.rawRssList,
-                                    state.mode
-                            )
-                        }
-                    }
-                }
-                .setNegativeButton(R.string.cancel, null).show()
-    }
-
-    private fun showEditFeedTitleEmptyErrorToast() {
-        Toast.makeText(requireContext(), getString(R.string.empty_title), Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showEditFeedFailToast() {
-        Toast.makeText(
-                requireContext(),
-                getString(R.string.edit_rss_title_error),
-                Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    private fun showEditFeedSuccessToast() {
-        Toast.makeText(
-                requireContext(),
-                getString(R.string.edit_rss_title_success),
-                Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    private fun showDeleteSuccessToast() {
-        Toast.makeText(
-                requireContext(),
-                getString(R.string.finish_delete_rss_success),
-                Toast.LENGTH_SHORT
-        )
-                .show()
-    }
-
-    private fun showDeleteFailToast() {
-        Toast.makeText(
-                requireContext(),
-                getString(R.string.finish_delete_rss_fail),
-                Toast.LENGTH_SHORT
-        ).show()
-    }
 }
 
 @Composable
@@ -385,8 +272,6 @@ fun RssListScreen(
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
         items = value.item,
-        rawRssList = value.rawRssList,
-        mode = value.mode,
         isInitializing = value.isInitializing,
         isRefreshing = value.isRefreshing,
         messageList = value.messageList,
@@ -417,8 +302,6 @@ fun RssListScreen(
 @Composable
 fun RssListScreen(
     items: List<RssListItem> = emptyList(),
-    rawRssList: List<Feed>,
-    mode: RssListMode,
     isInitializing: Boolean,
     isRefreshing: Boolean,
     messageList: List<RssListMessage> = emptyList(),
@@ -828,12 +711,10 @@ fun RssListText(
 fun PreviewLoadingRssListScreen() {
     MyCurationTheme {
         RssListScreen(
-                items = emptyList(),
-                rawRssList = emptyList(),
-                mode = RssListMode.UNREAD_ONLY,
-                isInitializing = true,
-                isRefreshing = false,
-                messageList = emptyList()
+            items = emptyList(),
+            isInitializing = true,
+            isRefreshing = false,
+            messageList = emptyList()
         )
     }
 }
@@ -843,12 +724,10 @@ fun PreviewLoadingRssListScreen() {
 fun PreviewEmptyRssListScreen() {
     MyCurationTheme {
         RssListScreen(
-                items = emptyList(),
-                rawRssList = emptyList(),
-                mode = RssListMode.UNREAD_ONLY,
-                isInitializing = false,
-                isRefreshing = false,
-                messageList = emptyList()
+            items = emptyList(),
+            isInitializing = false,
+            isRefreshing = false,
+            messageList = emptyList()
         )
     }
 }
