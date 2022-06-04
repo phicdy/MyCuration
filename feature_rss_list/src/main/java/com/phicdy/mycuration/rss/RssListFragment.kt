@@ -429,7 +429,7 @@ fun SwipeRefreshRssList(
             onRefresh = onRefresh,
             modifier = modifier
     ) {
-        LazyColumn {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(items) { item ->
                 when (item) {
                     is RssListItem.All -> AllRssHeader(
