@@ -59,7 +59,9 @@ Set status to read automatically by user settings
 ## Devlopment Environment
 
 * Put your `google-services.json` for Google Analytics
-* Set up your release setting in ~/.gradle/gradle.properties or edit gradle.properties in this project
+* Set up your settings in ~/.gradle/gradle.properties or edit gradle.properties in this project
+  * Set admob ID value like `ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy` to `ADMOB_ID_MYCURATION`
+  * Set release keystore settings to `RELEASE_KEY_ALIAS`, `RELEASE_STORE_FILE_PATH`, `RELEASE_KEY_PASSWORD` and `RELEASE_STORE_PASSWORD`
 * If you want to copy debug build to somewhere, set the destination in ~/.gradle/gradle.properties or edit gradle.properties in this project
 
 ```
