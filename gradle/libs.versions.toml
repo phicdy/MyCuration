@@ -37,7 +37,7 @@ compose-material-icons = { module = "androidx.compose.material:material-icons-co
 compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "jetpack_compose" }
 compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "jetpack_compose" }
 
-firebase-ads = { module = "com.google.firebase:firebase-ads", version = "18.3.0" }
+firebase-ads = { module = "com.google.firebase:firebase-ads", version = "21.0.0" }
 
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment_ktx" }
