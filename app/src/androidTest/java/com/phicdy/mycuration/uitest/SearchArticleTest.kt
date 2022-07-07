@@ -5,15 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
-import androidx.test.espresso.action.ViewActions.pressImeActionButton
-import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
@@ -32,18 +26,14 @@ import com.phicdy.mycuration.repository.Database
 import com.phicdy.mycuration.top.TopActivity
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
-import org.junit.After
+import org.junit.*
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
 import org.junit.runner.RunWith
 
 @Ignore("Not passed. Ignore until fixed")
@@ -90,7 +80,6 @@ class SearchArticleTest : UiTest() {
     @After
     public override fun tearDown() {
         super.tearDown()
-        coroutineTestRule.testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test
@@ -101,7 +90,7 @@ class SearchArticleTest : UiTest() {
     }
 
     @Test
-    fun noResultShowsWhenNoArticlesFound() {
+    fun noResultShowsWhenNoArticlesFound() = coroutineTestRule.testCoroutineScope.runTest {
         addTestRss()
         openSearchResult("b")
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -109,24 +98,24 @@ class SearchArticleTest : UiTest() {
     }
 
     @Test
-    fun resultShowsWhenArticleFound() {
+    fun resultShowsWhenArticleFound() = coroutineTestRule.testCoroutineScope.runTest {
         addTestRss()
         openSearchResult(testArticleTitle)
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         assertNull(device.wait<UiObject2>(Until.findObject(By.text("該当する記事はありません")), 5000))
 
         val title = onView(
-            allOf(
-                withId(R.id.articleTitle), withText(testArticleTitle),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.rv_article),
-                        0
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
+                allOf(
+                        withId(R.id.articleTitle), withText(testArticleTitle),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.rv_article),
+                                        0
+                                ),
+                                0
+                        ),
+                        isDisplayed()
+                )
         )
         title.check(matches(withText(testArticleTitle)))
 
@@ -243,15 +232,15 @@ class SearchArticleTest : UiTest() {
         searchAutoComplete2.perform(pressImeActionButton())
     }
 
-    private fun addTestRss() = runBlocking {
+    private suspend fun addTestRss() {
         val feed = rssRepository.store(testRssTitle, testRssUrl, "RSS1.0", "http://hoge,com")
         assertNotNull(feed)
         // postDate: 2018-01-01 12:34:56
         val articles = arrayListOf(
-            Article(
-                1, testArticleTitle, testArticleUrl, Article.UNREAD,
-                testArticlePoint, testArticleDateLong, feed!!.id, feed.title, ""
-            )
+                Article(
+                        1, testArticleTitle, testArticleUrl, Article.UNREAD,
+                        testArticlePoint, testArticleDateLong, feed!!.id, feed.title, ""
+                )
         )
         articleRepository.saveNewArticles(articles, feed.id)
     }

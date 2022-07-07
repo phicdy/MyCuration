@@ -10,7 +10,7 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
@@ -40,7 +40,7 @@ class GetFeedIconTaskTest {
     }
 
     @Test
-    fun iconExistsWhenGetKindouIcon() = runBlocking {
+    fun iconExistsWhenGetKindouIcon() = coroutineTestRule.testCoroutineScope.runTest {
         val kindou = "http://kindou.info"
         rssRepository.store("kindou", kindou, Feed.ATOM, kindou)
         val task = GetFeedIconTask()

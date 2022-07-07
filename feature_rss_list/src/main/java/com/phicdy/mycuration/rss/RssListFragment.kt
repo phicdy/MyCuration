@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.rss
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,8 +28,7 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     private var _binding: FragmentRssListBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var rssFeedListAdapter: RssListAdapter
-    private var listener: OnFeedListFragmentListener? = null
+    private val rssFeedListAdapter = RssListAdapter(this)
 
     @Inject
     lateinit var fetchAllRssListActionCreator: FetchAllRssListActionCreator
@@ -55,7 +53,6 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
     lateinit var consumeRssListMessageActionCreator: ConsumeRssListMessageActionCreator
 
     private fun init(items: List<RssListItem>) {
-        rssFeedListAdapter = RssListAdapter(listener)
         binding.recyclerview.visibility = View.VISIBLE
         binding.recyclerview.layoutManager = LinearLayoutManager(activity)
         binding.recyclerview.adapter = rssFeedListAdapter
@@ -138,15 +135,6 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            listener = context as OnFeedListFragmentListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException("$context must implement OnFragmentInteractionListener")
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
@@ -156,11 +144,6 @@ class RssListFragment : Fragment(), OnFeedListFragmentListener {
                 RssUpdateIntervalCheckDate(Date())
             )
         }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
     }
 
     override fun onDestroyView() {

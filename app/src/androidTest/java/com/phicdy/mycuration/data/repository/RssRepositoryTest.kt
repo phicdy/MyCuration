@@ -6,7 +6,7 @@ import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertNotNull
@@ -50,7 +50,7 @@ class RssRepositoryTest {
     }
 
     @Test
-    fun whenDeleteRSSThenTheRSSAndRelatedArticlesAndFiltersAreDeleted() = coroutineTestRule.testCoroutineScope.runBlockingTest {
+    fun whenDeleteRSSThenTheRSSAndRelatedArticlesAndFiltersAreDeleted() = coroutineTestRule.testCoroutineScope.runTest {
         val rss = rssRepository.store("title", "http://www.google.com", "RSS", "http://yahoo.co.jp")
         rss?.let {
             val rssList = arrayListOf(rss)
