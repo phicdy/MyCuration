@@ -7,7 +7,7 @@ import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat
@@ -48,7 +48,7 @@ class FilterRepositoryTest {
     }
 
     @Test
-    fun whenGetEnabledFilter_ThenReturnTheFilter() = runBlocking {
+    fun whenGetEnabledFilter_ThenReturnTheFilter() = coroutineTestRule.testCoroutineScope.runTest {
         val stored = rssRepository.store("title", "http://www.google.com", Feed.ATOM, "http://www.google.com")
         val filterTitle = "filter"
         val keyword = "keyword"
@@ -64,7 +64,7 @@ class FilterRepositoryTest {
     }
 
     @Test
-    fun whenStoreDisabledFilterAndGetEnabledFilter_ThenReturnEmpty() = runBlocking {
+    fun whenStoreDisabledFilterAndGetEnabledFilter_ThenReturnEmpty() = coroutineTestRule.testCoroutineScope.runTest {
         val stored = rssRepository.store("title", "http://www.google.com", Feed.ATOM, "http://www.google.com")
         val filterTitle = "filter"
         val keyword = "keyword"

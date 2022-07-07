@@ -12,7 +12,7 @@ import com.phicdy.mycuration.repository.Database
 import com.phicdy.mycuration.util.UrlUtil
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -60,11 +60,10 @@ class RssParserTest {
     @After
     fun tearDown() {
         deleteAll(db)
-        coroutineTestRule.testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test
-    fun testParseFeedInfoRSS1() = runBlocking {
+    fun testParseFeedInfoRSS1() = coroutineTestRule.testCoroutineScope.runTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://news.yahoo.co.jp/rss/topics/top-picks.xml", callback)
@@ -88,7 +87,7 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoRSS1_rdf() = runBlocking {
+    fun testParseFeedInfoRSS1_rdf() = coroutineTestRule.testCoroutineScope.runTest {
         val testUrl = "https://b.hatena.ne.jp/hotentry/it.rss"
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
@@ -107,7 +106,7 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoRSS2() = runBlocking {
+    fun testParseFeedInfoRSS2() = coroutineTestRule.testCoroutineScope.runTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://hiroki.jp/feed/", callback)
@@ -147,7 +146,7 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoATOM() = runBlocking {
+    fun testParseFeedInfoATOM() = coroutineTestRule.testCoroutineScope.runTest {
         // Publickey
         val publicKeyFeedUrl = "https://www.publickey1.jp/atom.xml"
         val parser = RssParser()
@@ -197,7 +196,7 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoTopHtml() = runBlocking {
+    fun testParseFeedInfoTopHtml() = coroutineTestRule.testCoroutineScope.runTest {
         // Test top URL
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
@@ -216,7 +215,7 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoTopHtmlFeedURLStartWithSlash() = runBlocking {
+    fun testParseFeedInfoTopHtmlFeedURLStartWithSlash() = coroutineTestRule.testCoroutineScope.runTest {
         // //smhn.info/feed is returned
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
@@ -236,7 +235,7 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoGzip() = runBlocking {
+    fun testParseFeedInfoGzip() = coroutineTestRule.testCoroutineScope.runTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://ground-sesame.hatenablog.jp", callback)
@@ -255,14 +254,14 @@ class RssParserTest {
     }
 
     @Test
-    fun testPathOnlyUrl() {
+    fun testPathOnlyUrl() = coroutineTestRule.testCoroutineScope.runTest {
         addNewFeedAndCheckResult("https://b.hatena.ne.jp/hotentry/game",
                 "https://b.hatena.ne.jp/hotentry/game.rss",
                 "https://b.hatena.ne.jp/hotentry/game")
     }
 
     @Test
-    fun testFeedPath() {
+    fun testFeedPath() = coroutineTestRule.testCoroutineScope.runTest {
         addNewFeedAndCheckResult("https://www.a-kimama.com",
                 "https://www.a-kimama.com/feed",
                 "https://www.a-kimama.com")
@@ -432,16 +431,16 @@ class RssParserTest {
     @Test
     fun parseArticlesOfFeedBurnerAndroidDeveloperBlog() {
         val articles =
-            parser.parseArticlesFromRss(FeedBurnerAndroidDeveloperBlog().text.byteInputStream())
+                parser.parseArticlesFromRss(FeedBurnerAndroidDeveloperBlog().text.byteInputStream())
         assertThat(articles[0].url)
-            .isEqualTo("https://android-developers.googleblog.com/2022/02/write-better-tests-with-new-testing.html")
+                .isEqualTo("https://android-developers.googleblog.com/2022/02/write-better-tests-with-new-testing.html")
     }
 
-    private fun addNewFeedAndCheckResult(
-        testUrl: String,
-        expectedFeedUrl: String,
-        expectedSiteUrl: String
-    ) = runBlocking {
+    private suspend fun addNewFeedAndCheckResult(
+            testUrl: String,
+            expectedFeedUrl: String,
+            expectedSiteUrl: String
+    ) {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)

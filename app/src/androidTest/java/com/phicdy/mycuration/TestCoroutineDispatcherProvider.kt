@@ -2,9 +2,11 @@ package com.phicdy.mycuration
 
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestDispatcher
 
-class TestCoroutineDispatcherProvider(private val testDispatcher: TestCoroutineDispatcher): CoroutineDispatcherProvider {
+@ExperimentalCoroutinesApi
+class TestCoroutineDispatcherProvider(private val testDispatcher: TestDispatcher) : CoroutineDispatcherProvider {
     override fun default(): CoroutineDispatcher = testDispatcher
     override fun io(): CoroutineDispatcher = testDispatcher
     override fun main(): CoroutineDispatcher = testDispatcher

@@ -6,7 +6,7 @@ import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -45,7 +45,7 @@ class CurationRepositoryTest {
     }
 
     @Test
-    fun testSaveNewCuration() = runBlocking {
+    fun testSaveNewCuration() = coroutineTestRule.testCoroutineScope.runTest {
         val curationId = insertTestCuration()
 
         val map = curationRepository.getAllCurationWords()
@@ -60,13 +60,13 @@ class CurationRepositoryTest {
     }
 
     @Test
-    fun whenDefault_ThenEmptyWordsReturn() = runBlocking {
+    fun whenDefault_ThenEmptyWordsReturn() = coroutineTestRule.testCoroutineScope.runTest {
         val map = curationRepository.getAllCurationWords()
         assertEquals(0, map.size)
     }
 
     @Test
-    fun whenInsert1Curation_ThenReturnTheWords() = runBlocking {
+    fun whenInsert1Curation_ThenReturnTheWords() = coroutineTestRule.testCoroutineScope.runTest {
         // 1 curation
         val curationId = insertTestCuration()
 
@@ -80,7 +80,7 @@ class CurationRepositoryTest {
     }
 
     @Test
-    fun testGetAllCurationWords() = runBlocking {
+    fun testGetAllCurationWords() = coroutineTestRule.testCoroutineScope.runTest {
         // 2 curations
         val curationId = insertTestCuration()
         val curationName2 = "test2"
@@ -112,13 +112,13 @@ class CurationRepositoryTest {
     }
 
     @Test
-    fun testDeleteCuration() = runBlocking {
+    fun testDeleteCuration() = coroutineTestRule.testCoroutineScope.runTest {
         val curationId = insertTestCuration()
         assertTrue(curationRepository.delete(curationId))
         assertFalse(curationRepository.isExist(TEST_CURATION_NAME))
     }
 
-    private fun insertTestCuration(): Int = runBlocking {
+    private suspend fun insertTestCuration(): Int {
         val words = ArrayList<String>().apply {
             add(TEST_WORD1)
             add(TEST_WORD2)
@@ -126,7 +126,7 @@ class CurationRepositoryTest {
         }
         val id = curationRepository.store(TEST_CURATION_NAME, words).toInt()
         assertTrue(id > 0)
-        return@runBlocking id
+        return id
     }
 
     companion object {
