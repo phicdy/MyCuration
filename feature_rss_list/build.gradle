@@ -15,31 +15,19 @@ dependencies {
     implementation project(':domain')
     implementation project(':entity')
     implementation project(':feature_article_list')
-    implementation project(':glide')
     implementation project(':repository')
     implementation project(':resource')
     implementation project(':action_article_list')
 
-    implementation libs.appcompat
-    implementation libs.material
-    implementation libs.recyclerview
-    implementation libs.constraintlayout
-    implementation libs.lifecycle.runtime
     implementation libs.work
-    implementation libs.swiperefreshlayout
     implementation libs.fragment
     implementation libs.accompanist
-    debugImplementation "androidx.customview:customview:1.2.0-alpha01"
-    debugImplementation "androidx.customview:customview-poolingcontainer:1.0.0-alpha01"
-
 
     implementation libs.coroutines.core
     implementation libs.coroutines.android
 
     implementation libs.dagger.hilt
     kapt libs.dagger.hilt.compiler
-
-    implementation libs.glide
 
     implementation libs.timber
 }
