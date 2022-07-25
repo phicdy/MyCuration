@@ -214,6 +214,8 @@ class RssListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // initialize store and register
+        rssListStateStore
         viewLifecycleOwner.lifecycleScope.launch {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
         }
