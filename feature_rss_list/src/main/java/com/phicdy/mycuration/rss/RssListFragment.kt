@@ -118,9 +118,8 @@ class RssListFragment : Fragment() {
                     RssListScreen(
                         store = rssListStateStore,
                         onRefresh = {
-                            val state = rssListStateStore.state.value ?: return@RssListScreen
                             lifecycleScope.launchWhenStarted {
-                                updateAllRssListActionCreator.run(state.mode)
+                                updateAllRssListActionCreator.run()
                             }
                         },
                         onHeaderClicked = {
@@ -223,10 +222,8 @@ class RssListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            val state = rssListStateStore.state.value ?: return@launch
             launchUpdateAllRssListActionCreator.run(
-                    state.mode,
-                    RssUpdateIntervalCheckDate(Date())
+                RssUpdateIntervalCheckDate(Date())
             )
         }
     }
