@@ -34,11 +34,14 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -205,6 +210,13 @@ class RssListFragment : Fragment() {
                             lifecycleScope.launchWhenStarted {
                                 consumeRssListMessageActionCreator.run(message)
                             }
+                        },
+                        onListLoadedAndResumed = {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                launchUpdateAllRssListActionCreator.run(
+                                    RssUpdateIntervalCheckDate(Date())
+                                )
+                            }
                         }
                     )
                 }
@@ -218,15 +230,6 @@ class RssListFragment : Fragment() {
         rssListStateStore
         viewLifecycleOwner.lifecycleScope.launch {
             fetchAllRssListActionCreator.run(RssListMode.UNREAD_ONLY)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewLifecycleOwner.lifecycleScope.launch {
-            launchUpdateAllRssListActionCreator.run(
-                RssUpdateIntervalCheckDate(Date())
-            )
         }
     }
 
@@ -266,7 +269,8 @@ fun RssListScreen(
     onEditRssTitleClicked: (String, Int) -> Unit = { _, _ -> },
     onCancelEditRssTitleClicked: () -> Unit = {},
     onNewRssTitleChanged: (String) -> Unit = {},
-    onMessageConsumed: (RssListMessage) -> Unit = {}
+    onMessageConsumed: (RssListMessage) -> Unit = {},
+    onListLoadedAndResumed: () -> Unit = {},
 ) {
     val value = store.state.observeAsState().value ?: return
     RssListScreen(
@@ -294,7 +298,8 @@ fun RssListScreen(
         onEditRssTitleClicked = onEditRssTitleClicked,
         onCancelEditRssTitleClicked = onCancelEditRssTitleClicked,
         onNewRssTitleChanged = onNewRssTitleChanged,
-        onMessageConsumed = onMessageConsumed
+        onMessageConsumed = onMessageConsumed,
+        onListLoadedAndResumed = onListLoadedAndResumed
     )
 }
 
@@ -324,7 +329,8 @@ fun RssListScreen(
     onEditRssTitleClicked: (String, Int) -> Unit = { _, _ -> },
     onCancelEditRssTitleClicked: () -> Unit = {},
     onNewRssTitleChanged: (String) -> Unit = {},
-    onMessageConsumed: (RssListMessage) -> Unit = {}
+    onMessageConsumed: (RssListMessage) -> Unit = {},
+    onListLoadedAndResumed: () -> Unit = {},
 ) {
     if (isInitializing) {
         CircularProgressIndicator()
@@ -339,19 +345,36 @@ fun RssListScreen(
                 )
             }
         } else {
+            val observer = remember {
+                LifecycleEventObserver { _, event ->
+                    when (event) {
+                        Lifecycle.Event.ON_RESUME -> {
+                            onListLoadedAndResumed()
+                        }
+                        else -> {}
+                    }
+                }
+            }
+            val lifecycle = LocalLifecycleOwner.current.lifecycle
+            DisposableEffect(Unit) {
+                lifecycle.addObserver(observer)
+                onDispose {
+                    lifecycle.removeObserver(observer)
+                }
+            }
             SwipeRefreshRssList(
-                    isRefreshing = isRefreshing,
-                    onRefresh = onRefresh,
-                    items = items,
-                    showDropdownMenuId = showDropdownMenuId,
-                    onHeaderClicked = onHeaderClicked,
-                    onRssClicked = onRssClicked,
-                    onRssLongClicked = onRssLongClicked,
-                    onFavoriteClicked = onFavoriteClicked,
-                    onFooterClicked = onFooterClicked,
-                    onEditTitleMenuClicked = onEditTitleMenuClicked,
-                    onDeleteMenuClicked = onDeleteMenuClicked,
-                    onDismissDropdownMenu = onDismissDropdownMenu,
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                items = items,
+                showDropdownMenuId = showDropdownMenuId,
+                onHeaderClicked = onHeaderClicked,
+                onRssClicked = onRssClicked,
+                onRssLongClicked = onRssLongClicked,
+                onFavoriteClicked = onFavoriteClicked,
+                onFooterClicked = onFooterClicked,
+                onEditTitleMenuClicked = onEditTitleMenuClicked,
+                onDeleteMenuClicked = onDeleteMenuClicked,
+                onDismissDropdownMenu = onDismissDropdownMenu,
             )
         }
     }
