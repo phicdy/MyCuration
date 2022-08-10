@@ -7,11 +7,14 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val LightThemeColors = lightColors(
-    primary = White,
-    primaryVariant = White,
+    // TopAppBar background, TextButton textColor
+    primary = Black900,
+    primaryVariant = Black,
     secondary = Green700,
     background = White,
+    // DropdownMenu and AlertDialog background
     surface = White,
+    // TopAppBar, DropdownMenu and AlertDialog textColor
     onPrimary = Black,
     onSecondary = White,
     onSurface = Black,
@@ -19,13 +22,15 @@ private val LightThemeColors = lightColors(
 )
 
 private val DarkThemeColors = darkColors(
-    primary = Black900,
-    primaryVariant = Black,
+    primary = White,
+    primaryVariant = White,
     secondary = Green700,
     background = Black,
-    surface = Black,
+    // DropdownMenu and AlertDialog background, TopAppBar background
+    surface = Black900,
     onPrimary = White,
     onSecondary = Black,
+    // TopAppBar, DropdownMenu and AlertDialog textColor
     onSurface = White,
     onBackground = White
 )

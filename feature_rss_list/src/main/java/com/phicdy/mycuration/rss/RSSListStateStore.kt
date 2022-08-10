@@ -106,6 +106,23 @@ class RSSListStateStore @Inject constructor(
                 }
             }
             is EditRssTitleSuccessAction -> {
+                val current = _state.value ?: return
+                val updatedItem = current.item.map { item ->
+                    if (item is RssListItem.Content && item.rssId == action.value.rssId) {
+                        item.copy(rssTitle = action.value.newTitle)
+                    } else {
+                        item
+                    }
+                }
+                val updatedRawRssList = current.rawRssList.map { rss ->
+                    if (rss.id == action.value.rssId) {
+                        rss.copy(title = action.value.newTitle)
+                    } else {
+                        rss
+                    }
+                }
+                _state.value =
+                    _state.value?.copy(item = updatedItem, rawRssList = updatedRawRssList)
                 appendToMessageList(RssListMessage.Type.SUCCEED_TO_EDIT_RSS)
             }
             is EditRssTitleErrorAction -> {
@@ -134,6 +151,35 @@ class RSSListStateStore @Inject constructor(
                 val current = _state.value ?: return
                 val messageList = current.messageList.filterNot { it.id == action.value.id }
                 _state.value = _state.value?.copy(messageList = messageList)
+            }
+            is ShowDropdownMenuAction -> {
+                _state.value = _state.value?.copy(showDropdownMenuId = action.value)
+            }
+            is HideDropdownMenuAction -> {
+                _state.value = _state.value?.copy(showDropdownMenuId = null)
+            }
+            is ShowDeleteRssAlertDialogAction -> {
+                _state.value = _state.value?.copy(showDeleteRssDialogId = action.value)
+            }
+            is HideDeleteRssAlertDialogAction -> {
+                _state.value = _state.value?.copy(showDeleteRssDialogId = null)
+            }
+            is ShowEditRssTitleAlertDialogAction -> {
+                _state.value = _state.value?.copy(
+                    showEditRssTitleDialogId = action.value,
+                    showEditRssTitleDialogTitle = action.title
+                )
+            }
+            is HideEditRssTitleAlertDialogAction -> {
+                _state.value = _state.value?.copy(
+                    showEditRssTitleDialogId = null,
+                    showEditRssTitleDialogTitle = null
+                )
+            }
+            is NewRssTitleChangeAction -> {
+                _state.value = _state.value?.copy(
+                    showEditRssTitleDialogTitle = action.value
+                )
             }
         }
     }

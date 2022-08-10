@@ -1,9 +1,11 @@
 package com.phicdy.mycuration.uitest
 
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
@@ -15,8 +17,6 @@ import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThat
-import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,9 +26,8 @@ import org.junit.runner.RunWith
 @SdkSuppress(minSdkVersion = 18)
 class AddFeedTest : UiTest() {
 
-    @JvmField
-    @Rule
-    var activityTestRule = ActivityTestRule(TopActivity::class.java)
+    @get:Rule
+    var activityTestRule = createAndroidComposeRule<TopActivity>()
 
     @Before
     fun setup() {
@@ -62,13 +61,19 @@ class AddFeedTest : UiTest() {
         TopActivityControl.clickAddRssButton()
 
         // Show edit text for URL if needed
-        val searchButton = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "search_button")), 5000)
+        val searchButton = device.wait(
+            Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "search_button")
+            ), 5000
+        )
         searchButton?.click()
 
         // Open RSS URL
-        val urlEditText = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "search_src_text")), 5000)
+        val urlEditText = device.wait(
+            Until.findObject(
+                By.res(BuildConfig.APPLICATION_ID, "search_src_text")
+            ), 5000
+        )
         assertNotNull("URL edit text was not found", urlEditText)
         urlEditText.text = url
 
@@ -76,30 +81,9 @@ class AddFeedTest : UiTest() {
         Thread.sleep(5000)
 
         // Assert RSS was added
-        val feedTitles = device.wait(Until.findObjects(
-                By.res(BuildConfig.APPLICATION_ID, "feedTitle")), 5000)
-        assertNotNull("Feed was not found", feedTitles)
-        if (feedTitles.size != 1) fail("Feed was not added")
-        assertThat(feedTitles[0].text, `is`(title))
-        val footerTitle = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "tv_rss_footer_title")), 5000)
-        assertThat(footerTitle.text, `is`("全てのRSSを表示"))
+        activityTestRule.onNodeWithText(title).assertIsDisplayed()
+        activityTestRule.onNodeWithText("全てのRSSを表示").assertIsDisplayed()
 
-        // Assert articles of RSS were added
-        val feedUnreadCountList = device.wait(Until.findObjects(
-                By.res(BuildConfig.APPLICATION_ID, "feedCount")), 5000)
-        assertNotNull("Feed count was not found", feedUnreadCountList)
-        // Feed count list does not include show/hide option row, the size is 1
-        if (feedUnreadCountList.size != 1) fail("Feed count was not added")
-        assertTrue(Integer.valueOf(feedUnreadCountList[0].text) >= -1)
-
-        // Assert all article view shows
-        val allArticleView = device.wait(
-            Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "tv_rss_footer_title")
-            ), 5000
-        )
-        assertNotNull(allArticleView)
         device.pressBack()
     }
 
