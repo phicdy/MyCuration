@@ -1,7 +1,7 @@
 [versions]
 jetpack_compose = "1.1.1"
 kotlin = "1.6.10"
-coroutine = "1.6.1"
+coroutine = "1.6.4"
 accompanist = "0.24.7-alpha"
 lifecycle = "2.4.1"
 arch_core_testing = "2.1.0"
