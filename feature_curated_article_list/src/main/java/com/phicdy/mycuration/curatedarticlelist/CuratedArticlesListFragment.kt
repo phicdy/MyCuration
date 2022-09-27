@@ -215,9 +215,9 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 launch {
                     swipeActionCreator.run(
-                            position = viewHolder.adapterPosition,
-                            direction = direction,
-                            items = articlesListAdapter.currentList
+                        position = viewHolder.bindingAdapterPosition,
+                        direction = direction,
+                        items = articlesListAdapter.currentList
                     )
                 }
             }

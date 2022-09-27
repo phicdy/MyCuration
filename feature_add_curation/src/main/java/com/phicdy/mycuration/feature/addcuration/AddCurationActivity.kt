@@ -249,8 +249,8 @@ fun AddCurationFragmentScreen(
                 backgroundColor = if (isSystemInDarkTheme()) Black900 else White
             )
         }
-    ) {
-        Column {
+    ) { padding ->
+        Column(modifier = Modifier.padding(padding)) {
             val localFocusManager = LocalFocusManager.current
             OutlinedTextField(
                 value = if (state is AddCurationState.Loaded) state.titleField else "",

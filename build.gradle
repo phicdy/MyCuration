@@ -59,7 +59,7 @@ subprojects {
         }
 
         composeOptions {
-            kotlinCompilerExtensionVersion libs.versions.jetpack.compose.get()
+            kotlinCompilerExtensionVersion libs.versions.jetpack.compose.compiler.get()
         }
 
         compileOptions {

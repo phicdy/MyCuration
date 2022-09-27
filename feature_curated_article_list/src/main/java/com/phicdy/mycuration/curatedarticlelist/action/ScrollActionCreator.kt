@@ -39,12 +39,17 @@ class ScrollActionCreator @Inject constructor(
                                 rssCache[targetArticle.feedId]
                             }
                             rss?.let {
-                                rssRepository.updateUnreadArticleCount(it.id, rss.unreadAriticlesCount - 1)
+                                rssRepository.updateUnreadArticleCount(
+                                    it.id,
+                                    rss.unreadAriticlesCount - 1
+                                )
                                 rss.unreadAriticlesCount -= 1
                             }
                             articleRepository.saveStatus(targetArticle.id, Article.READ)
                         }
                     }
+
+                    CuratedArticleItem.Advertisement -> {}
                 }
             }
 
