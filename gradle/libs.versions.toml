@@ -44,7 +44,7 @@ compose-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.r
 compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "jetpack_compose" }
 
 
-firebase-ads = { module = "com.google.firebase:firebase-ads", version = "21.1.0" }
+firebase-ads = { module = "com.google.firebase:firebase-ads", version = "21.2.0" }
 
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 activity = { module = "androidx.activity:activity-ktx", version.ref = "activity_ktx" }
