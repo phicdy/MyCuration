@@ -6,6 +6,7 @@ accompanist = "0.24.7-alpha"
 lifecycle = "2.5.1"
 arch_core_testing = "2.1.0"
 appcompat = "1.4.2"
+activity_ktx = "1.6.0"
 fragment_ktx = "1.4.1"
 preference = "1.2.0"
 browser = "1.4.0"
@@ -45,6 +46,7 @@ compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", versi
 firebase-ads = { module = "com.google.firebase:firebase-ads", version = "21.1.0" }
 
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+activity = { module = "androidx.activity:activity-ktx", version.ref = "activity_ktx" }
 fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment_ktx" }
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
