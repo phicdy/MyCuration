@@ -17,6 +17,7 @@ class ShareUrlActionCreator @Inject constructor(
             if (position < 0 || position >= items.size) return@withContext
             when (val item = items[position]) {
                 is ArticleItem.Content -> dispatcher.dispatch(ShareUrlAction(item.value.url))
+                ArticleItem.Advertisement -> {}
             }
         }
     }
