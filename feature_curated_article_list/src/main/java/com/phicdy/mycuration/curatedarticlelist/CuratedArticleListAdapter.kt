@@ -52,11 +52,11 @@ class CuratedArticleListAdapter(
             is ArticleViewHolder -> {
                 holder.mView.setOnClickListener {
                     coroutineScope.launch {
-                        listener.onItemClicked(holder.getAdapterPosition(), currentList)
+                        listener.onItemClicked(holder.bindingAdapterPosition, currentList)
                     }
                 }
                 holder.mView.setOnLongClickListener {
-                    listener.onItemLongClicked(holder.getAdapterPosition(), currentList)
+                    listener.onItemLongClicked(holder.bindingAdapterPosition, currentList)
                     true
                 }
 
