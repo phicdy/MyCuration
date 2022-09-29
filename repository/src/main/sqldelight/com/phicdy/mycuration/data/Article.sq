@@ -81,7 +81,7 @@ FROM articles
 INNER JOIN feeds
 LEFT OUTER JOIN favoriteArticles
 ON (articles._id = favoriteArticles.articleId)
-WHERE articles.title LIKE ? ESCAPE '$' AND articles.feedId = feeds._id
+WHERE articles.title LIKE (:title) ESCAPE '$' AND articles.feedId = feeds._id
 ORDER BY date DESC;
 
 searchArticleOrderByDateAsc:
@@ -90,7 +90,7 @@ FROM articles
 INNER JOIN feeds
 LEFT OUTER JOIN favoriteArticles
 ON (articles._id = favoriteArticles.articleId)
-WHERE articles.title LIKE ? ESCAPE '$' AND articles.feedId = feeds._id
+WHERE articles.title LIKE (:title) ESCAPE '$' AND articles.feedId = feeds._id
 ORDER BY date ASC;
 
 getArticlesOfFeedsDesc:
