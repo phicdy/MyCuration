@@ -36,6 +36,11 @@ android {
                 mappingFileUploadEnabled false
             }
         }
+        benchmark {
+            initWith buildTypes.release
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+        }
     }
 
     buildFeatures {
