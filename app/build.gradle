@@ -67,16 +67,14 @@ spoon {
 }
 
 dependencies {
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-    androidTestImplementation 'androidx.test:core:1.4.0'
-    androidTestImplementation 'androidx.test:runner:1.4.0'
-    androidTestImplementation 'androidx.test:rules:1.4.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'com.squareup.spoon:spoon-client:1.7.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestImplementation 'org.assertj:assertj-core:3.23.1'
+    androidTestImplementation libs.uiautomator
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.test
+    androidTestImplementation libs.spoon
+    androidTestImplementation libs.espresso
+    androidTestImplementation libs.assertj
     androidTestImplementation libs.coroutines.test
     androidTestImplementation libs.compose.test.junit4
     debugImplementation libs.compose.test.manifest
