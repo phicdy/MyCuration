@@ -35,12 +35,18 @@ allprojects {
 subprojects {
     if (name == 'app') {
         apply plugin: 'com.android.application'
+        apply plugin: 'kotlin-android'
+        apply plugin: 'kotlin-kapt'
+        apply from: "$rootDir/jacoco.gradle"
+    } else if (name == 'benchmark') {
+        apply plugin: 'com.android.test'
+        apply plugin: 'kotlin-android'
     } else {
         apply plugin: 'com.android.library'
+        apply plugin: 'kotlin-android'
+        apply plugin: 'kotlin-kapt'
+        apply from: "$rootDir/jacoco.gradle"
     }
-    apply plugin: 'kotlin-android'
-    apply plugin: 'kotlin-kapt'
-    apply from: "$rootDir/jacoco.gradle"
 
     android {
         compileSdkVersion 33
@@ -54,12 +60,14 @@ subprojects {
             testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         }
 
-        buildFeatures {
-            compose true
-        }
+        if (name != 'benchmark') {
+            buildFeatures {
+                compose true
+            }
 
-        composeOptions {
-            kotlinCompilerExtensionVersion libs.versions.jetpack.compose.compiler.get()
+            composeOptions {
+                kotlinCompilerExtensionVersion libs.versions.jetpack.compose.compiler.get()
+            }
         }
 
         compileOptions {
@@ -81,15 +89,17 @@ subprojects {
         }
     }
 
-    dependencies {
-        implementation libs.kotlin.stdlib
-        implementation libs.bundles.compose
-        implementation 'androidx.activity:activity-compose:1.6.0'
-        implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
+    if (name != 'benchmark') {
+        dependencies {
+            implementation libs.kotlin.stdlib
+            implementation libs.bundles.compose
+            implementation 'androidx.activity:activity-compose:1.6.0'
+            implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
 
-        testImplementation 'junit:junit:4.13.2'
-        testImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
-        testImplementation 'org.assertj:assertj-core:3.23.1'
+            testImplementation 'junit:junit:4.13.2'
+            testImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
+            testImplementation libs.assertj
+        }
     }
 }
 
