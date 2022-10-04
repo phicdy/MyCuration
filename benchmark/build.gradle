@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ManagedVirtualDevice
+
 android {
     namespace 'com.phicdy.mycuration.benchmark'
 
@@ -14,6 +16,17 @@ android {
             matchingFallbacks = ["release"]
         }
     }
+    testOptions {
+        managedDevices {
+            devices {
+                pixel2Api31(ManagedVirtualDevice) {
+                    device = "Pixel 2"
+                    apiLevel = 31
+                    systemImageSource = "aosp"
+                }
+            }
+        }
+    }
 
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
@@ -24,6 +37,7 @@ dependencies {
     implementation libs.espresso
     implementation libs.uiautomator
     implementation libs.macrobenchmark
+    implementation libs.profileinstaller
 }
 
 androidComponents {
