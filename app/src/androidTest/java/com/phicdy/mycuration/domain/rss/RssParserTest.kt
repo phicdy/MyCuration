@@ -431,15 +431,15 @@ class RssParserTest {
     @Test
     fun parseArticlesOfFeedBurnerAndroidDeveloperBlog() {
         val articles =
-                parser.parseArticlesFromRss(FeedBurnerAndroidDeveloperBlog().text.byteInputStream())
+            parser.parseArticlesFromRss(FeedBurnerAndroidDeveloperBlog().text.byteInputStream())
         assertThat(articles[0].url)
-                .isEqualTo("https://android-developers.googleblog.com/2022/02/write-better-tests-with-new-testing.html")
+            .isEqualTo("https://android-developers.googleblog.com/2022/02/write-better-tests-with-new-testing.html")
     }
 
     private suspend fun addNewFeedAndCheckResult(
-            testUrl: String,
-            expectedFeedUrl: String,
-            expectedSiteUrl: String
+        testUrl: String,
+        expectedFeedUrl: String,
+        expectedSiteUrl: String
     ) {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
