@@ -259,6 +259,7 @@ class RssParser @Inject constructor() {
     private fun parseAtomAriticleUrl(parser: XmlPullParser): String {
         var isTypeTextHtml = false
         var hasType = false
+        var href = ""
         for (i in 0 until parser.attributeCount) {
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
@@ -269,12 +270,12 @@ class RssParser @Inject constructor() {
                 }
                 continue
             }
-            if (attributeName == "href" && (!hasType || isTypeTextHtml)) {
+            if (attributeName == "href") {
                 if (attributeValue.startsWith("http://") || attributeValue.startsWith("https://")) {
-                    return attributeValue
+                    href = attributeValue
                 }
             }
         }
-        return ""
+        return if (!hasType || isTypeTextHtml) href else ""
     }
 }
