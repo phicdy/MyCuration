@@ -34,6 +34,11 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           file: ./*/reports/jacoco/jacocoTestReport.xml
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/test-results/*/TEST-*.xml'
 
   lint:
     runs-on: ubuntu-latest
