@@ -61,6 +61,11 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           script: ./gradlew connectedDebugAndroidTest
+      - name: Print test result
+        run: |
+          ls app/build/outputs/
+          ls app/build/outputs/androidTest-results/
+          ls app/build/outputs/androidTest-results/connected
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: always()
