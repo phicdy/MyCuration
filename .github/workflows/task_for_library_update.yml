@@ -62,6 +62,7 @@ jobs:
           api-level: ${{ matrix.api-level }}
           script: ./gradlew connectedDebugAndroidTest
       - name: Print test result
+        if: always()
         run: |
           ls app/build/outputs/
           ls app/build/outputs/androidTest-results/
