@@ -67,11 +67,12 @@ jobs:
           ls app/build/outputs/
           ls app/build/outputs/androidTest-results/
           ls app/build/outputs/androidTest-results/connected
-      - name: Publish Test Report
+      - name: Publish androidTest Report
         uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           report_paths: '**/build/outputs/androidTest-results/connected/TEST-*.xml'
+          check_name: 'androidTest Report'
 
   dependency_diff:
     runs-on: ubuntu-latest
