@@ -60,7 +60,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          script: ./gradlew -Dorg.gradle.jvmargs=-Xmx2562m connectedDebugAndroidTest
+          script: ./gradlew -Dorg.gradle.jvmargs=-Xmx2048m connectedDebugAndroidTest
       - name: Print test result
         if: always()
         run: |
