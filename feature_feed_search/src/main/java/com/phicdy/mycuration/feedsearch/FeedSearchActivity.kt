@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,6 +15,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
@@ -98,6 +98,18 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
             val url = webView.url ?: return@OnClickListener
             presenter.onFabClicked(url)
         })
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                } else {
+                    isEnabled = false
+                    finish()
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(callback)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -189,18 +201,6 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (webView.canGoBack()) {
-                webView.goBack()
-            } else {
-                finish()
-            }
-            return true
-        }
-        return false
     }
 
     override fun startFeedUrlHookActivity(url: String) {

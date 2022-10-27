@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +14,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -90,6 +90,15 @@ class TopActivity :
             }
         }
 
+    private val onBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            if (back.visibility == View.VISIBLE) {
+                closeAddFab()
+                isEnabled = false
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_top)
@@ -117,6 +126,7 @@ class TopActivity :
                 showRateDialog()
             }
         }
+        onBackPressedDispatcher.addCallback(onBackPressedCallback)
     }
 
     private fun initViewPager() {
@@ -244,6 +254,8 @@ class TopActivity :
         fabAddFilter.show()
         val fadeInFilter = AnimationUtils.loadAnimation(this, R.anim.fab_fadein_filter)
         llAddFilter.startAnimation(fadeInFilter)
+
+        onBackPressedCallback.isEnabled = true
     }
 
     private fun closeAddFab() {
@@ -382,14 +394,6 @@ class TopActivity :
         val manager = AlarmManagerTaskManager(this)
         val intervalSec = helper.autoUpdateIntervalSecond
         manager.setNewAlarm(intervalSec)
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && back.visibility == View.VISIBLE) {
-            closeAddFab()
-            return true
-        }
-        return super.onKeyDown(keyCode, event)
     }
 
     private fun goToFeedSearch() {
