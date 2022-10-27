@@ -67,6 +67,11 @@ jobs:
           ls app/build/outputs/
           ls app/build/outputs/androidTest-results/
           ls app/build/outputs/androidTest-results/connected
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: Test result
+          path: '**/build/outputs/androidTest-results/connected/TEST-*.xml'
       - name: Publish androidTest Report
         uses: mikepenz/action-junit-report@v3
         if: always()
