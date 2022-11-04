@@ -60,7 +60,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          script: ./gradlew -Dorg.gradle.jvmargs=-"Xmx1536m -XX:MaxMetaspaceSize=4g" connectedDebugAndroidTest
+          script: ./gradlew -Dorg.gradle.jvmargs=-"Xmx1536m -XX:MaxMetaspaceSize=4g" connectedDebugAndroidTest --no-parallel
       - name: Print test result
         if: always()
         run: |
