@@ -12,6 +12,9 @@ class IconParserTest {
     fun testParseXml() {
         val parser = IconParser()
         assertEquals("https://gigazine.net/favicon.ico", parser.parseHtml("https://gigazine.net"))
-        assertEquals("http://b.hatena.ne.jp/favicon.ico", parser.parseHtml("http://b.hatena.ne.jp"))
+        assertEquals(
+            "https://b.hatena.ne.jp/favicon.ico",
+            parser.parseHtml("https://b.hatena.ne.jp")
+        )
     }
 }
