@@ -61,6 +61,8 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           script: ./gradlew connectedDebugAndroidTest --no-parallel
+        env:
+          ADMOB_ID_MYCURATION: ${{ secrets.ADMOB_ID_MYCURATION }}
       - name: Print test result
         if: always()
         run: |
