@@ -177,7 +177,7 @@ class RssParserTest {
             rssRepository.getFeedByUrl("https://feeds.feedburner.com/blogspot/RLXA")
         assertNotNull(googleTestFeed)
         assertEquals("https://feeds.feedburner.com/blogspot/RLXA", googleTestFeed?.url)
-        assertEquals("http://testing.googleblog.com/", googleTestFeed?.siteUrl)
+        assertEquals("http://testing.googleblog.com/feeds/posts/default", googleTestFeed?.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, googleTestFeed?.iconPath)
 
         // MOONGIFT
