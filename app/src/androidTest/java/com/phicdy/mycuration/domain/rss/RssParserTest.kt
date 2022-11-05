@@ -67,11 +67,6 @@ class RssParserTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://news.yahoo.co.jp/rss/topics/top-picks.xml", callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val addedFeed =
             rssRepository.getFeedByUrl("https://news.yahoo.co.jp/rss/topics/top-picks.xml")
@@ -92,11 +87,6 @@ class RssParserTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val addedFeed = rssRepository.getFeedByUrl(testUrl)
         assertNotNull(addedFeed)
@@ -110,11 +100,6 @@ class RssParserTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://hiroki.jp/feed/", callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val addedFeed = rssRepository.getFeedByUrl("https://hiroki.jp/feed/")
         assertNotNull(addedFeed)
@@ -123,11 +108,6 @@ class RssParserTest {
         assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
 
         executor.start("https://www.infoq.com/jp/feed", callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val infoqFeed = rssRepository.getFeedByUrl("https://www.infoq.com/jp/feed")
         assertNotNull(infoqFeed)
@@ -152,11 +132,6 @@ class RssParserTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start(publicKeyFeedUrl, callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val publicKeyFeed = rssRepository.getFeedByUrl(publicKeyFeedUrl)
         assertNotNull(publicKeyFeed)
@@ -167,26 +142,16 @@ class RssParserTest {
 
         // Google testing blog
         executor.start("https://feeds.feedburner.com/blogspot/RLXA", callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val googleTestFeed =
             rssRepository.getFeedByUrl("https://feeds.feedburner.com/blogspot/RLXA")
         assertNotNull(googleTestFeed)
         assertEquals("https://feeds.feedburner.com/blogspot/RLXA", googleTestFeed?.url)
-        assertEquals("http://testing.googleblog.com/", googleTestFeed?.siteUrl)
+        assertEquals("http://testing.googleblog.com/feeds/posts/default", googleTestFeed?.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, googleTestFeed?.iconPath)
 
         // MOONGIFT
         executor.start("https://feeds.feedburner.com/moongift", callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val monngiftFeed = rssRepository.getFeedByUrl("https://feeds.feedburner.com/moongift")
         assertNotNull(monngiftFeed)
@@ -201,11 +166,6 @@ class RssParserTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://gigazine.net", callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val addedFeed = rssRepository.getFeedByUrl("https://gigazine.net/news/rss_2.0/")
         assertNotNull(addedFeed)
@@ -220,11 +180,6 @@ class RssParserTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://smhn.info", callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val smhnFeed = rssRepository.getFeedByUrl("https://smhn.info/feed")
 
@@ -239,11 +194,6 @@ class RssParserTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start("https://ground-sesame.hatenablog.jp", callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val surigomaFeed = rssRepository.getFeedByUrl("https://ground-sesame.hatenablog.jp/rss")
         assertNotNull(surigomaFeed)
@@ -444,11 +394,6 @@ class RssParserTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
         executor.start(testUrl, callback)
-        try {
-            Thread.sleep(10000)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
 
         val addedFeed = rssRepository.getFeedByUrl(expectedFeedUrl)
         assertNotNull(addedFeed)

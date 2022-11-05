@@ -102,8 +102,25 @@ class RssParser @Inject constructor() {
                 } else {
                     links[0].attr("href")
                 }
-                val title = document.title()
-                val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.ATOM, 0, siteUrl)
+                var title = document.title()
+                if (title.isBlank()) {
+                    val titleElements = document.getElementsByTag("title")
+                    if (titleElements.isNotEmpty()) {
+                        val child = titleElements[0].childNodes()
+                        if (child.isNotEmpty()) {
+                            title = child[0].outerHtml()
+                        }
+                    }
+                }
+                val feed = Feed(
+                    Feed.DEFAULT_FEED_ID,
+                    title,
+                    baseUrl,
+                    Feed.DEDAULT_ICON_PATH,
+                    Feed.ATOM,
+                    0,
+                    siteUrl
+                )
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("html").isEmpty()) {
                 if (checkCanonical) {
