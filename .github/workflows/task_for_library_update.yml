@@ -70,6 +70,7 @@ jobs:
         if: always()
         with:
           report_paths: '**/build/outputs/androidTest-results/connected//TEST-*.xml'
+          check_name: 'androidTest Report'
 
   dependency_diff:
     runs-on: ubuntu-latest
