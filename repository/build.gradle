@@ -2,6 +2,8 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'com.squareup.sqldelight'
 
 android {
+    namespace 'com.phicdy.mycuration.repository'
+
     buildTypes {
         release {
             minifyEnabled false
