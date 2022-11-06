@@ -91,7 +91,6 @@ subprojects {
 
     if (name != 'benchmark') {
         dependencies {
-            implementation libs.kotlin.stdlib
             implementation libs.bundles.compose
             implementation 'androidx.activity:activity-compose:1.6.1'
             implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
