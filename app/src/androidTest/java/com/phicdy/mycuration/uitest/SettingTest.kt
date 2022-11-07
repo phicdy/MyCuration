@@ -27,7 +27,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = 18)
-@Ignore
 class SettingTest : UiTest() {
 
     @get:Rule
@@ -48,6 +47,7 @@ class SettingTest : UiTest() {
         super.tearDown()
     }
 
+    @Ignore("TODO: Initialize Chrome")
     @Test
     fun openWithInternalBrowser() {
         addYahoo()
@@ -62,7 +62,7 @@ class SettingTest : UiTest() {
             val text = setting.findObject(By.res("android:id/title"))
             if (text.text == "内蔵ブラウザで開く") {
                 var browserSwitch: UiObject2? = setting.findObject(
-                        By.res("android:id/switch_widget"))
+                    By.res("android:id/switch_widget"))
                 if (browserSwitch == null)
                     browserSwitch = setting.findObject(
                         By.res("android:id/switchWidget"))

@@ -5,6 +5,7 @@ import com.phicdy.mycuration.domain.util.TextUtil
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
@@ -58,8 +59,19 @@ class RssParser @Inject constructor() {
                 if (siteUrl.isBlank()) {
                     siteUrl = url.protocol + "://" + url.host
                 }
-                val title = document.title()
-                val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.RSS_1, 0, siteUrl)
+                var title = document.title()
+                if (title.isBlank()) {
+                    title = parseTitleFromTag(document)
+                }
+                val feed = Feed(
+                    Feed.DEFAULT_FEED_ID,
+                    title,
+                    baseUrl,
+                    Feed.DEDAULT_ICON_PATH,
+                    Feed.RSS_1,
+                    0,
+                    siteUrl
+                )
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("rss").isEmpty()) {
                 // RSS 2.0
@@ -74,8 +86,19 @@ class RssParser @Inject constructor() {
                 if (siteUrl.isBlank()) {
                     siteUrl = url.protocol + "://" + url.host
                 }
-                val title = document.title()
-                val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.RSS_2, 0, siteUrl)
+                var title = document.title()
+                if (title.isBlank()) {
+                    title = parseTitleFromTag(document)
+                }
+                val feed = Feed(
+                    Feed.DEFAULT_FEED_ID,
+                    title,
+                    baseUrl,
+                    Feed.DEDAULT_ICON_PATH,
+                    Feed.RSS_2,
+                    0,
+                    siteUrl
+                )
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("feed").isEmpty()) {
                 // ATOM:
@@ -104,13 +127,7 @@ class RssParser @Inject constructor() {
                 }
                 var title = document.title()
                 if (title.isBlank()) {
-                    val titleElements = document.getElementsByTag("title")
-                    if (titleElements.isNotEmpty()) {
-                        val child = titleElements[0].childNodes()
-                        if (child.isNotEmpty()) {
-                            title = child[0].outerHtml()
-                        }
-                    }
+                    title = parseTitleFromTag(document)
                 }
                 val feed = Feed(
                     Feed.DEFAULT_FEED_ID,
@@ -176,6 +193,17 @@ class RssParser @Inject constructor() {
         }
 
         return RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
+    }
+
+    private fun parseTitleFromTag(document: Document): String {
+        val titleElements = document.getElementsByTag("title")
+        if (titleElements.isNotEmpty()) {
+            val child = titleElements[0].childNodes()
+            if (child.isNotEmpty()) {
+                return child[0].outerHtml()
+            }
+        }
+        return ""
     }
 
     fun parseArticlesFromRss(inputStream: InputStream): ArrayList<Article> {

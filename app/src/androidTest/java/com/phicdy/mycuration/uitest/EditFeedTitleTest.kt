@@ -22,14 +22,12 @@ import com.phicdy.mycuration.top.TopActivity
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = 18)
-@Ignore
 class EditFeedTitleTest : UiTest() {
 
     @get:Rule
