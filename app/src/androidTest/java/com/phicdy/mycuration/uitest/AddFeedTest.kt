@@ -80,7 +80,6 @@ class AddFeedTest : UiTest() {
         urlEditText.text = url
 
         device.pressEnter()
-        Thread.sleep(5000)
 
         // Assert RSS was added
         activityTestRule.onNodeWithText(title).assertIsDisplayed()
