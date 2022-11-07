@@ -1,0 +1,50 @@
+name: androidTest
+
+on:
+  pull_request:
+    types: [synchronize]
+    branches:
+      - develop
+    paths:
+      - '**/androidTest/**'
+
+jobs:
+  android_test:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level:
+          - 29
+    steps:
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
+        run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
+      - name: Replace Admob ID
+        env:
+          ADMOB_ID_MYCURATION: ${{ secrets.ADMOB_ID_MYCURATION }}
+        run: touch ~/.gradle/gradle.properties && echo ADMOB_ID_MYCURATION=$ADMOB_ID_MYCURATION > ~/.gradle/gradle.properties
+      - name: Run androidTest
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          script: ./gradlew connectedDebugAndroidTest
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/outputs/androidTest-results/connected//TEST-*.xml'
+          check_name: 'androidTest Report'
