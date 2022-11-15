@@ -2,7 +2,7 @@ name: androidTest
 
 on:
   pull_request:
-    types: [synchronize]
+    types: [ opened, synchronize, reopened, ready_for_review ]
     branches:
       - develop
     paths:
