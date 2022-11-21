@@ -110,7 +110,9 @@ dependencies {
     implementation libs.coroutines.core
     implementation libs.coroutines.android
 
-    implementation libs.stetho
+    debugImplementation libs.flipper
+    debugImplementation libs.soloader
+    releaseImplementation libs.flipper.noop
 
     implementation platform(libs.firebase.bom)
     implementation 'com.google.firebase:firebase-analytics-ktx'
