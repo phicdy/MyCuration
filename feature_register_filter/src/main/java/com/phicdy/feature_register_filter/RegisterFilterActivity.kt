@@ -154,7 +154,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
     }
 
     override fun showSaveErrorToast() {
-        Toast.makeText(applicationContext, getString(R.string.filter_saved_error), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            applicationContext,
+            getString(R.string.filter_saved_error),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun trackEdit() {
@@ -163,6 +167,14 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
 
     override fun trackRegister() {
         TrackerHelper.sendButtonEvent(getString(R.string.add_new_filter))
+    }
+
+    override fun handleEmptyFeed() {
+        Toast.makeText(
+            applicationContext,
+            getString(R.string.target_rss_empty_error),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     companion object {

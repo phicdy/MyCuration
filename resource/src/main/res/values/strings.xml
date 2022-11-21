@@ -50,6 +50,7 @@
     <string name="filter_saved">フィルターを登録しました。</string>
     <string name="filter_saved_error">フィルターの登録に失敗しました。</string>
     <string name="percent_only_error">この単語では登録できません。</string>
+    <string name="target_rss_empty_error">対象のRSSが選択されていません。</string>
     <string name="add_filter">フィルター登録</string>
     <string name="delete_filter">フィルター削除</string>
     <string name="edit_filter">フィルターの編集</string>
