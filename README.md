@@ -51,7 +51,7 @@ Set status to read automatically by user settings
 * [Jsoup](https://github.com/jhy/jsoup/)
 * [Calligraphy](https://github.com/chrisjenx/Calligraphy)
 * [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
-* [stetho](https://github.com/facebook/stetho)
+* [Flipper](https://github.com/facebook/flipper)
 * [Timber](https://github.com/JakeWharton/timber)
 * [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin)
 * [AssertJ](https://github.com/joel-costigliola/assertj-core)
