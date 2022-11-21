@@ -113,6 +113,9 @@ class RegisterFilterPresenterTest {
 
         }
 
+        override fun handleEmptyFeed() {
+        }
+
         companion object {
             const val DEFAULT_FILTER_TARGET = "default"
             const val MULTIPLE_FILTER_TARGET = "multiple-target"
