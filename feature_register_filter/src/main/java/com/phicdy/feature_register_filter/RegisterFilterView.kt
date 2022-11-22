@@ -18,4 +18,5 @@ interface RegisterFilterView {
     fun showSaveErrorToast()
     fun trackEdit()
     fun trackRegister()
+    fun handleEmptyFeed()
 }

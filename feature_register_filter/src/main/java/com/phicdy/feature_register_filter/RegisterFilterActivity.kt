@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.feature.util.changeTheme
@@ -21,20 +22,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 
 @AndroidEntryPoint
-class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, CoroutineScope {
-
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
 
     @Inject
     lateinit var presenter: RegisterFilterPresenter
@@ -49,7 +42,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
         setContentView(R.layout.activity_register_filter)
 
         initView()
-        launch {
+        lifecycleScope.launch {
             presenter.create()
         }
     }
@@ -96,7 +89,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
         when (item.itemId) {
             // For arrow button on toolbar
             android.R.id.home -> finish()
-            else -> launch { presenter.optionItemClicked(item) }
+            else -> lifecycleScope.launchWhenStarted { presenter.optionItemClicked(item) }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -161,7 +154,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
     }
 
     override fun showSaveErrorToast() {
-        Toast.makeText(applicationContext, getString(R.string.filter_saved_error), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            applicationContext,
+            getString(R.string.filter_saved_error),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun trackEdit() {
@@ -170,6 +167,14 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView, Coroutin
 
     override fun trackRegister() {
         TrackerHelper.sendButtonEvent(getString(R.string.add_new_filter))
+    }
+
+    override fun handleEmptyFeed() {
+        Toast.makeText(
+            applicationContext,
+            getString(R.string.target_rss_empty_error),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     companion object {

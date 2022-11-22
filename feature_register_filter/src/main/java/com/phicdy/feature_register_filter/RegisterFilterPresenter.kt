@@ -55,14 +55,26 @@ class RegisterFilterPresenter @Inject constructor(
             titleText.isBlank() -> view.handleEmptyTitle()
             keywordText.isBlank() && filterUrlText.isBlank() -> view.handleEmptyCondition()
             keywordText == "%" || filterUrlText == "%" -> view.handlePercentOnly()
+            selectedFeedList.isEmpty() -> view.handleEmptyFeed()
             else -> {
                 val result: Boolean
                 if (isEdit) {
-                    result = filterRepository.updateFilter(editFilterId, titleText, keywordText, filterUrlText, selectedFeedList)
+                    result = filterRepository.updateFilter(
+                        editFilterId,
+                        titleText,
+                        keywordText,
+                        filterUrlText,
+                        selectedFeedList
+                    )
                     view.trackEdit()
                 } else {
                     // Add new filter
-                    result = filterRepository.saveNewFilter(titleText, selectedFeedList, keywordText, filterUrlText)
+                    result = filterRepository.saveNewFilter(
+                        titleText,
+                        selectedFeedList,
+                        keywordText,
+                        filterUrlText
+                    )
                     view.trackRegister()
                 }
                 if (result) {
