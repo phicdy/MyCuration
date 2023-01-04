@@ -76,8 +76,11 @@ dependencies {
     androidTestImplementation libs.espresso
     androidTestImplementation libs.assertj
     androidTestImplementation libs.coroutines.test
-    androidTestImplementation libs.compose.test.junit4
-    debugImplementation libs.compose.test.manifest
+
+    def composeBom = platform(libs.compose.bom)
+    androidTestImplementation composeBom
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     implementation project(':core')
     implementation project(':di_common')
