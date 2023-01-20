@@ -100,7 +100,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body-includes: Dependency diff
-      - uses: peter-evans/create-or-update-comment@66af80548887a02b37dfc2ddd9531512ee489557
+      - uses: peter-evans/create-or-update-comment@2cabc739d5d914143fda652ac1a7456f5c73d3c4
         if: ${{ steps.dependency-diff.outputs.text-diff != null || steps.find_comment.outputs.comment-id != null }}
         with:
           body: |
