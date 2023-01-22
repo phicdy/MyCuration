@@ -41,6 +41,17 @@
       }
     },
     {
+      "groupName": "github actions",
+      "matchPackagePatterns": [
+        "^peter-evans/create-or-update-comment",
+        "^peter-evans/find-comment"
+      ],
+      "automerge": true,
+      "major": {
+        "automerge": false
+      }
+    },
+    {
       "groupName": "kotlinx.coroutines",
       "matchPackagePatterns": [
         "^org\\.jetbrains\\.kotlinx:kotlinx-coroutines"
