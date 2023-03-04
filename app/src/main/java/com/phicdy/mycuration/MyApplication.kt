@@ -5,13 +5,6 @@ import android.content.Context
 import androidx.work.Configuration
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.facebook.flipper.android.AndroidFlipperClient
-import com.facebook.flipper.android.utils.FlipperUtils
-import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
-import com.facebook.flipper.plugins.inspector.DescriptorMapping
-import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
-import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
-import com.facebook.soloader.SoLoader
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.phicdy.mycuration.advertisement.AdProvider
@@ -57,14 +50,7 @@ class MyApplication : Application() {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(timberTree)
-            if (FlipperUtils.shouldEnableFlipper(this)) {
-                SoLoader.init(this, false)
-                val client = AndroidFlipperClient.getInstance(this)
-                client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
-                client.addPlugin(DatabasesFlipperPlugin(this))
-                client.addPlugin(SharedPreferencesFlipperPlugin(this, "FilterPref"))
-                client.start()
-            }
+            FlipperInitializer().init(this)
         }
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
