@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -145,7 +146,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
 
         // Start tutorial at first time
         if (!BuildConfig.DEBUG) {
-            Handler().post {
+            Handler(Looper.getMainLooper()).post {
                 val view = findViewById<View>(R.id.search_rss)
                 val config = ShowcaseConfig()
                 config.delay = 500 // half second between each showcase view
@@ -155,7 +156,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
 
                 // Search tutorial
                 sequence.addSequenceItem(
-                        MaterialShowcaseView.Builder(this@FeedSearchActivity)
+                    MaterialShowcaseView.Builder(this@FeedSearchActivity)
                                 .setTarget(view)
                                 .setContentText(R.string.tutorial_search_rss_description)
                                 .setDismissText(R.string.tutorial_next)

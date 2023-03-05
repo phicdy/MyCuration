@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -359,18 +360,19 @@ class TopActivity :
 
         // Start tutorial at first time
         if (!BuildConfig.DEBUG) {
-            Handler().post {
+            Handler(Looper.getMainLooper()).post {
                 val view = findViewById<View>(R.id.fab_top)
                 MaterialShowcaseView.Builder(this@TopActivity)
-                        .setTarget(view)
-                        .setContentText(
-                                R.string.tutorial_go_to_search_rss_description)
-                        .setDismissText(R.string.tutorial_next)
-                        .singleUse(SHOWCASE_ID)
-                        .setListener(object : IShowcaseListener {
-                            override fun onShowcaseDisplayed(materialShowcaseView: MaterialShowcaseView) {
+                    .setTarget(view)
+                    .setContentText(
+                        R.string.tutorial_go_to_search_rss_description
+                    )
+                    .setDismissText(R.string.tutorial_next)
+                    .singleUse(SHOWCASE_ID)
+                    .setListener(object : IShowcaseListener {
+                        override fun onShowcaseDisplayed(materialShowcaseView: MaterialShowcaseView) {
 
-                            }
+                        }
 
                             override fun onShowcaseDismissed(materialShowcaseView: MaterialShowcaseView) {
                                 goToFeedSearch()
