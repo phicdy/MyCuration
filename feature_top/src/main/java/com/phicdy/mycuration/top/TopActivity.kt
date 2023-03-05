@@ -359,7 +359,7 @@ class TopActivity :
         searchAutoComplete.setHintTextColor(color)
 
         // Start tutorial at first time
-        if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG && BuildConfig.BUILD_TYPE != "benchmark") {
             Handler(Looper.getMainLooper()).post {
                 val view = findViewById<View>(R.id.fab_top)
                 MaterialShowcaseView.Builder(this@TopActivity)

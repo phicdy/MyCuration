@@ -145,7 +145,7 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
 
 
         // Start tutorial at first time
-        if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG && BuildConfig.BUILD_TYPE != "benchmark") {
             Handler(Looper.getMainLooper()).post {
                 val view = findViewById<View>(R.id.search_rss)
                 val config = ShowcaseConfig()
