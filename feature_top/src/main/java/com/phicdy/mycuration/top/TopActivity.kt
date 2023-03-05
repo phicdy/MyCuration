@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -375,7 +376,9 @@ class TopActivity :
                         }
 
                             override fun onShowcaseDismissed(materialShowcaseView: MaterialShowcaseView) {
-                                goToFeedSearch()
+                                if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                                    goToFeedSearch()
+                                }
                             }
                         })
                         .show()
