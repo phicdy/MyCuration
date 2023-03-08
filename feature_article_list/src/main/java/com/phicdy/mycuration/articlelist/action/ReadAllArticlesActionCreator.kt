@@ -41,7 +41,7 @@ class ReadAllArticlesActionCreator(
                     val readCount = unread.filter { rss.id == it.value.feedId }.size
                     if (readCount == 0) return@let
                     articleRepository.saveStatusToRead(feedId)
-                    rssRepository.updateUnreadArticleCount(feedId, readCount)
+                    rssRepository.updateUnreadArticleCount(feedId, 0)
                     dispatcher.dispatch(ReadArticleAction(ReadArticle(rss.id, readCount)))
                 }
             }
