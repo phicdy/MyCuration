@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.articlelist.action
 
+import com.phicdy.action.articlelist.ReadArticleAction
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.ActionCreator
 import com.phicdy.mycuration.core.Dispatcher
@@ -7,6 +8,7 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.entity.ReadArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -30,7 +32,7 @@ class ScrollActionCreator(
                     is ArticleItem.Content -> {
                         val targetArticle = item.value
                         if (targetArticle.status == Article.UNREAD) {
-                            targetArticle.status = Article.TOREAD
+                            targetArticle.status = Article.READ
 
                             val rss = if (rssCache[targetArticle.feedId] == null) {
                                 val cache = rssRepository.getFeedById(targetArticle.feedId)
@@ -41,9 +43,10 @@ class ScrollActionCreator(
                             }
                             rss?.let {
                                 rssRepository.updateUnreadArticleCount(it.id, rss.unreadAriticlesCount - 1)
+                                dispatcher.dispatch(ReadArticleAction(ReadArticle(it.id, 1)))
                                 rss.unreadAriticlesCount -= 1
                             }
-                            articleRepository.saveStatus(targetArticle.id, Article.TOREAD)
+                            articleRepository.saveStatus(targetArticle.id, Article.READ)
                         }
                     }
                 }

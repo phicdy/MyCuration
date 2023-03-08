@@ -16,6 +16,7 @@ buildscript {
     ext.firebase_version = '16.0.9'
     ext.jacoco_version = "0.8.2"
     ext.glideVer = '4.8.0'
+    ext.work_version = '2.2.0'
 
     repositories {
         google().content {
@@ -74,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.android.tools.build:gradle:3.5.2'
         classpath 'com.google.gms:google-services:4.2.0'
         classpath 'com.stanfy.spoon:spoon-gradle-plugin:1.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -157,8 +158,8 @@ subprojects {
         defaultConfig {
             minSdkVersion 21
             targetSdkVersion 28
-            versionName "1.8.1"
-            versionCode 54
+            versionName "1.8.2"
+            versionCode 55
 
             testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         }
@@ -166,6 +167,10 @@ subprojects {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
+        }
+
+        kotlinOptions {
+            jvmTarget = '1.8'
         }
 
         testOptions {

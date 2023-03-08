@@ -2,14 +2,19 @@ package com.phicdy.mycuration
 
 import android.app.Application
 import android.content.Context
+import androidx.work.Configuration
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.data.preference.PreferenceHelper
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.di.appModule
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
+import com.phicdy.mycuration.rss.IconFetchWorker
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.log.TimberTree
@@ -24,6 +29,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 
 class MyApplication : Application() {
@@ -36,6 +42,8 @@ class MyApplication : Application() {
     }
 
     private val adProvider by inject<AdProvider>()
+
+    private val rssRepository by inject<RssRepository>()
 
     override fun onCreate() {
         super.onCreate()
@@ -86,6 +94,16 @@ class MyApplication : Application() {
         }
 
         AlarmManagerTaskManager(this).setFixUnreadCountAlarm()
+        WorkManager.initialize(this, Configuration.Builder()
+                .setWorkerFactory(DefaultWorkerFactory(rssRepository))
+                .build())
+        val saveRequest =
+                PeriodicWorkRequestBuilder<IconFetchWorker>(1, TimeUnit.DAYS)
+                        .build()
+        WorkManager.getInstance(this).apply {
+            cancelAllWork()
+            enqueue(saveRequest)
+        }
 
         adProvider.init(this)
     }

@@ -96,9 +96,9 @@ class ArticleRepositoryTest {
         val articles = ArrayList<Article>()
         val now = System.currentTimeMillis()
         val toReadArticle = Article(1, "toread_article",
-                "http://www.google.com", Article.TOREAD, "", now + 1, id, "", "")
+                "http://www.google.com", Article.READ, "", now + 1, id, "", "")
         val toReadArticle2 = Article(1, "toread_article2",
-                "http://www.google.com/hogehoge", Article.TOREAD, "", now + 2, id, "", "")
+                "http://www.google.com/hogehoge", Article.READ, "", now + 2, id, "", "")
         articles.add(toReadArticle)
         articles.add(toReadArticle2)
         articleRepository.saveNewArticles(articles, id)
@@ -109,7 +109,7 @@ class ArticleRepositoryTest {
         val changedArticles = articleRepository.getTop300Articles(true)
         var existToReadArticle = false
         for ((_, _, _, status) in changedArticles) {
-            if (status == Article.TOREAD) {
+            if (status == Article.READ) {
                 existToReadArticle = true
             }
         }

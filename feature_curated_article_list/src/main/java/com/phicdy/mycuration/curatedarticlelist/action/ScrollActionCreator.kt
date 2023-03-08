@@ -30,7 +30,7 @@ class ScrollActionCreator(
                     is CuratedArticleItem.Content -> {
                         val targetArticle = item.value
                         if (targetArticle.status == Article.UNREAD) {
-                            targetArticle.status = Article.TOREAD
+                            targetArticle.status = Article.READ
 
                             val rss = if (rssCache[targetArticle.feedId] == null) {
                                 val cache = rssRepository.getFeedById(targetArticle.feedId)
@@ -43,7 +43,7 @@ class ScrollActionCreator(
                                 rssRepository.updateUnreadArticleCount(it.id, rss.unreadAriticlesCount - 1)
                                 rss.unreadAriticlesCount -= 1
                             }
-                            articleRepository.saveStatus(targetArticle.id, Article.TOREAD)
+                            articleRepository.saveStatus(targetArticle.id, Article.READ)
                         }
                     }
                 }

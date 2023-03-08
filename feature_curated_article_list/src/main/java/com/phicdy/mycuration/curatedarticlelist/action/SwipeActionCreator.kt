@@ -37,7 +37,7 @@ class SwipeActionCreator(
                         articleRepository.saveStatus(article.id, newStatus)
                         val rss = rssRepository.getFeedById(article.feedId)
                         rss?.let {
-                            if (newStatus == Article.TOREAD) {
+                            if (newStatus == Article.READ) {
                                 rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount - 1)
                             } else {
                                 rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount + 1)
@@ -50,7 +50,7 @@ class SwipeActionCreator(
             when (direction) {
                 LEFT -> {
                     when (preferenceHelper.swipeDirection) {
-                        PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> update(Article.TOREAD)
+                        PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> update(Article.READ)
                         PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> update(Article.UNREAD)
                         else -> {
                         }
@@ -59,7 +59,7 @@ class SwipeActionCreator(
                 RIGHT -> {
                     when (preferenceHelper.swipeDirection) {
                         PreferenceHelper.SWIPE_RIGHT_TO_LEFT -> update(Article.UNREAD)
-                        PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> update(Article.TOREAD)
+                        PreferenceHelper.SWIPE_LEFT_TO_RIGHT -> update(Article.READ)
                         else -> {
                         }
                     }

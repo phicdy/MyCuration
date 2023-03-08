@@ -70,9 +70,17 @@ import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
 import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
+import com.phicdy.mycuration.rss.ChangeRssListModeActionCreator
+import com.phicdy.mycuration.rss.ChangeRssTitleActionCreator
+import com.phicdy.mycuration.rss.DeleteRssActionCreator
+import com.phicdy.mycuration.rss.FetchAllRssListActionCreator
+import com.phicdy.mycuration.rss.FetchRssStartUpdateStateActionCreator
+import com.phicdy.mycuration.rss.RSSListStateStore
 import com.phicdy.mycuration.rss.RssListFragment
-import com.phicdy.mycuration.rss.RssListPresenter
-import com.phicdy.mycuration.rss.RssListView
+import com.phicdy.mycuration.rss.RssListItemFactory
+import com.phicdy.mycuration.rss.RssListStartUpdateStateStore
+import com.phicdy.mycuration.rss.RssListUpdateStateStore
+import com.phicdy.mycuration.rss.UpdateAllRssActionCreator
 import com.phicdy.mycuration.util.log.TimberTree
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
@@ -113,14 +121,48 @@ val appModule = module {
     }
 
     scope(named<RssListFragment>()) {
-        scoped { (view: RssListView) ->
-            RssListPresenter(
-                    view = view,
-                    preferenceHelper = get(),
+        scoped {
+            FetchAllRssListActionCreator(
+                    dispatcher = get(),
                     rssRepository = get(),
-                    networkTaskManager = get()
+                    rssListItemFactory = RssListItemFactory()
             )
         }
+        scoped {
+            FetchRssStartUpdateStateActionCreator(
+                    dispatcher = get(),
+                    preferenceHelper = get()
+            )
+        }
+        scoped {
+            UpdateAllRssActionCreator(
+                    dispatcher = get(),
+                    networkTaskManager = get(),
+                    preferenceHelper = get(),
+                    rssListItemFactory = RssListItemFactory()
+            )
+        }
+        scoped {
+            ChangeRssListModeActionCreator(
+                    dispatcher = get(),
+                    rssListItemFactory = RssListItemFactory()
+            )
+        }
+        scoped {
+            ChangeRssTitleActionCreator(
+                    dispatcher = get(),
+                    rssListItemFactory = RssListItemFactory()
+            )
+        }
+        scoped {
+            DeleteRssActionCreator(
+                    dispatcher = get(),
+                    rssListItemFactory = RssListItemFactory()
+            )
+        }
+        viewModel { RSSListStateStore(get(), RssListItemFactory()) }
+        viewModel { RssListStartUpdateStateStore(get()) }
+        viewModel { RssListUpdateStateStore(get()) }
     }
 
     scope(named<ArticlesListFragment>()) {
