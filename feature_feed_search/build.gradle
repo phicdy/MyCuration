@@ -1,0 +1,36 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':domain')
+    implementation project(':entity')
+    implementation project(':feature_util')
+    implementation project(':feature_feed_url_hook')
+    implementation project(':repository')
+    implementation project(':resource')
+    implementation project(':tracker')
+    implementation project(':util')
+
+    implementation libs.coroutines.core
+    implementation libs.coroutines.android
+
+    implementation libs.appcompat
+    implementation libs.material
+
+    implementation libs.dagger.hilt
+    kapt libs.dagger.hilt.compiler
+
+    implementation libs.materialshowcaseview
+}

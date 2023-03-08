@@ -1,0 +1,114 @@
+name: Task for library update
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+    branches:
+      - develop
+    paths:
+      - 'gradle/libs.versions.toml'
+      - 'build.gradle'
+
+jobs:
+  upload_dependency_list:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
+        run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
+      - name: Create dependency list
+        env:
+          TZ: Asia/Tokyo
+        run: ./gradlew app:dependencies > depend.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Dependency list
+          path: depend.txt
+
+  android_test:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level:
+          - 29
+    steps:
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
+        run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
+      - name: Replace Admob ID
+        env:
+          ADMOB_ID_MYCURATION: ${{ secrets.ADMOB_ID_MYCURATION }}
+        run: touch ~/.gradle/gradle.properties && echo ADMOB_ID_MYCURATION=$ADMOB_ID_MYCURATION > ~/.gradle/gradle.properties
+      - name: Run androidTest
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          script: ./gradlew connectedDebugAndroidTest
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/outputs/androidTest-results/connected//TEST-*.xml'
+          check_name: 'androidTest Report'
+
+  dependency_diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - id: dependency-diff
+        name: Generate dependency diff
+        run: |
+          BRANCH_NAME="${GITHUB_HEAD_REF}"
+          DIFF=$(scripts/dependency_diff.sh $BASE_BRANCH $BRANCH_NAME app releaseRuntimeClasspath)
+          DIFF="${DIFF//'%'/'%25'}"
+          DIFF="${DIFF//$'\n'/'%0A'}"
+          DIFF="${DIFF//$'\r'/'%0D'}"
+          echo "::set-output name=text-diff::${DIFF}"
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - uses: peter-evans/find-comment@034abe94d3191f9c89d870519735beae326f2bdb
+        id: find_comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-includes: Dependency diff
+      - uses: peter-evans/create-or-update-comment@b1fa5d531f73c67e1ab3962d1c16764f188066a6
+        if: ${{ steps.dependency-diff.outputs.text-diff != null || steps.find_comment.outputs.comment-id != null }}
+        with:
+          body: |
+            Dependency diff:
+              ```diff
+              ${{ steps.dependency-diff.outputs.text-diff }}
+              ```
+          edit-mode: replace
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}

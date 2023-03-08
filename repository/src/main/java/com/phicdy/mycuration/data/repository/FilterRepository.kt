@@ -35,14 +35,19 @@ class FilterRepository @Inject constructor(
                         var keyword = results[0].keyword ?: ""
                         var url = results[0].url ?: ""
                         var enabled = results[0].enabled.toInt()
-                        var rssId = results[0]._id__.toInt()
-                        var rssTitle = results[0].title_
-                        rssList.add(Feed(rssId, rssTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
                         for (result in results) {
                             val cursorFilterId = result._id
                             if (filterId != cursorFilterId) {
                                 // Next filter starts, add to filter list and init RSS list for next filter
-                                val filter = Filter(filterId.toInt(), title, keyword, url, rssList, -1, enabled)
+                                val filter = Filter(
+                                    id = filterId.toInt(),
+                                    title = title,
+                                    keyword = keyword,
+                                    url = url,
+                                    feeds = rssList,
+                                    feedId = -1,
+                                    enabled = enabled
+                                )
                                 filters.add(filter)
                                 filterId = cursorFilterId
                                 rssList = ArrayList()
@@ -51,9 +56,19 @@ class FilterRepository @Inject constructor(
                             keyword = result.keyword ?: ""
                             url = result.url ?: ""
                             enabled = result.enabled.toInt()
-                            rssId = result._id__.toInt()
-                            rssTitle = result.title_
-                            rssList.add(Feed(rssId, rssTitle, "", Feed.DEDAULT_ICON_PATH, "", 0, ""))
+                            val rssId = result._id__.toInt()
+                            val rssTitle = result.title_
+                            rssList.add(
+                                Feed(
+                                    id = rssId,
+                                    title = rssTitle,
+                                    url = "",
+                                    iconPath = Feed.DEDAULT_ICON_PATH,
+                                    format = "",
+                                    unreadAriticlesCount = 0,
+                                    siteUrl = ""
+                                )
+                            )
                         }
                         val filter = Filter(filterId.toInt(), title, keyword, url, rssList, -1, enabled)
                         filters.add(filter)

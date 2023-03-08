@@ -5,6 +5,7 @@ import com.phicdy.mycuration.domain.util.TextUtil
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
@@ -13,7 +14,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.ArrayList
 import javax.inject.Inject
 
 class RssParser @Inject constructor() {
@@ -51,7 +51,7 @@ class RssParser @Inject constructor() {
                 val links = document.getElementsByTag("link")
                 var siteUrl = ""
                 links.forEach { element ->
-                    if (element.parent().tag().toString() == "channel") {
+                    if (element.parent()?.tag().toString() == "channel") {
                         siteUrl = element.text()
                         return@forEach
                     }
@@ -59,15 +59,26 @@ class RssParser @Inject constructor() {
                 if (siteUrl.isBlank()) {
                     siteUrl = url.protocol + "://" + url.host
                 }
-                val title = document.title()
-                val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.RSS_1, 0, siteUrl)
+                var title = document.title()
+                if (title.isBlank()) {
+                    title = parseTitleFromTag(document)
+                }
+                val feed = Feed(
+                    Feed.DEFAULT_FEED_ID,
+                    title,
+                    baseUrl,
+                    Feed.DEDAULT_ICON_PATH,
+                    Feed.RSS_1,
+                    0,
+                    siteUrl
+                )
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("rss").isEmpty()) {
                 // RSS 2.0
                 val links = document.getElementsByTag("link")
                 var siteUrl = ""
                 links.forEach { element ->
-                    if (element.parent().tag().toString() == "channel") {
+                    if (element.parent()?.tag().toString() == "channel") {
                         siteUrl = element.text()
                         return@forEach
                     }
@@ -75,8 +86,19 @@ class RssParser @Inject constructor() {
                 if (siteUrl.isBlank()) {
                     siteUrl = url.protocol + "://" + url.host
                 }
-                val title = document.title()
-                val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.RSS_2, 0, siteUrl)
+                var title = document.title()
+                if (title.isBlank()) {
+                    title = parseTitleFromTag(document)
+                }
+                val feed = Feed(
+                    Feed.DEFAULT_FEED_ID,
+                    title,
+                    baseUrl,
+                    Feed.DEDAULT_ICON_PATH,
+                    Feed.RSS_2,
+                    0,
+                    siteUrl
+                )
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("feed").isEmpty()) {
                 // ATOM:
@@ -103,8 +125,19 @@ class RssParser @Inject constructor() {
                 } else {
                     links[0].attr("href")
                 }
-                val title = document.title()
-                val feed = Feed(Feed.DEFAULT_FEED_ID, title, baseUrl, Feed.DEDAULT_ICON_PATH, Feed.ATOM, 0, siteUrl)
+                var title = document.title()
+                if (title.isBlank()) {
+                    title = parseTitleFromTag(document)
+                }
+                val feed = Feed(
+                    Feed.DEFAULT_FEED_ID,
+                    title,
+                    baseUrl,
+                    Feed.DEDAULT_ICON_PATH,
+                    Feed.ATOM,
+                    0,
+                    siteUrl
+                )
                 return RssParseResult(feed)
             } else if (!document.getElementsByTag("html").isEmpty()) {
                 if (checkCanonical) {
@@ -162,6 +195,17 @@ class RssParser @Inject constructor() {
         return RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
     }
 
+    private fun parseTitleFromTag(document: Document): String {
+        val titleElements = document.getElementsByTag("title")
+        if (titleElements.isNotEmpty()) {
+            val child = titleElements[0].childNodes()
+            if (child.isNotEmpty()) {
+                return child[0].outerHtml()
+            }
+        }
+        return ""
+    }
+
     fun parseArticlesFromRss(inputStream: InputStream): ArrayList<Article> {
         val articles = ArrayList<Article>()
 
@@ -210,6 +254,7 @@ class RssParser @Inject constructor() {
                                             try {
                                                 article.url = parser.text
                                             } catch (ignored: IllegalStateException) {
+                                            } catch (ignored: NullPointerException) {
                                             }
                                         }
                                     }
@@ -259,6 +304,7 @@ class RssParser @Inject constructor() {
     private fun parseAtomAriticleUrl(parser: XmlPullParser): String {
         var isTypeTextHtml = false
         var hasType = false
+        var href = ""
         for (i in 0 until parser.attributeCount) {
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
@@ -269,12 +315,12 @@ class RssParser @Inject constructor() {
                 }
                 continue
             }
-            if (attributeName == "href" && (!hasType || isTypeTextHtml)) {
+            if (attributeName == "href") {
                 if (attributeValue.startsWith("http://") || attributeValue.startsWith("https://")) {
-                    return attributeValue
+                    href = attributeValue
                 }
             }
         }
-        return ""
+        return if (!hasType || isTypeTextHtml) href else ""
     }
 }

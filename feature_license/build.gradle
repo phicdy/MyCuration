@@ -1,6 +1,6 @@
 android {
     buildFeatures {
-        viewBinding = true
+        viewBinding true
     }
 
     buildTypes {
@@ -15,6 +15,6 @@ dependencies {
     implementation project(':feature_util')
     implementation project(':resource')
 
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation "com.google.android.material:material:$material_version"
+    implementation libs.appcompat
+    implementation libs.material
 }

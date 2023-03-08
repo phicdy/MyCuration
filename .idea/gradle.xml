@@ -4,12 +4,10 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="delegatedBuild" value="false" />
         <option name="testRunner" value="GRADLE" />
-        <option name="disableWrapperSourceDistributionNotification" value="true" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="1.8" />
+        <option name="gradleJvm" value="Android Studio default JDK" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -17,6 +15,7 @@
             <option value="$PROJECT_DIR$/admob" />
             <option value="$PROJECT_DIR$/advertisement" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/benchmark" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/di_common" />
             <option value="$PROJECT_DIR$/domain" />
@@ -24,18 +23,23 @@
             <option value="$PROJECT_DIR$/feature_add_curation" />
             <option value="$PROJECT_DIR$/feature_article_list" />
             <option value="$PROJECT_DIR$/feature_curated_article_list" />
+            <option value="$PROJECT_DIR$/feature_curation_list" />
+            <option value="$PROJECT_DIR$/feature_feed_search" />
+            <option value="$PROJECT_DIR$/feature_feed_url_hook" />
+            <option value="$PROJECT_DIR$/feature_filter_list" />
             <option value="$PROJECT_DIR$/feature_license" />
+            <option value="$PROJECT_DIR$/feature_register_filter" />
             <option value="$PROJECT_DIR$/feature_rss_list" />
+            <option value="$PROJECT_DIR$/feature_setting" />
+            <option value="$PROJECT_DIR$/feature_top" />
             <option value="$PROJECT_DIR$/feature_util" />
             <option value="$PROJECT_DIR$/glide" />
-            <option value="$PROJECT_DIR$/legacy" />
             <option value="$PROJECT_DIR$/repository" />
             <option value="$PROJECT_DIR$/resource" />
             <option value="$PROJECT_DIR$/tracker" />
             <option value="$PROJECT_DIR$/util" />
           </set>
         </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

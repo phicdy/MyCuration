@@ -57,7 +57,10 @@ abstract class UiTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val file = File(context.externalCacheDir, System.currentTimeMillis().toString() + ".png")
         device.takeScreenshot(file)
-        Spoon.save(context, file)
+        try {
+            Spoon.save(context, file)
+        } catch (ignored: Exception) {
+        }
     }
 
     internal fun takeScreenshot(device: UiDevice, fileName: String) {
@@ -68,6 +71,9 @@ abstract class UiTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val file = File(context.externalCacheDir, "$fileName.png")
         device.takeScreenshot(file)
-        Spoon.save(context, file)
+        try {
+            Spoon.save(context, file)
+        } catch (ignored: Exception) {
+        }
     }
 }

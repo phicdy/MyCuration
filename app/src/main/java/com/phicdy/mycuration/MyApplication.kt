@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.work.Configuration
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.facebook.stetho.Stetho
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.phicdy.mycuration.advertisement.AdProvider
@@ -51,12 +50,7 @@ class MyApplication : Application() {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(timberTree)
-            Stetho.initialize(
-                    Stetho.newInitializerBuilder(this)
-                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                            .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                            .build()
-            )
+            FlipperInitializer().init(this)
         }
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
@@ -69,7 +63,7 @@ class MyApplication : Application() {
         FileUtil.setUpAppPath(this)
         File(FileUtil.iconSaveFolder()).let { dir ->
             if (dir.exists() && dir.isDirectory) {
-                dir.listFiles().forEach { icon ->
+                dir.listFiles()?.forEach { icon ->
                     icon.delete()
                 }
                 dir.delete()

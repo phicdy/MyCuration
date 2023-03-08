@@ -37,10 +37,15 @@ class ReadAllFavoriteArticlesActionCreator @Inject constructor(
                             rssCache[content.feedId]
                         }
                         rss?.let {
-                            rssRepository.updateUnreadArticleCount(content.feedId, it.unreadAriticlesCount - 1)
+                            rssRepository.updateUnreadArticleCount(
+                                content.feedId,
+                                it.unreadAriticlesCount - 1
+                            )
                             dispatcher.dispatch(ReadArticleAction(ReadArticle(content.feedId, 1)))
                         }
                     }
+
+                    ArticleItem.Advertisement -> {}
                 }
             }
         }

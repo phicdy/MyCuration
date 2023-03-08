@@ -11,14 +11,13 @@ import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.util.ArrayList
 
 @ExperimentalCoroutinesApi
 class HatenaBookmarkApiTest {
@@ -47,11 +46,10 @@ class HatenaBookmarkApiTest {
     @After
     fun tearDown() {
         deleteAll(db)
-        coroutineTestRule.testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test
-    fun myQiitaArticleReturnsZero() = runBlocking {
+    fun myQiitaArticleReturnsZero() = coroutineTestRule.testCoroutineScope.runTest {
         val testFeed = rssRepository.store("test", "http://hoge.com", "hoge", "")
         val articles = ArrayList<Article>()
         val testUrl = "http://qiita.com/phicdy/items/1bcce3d6f040fc48f7bf"
@@ -64,7 +62,7 @@ class HatenaBookmarkApiTest {
     }
 
     @Test
-    fun myBlogArticleReturns1() = runBlocking {
+    fun myBlogArticleReturns1() = coroutineTestRule.testCoroutineScope.runTest {
         // Save test feed and article
         val testFeed = rssRepository.store("test", "http://hoge.com", "hoge", "")
         val articles = ArrayList<Article>()

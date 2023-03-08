@@ -36,13 +36,19 @@ android {
                 mappingFileUploadEnabled false
             }
         }
+        benchmark {
+            initWith buildTypes.release
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+        }
     }
 
     buildFeatures {
-        viewBinding = true
+        viewBinding true
     }
 
     lintOptions {
+        lintConfig = file("$rootDir/android-lint.xml")
         disable 'MissingTranslation'
         disable "RtlHardcoded"
         abortOnError true
@@ -62,17 +68,20 @@ spoon {
 }
 
 dependencies {
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-    androidTestImplementation 'androidx.test:core:1.2.0'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'com.squareup.spoon:spoon-client:1.6.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    androidTestImplementation 'org.assertj:assertj-core:3.11.1'
-    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
+    androidTestImplementation libs.uiautomator
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.test
+    androidTestImplementation libs.spoon
+    androidTestImplementation libs.espresso
+    androidTestImplementation libs.assertj
+    androidTestImplementation libs.coroutines.test
+
+    def composeBom = platform(libs.compose.bom)
+    androidTestImplementation composeBom
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     implementation project(':core')
     implementation project(':di_common')
@@ -81,40 +90,47 @@ dependencies {
     implementation project(':feature_add_curation')
     implementation project(':feature_article_list')
     implementation project(':feature_curated_article_list')
+    implementation project(':feature_curation_list')
+    implementation project(':feature_feed_search')
+    implementation project(':feature_feed_url_hook')
+    implementation project(':feature_filter_list')
     implementation project(':feature_license')
+    implementation project(':feature_register_filter')
     implementation project(':feature_rss_list')
-    implementation project(':legacy')
+    implementation project(':feature_setting')
+    implementation project(':feature_top')
     implementation project(':repository')
     implementation project(':resource')
     implementation project(':util')
     implementation project(':tracker')
     implementation project(':advertisement')
     implementation project(':admob')
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
-    implementation "androidx.work:work-runtime-ktx:$work_version"
-    implementation "com.google.android.material:material:$material_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
-    implementation "androidx.preference:preference:$preference_version"
+    implementation libs.appcompat
+    implementation libs.work
+    implementation libs.material
+    implementation libs.constraintlayout
+    implementation libs.preference
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    implementation libs.coroutines.core
+    implementation libs.coroutines.android
 
-    implementation 'com.facebook.stetho:stetho:1.6.0'
+    debugImplementation libs.flipper
+    debugImplementation libs.soloader
+    releaseImplementation libs.flipper.noop
 
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.0'
-
-    implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
+    implementation platform(libs.firebase.bom)
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation libs.retrofit
 
-    implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
-    kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt_version"
+    implementation libs.dagger.hilt
+    kapt libs.dagger.hilt.compiler
 
-    implementation "com.jakewharton.timber:timber:$timber_version"
+    implementation libs.timber
 
-    implementation "com.squareup.sqldelight:android-driver:$sql_delight_version"
-    implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
+    implementation libs.sqldelight
+    implementation libs.sqlite
 }
 
 apply plugin: 'com.google.gms.google-services'

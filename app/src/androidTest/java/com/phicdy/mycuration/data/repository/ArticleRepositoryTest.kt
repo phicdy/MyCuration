@@ -7,12 +7,9 @@ import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,7 +17,7 @@ import org.junit.experimental.theories.DataPoints
 import org.junit.experimental.theories.Theories
 import org.junit.experimental.theories.Theory
 import org.junit.runner.RunWith
-import java.util.Date
+import java.util.*
 
 @ExperimentalCoroutinesApi
 @RunWith(Theories::class)
@@ -63,7 +60,7 @@ class ArticleRepositoryTest {
     }
 
     @Theory
-    fun whenSearchJapaneseArticle_ThenReturnTheArticle(title: String) = coroutineTestRule.testCoroutineScope.runBlockingTest {
+    fun whenSearchJapaneseArticle_ThenReturnTheArticle(title: String) = coroutineTestRule.testCoroutineScope.runTest {
         val rss = rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         rss?.let {
             val testUnreadArticles = arrayListOf(Article(1, title,
@@ -78,7 +75,7 @@ class ArticleRepositoryTest {
 
 
     @Test
-    fun testSaveNewArticles() = coroutineTestRule.testCoroutineScope.runBlockingTest {
+    fun testSaveNewArticles() = coroutineTestRule.testCoroutineScope.runTest {
         // Reset data and insert curation at first
         val curationId = insertTestCurationForArticle1()
         insertTestData()
@@ -103,7 +100,7 @@ class ArticleRepositoryTest {
     }
 
     @Test
-    fun testGetAllArticlesOfCuration() = coroutineTestRule.testCoroutineScope.runBlockingTest {
+    fun testGetAllArticlesOfCuration() = coroutineTestRule.testCoroutineScope.runTest {
         insertTestData()
         val curationId = insertTestCurationForArticle1()
 
@@ -120,7 +117,7 @@ class ArticleRepositoryTest {
     }
 
 
-    private fun insertTestData() = coroutineTestRule.testCoroutineScope.runBlockingTest {
+    private suspend fun insertTestData() {
         rssRepository.store(TEST_FEED_TITLE, TEST_FEED_URL, "RSS", TEST_FEED_URL)
         val id = rssRepository.getFeedByUrl(TEST_FEED_URL)?.id ?: -1
 

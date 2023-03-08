@@ -37,12 +37,20 @@ class SwipeActionCreator @Inject constructor(
                         val rss = rssRepository.getFeedById(article.feedId)
                         rss?.let {
                             if (newStatus == Article.READ) {
-                                rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount - 1)
+                                rssRepository.updateUnreadArticleCount(
+                                    rss.id,
+                                    rss.unreadAriticlesCount - 1
+                                )
                             } else {
-                                rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount + 1)
+                                rssRepository.updateUnreadArticleCount(
+                                    rss.id,
+                                    rss.unreadAriticlesCount + 1
+                                )
                             }
                         }
                     }
+
+                    CuratedArticleItem.Advertisement -> {}
                 }
             }
 

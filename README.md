@@ -51,16 +51,30 @@ Set status to read automatically by user settings
 * [Jsoup](https://github.com/jhy/jsoup/)
 * [Calligraphy](https://github.com/chrisjenx/Calligraphy)
 * [MaterialShowcaseView](https://github.com/deano2390/MaterialShowcaseView)
-* [stetho](https://github.com/facebook/stetho)
+* [Flipper](https://github.com/facebook/flipper)
 * [Timber](https://github.com/JakeWharton/timber)
 * [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin)
 * [AssertJ](https://github.com/joel-costigliola/assertj-core)
 
+## Baseline Profile
+
+When release the app, re-generate the baseline profile
+https://developer.android.com/topic/performance/baselineprofiles/create-baselineprofile
+
+```
+./gradlew :benchmark:pixel6Api31BenchmarkAndroidTest
+cp benchmark/build/outputs/managed_device_android_test_additional_output/pixel6Api31/TrivialBaselineProfileBenchmark_startup-baseline-prof.txt app/src/main/baseline-prof.txt
+```
+
 ## Devlopment Environment
 
 * Put your `google-services.json` for Google Analytics
-* Set up your release setting in ~/.gradle/gradle.properties or edit gradle.properties in this project
-* If you want to copy debug build to somewhere, set the destination in ~/.gradle/gradle.properties or edit gradle.properties in this project
+* Set up your settings in ~/.gradle/gradle.properties or edit gradle.properties in this project
+  * Set admob ID value like `ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy` to `ADMOB_ID_MYCURATION`
+  * Set release keystore settings to `RELEASE_KEY_ALIAS`, `RELEASE_STORE_FILE_PATH`
+    , `RELEASE_KEY_PASSWORD` and `RELEASE_STORE_PASSWORD`
+* If you want to copy debug build to somewhere, set the destination in ~/.gradle/gradle.properties
+  or edit gradle.properties in this project
 
 ```
 COPY_BUILD_DESTINATION=/your/copy/destination

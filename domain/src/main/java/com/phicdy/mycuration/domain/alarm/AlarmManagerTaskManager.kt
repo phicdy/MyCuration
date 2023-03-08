@@ -32,7 +32,7 @@ class AlarmManagerTaskManager @Inject constructor(@ApplicationContext private va
             this.action = action
         }
 
-        val pi = PendingIntent.getBroadcast(context, 0, i, 0)
+        val pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_IMMUTABLE)
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
@@ -48,7 +48,7 @@ class AlarmManagerTaskManager @Inject constructor(@ApplicationContext private va
         val i = Intent(context, AutoUpdateBroadcastReciever::class.java)
         i.action = action
 
-        val pi = PendingIntent.getBroadcast(context, 0, i, 0)
+        val pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_IMMUTABLE)
         val alm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alm.cancel(pi)
     }

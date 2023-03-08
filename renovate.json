@@ -1,0 +1,61 @@
+{
+  "extends": [
+    "config:base",
+    ":timezone(Asia/Tokyo)"
+  ],
+  "packageRules": [
+    {
+      "groupName": "Jetpack Compose",
+      "matchPackagePatterns": [
+        "^androidx\\.compose:",
+        "^androidx\\.compose\\.animation:",
+        "^androidx\\.compose\\.compiler:",
+        "^androidx\\.compose\\.foundation:",
+        "^androidx\\.compose\\.material:",
+        "^androidx\\.compose\\.runtime:",
+        "^androidx\\.compose\\.ui:"
+      ]
+    },
+    {
+      "groupName": "androidx.activity",
+      "matchPackagePatterns": [
+        "^androidx\\.activity:"
+      ]
+    },
+    {
+      "groupName": "androidx.lifecycle",
+      "matchPackagePatterns": [
+        "^androidx\\.lifecycle:"
+      ]
+    },
+    {
+      "groupName": "androidx.test",
+      "matchPackagePatterns": [
+        "^androidx\\.test:",
+        "^androidx\\.test\\.ext:",
+        "^androidx\\.test\\.espresso:"
+      ],
+      "automerge": true,
+      "major": {
+        "automerge": false
+      }
+    },
+    {
+      "groupName": "github actions",
+      "matchPackagePatterns": [
+        "^peter-evans/create-or-update-comment",
+        "^peter-evans/find-comment"
+      ],
+      "automerge": true,
+      "major": {
+        "automerge": false
+      }
+    },
+    {
+      "groupName": "kotlinx.coroutines",
+      "matchPackagePatterns": [
+        "^org\\.jetbrains\\.kotlinx:kotlinx-coroutines"
+      ]
+    }
+  ]
+}

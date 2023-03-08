@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.phicdy.mycuration.top.TopActivity">
+    <item
+        android:id="@+id/done_select_target_rss"
+        android:icon="@drawable/ic_check"
+        android:orderInCategory="100"
+        android:title="@string/done"
+        app:showAsAction="ifRoom" />
+</menu>
