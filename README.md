@@ -62,8 +62,8 @@ When release the app, re-generate the baseline profile
 https://developer.android.com/topic/performance/baselineprofiles/create-baselineprofile
 
 ```
-./gradlew :benchmark:pixel2Api31BenchmarkAndroidTest
-cp benchmark/build/outputs/managed_device_android_test_additional_output/pixel2Api31/TrivialBaselineProfileBenchmark_startup-baseline-prof.txt app/src/main/baseline-prof.txt
+./gradlew :benchmark:pixel6Api31BenchmarkAndroidTest
+cp benchmark/build/outputs/managed_device_android_test_additional_output/pixel6Api31/TrivialBaselineProfileBenchmark_startup-baseline-prof.txt app/src/main/baseline-prof.txt
 ```
 
 ## Devlopment Environment

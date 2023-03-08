@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,6 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -358,22 +360,25 @@ class TopActivity :
         searchAutoComplete.setHintTextColor(color)
 
         // Start tutorial at first time
-        if (!BuildConfig.DEBUG) {
-            Handler().post {
+        if (!BuildConfig.DEBUG && BuildConfig.BUILD_TYPE != "benchmark") {
+            Handler(Looper.getMainLooper()).post {
                 val view = findViewById<View>(R.id.fab_top)
                 MaterialShowcaseView.Builder(this@TopActivity)
-                        .setTarget(view)
-                        .setContentText(
-                                R.string.tutorial_go_to_search_rss_description)
-                        .setDismissText(R.string.tutorial_next)
-                        .singleUse(SHOWCASE_ID)
-                        .setListener(object : IShowcaseListener {
-                            override fun onShowcaseDisplayed(materialShowcaseView: MaterialShowcaseView) {
+                    .setTarget(view)
+                    .setContentText(
+                        R.string.tutorial_go_to_search_rss_description
+                    )
+                    .setDismissText(R.string.tutorial_next)
+                    .singleUse(SHOWCASE_ID)
+                    .setListener(object : IShowcaseListener {
+                        override fun onShowcaseDisplayed(materialShowcaseView: MaterialShowcaseView) {
 
-                            }
+                        }
 
                             override fun onShowcaseDismissed(materialShowcaseView: MaterialShowcaseView) {
-                                goToFeedSearch()
+                                if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                                    goToFeedSearch()
+                                }
                             }
                         })
                         .show()
