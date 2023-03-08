@@ -4,8 +4,11 @@ import com.phicdy.mycuration.articlelist.action.OpenInternalBrowserAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class OpenInternalWebBrowserStateStore(
+@HiltViewModel
+class OpenInternalWebBrowserStateStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<String>(dispatcher) {
 

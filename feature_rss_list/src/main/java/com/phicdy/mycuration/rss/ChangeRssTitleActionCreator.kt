@@ -2,26 +2,29 @@ package com.phicdy.mycuration.rss
 
 import com.phicdy.mycuration.core.ActionCreator3
 import com.phicdy.mycuration.core.Dispatcher
+import javax.inject.Inject
 
-class ChangeRssTitleActionCreator(
+class ChangeRssTitleActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val rssListItemFactory: RssListItemFactory
-) : ActionCreator3<Int, String, RssListState> {
+) : ActionCreator3<Int, String, RssListState.Updated> {
 
-    override suspend fun run(arg1: Int, arg2: String, arg3: RssListState) {
-        val updated = arg3.rss.map {
-            if (it.id == arg1) {
-                it.copy(title = arg2)
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(rssId: Int, rssTitle: String, state: RssListState.Updated) {
+        val updated = state.rawRssList.map { rss ->
+            if (rss.id == rssId) {
+                rss.copy(title = rssTitle)
             } else {
-                it
+                rss
             }
         }
-        RssListState(
-                item = rssListItemFactory.create(arg3.mode, updated),
-                mode = arg3.mode,
-                rss = updated
-        ).let {
-            dispatcher.dispatch(RssListAction(it))
-        }
+        val (mode, item) = rssListItemFactory.create(state.mode, updated)
+        dispatcher.dispatch(RssListAction(
+                RssListState.Updated(
+                        item = item,
+                        mode = mode,
+                        rawRssList = updated
+                )
+        ))
     }
 }

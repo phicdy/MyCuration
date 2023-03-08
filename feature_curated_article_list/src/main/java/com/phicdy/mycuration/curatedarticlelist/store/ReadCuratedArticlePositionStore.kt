@@ -4,8 +4,11 @@ import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.action.ReadArticleAction
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ReadCuratedArticlePositionStore(
+@HiltViewModel
+class ReadCuratedArticlePositionStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<Int>(dispatcher) {
 

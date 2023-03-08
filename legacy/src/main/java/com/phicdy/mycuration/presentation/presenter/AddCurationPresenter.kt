@@ -4,9 +4,10 @@ package com.phicdy.mycuration.presentation.presenter
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.presentation.view.AddCurationView
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
 
-class AddCurationPresenter(
+class AddCurationPresenter @Inject constructor(
         private val view: AddCurationView,
         private val repository: CurationRepository
 ) {

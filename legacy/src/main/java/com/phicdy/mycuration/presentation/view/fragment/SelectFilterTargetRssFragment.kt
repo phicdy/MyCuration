@@ -14,19 +14,22 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.glide.GlideApp
 import com.phicdy.mycuration.legacy.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
 
-    private var selectedList: ArrayList<Feed> = ArrayList()
+    private var selectedList = mutableListOf<Feed>()
     private lateinit var recyclerView: RecyclerView
 
-    private val rssRepository: RssRepository by inject()
+    @Inject
+    lateinit var rssRepository: RssRepository
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
@@ -53,15 +56,15 @@ class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
         super.onDestroy()
     }
 
-    fun list(): ArrayList<Feed>? {
+    fun list(): List<Feed> {
         return selectedList
     }
 
-    fun updateSelected(selectedList: ArrayList<Feed>) {
+    fun updateSelected(selectedList: MutableList<Feed>) {
         this.selectedList = selectedList
     }
 
-    private inner class TargetRssListAdapter(private val feeds: ArrayList<Feed>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private inner class TargetRssListAdapter(private val feeds: List<Feed>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val itemView = LayoutInflater.from(parent.context)
                     .inflate(R.layout.filter_target_rss_list, parent, false)

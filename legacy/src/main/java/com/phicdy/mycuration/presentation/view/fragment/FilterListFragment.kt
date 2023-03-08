@@ -10,20 +10,28 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.data.repository.FilterRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FilterListPresenter
 import com.phicdy.mycuration.presentation.view.FilterListView
 import com.phicdy.mycuration.presentation.view.activity.RegisterFilterActivity
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
 
     companion object {
@@ -36,7 +44,15 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FilterListPresenter by currentScope.inject { parametersOf(this) }
+    @Inject
+    lateinit var presenter: FilterListPresenter
+
+    @Inject
+    lateinit var rssRepository: RssRepository
+
+    @Inject
+    lateinit var filterRepository: FilterRepository
+
     private lateinit var filtersListAdapter: FiltersListAdapter
     private lateinit var filtersRecyclerView: RecyclerView
     private lateinit var emptyView: TextView
@@ -174,5 +190,13 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
             internal val filterUrl = itemView.findViewById(R.id.filterUrl) as TextView
             internal val filterEnabled = itemView.findViewById(R.id.sw_filter_enable) as Switch
         }
+    }
+
+    @Module
+    @InstallIn(FragmentComponent::class)
+    object FilterListModule {
+        @FragmentScoped
+        @Provides
+        fun provideFilterListView(fragment: Fragment): FilterListView = fragment as FilterListView
     }
 }

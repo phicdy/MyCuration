@@ -5,8 +5,11 @@ import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.entity.ReadAllArticles
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ReadAllArticlesStateStore(
+@HiltViewModel
+class ReadAllArticlesStateStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<ReadAllArticles>(dispatcher) {
 

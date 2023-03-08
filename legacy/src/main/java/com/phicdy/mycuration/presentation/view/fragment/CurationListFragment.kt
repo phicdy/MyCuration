@@ -9,22 +9,29 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.phicdy.mycuration.data.repository.CurationRepository
+import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Curation
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.CurationListPresenter
 import com.phicdy.mycuration.presentation.view.CurationItem
 import com.phicdy.mycuration.presentation.view.CurationListView
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.scopes.FragmentScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
 import java.util.ArrayList
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-
+@AndroidEntryPoint
 class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
 
     companion object {
@@ -36,7 +43,15 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: CurationListPresenter by currentScope.inject { parametersOf(this) }
+    @Inject
+    lateinit var presenter: CurationListPresenter
+
+    @Inject
+    lateinit var rssRepository: RssRepository
+
+    @Inject
+    lateinit var curationRepository: CurationRepository
+
     private lateinit var curationListAdapter: CurationListAdapter
     private var mListener: OnCurationListFragmentListener? = null
     private lateinit var curationRecyclerView: RecyclerView
@@ -179,5 +194,13 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
                 curationCount.text = count
             }
         }
+    }
+
+    @Module
+    @InstallIn(FragmentComponent::class)
+    object CurationListModule {
+        @FragmentScoped
+        @Provides
+        fun provideCurationListView(fragment: Fragment): CurationListView = fragment as CurationListView
     }
 }

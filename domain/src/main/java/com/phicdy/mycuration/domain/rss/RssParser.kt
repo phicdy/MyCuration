@@ -14,8 +14,9 @@ import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.ArrayList
+import javax.inject.Inject
 
-class RssParser {
+class RssParser @Inject constructor() {
 
     private var isCanonical = false
 

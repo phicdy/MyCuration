@@ -6,8 +6,11 @@ import com.phicdy.mycuration.articlelist.action.UpdateFavoriteAction
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ArticleListStore(
+@HiltViewModel
+class ArticleListStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<List<ArticleItem>>(dispatcher) {
 

@@ -6,8 +6,9 @@ import com.google.android.gms.ads.MobileAds
 import com.phicdy.mycuration.advertisement.AdFragment
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.advertisement.AdViewHolder
+import javax.inject.Inject
 
-class AdmobProvider : AdProvider {
+class AdmobProvider @Inject constructor() : AdProvider {
 
     override fun init(context: Context) {
         MobileAds.initialize(context, BuildConfig.AD_APP_ID)

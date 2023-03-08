@@ -4,9 +4,12 @@ import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.action.FinishAction
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 
-class FinishCuratedArticleStateStore(
+@HiltViewModel
+class FinishCuratedArticleStateStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<Boolean>(dispatcher), CoroutineScope {
 

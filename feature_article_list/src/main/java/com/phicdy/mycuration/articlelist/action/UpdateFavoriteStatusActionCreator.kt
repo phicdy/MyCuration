@@ -4,12 +4,14 @@ import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.core.ActionCreator2
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.repository.FavoriteRepository
+import javax.inject.Inject
 
-class UpdateFavoriteStatusActionCreator(
+class UpdateFavoriteStatusActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val favoriteRepository: FavoriteRepository
 ) : ActionCreator2<Int, List<ArticleItem>> {
 
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override suspend fun run(position: Int, currentList: List<ArticleItem>) {
         val item = currentList[position]
         if (item is ArticleItem.Content) {

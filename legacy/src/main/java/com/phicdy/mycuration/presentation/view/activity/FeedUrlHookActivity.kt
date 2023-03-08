@@ -7,36 +7,35 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
+import com.phicdy.mycuration.domain.rss.RssUrlHookIntentData
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.FeedUrlHookPresenter
 import com.phicdy.mycuration.presentation.view.FeedUrlHookView
 import com.phicdy.mycuration.tracker.TrackerHelper
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope {
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: FeedUrlHookPresenter by currentScope.inject {
-        parametersOf(
-                this,
-                if (intent.action == null) "" else intent.action,
-                if (intent.dataString == null) "" else intent.dataString,
-                if (intent.extras == null) "" else intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "")
-                        ?: "",
-                this
-        )
-    }
+    @Inject
+    lateinit var presenter: FeedUrlHookPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +46,6 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun showInvalidUrlErrorToast() {
@@ -76,5 +71,25 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView, CoroutineScope
     @UiThread
     private fun showToastOnUiThread(@StringRes res: Int, toastLength: Int) {
         runOnUiThread { Toast.makeText(applicationContext, res, toastLength).show() }
+    }
+
+    @Module
+    @InstallIn(ActivityComponent::class)
+    object FeedUrlHookModule {
+
+        @ActivityScoped
+        @Provides
+        fun provideFeedUrlHookView(@ActivityContext activity: Context): FeedUrlHookView =
+                activity as FeedUrlHookView
+
+        @ActivityScoped
+        @Provides
+        fun provideRssUrlHookIntentData(@ActivityContext activity: Context): RssUrlHookIntentData =
+                RssUrlHookIntentData(
+                        action = (activity as AppCompatActivity).intent.action ?: "",
+                        dataString = activity.intent.dataString ?: "",
+                        extrasText = activity.intent.extras?.getCharSequence(Intent.EXTRA_TEXT, "")
+                                ?: ""
+                )
     }
 }

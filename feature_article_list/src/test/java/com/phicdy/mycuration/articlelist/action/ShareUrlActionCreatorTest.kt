@@ -30,10 +30,11 @@ class ShareUrlActionCreatorTest {
                 on { url } doReturn "aaa"
             }
             ShareUrlActionCreator(
-                    dispatcher = dispatcher,
+                    dispatcher = dispatcher
+            ).run(
                     position = 0,
                     items = listOf(ArticleItem.Content(article))
-            ).run()
+            )
             assertThat(store.state.value).isEqualTo("aaa")
         }
     }
@@ -48,10 +49,11 @@ class ShareUrlActionCreatorTest {
                 on { url } doReturn "aaa"
             }
             ShareUrlActionCreator(
-                    dispatcher = dispatcher,
+                    dispatcher = dispatcher
+            ).run(
                     position = -1,
                     items = listOf(ArticleItem.Content(article))
-            ).run()
+            )
             assertThat(store.state.value).isNull()
         }
     }
@@ -66,10 +68,11 @@ class ShareUrlActionCreatorTest {
                 on { url } doReturn "aaa"
             }
             ShareUrlActionCreator(
-                    dispatcher = dispatcher,
+                    dispatcher = dispatcher
+            ).run(
                     position = 1,
                     items = listOf(ArticleItem.Content(article))
-            ).run()
+            )
             assertThat(store.state.value).isNull()
         }
     }

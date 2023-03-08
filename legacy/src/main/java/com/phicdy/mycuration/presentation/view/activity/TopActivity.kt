@@ -40,17 +40,23 @@ import com.phicdy.mycuration.presentation.view.fragment.CurationListFragment
 import com.phicdy.mycuration.presentation.view.fragment.FilterListFragment
 import com.phicdy.mycuration.rss.RssListFragment
 import com.phicdy.mycuration.tracker.TrackerHelper
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@AndroidEntryPoint
 class TopActivity :
         AppCompatActivity(),
         RssListFragment.OnFeedListFragmentListener,
@@ -67,7 +73,8 @@ class TopActivity :
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    private val presenter: TopActivityPresenter by currentScope.inject { parametersOf(this) }
+    @Inject
+    lateinit var presenter: TopActivityPresenter
     private lateinit var fab: FloatingActionButton
     private lateinit var fabAddCuration: FloatingActionButton
     private lateinit var fabAddRss: FloatingActionButton
@@ -363,10 +370,6 @@ class TopActivity :
         return super.onKeyDown(keyCode, event)
     }
 
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
-    }
-
     override fun goToFeedSearch() {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_add_rss))
         startActivity(Intent(this@TopActivity, FeedSearchActivity::class.java))
@@ -450,6 +453,13 @@ class TopActivity :
         startActivity(FavoriteArticlesListActivity.createIntent(this))
     }
 
+    override fun onFooterClicked() {
+        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
+        if (fragment is RssListFragment) {
+            fragment.changeRssListMode()
+        }
+    }
+
     override fun onCurationListClicked(curationId: Int) {
         startActivity(CuratedArticlesListActivity.createIntent(this, curationId))
     }
@@ -516,6 +526,14 @@ class TopActivity :
         if (fragment is RssListFragment) {
             fragment.updateFeedTitle(rssId, newTitle)
         }
+    }
+
+    @Module
+    @InstallIn(ActivityComponent::class)
+    object TopModule {
+        @ActivityScoped
+        @Provides
+        fun provideTopActivityView(@ActivityContext activity: Context): TopActivityView = activity as TopActivityView
     }
 }
 

@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import com.phicdy.action.articlelist.ReadArticleAction
 import com.phicdy.action.articlelist.UnReadArticleAction
 import com.phicdy.mycuration.articlelist.ArticleItem
-import com.phicdy.mycuration.core.ActionCreator
+import com.phicdy.mycuration.core.ActionCreator3
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.ArticleRepository
@@ -15,18 +15,17 @@ import com.phicdy.mycuration.entity.ReadArticle
 import com.phicdy.mycuration.entity.UnReadArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SwipeActionCreator(
+class SwipeActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val articleRepository: ArticleRepository,
         private val rssRepository: RssRepository,
-        private val preferenceHelper: PreferenceHelper,
-        private val position: Int,
-        private val direction: Int,
-        private val items: List<ArticleItem>
-) : ActionCreator {
+        private val preferenceHelper: PreferenceHelper
+) : ActionCreator3<Int, Int, List<ArticleItem>> {
 
-    override suspend fun run() {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(position: Int, direction: Int, items: List<ArticleItem>) {
         withContext(Dispatchers.IO) {
             suspend fun update(newStatus: String) {
                 when (val item = items[position]) {

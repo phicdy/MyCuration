@@ -5,8 +5,11 @@ import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.CuratedArticleItem
 import com.phicdy.mycuration.curatedarticlelist.action.FetchArticleAction
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class CuratedArticleListStore(
+@HiltViewModel
+class CuratedArticleListStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<List<CuratedArticleItem>>(dispatcher) {
 

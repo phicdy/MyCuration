@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.presentation.view.activity
 
-import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,9 +8,10 @@ import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.fragment.AddCurationFragment
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class AddCurationActivity : AppCompatActivity() {
 
     private var wordListFragment: AddCurationFragment? = null
@@ -38,10 +38,6 @@ class AddCurationActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun onResume() {

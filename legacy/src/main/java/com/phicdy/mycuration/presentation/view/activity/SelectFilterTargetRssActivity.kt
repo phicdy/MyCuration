@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.presentation.view.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -13,14 +14,24 @@ import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.presenter.SelectFilterTargetRssPresenter
 import com.phicdy.mycuration.presentation.view.SelectTargetRssView
 import com.phicdy.mycuration.presentation.view.fragment.SelectFilterTargetRssFragment
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
 
     companion object {
         const val TARGET_RSS = "targetRss"
     }
 
-    private lateinit var presenter: SelectFilterTargetRssPresenter
+    @Inject
+    lateinit var presenter: SelectFilterTargetRssPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,15 +42,14 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        presenter = SelectFilterTargetRssPresenter(this)
         presenter.create()
     }
 
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
         val rssFragment = fragment as? SelectFilterTargetRssFragment // maybe Glide's fragment
-        val selectedList = intent.getParcelableArrayListExtra<Feed>(TARGET_RSS)
-        rssFragment?.updateSelected(selectedList)
+        val selectedList = intent.getParcelableArrayListExtra<Feed>(TARGET_RSS) ?: throw IllegalArgumentException("RSS is not selected")
+        rssFragment?.updateSelected(selectedList.toMutableList())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -66,9 +76,19 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
         val bundle = Bundle()
         val manager = supportFragmentManager
         val fragment = manager.findFragmentById(R.id.f_select_target) as SelectFilterTargetRssFragment
-        bundle.putParcelableArrayList(RegisterFilterActivity.KEY_SELECTED_FEED, fragment.list())
+        val rssList = arrayListOf<Feed>()
+        fragment.list().forEach { rssList.add(it) }
+        bundle.putParcelableArrayList(RegisterFilterActivity.KEY_SELECTED_FEED, rssList)
         data.putExtras(bundle)
         setResult(RESULT_OK, data)
         finish()
+    }
+
+    @Module
+    @InstallIn(ActivityComponent::class)
+    object SelectFilterTargetRssModule {
+        @ActivityScoped
+        @Provides
+        fun provideSelectTargetRssView(@ActivityContext activity: Context): SelectTargetRssView = activity as SelectTargetRssView
     }
 }

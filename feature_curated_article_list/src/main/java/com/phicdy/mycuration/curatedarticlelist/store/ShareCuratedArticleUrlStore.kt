@@ -4,13 +4,13 @@ import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.action.ShareUrlAction
-import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.CoroutineContext
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ShareCuratedArticleUrlStore(
-        dispatcher: Dispatcher,
-        context: CoroutineContext = Dispatchers.Main
-) : Store<String>(dispatcher, context) {
+@HiltViewModel
+class ShareCuratedArticleUrlStore @Inject constructor(
+        dispatcher: Dispatcher
+) : Store<String>(dispatcher) {
 
     init {
         dispatcher.register(this)

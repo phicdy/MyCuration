@@ -3,26 +3,30 @@ package com.phicdy.mycuration.rss
 import com.phicdy.mycuration.core.ActionCreator1
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.entity.RssListMode
+import javax.inject.Inject
 
-class ChangeRssListModeActionCreator(
+class ChangeRssListModeActionCreator @Inject constructor(
         private val dispatcher: Dispatcher,
         private val rssListItemFactory: RssListItemFactory
-) : ActionCreator1<RssListState> {
+) : ActionCreator1<RssListState.Updated> {
 
-    override suspend fun run(arg: RssListState) {
-        when (arg.mode) {
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    override suspend fun run(state: RssListState.Updated) {
+        when (state.mode) {
             RssListMode.UNREAD_ONLY -> {
-                RssListState(
-                        item = rssListItemFactory.create(RssListMode.ALL, arg.rss),
+                val (_, item) = rssListItemFactory.create(RssListMode.ALL, state.rawRssList)
+                RssListState.Updated(
+                        item = item,
                         mode = RssListMode.ALL,
-                        rss = arg.rss
+                        rawRssList = state.rawRssList
                 )
             }
             RssListMode.ALL -> {
-                RssListState(
-                        item = rssListItemFactory.create(RssListMode.UNREAD_ONLY, arg.rss),
+                val (_, item) = rssListItemFactory.create(RssListMode.UNREAD_ONLY, state.rawRssList)
+                RssListState.Updated(
+                        item = item,
                         mode = RssListMode.UNREAD_ONLY,
-                        rss = arg.rss
+                        rawRssList = state.rawRssList
                 )
             }
         }.let {

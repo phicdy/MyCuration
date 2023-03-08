@@ -4,8 +4,12 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.util.UrlUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class RssParseExecutor(private val parser: RssParser, private val rssRepository: RssRepository) {
+class RssParseExecutor @Inject constructor(
+        private val parser: RssParser,
+        private val rssRepository: RssRepository
+) {
 
     interface RssParseCallback {
         fun succeeded(rssUrl: String)

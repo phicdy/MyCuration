@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
@@ -42,18 +43,16 @@ import com.phicdy.mycuration.curatedarticlelist.store.SwipeCuratedArticlePositio
 import com.phicdy.mycuration.curatedarticlelist.util.bitmapFrom
 import com.phicdy.mycuration.feature_curated_article_list.R
 import com.phicdy.mycuration.tracker.TrackerHelper
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.get
-import org.koin.android.ext.android.inject
-import org.koin.android.scope.currentScope
-import org.koin.core.parameter.parametersOf
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-
+@AndroidEntryPoint
 class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleListAdapter.Listener {
 
     companion object {
@@ -67,7 +66,7 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
         }
     }
 
-    private lateinit var job: Job
+    private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
@@ -75,19 +74,39 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
         arguments?.getInt(CURATION_ID, DEFAULT_CURATION_ID) ?: DEFAULT_CURATION_ID
     }
 
-    private val fetchArticleListOfCurationActionCreator by currentScope.inject<FetchCuratedArticleListActionCreator> {
-        parametersOf(curationId)
-    }
+    @Inject
+    lateinit var fetchArticleListOfCurationActionCreator: FetchCuratedArticleListActionCreator
 
-    private val curatedArticleListStore: CuratedArticleListStore by currentScope.inject()
-    private val finishCuratedArticleStateStore: FinishCuratedArticleStateStore by currentScope.inject()
-    private val readCuratedArticlePositionStore: ReadCuratedArticlePositionStore by currentScope.inject()
-    private val openCuratedArticleWithInternalWebBrowserStateStore: OpenCuratedArticleWithInternalWebBrowserStateStore by currentScope.inject()
-    private val openCuratedArticleWithExternalWebBrowserStateStore: OpenCuratedArticleWithExternalWebBrowserStateStore by currentScope.inject()
-    private val scrollCuratedArticlePositionStore: ScrollCuratedArticlePositionStore by currentScope.inject()
-    private val swipeCuratedArticlePositionStore: SwipeCuratedArticlePositionStore by currentScope.inject()
-    private val readAllCuratedArticlesStateStore: ReadAllCuratedArticlesStateStore by currentScope.inject()
-    private val shareCuratedArticleUrlStore: ShareCuratedArticleUrlStore by currentScope.inject()
+    @Inject
+    lateinit var swipeActionCreator: SwipeActionCreator
+
+    @Inject
+    lateinit var finishStateActionCreator: FinishStateActionCreator
+
+    @Inject
+    lateinit var scrollActionCreator: ScrollActionCreator
+
+    @Inject
+    lateinit var readAllCuratedArticlesActionCreator: ReadAllCuratedArticlesActionCreator
+
+    @Inject
+    lateinit var readCuratedArticleActionCreator: ReadCuratedArticleActionCreator
+
+    @Inject
+    lateinit var openUrlActionCreator: OpenUrlActionCreator
+
+    @Inject
+    lateinit var shareUrlActionCreator: ShareUrlActionCreator
+
+    private val curatedArticleListStore: CuratedArticleListStore by viewModels()
+    private val finishCuratedArticleStateStore: FinishCuratedArticleStateStore by viewModels()
+    private val readCuratedArticlePositionStore: ReadCuratedArticlePositionStore by viewModels()
+    private val openCuratedArticleWithInternalWebBrowserStateStore: OpenCuratedArticleWithInternalWebBrowserStateStore by viewModels()
+    private val openCuratedArticleWithExternalWebBrowserStateStore: OpenCuratedArticleWithExternalWebBrowserStateStore by viewModels()
+    private val scrollCuratedArticlePositionStore: ScrollCuratedArticlePositionStore by viewModels()
+    private val swipeCuratedArticlePositionStore: SwipeCuratedArticlePositionStore by viewModels()
+    private val readAllCuratedArticlesStateStore: ReadAllCuratedArticlesStateStore by viewModels()
+    private val shareCuratedArticleUrlStore: ShareCuratedArticleUrlStore by viewModels()
 
     private lateinit var recyclerView: CuratedArticleRecyclerView
     private lateinit var articlesListAdapter: CuratedArticleListAdapter
@@ -95,36 +114,36 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
     private lateinit var listener: OnArticlesListFragmentListener
     private lateinit var emptyView: TextView
 
-    private val adProvider by inject<AdProvider>()
+    @Inject
+    lateinit var adProvider: AdProvider
 
     interface OnArticlesListFragmentListener {
         fun finish()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        job = Job()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        curatedArticleListStore.state.observe(this, Observer<List<CuratedArticleItem>> {
+        curatedArticleListStore.state.observe(viewLifecycleOwner, Observer<List<CuratedArticleItem>> {
             if (it.isEmpty()) {
                 showEmptyView()
             } else {
                 articlesListAdapter.submitList(it)
             }
         })
-        readCuratedArticlePositionStore.state.observe(this, Observer<Int> {
+        readCuratedArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
         })
-        finishCuratedArticleStateStore.state.observe(this, Observer<Boolean> {
+        finishCuratedArticleStateStore.state.observe(viewLifecycleOwner, Observer<Boolean> {
             if (it) listener.finish()
         })
-        openCuratedArticleWithInternalWebBrowserStateStore.state.observe(this, Observer<String> { url ->
+        openCuratedArticleWithInternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> { url ->
             openInternalWebView(url)
         })
-        openCuratedArticleWithExternalWebBrowserStateStore.state.observe(this, Observer<String> {
+        openCuratedArticleWithExternalWebBrowserStateStore.state.observe(viewLifecycleOwner, Observer<String> {
             openExternalWebView(it)
         })
-        scrollCuratedArticlePositionStore.state.observe(this, Observer<Int> { positionAfterScroll ->
+        scrollCuratedArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> { positionAfterScroll ->
             launch {
                 val manager = recyclerView.layoutManager as LinearLayoutManager
                 val firstPositionBeforeScroll = manager.findFirstVisibleItemPosition()
@@ -135,26 +154,22 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
                 runFinishActionCreator()
             }
         })
-        swipeCuratedArticlePositionStore.state.observe(this, Observer<Int> {
+        swipeCuratedArticlePositionStore.state.observe(viewLifecycleOwner, Observer<Int> {
             articlesListAdapter.notifyItemChanged(it)
             runFinishActionCreator()
         })
-        readAllCuratedArticlesStateStore.state.observe(this, Observer<Unit> {
+        readAllCuratedArticlesStateStore.state.observe(viewLifecycleOwner, Observer<Unit> {
             notifyListView()
             runFinishActionCreator()
         })
-        shareCuratedArticleUrlStore.state.observe(this, Observer<String> {
+        shareCuratedArticleUrlStore.state.observe(viewLifecycleOwner, Observer<String> {
             showShareUi(it)
         })
     }
 
     private fun runFinishActionCreator() {
         launch {
-            FinishStateActionCreator(
-                    dispatcher = get(),
-                    preferenceHelper = get(),
-                    items = articlesListAdapter.currentList
-            ).run()
+            finishStateActionCreator.run(items = articlesListAdapter.currentList)
         }
     }
 
@@ -177,7 +192,7 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
         recyclerView.adapter = articlesListAdapter
         setAllListener()
         launch {
-            fetchArticleListOfCurationActionCreator.run()
+            fetchArticleListOfCurationActionCreator.run(curationId)
         }
         return view
     }
@@ -198,17 +213,12 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val actionCreator = SwipeActionCreator(
-                        dispatcher = get(),
-                        articleRepository = get(),
-                        rssRepository = get(),
-                        preferenceHelper = get(),
-                        position = viewHolder.adapterPosition,
-                        direction = direction,
-                        items = articlesListAdapter.currentList
-                )
                 launch {
-                    actionCreator.run()
+                    swipeActionCreator.run(
+                            position = viewHolder.adapterPosition,
+                            direction = direction,
+                            items = articlesListAdapter.currentList
+                    )
                 }
             }
         })
@@ -219,25 +229,19 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
     fun onFabButtonClicked() {
         launch {
             val manager = recyclerView.layoutManager as LinearLayoutManager
-            ScrollActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    rssRepository = get(),
+            scrollActionCreator.run(
                     firstVisiblePosition = manager.findFirstVisibleItemPosition(),
                     lastVisiblePosition = manager.findLastCompletelyVisibleItemPosition(),
                     items = articlesListAdapter.currentList
-            ).run()
+            )
         }
     }
 
     fun handleAllRead() {
         launch {
-            ReadAllCuratedArticlesActionCreator(
-                    dispatcher = get(),
-                    articleRepository = get(),
-                    rssRepository = get(),
+            readAllCuratedArticlesActionCreator.run(
                     items = articlesListAdapter.currentList
-            ).run()
+            )
         }
     }
 
@@ -295,33 +299,23 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
     }
 
     override fun onItemClicked(position: Int, articles: List<CuratedArticleItem>) {
-        val actionCreator = ReadCuratedArticleActionCreator(
-                dispatcher = get(),
-                articleRepository = get(),
-                rssRepository = get(),
-                position = position,
-                items = articles
-        )
         launch {
-            actionCreator.run()
-        }
-        val openUrlActionCreator = OpenUrlActionCreator(
-                dispatcher = get(),
-                preferenceHelper = get(),
-                item = articles[position]
-        )
-        launch {
-            openUrlActionCreator.run()
+            readCuratedArticleActionCreator.run(
+                    position = position,
+                    items = articles
+            )
+            openUrlActionCreator.run(
+                    item = articles[position]
+            )
         }
     }
 
     override fun onItemLongClicked(position: Int, articles: List<CuratedArticleItem>) {
         launch {
-            ShareUrlActionCreator(
-                    dispatcher = get(),
+            shareUrlActionCreator.run(
                     position = position,
                     items = articles
-            ).run()
+            )
         }
     }
 }

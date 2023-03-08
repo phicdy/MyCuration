@@ -1,13 +1,13 @@
 package com.phicdy.mycuration.articlelist
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
 
     private lateinit var fragment: ArticlesListFragment
@@ -37,10 +37,6 @@ class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.On
     override fun onResume() {
         super.onResume()
         changeTheme()
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

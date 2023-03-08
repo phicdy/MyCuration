@@ -4,8 +4,11 @@ import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.core.Store
 import com.phicdy.mycuration.curatedarticlelist.action.SwipeAction
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SwipeCuratedArticlePositionStore(
+@HiltViewModel
+class SwipeCuratedArticlePositionStore @Inject constructor(
         dispatcher: Dispatcher
 ) : Store<Int>(dispatcher) {
 

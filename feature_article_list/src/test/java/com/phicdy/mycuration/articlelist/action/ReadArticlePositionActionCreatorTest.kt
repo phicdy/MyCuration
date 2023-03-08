@@ -28,10 +28,11 @@ class ReadArticlePositionActionCreatorTest {
             ReadArticleActionCreator(
                     dispatcher = mock(),
                     articleRepository = mock(),
-                    rssRepository = mock(),
+                    rssRepository = mock()
+            ).run(
                     position = 0,
                     items = listOf(ArticleItem.Content(article))
-            ).run()
+            )
             assertThat(article.status).isEqualTo(Article.READ)
         }
     }
@@ -54,10 +55,11 @@ class ReadArticlePositionActionCreatorTest {
             ReadArticleActionCreator(
                     dispatcher = mock(),
                     articleRepository = mock(),
-                    rssRepository = mock(),
+                    rssRepository = mock()
+            ).run(
                     position = 0,
                     items = listOf(ArticleItem.Content(article))
-            ).run()
+            )
             assertThat(article.status).isEqualTo(Article.READ)
         }
     }
@@ -80,10 +82,11 @@ class ReadArticlePositionActionCreatorTest {
             ReadArticleActionCreator(
                     dispatcher = mock(),
                     articleRepository = mock(),
-                    rssRepository = mock(),
+                    rssRepository = mock()
+            ).run(
                     position = 0,
                     items = listOf(ArticleItem.Content(article))
-            ).run()
+            )
             assertThat(article.status).isEqualTo(Article.READ)
         }
     }

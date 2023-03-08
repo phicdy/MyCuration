@@ -6,9 +6,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Date
+import javax.inject.Inject
 
 
-class TimberTree : Timber.DebugTree() {
+class TimberTree @Inject constructor() : Timber.DebugTree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         super.log(priority, tag, message, t)

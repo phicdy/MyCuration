@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.presentation.view.activity
 
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -9,8 +8,9 @@ import androidx.appcompat.widget.Toolbar
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.fragment.SettingFragment
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,10 +22,6 @@ class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentLi
         supportActionBar?.title = getString(R.string.setting)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

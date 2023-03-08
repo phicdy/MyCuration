@@ -1,5 +1,7 @@
 apply plugin: 'spoon'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     defaultConfig {
@@ -20,11 +22,24 @@ android {
     }
 
     buildTypes {
+        debug {
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
+
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
         }
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     lintOptions {
@@ -69,26 +84,25 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "com.google.android.material:material:$material_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
+    implementation "androidx.preference:preference:$preference_version"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.0'
 
-    implementation "com.google.firebase:firebase-analytics:$firebase_analytics_version"
+    implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 
-    implementation "org.koin:koin-android-scope:$koin_version"
-    implementation "org.koin:koin-android-viewmodel:$koin_version"
+    implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt_version"
 
     implementation "com.jakewharton.timber:timber:$timber_version"
-
-    // Font
-    implementation 'io.github.inflationx:calligraphy3:3.0.0'
-    implementation 'io.github.inflationx:viewpump:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

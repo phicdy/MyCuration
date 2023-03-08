@@ -8,11 +8,13 @@ import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.legacy.R
 import com.phicdy.mycuration.presentation.view.TopActivityView
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
-class TopActivityPresenter(private val view: TopActivityView,
-                           private val articleRepository: ArticleRepository,
-                           private val rssRepository: RssRepository,
-                           private val helper: PreferenceHelper
+class TopActivityPresenter @Inject constructor(
+        private val view: TopActivityView,
+        private val articleRepository: ArticleRepository,
+        private val rssRepository: RssRepository,
+        private val helper: PreferenceHelper
 ) {
 
     fun create() {
