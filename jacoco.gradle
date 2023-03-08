@@ -46,7 +46,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
     doLast {
         println "jacoco xml report has been generated to file://${buildDir}/reports/jacoco/jacocoTestReport.xml"
-        println "jacoco html report has been generated to file://${reports.html.destination}/index.html"
+        println "jacoco html report has been generated to file://${reports.html.outputLocation}/index.html"
     }
 }
 

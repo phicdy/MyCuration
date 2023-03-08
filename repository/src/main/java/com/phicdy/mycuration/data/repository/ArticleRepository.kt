@@ -1,82 +1,45 @@
 package com.phicdy.mycuration.data.repository
 
-import android.content.ContentValues
-import android.database.Cursor
 import android.database.SQLException
-import android.database.sqlite.SQLiteDatabase
+import com.phicdy.mycuration.core.CoroutineDispatcherProvider
+import com.phicdy.mycuration.data.Articles
+import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
-import com.phicdy.mycuration.entity.CurationSelection
 import com.phicdy.mycuration.entity.FavoritableArticle
-import com.phicdy.mycuration.entity.FavoriteArticle
-import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
+import com.phicdy.mycuration.repository.Database
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ArticleRepository(val db: SQLiteDatabase) {
+@Singleton
+class ArticleRepository @Inject constructor(
+        private val database: Database,
+        private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+        @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
+) {
 
-    /**
-     * Update method from "to read" to "read" for all of the articles.
-     */
-    suspend fun saveAllStatusToReadFromToRead() = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
-            db.beginTransaction()
-            try {
-                val values = ContentValues()
-                values.put(Article.STATUS, Article.READ)
-                val condition = Article.STATUS + " = '" + Article.READ + "'"
-                db.update(Article.TABLE_NAME, values, condition, null)
-                db.setTransactionSuccessful()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            } finally {
-                db.endTransaction()
-            }
-        }
-    }
-
-    suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
-            val articles = ArrayList<Article>()
-            var cursor: Cursor? = null
-            try {
-                db.beginTransaction()
-                // Get unread articles
-                val sql = ("select " + Article.ID + ", " + Article.TITLE + ", " + Article.URL + ", " + Article.STATUS + "" +
-                        ", " + Article.POINT + ", " + Article.DATE + " from " + Article.TABLE_NAME + " where " + Article.FEEDID + " = "
-                        + rssId + " order by " + Article.DATE) + if (isNewestArticleTop) " desc" else " asc"
-                cursor = db.rawQuery(sql, null)
-                while (cursor.moveToNext()) {
-                    val id = cursor.getInt(0)
-                    val title = cursor.getString(1)
-                    val url = cursor.getString(2)
-                    val status = cursor.getString(3)
-                    val point = cursor.getString(4)
-                    val dateLong = cursor.getLong(5)
-                    val article = Article(id, title, url, status, point,
-                            dateLong, rssId, "", "")
-                    articles.add(article)
+    suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): List<Article> {
+        return withContext(coroutineDispatcherProvider.io()) {
+            database.transactionWithResult {
+                if (isNewestArticleTop) {
+                    database.articleQueries.getAllInRssOrderByDateDesc(rssId.toLong())
+                            .executeAsList()
+                            .map { it.toArticle() }
+                } else {
+                    database.articleQueries.getAllInRssOrderByDateAsc(rssId.toLong())
+                            .executeAsList()
+                            .map { it.toArticle() }
                 }
-                db.setTransactionSuccessful()
-            } catch (e: Exception) {
-                return@withContext articles
-            } finally {
-                db.endTransaction()
-                cursor?.close()
             }
-
-            return@withContext articles
         }
     }
 
-    suspend fun applyFiltersOfRss(filterList: ArrayList<Filter>, rssId: Int): Int = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
+    suspend fun applyFiltersOfRss(filterList: List<Filter>, rssId: Int): Int {
+        return withContext(applicationCoroutineScope.coroutineContext) {
             // If articles are hit in condition, Set articles status to "read"
-            val value = ContentValues().apply {
-                put(Article.STATUS, Article.READ)
-            }
             var updatedCount = 0
             for ((id, _, keyword, url) in filterList) {
                 try {
@@ -86,25 +49,26 @@ class ArticleRepository(val db: SQLiteDatabase) {
                         continue
                     }
 
-                    db.beginTransaction()
-                    // Initialize condition
-                    var condition = Article.FEEDID + " = $rssId and " + Article.STATUS + " = '" + Article.UNREAD + "'"
-                    if (keyword.isNotBlank()) {
-                        condition = "$condition and title like '%$keyword%'"
+                    database.transaction {
+                        if (keyword.isNotBlank()) {
+                            if (url.isNotBlank()) {
+                                database.articleQueries.updateReadStatusByTitleAndUrl(rssId.toLong(), Article.UNREAD, "%$keyword%", "%$url%")
+                            } else {
+                                database.articleQueries.updateReadStatusByTitle(rssId.toLong(), Article.UNREAD, "%$keyword%")
+                            }
+                        } else {
+                            if (url.isNotBlank()) {
+                                database.articleQueries.updateReadStatusByUrl(rssId.toLong(), Article.UNREAD, "%$url%")
+                            }
+                        }
+                        updatedCount = database.articleQueries.selectChanges().executeAsOne().toInt()
                     }
-                    if (url.isNotBlank()) {
-                        condition = "$condition and url like '%$url%'"
-                    }
-                    updatedCount += db.update(Article.TABLE_NAME, value, condition, null)
-                    db.setTransactionSuccessful()
                 } catch (e: Exception) {
                     Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
                     Timber.e(e)
-                } finally {
-                    db.endTransaction()
                 }
             }
-            return@withContext updatedCount
+            updatedCount
         }
     }
 
@@ -114,43 +78,31 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param articles Article array to save
      * @param feedId Feed ID of the articles
      */
-    suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> = coroutineScope {
-        return@coroutineScope withContext(Dispatchers.IO) {
-            if (articles.isEmpty()) {
-                return@withContext emptyList<Article>()
-            }
-            val insertArticleSt = db.compileStatement(
-                    "insert into articles(title,url,status,point,date,feedId) values (?,?,?,?,?,?);")
+    suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> {
+        return withContext(applicationCoroutineScope.coroutineContext) {
             val result = arrayListOf<Article>()
             try {
-                db.beginTransaction()
-                articles.forEach { article ->
-                    insertArticleSt.bindString(1, article.title)
-                    insertArticleSt.bindString(2, article.url)
-                    insertArticleSt.bindString(3, article.status)
-                    insertArticleSt.bindString(4, article.point)
-                    insertArticleSt.bindLong(5, article.postedDate)
-                    insertArticleSt.bindString(6, feedId.toString())
-                    val id = insertArticleSt.executeInsert().toInt()
-                    result.add(Article(
-                            id = id,
-                            title = article.title,
-                            url = article.url,
-                            status = article.status,
-                            point = article.point,
-                            feedIconPath = article.feedIconPath,
-                            postedDate = article.postedDate,
-                            feedId = article.feedId,
-                            feedTitle = article.feedTitle)
-                    )
+                database.transaction {
+                    articles.forEach { article ->
+                        database.articleQueries.insert(article.title, article.url, article.status, article.point, article.postedDate, feedId.toLong())
+                        val id = database.articleQueries.selectLastInsertRowId().executeAsOne().toInt()
+                        result.add(Article(
+                                id = id,
+                                title = article.title,
+                                url = article.url,
+                                status = article.status,
+                                point = article.point,
+                                feedIconPath = article.feedIconPath,
+                                postedDate = article.postedDate,
+                                feedId = article.feedId,
+                                feedTitle = article.feedTitle)
+                        )
+                    }
                 }
-                db.setTransactionSuccessful()
             } catch (e: SQLException) {
                 e.printStackTrace()
-            } finally {
-                db.endTransaction()
             }
-            return@withContext result
+            result
         }
     }
 
@@ -160,20 +112,15 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param rssId RSS ID to check
      * @return `true` if exists.
      */
-    suspend fun isExistArticleOf(rssId: Int? = null): Boolean = withContext(Dispatchers.IO) {
+    suspend fun isExistArticleOf(rssId: Int): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var isExist = false
-        db.beginTransaction()
-        var cursor: Cursor? = null
         try {
-            val selection = if (rssId == null) null else Article.FEEDID + " = " + rssId
-            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null, "1")
-            isExist = cursor.count > 0
-            db.setTransactionSuccessful()
+            val count = database.transactionWithResult<Long> {
+                database.articleQueries.getCount(rssId.toLong()).executeAsOne()
+            }
+            isExist = count > 0
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
         return@withContext isExist
     }
@@ -182,39 +129,15 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * Get article URLs that were stored in database from argument articles
      *
      */
-    suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(Dispatchers.IO) {
-        val urls = mutableListOf<String>()
-        db.beginTransaction()
-        var cursor: Cursor? = null
+    suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            val selection = StringBuffer().apply {
-                append(Article.URL)
-                append(" in (")
-                articles.map { append("'" + it.url + "', ") }
-                delete(length - 2, length)
-                append(")")
-            }.toString()
-            cursor = db.query(true, Article.TABLE_NAME, arrayOf(Article.URL), selection, null, null, null, null, null)
-            while (cursor.moveToNext()) {
-                urls.add(cursor.getString(0))
+            return@withContext database.transactionWithResult<List<String>> {
+                database.articleQueries.getAllInUrl(articles.map { it.url }).executeAsList()
             }
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
-        return@withContext urls
-    }
-
-    /**
-     * Check method of article existence.
-     *
-     * @return `true` if there is an article or more.
-     */
-    suspend fun isExistArticle(): Boolean = coroutineScope {
-        return@coroutineScope isExistArticleOf(null)
+        return@withContext emptyList()
     }
 
     /**
@@ -222,37 +145,26 @@ class ArticleRepository(val db: SQLiteDatabase) {
      *
      * @param rssId RSS ID for articles to change status to read
      */
-    suspend fun saveStatusToRead(rssId: Int) = withContext(Dispatchers.IO) {
+    suspend fun saveStatusToRead(rssId: Int) = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Article.STATUS, Article.READ)
+            database.transaction {
+                database.articleQueries.updateReadStatusByFeedId(rssId.toLong())
             }
-            val whereClause = Article.FEEDID + " = " + rssId
-            db.update(Article.TABLE_NAME, values, whereClause, null)
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
     /**
      * Update method for all of the articles to read status.
      */
-    suspend fun saveAllStatusToRead() = withContext(Dispatchers.IO) {
+    suspend fun saveAllStatusToRead() = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Article.STATUS, Article.READ)
+            database.transaction {
+                database.articleQueries.updateAllReadStatus()
             }
-            db.update(Article.TABLE_NAME, values, null, null)
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
@@ -262,18 +174,13 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param articleId Artilce ID to change status
      * @param status New status
      */
-    suspend fun saveStatus(articleId: Int, status: String) = withContext(Dispatchers.IO) {
+    suspend fun saveStatus(articleId: Int, status: String) = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Article.STATUS, status)
+            database.transaction {
+                database.articleQueries.updateReadStatusById(status, articleId.toLong())
             }
-            db.update(Article.TABLE_NAME, values, Article.ID + " = " + articleId, null)
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
@@ -283,366 +190,190 @@ class ArticleRepository(val db: SQLiteDatabase) {
      * @param url Article URL to update
      * @param point New hatena point
      */
-    suspend fun saveHatenaPoint(url: String, point: String) = withContext(Dispatchers.IO) {
+    suspend fun saveHatenaPoint(url: String, point: String) = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            db.beginTransaction()
-            val values = ContentValues().apply {
-                put(Article.POINT, point)
+            database.transaction {
+                database.articleQueries.updatePointByUrl(point, url)
             }
-            db.update(Article.TABLE_NAME, values, Article.URL + " = '" + url + "'", null)
-            db.setTransactionSuccessful()
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            db.endTransaction()
         }
     }
 
-    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
-        val articles = mutableListOf<FavoritableArticle>()
-        var cursor: Cursor? = null
+    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            // Get unread articles
-            val sql = StringBuilder().apply {
-                append("select ")
-                append("${Article.TABLE_NAME}.${Article.ID},")
-                append("${Article.TABLE_NAME}.${Article.TITLE},")
-                append("${Article.TABLE_NAME}.${Article.URL},")
-                append("${Article.TABLE_NAME}.${Article.POINT},")
-                append("${Article.TABLE_NAME}.${Article.DATE},")
-                append("${Article.TABLE_NAME}.${Article.FEEDID},")
-                append("${Feed.TABLE_NAME}.${Feed.TITLE},")
-                append("${Feed.TABLE_NAME}.${Feed.ICON_PATH},")
-                append("${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID} ")
-                append("from ")
-                append("${Article.TABLE_NAME} ")
-                append("inner join ${Feed.TABLE_NAME} ")
-                append("left outer join ${FavoriteArticle.TABLE_NAME} ")
-                append("on ")
-                append("(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
-                append("where ")
-                append("${Article.TABLE_NAME}.${Article.STATUS} = \"${Article.UNREAD}\" and ")
-                append("${Article.TABLE_NAME}.${Article.FEEDID} = ${Feed.TABLE_NAME}.${Feed.ID} ")
-                append("order by ${Article.DATE} ")
-                append(if (isNewestArticleTop) "desc" else "asc")
-            }.toString()
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = Article.UNREAD
-                val point = cursor.getString(3)
-                val dateLong = cursor.getLong(4)
-                val feedId = cursor.getInt(5)
-                val feedTitle = cursor.getString(6)
-                val feedIconPath = cursor.getString(7)
-                val favoriteId = cursor.getInt(8)
-                val article = FavoritableArticle(id, title, url, status, point,
-                        dateLong, feedId, feedTitle, feedIconPath, favoriteId > 0)
-                articles.add(article)
+            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+                if (isNewestArticleTop) {
+                    database.articleQueries.getAllUnreadArticlesOrderByDateDesc().executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                } else {
+                    database.articleQueries.getAllUnreadArticlesOrderByDateAsc().executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext articles
+        return@withContext emptyList()
     }
 
-    suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
-        val articles = mutableListOf<FavoritableArticle>()
-        var cursor: Cursor? = null
+    suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            // Get unread articles
-            val sql = StringBuilder().apply {
-                append("select ")
-                append("${Article.TABLE_NAME}.${Article.ID},")
-                append("${Article.TABLE_NAME}.${Article.TITLE},")
-                append("${Article.TABLE_NAME}.${Article.URL},")
-                append("${Article.TABLE_NAME}.${Article.STATUS},")
-                append("${Article.TABLE_NAME}.${Article.POINT},")
-                append("${Article.TABLE_NAME}.${Article.DATE},")
-                append("${Article.TABLE_NAME}.${Article.FEEDID},")
-                append("${Feed.TABLE_NAME}.${Feed.TITLE},")
-                append("${Feed.TABLE_NAME}.${Feed.ICON_PATH},")
-                append("${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID} ")
-                append("from ")
-                append("${Article.TABLE_NAME} ")
-                append("inner join ${Feed.TABLE_NAME} ")
-                append("left outer join ${FavoriteArticle.TABLE_NAME} ")
-                append("on ")
-                append("(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
-                append("where ")
-                append("${Article.TABLE_NAME}.${Article.FEEDID} = ${Feed.TABLE_NAME}.${Feed.ID} ")
-                append("order by ${Article.DATE} ")
-                append(if (isNewestArticleTop) "desc " else "asc ")
-                append("limit 300")
-            }.toString()
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val feedId = cursor.getInt(6)
-                val feedTitle = cursor.getString(7)
-                val feedIconPath = cursor.getString(8)
-                val favoriteId = cursor.getInt(9)
-                val article = FavoritableArticle(id, title, url, status, point,
-                        dateLong, feedId, feedTitle, feedIconPath, favoriteId > 0)
-                articles.add(article)
+            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+                if (isNewestArticleTop) {
+                    database.articleQueries.getTop300OrderByDateDesc().executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                } else {
+                    database.articleQueries.getTop300OrderByDateAsc().executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
-        return@withContext articles
+        return@withContext emptyList()
     }
 
-    suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
+    suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         var searchKeyWord = keyword
-        val articles = mutableListOf<FavoritableArticle>()
         if (searchKeyWord.contains("%")) {
             searchKeyWord = searchKeyWord.replace("%", "$%")
         }
         if (searchKeyWord.contains("_")) {
             searchKeyWord = searchKeyWord.replace("_", "$" + "_")
         }
-        var columns = arrayOf(
-                Article.ID, Article.TITLE, Article.URL, Article.STATUS, Article.POINT, Article.DATE
-        ).joinToString(postfix = ", ") {
-            Article.TABLE_NAME + "." + it
-        }
-        columns += arrayOf(Feed.TITLE, Feed.ICON_PATH).joinToString { Feed.TABLE_NAME + "." + it }
-        var sql = "select " + columns + ", ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID}" +
-                " from " + Article.TABLE_NAME + " inner join " + Feed.TABLE_NAME +
-                " left outer join ${FavoriteArticle.TABLE_NAME}" +
-                " on " +
-                "(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) " +
-                " where " + Article.TABLE_NAME + "." + Article.TITLE + " like '%" + searchKeyWord + "%' escape '$' and " +
-                Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
-                " order by " + Article.DATE
-        sql += if (isNewestArticleTop) {
-            " desc"
-        } else {
-            " asc"
-        }
-
-        var cursor: Cursor? = null
         try {
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val feedTitle = cursor.getString(6)
-                val feedIconPath = cursor.getString(7)
-                val favoriteId = cursor.getInt(8)
-                val article = FavoritableArticle(id, title, url, status, point,
-                        dateLong, 0, feedTitle, feedIconPath, favoriteId > 0)
-                articles.add(article)
+            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+                if (isNewestArticleTop) {
+                    database.articleQueries.searchArticleOrderByDateDesc("%$searchKeyWord%").executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                } else {
+                    database.articleQueries.searchArticleOrderByDateAsc("%$searchKeyWord%").executeAsList().map {
+                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+                    }
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext articles
+        return@withContext emptyList()
     }
 
-    suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> {
-        return getArticlesOfRss(rssId, null, isNewestArticleTop)
+    suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
+        return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            if (isNewestArticleTop) {
+                database.articleQueries.getArticlesOfFeedsDesc(rssId.toLong()).executeAsList().map {
+                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                }
+            } else {
+                database.articleQueries.getArticlesOfFeedsAsc(rssId.toLong()).executeAsList().map {
+                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                }
+            }
+        }
     }
 
-    suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> {
-        return getArticlesOfRss(rssId, Article.UNREAD, isNewestArticleTop)
+    suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
+        return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            if (isNewestArticleTop) {
+                database.articleQueries.getUnreadArticlesOfFeedsDesc(rssId.toLong()).executeAsList().map {
+                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                }
+            } else {
+                database.articleQueries.getUnreadArticlesOfFeedsAsc(rssId.toLong()).executeAsList().map {
+                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                }
+            }
+        }
     }
 
-    suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(Dispatchers.IO) {
-        var cursor: Cursor? = null
-        var count = -1
+    suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
         try {
-            val selection = "${Article.FEEDID} = $rssId and ${Article.STATUS} = '${Article.UNREAD}'"
-            db.beginTransaction()
-            cursor = db.query(Article.TABLE_NAME, arrayOf(Article.ID), selection, null, null, null, null)
-            count = cursor.count
-            db.setTransactionSuccessful()
+            return@withContext database.transactionWithResult<Int> {
+                database.articleQueries.getUnreadCount(rssId.toLong()).executeAsOne().toInt()
+            }
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
-        return@withContext count
+        return@withContext -1
     }
 
-    private suspend fun getArticlesOfRss(rssId: Int, searchStatus: String?, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
-        val articles = mutableListOf<FavoritableArticle>()
-        val sql = StringBuilder().apply {
-            append("select ")
-            append("${Article.TABLE_NAME}.${Article.ID},")
-            append("${Article.TABLE_NAME}.${Article.TITLE},")
-            append("${Article.TABLE_NAME}.${Article.URL},")
-            append("${Article.TABLE_NAME}.${Article.STATUS},")
-            append("${Article.TABLE_NAME}.${Article.POINT},")
-            append("${Article.TABLE_NAME}.${Article.DATE},")
-            append("${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ID} ")
-            append("from ")
-            append("${Article.TABLE_NAME} ")
-            append("left outer join ${FavoriteArticle.TABLE_NAME} ")
-            append("on ")
-            append("(${Article.TABLE_NAME}.${Article.ID} = ${FavoriteArticle.TABLE_NAME}.${FavoriteArticle.ARTICLE_ID}) ")
-            append("where ")
-            if (!searchStatus.isNullOrBlank()) append("${Article.TABLE_NAME}.${Article.STATUS} = \"$searchStatus\" and ")
-            append("${Article.TABLE_NAME}.${Article.FEEDID} = $rssId ")
-            append("order by ${Article.DATE} ")
-            append(if (isNewestArticleTop) "desc" else "asc")
-        }.toString()
-        var cursor: Cursor? = null
+    suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): List<Article> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val favoriteId = cursor.getInt(6)
-                val article = FavoritableArticle(id, title, url, status, point,
-                        dateLong, rssId, "", "", favoriteId > 0)
-                articles.add(article)
+            return@withContext if (isNewestArticleTop) {
+                database.articleQueries.getUnreadArticlesOfCurationDesc(curationId.toLong()).executeAsList().map {
+                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
+                }
+            } else {
+                database.articleQueries.getUnreadArticlesOfCurationAsc(curationId.toLong()).executeAsList().map {
+                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext articles
+        return@withContext emptyList()
     }
 
-    suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
-        val articles = arrayListOf<Article>()
-        var sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
-                Article.TABLE_NAME + "." + Article.TITLE + "," +
-                Article.TABLE_NAME + "." + Article.URL + "," +
-                Article.TABLE_NAME + "." + Article.STATUS + "," +
-                Article.TABLE_NAME + "." + Article.POINT + "," +
-                Article.TABLE_NAME + "." + Article.DATE + "," +
-                Article.TABLE_NAME + "." + Article.FEEDID + "," +
-                Feed.TABLE_NAME + "." + Feed.TITLE + "," +
-                Feed.TABLE_NAME + "." + Feed.ICON_PATH +
-                " from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-                " on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-                Article.TABLE_NAME + "." + Article.STATUS + " = '" + Article.UNREAD + "' and " +
-                Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
-                " inner join " + Feed.TABLE_NAME +
-                " on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
-                " order by " + Article.DATE
-        sql += if (isNewestArticleTop) {
-            " desc"
-        } else {
-            " asc"
-        }
-        var cursor: Cursor? = null
+    suspend fun getAllArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): List<Article> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val feedId = cursor.getInt(6)
-                val feedTitle = cursor.getString(7)
-                val feedIconPath = cursor.getString(8)
-                val article = Article(id, title, url, status, point,
-                        dateLong, feedId, feedTitle, feedIconPath)
-                articles.add(article)
+            return@withContext if (isNewestArticleTop) {
+                database.articleQueries.getArticlesOfCurationDesc(curationId.toLong()).executeAsList().map {
+                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
+                }
+            } else {
+                database.articleQueries.getArticlesOfCurationAsc(curationId.toLong()).executeAsList().map {
+                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
+                }
             }
-            db.setTransactionSuccessful()
         } catch (e: Exception) {
             Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
         }
 
-        return@withContext articles
+        return@withContext emptyList()
     }
 
-    suspend fun getAllArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): ArrayList<Article> = withContext(Dispatchers.IO) {
-        val articles = arrayListOf<Article>()
-        var sql = "select " + Article.TABLE_NAME + "." + Article.ID + "," +
-                Article.TABLE_NAME + "." + Article.TITLE + "," +
-                Article.TABLE_NAME + "." + Article.URL + "," +
-                Article.TABLE_NAME + "." + Article.STATUS + "," +
-                Article.TABLE_NAME + "." + Article.POINT + "," +
-                Article.TABLE_NAME + "." + Article.DATE + "," +
-                Article.TABLE_NAME + "." + Article.FEEDID + "," +
-                Feed.TABLE_NAME + "." + Feed.TITLE + "," +
-                Feed.TABLE_NAME + "." + Feed.ICON_PATH +
-                " from (" + Article.TABLE_NAME + " inner join " + CurationSelection.TABLE_NAME +
-                " on " + CurationSelection.CURATION_ID + " = " + curationId + " and " +
-                Article.TABLE_NAME + "." + Article.ID + " = " + CurationSelection.TABLE_NAME + "." + CurationSelection.ARTICLE_ID + ")" +
-                " inner join " + Feed.TABLE_NAME +
-                " on " + Article.TABLE_NAME + "." + Article.FEEDID + " = " + Feed.TABLE_NAME + "." + Feed.ID +
-                " order by " + Article.DATE
-        sql += if (isNewestArticleTop) {
-            " desc"
-        } else {
-            " asc"
-        }
-        var cursor: Cursor? = null
-        try {
-            db.beginTransaction()
-            cursor = db.rawQuery(sql, null)
-            while (cursor.moveToNext()) {
-                val id = cursor.getInt(0)
-                val title = cursor.getString(1)
-                val url = cursor.getString(2)
-                val status = cursor.getString(3)
-                val point = cursor.getString(4)
-                val dateLong = cursor.getLong(5)
-                val feedId = cursor.getInt(6)
-                val feedTitle = cursor.getString(7)
-                val feedIconPath = cursor.getString(8)
-                val article = Article(id, title, url, status, point,
-                        dateLong, feedId, feedTitle, feedIconPath)
-                articles.add(article)
-            }
-            db.setTransactionSuccessful()
-        } catch (e: Exception) {
-            Timber.e(e)
-        } finally {
-            cursor?.close()
-            db.endTransaction()
-        }
-
-        return@withContext articles
-    }
+    private fun Articles.toArticle(): Article = Article(
+            id = _id.toInt(),
+            title = title,
+            url = url,
+            status = status,
+            point = point,
+            postedDate = date,
+            feedId = feedId.toInt(),
+            feedTitle = "",
+            feedIconPath = ""
+    )
 }

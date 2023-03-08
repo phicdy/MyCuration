@@ -1,18 +1,17 @@
 package com.phicdy.mycuration.di
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.data.repository.AdditionalSettingRepository
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
-import com.phicdy.mycuration.data.repository.FavoriteRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
+import com.phicdy.mycuration.repository.Database
+import com.squareup.sqldelight.android.AndroidSqliteDriver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,37 +26,15 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideSQLiteDatabase(@ApplicationContext context: Context): SQLiteDatabase =
-            DatabaseHelper(context = context).writableDatabase
-
-    @Singleton
-    @Provides
-    fun provideArticleRepository(sqLiteDatabase: SQLiteDatabase): ArticleRepository =
-            ArticleRepository(sqLiteDatabase)
-
-    @Singleton
-    @Provides
-    fun provideFilterRepository(sqLiteDatabase: SQLiteDatabase): FilterRepository =
-            FilterRepository(sqLiteDatabase)
-
-    @Singleton
-    @Provides
-    fun provideRssRepository(
-            sqLiteDatabase: SQLiteDatabase,
-            articleRepository: ArticleRepository,
-            filterRepository: FilterRepository
-    ): RssRepository =
-            RssRepository(sqLiteDatabase, articleRepository, filterRepository)
-
-    @Singleton
-    @Provides
-    fun provideCurationRepository(sqLiteDatabase: SQLiteDatabase): CurationRepository =
-            CurationRepository(sqLiteDatabase)
-
-    @Singleton
-    @Provides
-    fun provideFavoriteRepository(sqLiteDatabase: SQLiteDatabase): FavoriteRepository =
-            FavoriteRepository(sqLiteDatabase)
+    fun provideDatabase(
+            @ApplicationContext context: Context,
+    ): Database = Database(
+            AndroidSqliteDriver(
+                    schema = Database.Schema,
+                    context = context,
+                    name = "rss_manage"
+            )
+    )
 
     @Singleton
     @Provides

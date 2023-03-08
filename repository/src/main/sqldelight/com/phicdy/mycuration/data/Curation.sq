@@ -1,0 +1,55 @@
+CREATE TABLE curations (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+);
+
+insert:
+INSERT INTO curations(name)
+VALUES (?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
+updateNmae:
+UPDATE curations
+SET name = ?
+WHERE _id = ?;
+
+getAll:
+SELECT *
+FROM curations
+ORDER BY name;
+
+getCountByName:
+SELECT COUNT(*)
+FROM curations
+WHERE name = ?;
+
+getById:
+SELECT *
+FROM curations
+WHERE _id = ?;
+
+getCountOfAllUnreadArticlesOfCuration:
+SELECT COUNT(*)
+FROM articles
+INNER JOIN curationSelections
+WHERE curationSelections.curationId = ? AND articles.status = "unread" AND articles._id = curationSelections.articleId
+ORDER BY date;
+
+getAllCurationWords:
+SELECT *
+FROM curations
+INNER JOIN curationConditions
+WHERE curations._id = curationConditions.curationId
+ORDER BY curations._id;
+
+delete:
+DELETE FROM curations
+WHERE _id = ?;
+
+deleteAll:
+DELETE FROM curations;
+
+selectChanges:
+SELECT changes();

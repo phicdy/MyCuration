@@ -1,9 +1,5 @@
 package com.phicdy.mycuration.articlelist.action
 
-import com.nhaarman.mockitokotlin2.argumentCaptor
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
 import com.phicdy.mycuration.articlelist.ArticleItem
 import com.phicdy.mycuration.articlelist.store.OpenExternalWebBrowserStateStore
 import com.phicdy.mycuration.articlelist.store.OpenInternalWebBrowserStateStore
@@ -14,6 +10,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
 class OpenUrlActionCreatorTest {

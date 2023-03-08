@@ -1,0 +1,59 @@
+CREATE TABLE filters (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    keyword TEXT,
+    url TEXT,
+    title TEXT NOT NULL,
+    enabled INTEGER NOT NULL
+);
+
+insert:
+INSERT INTO filters(keyword, url, title, enabled)
+VALUES (?, ?, ?, ?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
+getAll:
+SELECT *
+FROM filters
+INNER JOIN filterFeedRegistrations
+INNER JOIN feeds
+WHERE filters._id = filterFeedRegistrations.filterId AND filterFeedRegistrations.feedId = feeds._id;
+
+getAllEnabled:
+SELECT *
+FROM filters
+INNER JOIN filterFeedRegistrations
+WHERE filterFeedRegistrations.feedId = ? AND filterFeedRegistrations.filterId = filters._id AND filters.enabled = 1;
+
+getById:
+SELECT *
+FROM filters
+INNER JOIN filterFeedRegistrations
+INNER JOIN feeds
+WHERE filters._id = ? AND filters._id = filterFeedRegistrations.filterId AND filterFeedRegistrations.feedId = feeds._id;
+
+getByTitleAndKeywordAndUrl:
+SELECT *
+FROM filters
+WHERE filters.title = ? AND keyword = ? AND url = ?;
+
+update:
+UPDATE filters
+SET keyword = ?, url = ?, title = ?
+WHERE _id = ?;
+
+updateEnabled:
+UPDATE filters
+SET enabled = ?
+WHERE _id = ?;
+
+delete:
+DELETE FROM filters
+WHERE _id = ?;
+
+deleteAll:
+DELETE FROM filters;
+
+selectChanges:
+SELECT changes();

@@ -45,7 +45,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver() {
     }
 
     private suspend fun handleAutoUpdate(context: Context) = coroutineScope {
-        val feeds = hiltEntryPoint.provideRssRepository().getAllFeedsWithNumOfUnreadArticles()
+        val feeds = hiltEntryPoint.provideRssRepository().getAllFeeds()
         hiltEntryPoint.provideNetworkTaskManager().updateAll(feeds).collect()
         val manager = AlarmManagerTaskManager(context)
         manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context)
@@ -56,7 +56,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver() {
 
     private suspend fun handleUpdateHatena(context: Context) {
         // Update Hatena point
-        val feeds = hiltEntryPoint.provideRssRepository().getAllFeedsWithNumOfUnreadArticles()
+        val feeds = hiltEntryPoint.provideRssRepository().getAllFeeds()
         if (feeds.isEmpty()) return
 
         // Update has higher priority
@@ -83,7 +83,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver() {
     }
 
     private suspend fun handleFixUnreadCount(context: Context) {
-        val rssList = hiltEntryPoint.provideRssRepository().getAllFeedsWithoutNumOfUnreadArticles()
+        val rssList = hiltEntryPoint.provideRssRepository().getAllFeeds()
         rssList.forEach {
             val size = hiltEntryPoint.provideArticleRepository().getUnreadArticlesOfRss(it.id, false).size
             hiltEntryPoint.provideRssRepository().updateUnreadArticleCount(it.id, size)

@@ -1,0 +1,66 @@
+CREATE TABLE feeds (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    url TEXT NOT NULL,
+    format TEXT NOT NULL,
+    siteUrl TEXT NOT NULL,
+    iconPath TEXT NOT NULL,
+    unreadArticle INTEGER NOT NULL
+);
+
+insert:
+INSERT INTO feeds(title, url, format, iconPath, siteUrl, unreadArticle)
+VALUES (?, ?, ?, ?, ?, ?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
+getNumOfRss:
+SELECT COUNT(*)
+FROM feeds;
+
+getAllFeeds:
+SELECT *
+FROM feeds
+ORDER BY title;
+
+getFeedByUrl:
+SELECT *
+FROM feeds
+WHERE url = ?;
+
+getFeedById:
+SELECT *
+FROM feeds
+WHERE _id = ?;
+
+getFeedByTitleAndUrlAndFormat:
+SELECT *
+FROM feeds
+WHERE title = ? AND url = ? AND format = ?;
+
+updateTitle:
+UPDATE feeds
+SET title = ?
+WHERE _id = ?;
+
+updateUnreadArticle:
+UPDATE feeds
+SET unreadArticle = ?
+WHERE _id = ?;
+
+updateIconPath:
+UPDATE feeds
+SET iconPath = ?
+WHERE siteUrl = ?;
+
+selectChanges:
+SELECT changes();
+
+delete:
+DELETE FROM feeds
+WHERE _id = ?;
+
+deleteAll:
+DELETE FROM feeds;
+

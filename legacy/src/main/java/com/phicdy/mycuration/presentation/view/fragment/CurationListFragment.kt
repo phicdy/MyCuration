@@ -87,9 +87,7 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
         super.onActivityCreated(savedInstanceState)
         curationRecyclerView = activity?.findViewById(R.id.rv_curation) as RecyclerView
         emptyView = activity?.findViewById(R.id.emptyView_curation) as TextView
-        launch {
-            presenter.activityCreated()
-        }
+        presenter.activityCreated()
     }
 
     override fun onDetach() {
@@ -114,8 +112,8 @@ class CurationListFragment : Fragment(), CurationListView, CoroutineScope {
         registerForContextMenu(curationRecyclerView)
     }
 
-    override fun initListBy(curations: ArrayList<Curation>) {
-        curationListAdapter = CurationListAdapter(curations)
+    override fun initListBy(curations: List<Curation>) {
+        curationListAdapter = CurationListAdapter(ArrayList(curations))
         curationRecyclerView.adapter = curationListAdapter
         curationRecyclerView.layoutManager = LinearLayoutManager(activity)
         curationListAdapter.notifyDataSetChanged()

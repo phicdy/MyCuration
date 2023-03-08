@@ -47,6 +47,11 @@ android {
         disable "RtlHardcoded"
         abortOnError true
     }
+
+    packagingOptions {
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+    }
 }
 
 spoon {
@@ -67,12 +72,16 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     androidTestImplementation 'org.assertj:assertj-core:3.11.1'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
 
     implementation project(':core')
+    implementation project(':di_common')
     implementation project(':domain')
     implementation project(':entity')
+    implementation project(':feature_add_curation')
     implementation project(':feature_article_list')
     implementation project(':feature_curated_article_list')
+    implementation project(':feature_license')
     implementation project(':feature_rss_list')
     implementation project(':legacy')
     implementation project(':repository')
@@ -90,7 +99,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
-    implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'com.facebook.stetho:stetho:1.6.0'
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.0'
 
@@ -103,6 +112,9 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt_version"
 
     implementation "com.jakewharton.timber:timber:$timber_version"
+
+    implementation "com.squareup.sqldelight:android-driver:$sql_delight_version"
+    implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

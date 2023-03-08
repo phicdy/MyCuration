@@ -29,14 +29,5 @@ data class Article(
 
         const val DEDAULT_HATENA_POINT = "-1"
 
-        const val CREATE_TABLE_SQL = "create table " + TABLE_NAME + "(" +
-                ID + " integer primary key autoincrement," +
-                TITLE + " text," +
-                URL + " text," +
-                STATUS + " text default " + UNREAD + "," +
-                POINT + " text," +
-                DATE + " text," +
-                FEEDID + " integer," +
-                "foreign key(" + FEEDID + ") references " + Feed.TABLE_NAME + "(" + Feed.ID + "))"
     }
 }

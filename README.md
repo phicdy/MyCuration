@@ -1,4 +1,4 @@
-## MyCuration  [![CircleCI](https://circleci.com/gh/phicdy/MyCuration.svg?style=svg)](https://circleci.com/gh/phicdy/MyCuration) [![codecov](https://codecov.io/gh/phicdy/MyCuration/branch/master/graph/badge.svg)](https://codecov.io/gh/phicdy/MyCuration)
+## MyCuration  ![Github Actions](https://github.com/phicdy/MyCuration/actions/workflows/android.yml/badge.svg) [![codecov](https://codecov.io/gh/phicdy/MyCuration/branch/master/graph/badge.svg)](https://codecov.io/gh/phicdy/MyCuration)
 
 <a href="https://play.google.com/store/apps/details?id=com.phicdy.mycuration&hl=ja"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="80px"/></a> 
 
@@ -42,6 +42,7 @@ Set status to read automatically by user settings
 
 * [Kotlin coroutines](https://github.com/Kotlin/kotlinx.coroutines)
 * [Dagger Hilt](https://dagger.dev/hilt/)
+* [SQLDelight](https://github.com/cashapp/sqldelight)
 * [RecyclerView](https://dl.google.com/dl/android/maven2/index.html)
 * [Retrofit](https://github.com/square/retrofit)
 * [Glide](https://github.com/bumptech/glide)

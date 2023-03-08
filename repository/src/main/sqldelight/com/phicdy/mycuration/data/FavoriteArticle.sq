@@ -1,0 +1,37 @@
+CREATE TABLE favoriteArticles (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    articleId INTEGER NOT NULL,
+    FOREIGN KEY(articleId) REFERENCES articles(_id)
+);
+
+insert:
+INSERT INTO favoriteArticles(articleId)
+VALUES (?);
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
+getAllOrderByAsc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles.feedId = feeds._id
+ORDER BY date ASC;
+
+getAllOrderByDesc:
+SELECT *
+FROM articles
+INNER JOIN feeds
+LEFT OUTER JOIN favoriteArticles
+ON (articles._id = favoriteArticles.articleId)
+WHERE articles._id = favoriteArticles.articleId AND articles.feedId = feeds._id
+ORDER BY date DESC;
+
+delete:
+DELETE FROM favoriteArticles
+WHERE articleId = ?;
+
+selectChanges:
+SELECT changes();

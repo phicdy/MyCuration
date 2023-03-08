@@ -1,23 +1,31 @@
 package com.phicdy.mycuration.domain.rss
 
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.mycuration.data.db.DatabaseHelper
+import com.phicdy.mycuration.CoroutineTestRule
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.repository.Database
 import com.phicdy.mycuration.util.UrlUtil
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class RssParserTest {
+
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     private val callback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {}
@@ -27,23 +35,32 @@ class RssParserTest {
     private lateinit var rssRepository: RssRepository
     private lateinit var parser: RssParser
 
+    private val db = Database(
+            AndroidSqliteDriver(
+                    schema = Database.Schema,
+                    context = ApplicationProvider.getApplicationContext(),
+                    name = "rss_manage"
+            )
+    )
+
     @Before
     @Throws(Exception::class)
     fun setUp() {
         parser = RssParser()
-        val helper = DatabaseHelper(ApplicationProvider.getApplicationContext())
         rssRepository = RssRepository(
-                helper.writableDatabase,
-                ArticleRepository(helper.writableDatabase),
-                FilterRepository(helper.writableDatabase)
+                db,
+                ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope),
+                FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider),
+                coroutineTestRule.testCoroutineScope,
+                coroutineTestRule.testCoroutineDispatcherProvider
         )
-        deleteAll(helper.writableDatabase)
+        deleteAll(db)
     }
 
     @After
     fun tearDown() {
-        val db = DatabaseHelper(ApplicationProvider.getApplicationContext()).writableDatabase
         deleteAll(db)
+        coroutineTestRule.testCoroutineScope.cleanupTestCoroutines()
     }
 
     @Test

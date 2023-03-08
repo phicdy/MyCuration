@@ -1,18 +1,21 @@
-<LinearLayout android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_filter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:drawSelectorOnTop="false" />
+        android:clipToPadding="false"
+        android:drawSelectorOnTop="false"
+        android:paddingBottom="64dp" />
 
     <TextView
         android:id="@+id/filter_emptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone"
-        android:text="@string/no_filter" />
+        android:text="@string/no_filter"
+        android:visibility="gone" />
 </LinearLayout>

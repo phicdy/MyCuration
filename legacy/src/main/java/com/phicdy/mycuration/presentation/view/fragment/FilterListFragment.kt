@@ -66,9 +66,7 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
         activity?.let {
             filtersRecyclerView = it.findViewById(R.id.rv_filter) as RecyclerView
             emptyView = it.findViewById(R.id.filter_emptyView) as TextView
-            launch {
-                presenter.onActivityCreated()
-            }
+            presenter.onActivityCreated()
         }
     }
 

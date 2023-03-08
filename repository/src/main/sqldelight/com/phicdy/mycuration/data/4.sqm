@@ -1,0 +1,5 @@
+CREATE TABLE favoriteArticles (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    articleId INTEGER,
+    FOREIGN KEY(articleId) REFERENCES articles(_id)
+);

@@ -44,13 +44,6 @@ data class Filter(
         const val TRUE = 1
         const val FALSE = 0
 
-        const val CREATE_TABLE_SQL = "create table " + TABLE_NAME + "(" +
-                ID + " integer primary key autoincrement," +
-                KEYWORD + " text," +
-                URL + " text," +
-                TITLE + " text," +
-                ENABLED + " integer)"
-
         @Suppress("DEPRECATION")
         const val CREATE_TABLE_SQL_VER2 = "create table " + TABLE_NAME + "(" +
                 ID + " integer primary key autoincrement," +

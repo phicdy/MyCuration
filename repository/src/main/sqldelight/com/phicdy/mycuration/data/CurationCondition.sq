@@ -1,0 +1,23 @@
+CREATE TABLE curationConditions (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    word TEXT NOT NULL,
+    curationId INTEGER NOT NULL,
+    FOREIGN KEY(curationId) REFERENCES curations(_id)
+);
+
+insert:
+INSERT INTO curationConditions(curationId, word)
+VALUES (?, ?);
+
+getAll:
+SELECT *
+FROM curationConditions
+WHERE curationId = ?;
+
+delete:
+DELETE FROM curationConditions
+WHERE curationId = ?;
+
+deleteAll:
+DELETE FROM curationConditions;
+

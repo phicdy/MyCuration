@@ -11,7 +11,6 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import com.phicdy.mycuration.data.db.DatabaseHelper
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
@@ -184,7 +183,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
             activity?.let { activity ->
                 prefImport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
-                        val currentDb = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
+                        val currentDb = activity.getDatabasePath(DATABASE_NAME)
                         presenter.onImportDatabaseClicked(currentDb)
                         ToastHelper.showToast(activity, getString(R.string.import_db), Toast.LENGTH_SHORT)
                     }
@@ -193,7 +192,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                 val prefExport = requirePreference<Preference>(R.string.key_export_db)
                 prefExport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
-                        val currentDb = activity.getDatabasePath(DatabaseHelper.DATABASE_NAME)
+                        val currentDb = activity.getDatabasePath(DATABASE_NAME)
                         presenter.onExportDatabaseClicked(currentDb)
                         ToastHelper.showToast(activity, getString(R.string.export_db), Toast.LENGTH_SHORT)
                     }
@@ -309,5 +308,9 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         @FragmentScoped
         @Provides
         fun provideSettingView(fragment: Fragment): SettingView = fragment as SettingView
+    }
+
+    companion object {
+        private const val DATABASE_NAME = "rss_manage"
     }
 }

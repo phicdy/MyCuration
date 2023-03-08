@@ -17,6 +17,8 @@ import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.FileUtil
 import com.phicdy.mycuration.util.log.TimberTree
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -25,6 +27,8 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class MyApplication : Application() {
+
+    val applicationScope = CoroutineScope(SupervisorJob())
 
     // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
     companion object {
