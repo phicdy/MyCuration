@@ -32,8 +32,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
         xml.enabled true
         html.enabled true
         csv.enabled false
-        xml.destination new File("${buildDir}/reports/jacoco/jacocoTestReport.xml")
-        html.destination new File("${buildDir}/reports/jacoco/html")
         getClassDirectories().setFrom(
                 fileTree(dir: "${buildDir}/intermediates/classes/debug",
                         exclude: coverageExcludeFiles) +
