@@ -3,6 +3,9 @@
     "config:base",
     ":timezone(Asia/Tokyo)"
   ],
+  "labels": [
+    "library_update"
+  ],
   "packageRules": [
     {
       "groupName": "androidx.activity",
