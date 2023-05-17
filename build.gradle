@@ -102,7 +102,7 @@ subprojects {
             implementation 'androidx.compose.material:material-icons-extended'
             implementation 'androidx.compose.runtime:runtime-livedata'
 
-            implementation 'androidx.activity:activity-compose:1.6.1'
+            implementation 'androidx.activity:activity-compose:1.7.1'
             implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
 
             testImplementation 'junit:junit:4.13.2'
