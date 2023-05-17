@@ -2,7 +2,7 @@
 jetpack_compose_compiler = "1.4.7"
 kotlin = "1.8.21"
 coroutine = "1.7.1"
-accompanist = "0.28.0"
+accompanist = "0.30.1"
 lifecycle = "2.5.1"
 arch_core_testing = "2.2.0"
 appcompat = "1.6.1"
