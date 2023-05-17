@@ -3,19 +3,10 @@
     "config:base",
     ":timezone(Asia/Tokyo)"
   ],
+  "labels": [
+    "library_update"
+  ],
   "packageRules": [
-    {
-      "groupName": "Jetpack Compose",
-      "matchPackagePatterns": [
-        "^androidx\\.compose:",
-        "^androidx\\.compose\\.animation:",
-        "^androidx\\.compose\\.compiler:",
-        "^androidx\\.compose\\.foundation:",
-        "^androidx\\.compose\\.material:",
-        "^androidx\\.compose\\.runtime:",
-        "^androidx\\.compose\\.ui:"
-      ]
-    },
     {
       "groupName": "androidx.activity",
       "matchPackagePatterns": [
@@ -52,8 +43,11 @@
       }
     },
     {
-      "groupName": "kotlinx.coroutines",
+      "groupName": "Jetpack Compose compiler and Kotlin",
       "matchPackagePatterns": [
+        "^androidx\\.compose\\.compiler:",
+        "^androidx\\.compose:",
+        "org\\.jetbrains\\.kotlin:",
         "^org\\.jetbrains\\.kotlinx:kotlinx-coroutines"
       ]
     }
