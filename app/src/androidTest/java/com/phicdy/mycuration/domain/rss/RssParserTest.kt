@@ -74,11 +74,6 @@ class RssParserTest {
         assertEquals("https://news.yahoo.co.jp/rss/topics/top-picks.xml", addedFeed?.url)
         assertEquals("https://news.yahoo.co.jp/topics/top-picks?source=rss", addedFeed?.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
-
-        //https://feed.japan.cnet.com/rss/index.rdf
-        //https://itpro.nikkeibp.co.jp/rss/ITpro.rdf
-        //https://blog.livedoor.jp/itsoku/index.rdf
-        //https://sierblog.com/index.rdf
     }
 
     @Test
@@ -114,15 +109,6 @@ class RssParserTest {
         assertEquals("https://www.infoq.com/jp/feed", infoqFeed?.url)
         assertEquals("https://www.infoq.com/jp", infoqFeed?.siteUrl)
         assertEquals(Feed.DEDAULT_ICON_PATH, infoqFeed?.iconPath)
-
-        //https://blog.riywo.com/feed
-        //https://dev.classmethod.jp/feed/
-        //https://ggsoku.com/feed
-        //https://labs.gree.jp/blog/feed
-        //https://htcsok.info/feed/
-        //https://developer.hatenastaff.com/rss
-        //https://rss.rssad.jp/rss/itmtop/2.0/itmedia_all.xml
-        //https://developers.linecorp.com/blog/ja/?feed=rss2
     }
 
     @Test

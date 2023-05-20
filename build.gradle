@@ -56,8 +56,6 @@ subprojects {
             targetSdkVersion 33
             versionName "1.10.0"
             versionCode 60
-
-            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         }
 
         if (name != 'benchmark') {
