@@ -57,6 +57,7 @@ android {
     lint {
         abortOnError true
         disable 'MissingTranslation', 'RtlHardcoded'
+        lintConfig = file("lint.xml")
     }
 }
 
