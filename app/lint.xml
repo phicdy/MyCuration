@@ -7,4 +7,7 @@
     <issue id="InvalidPackage">
         <ignore regexp="junit-.+.jar" />
     </issue>
+    <issue id="NotificationPermission">
+        <ignore regexp="com.bumptech.glide.request.target.NotificationTarget" />
+    </issue>
 </lint>

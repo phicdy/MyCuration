@@ -46,17 +46,18 @@ android {
     buildFeatures {
         viewBinding true
     }
-
-    lintOptions {
-        lintConfig = file("$rootDir/android-lint.xml")
-        disable 'MissingTranslation'
-        disable "RtlHardcoded"
-        abortOnError true
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/AL2.0', 'META-INF/LGPL2.1']
+        }
     }
 
-    packagingOptions {
-        exclude 'META-INF/AL2.0'
-        exclude 'META-INF/LGPL2.1'
+
+    namespace 'com.phicdy.mycuration'
+    lint {
+        abortOnError true
+        disable 'MissingTranslation', 'RtlHardcoded'
+        lintConfig = file("lint.xml")
     }
 }
 
