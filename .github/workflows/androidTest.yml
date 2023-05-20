@@ -41,6 +41,10 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          disable-animations: true
+          disk-size: 6000M
+          heap-size: 600M
           script: ./gradlew connectedDebugAndroidTest -x :benchmark:connectedBenchmarkAndroidTest
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
