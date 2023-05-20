@@ -60,6 +60,8 @@ jobs:
         env:
           ADMOB_ID_MYCURATION: ${{ secrets.ADMOB_ID_MYCURATION }}
         run: touch ~/.gradle/gradle.properties && echo ADMOB_ID_MYCURATION=$ADMOB_ID_MYCURATION > ~/.gradle/gradle.properties
+      - name: Build AndroidTest apps
+        run: ./gradlew packageDebug packageDebugAndroidTest --daemon
       - name: Run androidTest
         uses: reactivecircus/android-emulator-runner@v2
         with:
