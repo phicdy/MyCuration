@@ -49,6 +49,7 @@ jobs:
           disk-size: 6000M
           heap-size: 600M
           emulator-boot-timeout: 12000
+          ram-size: 4096M
           script: ./gradlew connectedDebugAndroidTest -x :benchmark:connectedBenchmarkAndroidTest
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
