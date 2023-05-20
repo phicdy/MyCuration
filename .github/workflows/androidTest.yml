@@ -18,11 +18,11 @@ jobs:
           - 29
     steps:
       - uses: actions/checkout@v3
-      - name: set up JDK 11
+      - name: set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
@@ -41,7 +41,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          script: ./gradlew connectedDebugAndroidTest
+          script: ./gradlew connectedDebugAndroidTest -x :benchmark:connectedBenchmarkAndroidTest
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: always()
