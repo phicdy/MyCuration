@@ -1,5 +1,5 @@
 [versions]
-gradle = "8.0.1"
+gradle = "8.0.2"
 jetpack_compose_compiler = "1.4.7"
 kotlin = "1.8.21"
 coroutine = "1.7.1"
