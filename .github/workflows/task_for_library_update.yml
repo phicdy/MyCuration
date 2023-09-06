@@ -76,7 +76,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: ./gradlew :app:connectedDebugAndroidTest --daemon
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v3
+        uses: mikepenz/action-junit-report@v4
         if: always()
         with:
           report_paths: '**/build/outputs/androidTest-results/connected//TEST-*.xml'
