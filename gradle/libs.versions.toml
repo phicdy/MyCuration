@@ -75,7 +75,7 @@ sqldelight = { module = "com.squareup.sqldelight:android-driver", version.ref = 
 sqldelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sql_delight" }
 sqldelight-gradle = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sql_delight" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.16.1" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.16.2" }
 
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
