@@ -21,7 +21,7 @@ glide = "4.16.0"
 work = "2.8.1"
 dagger_hilt = "2.48.1"
 sql_delight = "1.5.5"
-sqlite = "2.3.1"
+sqlite = "2.4.0"
 timber = "5.0.1"
 flipper = "0.230.0"
 
