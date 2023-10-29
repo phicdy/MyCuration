@@ -105,7 +105,7 @@ jobs:
         env:
           BASE_BRANCH: ${{ github.base_ref }}
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      - uses: peter-evans/find-comment@bc3fcb27044f7fbfbaefc7031bbaecde5859f7d9
+      - uses: peter-evans/find-comment@d743528ff9cc2027f7debbaad2544a1f4672ea99
         id: find_comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
