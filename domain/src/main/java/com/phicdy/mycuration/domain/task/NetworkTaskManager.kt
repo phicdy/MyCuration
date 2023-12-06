@@ -55,8 +55,8 @@ class NetworkTaskManager(
             val savedArtices = articleRepository.saveNewArticles(newArticleList, feed.id)
             curationRepository.saveCurationsOf(savedArtices)
             feed.unreadAriticlesCount += newArticleList.size
-            
-            newArticleList.map {
+
+            newArticleList.forEach {
                 launch {
                     val hatenaBookmarkApi = HatenaBookmarkApi()
                     val point = hatenaBookmarkApi.request(it.url)
