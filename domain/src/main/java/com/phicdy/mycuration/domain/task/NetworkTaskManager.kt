@@ -19,18 +19,18 @@ import timber.log.Timber
 import java.io.IOException
 
 class NetworkTaskManager(
-        private val articleRepository: ArticleRepository,
-        private val rssRepository: RssRepository,
-        private val curationRepository: CurationRepository,
-        private val filterRepository: FilterRepository,
-        private val client: OkHttpClient
+    private val articleRepository: ArticleRepository,
+    private val rssRepository: RssRepository,
+    private val curationRepository: CurationRepository,
+    private val filterRepository: FilterRepository,
+    private val client: OkHttpClient
 ) {
 
     val isUpdatingFeed: Boolean get() = false
 
     suspend fun updateAll(rssList: List<Feed>): Flow<Feed> = flow {
         rssList.filter { it.id > 0 }
-                .map { emit(updateFeed(it)) }
+            .map { emit(updateFeed(it)) }
     }
 
     suspend fun updateFeed(feed: Feed): Feed = withContext(Dispatchers.IO) {
