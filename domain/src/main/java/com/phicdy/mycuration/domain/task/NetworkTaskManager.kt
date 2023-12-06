@@ -52,19 +52,17 @@ class NetworkTaskManager(
                 return@withContext feed
             }
 
-            newArticleList
-                    .also {
-                        val savedArtices = articleRepository.saveNewArticles(it, feed.id)
-                        curationRepository.saveCurationsOf(savedArtices)
-                        feed.unreadAriticlesCount += it.size
-                    }
-                    .map {
-                        launch {
-                            val hatenaBookmarkApi = HatenaBookmarkApi()
-                            val point = hatenaBookmarkApi.request(it.url)
-                            articleRepository.saveHatenaPoint(it.url, point)
-                        }
-                    }
+            val savedArtices = articleRepository.saveNewArticles(newArticleList, feed.id)
+            curationRepository.saveCurationsOf(savedArtices)
+            feed.unreadAriticlesCount += newArticleList.size
+            
+            newArticleList.map {
+                launch {
+                    val hatenaBookmarkApi = HatenaBookmarkApi()
+                    val point = hatenaBookmarkApi.request(it.url)
+                    articleRepository.saveHatenaPoint(it.url, point)
+                }
+            }
 
             FilterTask(articleRepository, filterRepository).applyFiltering(feed.id)
 
