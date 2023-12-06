@@ -59,7 +59,7 @@ class NetworkTaskManager(
                         feed.unreadAriticlesCount += it.size
                     }
                     .map {
-                        GlobalScope.launch {
+                        launch {
                             val hatenaBookmarkApi = HatenaBookmarkApi()
                             val point = hatenaBookmarkApi.request(it.url)
                             articleRepository.saveHatenaPoint(it.url, point)
