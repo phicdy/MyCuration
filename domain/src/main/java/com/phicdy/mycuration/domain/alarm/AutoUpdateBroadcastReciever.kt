@@ -46,7 +46,7 @@ class AutoUpdateBroadcastReciever : BroadcastReceiver() {
 
     private suspend fun handleAutoUpdate(context: Context) = coroutineScope {
         val feeds = hiltEntryPoint.provideRssRepository().getAllFeeds()
-        hiltEntryPoint.provideNetworkTaskManager().updateAll(feeds).collect()
+        hiltEntryPoint.provideNetworkTaskManager().updateAll(feeds)
         val manager = AlarmManagerTaskManager(context)
         manager.setNewHatenaUpdateAlarmAfterFeedUpdate(context)
 

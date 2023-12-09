@@ -29,10 +29,9 @@ class NetworkTaskManager(
 
     val isUpdatingFeed: Boolean get() = false
 
-    suspend fun updateAll(rssList: List<Feed>): Flow<Feed> = flow {
+    suspend fun updateAll(rssList: List<Feed>): List<Feed> =
         rssList.filter { it.id > 0 }
-            .map { emit(updateFeed(it)) }
-    }
+            .map { updateFeed(it) }
 
     suspend fun updateFeed(feed: Feed): Feed = withContext(Dispatchers.IO) {
         if (feed.url.isEmpty()) return@withContext feed
