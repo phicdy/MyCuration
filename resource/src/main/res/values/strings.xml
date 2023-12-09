@@ -90,6 +90,8 @@
     <string name="debug">デバッグ</string>
     <string name="import_db">データベースのインポート</string>
     <string name="export_db">データベースのエクスポート</string>
+    <string name="export_db_succeed">データベースのエクスポートに成功</string>
+    <string name="export_db_fail">データベースのエクスポートに失敗</string>
     <string name="add_test_rss">テストRSS挿入</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_launch_tab">keyLaunchTab</string>

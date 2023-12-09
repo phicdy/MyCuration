@@ -5,7 +5,7 @@ import java.io.InputStream
 
 interface AdditionalSettingApi {
 
-    suspend fun exportDb(currentDb: File)
+    suspend fun exportDb(currentDb: File): Boolean
     suspend fun importDb(currentDb: File, importDb: InputStream)
     suspend fun addDebugRss()
 }

@@ -176,7 +176,6 @@ class SettingPresenter @Inject constructor(
         addtionalSettingApi.importDb(currentDb, uri)
     }
 
-    suspend fun onExportDatabaseClicked(currentDb: File) = coroutineScope {
+    suspend fun onExportDatabaseClicked(currentDb: File): Boolean =
         addtionalSettingApi.exportDb(currentDb)
-    }
 }

@@ -18,17 +18,21 @@ class AdditionalSettingRepository(
     private val rssRepository: RssRepository
 ) : AdditionalSettingApi {
 
-    override suspend fun exportDb(currentDb: File) = withContext(Dispatchers.IO) {
+    /**
+     * @return true if succeeded
+     */
+    override suspend fun exportDb(currentDb: File): Boolean = withContext(Dispatchers.IO) {
         try {
             val sdcardRootPath = FileUtil.sdCardRootPath
             Timber.d("SD Card path: %s", sdcardRootPath)
-            val backupStrage = if (sdcardRootPath != null && FileUtil.isSDCardMouted(sdcardRootPath)) {
-                Timber.d("SD card is mounted")
-                File(sdcardRootPath)
-            } else {
-                Timber.d("not mounted")
-                Environment.getExternalStorageDirectory()
-            }
+            val backupStrage =
+                if (sdcardRootPath != null && FileUtil.isSDCardMouted(sdcardRootPath)) {
+                    Timber.d("SD card is mounted")
+                    File(sdcardRootPath)
+                } else {
+                    Timber.d("not mounted")
+                    Environment.getExternalStorageDirectory()
+                }
             if (backupStrage.canWrite()) {
                 Timber.d("Backup storage is writable")
 
@@ -74,12 +78,15 @@ class AdditionalSettingRepository(
                     shmSrc.close()
                     shmDst.close()
                 }
+                true
             } else {
                 // TODO Runtime Permission
                 Timber.d("SD Card is not writabble, enable storage permission in Android setting")
+                false
             }
         } catch (e: Exception) {
             Timber.e(e)
+            false
         }
     }
 

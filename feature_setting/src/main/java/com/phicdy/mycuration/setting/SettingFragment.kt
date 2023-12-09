@@ -199,8 +199,12 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                 prefExport.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     launch {
                         val currentDb = activity.getDatabasePath(DATABASE_NAME)
-                        presenter.onExportDatabaseClicked(currentDb)
-                        ToastHelper.showToast(activity, getString(R.string.export_db), Toast.LENGTH_SHORT)
+                        val result = presenter.onExportDatabaseClicked(currentDb)
+                        if (result) {
+                            ToastHelper.showToast(activity, getString(R.string.export_db_succeed), Toast.LENGTH_SHORT)
+                        } else {
+                            ToastHelper.showToast(activity, getString(R.string.export_db_fail), Toast.LENGTH_SHORT)
+                        }
                     }
                     true
                 }
