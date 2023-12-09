@@ -242,7 +242,7 @@ class SearchArticleTest : UiTest() {
                         testArticlePoint, testArticleDateLong, feed!!.id, feed.title, ""
                 )
         )
-        articleRepository.saveNewArticles(articles, feed.id)
+        articleRepository.saveNewArticles(articles)
     }
 
     private fun childAtPosition(

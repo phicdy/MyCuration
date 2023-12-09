@@ -76,15 +76,14 @@ class ArticleRepository @Inject constructor(
      * Save method for new articles
      *
      * @param articles Article array to save
-     * @param feedId Feed ID of the articles
      */
-    suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> {
+    suspend fun saveNewArticles(articles: List<Article>): List<Article> {
         return withContext(applicationCoroutineScope.coroutineContext) {
             val result = arrayListOf<Article>()
             try {
                 database.articleQueries.transaction {
                     articles.forEach { article ->
-                        database.articleQueries.insert(article.title, article.url, article.status, article.point, article.postedDate, feedId.toLong())
+                        database.articleQueries.insert(article.title, article.url, article.status, article.point, article.postedDate, article.feedId.toLong())
                         val id = database.articleQueries.selectLastInsertRowId().executeAsOne().toInt()
                         result.add(Article(
                                 id = id,

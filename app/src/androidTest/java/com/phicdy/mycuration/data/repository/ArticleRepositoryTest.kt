@@ -66,7 +66,7 @@ class ArticleRepositoryTest {
             val testUnreadArticles = arrayListOf(Article(1, title,
                     TEST_ARTICLE_URL, Article.UNREAD, "", Date().time, rss.id, "", "")
             )
-            articleRepository.saveNewArticles(testUnreadArticles, rss.id)
+            articleRepository.saveNewArticles(testUnreadArticles)
             val list = articleRepository.searchArticles(title, true)
             assertEquals(1, list.size)
             assertEquals(title, list[0].title)
@@ -138,7 +138,7 @@ class ArticleRepositoryTest {
             add(doubleQuotationTitle)
             add(japaneseTitle)
         }
-        val savedArticles = articleRepository.saveNewArticles(testUnreadArticles, id)
+        val savedArticles = articleRepository.saveNewArticles(testUnreadArticles)
         curationRepository.saveCurationsOf(savedArticles)
         rssRepository.updateUnreadArticleCount(id, testUnreadArticles.size)
 
@@ -146,7 +146,7 @@ class ArticleRepositoryTest {
                 Article.READ, "", now + 4, id, "", "")
         testReadArticles.clear()
         testReadArticles.add(readArticle)
-        val savedArtices = articleRepository.saveNewArticles(testReadArticles, id)
+        val savedArtices = articleRepository.saveNewArticles(testReadArticles)
         curationRepository.saveCurationsOf(savedArtices)
     }
 

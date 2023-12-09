@@ -54,7 +54,7 @@ class HatenaBookmarkApiTest {
         val articles = ArrayList<Article>()
         val testUrl = "http://qiita.com/phicdy/items/1bcce3d6f040fc48f7bf"
         articles.add(Article(1, "hoge", testUrl, Article.UNREAD, "", 1, testFeed!!.id, "", ""))
-        articleRepository.saveNewArticles(articles, testFeed.id)
+        articleRepository.saveNewArticles(articles)
 
         val hatenaBookmarkApi = HatenaBookmarkApi()
         val point = hatenaBookmarkApi.request(testUrl)
@@ -68,7 +68,7 @@ class HatenaBookmarkApiTest {
         val articles = ArrayList<Article>()
         val testUrl = "http://phicdy.hatenablog.com/entry/2014/09/01/214055"
         articles.add(Article(1, "hoge", testUrl, Article.UNREAD, "", 1, testFeed!!.id, "", ""))
-        articleRepository.saveNewArticles(articles, testFeed.id)
+        articleRepository.saveNewArticles(articles)
 
         // Start request
         val hatenaBookmarkApi = HatenaBookmarkApi()

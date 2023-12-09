@@ -43,6 +43,7 @@ class NetworkTaskManager(
             val articles = parser.parseArticlesFromRss(inputStream)
             val storedUrlList = articleRepository.getStoredUrlListIn(articles)
             val newArticleList = articles.filter { it.url !in storedUrlList }
+                .map { it.copy(feedId = feed.id) }
             if (newArticleList.isEmpty()) {
                 val size = articleRepository.getUnreadArticleCount(feed.id)
                 rssRepository.updateUnreadArticleCount(feed.id, size)
@@ -51,7 +52,7 @@ class NetworkTaskManager(
                 return@withContext feed
             }
 
-            val savedArtices = articleRepository.saveNewArticles(newArticleList, feed.id)
+            val savedArtices = articleRepository.saveNewArticles(newArticleList)
             curationRepository.saveCurationsOf(savedArtices)
             feed.unreadAriticlesCount += newArticleList.size
 
