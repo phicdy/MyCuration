@@ -8,6 +8,7 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
+import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
@@ -47,7 +48,14 @@ object RepositoryModule {
             curationRepository: CurationRepository,
             filterRepository: FilterRepository,
             okHttpClient: OkHttpClient
-    ): NetworkTaskManager = NetworkTaskManager(articleRepository, rssRepository, curationRepository, filterRepository, okHttpClient)
+    ): NetworkTaskManager = NetworkTaskManager(
+        articleRepository,
+        rssRepository,
+        curationRepository,
+        filterRepository,
+        okHttpClient,
+        RssParser()
+    )
 
     @Singleton
     @Provides

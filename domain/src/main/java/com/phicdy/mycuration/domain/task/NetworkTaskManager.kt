@@ -23,7 +23,8 @@ class NetworkTaskManager(
     private val rssRepository: RssRepository,
     private val curationRepository: CurationRepository,
     private val filterRepository: FilterRepository,
-    private val client: OkHttpClient
+    private val client: OkHttpClient,
+    private val parser :RssParser
 ) {
 
     val isUpdatingFeed: Boolean get() = false
@@ -40,7 +41,6 @@ class NetworkTaskManager(
             val request = Request.Builder().url(feed.url).build()
             val response = client.newCall(request).execute()
             val inputStream = response.body()?.byteStream() ?: return@withContext feed
-            val parser = RssParser()
             val articles = parser.parseArticlesFromRss(inputStream)
             val storedUrlList = articleRepository.getStoredUrlListIn(articles)
             val newArticleList = articles.filter { it.url !in storedUrlList }
