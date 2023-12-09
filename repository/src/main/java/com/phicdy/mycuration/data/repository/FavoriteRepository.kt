@@ -16,7 +16,7 @@ class FavoriteRepository @Inject constructor(
     suspend fun store(articleId: Int): Long = withContext(Dispatchers.IO) {
         var id = -1L
         try {
-            database.transaction {
+            database.favoriteArticleQueries.transaction {
                 database.favoriteArticleQueries.insert(articleId.toLong())
                 id = database.favoriteArticleQueries.selectLastInsertRowId().executeAsOne()
             }
@@ -29,7 +29,7 @@ class FavoriteRepository @Inject constructor(
 
     suspend fun delete(articleId: Int): Boolean = withContext(Dispatchers.IO) {
         try {
-            database.transactionWithResult<Boolean> {
+            database.favoriteArticleQueries.transactionWithResult<Boolean> {
                 database.favoriteArticleQueries.delete(articleId.toLong())
                 database.favoriteArticleQueries.selectChanges().executeAsOne() == 1L
             }
@@ -41,7 +41,7 @@ class FavoriteRepository @Inject constructor(
 
     suspend fun fetchAll(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(Dispatchers.IO) {
         try {
-            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            return@withContext database.favoriteArticleQueries.transactionWithResult<List<FavoritableArticle>> {
                 if (isNewestArticleTop) {
                     database.favoriteArticleQueries.getAllOrderByDesc().executeAsList().map {
                         val isFavorite = if (it._id__ == null) false else it._id__ > 0

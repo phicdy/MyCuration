@@ -23,7 +23,7 @@ class ArticleRepository @Inject constructor(
 
     suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): List<Article> {
         return withContext(coroutineDispatcherProvider.io()) {
-            database.transactionWithResult {
+            database.articleQueries.transactionWithResult {
                 if (isNewestArticleTop) {
                     database.articleQueries.getAllInRssOrderByDateDesc(rssId.toLong())
                             .executeAsList()
@@ -49,7 +49,7 @@ class ArticleRepository @Inject constructor(
                         continue
                     }
 
-                    database.transaction {
+                    database.articleQueries.transaction {
                         if (keyword.isNotBlank()) {
                             if (url.isNotBlank()) {
                                 database.articleQueries.updateReadStatusByTitleAndUrl(rssId.toLong(), Article.UNREAD, "%$keyword%", "%$url%")
@@ -82,7 +82,7 @@ class ArticleRepository @Inject constructor(
         return withContext(applicationCoroutineScope.coroutineContext) {
             val result = arrayListOf<Article>()
             try {
-                database.transaction {
+                database.articleQueries.transaction {
                     articles.forEach { article ->
                         database.articleQueries.insert(article.title, article.url, article.status, article.point, article.postedDate, feedId.toLong())
                         val id = database.articleQueries.selectLastInsertRowId().executeAsOne().toInt()
@@ -115,7 +115,7 @@ class ArticleRepository @Inject constructor(
     suspend fun isExistArticleOf(rssId: Int): Boolean = withContext(coroutineDispatcherProvider.io()) {
         var isExist = false
         try {
-            val count = database.transactionWithResult<Long> {
+            val count = database.articleQueries.transactionWithResult {
                 database.articleQueries.getCount(rssId.toLong()).executeAsOne()
             }
             isExist = count > 0
@@ -131,7 +131,7 @@ class ArticleRepository @Inject constructor(
      */
     suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<List<String>> {
+            return@withContext database.articleQueries.transactionWithResult<List<String>> {
                 database.articleQueries.getAllInUrl(articles.map { it.url }).executeAsList()
             }
         } catch (e: SQLException) {
@@ -147,7 +147,7 @@ class ArticleRepository @Inject constructor(
      */
     suspend fun saveStatusToRead(rssId: Int) = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            database.transaction {
+            database.articleQueries.transaction {
                 database.articleQueries.updateReadStatusByFeedId(rssId.toLong())
             }
         } catch (e: SQLException) {
@@ -160,7 +160,7 @@ class ArticleRepository @Inject constructor(
      */
     suspend fun saveAllStatusToRead() = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            database.transaction {
+            database.articleQueries.transaction {
                 database.articleQueries.updateAllReadStatus()
             }
         } catch (e: SQLException) {
@@ -176,7 +176,7 @@ class ArticleRepository @Inject constructor(
      */
     suspend fun saveStatus(articleId: Int, status: String) = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            database.transaction {
+            database.articleQueries.transaction {
                 database.articleQueries.updateReadStatusById(status, articleId.toLong())
             }
         } catch (e: SQLException) {
@@ -192,7 +192,7 @@ class ArticleRepository @Inject constructor(
      */
     suspend fun saveHatenaPoint(url: String, point: String) = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            database.transaction {
+            database.articleQueries.transaction {
                 database.articleQueries.updatePointByUrl(point, url)
             }
         } catch (e: SQLException) {
@@ -202,7 +202,7 @@ class ArticleRepository @Inject constructor(
 
     suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
                 if (isNewestArticleTop) {
                     database.articleQueries.getAllUnreadArticlesOrderByDateDesc().executeAsList().map {
                         val isFavorite = if (it._id__ == null) false else it._id__ > 0
@@ -226,7 +226,7 @@ class ArticleRepository @Inject constructor(
 
     suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
                 if (isNewestArticleTop) {
                     database.articleQueries.getTop300OrderByDateDesc().executeAsList().map {
                         val isFavorite = if (it._id__ == null) false else it._id__ > 0
@@ -256,7 +256,7 @@ class ArticleRepository @Inject constructor(
             searchKeyWord = searchKeyWord.replace("_", "$" + "_")
         }
         try {
-            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
                 if (isNewestArticleTop) {
                     database.articleQueries.searchArticleOrderByDateDesc("%$searchKeyWord%").executeAsList().map {
                         val isFavorite = if (it._id__ == null) false else it._id__ > 0
@@ -279,7 +279,7 @@ class ArticleRepository @Inject constructor(
     }
 
     suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
-        return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+        return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
             if (isNewestArticleTop) {
                 database.articleQueries.getArticlesOfFeedsDesc(rssId.toLong()).executeAsList().map {
                     val isFavorite = if (it._id_ == null) false else it._id_ > 0
@@ -297,7 +297,7 @@ class ArticleRepository @Inject constructor(
     }
 
     suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
-        return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+        return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
             if (isNewestArticleTop) {
                 database.articleQueries.getUnreadArticlesOfFeedsDesc(rssId.toLong()).executeAsList().map {
                     val isFavorite = if (it._id_ == null) false else it._id_ > 0
@@ -316,7 +316,7 @@ class ArticleRepository @Inject constructor(
 
     suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<Int> {
+            return@withContext database.articleQueries.transactionWithResult<Int> {
                 database.articleQueries.getUnreadCount(rssId.toLong()).executeAsOne().toInt()
             }
         } catch (e: SQLException) {

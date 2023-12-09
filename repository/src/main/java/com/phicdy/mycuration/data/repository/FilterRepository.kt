@@ -26,7 +26,7 @@ class FilterRepository @Inject constructor(
         return@coroutineScope withContext(coroutineDispatcherProvider.io()) {
             val filters = ArrayList<Filter>()
             try {
-                database.transaction {
+                database.filtersQueries.transaction {
                     val results = database.filtersQueries.getAll().executeAsList()
                     if (results.isNotEmpty()) {
                         var rssList = ArrayList<Feed>()
@@ -83,7 +83,7 @@ class FilterRepository @Inject constructor(
 
     suspend fun getEnabledFiltersOfFeed(feedId: Int): List<Filter> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<List<Filter>> {
+            return@withContext database.filtersQueries.transactionWithResult<List<Filter>> {
                 database.filtersQueries.getAllEnabled(feedId.toLong()).executeAsList().map {
                     Filter(it._id.toInt(), it.title, it.keyword ?: "", it.url
                             ?: "", arrayListOf(), -1, it.enabled.toInt())
@@ -98,7 +98,7 @@ class FilterRepository @Inject constructor(
 
     suspend fun getFilterById(filterId: Int): Filter? = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<Filter?> {
+            return@withContext database.filtersQueries.transactionWithResult<Filter?> {
                 val results = database.filtersQueries.getById(filterId.toLong()).executeAsList()
                 if (results.isEmpty()) {
                     null
@@ -160,7 +160,7 @@ class FilterRepository @Inject constructor(
                               keyword: String, filterUrl: String): Boolean = withContext(coroutineDispatcherProvider.io()) {
         try {
             var newFilterId = INSERT_ERROR_ID.toLong()
-            val result = database.transactionWithResult<Boolean> {
+            val result = database.filtersQueries.transactionWithResult {
                 // Check same filter exists in DB
                 val sameFilter = database.filtersQueries.getByTitleAndKeywordAndUrl(title, keyword, filterUrl).executeAsOneOrNull()
                 if (sameFilter != null) {
@@ -230,7 +230,7 @@ class FilterRepository @Inject constructor(
         if (filterId < MIN_TABLE_ID) return@coroutineScope false
         var result = true
         try {
-            database.transaction {
+            database.filterFeedRegistrationQueries.transaction {
                 for ((feedId) in feeds) {
                     if (feedId < MIN_TABLE_ID) {
                         result = false
@@ -252,7 +252,7 @@ class FilterRepository @Inject constructor(
 
     suspend fun updateEnabled(id: Int, isEnabled: Boolean) = withContext(coroutineDispatcherProvider.io()) {
         try {
-            database.transaction {
+            database.filtersQueries.transaction {
                 database.filtersQueries.updateEnabled(if (isEnabled) Filter.TRUE.toLong() else Filter.FALSE.toLong(), id.toLong())
             }
         } catch (e: SQLException) {
