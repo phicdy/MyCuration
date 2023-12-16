@@ -23,5 +23,6 @@ include ':app',
         ':benchmark',
         ':repository',
         ':resource',
+        ':test_util',
         ':tracker',
         ':util'
