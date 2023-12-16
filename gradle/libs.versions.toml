@@ -24,9 +24,11 @@ sql_delight = "1.5.5"
 sqlite = "2.4.0"
 timber = "5.0.1"
 flipper = "0.242.0"
+junit = "4.13.2"
 
 [libraries]
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+junit = { module = "junit:junit", version.ref = "junit" }
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
@@ -47,8 +49,8 @@ work = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 preference = { module = "androidx.preference:preference", version.ref = "preference" }
 sqlite = { module = "androidx.sqlite:sqlite-ktx", version.ref = "sqlite" }
 browser = { module = "androidx.browser:browser", version.ref = "browser" }
-swiperefreshlayout= { module = "androidx.swiperefreshlayout:swiperefreshlayout", version= "1.1.0" }
-annotation = { module = "androidx.annotation:annotation", version= "1.7.0" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version = "1.1.0" }
+annotation = { module = "androidx.annotation:annotation", version = "1.7.0" }
 core-testing = { module = "androidx.arch.core:core-testing", version.ref = "arch_core_testing" }
 
 javax-inject = { module = "javax.inject:javax.inject", version = "1" }

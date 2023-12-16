@@ -15,7 +15,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
-import com.phicdy.mycuration.CoroutineTestRule
+import com.phicdy.test.util.CoroutineTestRule
 import com.phicdy.mycuration.R
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository

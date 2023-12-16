@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.domain.task
 
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.mycuration.CoroutineTestRule
+import com.phicdy.test.util.CoroutineTestRule
 import com.phicdy.mycuration.data.network.HatenaBookmarkApi
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
