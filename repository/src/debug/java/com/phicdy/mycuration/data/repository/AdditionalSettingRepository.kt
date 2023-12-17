@@ -121,34 +121,34 @@ class AdditionalSettingRepository(
 
     override suspend fun addDebugRss() {
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - 主要",
-                "https://news.yahoo.co.jp/pickup/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - 主要",
+            "https://news.yahoo.co.jp/rss/topics/top-picks.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - 国際",
-                "https://news.yahoo.co.jp/pickup/world/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - 国際",
+            "https://news.yahoo.co.jp/rss/topics/world.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - エンタメ",
-                "https://news.yahoo.co.jp/pickup/entertainment/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - エンタメ",
+            "https://news.yahoo.co.jp/rss/topics/entertainment.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - IT",
-                "https://news.yahoo.co.jp/pickup/computer/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - IT",
+            "https://news.yahoo.co.jp/rss/topics/it.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - 地域",
-                "https://news.yahoo.co.jp/pickup/local/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - 地域",
+            "https://news.yahoo.co.jp/rss/topics/local.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
     }
 
