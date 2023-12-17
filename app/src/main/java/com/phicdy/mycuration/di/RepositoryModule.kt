@@ -61,7 +61,8 @@ object RepositoryModule {
     @Provides
     fun provideAdditionalSettingApi(
         rssRepository: RssRepository,
-    ): AdditionalSettingApi = AdditionalSettingRepository(rssRepository)
+        articleRepository: ArticleRepository
+    ): AdditionalSettingApi = AdditionalSettingRepository(rssRepository, articleRepository)
 
     @Singleton
     @Provides

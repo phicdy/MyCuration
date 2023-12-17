@@ -215,6 +215,14 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     }
                     true
                 }
+                val prefDeleteAllarticles = requirePreference<Preference>(
+                    R.string.key_delete_all_articles
+                )
+                prefDeleteAllarticles.onPreferenceClickListener =
+                    Preference.OnPreferenceClickListener {
+                        launch { presenter.onDeleteAllArticleClicked() }
+                        true
+                    }
             }
         }
 

@@ -178,4 +178,9 @@ class SettingPresenter @Inject constructor(
 
     suspend fun onExportDatabaseClicked(currentDb: File): Boolean =
         addtionalSettingApi.exportDb(currentDb)
+
+
+    suspend fun onDeleteAllArticleClicked() {
+        addtionalSettingApi.deleteAllArticles()
+    }
 }

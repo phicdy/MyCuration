@@ -15,7 +15,8 @@ import java.nio.file.StandardCopyOption
 
 
 class AdditionalSettingRepository(
-    private val rssRepository: RssRepository
+    private val rssRepository: RssRepository,
+    private val articleRepository: ArticleRepository
 ) : AdditionalSettingApi {
 
     /**
@@ -150,6 +151,13 @@ class AdditionalSettingRepository(
             "RSS2.0",
             "https://news.yahoo.co.jp"
         )
+    }
+
+    override suspend fun deleteAllArticles() {
+        articleRepository.deleteAll()
+        rssRepository.getAllFeeds().forEach {
+            rssRepository.updateUnreadArticleCount(it.id, 0)
+        }
     }
 
     companion object {

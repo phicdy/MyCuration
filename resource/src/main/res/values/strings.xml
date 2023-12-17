@@ -93,6 +93,7 @@
     <string name="export_db_succeed">データベースのエクスポートに成功</string>
     <string name="export_db_fail">データベースのエクスポートに失敗</string>
     <string name="add_test_rss">テストRSS挿入</string>
+    <string name="delete_all_articles">記事全削除</string>
     <string name="key_update_interval">keyUpdateInterval</string>
     <string name="key_launch_tab">keyLaunchTab</string>
     <string name="key_theme">keyTheme</string>
@@ -105,6 +106,7 @@
     <string name="key_import_db">keyImportDb</string>
     <string name="key_export_db">keyExportDb</string>
     <string name="key_add_rss">keyAddRss</string>
+    <string name="key_delete_all_articles">keyDeleteAllArticles</string>
     <string name="key_review">keyReview</string>
 
     <string name="all_read">全て既読にする</string>
