@@ -122,7 +122,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     }
 
     private fun <T : Preference> requirePreference(key: Int): T = findPreference(getString(key))
-            ?: throw IllegalArgumentException("key not found")
+        ?: throw IllegalArgumentException("key not found")
 
     override fun initListener() {
         listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -132,48 +132,76 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                     val manager = AlarmManagerTaskManager(activity as Context)
                     presenter.updateUpdateInterval(intervalHour, manager)
                     // GA
-                    TrackerHelper.sendSettingEvent(getString(R.string.change_auto_update_interval), intervalHour.toLong().toString())
+                    TrackerHelper.sendSettingEvent(
+                        getString(R.string.change_auto_update_interval),
+                        intervalHour.toLong().toString()
+                    )
                 }
+
                 getString(R.string.key_all_read_behavior) -> {
                     val isAllReadBack = Integer.valueOf(prefAllReadBehavior.value) == 1
                     presenter.updateAllReadBehavior(isAllReadBack)
                     // GA
-                    val allReadBehaviorStringItems = resources.getStringArray(R.array.all_read_behavior)
-                    TrackerHelper.sendSettingEvent(getString(R.string.change_all_read_behavior),
-                            allReadBehaviorStringItems[Integer.valueOf(prefAllReadBehavior.value)])
+                    val allReadBehaviorStringItems =
+                        resources.getStringArray(R.array.all_read_behavior)
+                    TrackerHelper.sendSettingEvent(
+                        getString(R.string.change_all_read_behavior),
+                        allReadBehaviorStringItems[Integer.valueOf(prefAllReadBehavior.value)]
+                    )
                 }
+
                 getString(R.string.key_swipe_direction) -> {
                     val swipeDirection = Integer.valueOf(prefSwipeDirection.value)
                     presenter.updateSwipeDirection(swipeDirection)
                     // GA
-                    val swipeDirectionStringItems = resources.getStringArray(R.array.swipe_direction_items)
-                    TrackerHelper.sendSettingEvent(getString(R.string.change_swipe_direction),
-                            swipeDirectionStringItems[Integer.valueOf(prefSwipeDirection.value)])
+                    val swipeDirectionStringItems =
+                        resources.getStringArray(R.array.swipe_direction_items)
+                    TrackerHelper.sendSettingEvent(
+                        getString(R.string.change_swipe_direction),
+                        swipeDirectionStringItems[Integer.valueOf(prefSwipeDirection.value)]
+                    )
                 }
+
                 getString(R.string.key_theme) -> {
                     val theme = Integer.valueOf(prefTheme.value)
                     presenter.updateTheme(theme)
                 }
+
                 getString(R.string.key_article_sort) -> {
                     val isNewArticleTop = prefArticleSort.isChecked
                     presenter.updateArticleSort(isNewArticleTop)
                     // GA
-                    TrackerHelper.sendSettingEvent(getString(R.string.change_aricle_sort),
-                            if (prefArticleSort.isChecked) getString(R.string.article_sort) else getString(R.string.not_article_sort))
+                    TrackerHelper.sendSettingEvent(
+                        getString(R.string.change_aricle_sort),
+                        if (prefArticleSort.isChecked) getString(R.string.article_sort) else getString(
+                            R.string.not_article_sort
+                        )
+                    )
                 }
+
                 getString(R.string.key_internal_browser) -> {
                     val isInternal = prefInternalBrowser.isChecked
                     presenter.updateInternalBrowser(isInternal)
                     // GA
-                    TrackerHelper.sendSettingEvent(getString(R.string.change_browser_option),
-                            if (prefInternalBrowser.isChecked) getString(R.string.open_internal) else getString(R.string.not_open_internal))
+                    TrackerHelper.sendSettingEvent(
+                        getString(R.string.change_browser_option),
+                        if (prefInternalBrowser.isChecked) getString(R.string.open_internal) else getString(
+                            R.string.not_open_internal
+                        )
+                    )
                 }
+
                 getString(R.string.key_auto_update_in_main_ui) -> {
                     val isAutoUpdateInMainUi = prefAutoUpdateInMainUi.isChecked
                     presenter.updateAutoUpdateInMainUi(isAutoUpdateInMainUi)
-                    TrackerHelper.sendSettingEvent(getString(R.string.change_auto_update_in_main_ui_option),
-                            if (isAutoUpdateInMainUi) getString(R.string.auto_update_in_main_ui) else getString(R.string.not_auto_update_in_main_ui))
+                    TrackerHelper.sendSettingEvent(
+                        getString(R.string.change_auto_update_in_main_ui_option),
+                        if (isAutoUpdateInMainUi) getString(R.string.auto_update_in_main_ui) else getString(
+                            R.string.not_auto_update_in_main_ui
+                        )
+                    )
                 }
+
                 getString(R.string.key_launch_tab) -> {
                     val launchTab = Integer.valueOf(prefLaunchTab.value)
                     presenter.updateLaunchTab(launchTab)
@@ -201,9 +229,17 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                         val currentDb = activity.getDatabasePath(DATABASE_NAME)
                         val result = presenter.onExportDatabaseClicked(currentDb)
                         if (result) {
-                            ToastHelper.showToast(activity, getString(R.string.export_db_succeed), Toast.LENGTH_SHORT)
+                            ToastHelper.showToast(
+                                activity,
+                                getString(R.string.export_db_succeed),
+                                Toast.LENGTH_SHORT
+                            )
                         } else {
-                            ToastHelper.showToast(activity, getString(R.string.export_db_fail), Toast.LENGTH_SHORT)
+                            ToastHelper.showToast(
+                                activity,
+                                getString(R.string.export_db_fail),
+                                Toast.LENGTH_SHORT
+                            )
                         }
                     }
                     true

@@ -27,13 +27,13 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideDatabase(
-            @ApplicationContext context: Context,
+        @ApplicationContext context: Context,
     ): Database = Database(
-            AndroidSqliteDriver(
-                    schema = Database.Schema,
-                    context = context,
-                    name = "rss_manage"
-            )
+        AndroidSqliteDriver(
+            schema = Database.Schema,
+            context = context,
+            name = "rss_manage"
+        )
     )
 
     @Singleton
