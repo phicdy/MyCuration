@@ -9,7 +9,7 @@ import java.io.IOException
 import java.util.Date
 import javax.inject.Inject
 
-class TimberTree @Inject constructor() : Timber.Tree() {
+class TimberTree @Inject constructor() : Timber.DebugTree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (!BuildConfig.DEBUG) return
