@@ -1,4 +1,4 @@
-package com.phicdy.mycuration
+package com.phicdy.test.util
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,7 +12,8 @@ import org.junit.runner.Description
 @ExperimentalCoroutinesApi
 class CoroutineTestRule : TestWatcher() {
     private val testDispatcher = StandardTestDispatcher()
-    val testCoroutineDispatcherProvider = TestCoroutineDispatcherProvider(testDispatcher)
+    val testCoroutineDispatcherProvider =
+        TestCoroutineDispatcherProvider(testDispatcher)
     val testCoroutineScope = TestScope(testDispatcher)
 
     override fun starting(description: Description) {

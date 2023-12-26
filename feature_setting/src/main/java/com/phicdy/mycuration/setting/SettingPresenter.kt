@@ -5,7 +5,6 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.domain.setting.SettingInitialData
-import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.io.InputStream
 import javax.inject.Inject
@@ -42,7 +41,8 @@ class SettingPresenter @Inject constructor(
 
         // Set index of behavior of all read
         for (i in settingInitialData.allReadBehaviorItems.indices) {
-            val allBehaviorItemBool = Integer.valueOf(settingInitialData.allReadBehaviorItems[i]) == 1
+            val allBehaviorItemBool =
+                Integer.valueOf(settingInitialData.allReadBehaviorItems[i]) == 1
             val savedValue = helper.allReadBack
             if (allBehaviorItemBool == savedValue) {
                 view.setAllReadBehavior(i, settingInitialData.allReadBehaviorStringItems[i])
@@ -78,8 +78,10 @@ class SettingPresenter @Inject constructor(
         }
     }
 
-    fun updateUpdateInterval(intervalHour: Int,
-                             manager: AlarmManagerTaskManager) {
+    fun updateUpdateInterval(
+        intervalHour: Int,
+        manager: AlarmManagerTaskManager
+    ) {
         // Save new interval second
         val intervalSecond = intervalHour * 60 * 60
         helper.autoUpdateIntervalSecond = intervalSecond
@@ -101,7 +103,8 @@ class SettingPresenter @Inject constructor(
 
         // Refresh summary
         for (i in settingInitialData.allReadBehaviorItems.indices) {
-            val allBehaviorItemBool = Integer.valueOf(settingInitialData.allReadBehaviorItems[i]) == 1
+            val allBehaviorItemBool =
+                Integer.valueOf(settingInitialData.allReadBehaviorItems[i]) == 1
             if (allBehaviorItemBool == isAllReadBack) {
                 view.setAllReadBehavior(i, settingInitialData.allReadBehaviorStringItems[i])
                 break
@@ -176,7 +179,11 @@ class SettingPresenter @Inject constructor(
         addtionalSettingApi.importDb(currentDb, uri)
     }
 
-    suspend fun onExportDatabaseClicked(currentDb: File) = coroutineScope {
+    suspend fun onExportDatabaseClicked(currentDb: File): Boolean =
         addtionalSettingApi.exportDb(currentDb)
+
+
+    suspend fun onDeleteAllArticleClicked() {
+        addtionalSettingApi.deleteAllArticles()
     }
 }

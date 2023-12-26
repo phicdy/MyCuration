@@ -14,4 +14,7 @@ class AdditionalSettingRepository(
 
     override suspend fun addDebugRss() {
     }
+
+    override suspend fun deleteAllArticles() {
+    }
 }

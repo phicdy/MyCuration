@@ -78,6 +78,7 @@ dependencies {
     androidTestImplementation libs.espresso
     androidTestImplementation libs.assertj
     androidTestImplementation libs.coroutines.test
+    androidTestImplementation project(':test_util')
 
     def composeBom = platform(libs.compose.bom)
     androidTestImplementation composeBom

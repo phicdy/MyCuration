@@ -1,4 +1,4 @@
-package com.phicdy.mycuration
+package com.phicdy.test.util
 
 import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher

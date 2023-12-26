@@ -24,7 +24,7 @@ class CurationRepository @Inject constructor(
 
     suspend fun calcNumOfAllUnreadArticlesOfCuration(curationId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<Long> {
+            return@withContext database.curationQueries.transactionWithResult<Long> {
                 database.curationQueries.getCountOfAllUnreadArticlesOfCuration(curationId.toLong()).executeAsOne()
             }.toInt()
         } catch (e: Exception) {
@@ -40,7 +40,7 @@ class CurationRepository @Inject constructor(
             val defaultCurationId = -1
             var curationId = defaultCurationId
             var words = ArrayList<String>()
-            val results = database.transactionWithResult<List<GetAllCurationWords>> {
+            val results = database.curationQueries.transactionWithResult {
                 database.curationQueries.getAllCurationWords().executeAsList()
             }
             for (result in results) {
@@ -72,7 +72,7 @@ class CurationRepository @Inject constructor(
             val curationWordMap = getAllCurationWords()
             for (curationId in curationWordMap.keys) {
                 val words = curationWordMap[curationId]
-                database.transaction {
+                database.curationSelectionQueries.transaction {
                     words?.forEach { word ->
                         for (article in articles) {
                             if (article.title.contains(word)) {
@@ -168,7 +168,7 @@ class CurationRepository @Inject constructor(
         }.await()
 
     suspend fun getAllCurations(): List<Curation> = withContext(coroutineDispatcherProvider.io()) {
-        return@withContext database.transactionWithResult<List<Curation>> {
+        return@withContext database.curationQueries.transactionWithResult<List<Curation>> {
             database.curationQueries.getAll()
                     .executeAsList()
                     .map {
@@ -197,7 +197,7 @@ class CurationRepository @Inject constructor(
 
     suspend fun isExist(name: String): Boolean = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<Boolean> {
+            return@withContext database.curationQueries.transactionWithResult<Boolean> {
                 database.curationQueries.getCountByName(name).executeAsOne() > 0
             }
         } catch (e: Exception) {
@@ -209,7 +209,7 @@ class CurationRepository @Inject constructor(
 
     suspend fun getCurationNameById(curationId: Int): String = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<String> {
+            return@withContext database.curationQueries.transactionWithResult<String> {
                 database.curationQueries.getById(curationId.toLong()).executeAsList().firstOrNull()?.name
                         ?: ""
             }
@@ -222,7 +222,7 @@ class CurationRepository @Inject constructor(
 
     suspend fun getCurationWords(curationId: Int): List<String> = withContext(coroutineDispatcherProvider.io()) {
         try {
-            return@withContext database.transactionWithResult<List<String>> {
+            return@withContext database.curationConditionQueries.transactionWithResult<List<String>> {
                 database.curationConditionQueries.getAll(curationId.toLong()).executeAsList().map {
                     it.word
                 }

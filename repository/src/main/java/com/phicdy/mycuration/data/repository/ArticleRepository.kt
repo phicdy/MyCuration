@@ -16,22 +16,22 @@ import javax.inject.Singleton
 
 @Singleton
 class ArticleRepository @Inject constructor(
-        private val database: Database,
-        private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
-        @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
+    private val database: Database,
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+    @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
 ) {
 
     suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): List<Article> {
         return withContext(coroutineDispatcherProvider.io()) {
-            database.transactionWithResult {
+            database.articleQueries.transactionWithResult {
                 if (isNewestArticleTop) {
                     database.articleQueries.getAllInRssOrderByDateDesc(rssId.toLong())
-                            .executeAsList()
-                            .map { it.toArticle() }
+                        .executeAsList()
+                        .map { it.toArticle() }
                 } else {
                     database.articleQueries.getAllInRssOrderByDateAsc(rssId.toLong())
-                            .executeAsList()
-                            .map { it.toArticle() }
+                        .executeAsList()
+                        .map { it.toArticle() }
                 }
             }
         }
@@ -49,19 +49,33 @@ class ArticleRepository @Inject constructor(
                         continue
                     }
 
-                    database.transaction {
+                    database.articleQueries.transaction {
                         if (keyword.isNotBlank()) {
                             if (url.isNotBlank()) {
-                                database.articleQueries.updateReadStatusByTitleAndUrl(rssId.toLong(), Article.UNREAD, "%$keyword%", "%$url%")
+                                database.articleQueries.updateReadStatusByTitleAndUrl(
+                                    rssId.toLong(),
+                                    Article.UNREAD,
+                                    "%$keyword%",
+                                    "%$url%"
+                                )
                             } else {
-                                database.articleQueries.updateReadStatusByTitle(rssId.toLong(), Article.UNREAD, "%$keyword%")
+                                database.articleQueries.updateReadStatusByTitle(
+                                    rssId.toLong(),
+                                    Article.UNREAD,
+                                    "%$keyword%"
+                                )
                             }
                         } else {
                             if (url.isNotBlank()) {
-                                database.articleQueries.updateReadStatusByUrl(rssId.toLong(), Article.UNREAD, "%$url%")
+                                database.articleQueries.updateReadStatusByUrl(
+                                    rssId.toLong(),
+                                    Article.UNREAD,
+                                    "%$url%"
+                                )
                             }
                         }
-                        updatedCount = database.articleQueries.selectChanges().executeAsOne().toInt()
+                        updatedCount =
+                            database.articleQueries.selectChanges().executeAsOne().toInt()
                     }
                 } catch (e: Exception) {
                     Timber.e("Apply Filtering, article can't be updated.Feed ID = $rssId")
@@ -76,17 +90,25 @@ class ArticleRepository @Inject constructor(
      * Save method for new articles
      *
      * @param articles Article array to save
-     * @param feedId Feed ID of the articles
      */
-    suspend fun saveNewArticles(articles: List<Article>, feedId: Int): List<Article> {
+    suspend fun saveNewArticles(articles: List<Article>): List<Article> {
         return withContext(applicationCoroutineScope.coroutineContext) {
             val result = arrayListOf<Article>()
             try {
-                database.transaction {
+                database.articleQueries.transaction {
                     articles.forEach { article ->
-                        database.articleQueries.insert(article.title, article.url, article.status, article.point, article.postedDate, feedId.toLong())
-                        val id = database.articleQueries.selectLastInsertRowId().executeAsOne().toInt()
-                        result.add(Article(
+                        database.articleQueries.insert(
+                            article.title,
+                            article.url,
+                            article.status,
+                            article.point,
+                            article.postedDate,
+                            article.feedId.toLong()
+                        )
+                        val id =
+                            database.articleQueries.selectLastInsertRowId().executeAsOne().toInt()
+                        result.add(
+                            Article(
                                 id = id,
                                 title = article.title,
                                 url = article.url,
@@ -95,7 +117,8 @@ class ArticleRepository @Inject constructor(
                                 feedIconPath = article.feedIconPath,
                                 postedDate = article.postedDate,
                                 feedId = article.feedId,
-                                feedTitle = article.feedTitle)
+                                feedTitle = article.feedTitle
+                            )
                         )
                     }
                 }
@@ -112,55 +135,58 @@ class ArticleRepository @Inject constructor(
      * @param rssId RSS ID to check
      * @return `true` if exists.
      */
-    suspend fun isExistArticleOf(rssId: Int): Boolean = withContext(coroutineDispatcherProvider.io()) {
-        var isExist = false
-        try {
-            val count = database.transactionWithResult<Long> {
-                database.articleQueries.getCount(rssId.toLong()).executeAsOne()
+    suspend fun isExistArticleOf(rssId: Int): Boolean =
+        withContext(coroutineDispatcherProvider.io()) {
+            var isExist = false
+            try {
+                val count = database.articleQueries.transactionWithResult {
+                    database.articleQueries.getCount(rssId.toLong()).executeAsOne()
+                }
+                isExist = count > 0
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
-            isExist = count > 0
-        } catch (e: SQLException) {
-            e.printStackTrace()
+            return@withContext isExist
         }
-        return@withContext isExist
-    }
 
     /**
      * Get article URLs that were stored in database from argument articles
      *
      */
-    suspend fun getStoredUrlListIn(articles: List<Article>): List<String> = withContext(coroutineDispatcherProvider.io()) {
-        try {
-            return@withContext database.transactionWithResult<List<String>> {
-                database.articleQueries.getAllInUrl(articles.map { it.url }).executeAsList()
+    suspend fun getStoredUrlListIn(articles: List<Article>): List<String> =
+        withContext(coroutineDispatcherProvider.io()) {
+            try {
+                return@withContext database.articleQueries.transactionWithResult<List<String>> {
+                    database.articleQueries.getAllInUrl(articles.map { it.url }).executeAsList()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
-        } catch (e: SQLException) {
-            e.printStackTrace()
+            return@withContext emptyList()
         }
-        return@withContext emptyList()
-    }
 
     /**
      * Update method for all of the articles of RSS ID to read status.
      *
      * @param rssId RSS ID for articles to change status to read
      */
-    suspend fun saveStatusToRead(rssId: Int) = withContext(applicationCoroutineScope.coroutineContext) {
-        try {
-            database.transaction {
-                database.articleQueries.updateReadStatusByFeedId(rssId.toLong())
+    suspend fun saveStatusToRead(rssId: Int) =
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                database.articleQueries.transaction {
+                    database.articleQueries.updateReadStatusByFeedId(rssId.toLong())
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
-        } catch (e: SQLException) {
-            e.printStackTrace()
         }
-    }
 
     /**
      * Update method for all of the articles to read status.
      */
     suspend fun saveAllStatusToRead() = withContext(applicationCoroutineScope.coroutineContext) {
         try {
-            database.transaction {
+            database.articleQueries.transaction {
                 database.articleQueries.updateAllReadStatus()
             }
         } catch (e: SQLException) {
@@ -174,15 +200,16 @@ class ArticleRepository @Inject constructor(
      * @param articleId Artilce ID to change status
      * @param status New status
      */
-    suspend fun saveStatus(articleId: Int, status: String) = withContext(applicationCoroutineScope.coroutineContext) {
-        try {
-            database.transaction {
-                database.articleQueries.updateReadStatusById(status, articleId.toLong())
+    suspend fun saveStatus(articleId: Int, status: String) =
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                database.articleQueries.transaction {
+                    database.articleQueries.updateReadStatusById(status, articleId.toLong())
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
-        } catch (e: SQLException) {
-            e.printStackTrace()
         }
-    }
 
     /**
      * Update method for hatena point of the article.
@@ -190,64 +217,80 @@ class ArticleRepository @Inject constructor(
      * @param url Article URL to update
      * @param point New hatena point
      */
-    suspend fun saveHatenaPoint(url: String, point: String) = withContext(applicationCoroutineScope.coroutineContext) {
-        try {
-            database.transaction {
-                database.articleQueries.updatePointByUrl(point, url)
+    suspend fun saveHatenaPoint(url: String, point: String) =
+        withContext(applicationCoroutineScope.coroutineContext) {
+            try {
+                database.articleQueries.transaction {
+                    database.articleQueries.updatePointByUrl(point, url)
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
-        } catch (e: SQLException) {
-            e.printStackTrace()
         }
-    }
 
-    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
-        try {
-            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
-                if (isNewestArticleTop) {
-                    database.articleQueries.getAllUnreadArticlesOrderByDateDesc().executeAsList().map {
-                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
-                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
-                    }
-                } else {
-                    database.articleQueries.getAllUnreadArticlesOrderByDateAsc().executeAsList().map {
-                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
-                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+    suspend fun getAllUnreadArticles(isNewestArticleTop: Boolean): List<FavoritableArticle> =
+        withContext(coroutineDispatcherProvider.io()) {
+            try {
+                return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
+                    if (isNewestArticleTop) {
+                        database.articleQueries.getAllUnreadArticlesOrderByDateDesc()
+                            .executeAsList().map {
+                                val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                                FavoritableArticle(
+                                    it._id.toInt(), it.title, it.url, it.status, it.point,
+                                    it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite
+                                )
+                            }
+                    } else {
+                        database.articleQueries.getAllUnreadArticlesOrderByDateAsc().executeAsList()
+                            .map {
+                                val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                                FavoritableArticle(
+                                    it._id.toInt(), it.title, it.url, it.status, it.point,
+                                    it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite
+                                )
+                            }
                     }
                 }
+            } catch (e: Exception) {
+                Timber.e(e)
             }
-        } catch (e: Exception) {
-            Timber.e(e)
+
+            return@withContext emptyList()
         }
 
-        return@withContext emptyList()
-    }
-
-    suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
-        try {
-            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
-                if (isNewestArticleTop) {
-                    database.articleQueries.getTop300OrderByDateDesc().executeAsList().map {
-                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
-                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
-                    }
-                } else {
-                    database.articleQueries.getTop300OrderByDateAsc().executeAsList().map {
-                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
-                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
+    suspend fun getTop300Articles(isNewestArticleTop: Boolean): List<FavoritableArticle> =
+        withContext(coroutineDispatcherProvider.io()) {
+            try {
+                return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
+                    if (isNewestArticleTop) {
+                        database.articleQueries.getTop300OrderByDateDesc().executeAsList().map {
+                            val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                            FavoritableArticle(
+                                it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite
+                            )
+                        }
+                    } else {
+                        database.articleQueries.getTop300OrderByDateAsc().executeAsList().map {
+                            val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                            FavoritableArticle(
+                                it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite
+                            )
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                Timber.e(e)
             }
-        } catch (e: Exception) {
-            Timber.e(e)
+            return@withContext emptyList()
         }
-        return@withContext emptyList()
-    }
 
-    suspend fun searchArticles(keyword: String, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
+    suspend fun searchArticles(
+        keyword: String,
+        isNewestArticleTop: Boolean
+    ): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
         var searchKeyWord = keyword
         if (searchKeyWord.contains("%")) {
             searchKeyWord = searchKeyWord.replace("%", "$%")
@@ -256,19 +299,25 @@ class ArticleRepository @Inject constructor(
             searchKeyWord = searchKeyWord.replace("_", "$" + "_")
         }
         try {
-            return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+            return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
                 if (isNewestArticleTop) {
-                    database.articleQueries.searchArticleOrderByDateDesc("%$searchKeyWord%").executeAsList().map {
-                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
-                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
-                    }
+                    database.articleQueries.searchArticleOrderByDateDesc("%$searchKeyWord%")
+                        .executeAsList().map {
+                            val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                            FavoritableArticle(
+                                it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite
+                            )
+                        }
                 } else {
-                    database.articleQueries.searchArticleOrderByDateAsc("%$searchKeyWord%").executeAsList().map {
-                        val isFavorite = if (it._id__ == null) false else it._id__ > 0
-                        FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite)
-                    }
+                    database.articleQueries.searchArticleOrderByDateAsc("%$searchKeyWord%")
+                        .executeAsList().map {
+                            val isFavorite = if (it._id__ == null) false else it._id__ > 0
+                            FavoritableArticle(
+                                it._id.toInt(), it.title, it.url, it.status, it.point,
+                                it.date, it.feedId.toInt(), it.title_, it.iconPath, isFavorite
+                            )
+                        }
                 }
             }
         } catch (e: Exception) {
@@ -278,65 +327,91 @@ class ArticleRepository @Inject constructor(
         return@withContext emptyList()
     }
 
-    suspend fun getAllArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
-        return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+    suspend fun getAllArticlesOfRss(
+        rssId: Int,
+        isNewestArticleTop: Boolean
+    ): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
+        return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
             if (isNewestArticleTop) {
                 database.articleQueries.getArticlesOfFeedsDesc(rssId.toLong()).executeAsList().map {
                     val isFavorite = if (it._id_ == null) false else it._id_ > 0
-                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                    FavoritableArticle(
+                        it._id.toInt(), it.title, it.url, it.status, it.point,
+                        it.date, it.feedId.toInt(), "", "", isFavorite
+                    )
                 }
             } else {
                 database.articleQueries.getArticlesOfFeedsAsc(rssId.toLong()).executeAsList().map {
                     val isFavorite = if (it._id_ == null) false else it._id_ > 0
-                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                    FavoritableArticle(
+                        it._id.toInt(), it.title, it.url, it.status, it.point,
+                        it.date, it.feedId.toInt(), "", "", isFavorite
+                    )
                 }
             }
         }
     }
 
-    suspend fun getUnreadArticlesOfRss(rssId: Int, isNewestArticleTop: Boolean): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
-        return@withContext database.transactionWithResult<List<FavoritableArticle>> {
+    suspend fun getUnreadArticlesOfRss(
+        rssId: Int,
+        isNewestArticleTop: Boolean
+    ): List<FavoritableArticle> = withContext(coroutineDispatcherProvider.io()) {
+        return@withContext database.articleQueries.transactionWithResult<List<FavoritableArticle>> {
             if (isNewestArticleTop) {
-                database.articleQueries.getUnreadArticlesOfFeedsDesc(rssId.toLong()).executeAsList().map {
-                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
-                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                            it.date, it.feedId.toInt(), "", "", isFavorite)
-                }
+                database.articleQueries.getUnreadArticlesOfFeedsDesc(rssId.toLong()).executeAsList()
+                    .map {
+                        val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                        FavoritableArticle(
+                            it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite
+                        )
+                    }
             } else {
-                database.articleQueries.getUnreadArticlesOfFeedsAsc(rssId.toLong()).executeAsList().map {
-                    val isFavorite = if (it._id_ == null) false else it._id_ > 0
-                    FavoritableArticle(it._id.toInt(), it.title, it.url, it.status, it.point,
-                            it.date, it.feedId.toInt(), "", "", isFavorite)
+                database.articleQueries.getUnreadArticlesOfFeedsAsc(rssId.toLong()).executeAsList()
+                    .map {
+                        val isFavorite = if (it._id_ == null) false else it._id_ > 0
+                        FavoritableArticle(
+                            it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), "", "", isFavorite
+                        )
+                    }
+            }
+        }
+    }
+
+    suspend fun getUnreadArticleCount(rssId: Int): Int =
+        withContext(coroutineDispatcherProvider.io()) {
+            try {
+                return@withContext database.articleQueries.transactionWithResult<Int> {
+                    database.articleQueries.getUnreadCount(rssId.toLong()).executeAsOne().toInt()
                 }
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
+            return@withContext -1
         }
-    }
 
-    suspend fun getUnreadArticleCount(rssId: Int): Int = withContext(coroutineDispatcherProvider.io()) {
-        try {
-            return@withContext database.transactionWithResult<Int> {
-                database.articleQueries.getUnreadCount(rssId.toLong()).executeAsOne().toInt()
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-        return@withContext -1
-    }
-
-    suspend fun getAllUnreadArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): List<Article> = withContext(coroutineDispatcherProvider.io()) {
+    suspend fun getAllUnreadArticlesOfCuration(
+        curationId: Int,
+        isNewestArticleTop: Boolean
+    ): List<Article> = withContext(coroutineDispatcherProvider.io()) {
         try {
             return@withContext if (isNewestArticleTop) {
-                database.articleQueries.getUnreadArticlesOfCurationDesc(curationId.toLong()).executeAsList().map {
-                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
-                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
-                }
+                database.articleQueries.getUnreadArticlesOfCurationDesc(curationId.toLong())
+                    .executeAsList().map {
+                        Article(
+                            it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath
+                        )
+                    }
             } else {
-                database.articleQueries.getUnreadArticlesOfCurationAsc(curationId.toLong()).executeAsList().map {
-                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
-                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
-                }
+                database.articleQueries.getUnreadArticlesOfCurationAsc(curationId.toLong())
+                    .executeAsList().map {
+                        Article(
+                            it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath
+                        )
+                    }
             }
         } catch (e: Exception) {
             Timber.e(e)
@@ -345,35 +420,52 @@ class ArticleRepository @Inject constructor(
         return@withContext emptyList()
     }
 
-    suspend fun getAllArticlesOfCuration(curationId: Int, isNewestArticleTop: Boolean): List<Article> = withContext(coroutineDispatcherProvider.io()) {
+    suspend fun getAllArticlesOfCuration(
+        curationId: Int,
+        isNewestArticleTop: Boolean
+    ): List<Article> = withContext(coroutineDispatcherProvider.io()) {
         try {
             return@withContext if (isNewestArticleTop) {
-                database.articleQueries.getArticlesOfCurationDesc(curationId.toLong()).executeAsList().map {
-                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
-                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
-                }
+                database.articleQueries.getArticlesOfCurationDesc(curationId.toLong())
+                    .executeAsList().map {
+                        Article(
+                            it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath
+                        )
+                    }
             } else {
-                database.articleQueries.getArticlesOfCurationAsc(curationId.toLong()).executeAsList().map {
-                    Article(it._id.toInt(), it.title, it.url, it.status, it.point,
-                            it.date, it.feedId.toInt(), it.title_, it.iconPath)
-                }
+                database.articleQueries.getArticlesOfCurationAsc(curationId.toLong())
+                    .executeAsList().map {
+                        Article(
+                            it._id.toInt(), it.title, it.url, it.status, it.point,
+                            it.date, it.feedId.toInt(), it.title_, it.iconPath
+                        )
+                    }
             }
         } catch (e: Exception) {
             Timber.e(e)
         }
 
         return@withContext emptyList()
+    }
+
+    suspend fun deleteAll() {
+        withContext(coroutineDispatcherProvider.io()) {
+            database.articleQueries.transaction {
+                database.articleQueries.deleteAll()
+            }
+        }
     }
 
     private fun Articles.toArticle(): Article = Article(
-            id = _id.toInt(),
-            title = title,
-            url = url,
-            status = status,
-            point = point,
-            postedDate = date,
-            feedId = feedId.toInt(),
-            feedTitle = "",
-            feedIconPath = ""
+        id = _id.toInt(),
+        title = title,
+        url = url,
+        status = status,
+        point = point,
+        postedDate = date,
+        feedId = feedId.toInt(),
+        feedTitle = "",
+        feedIconPath = ""
     )
 }

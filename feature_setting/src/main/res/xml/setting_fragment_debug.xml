@@ -68,5 +68,8 @@
         <Preference
             android:key="@string/key_add_rss"
             android:title="@string/add_test_rss" />
+        <Preference
+            android:key="@string/key_delete_all_articles"
+            android:title="@string/delete_all_articles" />
     </PreferenceCategory>
 </PreferenceScreen>

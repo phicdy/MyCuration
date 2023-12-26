@@ -15,20 +15,25 @@ import java.nio.file.StandardCopyOption
 
 
 class AdditionalSettingRepository(
-    private val rssRepository: RssRepository
+    private val rssRepository: RssRepository,
+    private val articleRepository: ArticleRepository
 ) : AdditionalSettingApi {
 
-    override suspend fun exportDb(currentDb: File) = withContext(Dispatchers.IO) {
+    /**
+     * @return true if succeeded
+     */
+    override suspend fun exportDb(currentDb: File): Boolean = withContext(Dispatchers.IO) {
         try {
             val sdcardRootPath = FileUtil.sdCardRootPath
             Timber.d("SD Card path: %s", sdcardRootPath)
-            val backupStrage = if (sdcardRootPath != null && FileUtil.isSDCardMouted(sdcardRootPath)) {
-                Timber.d("SD card is mounted")
-                File(sdcardRootPath)
-            } else {
-                Timber.d("not mounted")
-                Environment.getExternalStorageDirectory()
-            }
+            val backupStrage =
+                if (sdcardRootPath != null && FileUtil.isSDCardMouted(sdcardRootPath)) {
+                    Timber.d("SD card is mounted")
+                    File(sdcardRootPath)
+                } else {
+                    Timber.d("not mounted")
+                    Environment.getExternalStorageDirectory()
+                }
             if (backupStrage.canWrite()) {
                 Timber.d("Backup storage is writable")
 
@@ -74,12 +79,15 @@ class AdditionalSettingRepository(
                     shmSrc.close()
                     shmDst.close()
                 }
+                true
             } else {
                 // TODO Runtime Permission
                 Timber.d("SD Card is not writabble, enable storage permission in Android setting")
+                false
             }
         } catch (e: Exception) {
             Timber.e(e)
+            false
         }
     }
 
@@ -114,35 +122,42 @@ class AdditionalSettingRepository(
 
     override suspend fun addDebugRss() {
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - 主要",
-                "https://news.yahoo.co.jp/pickup/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - 主要",
+            "https://news.yahoo.co.jp/rss/topics/top-picks.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - 国際",
-                "https://news.yahoo.co.jp/pickup/world/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - 国際",
+            "https://news.yahoo.co.jp/rss/topics/world.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - エンタメ",
-                "https://news.yahoo.co.jp/pickup/entertainment/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - エンタメ",
+            "https://news.yahoo.co.jp/rss/topics/entertainment.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - IT",
-                "https://news.yahoo.co.jp/pickup/computer/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - IT",
+            "https://news.yahoo.co.jp/rss/topics/it.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
         rssRepository.store(
-                "Yahoo!ニュース・トピックス - 地域",
-                "https://news.yahoo.co.jp/pickup/local/rss.xml",
-                "RSS2.0",
-                "https://news.yahoo.co.jp"
+            "Yahoo!ニュース・トピックス - 地域",
+            "https://news.yahoo.co.jp/rss/topics/local.xml",
+            "RSS2.0",
+            "https://news.yahoo.co.jp"
         )
+    }
+
+    override suspend fun deleteAllArticles() {
+        articleRepository.deleteAll()
+        rssRepository.getAllFeeds().forEach {
+            rssRepository.updateUnreadArticleCount(it.id, 0)
+        }
     }
 
     companion object {

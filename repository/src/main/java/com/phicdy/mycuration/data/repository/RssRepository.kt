@@ -34,7 +34,7 @@ class RssRepository @Inject constructor(
     suspend fun saveNewTitle(rssId: Int, newTitle: String): Int {
         return withContext(coroutineDispatcherProvider.io()) {
             withContext(applicationCoroutineScope.coroutineContext) {
-                database.transactionWithResult {
+                database.feedQueries.transactionWithResult {
                     database.feedQueries.updateTitle(newTitle, rssId.toLong())
                     database.feedQueries.selectChanges().executeAsOne().toInt()
                 }
@@ -83,7 +83,7 @@ class RssRepository @Inject constructor(
      * @return Feed list
      */
     suspend fun getAllFeeds(): List<Feed> = withContext(coroutineDispatcherProvider.io()) {
-        return@withContext database.transactionWithResult<List<Feed>> {
+        return@withContext database.feedQueries.transactionWithResult<List<Feed>> {
             database.feedQueries.getAllFeeds()
                     .executeAsList()
                     .map {
@@ -108,7 +108,7 @@ class RssRepository @Inject constructor(
      */
     suspend fun updateUnreadArticleCount(feedId: Int, unreadCount: Int) = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
-            database.transaction {
+            database.feedQueries.transaction {
                 database.feedQueries.updateUnreadArticle(unreadCount.toLong(), feedId.toLong())
                 Timber.d("Finished to update unread article count to $unreadCount in DB. RSS ID is $feedId")
             }
@@ -123,7 +123,7 @@ class RssRepository @Inject constructor(
      */
     suspend fun saveIconPath(siteUrl: String, iconPath: String) = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
-            database.transaction {
+            database.feedQueries.transaction {
                 database.feedQueries.updateIconPath(iconPath, siteUrl)
             }
         }
@@ -134,7 +134,7 @@ class RssRepository @Inject constructor(
      */
     suspend fun store(feedTitle: String, feedUrl: String, format: String, siteUrl: String): Feed? = withContext(coroutineDispatcherProvider.io()) {
         withContext(applicationCoroutineScope.coroutineContext) {
-            database.transactionWithResult {
+            database.feedQueries.transactionWithResult {
                 val stored = database.feedQueries.getFeedByTitleAndUrlAndFormat(feedTitle, feedUrl, format).executeAsOneOrNull()
                 if (stored == null) {
                     // If there aren't same feeds in DB,Insert into DB
@@ -155,13 +155,13 @@ class RssRepository @Inject constructor(
     }
 
     suspend fun getFeedByUrl(feedUrl: String): Feed? = withContext(coroutineDispatcherProvider.io()) {
-        return@withContext database.transactionWithResult<Feed?> {
+        return@withContext database.feedQueries.transactionWithResult<Feed?> {
             database.feedQueries.getFeedByUrl(feedUrl).executeAsOneOrNull()?.toFeed()
         }
     }
 
     suspend fun getFeedById(feedId: Int): Feed? = withContext(coroutineDispatcherProvider.io()) {
-        return@withContext database.transactionWithResult<Feed?> {
+        return@withContext database.feedQueries.transactionWithResult<Feed?> {
             database.feedQueries.getFeedById(feedId.toLong()).executeAsOneOrNull()?.toFeed()
         }
     }

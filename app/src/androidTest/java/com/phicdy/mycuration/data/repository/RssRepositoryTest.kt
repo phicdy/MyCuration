@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.data.repository
 
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.mycuration.CoroutineTestRule
+import com.phicdy.test.util.CoroutineTestRule
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.repository.Database
 import com.squareup.sqldelight.android.AndroidSqliteDriver
