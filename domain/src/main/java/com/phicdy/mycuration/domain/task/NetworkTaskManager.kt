@@ -166,7 +166,7 @@ class NetworkTaskManager(
         return@withContext feed
     }
 
-    private suspend fun <T> measureTimeMillsWithResult(block: suspend () -> T): Pair<Long, T> {
+    private inline fun <T> measureTimeMillsWithResult(block: () -> T): Pair<Long, T> {
         val now = System.currentTimeMillis()
         val result = block()
         val time = System.currentTimeMillis() - now
