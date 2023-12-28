@@ -68,9 +68,7 @@ class NetworkTaskManager(
             val refreshUnreadCountTime = measureTimeMillsWithResult {
                 val allUnradArticles = articleRepository.getAllUnreadArticles(true)
                 for (rss in rssList) {
-                    val unreadCount = allUnradArticles.count { it.feedId == rss.id }
-                    rss.unreadAriticlesCount =
-                        unreadCount + savedArtices.count { it.feedId == rss.id }
+                    rss.unreadAriticlesCount = allUnradArticles.count { it.feedId == rss.id }
                     rssRepository.updateUnreadArticleCount(rss.id, rss.unreadAriticlesCount)
                 }
             }
