@@ -27,7 +27,7 @@ jobs:
         env:
           TZ: Asia/Tokyo
         run: ./gradlew app:dependencies > depend.txt
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Dependency list
           path: depend.txt
