@@ -93,17 +93,24 @@ class NetworkTaskManager(
             val response = client.newCall(request).execute()
             val inputStream = response.body()?.byteStream() ?: return emptyList()
             inputStream.use {
-                val (parseTime, articles) = measureTimeMillsWithResult {
+                val (parseTime, fetchedArticles) = measureTimeMillsWithResult {
                     parser.parseArticlesFromRss(inputStream)
                 }
                 Timber.d("parse ${feed.title} time: $parseTime")
-                if (articles.isEmpty()) return emptyList()
+                if (fetchedArticles.isEmpty()) return emptyList()
 
-                val (getStoredUrlTime, storedUrlList) = measureTimeMillsWithResult {
-                    articleRepository.getStoredUrlListIn(articles)
+                val cacheArticles = articleRepository.getLatestArticlesCache(feed)
+                articleRepository.updateLatestArticlesCache(feed, fetchedArticles)
+                val targetCacheList = if (cacheArticles.isEmpty()) {
+                    val (getStoredUrlTime, storedUrlList) = measureTimeMillsWithResult {
+                        articleRepository.getStoredUrlListIn(fetchedArticles)
+                    }
+                    Timber.d("get stored URL ${feed.title} time: $getStoredUrlTime")
+                    storedUrlList
+                } else {
+                    cacheArticles.map { it.url }
                 }
-                Timber.d("get stored URL ${feed.title} time: $getStoredUrlTime")
-                return articles.filter { it.url !in storedUrlList }
+                return fetchedArticles.filter { it.url !in targetCacheList }
                     .map { it.copy(feedId = feed.id) }
             }
         } catch (e: IOException) {
