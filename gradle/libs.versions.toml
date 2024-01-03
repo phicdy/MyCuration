@@ -63,7 +63,7 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 
 flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper" }
 flipper-noop = { module = "com.facebook.flipper:flipper-noop", version.ref = "flipper" }
-soloader = { module = "com.facebook.soloader:soloader", version = "0.10.5" }
+soloader = { module = "com.facebook.soloader:soloader", version = "0.11.0" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
