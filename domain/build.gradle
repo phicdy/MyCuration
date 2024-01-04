@@ -22,6 +22,7 @@ dependencies {
     implementation libs.retrofit
 
     implementation libs.jsoup
+    implementation libs.sax
 
     implementation libs.timber
 

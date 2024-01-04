@@ -1,7 +1,7 @@
 package com.phicdy.mycuration.domain.rss
 
+import android.util.Log
 import androidx.test.core.app.ApplicationProvider
-import com.phicdy.test.util.CoroutineTestRule
 import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -10,6 +10,7 @@ import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.repository.Database
 import com.phicdy.mycuration.util.UrlUtil
+import com.phicdy.test.util.CoroutineTestRule
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -20,6 +21,11 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.xml.sax.InputSource
+import java.io.StringReader
+import javax.xml.parsers.SAXParser
+import javax.xml.parsers.SAXParserFactory
+import kotlin.time.measureTime
 
 @ExperimentalCoroutinesApi
 class RssParserTest {
@@ -36,11 +42,11 @@ class RssParserTest {
     private lateinit var parser: RssParser
 
     private val db = Database(
-            AndroidSqliteDriver(
-                    schema = Database.Schema,
-                    context = ApplicationProvider.getApplicationContext(),
-                    name = "rss_manage"
-            )
+        AndroidSqliteDriver(
+            schema = Database.Schema,
+            context = ApplicationProvider.getApplicationContext(),
+            name = "rss_manage"
+        )
     )
 
     @Before
@@ -48,11 +54,15 @@ class RssParserTest {
     fun setUp() {
         parser = RssParser()
         rssRepository = RssRepository(
+            db,
+            ArticleRepository(
                 db,
-                ArticleRepository(db, coroutineTestRule.testCoroutineDispatcherProvider, coroutineTestRule.testCoroutineScope),
-                FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider),
-                coroutineTestRule.testCoroutineScope,
-                coroutineTestRule.testCoroutineDispatcherProvider
+                coroutineTestRule.testCoroutineDispatcherProvider,
+                coroutineTestRule.testCoroutineScope
+            ),
+            FilterRepository(db, coroutineTestRule.testCoroutineDispatcherProvider),
+            coroutineTestRule.testCoroutineScope,
+            coroutineTestRule.testCoroutineDispatcherProvider
         )
         deleteAll(db)
     }
@@ -161,19 +171,20 @@ class RssParserTest {
     }
 
     @Test
-    fun testParseFeedInfoTopHtmlFeedURLStartWithSlash() = coroutineTestRule.testCoroutineScope.runTest {
-        // //smhn.info/feed is returned
-        val parser = RssParser()
-        val executor = RssParseExecutor(parser, rssRepository)
-        executor.start("https://smhn.info", callback)
+    fun testParseFeedInfoTopHtmlFeedURLStartWithSlash() =
+        coroutineTestRule.testCoroutineScope.runTest {
+            // //smhn.info/feed is returned
+            val parser = RssParser()
+            val executor = RssParseExecutor(parser, rssRepository)
+            executor.start("https://smhn.info", callback)
 
-        val smhnFeed = rssRepository.getFeedByUrl("https://smhn.info/feed")
+            val smhnFeed = rssRepository.getFeedByUrl("https://smhn.info/feed")
 
-        assertNotNull(smhnFeed)
-        assertEquals("https://smhn.info/feed", smhnFeed?.url)
-        assertEquals("https://smhn.info", smhnFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, smhnFeed?.iconPath)
-    }
+            assertNotNull(smhnFeed)
+            assertEquals("https://smhn.info/feed", smhnFeed?.url)
+            assertEquals("https://smhn.info", smhnFeed?.siteUrl)
+            assertEquals(Feed.DEDAULT_ICON_PATH, smhnFeed?.iconPath)
+        }
 
     @Test
     fun testParseFeedInfoGzip() = coroutineTestRule.testCoroutineScope.runTest {
@@ -191,16 +202,20 @@ class RssParserTest {
 
     @Test
     fun testPathOnlyUrl() = coroutineTestRule.testCoroutineScope.runTest {
-        addNewFeedAndCheckResult("https://b.hatena.ne.jp/hotentry/game",
-                "https://b.hatena.ne.jp/hotentry/game.rss",
-                "https://b.hatena.ne.jp/hotentry/game")
+        addNewFeedAndCheckResult(
+            "https://b.hatena.ne.jp/hotentry/game",
+            "https://b.hatena.ne.jp/hotentry/game.rss",
+            "https://b.hatena.ne.jp/hotentry/game"
+        )
     }
 
     @Test
     fun testFeedPath() = coroutineTestRule.testCoroutineScope.runTest {
-        addNewFeedAndCheckResult("https://www.a-kimama.com",
-                "https://www.a-kimama.com/feed",
-                "https://www.a-kimama.com")
+        addNewFeedAndCheckResult(
+            "https://www.a-kimama.com",
+            "https://www.a-kimama.com/feed",
+            "https://www.a-kimama.com"
+        )
     }
 
     @Test
@@ -213,147 +228,182 @@ class RssParserTest {
 
     @Test
     fun parseRSSVersion1AndFirstSizeIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles.size).isEqualTo(2)
     }
 
     @Test
     fun parserRSSVersion1AndFirstTitleIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[0].title).isEqualTo("トップレベルのコンピュータエンジニアなら普段からチェックして当然の技術系メディアN選 - kuenishi's blog")
     }
 
     @Test
     fun parserRSSVersion1AndFirstURLIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[0].url).isEqualTo("https://kuenishi.hatenadiary.jp/entry/2018/04/13/022908")
     }
 
     @Test
     fun parserRSSVersion1AndFirstDateIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[0].postedDate).isEqualTo(1523554436000L)
     }
 
     @Test
     fun parserRSSVersion1AndFirstStatusIsunread() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[0].status).isEqualTo(Article.UNREAD)
     }
 
     @Test
     fun parserRSSVersion1AndFirstHatenaPointIsMinus1() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val text = RssV1().text()
+        repeat(10) {
+//            val result = measureTimedValue {
+//                parseBySAX(text)
+//            }
+//            Log.d("RssParserTest", "SAX: ${result.duration}")
+            val result2 = measureTime {
+//            val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+                parser.parseArticlesFromRss(text.byteInputStream())
+            }
+            Log.d("RssParserTest", "Previous parser: $result2")
+        }
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[0].point).isEqualTo("-1")
     }
 
     @Test
     fun parserRSSVersion1AndSecondTitleIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[1].title).isEqualTo("「Excelが使える」のレベルを的確に見抜ける、入社試験に使えるサンプル問題が公開中【やじうまWatch】 - INTERNET Watch")
     }
 
     @Test
     fun parserRSSVersion1AndSecondURLIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[1].url).isEqualTo("https://internet.watch.impress.co.jp/docs/yajiuma/1116878.html")
     }
 
     @Test
     fun parserRSSVersion1AndSecondDateIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[1].postedDate).isEqualTo(1523567035000L)
     }
 
     @Test
     fun parserRSSVersion1AndSecondStatusIsunread() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[1].status).isEqualTo(Article.UNREAD)
     }
 
     @Test
     fun parserRSSVersion1AndSecondHatenaPointIsMinus1() {
-        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV1().text().byteInputStream())
+        val articles = parseBySAX(RssV1().text())
         assertThat(articles[1].point).isEqualTo("-1")
     }
 
     @Test
     fun parserRSSVersion2AndSizeIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles.size).isEqualTo(2)
     }
 
     @Test
     fun parserRSSVersion2AndFirstTitleIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[0].title).isEqualTo("内閣支持率が続落し38% 時事")
     }
 
     @Test
     fun parserRSSVersion2AndFirstURLIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[0].url).isEqualTo("https://news.yahoo.co.jp/pickup/6278905")
     }
 
     @Test
     fun parserRSSVersion2AndFirstDateIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[0].postedDate).isEqualTo(1523607277000L)
     }
 
     @Test
     fun parserRSSVersion2AndFirstStatusIsunread() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[0].status).isEqualTo(Article.UNREAD)
     }
 
     @Test
     fun parserRSSVersion2AndFirstHatenaPointIsMinus1() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[0].point).isEqualTo("-1")
     }
 
     @Test
     fun parserRSSVersion2AndSecondTitleIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[1].title).isEqualTo("ハム球場で迷惑行為 県警警戒")
     }
 
     @Test
     fun parserRSSVersion2AndSecondURLIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[1].url).isEqualTo("https://news.yahoo.co.jp/pickup/6278920")
     }
 
     @Test
     fun parserRSSVersion2AndSecondDateIsCorrect() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[1].postedDate).isEqualTo(1523612750000L)
     }
 
     @Test
     fun parserRSSVersion2AndSecondStatusIsunread() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[1].status).isEqualTo(Article.UNREAD)
     }
 
     @Test
     fun parserRSSVersion2AndSecondHatenaPointIsMinus1() {
-        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(RssV2().text().byteInputStream())
+        val articles = parseBySAX(RssV2().text())
         assertThat(articles[1].point).isEqualTo("-1")
     }
 
     @Test
     fun parserAtom() {
-        val articles = parser.parseArticlesFromRss(Atom().text().byteInputStream())
+//        val articles = parser.parseArticlesFromRss(Atom().text().byteInputStream())
+        val articles = parseBySAX(Atom().text())
         assertThat(articles[0].url)
             .isEqualTo("https://feedproxy.google.com/~r/AndroidDagashi/~3/saI5mOCH5sg/57-2019-03-03")
     }
 
     @Test
     fun parserAtomAndroidDeveloperBlog() {
-        val articles =
-            parser.parseArticlesFromRss(AtomAndroidDeveloperBlog().text.byteInputStream())
+//        val articles =
+//            parser.parseArticlesFromRss(AtomAndroidDeveloperBlog().text.byteInputStream())
+        val articles = parseBySAX(AtomAndroidDeveloperBlog().text)
         assertThat(articles[0].url)
             .isEqualTo("https://feedproxy.google.com/~r/blogspot/hsDu/~3/X3CHRsxGnbE/google-mobile-developer-day-at-game.html")
     }
@@ -366,8 +416,9 @@ class RssParserTest {
 
     @Test
     fun parseArticlesOfFeedBurnerAndroidDeveloperBlog() {
-        val articles =
-            parser.parseArticlesFromRss(FeedBurnerAndroidDeveloperBlog().text.byteInputStream())
+//        val articles =
+//            parser.parseArticlesFromRss(FeedBurnerAndroidDeveloperBlog().text.byteInputStream())
+        val articles = parseBySAX(FeedBurnerAndroidDeveloperBlog().text)
         assertThat(articles[0].url)
             .isEqualTo("https://android-developers.googleblog.com/2022/02/write-better-tests-with-new-testing.html")
     }
@@ -387,5 +438,13 @@ class RssParserTest {
         assertEquals(expectedSiteUrl, addedFeed?.siteUrl)
 
         assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
+    }
+
+    private fun parseBySAX(xml: String): List<Article> {
+        val factory = SAXParserFactory.newInstance()
+        val parser: SAXParser = factory.newSAXParser()
+        val handler = SAXRssHandler()
+        parser.parse(InputSource(StringReader(xml)), handler)
+        return handler.getArticles()
     }
 }

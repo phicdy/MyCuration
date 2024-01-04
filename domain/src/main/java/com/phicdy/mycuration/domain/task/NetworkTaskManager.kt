@@ -7,6 +7,7 @@ import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.domain.rss.RssParser
+import com.phicdy.mycuration.domain.rss.SAXRssHandler
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import kotlinx.coroutines.CoroutineScope
@@ -16,8 +17,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.xml.sax.InputSource
+import org.xml.sax.SAXException
 import timber.log.Timber
 import java.io.IOException
+import java.io.InputStream
+import javax.xml.parsers.SAXParser
+import javax.xml.parsers.SAXParserFactory
 
 class NetworkTaskManager(
     private val articleRepository: ArticleRepository,
@@ -94,7 +100,8 @@ class NetworkTaskManager(
             val inputStream = response.body()?.byteStream() ?: return emptyList()
             inputStream.use {
                 val (parseTime, fetchedArticles) = measureTimeMillsWithResult {
-                    parser.parseArticlesFromRss(inputStream)
+//                    parser.parseArticlesFromRss(inputStream)
+                    parseBySAX(inputStream)
                 }
                 Timber.d("parse ${feed.title} time: $parseTime")
                 if (fetchedArticles.isEmpty()) return emptyList()
@@ -176,5 +183,17 @@ class NetworkTaskManager(
         val result = block()
         val time = System.currentTimeMillis() - now
         return time to result
+    }
+
+    private fun parseBySAX(xml: InputStream): List<Article> {
+        val factory = SAXParserFactory.newInstance()
+        val parser: SAXParser = factory.newSAXParser()
+        val handler = SAXRssHandler()
+        try {
+            parser.parse(InputSource(xml), handler)
+        } catch (e: SAXException) {
+            e.printStackTrace()
+        }
+        return handler.getArticles()
     }
 }
