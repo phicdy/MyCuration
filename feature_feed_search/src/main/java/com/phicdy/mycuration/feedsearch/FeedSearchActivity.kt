@@ -134,15 +134,8 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
             }
         })
 
-        val color = getThemeColor(R.attr.colorPrimary)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView.setSearchableInfo(searchManager
-                .getSearchableInfo(componentName))
-        val searchAutoComplete = searchView
-                .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
-        searchAutoComplete.setTextColor(color)
-        searchAutoComplete.setHintTextColor(color)
-
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 
         // Start tutorial at first time
         if (!BuildConfig.DEBUG && BuildConfig.BUILD_TYPE != "benchmark") {
