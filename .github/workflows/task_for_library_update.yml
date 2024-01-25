@@ -105,12 +105,12 @@ jobs:
         env:
           BASE_BRANCH: ${{ github.base_ref }}
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      - uses: peter-evans/find-comment@e3754082ec6536fb0f8c4c6ebb4c2682cf6efa67
+      - uses: peter-evans/find-comment@c8a5a626fefcc32783c2767493a7b0648d9a882f
         id: find_comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body-includes: Dependency diff
-      - uses: peter-evans/create-or-update-comment@d41bfe36e5af6ca183ce8b04db32e4aa6412e693
+      - uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043
         if: ${{ steps.dependency-diff.outputs.text-diff != null || steps.find_comment.outputs.comment-id != null }}
         with:
           body: |
