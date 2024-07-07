@@ -52,7 +52,11 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     private lateinit var filtersRecyclerView: RecyclerView
     private lateinit var emptyView: TextView
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_filter_list, container, false)
     }
 
@@ -115,9 +119,11 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
         startActivity(intent)
     }
 
-    private inner class FiltersListAdapter(private val filters: ArrayList<Filter>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private inner class FiltersListAdapter(private val filters: ArrayList<Filter>) :
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.filters_list, parent, false)
+            val itemView =
+                LayoutInflater.from(parent.context).inflate(R.layout.filters_list, parent, false)
             return ViewHolder(itemView)
         }
 
@@ -161,17 +167,23 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
                 holder.filterEnabled.isChecked = filter.isEnabled
 
                 holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
-                    menu.add(0, EDIT_FILTER_MENU_ID, 0, R.string.edit_filter).setOnMenuItemClickListener {
-                        presenter.onEditMenuClicked(filters[position])
-                        true
-                    }
-                    menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter).setOnMenuItemClickListener {
-                        launch {
-                            presenter.onDeleteMenuClicked(position, filters[position], filters.size)
-                            filters.removeAt(position)
+                    menu.add(0, EDIT_FILTER_MENU_ID, 0, R.string.edit_filter)
+                        .setOnMenuItemClickListener {
+                            presenter.onEditMenuClicked(filters[position])
+                            true
                         }
-                        true
-                    }
+                    menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter)
+                        .setOnMenuItemClickListener {
+                            launch {
+                                presenter.onDeleteMenuClicked(
+                                    position,
+                                    filters[position],
+                                    filters.size
+                                )
+                                filters.removeAt(position)
+                            }
+                            true
+                        }
                 }
             }
         }
