@@ -1,8 +1,8 @@
 [versions]
 gradle = "8.5.0"
-jetpack_compose_compiler = "1.5.8"
-kotlin = "1.9.22"
-coroutine = "1.7.3"
+jetpack_compose_compiler = "1.5.14"
+kotlin = "1.9.24"
+coroutine = "1.8.1"
 accompanist = "0.32.0"
 lifecycle = "2.7.0"
 arch_core_testing = "2.2.0"
@@ -35,7 +35,7 @@ lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", v
 lifecycle-livedata = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
-compose_bom = { module = "androidx.compose:compose-bom", version = "2024.02.01" }
+compose_bom = { module = "androidx.compose:compose-bom", version = "2024.06.00" }
 compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "jetpack_compose_compiler" }
 accompanist = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 firebase-ads = { module = "com.google.firebase:firebase-ads", version = "23.0.0" }
