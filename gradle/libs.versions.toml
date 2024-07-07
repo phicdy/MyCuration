@@ -1,7 +1,7 @@
 [versions]
 gradle = "8.5.0"
 jetpack_compose_compiler = "1.5.14"
-kotlin = "1.9.24"
+kotlin = "2.0.0"
 coroutine = "1.8.1"
 accompanist = "0.34.0"
 lifecycle = "2.8.3"
@@ -26,17 +26,19 @@ timber = "5.0.1"
 flipper = "0.250.0"
 junit = "4.13.2"
 
+[plugins]
+kotlin-gradle = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
 [libraries]
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 junit = { module = "junit:junit", version.ref = "junit" }
-kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-livedata = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
 compose_bom = { module = "androidx.compose:compose-bom", version = "2024.06.00" }
-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "jetpack_compose_compiler" }
 accompanist = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 firebase-ads = { module = "com.google.firebase:firebase-ads", version = "23.0.0" }
 

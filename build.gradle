@@ -11,11 +11,15 @@ buildscript {
         classpath libs.gradle
         classpath 'com.google.gms:google-services:4.4.2'
         classpath 'com.stanfy.spoon:spoon-gradle-plugin:1.2.2'
-        classpath libs.kotlin.gradle
         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
         classpath libs.dagger.hilt.gradle
         classpath libs.sqldelight.gradle
     }
+}
+
+plugins {
+    alias(libs.plugins.kotlin.gradle) apply(false)
+    alias(libs.plugins.compose.compiler) apply(false)
 }
 
 allprojects {
@@ -56,16 +60,6 @@ subprojects {
             targetSdkVersion 33
             versionName "1.10.0"
             versionCode 60
-        }
-
-        if (name != 'benchmark') {
-            buildFeatures {
-                compose true
-            }
-
-            composeOptions {
-                kotlinCompilerExtensionVersion libs.versions.jetpack.compose.compiler.get()
-            }
         }
 
         compileOptions {
