@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -181,7 +181,8 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
             internal val feedTitle = itemView.findViewById(R.id.filterTargetFeed) as TextView
             internal val filterKeyword = itemView.findViewById(R.id.filterKeyword) as TextView
             internal val filterUrl = itemView.findViewById(R.id.filterUrl) as TextView
-            internal val filterEnabled = itemView.findViewById(R.id.sw_filter_enable) as Switch
+            internal val filterEnabled =
+                itemView.findViewById(R.id.sw_filter_enable) as SwitchCompat
         }
     }
 

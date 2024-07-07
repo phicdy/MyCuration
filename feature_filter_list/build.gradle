@@ -21,6 +21,7 @@ dependencies {
     implementation project(':resource')
 
     implementation libs.recyclerview
+    implementation libs.appcompat
 
     implementation libs.dagger.hilt
     kapt libs.dagger.hilt.compiler

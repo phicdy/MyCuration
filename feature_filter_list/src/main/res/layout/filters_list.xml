@@ -52,11 +52,11 @@
             tools:text="@string/sample_filter_url" />
     </LinearLayout>
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/sw_filter_enable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="8dp"
-        android:focusable="false"/>
+        android:focusable="false" />
 </LinearLayout>
