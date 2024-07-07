@@ -63,8 +63,8 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         activity?.let {
-            filtersRecyclerView = it.findViewById(R.id.rv_filter) as RecyclerView
-            emptyView = it.findViewById(R.id.filter_emptyView) as TextView
+            filtersRecyclerView = it.findViewById(R.id.rv_filter)
+            emptyView = it.findViewById(R.id.filter_emptyView)
             presenter.onActivityCreated()
         }
     }
@@ -189,12 +189,11 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
         }
 
         private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            internal val filterTitle = itemView.findViewById(R.id.filterTitle) as TextView
-            internal val feedTitle = itemView.findViewById(R.id.filterTargetFeed) as TextView
-            internal val filterKeyword = itemView.findViewById(R.id.filterKeyword) as TextView
-            internal val filterUrl = itemView.findViewById(R.id.filterUrl) as TextView
-            internal val filterEnabled =
-                itemView.findViewById(R.id.sw_filter_enable) as SwitchCompat
+            val filterTitle: TextView = itemView.findViewById(R.id.filterTitle)
+            val feedTitle: TextView = itemView.findViewById(R.id.filterTargetFeed)
+            val filterKeyword: TextView = itemView.findViewById(R.id.filterKeyword)
+            val filterUrl: TextView = itemView.findViewById(R.id.filterUrl)
+            val filterEnabled: SwitchCompat = itemView.findViewById(R.id.sw_filter_enable)
         }
     }
 
