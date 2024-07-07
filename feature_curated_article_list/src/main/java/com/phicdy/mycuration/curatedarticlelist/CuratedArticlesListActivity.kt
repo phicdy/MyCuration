@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -22,7 +23,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFragment.OnArticlesListFragmentListener {
+class CuratedArticlesListActivity : AppCompatActivity(),
+    CuratedArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
         private const val DEFAULT_CURATION_ID = -1
@@ -30,9 +32,9 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
         private const val CURATION_ID = "CURATION_ID"
 
         fun createIntent(context: Context, curationId: Int) =
-                Intent(context, CuratedArticlesListActivity::class.java).apply {
-                    putExtra(CURATION_ID, curationId)
-                }
+            Intent(context, CuratedArticlesListActivity::class.java).apply {
+                putExtra(CURATION_ID, curationId)
+            }
     }
 
     private lateinit var searchView: SearchView
@@ -53,8 +55,8 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
         if (savedInstanceState == null) {
             val fragment = CuratedArticlesListFragment.newInstance(curationId)
             supportFragmentManager.beginTransaction()
-                    .add(R.id.container, fragment, TAG_FRAGMENT)
-                    .commit()
+                .add(R.id.container, fragment, TAG_FRAGMENT)
+                .commit()
         }
 
         lifecycleScope.launch {
@@ -64,7 +66,8 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
             initToolbar()
             fab = findViewById(R.id.fab_article_list)
             fab.setOnClickListener {
-                val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? CuratedArticlesListFragment
+                val fragment =
+                    supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? CuratedArticlesListFragment
                 fragment?.onFabButtonClicked()
                 TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
             }
@@ -90,8 +93,10 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchMenuItem = menu.findItem(R.id.search_article)
         searchView = searchMenuItem.actionView as SearchView
-        searchView.setSearchableInfo(searchManager
-                .getSearchableInfo(componentName))
+        searchView.setSearchableInfo(
+            searchManager
+                .getSearchableInfo(componentName)
+        )
         searchView.queryHint = getString(R.string.search_article)
         searchView.setOnQueryTextFocusChangeListener { _, queryTextFocused ->
             if (!queryTextFocused) {
@@ -106,7 +111,10 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query == null) return false
-                val intent = Intent(this@CuratedArticlesListActivity, ArticleSearchResultActivity::class.java)
+                val intent = Intent(
+                    this@CuratedArticlesListActivity,
+                    ArticleSearchResultActivity::class.java
+                )
                 intent.action = Intent.ACTION_SEARCH
                 intent.putExtra(SearchManager.QUERY, query)
                 startActivity(intent)
@@ -114,8 +122,8 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
             }
         })
         val color = getThemeColor(R.attr.colorPrimary)
-        val searchAutoComplete = searchView
-                .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+        val searchAutoComplete: TextView =
+            searchView.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.setTextColor(color)
         searchAutoComplete.setHintTextColor(color)
         return true
@@ -126,9 +134,11 @@ class CuratedArticlesListActivity : AppCompatActivity(), CuratedArticlesListFrag
         when (item.itemId) {
             R.id.all_read -> {
                 TrackerHelper.sendButtonEvent(getString(R.string.read_all_articles))
-                val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? CuratedArticlesListFragment
+                val fragment =
+                    supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? CuratedArticlesListFragment
                 fragment?.handleAllRead()
             }
+
             android.R.id.home -> finish()
             else -> {
             }
