@@ -16,7 +16,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fr_article_search_result"
         android:name="com.phicdy.mycuration.articlelist.ArticlesListFragment"
         android:layout_width="match_parent"
