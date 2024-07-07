@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -16,13 +17,14 @@ import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFragment.OnArticlesListFragmentListener {
+class FavoriteArticlesListActivity : AppCompatActivity(),
+    FavoriteArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
         private const val TAG_FRAGMENT = "TAG_FRAGMENT"
 
         fun createIntent(context: Context) =
-                Intent(context, FavoriteArticlesListActivity::class.java)
+            Intent(context, FavoriteArticlesListActivity::class.java)
     }
 
     private lateinit var searchView: SearchView
@@ -36,8 +38,8 @@ class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFr
         if (savedInstanceState == null) {
             val fragment = FavoriteArticlesListFragment.newInstance()
             supportFragmentManager.beginTransaction()
-                    .add(R.id.container, fragment, TAG_FRAGMENT)
-                    .commit()
+                .add(R.id.container, fragment, TAG_FRAGMENT)
+                .commit()
         }
 
         title = getString(R.string.favorite)
@@ -46,7 +48,8 @@ class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFr
         initToolbar()
         fab = findViewById(R.id.fab_article_list)
         fab.setOnClickListener {
-            val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? FavoriteArticlesListFragment
+            val fragment =
+                supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? FavoriteArticlesListFragment
             fragment?.onFabButtonClicked()
             TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
         }
@@ -71,8 +74,10 @@ class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFr
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchMenuItem = menu.findItem(R.id.search_article)
         searchView = searchMenuItem.actionView as SearchView
-        searchView.setSearchableInfo(searchManager
-                .getSearchableInfo(componentName))
+        searchView.setSearchableInfo(
+            searchManager
+                .getSearchableInfo(componentName)
+        )
         searchView.queryHint = getString(R.string.search_article)
         searchView.setOnQueryTextFocusChangeListener { _, queryTextFocused ->
             if (!queryTextFocused) {
@@ -87,7 +92,10 @@ class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFr
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query == null) return false
-                val intent = Intent(this@FavoriteArticlesListActivity, ArticleSearchResultActivity::class.java)
+                val intent = Intent(
+                    this@FavoriteArticlesListActivity,
+                    ArticleSearchResultActivity::class.java
+                )
                 intent.action = Intent.ACTION_SEARCH
                 intent.putExtra(SearchManager.QUERY, query)
                 startActivity(intent)
@@ -95,8 +103,8 @@ class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFr
             }
         })
         val color = getThemeColor(R.attr.colorPrimary)
-        val searchAutoComplete = searchView
-                .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+        val searchAutoComplete: TextView =
+            searchView.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.setTextColor(color)
         searchAutoComplete.setHintTextColor(color)
         return true
@@ -107,9 +115,11 @@ class FavoriteArticlesListActivity : AppCompatActivity(), FavoriteArticlesListFr
         when (item.itemId) {
             R.id.all_read -> {
                 TrackerHelper.sendButtonEvent(getString(R.string.read_all_articles))
-                val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? FavoriteArticlesListFragment
+                val fragment =
+                    supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? FavoriteArticlesListFragment
                 fragment?.handleAllRead()
             }
+
             android.R.id.home -> finish()
             else -> {
             }

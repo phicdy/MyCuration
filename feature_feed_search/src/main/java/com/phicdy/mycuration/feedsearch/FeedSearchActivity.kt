@@ -15,6 +15,7 @@ import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.StringRes
@@ -83,7 +84,10 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
                 return false
             }
 
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
                 return false
             }
 
@@ -136,10 +140,12 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
 
         val color = getThemeColor(R.attr.colorPrimary)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView.setSearchableInfo(searchManager
-                .getSearchableInfo(componentName))
-        val searchAutoComplete = searchView
-                .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+        searchView.setSearchableInfo(
+            searchManager
+                .getSearchableInfo(componentName)
+        )
+        val searchAutoComplete: TextView =
+            searchView.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.setTextColor(color)
         searchAutoComplete.setHintTextColor(color)
 
@@ -157,20 +163,20 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
                 // Search tutorial
                 sequence.addSequenceItem(
                     MaterialShowcaseView.Builder(this@FeedSearchActivity)
-                                .setTarget(view)
-                                .setContentText(R.string.tutorial_search_rss_description)
-                                .setDismissText(R.string.tutorial_next)
-                                .build()
+                        .setTarget(view)
+                        .setContentText(R.string.tutorial_search_rss_description)
+                        .setDismissText(R.string.tutorial_next)
+                        .build()
                 )
 
                 // Add button tutorial
                 sequence.addSequenceItem(
-                        MaterialShowcaseView.Builder(this@FeedSearchActivity)
-                                .setTarget(fab)
-                                .setContentText(R.string.tutorial_add_rss_description)
-                                .setDismissText(R.string.tutorial_close)
-                                .setDismissOnTouch(true)
-                                .build()
+                    MaterialShowcaseView.Builder(this@FeedSearchActivity)
+                        .setTarget(fab)
+                        .setContentText(R.string.tutorial_add_rss_description)
+                        .setDismissText(R.string.tutorial_close)
+                        .setDismissOnTouch(true)
+                        .build()
                 )
 
                 // Open software keyboard if tutorial already finished
@@ -260,6 +266,6 @@ class FeedSearchActivity : AppCompatActivity(), FeedSearchView, CoroutineScope {
         @ActivityScoped
         @Provides
         fun provideFeedSearchView(@ActivityContext activity: Context): FeedSearchView =
-                activity as FeedSearchView
+            activity as FeedSearchView
     }
 }

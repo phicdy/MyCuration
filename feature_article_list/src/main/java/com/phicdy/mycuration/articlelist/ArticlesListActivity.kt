@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -22,16 +23,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticlesListFragmentListener {
+class ArticlesListActivity : AppCompatActivity(),
+    ArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
         private const val TAG_FRAGMENT = "TAG_FRAGMENT"
         private const val RSS_ID = "RSS_ID"
 
         fun createIntent(context: Context, rssId: Int) =
-                Intent(context, ArticlesListActivity::class.java).apply {
-                    putExtra(RSS_ID, rssId)
-                }
+            Intent(context, ArticlesListActivity::class.java).apply {
+                putExtra(RSS_ID, rssId)
+            }
     }
 
     private lateinit var searchView: SearchView
@@ -52,8 +54,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         if (savedInstanceState == null) {
             val fragment = ArticlesListFragment.newInstance(feedId)
             supportFragmentManager.beginTransaction()
-                    .add(R.id.container, fragment, TAG_FRAGMENT)
-                    .commit()
+                .add(R.id.container, fragment, TAG_FRAGMENT)
+                .commit()
         }
 
         lifecycleScope.launch {
@@ -63,6 +65,7 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
                     title = getString(R.string.all)
                     fbTitle = getString(R.string.all)
                 }
+
                 else -> {
                     // Select a feed
                     val prefMgr = PreferenceHelper
@@ -76,7 +79,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
             initToolbar()
             fab = findViewById(R.id.fab_article_list)
             fab.setOnClickListener {
-                val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
+                val fragment =
+                    supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
                 fragment?.onFabButtonClicked()
                 TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
             }
@@ -102,8 +106,10 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchMenuItem = menu.findItem(R.id.search_article)
         searchView = searchMenuItem.actionView as SearchView
-        searchView.setSearchableInfo(searchManager
-                .getSearchableInfo(componentName))
+        searchView.setSearchableInfo(
+            searchManager
+                .getSearchableInfo(componentName)
+        )
         searchView.queryHint = getString(R.string.search_article)
         searchView.setOnQueryTextFocusChangeListener { _, queryTextFocused ->
             if (!queryTextFocused) {
@@ -118,7 +124,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query == null) return false
-                val intent = Intent(this@ArticlesListActivity, ArticleSearchResultActivity::class.java)
+                val intent =
+                    Intent(this@ArticlesListActivity, ArticleSearchResultActivity::class.java)
                 intent.action = Intent.ACTION_SEARCH
                 intent.putExtra(SearchManager.QUERY, query)
                 startActivity(intent)
@@ -126,8 +133,8 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
             }
         })
         val color = getThemeColor(R.attr.colorPrimary)
-        val searchAutoComplete = searchView
-                .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+        val searchAutoComplete: TextView =
+            searchView.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.setTextColor(color)
         searchAutoComplete.setHintTextColor(color)
         return true
@@ -138,9 +145,11 @@ class ArticlesListActivity : AppCompatActivity(), ArticlesListFragment.OnArticle
         when (item.itemId) {
             R.id.all_read -> {
                 TrackerHelper.sendButtonEvent(getString(R.string.read_all_articles))
-                val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
+                val fragment =
+                    supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
                 fragment?.handleAllRead()
             }
+
             android.R.id.home -> finish()
             else -> {
             }

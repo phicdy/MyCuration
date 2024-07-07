@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -144,20 +145,22 @@ class TopActivity :
             R.id.navigation_curation -> {
                 supportActionBar?.title = getString(R.string.curation)
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.fr_content, CurationListFragment(), FRAGMENT_TAG)
-                        .commit()
+                    .replace(R.id.fr_content, CurationListFragment(), FRAGMENT_TAG)
+                    .commit()
             }
+
             R.id.navigation_rss -> {
                 supportActionBar?.title = getString(R.string.rss)
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.fr_content, RssListFragment(), FRAGMENT_TAG)
-                        .commit()
+                    .replace(R.id.fr_content, RssListFragment(), FRAGMENT_TAG)
+                    .commit()
             }
+
             R.id.navigation_filter -> {
                 supportActionBar?.title = getString(R.string.filter)
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.fr_content, FilterListFragment(), FRAGMENT_TAG)
-                        .commit()
+                    .replace(R.id.fr_content, FilterListFragment(), FRAGMENT_TAG)
+                    .commit()
             }
         }
     }
@@ -354,8 +357,8 @@ class TopActivity :
         })
 
         val color = getThemeColor(R.attr.colorPrimary)
-        val searchAutoComplete = searchView!!
-                .findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+        val searchAutoComplete: TextView = searchView!!
+            .findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.setTextColor(color)
         searchAutoComplete.setHintTextColor(color)
 
@@ -375,13 +378,13 @@ class TopActivity :
 
                         }
 
-                            override fun onShowcaseDismissed(materialShowcaseView: MaterialShowcaseView) {
-                                if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                                    goToFeedSearch()
-                                }
+                        override fun onShowcaseDismissed(materialShowcaseView: MaterialShowcaseView) {
+                            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                                goToFeedSearch()
                             }
-                        })
-                        .show()
+                        }
+                    })
+                    .show()
             }
         }
         return true
@@ -449,7 +452,9 @@ class TopActivity :
 
     private fun changeTab(position: Int) {
         when (position) {
-            PreferenceHelper.LAUNCH_CURATION -> navigationView.selectedItemId = R.id.navigation_curation
+            PreferenceHelper.LAUNCH_CURATION -> navigationView.selectedItemId =
+                R.id.navigation_curation
+
             PreferenceHelper.LAUNCH_RSS -> navigationView.selectedItemId = R.id.navigation_rss
         }
     }
@@ -470,7 +475,7 @@ class TopActivity :
                     closeRateDialogActionCreator.run()
                 }
             }
-                .show()
+            .show()
     }
 
     private fun goToGooglePlay() {
