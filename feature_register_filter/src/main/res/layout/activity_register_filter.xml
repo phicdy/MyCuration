@@ -97,12 +97,12 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/bg_filter_target_rss"
-        android:drawableLeft="@drawable/ic_rss_black"
         android:drawablePadding="8dp"
         android:hint="@string/target_rss"
         android:padding="12dp"
         android:textColorHint="@color/text_hint_text_input_edit_text"
         android:textSize="@dimen/text_size_register_filter"
+        app:drawableLeftCompat="@drawable/ic_rss_black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_filter_url" />
 </androidx.constraintlayout.widget.ConstraintLayout>

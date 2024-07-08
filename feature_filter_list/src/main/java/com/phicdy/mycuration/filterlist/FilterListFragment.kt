@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -52,15 +52,19 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
     private lateinit var filtersRecyclerView: RecyclerView
     private lateinit var emptyView: TextView
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_filter_list, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         activity?.let {
-            filtersRecyclerView = it.findViewById(R.id.rv_filter) as RecyclerView
-            emptyView = it.findViewById(R.id.filter_emptyView) as TextView
+            filtersRecyclerView = it.findViewById(R.id.rv_filter)
+            emptyView = it.findViewById(R.id.filter_emptyView)
             presenter.onActivityCreated()
         }
     }
@@ -115,9 +119,11 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
         startActivity(intent)
     }
 
-    private inner class FiltersListAdapter(private val filters: ArrayList<Filter>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private inner class FiltersListAdapter(private val filters: ArrayList<Filter>) :
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.filters_list, parent, false)
+            val itemView =
+                LayoutInflater.from(parent.context).inflate(R.layout.filters_list, parent, false)
             return ViewHolder(itemView)
         }
 
@@ -161,27 +167,33 @@ class FilterListFragment : Fragment(), FilterListView, CoroutineScope {
                 holder.filterEnabled.isChecked = filter.isEnabled
 
                 holder.itemView.setOnCreateContextMenuListener { menu, _, _ ->
-                    menu.add(0, EDIT_FILTER_MENU_ID, 0, R.string.edit_filter).setOnMenuItemClickListener {
-                        presenter.onEditMenuClicked(filters[position])
-                        true
-                    }
-                    menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter).setOnMenuItemClickListener {
-                        launch {
-                            presenter.onDeleteMenuClicked(position, filters[position], filters.size)
-                            filters.removeAt(position)
+                    menu.add(0, EDIT_FILTER_MENU_ID, 0, R.string.edit_filter)
+                        .setOnMenuItemClickListener {
+                            presenter.onEditMenuClicked(filters[position])
+                            true
                         }
-                        true
-                    }
+                    menu.add(0, DELETE_FILTER_MENU_ID, 1, R.string.delete_filter)
+                        .setOnMenuItemClickListener {
+                            launch {
+                                presenter.onDeleteMenuClicked(
+                                    position,
+                                    filters[position],
+                                    filters.size
+                                )
+                                filters.removeAt(position)
+                            }
+                            true
+                        }
                 }
             }
         }
 
         private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            internal val filterTitle = itemView.findViewById(R.id.filterTitle) as TextView
-            internal val feedTitle = itemView.findViewById(R.id.filterTargetFeed) as TextView
-            internal val filterKeyword = itemView.findViewById(R.id.filterKeyword) as TextView
-            internal val filterUrl = itemView.findViewById(R.id.filterUrl) as TextView
-            internal val filterEnabled = itemView.findViewById(R.id.sw_filter_enable) as Switch
+            val filterTitle: TextView = itemView.findViewById(R.id.filterTitle)
+            val feedTitle: TextView = itemView.findViewById(R.id.filterTargetFeed)
+            val filterKeyword: TextView = itemView.findViewById(R.id.filterKeyword)
+            val filterUrl: TextView = itemView.findViewById(R.id.filterUrl)
+            val filterEnabled: SwitchCompat = itemView.findViewById(R.id.sw_filter_enable)
         }
     }
 

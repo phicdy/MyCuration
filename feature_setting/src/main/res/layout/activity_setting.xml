@@ -15,7 +15,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fr_setting"
         android:name="com.phicdy.mycuration.setting.SettingFragment"
         android:layout_width="match_parent"
