@@ -1,7 +1,16 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
 include ':app',
         ':action_article_list',
         ':admob',
         ':advertisement',
+        ':baselineprofile',
         ':core',
         ':di_common',
         ':domain',

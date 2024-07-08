@@ -25,10 +25,14 @@ sqlite = "2.4.0"
 timber = "5.0.1"
 flipper = "0.250.0"
 junit = "4.13.2"
+baselineprofile = "1.2.4"
 
 [plugins]
 kotlin-gradle = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+android-test = { id = "com.android.test", version.ref = "gradle" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
+android-application = { id = "com.android.application", version.ref = "gradle" }
 
 [libraries]
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }

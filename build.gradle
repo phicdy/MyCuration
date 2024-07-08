@@ -19,6 +19,9 @@ buildscript {
 plugins {
     alias(libs.plugins.kotlin.gradle) apply(false)
     alias(libs.plugins.compose.compiler) apply(false)
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.baselineprofile) apply false
+    alias(libs.plugins.android.application) apply false
 }
 
 allprojects {
@@ -43,6 +46,9 @@ subprojects {
     } else if (name == 'benchmark') {
         apply plugin: 'com.android.test'
         apply plugin: 'kotlin-android'
+    } else if (name == 'baselineprofile') {
+        // Do notihng
+        return
     } else {
         apply plugin: 'com.android.library'
         apply plugin: 'kotlin-android'

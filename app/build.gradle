@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.baselineprofile)
+}
 apply plugin: 'spoon'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-kapt'
@@ -133,6 +137,9 @@ dependencies {
 
     implementation libs.sqldelight
     implementation libs.sqlite
+
+    implementation libs.profileinstaller
+    baselineProfile project(':baselineprofile')
 }
 
 apply plugin: 'com.google.gms.google-services'
