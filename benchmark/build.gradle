@@ -4,7 +4,8 @@ android {
     namespace 'com.phicdy.mycuration.benchmark'
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 28
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         // This benchmark buildType is used for benchmarking, and should function like your
@@ -21,7 +22,7 @@ android {
             devices {
                 pixel6Api31(ManagedVirtualDevice) {
                     device = "Pixel 6"
-                    apiLevel = 31
+                    apiLevel = 33
                     systemImageSource = "aosp"
                 }
             }
@@ -34,10 +35,13 @@ android {
 
 dependencies {
     implementation libs.androidx.test
+    implementation libs.androidx.test.core
+    implementation libs.androidx.test.rules
+    implementation libs.androidx.test.runner
     implementation libs.espresso
     implementation libs.uiautomator
     implementation libs.macrobenchmark
-    implementation libs.profileinstaller
+    implementation libs.junit
 }
 
 androidComponents {
