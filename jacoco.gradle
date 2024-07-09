@@ -25,7 +25,8 @@ def coverageExcludeFiles = ['**/R.class', '**/R$*.class', '**/com/android/**/*.*
                             '**/com/phicdy/mycuration/domain/task/GetFeedIconTask*',
                             '**/com/phicdy/mycuration/domain/task/HatenaBookmarkApi*',
                             '**/com/phicdy/mycuration/tracker/*.*']
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+tasks.register('jacocoTestReport', JacocoReport) {
+    dependsOn('testDebugUnitTest')
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
     reports {
@@ -41,10 +42,5 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     }
     getSourceDirectories().setFrom(files(coverageSourceDirs))
     getExecutionData().setFrom(files("${buildDir}/jacoco/testDebugUnitTest.exec"))
-
-    doLast {
-        println "jacoco xml report has been generated to file://${buildDir}/reports/jacoco/jacocoTestReport.xml"
-        println "jacoco html report has been generated to file://${reports.html.outputLocation}/index.html"
-    }
 }
 
