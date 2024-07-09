@@ -33,6 +33,10 @@ jobs:
       - name: Create jacoco report
         run: ./gradlew jacocoTestReport
       - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
         if: always()
