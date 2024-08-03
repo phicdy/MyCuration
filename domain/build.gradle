@@ -28,6 +28,5 @@ dependencies {
     implementation libs.javax.inject
 
     implementation libs.dagger.hilt
-    implementation project(':core')
     kapt libs.dagger.hilt.compiler
 }
