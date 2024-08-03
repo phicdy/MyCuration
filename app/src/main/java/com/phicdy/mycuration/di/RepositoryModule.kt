@@ -1,7 +1,6 @@
 package com.phicdy.mycuration.di
 
 import android.content.Context
-import com.phicdy.mycuration.core.CoroutineDispatcherProvider
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.AdditionalSettingApi
 import com.phicdy.mycuration.data.repository.AdditionalSettingRepository
@@ -9,7 +8,6 @@ import com.phicdy.mycuration.data.repository.ArticleRepository
 import com.phicdy.mycuration.data.repository.CurationRepository
 import com.phicdy.mycuration.data.repository.FilterRepository
 import com.phicdy.mycuration.data.repository.RssRepository
-import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.domain.rss.RssParser
 import com.phicdy.mycuration.domain.task.NetworkTaskManager
 import com.phicdy.mycuration.repository.Database
@@ -19,7 +17,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
@@ -46,22 +43,18 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideNetworkTaskManager(
-        articleRepository: ArticleRepository,
-        rssRepository: RssRepository,
-        curationRepository: CurationRepository,
-        filterRepository: FilterRepository,
-        okHttpClient: OkHttpClient,
-        coroutineDispatcherProvider: CoroutineDispatcherProvider,
-        @ApplicationCoroutineScope coroutineScope: CoroutineScope
+            articleRepository: ArticleRepository,
+            rssRepository: RssRepository,
+            curationRepository: CurationRepository,
+            filterRepository: FilterRepository,
+            okHttpClient: OkHttpClient
     ): NetworkTaskManager = NetworkTaskManager(
         articleRepository,
         rssRepository,
         curationRepository,
         filterRepository,
         okHttpClient,
-        RssParser(),
-        coroutineDispatcherProvider,
-        coroutineScope
+        RssParser()
     )
 
     @Singleton

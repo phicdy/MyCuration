@@ -6,13 +6,11 @@ import com.phicdy.mycuration.data.Articles
 import com.phicdy.mycuration.di.common.ApplicationCoroutineScope
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.FavoritableArticle
-import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.entity.Filter
 import com.phicdy.mycuration.repository.Database
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,9 +20,6 @@ class ArticleRepository @Inject constructor(
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
     @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope,
 ) {
-
-    // RSS ID to latest articles
-    private val latestArticlesCache: ConcurrentHashMap<Int, List<Article>> = ConcurrentHashMap()
 
     suspend fun getAllArticlesInRss(rssId: Int, isNewestArticleTop: Boolean): List<Article> {
         return withContext(coroutineDispatcherProvider.io()) {
@@ -459,17 +454,6 @@ class ArticleRepository @Inject constructor(
             database.articleQueries.transaction {
                 database.articleQueries.deleteAll()
             }
-        }
-    }
-
-    suspend fun getLatestArticlesCache(feed: Feed): List<Article> =
-        withContext(coroutineDispatcherProvider.io()) {
-            return@withContext latestArticlesCache[feed.id] ?: emptyList()
-        }
-
-    suspend fun updateLatestArticlesCache(feed: Feed, articles: List<Article>) {
-        withContext(coroutineDispatcherProvider.io()) {
-            latestArticlesCache[feed.id] = articles
         }
     }
 
