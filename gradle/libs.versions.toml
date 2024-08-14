@@ -93,7 +93,7 @@ materialshowcaseview = { module = "com.github.deano2390:MaterialShowcaseView", v
 firebase_bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom" }
 
 androidx_test_core = { module = "androidx.test:core", version = "1.6.1" }
-androidx_test_runner = { module = "androidx.test:runner", version = "1.6.1" }
+androidx_test_runner = { module = "androidx.test:runner", version = "1.6.2" }
 androidx_test_rules = { module = "androidx.test:rules", version = "1.6.1" }
 androidx_test = { module = "androidx.test.ext:junit", version = "1.2.1" }
 espresso = { module = "androidx.test.espresso:espresso-core", version = "3.6.1" }
