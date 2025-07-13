@@ -18,12 +18,12 @@ object FileUtil {
             try {
                 val fstab = File("/system/etc/vold.fstab")
                 if (fstab.exists()) {
-                    scanner = Scanner(FileInputStream(File(
-                            "/system/etc/vold.fstab")))
+                    scanner = Scanner(FileInputStream(File("/system/etc/vold.fstab")))
                     while (scanner.hasNextLine()) {
                         val line = scanner.nextLine()
                         if (line.startsWith("dev_mount") || line.startsWith("fuse_mount")) {
-                            sdCardRootPath = line.replace("\t".toRegex(), " ").split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2]
+                            sdCardRootPath = line.replace("\t".toRegex(), " ").split(" ".toRegex())
+                                .dropLastWhile { it.isEmpty() }.toTypedArray()[2]
                         }
                     }
                 } else {
@@ -64,7 +64,8 @@ object FileUtil {
     fun getAppPath(context: Context): String {
         val pkgMgr = context.packageManager
         try {
-            val path = pkgMgr.getPackageInfo(context.packageName, 0).applicationInfo.dataDir
+            val path = pkgMgr.getPackageInfo(context.packageName, 0).applicationInfo?.dataDir
+                ?: return ""
             return if (path.endsWith("/")) {
                 path
             } else {
