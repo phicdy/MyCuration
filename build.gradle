@@ -57,7 +57,7 @@ subprojects {
     }
 
     android {
-        compileSdkVersion 34
+        compileSdkVersion 36
 
         defaultConfig {
             minSdkVersion 21

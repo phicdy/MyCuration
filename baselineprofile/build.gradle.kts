@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.phicdy.baselineprofile"
-    compileSdk = 34
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -55,7 +55,7 @@ androidComponents {
         val artifactsLoader = v.artifacts.getBuiltArtifactsLoader()
         v.instrumentationRunnerArguments.put(
             "targetAppId",
-            v.testedApks.map { artifactsLoader.load(it)?.applicationId }
+            v.testedApks.map { artifactsLoader.load(it)?.applicationId ?: "" }
         )
     }
 }
