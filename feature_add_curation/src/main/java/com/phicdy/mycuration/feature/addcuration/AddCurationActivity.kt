@@ -1,5 +1,6 @@
 package com.phicdy.mycuration.feature.addcuration
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
@@ -320,6 +321,7 @@ fun WordRow(
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(uiMode = UI_MODE_NIGHT_NO)
 @Composable
 fun AddCurationLightPreview() {
@@ -328,6 +330,7 @@ fun AddCurationLightPreview() {
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun AddCurationDarkPreview() {
