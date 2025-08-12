@@ -3,6 +3,7 @@ package com.phicdy.mycuration.license
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.license.databinding.ActivityLicenseBinding
 
@@ -12,6 +13,7 @@ class LicenseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
         binding = ActivityLicenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

@@ -17,5 +17,6 @@ dependencies {
     implementation project(':resource')
 
     implementation libs.appcompat
+    implementation libs.core
     implementation libs.material
 }
