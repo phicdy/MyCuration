@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.WindowCompat
 import com.phicdy.mycuration.feature.util.changeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,6 +15,7 @@ class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.On
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_article_search_result)
 
         // Set feed id and url from main activity

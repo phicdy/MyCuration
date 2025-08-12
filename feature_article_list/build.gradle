@@ -24,6 +24,7 @@ dependencies {
     implementation project(':action_article_list')
 
     implementation libs.appcompat
+    implementation libs.core
     implementation libs.recyclerview
     implementation libs.lifecycle.runtime
     implementation libs.material
