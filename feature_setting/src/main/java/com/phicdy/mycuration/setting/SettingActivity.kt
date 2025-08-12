@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.WindowCompat
 import com.phicdy.mycuration.feature.util.changeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -13,6 +14,7 @@ class SettingActivity : AppCompatActivity(), SettingFragment.OnSettingFragmentLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_setting)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_setting)
