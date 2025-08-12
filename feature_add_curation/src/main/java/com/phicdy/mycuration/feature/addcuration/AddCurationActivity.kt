@@ -83,6 +83,7 @@ class AddCurationActivity : AppCompatActivity() {
         val id = intent.getIntExtra(EDIT_CURATION_ID, -1)
         setContent {
             MyCurationTheme {
+                val state = addCurationStateStore.state.observeAsState().value
                 AddCurationFragmentScreen(
                     onBackIconClicked = { finish() },
                     onCheckIconClicked = { title, words ->
@@ -110,7 +111,8 @@ class AddCurationActivity : AppCompatActivity() {
                             updateTextFieldActionCreator.run(AddCurationTextFieldType.WORD, it)
                         }
                     },
-                    isEdit = id != -1
+                    isEdit = id != -1,
+                    state = state,
                 )
             }
         }
@@ -222,9 +224,8 @@ fun AddCurationFragmentScreen(
     onTitleFieldChanged: (String) -> Unit = {},
     onWordFieldChanged: (String) -> Unit = {},
     isEdit: Boolean = false,
-    store: AddCurationStateStore = viewModel()
+    state: AddCurationState?,
 ) {
-    val state = store.state.observeAsState().value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -321,20 +322,26 @@ fun WordRow(
     }
 }
 
-@SuppressLint("ViewModelConstructorInComposable")
 @Preview(uiMode = UI_MODE_NIGHT_NO)
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun AddCurationLightPreview() {
+fun AddCurationFragmentScreenLoadingPreview() {
     MyCurationTheme {
-        AddCurationFragmentScreen(store = AddCurationStateStore(Dispatcher()))
+        AddCurationFragmentScreen(state = AddCurationState.Loading)
     }
 }
 
-@SuppressLint("ViewModelConstructorInComposable")
+@Preview(uiMode = UI_MODE_NIGHT_NO)
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun AddCurationDarkPreview() {
+fun AddCurationFragmentScreenLoadedPreview() {
     MyCurationTheme {
-        AddCurationFragmentScreen(store = AddCurationStateStore(Dispatcher()))
+        AddCurationFragmentScreen(
+            state = AddCurationState.Loaded(
+                titleField = "Curation Title",
+                wordField = "Word1, Word2",
+                words = listOf("Word1", "Word2")
+            )
+        )
     }
 }
