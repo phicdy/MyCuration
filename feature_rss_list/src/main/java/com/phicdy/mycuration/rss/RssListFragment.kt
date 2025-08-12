@@ -554,11 +554,12 @@ fun RssContent(
                     contentDescription = ""
                 )
                 RssListText(
-                        text = title,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center,
+                    text = title,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
                 )
-                Spacer(modifier = Modifier.weight(1.0f))
                 RssListText(
                         text = unreadCount.toString(),
                         fontSize = 16.sp,
