@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -82,6 +83,8 @@ class AddCurationActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
+
         val id = intent.getIntExtra(EDIT_CURATION_ID, -1)
         val actualDarkThemeUserSetting = PreferenceHelper.theme == PreferenceHelper.THEME_DARK
         setContent {
@@ -227,6 +230,7 @@ fun AddCurationFragmentScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = if (isEdit) R.string.title_activity_edit_curation else R.string.title_activity_add_curation)) },
+                modifier = Modifier.statusBarsPadding(),
                 navigationIcon = {
                     IconButton(
                         onClick = onBackIconClicked
