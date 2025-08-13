@@ -23,26 +23,29 @@ import java.util.Date
 import java.util.Locale
 
 class CuratedArticleListAdapter(
-        private val coroutineScope: CoroutineScope,
-        private val listener: Listener,
-        private val adProvider: AdProvider
+    private val coroutineScope: CoroutineScope,
+    private val listener: Listener,
+    private val adProvider: AdProvider
 ) : ListAdapter<CuratedArticleItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_FOOTER -> {
                 val footer = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.footer_curated_article_list, parent, false)
+                    .inflate(R.layout.footer_curated_article_list, parent, false)
                 FooterViewHolder(footer)
             }
+
             VIEW_TYPE_ARTICLE -> {
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_curated_articles_list, parent, false)
+                    .inflate(R.layout.item_curated_articles_list, parent, false)
                 ArticleViewHolder(view)
             }
+
             VIEW_TYPE_AD -> {
                 adProvider.newViewHolderInstance(parent)
             }
+
             else -> throw InvalidParameterException("Invalid view type for article list")
         }
     }
@@ -61,7 +64,7 @@ class CuratedArticleListAdapter(
                 }
 
                 val content = getItem(position) as? CuratedArticleItem.Content
-                        ?: throw IllegalStateException()
+                    ?: throw IllegalStateException()
                 val article = content.value
 
                 holder.articleTitle.text = article.title
@@ -121,7 +124,7 @@ class CuratedArticleListAdapter(
     private class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     private class ArticleViewHolder(
-            val mView: View
+        val mView: View
     ) : RecyclerView.ViewHolder(mView) {
         val articleTitle: TextView = mView.findViewById(R.id.articleTitle) as TextView
         val articlePostedTime: TextView = mView.findViewById(R.id.articlePostedTime) as TextView
@@ -145,7 +148,10 @@ class CuratedArticleListAdapter(
 
 
 private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CuratedArticleItem>() {
-    override fun areItemsTheSame(oldItem: CuratedArticleItem, newItem: CuratedArticleItem): Boolean {
+    override fun areItemsTheSame(
+        oldItem: CuratedArticleItem,
+        newItem: CuratedArticleItem
+    ): Boolean {
         return when (newItem) {
             is CuratedArticleItem.Content -> {
                 when (oldItem) {
@@ -153,6 +159,7 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CuratedArticleItem>()
                     is CuratedArticleItem.Advertisement -> false
                 }
             }
+
             is CuratedArticleItem.Advertisement -> {
                 when (oldItem) {
                     is CuratedArticleItem.Content -> false
@@ -162,7 +169,10 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CuratedArticleItem>()
         }
     }
 
-    override fun areContentsTheSame(oldItem: CuratedArticleItem, newItem: CuratedArticleItem): Boolean {
+    override fun areContentsTheSame(
+        oldItem: CuratedArticleItem,
+        newItem: CuratedArticleItem
+    ): Boolean {
         return when (newItem) {
             is CuratedArticleItem.Content -> {
                 when (oldItem) {
@@ -170,6 +180,7 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CuratedArticleItem>()
                     is CuratedArticleItem.Advertisement -> false
                 }
             }
+
             is CuratedArticleItem.Advertisement -> {
                 when (oldItem) {
                     is CuratedArticleItem.Content -> false
