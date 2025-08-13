@@ -4,6 +4,10 @@ apply plugin: 'com.squareup.sqldelight'
 android {
     namespace 'com.phicdy.mycuration.repository'
 
+    buildFeatures {
+        buildConfig true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
