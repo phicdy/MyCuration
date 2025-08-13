@@ -10,9 +10,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.glide.GlideApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,11 @@ class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_select_filter_target_rss, container, false)
     }
 
@@ -63,10 +67,11 @@ class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
         this.selectedList = selectedList
     }
 
-    private inner class TargetRssListAdapter(private val feeds: List<Feed>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private inner class TargetRssListAdapter(private val feeds: List<Feed>) :
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val itemView = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.filter_target_rss_list, parent, false)
+                .inflate(R.layout.filter_target_rss_list, parent, false)
             return ViewHolder(itemView)
         }
 
@@ -82,12 +87,12 @@ class SelectFilterTargetRssFragment : Fragment(), CoroutineScope {
                 if (iconPath == Feed.DEDAULT_ICON_PATH) {
                     holder.ivIcon.setImageResource(R.drawable.ic_rss)
                 } else {
-                    GlideApp.with(this@SelectFilterTargetRssFragment)
-                            .load(iconPath)
-                            .placeholder(R.drawable.ic_rss)
-                            .circleCrop()
-                            .error(R.drawable.ic_rss)
-                            .into(holder.ivIcon)
+                    Glide.with(this@SelectFilterTargetRssFragment)
+                        .load(iconPath)
+                        .placeholder(R.drawable.ic_rss)
+                        .circleCrop()
+                        .error(R.drawable.ic_rss)
+                        .into(holder.ivIcon)
                 }
 
                 var isChecked = false

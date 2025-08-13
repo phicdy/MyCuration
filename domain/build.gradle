@@ -1,4 +1,7 @@
-apply plugin: 'kotlin-kapt'
+plugins {
+    alias(libs.plugins.google.ksp)
+}
+
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
@@ -28,5 +31,5 @@ dependencies {
     implementation libs.javax.inject
 
     implementation libs.dagger.hilt
-    kapt libs.dagger.hilt.compiler
+    ksp libs.dagger.hilt.compiler
 }

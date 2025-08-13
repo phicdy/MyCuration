@@ -9,13 +9,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.advertisement.AdViewHolder
 import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.glide.GlideApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
@@ -24,27 +24,30 @@ import java.util.Date
 import java.util.Locale
 
 class ArticleListAdapter(
-        private val coroutineScope: CoroutineScope,
-        private val listener: Listener,
-        private val adProvider: AdProvider,
-        private val updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator
+    private val coroutineScope: CoroutineScope,
+    private val listener: Listener,
+    private val adProvider: AdProvider,
+    private val updateFavoriteStatusActionCreator: UpdateFavoriteStatusActionCreator
 ) : ListAdapter<ArticleItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_FOOTER -> {
                 val footer = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.footer_article_list_activity, parent, false)
+                    .inflate(R.layout.footer_article_list_activity, parent, false)
                 FooterViewHolder(footer)
             }
+
             VIEW_TYPE_ARTICLE -> {
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.articles_list, parent, false)
+                    .inflate(R.layout.articles_list, parent, false)
                 ArticleViewHolder(view)
             }
+
             VIEW_TYPE_AD -> {
                 adProvider.newViewHolderInstance(parent)
             }
+
             else -> throw InvalidParameterException("Invalid view type for article list")
         }
     }
@@ -63,7 +66,7 @@ class ArticleListAdapter(
                 }
 
                 val content = getItem(position) as? ArticleItem.Content
-                        ?: throw IllegalStateException()
+                    ?: throw IllegalStateException()
                 val article = content.value
 
                 holder.articleTitle.text = article.title
@@ -88,12 +91,12 @@ class ArticleListAdapter(
 
                     val iconPath = article.feedIconPath
                     if (iconPath.isNotBlank() && iconPath != Feed.DEDAULT_ICON_PATH) {
-                        GlideApp.with(holder.feedIconView)
-                                .load(article.feedIconPath)
-                                .placeholder(R.drawable.ic_rss)
-                                .circleCrop()
-                                .error(R.drawable.ic_rss)
-                                .into(holder.feedIconView)
+                        Glide.with(holder.feedIconView)
+                            .load(article.feedIconPath)
+                            .placeholder(R.drawable.ic_rss)
+                            .circleCrop()
+                            .error(R.drawable.ic_rss)
+                            .into(holder.feedIconView)
                     } else {
                         holder.feedIconView.setImageResource(R.drawable.ic_rss)
                     }
@@ -110,7 +113,8 @@ class ArticleListAdapter(
                 holder.articlePoint.setTextColor(color)
                 holder.feedTitleView.setTextColor(color)
 
-                holder.favoriteOnIcon.visibility = if (article.isFavorite) View.VISIBLE else View.GONE
+                holder.favoriteOnIcon.visibility =
+                    if (article.isFavorite) View.VISIBLE else View.GONE
                 holder.favoriteOnIcon.setOnClickListener {
                     holder.favoriteOffIcon.visibility = View.VISIBLE
                     holder.favoriteOnIcon.visibility = View.GONE
@@ -119,7 +123,8 @@ class ArticleListAdapter(
                     }
                 }
 
-                holder.favoriteOffIcon.visibility = if (article.isFavorite) View.GONE else View.VISIBLE
+                holder.favoriteOffIcon.visibility =
+                    if (article.isFavorite) View.GONE else View.VISIBLE
                 holder.favoriteOffIcon.setOnClickListener {
                     holder.favoriteOffIcon.visibility = View.GONE
                     holder.favoriteOnIcon.visibility = View.VISIBLE
@@ -141,7 +146,7 @@ class ArticleListAdapter(
     private class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     private class ArticleViewHolder(
-            val mView: View
+        val mView: View
     ) : RecyclerView.ViewHolder(mView) {
         val articleTitle: TextView = mView.findViewById(R.id.articleTitle) as TextView
         val articlePostedTime: TextView = mView.findViewById(R.id.articlePostedTime) as TextView
@@ -175,6 +180,7 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ArticleItem>() {
                     is ArticleItem.Advertisement -> false
                 }
             }
+
             is ArticleItem.Advertisement -> {
                 when (oldItem) {
                     is ArticleItem.Content -> false
@@ -192,6 +198,7 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ArticleItem>() {
                     is ArticleItem.Advertisement -> false
                 }
             }
+
             is ArticleItem.Advertisement -> {
                 when (oldItem) {
                     is ArticleItem.Content -> false

@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.google.ksp)
 }
 apply plugin: 'spoon'
 apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
@@ -132,7 +132,7 @@ dependencies {
     implementation libs.retrofit
 
     implementation libs.dagger.hilt
-    kapt libs.dagger.hilt.compiler
+    ksp libs.dagger.hilt.compiler
 
     implementation libs.timber
 

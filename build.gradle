@@ -22,6 +22,7 @@ plugins {
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.baselineprofile) apply false
     alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.google.ksp) apply false
 }
 
 allprojects {
@@ -41,7 +42,7 @@ subprojects {
     if (name == 'app') {
         apply plugin: 'com.android.application'
         apply plugin: 'kotlin-android'
-        apply plugin: 'kotlin-kapt'
+        apply plugin: 'com.google.devtools.ksp'
         apply from: "$rootDir/jacoco.gradle"
     } else if (name == 'benchmark') {
         apply plugin: 'com.android.test'
@@ -52,7 +53,7 @@ subprojects {
     } else {
         apply plugin: 'com.android.library'
         apply plugin: 'kotlin-android'
-        apply plugin: 'kotlin-kapt'
+        apply plugin: 'com.google.devtools.ksp'
         apply from: "$rootDir/jacoco.gradle"
     }
 

@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-kapt'
+    alias(libs.plugins.google.ksp)
     id 'dagger.hilt.android.plugin'
 }
 
@@ -30,5 +30,5 @@ dependencies {
     implementation libs.core
 
     implementation libs.dagger.hilt
-    kapt libs.dagger.hilt.compiler
+    ksp libs.dagger.hilt.compiler
 }
