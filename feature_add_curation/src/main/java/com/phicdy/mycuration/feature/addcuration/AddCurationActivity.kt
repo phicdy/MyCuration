@@ -1,6 +1,5 @@
 package com.phicdy.mycuration.feature.addcuration
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
@@ -9,19 +8,23 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
@@ -40,6 +43,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.phicdy.mycuration.core.Dispatcher
@@ -76,14 +81,13 @@ class AddCurationActivity : AppCompatActivity() {
 
     private val storeCurationStateStore: StoreCurationStateStore by viewModels()
 
-    private lateinit var progressDialog: MyProgressDialogFragment
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val id = intent.getIntExtra(EDIT_CURATION_ID, -1)
         setContent {
             MyCurationTheme {
                 val state = addCurationStateStore.state.observeAsState().value
+                val storeState = storeCurationStateStore.state.observeAsState().value
                 AddCurationFragmentScreen(
                     onBackIconClicked = { finish() },
                     onCheckIconClicked = { title, words ->
@@ -113,6 +117,7 @@ class AddCurationActivity : AppCompatActivity() {
                     },
                     isEdit = id != -1,
                     state = state,
+                    storeState = storeState
                 )
             }
         }
@@ -125,16 +130,18 @@ class AddCurationActivity : AppCompatActivity() {
                 }
             }
         }
-        storeCurationStateStore.state.observe(this, { state ->
+        storeCurationStateStore.state.observe(this) { state ->
             when (state) {
                 StoreCurationState.EmptyNameError -> handleEmptyCurationNameError()
                 StoreCurationState.EmptyWordError -> handleEmptyWordError()
-                StoreCurationState.Loading -> showProgressDialog()
+                StoreCurationState.Loading -> { /* Handled by Composable */
+                }
+
                 StoreCurationState.SameNameExitError -> handleSameNameCurationError()
                 StoreCurationState.SucceedToAdd -> handleAddSuccess()
                 StoreCurationState.SucceedToEdit -> handleEditSuccess()
             }
-        })
+        }
         addCurationStateStore.register()
         lifecycleScope.launch {
             initializeAddCurationActionCreator.run(id)
@@ -172,12 +179,10 @@ class AddCurationActivity : AppCompatActivity() {
     private fun handleInsertResultMessage(result: Boolean, errorMessage: String) {
         if (result) {
             showSuccessToast()
-            dismissProgressDialog()
             finish()
         } else {
             showToast(errorMessage)
             showErrorToast()
-            dismissProgressDialog()
         }
     }
 
@@ -201,15 +206,6 @@ class AddCurationActivity : AppCompatActivity() {
         ToastHelper.showToast(this, text, Toast.LENGTH_SHORT)
     }
 
-    private fun showProgressDialog() {
-        progressDialog = MyProgressDialogFragment.newInstance(getString(R.string.adding_curation))
-        progressDialog.show(supportFragmentManager, null)
-    }
-
-    private fun dismissProgressDialog() {
-        progressDialog.dismiss()
-    }
-
     companion object {
         const val EDIT_CURATION_ID = "editCurationId"
     }
@@ -225,6 +221,7 @@ fun AddCurationFragmentScreen(
     onWordFieldChanged: (String) -> Unit = {},
     isEdit: Boolean = false,
     state: AddCurationState?,
+    storeState: StoreCurationState?,
 ) {
     Scaffold(
         topBar = {
@@ -298,6 +295,9 @@ fun AddCurationFragmentScreen(
                 }
             }
         }
+        if (storeState == StoreCurationState.Loading) {
+            LoadingIndicatorDialog()
+        }
     }
 }
 
@@ -322,12 +322,34 @@ fun WordRow(
     }
 }
 
+@Composable
+private fun LoadingIndicatorDialog() {
+    Dialog(
+        onDismissRequest = { /* Modal, not dismissable by click outside or back press */ },
+        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.padding(bottom = 16.dp))
+                Text(text = stringResource(R.string.adding_curation))
+            }
+        }
+    }
+}
+
 @Preview(uiMode = UI_MODE_NIGHT_NO)
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun AddCurationFragmentScreenLoadingPreview() {
     MyCurationTheme {
-        AddCurationFragmentScreen(state = AddCurationState.Loading)
+        AddCurationFragmentScreen(state = AddCurationState.Loading, storeState = null)
     }
 }
 
@@ -341,7 +363,8 @@ fun AddCurationFragmentScreenLoadedPreview() {
                 titleField = "Curation Title",
                 wordField = "Word1, Word2",
                 words = listOf("Word1", "Word2")
-            )
+            ),
+            storeState = StoreCurationState.Loading
         )
     }
 }
