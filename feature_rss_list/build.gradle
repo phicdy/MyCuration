@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.ksp)
 }
 
-apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
@@ -35,7 +35,7 @@ dependencies {
     implementation libs.coroutines.android
 
     implementation libs.dagger.hilt
-    kapt libs.dagger.hilt.compiler
+    ksp libs.dagger.hilt.compiler
 
     implementation libs.timber
 }

@@ -9,13 +9,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.advertisement.AdViewHolder
 import com.phicdy.mycuration.articlelist.action.UpdateFavoriteStatusActionCreator
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.FavoritableArticle
 import com.phicdy.mycuration.entity.Feed
-import com.phicdy.mycuration.glide.GlideApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
@@ -88,12 +88,12 @@ class ArticleListAdapter(
 
                     val iconPath = article.feedIconPath
                     if (iconPath.isNotBlank() && iconPath != Feed.DEDAULT_ICON_PATH) {
-                        GlideApp.with(holder.feedIconView)
-                                .load(article.feedIconPath)
-                                .placeholder(R.drawable.ic_rss)
-                                .circleCrop()
-                                .error(R.drawable.ic_rss)
-                                .into(holder.feedIconView)
+                        Glide.with(holder.feedIconView)
+                            .load(article.feedIconPath)
+                            .placeholder(R.drawable.ic_rss)
+                            .circleCrop()
+                            .error(R.drawable.ic_rss)
+                            .into(holder.feedIconView)
                     } else {
                         holder.feedIconView.setImageResource(R.drawable.ic_rss)
                     }

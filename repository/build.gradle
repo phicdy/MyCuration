@@ -32,7 +32,7 @@ dependencies {
     implementation libs.timber
 
     implementation libs.dagger.hilt
-    kapt libs.dagger.hilt.compiler
+    ksp libs.dagger.hilt.compiler
 
     implementation libs.sqldelight
     implementation libs.sqldelight.coroutines
