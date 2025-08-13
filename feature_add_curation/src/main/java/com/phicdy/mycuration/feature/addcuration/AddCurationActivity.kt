@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,11 +32,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,13 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.phicdy.mycuration.core.Dispatcher
-import com.phicdy.mycuration.feature.util.changeTheme
-import com.phicdy.mycuration.resource.Black900
+import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.resource.MyCurationTheme
-import com.phicdy.mycuration.resource.White
 import com.phicdy.mycuration.tracker.TrackerHelper
 import com.phicdy.mycuration.util.ToastHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,8 +83,14 @@ class AddCurationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val id = intent.getIntExtra(EDIT_CURATION_ID, -1)
+        val actualDarkThemeUserSetting = PreferenceHelper.theme == PreferenceHelper.THEME_DARK
         setContent {
-            MyCurationTheme {
+            MyCurationTheme(darkTheme = actualDarkThemeUserSetting) {
+                val view = LocalView.current
+                SideEffect {
+                    val windowInsetsController = WindowInsetsControllerCompat(window, view)
+                    windowInsetsController.isAppearanceLightStatusBars = !actualDarkThemeUserSetting
+                }
                 val state = addCurationStateStore.state.observeAsState().value
                 val storeState = storeCurationStateStore.state.observeAsState().value
                 AddCurationFragmentScreen(
@@ -146,11 +151,6 @@ class AddCurationActivity : AppCompatActivity() {
         lifecycleScope.launch {
             initializeAddCurationActionCreator.run(id)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        changeTheme()
     }
 
     private fun handleEmptyCurationNameError() {
@@ -245,7 +245,7 @@ fun AddCurationFragmentScreen(
                         Icon(Icons.Filled.Check, contentDescription = "")
                     }
                 },
-                backgroundColor = if (isSystemInDarkTheme()) Black900 else White
+                backgroundColor = MaterialTheme.colors.surface
             )
         }
     ) { padding ->
