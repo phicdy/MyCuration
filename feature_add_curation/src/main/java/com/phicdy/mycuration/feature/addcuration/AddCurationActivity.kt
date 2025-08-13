@@ -232,9 +232,7 @@ fun AddCurationFragmentScreen(
                 title = { Text(stringResource(id = if (isEdit) R.string.title_activity_edit_curation else R.string.title_activity_add_curation)) },
                 modifier = Modifier.statusBarsPadding(),
                 navigationIcon = {
-                    IconButton(
-                        onClick = onBackIconClicked
-                    ) {
+                    IconButton(onClick = onBackIconClicked) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "")
                     }
                 },
@@ -290,7 +288,13 @@ fun AddCurationFragmentScreen(
                 })
             )
             if (state is AddCurationState.Loaded && state.words.isNotEmpty()) {
-                LazyColumn(modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp)) {
+                LazyColumn(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 12.dp,
+                        end = 16.dp
+                    )
+                ) {
                     itemsIndexed(state.words) { index, word ->
                         WordRow(word) {
                             onCloseClicked(index)
