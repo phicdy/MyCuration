@@ -4,9 +4,9 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,7 +59,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AddCurationActivity : AppCompatActivity() {
+class AddCurationActivity : ComponentActivity() {
 
     @Inject
     lateinit var initializeAddCurationActionCreator: InitializeAddCurationActionCreator
