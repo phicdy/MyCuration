@@ -103,7 +103,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".feature.addcuration.AddCurationActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:windowSoftInputMode="adjustResize" />
 
         <receiver
             android:name=".domain.alarm.BootReceiver"

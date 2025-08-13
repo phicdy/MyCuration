@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -104,6 +105,7 @@ class TopActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_top)
         initViewPager()
         initFab()

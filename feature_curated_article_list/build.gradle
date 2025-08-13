@@ -23,6 +23,7 @@ dependencies {
     implementation project(':advertisement')
 
     implementation libs.appcompat
+    implementation libs.core
     implementation libs.recyclerview
     implementation libs.lifecycle.runtime
     implementation libs.browser

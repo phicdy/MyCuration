@@ -27,6 +27,7 @@ dependencies {
     implementation libs.coroutines.android
 
     implementation libs.appcompat
+    implementation libs.core
 
     implementation libs.dagger.hilt
     kapt libs.dagger.hilt.compiler

@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.phicdy.mycuration.domain.rss.RssUrlHookIntentData
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.tracker.TrackerHelper
@@ -37,6 +38,7 @@ class FeedUrlHookActivity : AppCompatActivity(), FeedUrlHookView,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_feed_url_hook)
         launch { presenter.create() }
     }

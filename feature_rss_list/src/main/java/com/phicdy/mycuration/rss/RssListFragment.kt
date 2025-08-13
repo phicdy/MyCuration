@@ -237,8 +237,8 @@ class RssListFragment : Fragment() {
         val state = rssListStateStore.state.value ?: return
         lifecycleScope.launchWhenStarted {
             changeRssListModeActionCreator.run(
-                    state.rawRssList,
-                    state.mode
+                state.rawRssList,
+                state.mode
             )
         }
     }
@@ -337,11 +337,11 @@ fun RssListScreen(
     } else {
         if (items.isEmpty()) {
             Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
                 RssEmptyText(
-                        modifier = Modifier
+                    modifier = Modifier
                 )
             }
         } else {
@@ -351,6 +351,7 @@ fun RssListScreen(
                         Lifecycle.Event.ON_RESUME -> {
                             onListLoadedAndResumed()
                         }
+
                         else -> {}
                     }
                 }
@@ -402,15 +403,19 @@ fun RssListScreen(
             RssListMessage.Type.SUCCEED_TO_EDIT_RSS -> {
                 context.getString(R.string.edit_rss_title_success)
             }
+
             RssListMessage.Type.SUCCEED_TO_DELETE_RSS -> {
                 context.getString(R.string.finish_delete_rss_success)
             }
+
             RssListMessage.Type.ERROR_EMPTY_RSS_TITLE_EDIT -> {
                 context.getString(R.string.empty_title)
             }
+
             RssListMessage.Type.ERROR_SAVE_RSS_TITLE -> {
                 context.getString(R.string.edit_rss_title_error)
             }
+
             RssListMessage.Type.ERROR_DELETE_RSS -> {
                 context.getString(R.string.finish_delete_rss_fail)
             }
@@ -423,10 +428,10 @@ fun RssListScreen(
 @Composable
 fun RssEmptyText(modifier: Modifier = Modifier) {
     RssListText(
-            text = stringResource(id = com.phicdy.mycuration.resource.R.string.no_rss_message),
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
-            modifier = modifier
+        text = stringResource(id = com.phicdy.mycuration.resource.R.string.no_rss_message),
+        fontSize = 14.sp,
+        textAlign = TextAlign.Center,
+        modifier = modifier
     )
 }
 
@@ -447,34 +452,37 @@ fun SwipeRefreshRssList(
     onDismissDropdownMenu: () -> Unit = {},
 ) {
     SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-            onRefresh = onRefresh,
-            modifier = modifier
+        state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+        onRefresh = onRefresh,
+        modifier = modifier
     ) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(items) { item ->
                 when (item) {
                     is RssListItem.All -> AllRssHeader(
-                            unreadCount = item.unreadCount,
-                            onHeaderClicked = onHeaderClicked
+                        unreadCount = item.unreadCount,
+                        onHeaderClicked = onHeaderClicked
                     )
+
                     is RssListItem.Content -> RssContent(
-                            id = item.rssId,
-                            title = item.rssTitle,
-                            unreadCount = item.unreadCount,
-                            onRssClicked = onRssClicked,
-                            onRssLongClicked = onRssLongClicked,
-                            showDropdownMenu = item.rssId == showDropdownMenuId,
-                            onEditTitleMenuClicked = onEditTitleMenuClicked,
-                            onDeleteMenuClicked = onDeleteMenuClicked,
-                            onDismissDropdownMenu = onDismissDropdownMenu,
+                        id = item.rssId,
+                        title = item.rssTitle,
+                        unreadCount = item.unreadCount,
+                        onRssClicked = onRssClicked,
+                        onRssLongClicked = onRssLongClicked,
+                        showDropdownMenu = item.rssId == showDropdownMenuId,
+                        onEditTitleMenuClicked = onEditTitleMenuClicked,
+                        onDeleteMenuClicked = onDeleteMenuClicked,
+                        onDismissDropdownMenu = onDismissDropdownMenu,
                     )
+
                     RssListItem.Favroite -> FavoriteContent(
-                            onFavoriteClicked = onFavoriteClicked,
+                        onFavoriteClicked = onFavoriteClicked,
                     )
+
                     is RssListItem.Footer -> Footer(
-                            footerState = item.state,
-                            onFooterClicked = onFooterClicked
+                        footerState = item.state,
+                        onFooterClicked = onFooterClicked
                     )
                 }
             }
@@ -484,12 +492,13 @@ fun SwipeRefreshRssList(
 
 @Composable
 fun AllRssHeader(
-        unreadCount: Int,
-        onHeaderClicked: () -> Unit = {}
+    unreadCount: Int,
+    onHeaderClicked: () -> Unit = {}
 ) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .clickable { onHeaderClicked() }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onHeaderClicked() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -504,16 +513,16 @@ fun AllRssHeader(
                 contentDescription = ""
             )
             RssListText(
-                    text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center,
+                text = stringResource(id = com.phicdy.mycuration.resource.R.string.all),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.weight(1.0f))
             RssListText(
-                    text = unreadCount.toString(),
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(end = 16.dp),
-                    textAlign = TextAlign.Center
+                text = unreadCount.toString(),
+                fontSize = 16.sp,
+                modifier = Modifier.padding(end = 16.dp),
+                textAlign = TextAlign.Center
             )
         }
         RssListDivider()
@@ -537,13 +546,13 @@ fun RssContent(
     Column(modifier = Modifier.fillMaxWidth()) {
         Box {
             Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = { onRssClicked(id) },
-                            onLongClick = { onRssLongClicked(id) }
-                        )
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        onClick = { onRssClicked(id) },
+                        onLongClick = { onRssLongClicked(id) }
+                    )
             ) {
                 Image(
                     painter = painterResource(id = iconDrawable),
@@ -554,21 +563,22 @@ fun RssContent(
                     contentDescription = ""
                 )
                 RssListText(
-                        text = title,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center,
+                    text = title,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
                 )
-                Spacer(modifier = Modifier.weight(1.0f))
                 RssListText(
-                        text = unreadCount.toString(),
-                        fontSize = 16.sp,
-                        modifier = Modifier.padding(end = 16.dp),
-                        textAlign = TextAlign.Center
+                    text = unreadCount.toString(),
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(end = 16.dp),
+                    textAlign = TextAlign.Center
                 )
             }
             DropdownMenu(
-                    expanded = showDropdownMenu,
-                    onDismissRequest = { onDismissDropdownMenu() },
+                expanded = showDropdownMenu,
+                onDismissRequest = { onDismissDropdownMenu() },
             ) {
                 DropdownMenuItem(onClick = { onEditTitleMenuClicked(id, title) }) {
                     Text(text = stringResource(id = R.string.edit_rss_title))
@@ -584,14 +594,14 @@ fun RssContent(
 
 @Composable
 fun FavoriteContent(
-        onFavoriteClicked: () -> Unit = {},
+    onFavoriteClicked: () -> Unit = {},
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onFavoriteClicked() }
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onFavoriteClicked() }
         ) {
             Image(
                 painter = painterResource(id = com.phicdy.mycuration.resource.R.drawable.ic_favorite_off),
@@ -602,9 +612,9 @@ fun FavoriteContent(
                 contentDescription = ""
             )
             RssListText(
-                    text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center,
+                text = stringResource(id = com.phicdy.mycuration.resource.R.string.favorite),
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
             )
         }
         RssListDivider()
@@ -613,8 +623,8 @@ fun FavoriteContent(
 
 @Composable
 fun Footer(
-        footerState: RssListFooterState,
-        onFooterClicked: () -> Unit = {},
+    footerState: RssListFooterState,
+    onFooterClicked: () -> Unit = {},
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val text = when (footerState) {
@@ -640,10 +650,10 @@ fun RssListDivider() {
 
 @Composable
 fun DeleteRssAlertDialog(
-        rssId: Int,
-        onDismissDeleteRssDialog: () -> Unit = {},
-        onDeleteRssClicked: (Int) -> Unit = {},
-        onCancelDeleteRssClicked: () -> Unit = {},
+    rssId: Int,
+    onDismissDeleteRssDialog: () -> Unit = {},
+    onDeleteRssClicked: (Int) -> Unit = {},
+    onCancelDeleteRssClicked: () -> Unit = {},
 ) {
     AlertDialog(
         onDismissRequest = { onDismissDeleteRssDialog() },

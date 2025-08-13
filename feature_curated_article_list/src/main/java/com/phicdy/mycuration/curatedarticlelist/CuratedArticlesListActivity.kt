@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
@@ -46,6 +47,7 @@ class CuratedArticlesListActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_curated_articles_list)
 
         // Set feed id and url from main activity
