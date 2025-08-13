@@ -29,7 +29,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
@@ -233,7 +233,10 @@ fun AddCurationFragmentScreen(
                 modifier = Modifier.statusBarsPadding(),
                 navigationIcon = {
                     IconButton(onClick = onBackIconClicked) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
                     }
                 },
                 actions = {
