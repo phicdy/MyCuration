@@ -14,6 +14,11 @@ buildscript {
         classpath libs.dagger.hilt.gradle
         classpath libs.sqldelight.gradle
     }
+    configurations.all {
+        resolutionStrategy {
+             force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+        }
+    }
 }
 
 plugins {
