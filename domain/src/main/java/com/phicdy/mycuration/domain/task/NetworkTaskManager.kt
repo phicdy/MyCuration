@@ -39,7 +39,7 @@ class NetworkTaskManager(
         try {
             val request = Request.Builder().url(feed.url).build()
             val response = client.newCall(request).execute()
-            val inputStream = response.body()?.byteStream() ?: return@withContext feed
+            val inputStream = response.body?.byteStream() ?: return@withContext feed
             val articles = parser.parseArticlesFromRss(inputStream)
             val storedUrlList = articleRepository.getStoredUrlListIn(articles)
             val newArticleList = articles.filter { it.url !in storedUrlList }
