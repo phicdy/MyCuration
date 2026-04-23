@@ -1,7 +1,7 @@
 [versions]
 gradle = "8.11.1"
 jetpack_compose_compiler = "1.5.14"
-kotlin = "2.1.0"
+kotlin = "2.3.21"
 ksp = "2.1.0-1.0.29"
 coroutine = "1.10.2"
 accompanist = "0.36.0"
