@@ -44,8 +44,7 @@ class RssParser @Inject constructor() {
             if (!"http".equals(url.protocol, ignoreCase = true) && !"https".equals(url.protocol, ignoreCase = true)) {
                 return RssParseResult(failedReason = RssParseResult.FailedReason.INVALID_URL)
             }
-            val pcUserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36"
-            val document = Jsoup.connect(baseUrl).userAgent(pcUserAgent).get()
+            val document = Jsoup.connect(baseUrl).userAgent(PC_USER_AGENT).get()
             if (!document.getElementsByTag("rdf").isEmpty() || !document.getElementsByTag("rdf:rdf").isEmpty()) {
                 // RSS 1.0
                 val links = document.getElementsByTag("link")
@@ -322,5 +321,12 @@ class RssParser @Inject constructor() {
             }
         }
         return if (!hasType || isTypeTextHtml) href else ""
+    }
+
+    companion object {
+        // Some sites (e.g. Hatena) answer an outdated browser user agent with 429 Too Many Requests,
+        // so use a recent desktop Chrome user agent.
+        private const val PC_USER_AGENT =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
     }
 }
