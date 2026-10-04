@@ -5,7 +5,7 @@ import com.phicdy.test.util.CoroutineTestRule
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.repository.Database
-import com.squareup.sqldelight.android.AndroidSqliteDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`

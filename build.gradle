@@ -9,7 +9,6 @@ buildscript {
     dependencies {
         classpath libs.gradle
         classpath 'com.google.gms:google-services:4.5.0'
-        classpath 'com.stanfy.spoon:spoon-gradle-plugin:1.2.2'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.8'
         classpath libs.dagger.hilt.gradle
         classpath libs.sqldelight.gradle
@@ -39,6 +38,17 @@ allprojects {
 }
 
 subprojects {
+    // Hilt 2.57.x bundles kotlin-metadata-jvm 2.2, which cannot read Kotlin 2.3 metadata.
+    // Align it with the Kotlin version until Hilt ships a newer one.
+    configurations.configureEach {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name == 'kotlin-metadata-jvm') {
+                details.useVersion libs.versions.kotlin.get()
+                details.because 'Hilt needs to read Kotlin 2.3 metadata'
+            }
+        }
+    }
+
     if (name == 'app') {
         apply plugin: 'com.android.application'
         apply plugin: 'kotlin-android'
@@ -72,10 +82,6 @@ subprojects {
             targetCompatibility JavaVersion.VERSION_17
         }
 
-        kotlinOptions {
-            jvmTarget = '17'
-        }
-
         testOptions {
             unitTests.returnDefaultValues = true
         }
@@ -83,6 +89,12 @@ subprojects {
         lintOptions {
             // Bug in Gradle plugin 4.0.0
             disable 'RequiredSize'
+        }
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
         }
     }
 

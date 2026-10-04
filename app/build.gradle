@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.google.ksp)
 }
-apply plugin: 'spoon'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'dagger.hilt.android.plugin'
 
@@ -33,7 +32,7 @@ android {
         }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
 
             firebaseCrashlytics {
@@ -64,13 +63,6 @@ android {
         disable 'MissingTranslation', 'RtlHardcoded'
         lintConfig = file("lint.xml")
     }
-}
-
-spoon {
-    debug = true
-
-    // To grant permissions to Android M >= devices */
-    grantAllPermissions = true
 }
 
 dependencies {

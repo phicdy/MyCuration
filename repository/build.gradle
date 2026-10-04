@@ -1,5 +1,13 @@
 apply plugin: 'dagger.hilt.android.plugin'
-apply plugin: 'com.squareup.sqldelight'
+apply plugin: 'app.cash.sqldelight'
+
+sqldelight {
+    databases {
+        Database {
+            packageName = "com.phicdy.mycuration.repository"
+        }
+    }
+}
 
 android {
     namespace 'com.phicdy.mycuration.repository'
@@ -38,4 +46,6 @@ dependencies {
     implementation libs.sqldelight.coroutines
 
     implementation libs.sqlite
+
+    testImplementation libs.sqldelight.sqlite.driver
 }
