@@ -46,4 +46,6 @@ dependencies {
     implementation libs.sqldelight.coroutines
 
     implementation libs.sqlite
+
+    testImplementation libs.sqldelight.sqlite.driver
 }

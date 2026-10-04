@@ -85,6 +85,7 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 sqldelight = { module = "app.cash.sqldelight:android-driver", version.ref = "sql_delight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sql_delight" }
 sqldelight-gradle = { module = "app.cash.sqldelight:gradle-plugin", version.ref = "sql_delight" }
+sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql_delight" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.23.2" }
 
