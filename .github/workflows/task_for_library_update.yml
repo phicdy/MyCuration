@@ -83,10 +83,20 @@ jobs:
       - name: tmp dump report
         if: always()
         run: |
-          f=$(grep -l "AddFeedTest" $(find . -path "*androidTest-results/connected*" -name "TEST-*.xml") | head -1)
-          echo "::notice title=file::$f"
-          grep -n -A3 "clickFabWithoutUrlOpen" "$f" | head -8 | python3 -c 'import sys;d=sys.stdin.read();print("::notice title=xml::"+d.replace("%","%25").replace("\n","%0A"))'
-          head -c 600 "$f" | python3 -c 'import sys;d=sys.stdin.read();print("::notice title=head::"+d.replace("%","%25").replace("\n","%0A"))'
+          python3 - <<'PY'
+          import glob
+          files = glob.glob('**/build/outputs/androidTest-results/**/*.xml', recursive=True)
+          def note(title, msg):
+              msg = (msg or 'none').replace('%', '%25').replace('\r', '').replace('\n', '%0A')
+              print(f'::warning title={title}::{msg}')
+          note('files', '\n'.join(files[:20]))
+          for f in files:
+              d = open(f, encoding='utf-8', errors='replace').read()
+              i = d.find('clickFabWithoutUrlOpen')
+              if i >= 0:
+                  note('xml', f + '\n' + d[max(0, i - 200):i + 600])
+                  break
+          PY
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5
         if: always()
