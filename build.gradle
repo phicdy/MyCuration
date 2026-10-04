@@ -38,6 +38,17 @@ allprojects {
 }
 
 subprojects {
+    // Hilt 2.57.x bundles kotlin-metadata-jvm 2.2, which cannot read Kotlin 2.3 metadata.
+    // Align it with the Kotlin version until Hilt ships a newer one.
+    configurations.configureEach {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name == 'kotlin-metadata-jvm') {
+                details.useVersion libs.versions.kotlin.get()
+                details.because 'Hilt needs to read Kotlin 2.3 metadata'
+            }
+        }
+    }
+
     if (name == 'app') {
         apply plugin: 'com.android.application'
         apply plugin: 'kotlin-android'
