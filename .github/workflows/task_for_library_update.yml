@@ -80,23 +80,10 @@ jobs:
           ram-size: 4096M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: ./gradlew :app:connectedDebugAndroidTest --daemon
-      - name: tmp dump report
+      - name: Mark ignored tests as skipped
         if: always()
-        run: |
-          python3 - <<'PY'
-          import glob
-          files = glob.glob('**/build/outputs/androidTest-results/**/*.xml', recursive=True)
-          def note(title, msg):
-              msg = (msg or 'none').replace('%', '%25').replace('\r', '').replace('\n', '%0A')
-              print(f'::warning title={title}::{msg}')
-          note('files', '\n'.join(files[:20]))
-          for f in files:
-              d = open(f, encoding='utf-8', errors='replace').read()
-              i = d.find('clickFabWithoutUrlOpen')
-              if i >= 0:
-                  note('xml', f + '\n' + d[max(0, i - 200):i + 600])
-                  break
-          PY
+        # AGP 9 writes @Ignore'd tests as empty <failure></failure> elements. Real failures always have a message.
+        run: find . -path '*/build/outputs/androidTest-results/*' -name 'TEST-*.xml' -exec sed -i 's#<failure></failure>#<skipped/>#g' {} +
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5
         if: always()
