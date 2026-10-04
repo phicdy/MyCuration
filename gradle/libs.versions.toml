@@ -1,8 +1,8 @@
 [versions]
 gradle = "8.13.2"
 jetpack_compose_compiler = "1.5.14"
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.29"
+kotlin = "2.3.21"
+ksp = "2.3.11"
 coroutine = "1.10.2"
 accompanist = "0.36.0"
 lifecycle = "2.10.0"
@@ -21,7 +21,7 @@ jacoco = "0.8.15"
 glide = "4.16.0"
 work = "2.10.3"
 dagger_hilt = "2.57.2"
-sql_delight = "1.5.5"
+sql_delight = "2.4.0"
 sqlite = "2.5.2"
 timber = "5.0.1"
 flipper = "0.273.0"
@@ -82,9 +82,9 @@ dagger-hilt-gradle = { module = "com.google.dagger:hilt-android-gradle-plugin", 
 
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
-sqldelight = { module = "com.squareup.sqldelight:android-driver", version.ref = "sql_delight" }
-sqldelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sql_delight" }
-sqldelight-gradle = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sql_delight" }
+sqldelight = { module = "app.cash.sqldelight:android-driver", version.ref = "sql_delight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sql_delight" }
+sqldelight-gradle = { module = "app.cash.sqldelight:gradle-plugin", version.ref = "sql_delight" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.23.2" }
 

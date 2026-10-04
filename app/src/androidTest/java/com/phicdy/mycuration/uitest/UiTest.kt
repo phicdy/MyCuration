@@ -15,7 +15,7 @@ import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.repository.Database
 import com.squareup.spoon.Spoon
-import com.squareup.sqldelight.android.AndroidSqliteDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import org.junit.Assert.assertNotNull
 import java.io.File
 
