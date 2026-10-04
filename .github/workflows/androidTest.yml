@@ -57,6 +57,13 @@ jobs:
           ram-size: 4096M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: ./gradlew :app:connectedDebugAndroidTest --daemon
+      - name: tmp dump report
+        if: always()
+        run: |
+          f=$(grep -l "AddFeedTest" $(find . -path "*androidTest-results/connected*" -name "TEST-*.xml") | head -1)
+          echo "::notice title=file::$f"
+          grep -n -A3 "clickFabWithoutUrlOpen" "$f" | head -8 | python3 -c 'import sys;d=sys.stdin.read();print("::notice title=xml::"+d.replace("%","%25").replace("\n","%0A"))'
+          head -c 600 "$f" | python3 -c 'import sys;d=sys.stdin.read();print("::notice title=head::"+d.replace("%","%25").replace("\n","%0A"))'
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5
         if: always()
