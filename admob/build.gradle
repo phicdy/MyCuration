@@ -17,6 +17,8 @@ android {
     }
     buildFeatures {
         buildConfig true
+        // Disabled by default since AGP 9
+        resValues true
     }
     namespace 'com.phicdy.mycuration.admob'
 }
