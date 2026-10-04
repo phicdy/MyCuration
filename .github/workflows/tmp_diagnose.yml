@@ -1,0 +1,21 @@
+name: tmp diagnose hatena
+on: push
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch pages
+        run: |
+          OLD="Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.63 Safari/537.36"
+          NEW="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+          for u in https://ground-sesame.hatenablog.jp https://ground-sesame.hatenablog.jp/ https://b.hatena.ne.jp/hotentry/game; do
+            for label in OLD NEW; do
+              ua="${!label}"
+              code=$(curl -s -L --compressed -A "$ua" -o page.html -w "%{http_code} %{content_type} %{url_effective}" "$u")
+              echo "::notice title=$label $u::$code size=$(wc -c < page.html)"
+              links=$(grep -o -i -E '<link[^>]*(alternate|canonical)[^>]*>' page.html | head -6 | tr '\n' ' ')
+              echo "::notice title=$label links $u::${links:-NONE}"
+              t=$(grep -o -i -E '<title>[^<]*' page.html | head -1)
+              echo "::notice title=$label title $u::${t:-NONE}"
+            done
+          done
