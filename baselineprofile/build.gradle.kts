@@ -2,7 +2,6 @@ import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
     alias(libs.plugins.android.test)
-    alias(libs.plugins.kotlin.gradle)
     alias(libs.plugins.baselineprofile)
 }
 

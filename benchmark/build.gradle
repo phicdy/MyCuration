@@ -4,7 +4,7 @@ android {
     namespace 'com.phicdy.mycuration.benchmark'
 
     defaultConfig {
-        minSdkVersion 28
+        minSdk 28
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -46,6 +46,6 @@ dependencies {
 
 androidComponents {
     beforeVariants(selector().all()) {
-        enabled = buildType == "benchmark"
+        enable = buildType == "benchmark"
     }
 }
