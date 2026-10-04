@@ -61,5 +61,5 @@ jobs:
         uses: mikepenz/action-junit-report@v5
         if: always()
         with:
-          report_paths: '**/build/outputs/androidTest-results/connected//TEST-*.xml'
+          report_paths: '**/build/outputs/androidTest-results/connected/**/TEST-*.xml'
           check_name: 'androidTest Report'
