@@ -8,6 +8,13 @@
   ],
   "packageRules": [
     {
+      "description": "GitHub Actionsの更新はメジャーも含めて自動マージ",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "automerge": true
+    },
+    {
       "groupName": "androidx.activity",
       "matchPackageNames": [
         "/^androidx\\.activity:/"
@@ -34,9 +41,6 @@
     {
       "groupName": "github actions",
       "automerge": true,
-      "major": {
-        "automerge": false
-      },
       "matchPackageNames": [
         "/^peter-evans/create-or-update-comment/",
         "/^peter-evans/find-comment/"
