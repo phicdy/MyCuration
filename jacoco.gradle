@@ -33,14 +33,19 @@ tasks.register('jacocoTestReport', JacocoReport) {
         xml.required = true
         html.required = true
         csv.required = false
-        getClassDirectories().setFrom(
-                fileTree(dir: "${buildDir}/intermediates/classes/debug",
-                        exclude: coverageExcludeFiles) +
-                        fileTree(dir: "$buildDir/tmp/kotlin-classes/debug",
-                                excludes: coverageExcludeFiles)
-        )
     }
+    def buildDirectory = layout.buildDirectory.get().asFile
+    getClassDirectories().setFrom(
+            fileTree(dir: "$buildDirectory/intermediates/javac/debug/compileDebugJavaWithJavac/classes",
+                    excludes: coverageExcludeFiles) +
+                    // Kotlin classes compiled by AGP 9's built-in Kotlin support
+                    fileTree(dir: "$buildDirectory/intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes",
+                            excludes: coverageExcludeFiles) +
+                    // Kotlin classes compiled by the Kotlin Gradle plugin (before AGP 9)
+                    fileTree(dir: "$buildDirectory/tmp/kotlin-classes/debug",
+                            excludes: coverageExcludeFiles)
+    )
     getSourceDirectories().setFrom(files(coverageSourceDirs))
-    getExecutionData().setFrom(files("${buildDir}/jacoco/testDebugUnitTest.exec"))
+    getExecutionData().setFrom(files(layout.buildDirectory.file("jacoco/testDebugUnitTest.exec")))
 }
 

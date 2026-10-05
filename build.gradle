@@ -38,43 +38,34 @@ allprojects {
 }
 
 subprojects {
-    // Hilt 2.57.x bundles kotlin-metadata-jvm 2.2, which cannot read Kotlin 2.3 metadata.
-    // Align it with the Kotlin version until Hilt ships a newer one.
-    configurations.configureEach {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name == 'kotlin-metadata-jvm') {
-                details.useVersion libs.versions.kotlin.get()
-                details.because 'Hilt needs to read Kotlin 2.3 metadata'
-            }
-        }
-    }
-
     if (name == 'app') {
         apply plugin: 'com.android.application'
-        apply plugin: 'kotlin-android'
         apply plugin: 'com.google.devtools.ksp'
         apply from: "$rootDir/jacoco.gradle"
     } else if (name == 'benchmark') {
         apply plugin: 'com.android.test'
-        apply plugin: 'kotlin-android'
     } else if (name == 'baselineprofile') {
         // Do notihng
         return
     } else {
         apply plugin: 'com.android.library'
-        apply plugin: 'kotlin-android'
         apply plugin: 'com.google.devtools.ksp'
         apply from: "$rootDir/jacoco.gradle"
     }
 
     android {
-        compileSdkVersion 36
+        compileSdk 36
 
         defaultConfig {
-            minSdkVersion 28
-            targetSdkVersion 36
-            versionName "1.13.0"
-            versionCode 63
+            minSdk 28
+            // Library modules have no targetSdk/versionName/versionCode in the AGP 9 DSL
+            if (project.name == 'app' || project.name == 'benchmark') {
+                targetSdk 36
+            }
+            if (project.name == 'app') {
+                versionName "1.13.0"
+                versionCode 63
+            }
         }
 
         compileOptions {
@@ -86,9 +77,9 @@ subprojects {
             unitTests.returnDefaultValues = true
         }
 
-        lintOptions {
+        lint {
             // Bug in Gradle plugin 4.0.0
-            disable 'RequiredSize'
+            disable += ['RequiredSize']
         }
     }
 

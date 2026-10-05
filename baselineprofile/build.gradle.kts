@@ -1,8 +1,5 @@
-import com.android.build.api.dsl.ManagedVirtualDevice
-
 plugins {
     alias(libs.plugins.android.test)
-    alias(libs.plugins.kotlin.gradle)
     alias(libs.plugins.baselineprofile)
 }
 
@@ -22,8 +19,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    testOptions.managedDevices.devices {
-        create<ManagedVirtualDevice>("pixel6Api33") {
+    testOptions.managedDevices.localDevices {
+        create("pixel6Api33") {
             device = "Pixel 6"
             apiLevel = 33
             systemImageSource = "aosp"
