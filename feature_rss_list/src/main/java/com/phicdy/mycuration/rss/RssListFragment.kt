@@ -401,23 +401,23 @@ fun RssListScreen(
         val context = LocalContext.current
         val toastText = when (message.type) {
             RssListMessage.Type.SUCCEED_TO_EDIT_RSS -> {
-                context.getString(R.string.edit_rss_title_success)
+                stringResource(R.string.edit_rss_title_success)
             }
 
             RssListMessage.Type.SUCCEED_TO_DELETE_RSS -> {
-                context.getString(R.string.finish_delete_rss_success)
+                stringResource(R.string.finish_delete_rss_success)
             }
 
             RssListMessage.Type.ERROR_EMPTY_RSS_TITLE_EDIT -> {
-                context.getString(R.string.empty_title)
+                stringResource(R.string.empty_title)
             }
 
             RssListMessage.Type.ERROR_SAVE_RSS_TITLE -> {
-                context.getString(R.string.edit_rss_title_error)
+                stringResource(R.string.edit_rss_title_error)
             }
 
             RssListMessage.Type.ERROR_DELETE_RSS -> {
-                context.getString(R.string.finish_delete_rss_fail)
+                stringResource(R.string.finish_delete_rss_fail)
             }
         }
         Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
