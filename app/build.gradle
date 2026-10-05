@@ -118,8 +118,8 @@ dependencies {
     releaseImplementation libs.flipper.noop
 
     implementation platform(libs.firebase.bom)
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-crashlytics'
 
     implementation libs.retrofit
 
