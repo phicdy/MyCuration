@@ -59,7 +59,7 @@ sqlite = { module = "androidx.sqlite:sqlite-ktx", version.ref = "sqlite" }
 browser = { module = "androidx.browser:browser", version.ref = "browser" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version = "1.2.0" }
 annotation = { module = "androidx.annotation:annotation", version = "1.11.0" }
-core = { module = "androidx.core:core-ktx", version = "1.17.0" }
+core = { module = "androidx.core:core-ktx", version = "1.19.1" }
 core-testing = { module = "androidx.arch.core:core-testing", version.ref = "arch_core_testing" }
 
 javax-inject = { module = "javax.inject:javax.inject", version = "1" }
