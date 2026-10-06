@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.articlelist.action
 
 import com.phicdy.mycuration.articlelist.ArticleItem
+import com.phicdy.mycuration.articlelist.SelectedArticle
 import com.phicdy.mycuration.core.ActionCreator1
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -15,18 +16,23 @@ class OpenUrlActionCreator @Inject constructor(
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override suspend fun run(item: ArticleItem) {
-        if (item is ArticleItem.Advertisement) return
+        run(item, isTwoPane = false)
+    }
+
+    /**
+     * @param isTwoPane true when the screen can show the article in the detail pane.
+     * The detail pane is used only when the "open internal" setting is enabled.
+     */
+    suspend fun run(item: ArticleItem, isTwoPane: Boolean) {
+        if (item !is ArticleItem.Content) return
         withContext(Dispatchers.IO) {
-            when (item) {
-                is ArticleItem.Advertisement -> return@withContext
-                is ArticleItem.Content -> {
-                    val content = item.value
-                    if (preferenceHelper.isOpenInternal) {
-                        dispatcher.dispatch(OpenInternalBrowserAction(content.url))
-                    } else {
-                        dispatcher.dispatch(OpenExternalBrowserAction(content.url))
-                    }
-                }
+            val content = item.value
+            when {
+                preferenceHelper.isOpenInternal && isTwoPane -> dispatcher.dispatch(
+                        OpenDetailPaneAction(SelectedArticle(content.id, content.title, content.url))
+                )
+                preferenceHelper.isOpenInternal -> dispatcher.dispatch(OpenInternalBrowserAction(content.url))
+                else -> dispatcher.dispatch(OpenExternalBrowserAction(content.url))
             }
         }
     }

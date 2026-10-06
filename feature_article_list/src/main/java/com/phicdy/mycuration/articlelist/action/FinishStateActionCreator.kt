@@ -16,6 +16,16 @@ class FinishStateActionCreator @Inject constructor(
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override suspend fun run(items: List<ArticleItem>) {
+        run(items, isTwoPane = false)
+    }
+
+    /**
+     * @param isTwoPane true when the list is shown with the detail pane.
+     * The screen is not finished automatically in two-pane mode because the user is still reading
+     * the article in the detail pane.
+     */
+    suspend fun run(items: List<ArticleItem>, isTwoPane: Boolean) {
+        if (isTwoPane) return
         withContext(Dispatchers.IO) {
             if (!preferenceHelper.allReadBack) return@withContext
             loop@ for (item in items) {

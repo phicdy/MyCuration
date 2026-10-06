@@ -4,6 +4,7 @@ sealed class Interation {
     data class Scroll(val positionAfterScroll: Int) : Interation()
     data class OpenInternalWebBrowser(val url: String) : Interation()
     data class OpenExternalWebBrowser(val url: String) : Interation()
+    data class OpenDetailPane(val article: SelectedArticle) : Interation()
     data class Share(val url: String) : Interation()
     data class ReadArticle(val position: Int) : Interation()
     data class SwipeArtilce(val position: Int) : Interation()

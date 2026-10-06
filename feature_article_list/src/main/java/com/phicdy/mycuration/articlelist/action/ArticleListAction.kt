@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.articlelist.action
 
 import com.phicdy.mycuration.articlelist.ArticleItem
+import com.phicdy.mycuration.articlelist.SelectedArticle
 import com.phicdy.mycuration.core.Action
 
 sealed class ArticleListAction<out T> : Action<T>
@@ -28,6 +29,10 @@ data class OpenInternalBrowserAction(
 data class OpenExternalBrowserAction(
         override val value: String
 ) : ArticleListAction<String>()
+
+data class OpenDetailPaneAction(
+        override val value: SelectedArticle
+) : ArticleListAction<SelectedArticle>()
 
 data class ScrollAction(
         override val value: Int
