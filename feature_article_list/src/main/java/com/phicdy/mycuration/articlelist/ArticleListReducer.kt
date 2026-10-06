@@ -11,6 +11,8 @@ import com.phicdy.mycuration.articlelist.action.SearchArticleAction
 import com.phicdy.mycuration.articlelist.action.ShareUrlAction
 import com.phicdy.mycuration.articlelist.action.SwipeAction
 import com.phicdy.mycuration.articlelist.action.UpdateFavoriteAction
+import com.phicdy.mycuration.articlelist.ui.ArticleListUiState
+import com.phicdy.mycuration.articlelist.ui.toUiState
 import com.phicdy.mycuration.core.Action
 import com.phicdy.mycuration.core.Reducer
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +23,8 @@ import kotlinx.coroutines.launch
 class ArticleListReducer(
         private val coroutineScope: CoroutineScope,
         private val channel: Channel<Interation>,
-        private val binding: MutableStateFlow<ArticleListUiBinding>
+        private val binding: MutableStateFlow<ArticleListUiBinding>,
+        private val uiState: MutableStateFlow<ArticleListUiState>
 ): Reducer {
     override fun reduce(action: Action<*>) {
         fun send(interation: Interation) {
@@ -29,16 +32,38 @@ class ArticleListReducer(
         }
 
         fun emit(uiBinding: ArticleListUiBinding) {
-            coroutineScope.launch { binding.emit(uiBinding) }
+            coroutineScope.launch {
+                binding.emit(uiBinding)
+                uiState.value = uiBinding.toUiState()
+            }
+        }
+
+        // Action creators mutate FavoritableArticle.status in place before dispatching these
+        // actions, so the list in the binding is unchanged by identity. Re-snapshot it so that
+        // observers of the immutable UI state get a new value.
+        fun refreshUiState() {
+            coroutineScope.launch { uiState.value = binding.value.toUiState() }
         }
         when (action) {
-            is ScrollAction -> send(Interation.Scroll(action.value))
+            is ScrollAction -> {
+                refreshUiState()
+                send(Interation.Scroll(action.value))
+            }
             is OpenInternalBrowserAction -> send(Interation.OpenInternalWebBrowser(action.value))
             is OpenExternalBrowserAction -> send(Interation.OpenExternalWebBrowser(action.value))
             is ShareUrlAction -> send(Interation.Share(action.value))
-            is ReadArticlePositionAction -> send(Interation.ReadArticle(action.value))
-            is ReadAllArticlesAction -> send(Interation.ReadAllOfArticles)
-            is SwipeAction -> send(Interation.SwipeArtilce(action.value))
+            is ReadArticlePositionAction -> {
+                refreshUiState()
+                send(Interation.ReadArticle(action.value))
+            }
+            is ReadAllArticlesAction -> {
+                refreshUiState()
+                send(Interation.ReadAllOfArticles)
+            }
+            is SwipeAction -> {
+                refreshUiState()
+                send(Interation.SwipeArtilce(action.value))
+            }
             is FinishAction -> send(Interation.Finish)
             is FetchArticleAction -> emit(ArticleListUiBinding.Loaded(action.value))
             is UpdateFavoriteAction -> emit(ArticleListUiBinding.Loaded(action.value))

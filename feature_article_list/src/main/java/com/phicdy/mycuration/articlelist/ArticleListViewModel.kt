@@ -3,6 +3,7 @@ package com.phicdy.mycuration.articlelist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
+import com.phicdy.mycuration.articlelist.ui.ArticleListUiState
 import com.phicdy.mycuration.core.Dispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -25,7 +26,15 @@ class ArticleListViewModel @Inject constructor(
     private val _binding = MutableStateFlow<ArticleListUiBinding>(ArticleListUiBinding.Init)
     val binding: StateFlow<ArticleListUiBinding> = _binding
 
-    private val reducer = ArticleListReducer(viewModelScope, _channel, _binding)
+    private val _uiState = MutableStateFlow<ArticleListUiState>(ArticleListUiState.Loading)
+
+    /**
+     * Immutable snapshot of the list for rendering. Re-emitted after every action that changes
+     * an item, including in-place status mutations by action creators.
+     */
+    val uiState: StateFlow<ArticleListUiState> = _uiState
+
+    private val reducer = ArticleListReducer(viewModelScope, _channel, _binding, _uiState)
 
     init {
         dispatcher.register(reducer)
