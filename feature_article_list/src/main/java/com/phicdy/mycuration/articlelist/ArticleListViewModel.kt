@@ -20,11 +20,11 @@ class ArticleListViewModel @Inject constructor(
         private val dispatcher: Dispatcher
 ): ViewModel() {
 
-    private val _channel = Channel<Interation>(Channel.UNLIMITED)
-    val interationChannel: Flow<Interation> = _channel.receiveAsFlow()
+    private val mutableChannel = Channel<Interation>(Channel.UNLIMITED)
+    val interationChannel: Flow<Interation> = mutableChannel.receiveAsFlow()
 
-    private val _binding = MutableStateFlow<ArticleListUiBinding>(ArticleListUiBinding.Init)
-    val binding: StateFlow<ArticleListUiBinding> = _binding
+    private val mutableBinding = MutableStateFlow<ArticleListUiBinding>(ArticleListUiBinding.Init)
+    val binding: StateFlow<ArticleListUiBinding> = mutableBinding
 
     private val mutableUiState = MutableStateFlow<ArticleListUiState>(ArticleListUiState.Loading)
 
@@ -34,7 +34,7 @@ class ArticleListViewModel @Inject constructor(
      */
     val uiState: StateFlow<ArticleListUiState> = mutableUiState
 
-    private val reducer = ArticleListReducer(viewModelScope, _channel, _binding, mutableUiState)
+    private val reducer = ArticleListReducer(viewModelScope, mutableChannel, mutableBinding, mutableUiState)
 
     init {
         dispatcher.register(reducer)
