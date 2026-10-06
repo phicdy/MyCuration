@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '25'
       - name: Decode google-services.json
         env:
           GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
@@ -46,7 +46,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '25'
       - name: Cache Gradle packages
         uses: actions/cache@v6
         with:
@@ -101,7 +101,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '25'
       - id: dependency-diff
         name: Generate dependency diff
         run: |
