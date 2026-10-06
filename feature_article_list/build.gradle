@@ -39,6 +39,7 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.browser
     implementation libs.fragment
+    implementation libs.compose.material3
 
     implementation libs.coroutines.core
     implementation libs.coroutines.android
