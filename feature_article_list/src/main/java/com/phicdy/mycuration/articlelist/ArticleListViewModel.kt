@@ -26,15 +26,15 @@ class ArticleListViewModel @Inject constructor(
     private val _binding = MutableStateFlow<ArticleListUiBinding>(ArticleListUiBinding.Init)
     val binding: StateFlow<ArticleListUiBinding> = _binding
 
-    private val _uiState = MutableStateFlow<ArticleListUiState>(ArticleListUiState.Loading)
+    private val mutableUiState = MutableStateFlow<ArticleListUiState>(ArticleListUiState.Loading)
 
     /**
      * Immutable snapshot of the list for rendering. Re-emitted after every action that changes
      * an item, including in-place status mutations by action creators.
      */
-    val uiState: StateFlow<ArticleListUiState> = _uiState
+    val uiState: StateFlow<ArticleListUiState> = mutableUiState
 
-    private val reducer = ArticleListReducer(viewModelScope, _channel, _binding, _uiState)
+    private val reducer = ArticleListReducer(viewModelScope, _channel, _binding, mutableUiState)
 
     init {
         dispatcher.register(reducer)
