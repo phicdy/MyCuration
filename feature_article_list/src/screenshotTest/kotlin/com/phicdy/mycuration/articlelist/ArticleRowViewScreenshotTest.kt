@@ -22,7 +22,6 @@ import com.phicdy.mycuration.entity.Feed
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 
 /**
  * Baseline screenshots of the current View based article row (articles_list.xml).
@@ -77,11 +76,9 @@ private fun bindArticleRow(row: View, article: FavoritableArticle) {
     articleTitle.text = article.title
     articleUrl.text = article.url
 
-    // Fixed time zone so that the rendered date does not depend on the machine
-    val format = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).apply {
-        timeZone = TimeZone.getTimeZone("Asia/Tokyo")
-    }
-    articlePostedTime.text = format.format(Date(article.postedDate))
+    // Default time zone, same as the adapter and the Compose row, so both screenshots match
+    articlePostedTime.text = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US)
+        .format(Date(article.postedDate))
 
     articlePoint.text = if (article.point == Article.DEDAULT_HATENA_POINT) {
         context.getString(R.string.not_get_hatena_point)
@@ -111,7 +108,7 @@ private fun bindArticleRow(row: View, article: FavoritableArticle) {
     favoriteOffIcon.visibility = if (article.isFavorite) View.GONE else View.VISIBLE
 }
 
-// 2019/01/01 12:00:00 in Asia/Tokyo
+// 2019/01/01 03:00:00 UTC
 private const val SAMPLE_POSTED_DATE = 1546311600000L
 
 private val sampleArticles: List<FavoritableArticle> = listOf(

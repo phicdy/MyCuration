@@ -296,7 +296,7 @@ private fun previewRow(
     isFavorite: Boolean = false,
     point: String? = "100",
     feedTitle: String? = "Feed title",
-) = ArticleRowUi.Content(
+): ArticleRowUi.Content = ArticleRowUi.Content(
     id = id,
     title = title,
     url = "https://example.com/articles/$id",
