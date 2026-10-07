@@ -39,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -265,14 +264,12 @@ private fun resolveColorControlHighlight(context: Context): Color {
 }
 
 /**
- * Text style equivalent to a plain TextView: no letter spacing and font padding included.
+ * Text style close to a plain TextView: no letter spacing.
  */
-@Suppress("DEPRECATION")
-private fun viewTextStyle(fontSize: TextUnit, color: Color) = TextStyle(
+private fun viewTextStyle(fontSize: TextUnit, color: Color): TextStyle = TextStyle(
     color = color,
     fontSize = fontSize,
     letterSpacing = 0.sp,
-    platformStyle = PlatformTextStyle(includeFontPadding = true),
 )
 
 internal fun formatPostedDate(postedDate: Long): String =
@@ -347,9 +344,9 @@ private fun PreviewFeedIcon() {
     }
 }
 
-private const val DIVIDER_ALPHA = 0.12f
-private const val FAVORITE_ICON_ALPHA = 0.6f
-private val DEFAULT_HIGHLIGHT = Color(0x1F000000)
+private const val DIVIDER_ALPHA: Float = 0.12f
+private const val FAVORITE_ICON_ALPHA: Float = 0.6f
+private val DEFAULT_HIGHLIGHT: Color = Color(0x1F000000)
 
 // 2019/01/01 12:00:00 UTC
-private const val PREVIEW_POSTED_DATE = 1546344000000L
+private const val PREVIEW_POSTED_DATE: Long = 1546344000000L
