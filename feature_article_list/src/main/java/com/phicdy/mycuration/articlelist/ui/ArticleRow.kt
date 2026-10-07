@@ -11,8 +11,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
@@ -30,7 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -61,9 +64,7 @@ import java.util.Locale
  */
 
 /**
- * Compose version of R.layout.articles_list. A single custom layout reproduces the constraints
- * of the former ConstraintLayout, so that overflowing children (feed title centered on the 12dp
- * icon, 32dp favorite star centered on the date) are placed and touchable exactly as before.
+ * Compose version of R.layout.articles_list.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -74,47 +75,78 @@ internal fun ArticleRow(
     onFavoriteClick: () -> Unit,
 ) {
     val textColor = colorResource(if (row.isRead) R.color.text_read else R.color.text_primary)
+    val smallTextStyle = viewTextStyle(fontSize = 12.sp, color = textColor)
     // Toggle the star immediately like the former adapter did, before the new list arrives
     var isFavorite by remember(row.isFavorite) { mutableStateOf(row.isFavorite) }
-    val hasFeed = row.feedTitle != null
-    Layout(
-        content = {
-            // 0: title
-            BasicText(
-                text = row.title,
-                style = viewTextStyle(fontSize = 14.sp, color = textColor),
-                maxLines = 4,
-                overflow = TextOverflow.Ellipsis,
-            )
-            // 1: url
-            BasicText(
-                text = row.url,
-                style = viewTextStyle(fontSize = 12.sp, color = colorResource(R.color.text_url)),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            // 2: posted date
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .padding(horizontal = 16.dp)
+            // ViewGroup clips children to its padding by default (clipToPadding)
+            .clipToBounds(),
+    ) {
+        BasicText(
+            text = row.title,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            style = viewTextStyle(fontSize = 14.sp, color = textColor),
+            maxLines = 4,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (row.feedTitle != null) {
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                FeedIcon(iconPath = row.feedIconPath)
+                BasicText(
+                    text = row.feedTitle,
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .overflowVertically(),
+                    style = smallTextStyle,
+                )
+            }
+        }
+        BasicText(
+            text = row.url,
+            modifier = Modifier.padding(top = 8.dp),
+            style = viewTextStyle(fontSize = 12.sp, color = colorResource(R.color.text_url)),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             BasicText(
                 text = remember(row.postedDate) { formatPostedDate(row.postedDate) },
-                style = viewTextStyle(fontSize = 12.sp, color = textColor),
+                style = smallTextStyle,
             )
-            // 3: hatena icon
             Image(
                 painter = painterResource(R.drawable.hatena),
                 contentDescription = stringResource(R.string.hatena),
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .overflowVertically(),
             )
-            // 4: hatena point
             BasicText(
                 text = row.point ?: stringResource(R.string.not_get_hatena_point),
-                style = viewTextStyle(fontSize = 12.sp, color = textColor),
+                modifier = Modifier.padding(start = 4.dp),
+                style = smallTextStyle,
             )
-            // 5: favorite star
+            Spacer(modifier = Modifier.weight(1f))
             Image(
                 painter = painterResource(
                     if (isFavorite) R.drawable.ic_favorite_on else R.drawable.ic_favorite_off
                 ),
                 contentDescription = null,
                 modifier = Modifier
+                    .overflowVertically()
                     .clickable {
                         isFavorite = !isFavorite
                         onFavoriteClick()
@@ -123,94 +155,29 @@ internal fun ArticleRow(
                 // Compose ignores android:alpha on the <vector> root of these drawables
                 alpha = FAVORITE_ICON_ALPHA,
             )
-            // 6: divider (style Divider: background_base_divider with alpha 0.12)
-            Box(
-                modifier = Modifier.background(
-                    colorResource(R.color.background_base_divider).copy(alpha = DIVIDER_ALPHA)
-                ),
-            )
-            // In ConstraintLayout, gone views and their own margins collapse to zero
-            if (hasFeed) {
-                // 7: feed icon
-                FeedIcon(iconPath = row.feedIconPath)
-                // 8: feed title
-                BasicText(
-                    text = row.feedTitle.orEmpty(),
-                    style = viewTextStyle(fontSize = 12.sp, color = textColor),
-                )
-            }
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-            .padding(horizontal = 16.dp)
-            // ViewGroup clips children to its padding by default (clipToPadding)
-            .clipToBounds(),
-    ) { measurables, constraints ->
-        val width = constraints.maxWidth
-        val loose = Constraints(maxWidth = width)
-        val margin4 = 4.dp.roundToPx()
-        val margin8 = 8.dp.roundToPx()
-
-        val title = measurables[0].measure(Constraints.fixedWidth(width))
-        val titleTop = margin8
-        var anchorBottom = titleTop + title.height
-
-        val icon = if (hasFeed) measurables[7].measure(loose) else null
-        val iconTop = anchorBottom + margin8
-        val feedTitle = if (hasFeed && icon != null) {
-            // wrap_content in ConstraintLayout is limited by the parent width only
-            measurables[8].measure(loose)
-        } else {
-            null
         }
-        if (icon != null) anchorBottom = iconTop + icon.height
-
-        val url = measurables[1].measure(loose)
-        val urlTop = anchorBottom + margin8
-
-        val date = measurables[2].measure(loose)
-        val dateTop = urlTop + url.height + margin4
-        val hatena = measurables[3].measure(loose)
-        val point = measurables[4].measure(loose)
-        val favorite = measurables[5].measure(loose)
-
-        val dividerTop = dateTop + date.height + margin8
-        val divider = measurables[6].measure(Constraints.fixed(width, 1.dp.roundToPx()))
-
-        val favoriteTop = dateTop + centerOn(date.height, favorite.height)
-        val feedTitleTop = if (icon != null && feedTitle != null) {
-            iconTop + centerOn(icon.height, feedTitle.height)
-        } else {
-            0
-        }
-        // wrap_content height of ConstraintLayout covers the bottom of every child
-        val height = maxOf(
-            dividerTop + divider.height,
-            favoriteTop + favorite.height,
-            feedTitleTop + (feedTitle?.height ?: 0),
+        // Divider style: background_base_divider with alpha 0.12
+        Box(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(colorResource(R.color.background_base_divider).copy(alpha = DIVIDER_ALPHA)),
         )
-
-        layout(width, height) {
-            title.placeRelative(0, titleTop)
-            if (icon != null && feedTitle != null) {
-                icon.placeRelative(0, iconTop)
-                feedTitle.placeRelative(icon.width + margin4, feedTitleTop)
-            }
-            url.placeRelative(0, urlTop)
-            date.placeRelative(0, dateTop)
-            val hatenaX = date.width + margin8
-            hatena.placeRelative(hatenaX, dateTop + centerOn(date.height, hatena.height))
-            point.placeRelative(
-                hatenaX + hatena.width + margin4,
-                dateTop + centerOn(date.height, point.height),
-            )
-            favorite.placeRelative(width - favorite.width, favoriteTop)
-            divider.placeRelative(0, dividerTop)
-        }
     }
 }
 
+/**
+ * Measures the child at its full height but reports zero height and centers the child on that
+ * point, so a child taller than its row overflows it without changing the row height. This is
+ * how ConstraintLayout placed the favorite star on the date and the feed title on the icon.
+ */
+private fun Modifier.overflowVertically(): Modifier = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity))
+    layout(placeable.width, 0) {
+        placeable.placeRelative(0, -placeable.height / 2)
+    }
+}
 
 /**
  * Feed icon loaded by Glide into an ImageView, same as the former adapter.
@@ -307,9 +274,6 @@ private fun viewTextStyle(fontSize: TextUnit, color: Color) = TextStyle(
     letterSpacing = 0.sp,
     platformStyle = PlatformTextStyle(includeFontPadding = true),
 )
-
-/** Vertical offset that centers a child of [size] on an anchor of [anchorSize], like ConstraintLayout. */
-private fun centerOn(anchorSize: Int, size: Int): Int = (anchorSize - size) / 2
 
 internal fun formatPostedDate(postedDate: Long): String =
     SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).format(Date(postedDate))
