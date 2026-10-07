@@ -27,6 +27,7 @@ timber = "5.0.1"
 flipper = "0.273.0"
 junit = "4.13.2"
 baselineprofile = "1.5.0"
+screenshot = "0.0.1-alpha16"
 
 [plugins]
 kotlin-gradle = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -35,6 +36,7 @@ android-test = { id = "com.android.test", version.ref = "gradle" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 android-application = { id = "com.android.application", version.ref = "gradle" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 
 [libraries]
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
@@ -106,6 +108,8 @@ macrobenchmark = { module = "androidx.benchmark:benchmark-macro-junit4", version
 spoon = { module = "com.squareup.spoon:spoon-client", version = "1.7.1" }
 assertj = { module = "org.assertj:assertj-core", version = "3.27.7" }
 profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version = "1.4.1" }
+screenshot-validation-api = { module = "com.android.tools.screenshot:screenshot-validation-api", version.ref = "screenshot" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 
 [bundles]
 lifecycle = ["lifecycle-viewmodel", "lifecycle-livedata"]

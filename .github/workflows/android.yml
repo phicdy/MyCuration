@@ -64,3 +64,34 @@ jobs:
         run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
       - name: Lint
         run: ./gradlew lintDebug
+
+  screenshot_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+      - name: Cache Gradle packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
+        run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
+      - name: Generate screenshots
+        run: ./gradlew :feature_article_list:updateDebugScreenshotTest
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: screenshots-feature_article_list
+          path: |
+            feature_article_list/src/screenshotTestDebug/reference/
+            feature_article_list/build/reports/screenshotTest/
+          if-no-files-found: warn
