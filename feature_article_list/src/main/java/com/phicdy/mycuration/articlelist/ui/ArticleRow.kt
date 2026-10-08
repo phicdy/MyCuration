@@ -58,8 +58,7 @@ import java.util.Locale
 
 /*
  * Compose versions of the article list row (R.layout.articles_list) and the empty view of
- * R.layout.fragment_articles_list. They are not used by production code yet and will replace
- * the RecyclerView in ArticlesListFragment in a later step.
+ * R.layout.fragment_articles_list, used by ArticlesListFragment.
  */
 
 /**

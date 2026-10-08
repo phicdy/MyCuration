@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.LazyListState
 /*
  * Scroll helpers for the FAB of the article list. They give the same positions that
  * ScrollActionCreator received from LinearLayoutManager and scroll like
- * RecyclerView.smoothScrollToPosition(). Not used by production code yet.
+ * RecyclerView.smoothScrollToPosition().
  */
 
 /**
