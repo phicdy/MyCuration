@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -104,80 +103,17 @@ class SearchArticleTest : UiTest() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         assertNull(device.wait<UiObject2>(Until.findObject(By.text("該当する記事はありません")), 5000))
 
-        val title = onView(
-                allOf(
-                        withId(R.id.articleTitle), withText(testArticleTitle),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.rv_article),
-                                        0
-                                ),
-                                0
-                        ),
-                        isDisplayed()
-                )
-        )
-        title.check(matches(withText(testArticleTitle)))
-
-        val rss = onView(
-            allOf(
-                withId(R.id.feedTitle), withText(testRssTitle),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.rv_article),
-                        0
-                    ),
-                    2
-                ),
-                isDisplayed()
-            )
-        )
-        rss.check(matches(withText(testRssTitle)))
-
-        val textView3 = onView(
-            allOf(
-                withId(R.id.tv_articleUrl), withText(testArticleUrl),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.rv_article),
-                        0
-                    ),
-                    3
-                ),
-                isDisplayed()
-            )
-        )
-        textView3.check(matches(withText(testArticleUrl)))
-
-        val date = onView(
-            allOf(
-                withId(R.id.articlePostedTime), withText(testArticleDateStr),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.rv_article),
-                        0
-                    ),
-                    4
-                ),
-                isDisplayed()
-            )
-        )
-        date.check(matches(withText(testArticleDateStr)))
-
-        val point = onView(
-            allOf(
-                withId(R.id.articlePoint), withText(testArticlePoint),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.rv_article),
-                        0
-                    ),
-                    6
-                ),
-                isDisplayed()
-            )
-        )
-        point.check(matches(withText(testArticlePoint)))
+        // The article list is rendered with Compose, so the texts are found by UiAutomator
+        // instead of the former RecyclerView view IDs
+        listOf(
+            testArticleTitle,
+            testRssTitle,
+            testArticleUrl,
+            testArticleDateStr,
+            testArticlePoint
+        ).forEach { text ->
+            assertNotNull("$text was not found", device.wait<UiObject2>(Until.findObject(By.text(text)), 5000))
+        }
     }
 
     private fun openSearchResult(query: String) {
