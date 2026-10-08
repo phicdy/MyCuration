@@ -40,7 +40,7 @@ fun ArticleRowComposePreview() {
 }
 
 /** Same background as the activity window, which the View based row is drawn on. */
-private fun windowBackgroundColor(context: Context): Color {
+internal fun windowBackgroundColor(context: Context): Color {
     val themedContext = ContextThemeWrapper(context, R.style.AppTheme)
     val typedArray = themedContext.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
     val drawable = typedArray.getDrawable(0)
