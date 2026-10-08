@@ -59,23 +59,28 @@ fi
 RAW_BASE="https://raw.githubusercontent.com/${REPOSITORY}/${BRANCH}/${DEST}"
 img() { printf '<img src="%s/%s" width="360">' "$RAW_BASE" "${1// /%20}"; }
 
-# Group Light/Dark variants of the same preview: strip the variant token from the file name.
+# Group Light/Dark variants of the same preview. File names look like
+# <Preview>_<Light|Dark>_<hash>_<index>.png, and the hash differs per variant,
+# so the key is "<test class>/<Preview>".
 declare -A LIGHT DARK
 KEYS=()
 for png in "${PNGS[@]}"; do
   name=$(basename "$png")
-  key="$(dirname "$png")/$(sed -E 's/_(Light|Dark)_/_/; s/^(Light|Dark)_//; s/_(Light|Dark)\.png$/.png/' <<<"$name")"
-  case "$name" in
-    *Light*) variant=light ;;
-    *Dark*) variant=dark ;;
-    *) variant=other ;;
-  esac
-  if [ "$variant" = other ] || { [ "$variant" = light ] && [ -n "${LIGHT[$key]:-}" ]; } || { [ "$variant" = dark ] && [ -n "${DARK[$key]:-}" ]; }; then
-    key="$png"
-    variant=light
+  if [[ "$name" =~ ^(.+)_(Light|Dark)_.*\.png$ ]]; then
+    preview=${BASH_REMATCH[1]}
+    variant=${BASH_REMATCH[2]}
+  else
+    preview=${name%.png}
+    variant=Other
+  fi
+  key="$(basename "$(dirname "$png")")/${preview}"
+  # A key that already has this variant (or has no variant) gets its own entry
+  if [ "$variant" = Other ] || { [ "$variant" = Light ] && [ -n "${LIGHT[$key]:-}" ]; } || { [ "$variant" = Dark ] && [ -n "${DARK[$key]:-}" ]; }; then
+    key="$key ($name)"
+    if [ "$variant" = Other ]; then variant=Light; fi
   fi
   if [ -z "${LIGHT[$key]:-}" ] && [ -z "${DARK[$key]:-}" ]; then KEYS+=("$key"); fi
-  if [ "$variant" = dark ]; then DARK[$key]=$png; else LIGHT[$key]=$png; fi
+  if [ "$variant" = Dark ]; then DARK[$key]=$png; else LIGHT[$key]=$png; fi
 done
 
 {
@@ -87,17 +92,14 @@ done
   for key in "${KEYS[@]}"; do
     light=${LIGHT[$key]:-}
     dark=${DARK[$key]:-}
+    echo "### \`${key}\`"
+    echo
     if [ -n "$light" ] && [ -n "$dark" ]; then
-      echo "### \`${key#./}\`"
-      echo
-      echo "| Light: \`$(basename "$light")\` | Dark: \`$(basename "$dark")\` |"
+      echo '| Light | Dark |'
       echo '| --- | --- |'
       echo "| $(img "$light") | $(img "$dark") |"
     else
-      file=${light:-$dark}
-      echo "### \`${file#./}\`"
-      echo
-      img "$file"
+      img "${light:-$dark}"
       echo
     fi
     echo
