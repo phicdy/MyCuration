@@ -156,13 +156,14 @@ class RssParser @Inject constructor() {
                 //<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
                 val elements = document.getElementsByAttributeValue("type", "application/rss+xml")
                 if (elements.isEmpty()) {
-                    val feedPathUrl = URL(url.protocol, url.host, "feed").toString()
+                    // The file part needs a leading slash, otherwise the URL becomes "https://example.comfeed"
+                    val feedPathUrl = URL(url.protocol, url.host, "/feed").toString()
                     return if (url.toString() == feedPathUrl) {
                         // Already check URL that path is "feed"
                         Timber.d("RSS URL was not found")
                         RssParseResult(failedReason = RssParseResult.FailedReason.NOT_FOUND)
                     } else {
-                        parseRssXml(URL(url.protocol, url.host, "feed").toString(), false)
+                        parseRssXml(feedPathUrl, false)
                     }
                 }
                 var feedUrl = elements[0].attr("href")
