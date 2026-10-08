@@ -67,6 +67,9 @@ jobs:
 
   screenshot_test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: set up JDK 17
@@ -95,3 +98,48 @@ jobs:
             feature_article_list/src/screenshotTestDebug/reference/
             feature_article_list/build/reports/screenshotTest/
           if-no-files-found: warn
+      - name: Check for generated screenshots
+        id: screenshots
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          count=$(find feature_article_list/src/screenshotTestDebug/reference -type f -name '*.png' 2>/dev/null | wc -l)
+          echo "Found $count screenshot(s)"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+      - name: Publish screenshots to the screenshots branch
+        id: publish
+        if: steps.screenshots.outputs.count > 0
+        env:
+          SRC_DIR: feature_article_list/src/screenshotTestDebug/reference
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_ID: ${{ github.run_id }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body_file="$RUNNER_TEMP/screenshot-comment.md"
+          BODY_FILE="$body_file" .github/scripts/publish_screenshots.sh
+          {
+            echo 'body<<SCREENSHOT_COMMENT_EOF'
+            cat "$body_file"
+            echo 'SCREENSHOT_COMMENT_EOF'
+          } >> "$GITHUB_OUTPUT"
+      - name: Find screenshot comment
+        uses: peter-evans/find-comment@0ab0dc781059d605234c6f0b3e02a2764a42d456
+        id: find_comment
+        if: steps.screenshots.outputs.count > 0
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- screenshot-comment -->'
+      - name: Create or update screenshot comment
+        uses: peter-evans/create-or-update-comment@35d33e4f3771787d0f602f5dca94f47c68b5cc60
+        if: steps.screenshots.outputs.count > 0
+        with:
+          body: ${{ steps.publish.outputs.body }}
+          edit-mode: replace
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
