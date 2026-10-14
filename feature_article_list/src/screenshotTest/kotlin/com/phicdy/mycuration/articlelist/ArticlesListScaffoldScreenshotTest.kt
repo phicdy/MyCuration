@@ -11,6 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tools.screenshot.PreviewTest
 import com.phicdy.mycuration.articlelist.ui.ArticlesListScaffold
+import com.phicdy.mycuration.articlelist.ui.ArticlesListSearchState
+import com.phicdy.mycuration.articlelist.ui.rememberArticlesListSearchState
 import com.phicdy.mycuration.articlelist.ui.EmptyArticleList
 import com.phicdy.mycuration.resource.MyCurationTheme
 
@@ -22,6 +24,29 @@ import com.phicdy.mycuration.resource.MyCurationTheme
 @Preview(name = "Dark", widthDp = 360, heightDp = 400, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ArticlesListScaffoldPreview() {
+    ArticlesListScaffoldSample(searchState = rememberArticlesListSearchState())
+}
+
+/** Search field just opened: the hint is shown. */
+@PreviewTest
+@Preview(name = "Light", widthDp = 360, heightDp = 400, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(name = "Dark", widthDp = 360, heightDp = 400, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun ArticlesListScaffoldSearchingPreview() {
+    ArticlesListScaffoldSample(searchState = rememberArticlesListSearchState(isSearching = true))
+}
+
+/** Search field with a query being typed. */
+@PreviewTest
+@Preview(name = "Light", widthDp = 360, heightDp = 400, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(name = "Dark", widthDp = 360, heightDp = 400, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun ArticlesListScaffoldSearchQueryPreview() {
+    ArticlesListScaffoldSample(searchState = rememberArticlesListSearchState(isSearching = true, query = "Kotlin"))
+}
+
+@Composable
+private fun ArticlesListScaffoldSample(searchState: ArticlesListSearchState) {
     MyCurationTheme {
         ArticlesListScaffold(
             title = stringResource(R.string.all),
@@ -30,6 +55,7 @@ fun ArticlesListScaffoldPreview() {
             onReadAllClick = {},
             onSearch = {},
             onFabClick = {},
+            searchState = searchState,
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
                 EmptyArticleList(text = stringResource(R.string.no_article))
