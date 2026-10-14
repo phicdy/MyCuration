@@ -7,7 +7,7 @@ sealed class ArticleListUiBinding {
 }
 
 /** Raw list of the binding, which position based action creators use. */
-fun ArticleListUiBinding.articles(): List<ArticleItem> = when (this) {
+fun ArticleListUiBinding.toArticleItems(): List<ArticleItem> = when (this) {
     ArticleListUiBinding.Init -> emptyList()
     is ArticleListUiBinding.Loaded -> list
     is ArticleListUiBinding.Searched -> list

@@ -8,19 +8,19 @@ import org.mockito.kotlin.mock
 class ArticleListUiBindingTest {
 
     @Test
-    fun `articles of Init is empty`() {
-        assertThat(ArticleListUiBinding.Init.articles()).isEmpty()
+    fun `toArticleItems of Init is empty`() {
+        assertThat(ArticleListUiBinding.Init.toArticleItems()).isEmpty()
     }
 
     @Test
-    fun `articles of Loaded is the loaded list`() {
+    fun `toArticleItems of Loaded is the loaded list`() {
         val list = listOf(ArticleItem.Advertisement, ArticleItem.Content(mock<FavoritableArticle>()))
-        assertThat(ArticleListUiBinding.Loaded(list).articles()).isSameAs(list)
+        assertThat(ArticleListUiBinding.Loaded(list).toArticleItems()).isSameAs(list)
     }
 
     @Test
-    fun `articles of Searched is the searched list`() {
+    fun `toArticleItems of Searched is the searched list`() {
         val list = listOf(ArticleItem.Content(mock<FavoritableArticle>()))
-        assertThat(ArticleListUiBinding.Searched(list).articles()).isSameAs(list)
+        assertThat(ArticleListUiBinding.Searched(list).toArticleItems()).isSameAs(list)
     }
 }

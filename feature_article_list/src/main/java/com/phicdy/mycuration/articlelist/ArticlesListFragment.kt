@@ -169,7 +169,7 @@ class ArticlesListFragment : Fragment() {
     }
 
     /** Raw list that corresponds to the rows of the LazyColumn, for position based action creators. */
-    private fun currentArticles(): List<ArticleItem> = viewModel.binding.value.articles()
+    private fun currentArticles(): List<ArticleItem> = viewModel.binding.value.toArticleItems()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
