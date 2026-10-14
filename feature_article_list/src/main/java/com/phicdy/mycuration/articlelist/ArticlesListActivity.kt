@@ -81,7 +81,7 @@ class ArticlesListActivity : AppCompatActivity(),
             fab.setOnClickListener {
                 val fragment =
                     supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
-                fragment?.onFabButtonClicked()
+                fragment?.scrollDownAndMarkAsRead()
                 TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
             }
         }

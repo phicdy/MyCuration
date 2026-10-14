@@ -40,7 +40,7 @@ class ArticleListViewModel @Inject constructor(
         dispatcher.register(reducer)
     }
 
-    fun onFabButtonClicked(
+    fun scrollDownAndMarkAsRead(
             findFirstVisibleItemPosition: Int,
             findLastCompletelyVisibleItemPosition: Int,
             currentList: List<ArticleItem>

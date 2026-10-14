@@ -181,8 +181,8 @@ class ArticlesListFragment : Fragment() {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return ComposeView(requireContext()).apply {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        ComposeView(requireContext()).apply {
             // An ID is needed to save and restore the scroll position
             id = R.id.compose_article_list
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -207,24 +207,23 @@ class ArticlesListFragment : Fragment() {
                         uiState = uiState,
                         listState = state,
                         adProvider = adProvider,
-                        onItemClick = ::onItemClicked,
-                        onItemLongClick = ::onItemLongClicked,
-                        onFavoriteClick = ::onFavoriteClicked,
-                        onSwipe = ::onSwiped,
+                        onItemClick = ::readAndOpenArticle,
+                        onItemLongClick = ::shareArticleUrl,
+                        onFavoriteClick = ::toggleFavorite,
+                        onSwipe = ::applySwipeAction,
                     )
                 }
             }
         }
-    }
 
     override fun onDestroyView() {
         listState = null
         super.onDestroyView()
     }
 
-    fun onFabButtonClicked() {
+    fun scrollDownAndMarkAsRead() {
         val state = listState ?: return
-        viewModel.onFabButtonClicked(
+        viewModel.scrollDownAndMarkAsRead(
                 state.firstVisibleItemPosition(),
                 state.lastCompletelyVisibleItemPosition(),
                 currentArticles()
@@ -281,7 +280,7 @@ class ArticlesListFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun onItemClicked(position: Int) {
+    private fun readAndOpenArticle(position: Int) {
         val articles = currentArticles()
         viewLifecycleOwner.lifecycleScope.launch {
             readArticleActionCreator.run(position, articles)
@@ -289,21 +288,21 @@ class ArticlesListFragment : Fragment() {
         }
     }
 
-    private fun onItemLongClicked(position: Int) {
+    private fun shareArticleUrl(position: Int) {
         val articles = currentArticles()
         viewLifecycleOwner.lifecycleScope.launch {
             shareUrlActionCreator.run(position, articles)
         }
     }
 
-    private fun onFavoriteClicked(position: Int) {
+    private fun toggleFavorite(position: Int) {
         val articles = currentArticles()
         viewLifecycleOwner.lifecycleScope.launch {
             updateFavoriteStatusActionCreator.run(position, articles)
         }
     }
 
-    private fun onSwiped(position: Int, direction: Int) {
+    private fun applySwipeAction(position: Int, direction: Int) {
         val articles = currentArticles()
         viewLifecycleOwner.lifecycleScope.launch {
             swipeActionCreator.run(position, direction, articles)
