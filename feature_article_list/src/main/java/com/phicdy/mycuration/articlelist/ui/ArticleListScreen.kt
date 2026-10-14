@@ -31,8 +31,7 @@ import com.phicdy.mycuration.articlelist.R
 import kotlinx.coroutines.launch
 
 /**
- * Article list rendered with Compose. Not used by production code yet; it will replace the
- * RecyclerView in ArticlesListFragment in a later step.
+ * Article list rendered with Compose, hosted by ArticlesListFragment.
  *
  * LazyColumn item indices are equal to the indices of the raw ArticleItem list, so the
  * callbacks pass positions that the position based action creators can use as is.
