@@ -46,7 +46,6 @@ import com.phicdy.mycuration.articlelist.R
 /**
  * Screen frame of ArticlesListActivity: top app bar with the "All read" and search actions,
  * the FAB that scrolls down and marks articles as read, and a snackbar host.
- * Not used by production code yet.
  */
 @Composable
 internal fun ArticlesListScaffold(
@@ -79,7 +78,7 @@ internal fun ArticlesListScaffold(
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_down),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.scroll_article_list),
                     alpha = ICON_ALPHA,
                 )
             }

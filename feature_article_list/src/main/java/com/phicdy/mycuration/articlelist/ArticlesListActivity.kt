@@ -4,19 +4,25 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.TextView
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.core.os.bundleOf
+import androidx.fragment.compose.AndroidFragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.phicdy.mycuration.articlelist.ui.ArticlesListScaffold
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.feature.util.changeTheme
-import com.phicdy.mycuration.feature.util.getThemeColor
+import com.phicdy.mycuration.resource.MyCurationTheme
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -27,134 +33,92 @@ class ArticlesListActivity : AppCompatActivity(),
     ArticlesListFragment.OnArticlesListFragmentListener {
 
     companion object {
-        private const val TAG_FRAGMENT = "TAG_FRAGMENT"
         private const val RSS_ID = "RSS_ID"
 
-        fun createIntent(context: Context, rssId: Int) =
+        fun createIntent(context: Context, rssId: Int): Intent =
             Intent(context, ArticlesListActivity::class.java).apply {
                 putExtra(RSS_ID, rssId)
             }
     }
 
-    private lateinit var searchView: SearchView
-    private lateinit var fbTitle: String
-    private lateinit var fab: FloatingActionButton
-
     @Inject
     lateinit var rssRepository: RssRepository
 
+    private var toolbarTitle: String by mutableStateOf("")
+
+    private val snackbarHostState = SnackbarHostState()
+
+    /** The hosted list, available while it is attached. */
+    private var articlesListFragment: ArticlesListFragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_articles_list)
 
         // Set feed id and url from main activity
-        val intent = intent
         val feedId = intent.getIntExtra(RSS_ID, Feed.ALL_FEED_ID)
 
-        if (savedInstanceState == null) {
-            val fragment = ArticlesListFragment.newInstance(feedId)
-            supportFragmentManager.beginTransaction()
-                .add(R.id.container, fragment, TAG_FRAGMENT)
-                .commit()
+        setContent {
+            MyCurationTheme {
+                ArticlesListScaffold(
+                    title = toolbarTitle,
+                    snackbarHostState = snackbarHostState,
+                    onNavigateUp = ::finish,
+                    onReadAllClick = ::markAllAsRead,
+                    onSearch = ::openSearchResult,
+                    onFabClick = ::scrollDownAndMarkAsRead,
+                    modifier = Modifier.systemBarsPadding(),
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        AndroidFragment<ArticlesListFragment>(
+                            arguments = bundleOf(ArticlesListFragment.RSS_ID to feedId),
+                            onUpdate = { fragment -> articlesListFragment = fragment },
+                        )
+                    }
+                }
+            }
         }
 
         lifecycleScope.launch {
-            when (feedId) {
+            val trackerTitle = when (feedId) {
                 Feed.ALL_FEED_ID -> {
                     // All article
-                    title = getString(R.string.all)
-                    fbTitle = getString(R.string.all)
+                    toolbarTitle = getString(R.string.all)
+                    getString(R.string.all)
                 }
 
                 else -> {
                     // Select a feed
                     val prefMgr = PreferenceHelper
                     prefMgr.setSearchFeedId(feedId)
-                    val selectedFeed = rssRepository.getFeedById(feedId)
-                    title = selectedFeed?.title
-                    fbTitle = getString(R.string.ga_not_all_title)
+                    toolbarTitle = rssRepository.getFeedById(feedId)?.title.orEmpty()
+                    getString(R.string.ga_not_all_title)
                 }
             }
-            TrackerHelper.sendUiEvent(fbTitle)
-            initToolbar()
-            fab = findViewById(R.id.fab_article_list)
-            fab.setOnClickListener {
-                val fragment =
-                    supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
-                fragment?.scrollDownAndMarkAsRead()
-                TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
-            }
+            TrackerHelper.sendUiEvent(trackerTitle)
         }
     }
 
-    private fun initToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_article_list)
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-        if (actionBar != null) {
-            // Show back arrow icon
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setDisplayShowHomeEnabled(true)
-            actionBar.title = title
-        }
+    private fun markAllAsRead() {
+        TrackerHelper.sendButtonEvent(getString(R.string.read_all_articles))
+        articlesListFragment?.markAllAsRead()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu_article, menu)
-        // Associate searchable configuration with the SearchView
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchMenuItem = menu.findItem(R.id.search_article)
-        searchView = searchMenuItem.actionView as SearchView
-        searchView.setSearchableInfo(
-            searchManager
-                .getSearchableInfo(componentName)
-        )
-        searchView.queryHint = getString(R.string.search_article)
-        searchView.setOnQueryTextFocusChangeListener { _, queryTextFocused ->
-            if (!queryTextFocused) {
-                searchMenuItem.collapseActionView()
-                searchView.setQuery("", false)
-            }
-        }
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return true
-            }
-
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query == null) return false
-                val intent =
-                    Intent(this@ArticlesListActivity, ArticleSearchResultActivity::class.java)
-                intent.action = Intent.ACTION_SEARCH
-                intent.putExtra(SearchManager.QUERY, query)
-                startActivity(intent)
-                return false
-            }
-        })
-        val color = getThemeColor(R.attr.colorPrimary)
-        val searchAutoComplete: TextView =
-            searchView.findViewById(androidx.appcompat.R.id.search_src_text)
-        searchAutoComplete.setTextColor(color)
-        searchAutoComplete.setHintTextColor(color)
-        return true
+    private fun scrollDownAndMarkAsRead() {
+        articlesListFragment?.scrollDownAndMarkAsRead()
+        TrackerHelper.sendButtonEvent(getString(R.string.scroll_article_list))
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    private fun openSearchResult(query: String) {
+        val intent = Intent(this, ArticleSearchResultActivity::class.java)
+        intent.action = Intent.ACTION_SEARCH
+        intent.putExtra(SearchManager.QUERY, query)
+        startActivity(intent)
+    }
 
-        when (item.itemId) {
-            R.id.all_read -> {
-                TrackerHelper.sendButtonEvent(getString(R.string.read_all_articles))
-                val fragment =
-                    supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? ArticlesListFragment
-                fragment?.handleAllRead()
-            }
-
-            android.R.id.home -> finish()
-            else -> {
-            }
+    override fun showOpenInternalBrowserError() {
+        lifecycleScope.launch {
+            snackbarHostState.showSnackbar(getString(R.string.open_internal_browser_error))
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {

@@ -55,6 +55,7 @@ firebase-ads = { module = "com.google.firebase:firebase-ads", version = "23.6.0"
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 activity = { module = "androidx.activity:activity-ktx", version.ref = "activity_ktx" }
 fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment_ktx" }
+fragment-compose = { module = "androidx.fragment:fragment-compose", version.ref = "fragment_ktx" }
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 work = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
