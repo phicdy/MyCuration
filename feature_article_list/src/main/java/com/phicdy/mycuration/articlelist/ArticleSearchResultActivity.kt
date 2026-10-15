@@ -5,6 +5,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
+import com.google.android.material.snackbar.Snackbar
 import com.phicdy.mycuration.feature.util.changeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,6 +35,10 @@ class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.On
             actionBar.setDisplayShowHomeEnabled(true)
             actionBar.title = getString(R.string.search_result)
         }
+    }
+
+    override fun showOpenInternalBrowserError() {
+        Snackbar.make(findViewById(android.R.id.content), R.string.open_internal_browser_error, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onResume() {

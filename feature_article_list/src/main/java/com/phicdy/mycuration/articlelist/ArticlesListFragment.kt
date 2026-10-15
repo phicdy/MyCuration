@@ -23,7 +23,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.Snackbar
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
@@ -123,6 +122,9 @@ class ArticlesListFragment : Fragment() {
 
     interface OnArticlesListFragmentListener {
         fun finish()
+
+        /** Shows that the internal browser (Chrome Custom Tabs) could not be opened. */
+        fun showOpenInternalBrowserError()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -230,7 +232,7 @@ class ArticlesListFragment : Fragment() {
         )
     }
 
-    fun handleAllRead() {
+    fun markAllAsRead() {
         viewLifecycleOwner.lifecycleScope.launch {
             readAllArticlesActionCreator.run(rssId, currentArticles())
         }
@@ -255,7 +257,7 @@ class ArticlesListFragment : Fragment() {
                     customTabsIntent.intent.setPackage("com.android.chrome")
                     customTabsIntent.launchUrl(activity, Uri.parse(url))
                 } catch (e: ActivityNotFoundException) {
-                    Snackbar.make(activity.findViewById(R.id.fab_article_list), R.string.open_internal_browser_error, Snackbar.LENGTH_SHORT).show()
+                    listener.showOpenInternalBrowserError()
                 }
             }
         }

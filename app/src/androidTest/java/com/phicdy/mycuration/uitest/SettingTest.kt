@@ -158,12 +158,11 @@ class SettingTest : UiTest() {
         clickYahoo()
 
         // Click fab
-        val fab = device.wait(Until.findObject(
-            By.res(BuildConfig.APPLICATION_ID, "fab_article_list")), 5000)
+        // The article list toolbar and FAB are Compose, so they are found by content description
+        val fab = device.wait(Until.findObject(By.desc("記事リストをスクロール")), 5000)
         fab.click()
         try {
-            val fab2 = device.wait(Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "fab_article_list")), 5000)
+            val fab2 = device.wait(Until.findObject(By.desc("記事リストをスクロール")), 5000)
             fab2.click()
         } catch (ignored: Exception) {
         }
@@ -205,20 +204,14 @@ class SettingTest : UiTest() {
         clickYahoo()
 
         // Click fab
-        val fab = device.wait(
-            Until.findObject(
-                By.res(BuildConfig.APPLICATION_ID, "fab_article_list")
-            ), 5000
-        )
+        val fab = device.wait(Until.findObject(By.desc("記事リストをスクロール")), 5000)
         fab.click()
         Thread.sleep(2000)
 
         fab.click()
 
         // Assert article list is still foreground
-        val allReadButton = device.findObject(
-            By.res(BuildConfig.APPLICATION_ID, "all_read")
-        )
+        val allReadButton = device.findObject(By.desc("全て既読にする"))
         assertNotNull(allReadButton)
     }
 
