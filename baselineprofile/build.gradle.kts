@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.phicdy.baselineprofile"
-    compileSdk = 36
+    compileSdk = 37
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
