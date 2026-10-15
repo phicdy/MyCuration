@@ -41,6 +41,9 @@ dependencies {
     implementation libs.fragment
     implementation libs.fragment.compose
     implementation libs.compose.material3
+    implementation libs.compose.material3.adaptive
+    implementation libs.compose.material3.adaptive.layout
+    implementation libs.compose.material3.adaptive.navigation
 
     implementation libs.coroutines.core
     implementation libs.coroutines.android

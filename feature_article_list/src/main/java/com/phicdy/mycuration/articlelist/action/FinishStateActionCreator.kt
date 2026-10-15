@@ -15,7 +15,15 @@ class FinishStateActionCreator @Inject constructor(
 ) : ActionCreator1<List<ArticleItem>> {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-    override suspend fun run(items: List<ArticleItem>) {
+    override suspend fun run(items: List<ArticleItem>): Unit = run(items, isTwoPane = false)
+
+    /**
+     * Finishes the screen when all articles are read and the setting allows it. In two-pane
+     * mode the screen is never finished, because the user may still be reading the article in
+     * the detail pane.
+     */
+    suspend fun run(items: List<ArticleItem>, isTwoPane: Boolean) {
+        if (isTwoPane) return
         withContext(Dispatchers.IO) {
             if (!preferenceHelper.allReadBack) return@withContext
             loop@ for (item in items) {

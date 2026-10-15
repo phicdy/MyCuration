@@ -27,6 +27,7 @@ timber = "5.0.1"
 flipper = "0.273.0"
 junit = "4.13.2"
 baselineprofile = "1.5.0"
+material3_adaptive = "1.3.0"
 screenshot = "0.0.1-alpha16"
 
 [plugins]
@@ -49,6 +50,10 @@ lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", versi
 compose_bom = { module = "androidx.compose:compose-bom", version = "2026.09.00" }
 # Version is managed by compose_bom
 compose-material3 = { module = "androidx.compose.material3:material3" }
+# Not managed by compose_bom
+compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "material3_adaptive" }
+compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "material3_adaptive" }
+compose-material3-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "material3_adaptive" }
 accompanist = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 firebase-ads = { module = "com.google.firebase:firebase-ads", version = "23.6.0" }
 
