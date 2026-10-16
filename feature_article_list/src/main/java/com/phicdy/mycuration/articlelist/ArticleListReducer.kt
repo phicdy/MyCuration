@@ -3,6 +3,7 @@ package com.phicdy.mycuration.articlelist
 import com.phicdy.action.articlelist.ReadAllArticlesAction
 import com.phicdy.mycuration.articlelist.action.FetchArticleAction
 import com.phicdy.mycuration.articlelist.action.FinishAction
+import com.phicdy.mycuration.articlelist.action.OpenDetailPaneAction
 import com.phicdy.mycuration.articlelist.action.OpenExternalBrowserAction
 import com.phicdy.mycuration.articlelist.action.OpenInternalBrowserAction
 import com.phicdy.mycuration.articlelist.action.ReadArticlePositionAction
@@ -51,6 +52,7 @@ class ArticleListReducer(
             }
             is OpenInternalBrowserAction -> send(Interation.OpenInternalWebBrowser(action.value))
             is OpenExternalBrowserAction -> send(Interation.OpenExternalWebBrowser(action.value))
+            is OpenDetailPaneAction -> send(Interation.OpenDetailPane(action.value))
             is ShareUrlAction -> send(Interation.Share(action.value))
             is ReadArticlePositionAction -> {
                 refreshUiState()

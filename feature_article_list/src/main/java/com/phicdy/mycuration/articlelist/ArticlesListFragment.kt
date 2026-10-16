@@ -106,6 +106,12 @@ class ArticlesListFragment : Fragment() {
 
     private val viewModel: ArticleListViewModel by viewModels()
 
+    /**
+     * Whether the host shows the tapped article next to the list. Always false for now; the
+     * two-pane layout is added in a following change.
+     */
+    var isTwoPane: Boolean = false
+
     /** State of the LazyColumn, available while the list is composed. */
     private var listState: LazyListState? = null
 
@@ -142,6 +148,8 @@ class ArticlesListFragment : Fragment() {
                     is Interation.Scroll -> mutableScrollRequests.tryEmit(interation.positionAfterScroll)
                     is Interation.OpenInternalWebBrowser -> openInternalWebView(interation.url)
                     is Interation.OpenExternalWebBrowser -> openExternalWebView(interation.url)
+                    // Only dispatched in two-pane mode, which is not enabled yet
+                    is Interation.OpenDetailPane -> Unit
                     is Interation.Share -> showShareUi(interation.url)
                     // Changed rows are re-rendered from uiState
                     is Interation.ReadArticle -> Unit
@@ -166,7 +174,7 @@ class ArticlesListFragment : Fragment() {
 
     private fun runFinishActionCreator() {
         viewLifecycleOwner.lifecycleScope.launch {
-            finishStateActionCreator.run(currentArticles())
+            finishStateActionCreator.run(currentArticles(), isTwoPane)
         }
     }
 
@@ -286,7 +294,7 @@ class ArticlesListFragment : Fragment() {
         val articles = currentArticles()
         viewLifecycleOwner.lifecycleScope.launch {
             readArticleActionCreator.run(position, articles)
-            openUrlActionCreator.run(articles[position])
+            openUrlActionCreator.run(articles[position], isTwoPane)
         }
     }
 

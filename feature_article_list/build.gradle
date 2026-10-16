@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.screenshot)
 }
@@ -41,6 +42,9 @@ dependencies {
     implementation libs.fragment
     implementation libs.fragment.compose
     implementation libs.compose.material3
+    implementation libs.compose.material3.adaptive
+    implementation libs.compose.material3.adaptive.layout
+    implementation libs.compose.material3.adaptive.navigation
 
     implementation libs.coroutines.core
     implementation libs.coroutines.android

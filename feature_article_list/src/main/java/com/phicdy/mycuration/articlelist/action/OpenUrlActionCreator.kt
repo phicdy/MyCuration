@@ -1,6 +1,7 @@
 package com.phicdy.mycuration.articlelist.action
 
 import com.phicdy.mycuration.articlelist.ArticleItem
+import com.phicdy.mycuration.articlelist.toSelectedArticle
 import com.phicdy.mycuration.core.ActionCreator1
 import com.phicdy.mycuration.core.Dispatcher
 import com.phicdy.mycuration.data.preference.PreferenceHelper
@@ -14,19 +15,22 @@ class OpenUrlActionCreator @Inject constructor(
 ) : ActionCreator1<ArticleItem> {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-    override suspend fun run(item: ArticleItem) {
-        if (item is ArticleItem.Advertisement) return
+    override suspend fun run(item: ArticleItem): Unit = run(item, isTwoPane = false)
+
+    /**
+     * Opens the article in the detail pane when two panes are shown and the "open internal"
+     * setting is on. Otherwise it opens in Custom Tabs or the external browser as before.
+     */
+    suspend fun run(item: ArticleItem, isTwoPane: Boolean) {
+        if (item !is ArticleItem.Content) return
         withContext(Dispatchers.IO) {
-            when (item) {
-                is ArticleItem.Advertisement -> return@withContext
-                is ArticleItem.Content -> {
-                    val content = item.value
-                    if (preferenceHelper.isOpenInternal) {
-                        dispatcher.dispatch(OpenInternalBrowserAction(content.url))
-                    } else {
-                        dispatcher.dispatch(OpenExternalBrowserAction(content.url))
-                    }
-                }
+            val content = item.value
+            when {
+                preferenceHelper.isOpenInternal && isTwoPane -> dispatcher.dispatch(
+                        OpenDetailPaneAction(content.toSelectedArticle())
+                )
+                preferenceHelper.isOpenInternal -> dispatcher.dispatch(OpenInternalBrowserAction(content.url))
+                else -> dispatcher.dispatch(OpenExternalBrowserAction(content.url))
             }
         }
     }
