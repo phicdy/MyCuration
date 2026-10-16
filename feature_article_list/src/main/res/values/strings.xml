@@ -1,3 +1,5 @@
 <resources>
     <string name="navigate_up">戻る</string>
+    <string name="select_article">記事を選択してください</string>
+    <string name="open_in_browser">ブラウザで開く</string>
 </resources>
