@@ -283,7 +283,13 @@ class ArticlesListFragment : Fragment() {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-            .addFlags(externalBrowserIntentFlags(isLargeWindow))
+            .addFlags(
+                externalBrowserIntentFlags(
+                    // Read on every tap so that a change in the settings takes effect right away
+                    isOpenAdjacentEnabled = PreferenceHelper.isOpenExternalBrowserAdjacent,
+                    isLargeWindow = isLargeWindow,
+                )
+            )
         startActivity(intent)
     }
 
