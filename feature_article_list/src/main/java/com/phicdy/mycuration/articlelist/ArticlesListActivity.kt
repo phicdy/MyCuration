@@ -10,13 +10,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.fragment.compose.AndroidFragment
 import androidx.lifecycle.lifecycleScope
+import com.phicdy.mycuration.articlelist.ui.ArticleDetailPane
+import com.phicdy.mycuration.articlelist.ui.ArticlesListPanes
 import com.phicdy.mycuration.articlelist.ui.ArticlesListScaffold
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.data.repository.RssRepository
@@ -25,6 +29,8 @@ import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.resource.MyCurationTheme
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,6 +57,11 @@ class ArticlesListActivity : AppCompatActivity(),
     /** The hosted list, available while it is attached. */
     private var articlesListFragment: ArticlesListFragment? = null
 
+    private val detailRequests = MutableSharedFlow<SelectedArticle>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,22 +70,42 @@ class ArticlesListActivity : AppCompatActivity(),
 
         setContent {
             MyCurationTheme {
-                ArticlesListScaffold(
-                    title = toolbarTitle,
-                    snackbarHostState = snackbarHostState,
-                    onNavigateUp = ::finish,
-                    onReadAllClick = ::markAllAsRead,
-                    onSearch = ::openSearchResult,
-                    onFabClick = ::scrollDownAndMarkAsRead,
+                ArticlesListPanes(
+                    isOpenInternal = PreferenceHelper.isOpenInternal,
+                    detailRequests = detailRequests,
                     modifier = Modifier.systemBarsPadding(),
-                ) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
-                        AndroidFragment<ArticlesListFragment>(
-                            arguments = bundleOf(ArticlesListFragment.RSS_ID to feedId),
-                            onUpdate = { fragment -> articlesListFragment = fragment },
+                    listPane = { isTwoPane, selectedArticle ->
+                        // The fragment's own composition reads these, so pass them on every update
+                        SideEffect {
+                            articlesListFragment?.updatePaneState(isTwoPane, selectedArticle)
+                        }
+                        ArticlesListScaffold(
+                            title = toolbarTitle,
+                            snackbarHostState = snackbarHostState,
+                            onNavigateUp = ::finish,
+                            onReadAllClick = ::markAllAsRead,
+                            onSearch = ::openSearchResult,
+                            onFabClick = ::scrollDownAndMarkAsRead,
+                        ) { innerPadding ->
+                            Box(modifier = Modifier.padding(innerPadding)) {
+                                AndroidFragment<ArticlesListFragment>(
+                                    arguments = bundleOf(ArticlesListFragment.RSS_ID to feedId),
+                                    onUpdate = { fragment ->
+                                        articlesListFragment = fragment
+                                        fragment.updatePaneState(isTwoPane, selectedArticle)
+                                    },
+                                )
+                            }
+                        }
+                    },
+                    detailPane = { selectedArticle ->
+                        ArticleDetailPane(
+                            article = selectedArticle,
+                            onShareClick = ::shareArticle,
+                            onOpenInBrowserClick = ::openArticleInBrowser,
                         )
-                    }
-                }
+                    },
+                )
             }
         }
 
@@ -113,6 +144,28 @@ class ArticlesListActivity : AppCompatActivity(),
         intent.action = Intent.ACTION_SEARCH
         intent.putExtra(SearchManager.QUERY, query)
         startActivity(intent)
+    }
+
+    private fun ArticlesListFragment.updatePaneState(isTwoPane: Boolean, selectedArticle: SelectedArticle?) {
+        this.isTwoPane = isTwoPane
+        selectedArticleId = selectedArticle?.id
+    }
+
+    private fun shareArticle(article: SelectedArticle) {
+        TrackerHelper.sendButtonEvent(getString(R.string.share_article))
+        val intent = Intent(Intent.ACTION_SEND)
+            .setType("text/plain")
+            .putExtra(Intent.EXTRA_TEXT, article.url)
+        startActivity(intent)
+    }
+
+    private fun openArticleInBrowser(article: SelectedArticle) {
+        TrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
+        startActivity(Intent(Intent.ACTION_VIEW, article.url.toUri()))
+    }
+
+    override fun showArticleInDetailPane(article: SelectedArticle) {
+        detailRequests.tryEmit(article)
     }
 
     override fun showOpenInternalBrowserError() {

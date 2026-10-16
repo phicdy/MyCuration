@@ -71,14 +71,22 @@ internal fun ArticleRow(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onFavoriteClick: () -> Unit,
+    /** Highlights the row of the article shown in the detail pane. */
+    isSelected: Boolean = false,
 ) {
     val textColor = colorResource(if (row.isRead) R.color.text_read else R.color.text_primary)
+    val backgroundColor = if (isSelected) {
+        colorResource(R.color.background_base_divider).copy(alpha = SELECTED_ALPHA)
+    } else {
+        Color.Transparent
+    }
     val smallTextStyle = viewTextStyle(fontSize = 12.sp, color = textColor)
     // Toggle the star immediately like the former adapter did, before the new list arrives
     var isFavorite by remember(row.isFavorite) { mutableStateOf(row.isFavorite) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(backgroundColor)
             .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .padding(horizontal = 16.dp)
             // ViewGroup clips children to its padding by default (clipToPadding)
@@ -344,6 +352,7 @@ private fun PreviewFeedIcon() {
 }
 
 private const val DIVIDER_ALPHA: Float = 0.12f
+private const val SELECTED_ALPHA: Float = 0.08f
 private const val FAVORITE_ICON_ALPHA: Float = 0.6f
 private val DEFAULT_HIGHLIGHT: Color = Color(0x1F000000)
 

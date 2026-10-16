@@ -17,6 +17,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
@@ -106,11 +108,11 @@ class ArticlesListFragment : Fragment() {
 
     private val viewModel: ArticleListViewModel by viewModels()
 
-    /**
-     * Whether the host shows the tapped article next to the list. Always false for now; the
-     * two-pane layout is added in a following change.
-     */
+    /** Whether the host shows the tapped article next to the list. Set by the host. */
     var isTwoPane: Boolean = false
+
+    /** ID of the article shown in the host's detail pane, highlighted in the list. */
+    var selectedArticleId: Int? by mutableStateOf(null)
 
     /** State of the LazyColumn, available while the list is composed. */
     private var listState: LazyListState? = null
@@ -131,6 +133,9 @@ class ArticlesListFragment : Fragment() {
 
         /** Shows that the internal browser (Chrome Custom Tabs) could not be opened. */
         fun showOpenInternalBrowserError()
+
+        /** Shows [article] next to the list. Only called while [isTwoPane] is true. */
+        fun showArticleInDetailPane(article: SelectedArticle) {}
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -148,8 +153,7 @@ class ArticlesListFragment : Fragment() {
                     is Interation.Scroll -> mutableScrollRequests.tryEmit(interation.positionAfterScroll)
                     is Interation.OpenInternalWebBrowser -> openInternalWebView(interation.url)
                     is Interation.OpenExternalWebBrowser -> openExternalWebView(interation.url)
-                    // Only dispatched in two-pane mode, which is not enabled yet
-                    is Interation.OpenDetailPane -> Unit
+                    is Interation.OpenDetailPane -> listener.showArticleInDetailPane(interation.article)
                     is Interation.Share -> showShareUi(interation.url)
                     // Changed rows are re-rendered from uiState
                     is Interation.ReadArticle -> Unit
@@ -221,6 +225,7 @@ class ArticlesListFragment : Fragment() {
                         onItemLongClick = ::shareArticleUrl,
                         onFavoriteClick = ::toggleFavorite,
                         onSwipe = ::applySwipeAction,
+                        selectedArticleId = selectedArticleId,
                     )
                 }
             }
