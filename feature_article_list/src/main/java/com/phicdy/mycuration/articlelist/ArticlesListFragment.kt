@@ -111,6 +111,9 @@ class ArticlesListFragment : Fragment() {
     /** Whether the host shows the tapped article next to the list. Set by the host. */
     var isTwoPane: Boolean = false
 
+    /** Whether the host window is large enough to open the external browser next to the app. Set by the host. */
+    var isLargeWindow: Boolean = false
+
     /** ID of the article shown in the host's detail pane, highlighted in the list. */
     var selectedArticleId: Int? by mutableStateOf(null)
 
@@ -280,6 +283,7 @@ class ArticlesListFragment : Fragment() {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
+            .addFlags(externalBrowserIntentFlags(isLargeWindow))
         startActivity(intent)
     }
 
