@@ -282,15 +282,18 @@ class ArticlesListFragment : Fragment() {
     private fun openExternalWebView(url: String) {
         TrackerHelper.sendButtonEvent(getString(R.string.tap_article_external))
         val uri = Uri.parse(url)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-            .addFlags(
-                externalBrowserIntentFlags(
-                    // Read on every tap so that a change in the settings takes effect right away
-                    isOpenAdjacentEnabled = PreferenceHelper.isOpenExternalBrowserAdjacent,
-                    isLargeWindow = isLargeWindow,
-                )
-            )
-        startActivity(intent)
+        val launch = externalBrowserLaunch(
+            // Read on every tap so that a change in the settings takes effect right away
+            isOpenAdjacentEnabled = PreferenceHelper.isOpenExternalBrowserAdjacent,
+            isLargeWindow = isLargeWindow,
+        )
+        try {
+            startActivity(launch.toIntent(uri))
+        } catch (e: ActivityNotFoundException) {
+            if (launch == defaultBrowserLaunch) throw e
+            // Chrome is not installed or is disabled
+            startActivity(defaultBrowserLaunch.toIntent(uri))
+        }
     }
 
     fun finish() {
