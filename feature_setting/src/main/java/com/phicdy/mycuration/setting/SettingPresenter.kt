@@ -38,6 +38,7 @@ class SettingPresenter @Inject constructor(
 
         // Set default value of internal browser option
         view.setInternalBrowser(helper.isOpenInternal)
+        view.setExternalBrowserAdjacent(helper.isOpenExternalBrowserAdjacent)
 
         // Set index of behavior of all read
         for (i in settingInitialData.allReadBehaviorItems.indices) {
@@ -149,6 +150,10 @@ class SettingPresenter @Inject constructor(
 
     fun updateInternalBrowser(isInternal: Boolean) {
         helper.isOpenInternal = isInternal
+    }
+
+    fun updateExternalBrowserAdjacent(isAdjacent: Boolean) {
+        helper.isOpenExternalBrowserAdjacent = isAdjacent
     }
 
     fun updateAutoUpdateInMainUi(isEnaled: Boolean) {

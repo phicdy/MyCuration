@@ -85,6 +85,8 @@
     <string name="all_read_not_back">RSS一覧に戻らない</string>
     <string name="open_internal">内蔵ブラウザで開く</string>
     <string name="not_open_internal">内蔵ブラウザで開かない</string>
+    <string name="open_external_browser_adjacent">大画面では外部ブラウザを分割画面で開く</string>
+    <string name="open_external_browser_adjacent_summary">内蔵ブラウザで開かない場合のみ有効です。ブラウザによっては分割画面で開けません</string>
     <string name="swipe_direction">スワイプ方向</string>
     <string name="save">保存</string>
     <string name="debug">デバッグ</string>
@@ -100,6 +102,7 @@
     <string name="key_article_sort">keyArticleSort</string>
     <string name="key_auto_update_in_main_ui">keyAutoUpdateInMainUi</string>
     <string name="key_internal_browser">keyInternalBrowser</string>
+    <string name="key_external_browser_adjacent">keyExternalBrowserAdjacent</string>
     <string name="key_all_read_behavior">keyAllReadBehavior</string>
     <string name="key_swipe_direction">keySwipeDirection</string>
     <string name="key_license">keyLicense</string>
