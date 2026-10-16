@@ -33,6 +33,7 @@ screenshot = "0.0.1-alpha16"
 [plugins]
 kotlin-gradle = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 android-test = { id = "com.android.test", version.ref = "gradle" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 android-application = { id = "com.android.application", version.ref = "gradle" }
