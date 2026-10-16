@@ -36,7 +36,7 @@ import com.phicdy.mycuration.articlelist.SelectedArticle
 
 /**
  * Detail pane of the two-pane article list: the selected article in a WebView with a top bar,
- * or a hint to select an article. Not used by production code yet.
+ * or a hint to select an article.
  *
  * [webContent] shows the page; it can be replaced in previews, where WebView does not render.
  */

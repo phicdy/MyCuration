@@ -47,6 +47,8 @@ internal fun ArticleListScreen(
     onFavoriteClick: (position: Int) -> Unit,
     /** [direction] is ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT, as SwipeActionCreator expects. */
     onSwipe: (position: Int, direction: Int) -> Unit,
+    /** ID of the article shown in the detail pane, highlighted in the list. */
+    selectedArticleId: Int? = null,
 ) {
     CompositionLocalProvider(LocalRippleConfiguration provides rememberPlatformRippleConfiguration()) {
         when (uiState) {
@@ -68,6 +70,7 @@ internal fun ArticleListScreen(
                 onItemLongClick = onItemLongClick,
                 onFavoriteClick = onFavoriteClick,
                 onSwipe = onSwipe,
+                selectedArticleId = selectedArticleId,
             )
         }
     }
@@ -82,6 +85,7 @@ private fun ArticleList(
     onItemLongClick: (position: Int) -> Unit,
     onFavoriteClick: (position: Int) -> Unit,
     onSwipe: (position: Int, direction: Int) -> Unit,
+    selectedArticleId: Int?,
 ) {
     val adViewCache = remember(adProvider) { AdViewCache(adProvider) }
     DisposableEffect(adViewCache) {
@@ -104,6 +108,7 @@ private fun ArticleList(
             when (row) {
                 is ArticleRowUi.Content -> SwipeableArticleRow(
                     row = row,
+                    isSelected = row.id == selectedArticleId,
                     onClick = { onItemClick(index) },
                     onLongClick = { onItemLongClick(index) },
                     onFavoriteClick = { onFavoriteClick(index) },
@@ -124,6 +129,7 @@ private fun ArticleList(
 @Composable
 private fun SwipeableArticleRow(
     row: ArticleRowUi.Content,
+    isSelected: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onFavoriteClick: () -> Unit,
@@ -143,6 +149,7 @@ private fun SwipeableArticleRow(
     ) {
         ArticleRow(
             row = row,
+            isSelected = isSelected,
             onClick = onClick,
             onLongClick = onLongClick,
             onFavoriteClick = onFavoriteClick,
