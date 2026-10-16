@@ -7,13 +7,25 @@ import org.junit.Test
 class ExternalBrowserIntentTest {
 
     @Test
-    fun `large windows launch the browser in the adjacent window as a new task`() {
-        assertThat(externalBrowserIntentFlags(isLargeWindow = true))
-            .isEqualTo(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT or Intent.FLAG_ACTIVITY_NEW_TASK)
+    fun `the browser is launched adjacent only when the setting is on and the window is large`() {
+        val adjacentFlags = Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT or Intent.FLAG_ACTIVITY_NEW_TASK
+        // isOpenAdjacentEnabled, isLargeWindow, expected
+        val cases = listOf(
+            Case(true, true, adjacentFlags),
+            Case(true, false, 0),
+            Case(false, true, 0),
+            Case(false, false, 0),
+        )
+        cases.forEach { case ->
+            assertThat(externalBrowserIntentFlags(case.isOpenAdjacentEnabled, case.isLargeWindow))
+                .describedAs(case.toString())
+                .isEqualTo(case.expected)
+        }
     }
 
-    @Test
-    fun `other windows add no flags`() {
-        assertThat(externalBrowserIntentFlags(isLargeWindow = false)).isEqualTo(0)
-    }
+    private data class Case(
+        val isOpenAdjacentEnabled: Boolean,
+        val isLargeWindow: Boolean,
+        val expected: Int,
+    )
 }

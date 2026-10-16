@@ -8,6 +8,7 @@ interface SettingView {
     fun setTheme(index: Int, theme: String, mode: Int)
     fun setArticleSort(isNewArticleTop: Boolean)
     fun setInternalBrowser(isEnabled: Boolean)
+    fun setExternalBrowserAdjacent(isEnabled: Boolean)
     fun setAllReadBehavior(index: Int, summary: String)
     fun setSwipeDirection(index: Int, summary: String)
     fun setLaunchTab(index: Int, summary: String)

@@ -50,6 +50,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
     private lateinit var prefTheme: ListPreference
     private lateinit var prefArticleSort: SwitchPreference
     private lateinit var prefInternalBrowser: SwitchPreference
+    private lateinit var prefExternalBrowserAdjacent: SwitchPreference
     private lateinit var prefLicense: Preference
     private lateinit var prefReview: Preference
 
@@ -114,6 +115,7 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
         prefTheme = requirePreference(R.string.key_theme)
         prefArticleSort = requirePreference(R.string.key_article_sort)
         prefInternalBrowser = requirePreference(R.string.key_internal_browser)
+        prefExternalBrowserAdjacent = requirePreference(R.string.key_external_browser_adjacent)
         prefAllReadBehavior = requirePreference(R.string.key_all_read_behavior)
         prefSwipeDirection = requirePreference(R.string.key_swipe_direction)
         prefLaunchTab = requirePreference(R.string.key_launch_tab)
@@ -189,6 +191,10 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
                             R.string.not_open_internal
                         )
                     )
+                }
+
+                getString(R.string.key_external_browser_adjacent) -> {
+                    presenter.updateExternalBrowserAdjacent(prefExternalBrowserAdjacent.isChecked)
                 }
 
                 getString(R.string.key_auto_update_in_main_ui) -> {
@@ -301,6 +307,10 @@ class SettingFragment : PreferenceFragmentCompat(), SettingView, CoroutineScope 
 
     override fun setInternalBrowser(isEnabled: Boolean) {
         prefInternalBrowser.isChecked = isEnabled
+    }
+
+    override fun setExternalBrowserAdjacent(isEnabled: Boolean) {
+        prefExternalBrowserAdjacent.isChecked = isEnabled
     }
 
     override fun setAllReadBehavior(index: Int, summary: String) {
