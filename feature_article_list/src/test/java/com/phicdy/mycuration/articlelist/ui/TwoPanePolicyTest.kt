@@ -26,6 +26,29 @@ class TwoPanePolicyTest {
         }
     }
 
+    @Test
+    fun `large windows are at least 600dp wide and 480dp tall`() {
+        // widthDp, heightDp, expected
+        val cases = listOf(
+            SizeCase(600, 480, true),
+            SizeCase(599, 480, false),
+            SizeCase(600, 479, false),
+            SizeCase(599, 479, false),
+            SizeCase(1280, 800, true),
+        )
+        cases.forEach { case ->
+            assertThat(TwoPanePolicy.isLargeWindow(case.widthDp, case.heightDp))
+                .describedAs(case.toString())
+                .isEqualTo(case.expected)
+        }
+    }
+
+    private data class SizeCase(
+        val widthDp: Int,
+        val heightDp: Int,
+        val expected: Boolean,
+    )
+
     private data class Case(
         val widthDp: Int,
         val heightDp: Int,
