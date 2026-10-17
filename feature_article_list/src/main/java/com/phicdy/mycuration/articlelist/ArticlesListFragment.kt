@@ -24,7 +24,9 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withStarted
 import com.phicdy.mycuration.advertisement.AdProvider
 import com.phicdy.mycuration.articlelist.action.FetchAllArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.FetchArticleListOfRssActionCreator
@@ -32,7 +34,6 @@ import com.phicdy.mycuration.articlelist.action.FinishStateActionCreator
 import com.phicdy.mycuration.articlelist.action.OpenUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.ReadAllArticlesActionCreator
 import com.phicdy.mycuration.articlelist.action.ReadArticleActionCreator
-import com.phicdy.mycuration.articlelist.action.ScrollActionCreator
 import com.phicdy.mycuration.articlelist.action.SearchArticleListActionCreator
 import com.phicdy.mycuration.articlelist.action.ShareUrlActionCreator
 import com.phicdy.mycuration.articlelist.action.SwipeActionCreator
@@ -92,9 +93,6 @@ class ArticlesListFragment : Fragment() {
     lateinit var swipeActionCreator: SwipeActionCreator
 
     @Inject
-    lateinit var scrollActionCreator: ScrollActionCreator
-
-    @Inject
     lateinit var readAllArticlesActionCreator: ReadAllArticlesActionCreator
 
     @Inject
@@ -145,8 +143,9 @@ class ArticlesListFragment : Fragment() {
         val prefMgr = PreferenceHelper
         prefMgr.setSearchFeedId(rssId)
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.interationChannel.collect { interation ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Interactions sent while stopped stay in the channel until the next start
+            viewModel.interationChannel.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect { interation ->
                 when (interation) {
                     // Read rows are re-rendered from uiState. The list scrolls and then
                     // runFinishActionCreator() is called when the scroll animation ends.
@@ -164,7 +163,9 @@ class ArticlesListFragment : Fragment() {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Fetch once, when the view is started for the first time
+            viewLifecycleOwner.lifecycle.withStarted {}
             when {
                 activity?.intent?.action == Intent.ACTION_SEARCH -> {
                     val query = activity?.intent?.getStringExtra(SearchManager.QUERY) ?: ""

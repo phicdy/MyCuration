@@ -52,6 +52,9 @@ class ArticlesListActivity : AppCompatActivity(),
 
     private var toolbarTitle: String by mutableStateOf("")
 
+    /** Re-read on resume, so a change in the settings applies when coming back. */
+    private var isOpenInternal: Boolean by mutableStateOf(PreferenceHelper.isOpenInternal)
+
     private val snackbarHostState = SnackbarHostState()
 
     /** The hosted list, available while it is attached. */
@@ -71,7 +74,7 @@ class ArticlesListActivity : AppCompatActivity(),
         setContent {
             MyCurationTheme {
                 ArticlesListPanes(
-                    isOpenInternal = PreferenceHelper.isOpenInternal,
+                    isOpenInternal = isOpenInternal,
                     detailRequests = detailRequests,
                     modifier = Modifier.systemBarsPadding(),
                     listPane = { isTwoPane, selectedArticle ->
@@ -177,5 +180,6 @@ class ArticlesListActivity : AppCompatActivity(),
     override fun onResume() {
         super.onResume()
         changeTheme()
+        isOpenInternal = PreferenceHelper.isOpenInternal
     }
 }

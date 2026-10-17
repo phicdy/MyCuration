@@ -7,7 +7,6 @@ import android.widget.ImageView
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.LocalRippleConfiguration
@@ -39,6 +39,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -87,6 +90,7 @@ internal fun ArticleRow(
         modifier = Modifier
             .fillMaxWidth()
             .background(backgroundColor)
+            .semantics { selected = isSelected }
             .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .padding(horizontal = 16.dp)
             // ViewGroup clips children to its padding by default (clipToPadding)
@@ -150,11 +154,11 @@ internal fun ArticleRow(
                 painter = painterResource(
                     if (isFavorite) R.drawable.ic_favorite_on else R.drawable.ic_favorite_off
                 ),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.favorite),
                 modifier = Modifier
                     .overflowVertically()
-                    .clickable {
-                        isFavorite = !isFavorite
+                    .toggleable(value = isFavorite, role = Role.Checkbox) { checked ->
+                        isFavorite = checked
                         onFavoriteClick()
                     }
                     .padding(4.dp),

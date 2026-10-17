@@ -261,7 +261,8 @@ class SettingTest : UiTest() {
     }
 
     private fun clickFirstArticle(device: UiDevice) {
-        val firstArticle = device.wait(Until.findObject(By.res(BuildConfig.APPLICATION_ID, "article")), 5000)
+        // Rows are Compose, so find the first row by its URL text instead of a view ID
+        val firstArticle = device.wait(Until.findObject(By.textStartsWith("http")), 5000)
         firstArticle.click()
     }
 }
