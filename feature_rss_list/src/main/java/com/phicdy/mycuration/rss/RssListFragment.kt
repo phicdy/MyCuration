@@ -123,7 +123,7 @@ class RssListFragment : Fragment() {
                     RssListScreen(
                         store = rssListStateStore,
                         onRefresh = {
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 updateAllRssListActionCreator.run()
                             }
                         },
@@ -135,7 +135,7 @@ class RssListFragment : Fragment() {
                             startActivity(ArticlesListActivity.createIntent(requireContext(), id))
                         },
                         onRssLongClicked = { id ->
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 showDropdownMenuActionCreator.run(id)
                             }
                         },
@@ -146,26 +146,26 @@ class RssListFragment : Fragment() {
                             changeRssListMode()
                         },
                         onDeleteMenuClicked = { id ->
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 hideDropdownMenuActionCreator.run()
                                 showDeleteRssAlertDialogActionCreator.run(id)
                             }
                         },
                         onDismissDropdownMenu = {
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 hideDropdownMenuActionCreator.run()
                             }
                         },
                         onDismissDeleteRssDialog = {
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 hideDeleteRssAlertDialogActionCreator.run()
                             }
                         },
                         onDeleteRssClicked = { id ->
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 val state =
                                     rssListStateStore.state.value
-                                        ?: return@launchWhenStarted
+                                        ?: return@launch
                                 deleteRssActionCreator.run(
                                     id,
                                     state.rawRssList,
@@ -175,39 +175,39 @@ class RssListFragment : Fragment() {
                             }
                         },
                         onCancelDeleteRssClicked = {
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 hideDeleteRssAlertDialogActionCreator.run()
                             }
                         },
                         onEditTitleMenuClicked = { id, title ->
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 hideDropdownMenuActionCreator.run()
                                 showEditRssTitleAlertDialogActionCreator.run(id, title)
                             }
                         },
                         onDismissEditRssTitleDialog = {
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 hideEditRssTitleAlertDialogActionCreator.run()
                             }
                         },
                         onEditRssTitleClicked = { newTitle, rssId ->
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 hideEditRssTitleAlertDialogActionCreator.run()
                                 editRssTitleActionCreator.run(newTitle, rssId)
                             }
                         },
                         onCancelEditRssTitleClicked = {
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 hideEditRssTitleAlertDialogActionCreator.run()
                             }
                         },
                         onNewRssTitleChanged = { newTitle ->
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 newRssTitleChangeActionCreator.run(newTitle)
                             }
                         },
                         onMessageConsumed = { message ->
-                            lifecycleScope.launchWhenStarted {
+                            lifecycleScope.launch {
                                 consumeRssListMessageActionCreator.run(message)
                             }
                         },
@@ -235,7 +235,7 @@ class RssListFragment : Fragment() {
 
     private fun changeRssListMode() {
         val state = rssListStateStore.state.value ?: return
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             changeRssListModeActionCreator.run(
                 state.rawRssList,
                 state.mode
