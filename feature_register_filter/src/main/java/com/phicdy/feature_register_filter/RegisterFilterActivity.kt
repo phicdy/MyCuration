@@ -91,7 +91,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
         when (item.itemId) {
             // For arrow button on toolbar
             android.R.id.home -> finish()
-            else -> lifecycleScope.launchWhenStarted { presenter.optionItemClicked(item) }
+            else -> lifecycleScope.launch { presenter.optionItemClicked(item) }
         }
         return super.onOptionsItemSelected(item)
     }

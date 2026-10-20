@@ -49,7 +49,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.resource.MyCurationTheme
 import com.phicdy.mycuration.tracker.TrackerHelper
@@ -130,11 +132,13 @@ class AddCurationActivity : ComponentActivity() {
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            addCurationStateStore.event.collect { event ->
-                when (event) {
-                    AddCurationEvent.Duplicated -> showDupulicatedWordToast()
-                    AddCurationEvent.Empty -> showWordEmptyErrorToast()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addCurationStateStore.event.collect { event ->
+                    when (event) {
+                        AddCurationEvent.Duplicated -> showDupulicatedWordToast()
+                        AddCurationEvent.Empty -> showWordEmptyErrorToast()
+                    }
                 }
             }
         }
