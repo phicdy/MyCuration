@@ -77,10 +77,10 @@ class ArticlesListActivity : AppCompatActivity(),
                     isOpenInternal = isOpenInternal,
                     detailRequests = detailRequests,
                     modifier = Modifier.systemBarsPadding(),
-                    listPane = { isTwoPane, selectedArticle ->
+                    listPane = { isTwoPane, isLargeWindow, selectedArticle ->
                         // The fragment's own composition reads these, so pass them on every update
                         SideEffect {
-                            articlesListFragment?.updatePaneState(isTwoPane, selectedArticle)
+                            articlesListFragment?.updatePaneState(isTwoPane, isLargeWindow, selectedArticle)
                         }
                         ArticlesListScaffold(
                             title = toolbarTitle,
@@ -95,7 +95,7 @@ class ArticlesListActivity : AppCompatActivity(),
                                     arguments = bundleOf(ArticlesListFragment.RSS_ID to feedId),
                                     onUpdate = { fragment ->
                                         articlesListFragment = fragment
-                                        fragment.updatePaneState(isTwoPane, selectedArticle)
+                                        fragment.updatePaneState(isTwoPane, isLargeWindow, selectedArticle)
                                     },
                                 )
                             }
@@ -149,8 +149,13 @@ class ArticlesListActivity : AppCompatActivity(),
         startActivity(intent)
     }
 
-    private fun ArticlesListFragment.updatePaneState(isTwoPane: Boolean, selectedArticle: SelectedArticle?) {
+    private fun ArticlesListFragment.updatePaneState(
+        isTwoPane: Boolean,
+        isLargeWindow: Boolean,
+        selectedArticle: SelectedArticle?,
+    ) {
         this.isTwoPane = isTwoPane
+        this.isLargeWindow = isLargeWindow
         selectedArticleId = selectedArticle?.id
     }
 

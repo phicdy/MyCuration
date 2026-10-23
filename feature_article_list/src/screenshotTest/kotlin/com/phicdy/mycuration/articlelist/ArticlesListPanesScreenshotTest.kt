@@ -41,7 +41,7 @@ fun ArticlesListPanesTwoPanePreview() {
             isOpenInternal = true,
             detailRequests = emptyFlow(),
             modifier = Modifier.background(windowBackgroundColor(LocalContext.current)),
-            listPane = { _, selectedArticle ->
+            listPane = { _, _, selectedArticle ->
                 ArticlesListScaffold(
                     title = stringResource(R.string.all),
                     snackbarHostState = remember { SnackbarHostState() },
