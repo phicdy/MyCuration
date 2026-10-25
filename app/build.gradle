@@ -6,6 +6,14 @@ plugins {
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'dagger.hilt.android.plugin'
 
+// Fixed debug keystore provided by CI so debug APKs can be installed over each other.
+// When these are absent (local builds), the default debug keystore is used.
+def debugKeystorePath = providers.environmentVariable("DEBUG_KEYSTORE_PATH").orNull
+def debugKeystorePassword = providers.environmentVariable("DEBUG_KEYSTORE_PASSWORD").orNull
+def debugKeyAlias = providers.environmentVariable("DEBUG_KEY_ALIAS").orNull
+def debugKeyPassword = providers.environmentVariable("DEBUG_KEY_PASSWORD").orNull
+def useFixedDebugKeystore = debugKeystorePath && debugKeystorePassword && debugKeyAlias && debugKeyPassword
+
 android {
     defaultConfig {
         applicationId "com.phicdy.mycuration"
@@ -22,10 +30,21 @@ android {
             keyPassword "$RELEASE_KEY_PASSWORD"
             storePassword "$RELEASE_STORE_PASSWORD"
         }
+        if (useFixedDebugKeystore) {
+            create("fixedDebug") {
+                storeFile file(debugKeystorePath)
+                storePassword debugKeystorePassword
+                keyAlias debugKeyAlias
+                keyPassword debugKeyPassword
+            }
+        }
     }
 
     buildTypes {
         debug {
+            if (useFixedDebugKeystore) {
+                signingConfig signingConfigs.fixedDebug
+            }
             firebaseCrashlytics {
                 mappingFileUploadEnabled false
             }
