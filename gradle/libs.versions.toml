@@ -28,7 +28,7 @@ flipper = "0.273.0"
 junit = "4.13.2"
 baselineprofile = "1.5.0"
 material3_adaptive = "1.3.0"
-screenshot = "0.0.1-alpha16"
+screenshot = "0.0.1-alpha17"
 
 [plugins]
 kotlin-gradle = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
