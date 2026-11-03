@@ -98,7 +98,7 @@ sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", 
 sqldelight-gradle = { module = "app.cash.sqldelight:gradle-plugin", version.ref = "sql_delight" }
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql_delight" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.23.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.24.1" }
 
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
