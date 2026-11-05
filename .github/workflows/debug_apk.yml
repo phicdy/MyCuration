@@ -36,6 +36,10 @@ jobs:
         env:
           GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE}}
         run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
+      - name: Replace Admob ID
+        env:
+          ADMOB_ID_MYCURATION: ${{ secrets.ADMOB_ID_MYCURATION }}
+        run: mkdir -p ~/.gradle && touch ~/.gradle/gradle.properties && echo ADMOB_ID_MYCURATION=$ADMOB_ID_MYCURATION > ~/.gradle/gradle.properties
       - name: Decode debug keystore
         id: keystore
         env:
