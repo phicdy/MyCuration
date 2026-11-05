@@ -1,5 +1,8 @@
 package com.phicdy.mycuration.articlelist.ui
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
@@ -66,7 +69,7 @@ internal suspend fun LazyListState.animateScrollToShowAtBottom(position: Int) {
             itemsBetween = target - last.index,
             averageItemSize = averageSize,
         )
-        animateScrollBy(distance.toFloat())
+        animateScrollBy(distance.toFloat(), fabScrollAnimationSpec)
     }
 
     // Align exactly with the real size of the target
@@ -77,7 +80,7 @@ internal suspend fun LazyListState.animateScrollToShowAtBottom(position: Int) {
         viewportStartOffset = layoutInfo.viewportStartOffset,
         viewportEndOffset = layoutInfo.viewportEndOffset,
     )
-    if (delta != 0) animateScrollBy(delta.toFloat())
+    if (delta != 0) animateScrollBy(delta.toFloat(), alignScrollAnimationSpec)
 }
 
 /**
@@ -107,5 +110,18 @@ internal fun distanceToShowCompletely(
     else -> 0
 }
 
+/**
+ * The default spring of animateScrollBy() moves a whole screen in a blink, so the FAB scroll
+ * uses a slower tween that the eye can follow.
+ */
+private val fabScrollAnimationSpec: AnimationSpec<Float> =
+    tween(durationMillis = FAB_SCROLL_DURATION_MILLIS, easing = FastOutSlowInEasing)
+
+/** Short tween for the final small correction after the estimated scroll. */
+private val alignScrollAnimationSpec: AnimationSpec<Float> =
+    tween(durationMillis = ALIGN_SCROLL_DURATION_MILLIS, easing = FastOutSlowInEasing)
+
+private const val FAB_SCROLL_DURATION_MILLIS: Int = 500
+private const val ALIGN_SCROLL_DURATION_MILLIS: Int = 150
 private const val NO_POSITION: Int = -1
 private const val MAX_ESTIMATED_SCROLLS: Int = 3
