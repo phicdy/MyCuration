@@ -2,8 +2,8 @@ package com.phicdy.mycuration.articlelist.ui
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 
@@ -50,38 +50,59 @@ internal suspend fun LazyListState.animateScrollToShowAtBottom(position: Int) {
     val itemCount = layoutInfo.totalItemsCount
     if (itemCount == 0 || position < 0) return
     val target = position.coerceAtMost(itemCount - 1)
-
-    // Bring the target into the viewport. Item sizes vary, so scroll by an estimated distance
-    // and repeat a few times if the estimation was too short.
-    repeat(MAX_ESTIMATED_SCROLLS) {
-        val visibleItems = layoutInfo.visibleItemsInfo
-        if (visibleItems.isEmpty() || visibleItems.any { it.index == target }) return@repeat
-        val first = visibleItems.first()
-        val last = visibleItems.last()
-        if (target < first.index) {
-            animateScrollToItem(target)
-            return
-        }
-        val averageSize = visibleItems.sumOf { it.size } / visibleItems.size
-        val distance = estimatedDistanceToShowAtBottom(
-            lastVisibleItemBottom = last.offset + last.size,
-            viewportEndOffset = layoutInfo.viewportEndOffset,
-            itemsBetween = target - last.index,
-            averageItemSize = averageSize,
-        )
-        animateScrollBy(distance.toFloat(), fabScrollAnimationSpec)
+    val firstVisible = layoutInfo.visibleItemsInfo.firstOrNull() ?: return
+    if (target < firstVisible.index) {
+        animateScrollToItem(target)
+        return
     }
 
-    // Align exactly with the real size of the target
-    val item = layoutInfo.visibleItemsInfo.firstOrNull { it.index == target } ?: return
-    val delta = distanceToShowCompletely(
-        itemOffset = item.offset,
-        itemSize = item.size,
-        viewportStartOffset = layoutInfo.viewportStartOffset,
-        viewportEndOffset = layoutInfo.viewportEndOffset,
-    )
-    if (delta != 0) animateScrollBy(delta.toFloat(), alignScrollAnimationSpec)
+    // One continuous animation. Item sizes vary, so the remaining distance is measured again on
+    // every frame: estimated while the target is below the viewport, exact once it is visible.
+    // This avoids a second, separate correction scroll at the end.
+    scroll {
+        var traveled = 0f
+        animate(initialValue = 0f, targetValue = 1f, animationSpec = fabScrollAnimationSpec) { progress, _ ->
+            val step = scrollStepForProgress(
+                progress = progress,
+                traveled = traveled,
+                remaining = remainingDistanceToShowAtBottom(target).toFloat(),
+            )
+            traveled += scrollBy(step)
+        }
+    }
 }
+
+/**
+ * Distance left to scroll so that [target] is completely visible at the bottom: exact when the
+ * item is visible, otherwise estimated from the average size of the visible items.
+ */
+private fun LazyListState.remainingDistanceToShowAtBottom(target: Int): Int {
+    val visibleItems = layoutInfo.visibleItemsInfo
+    if (visibleItems.isEmpty()) return 0
+    val item = visibleItems.firstOrNull { it.index == target }
+    if (item != null) {
+        return distanceToShowCompletely(
+            itemOffset = item.offset,
+            itemSize = item.size,
+            viewportStartOffset = layoutInfo.viewportStartOffset,
+            viewportEndOffset = layoutInfo.viewportEndOffset,
+        )
+    }
+    val last = visibleItems.last()
+    return estimatedDistanceToShowAtBottom(
+        lastVisibleItemBottom = last.offset + last.size,
+        viewportEndOffset = layoutInfo.viewportEndOffset,
+        itemsBetween = target - last.index,
+        averageItemSize = visibleItems.sumOf { it.size } / visibleItems.size,
+    )
+}
+
+/**
+ * Scroll amount for one animation frame: the eased [progress] of the whole distance, where the
+ * whole distance is what has been [traveled] so far plus what is [remaining] now.
+ */
+internal fun scrollStepForProgress(progress: Float, traveled: Float, remaining: Float): Float =
+    progress * (traveled + remaining) - traveled
 
 /**
  * Estimated forward scroll distance that brings the item [itemsBetween] items after the last
@@ -117,11 +138,5 @@ internal fun distanceToShowCompletely(
 private val fabScrollAnimationSpec: AnimationSpec<Float> =
     tween(durationMillis = FAB_SCROLL_DURATION_MILLIS, easing = FastOutSlowInEasing)
 
-/** Short tween for the final small correction after the estimated scroll. */
-private val alignScrollAnimationSpec: AnimationSpec<Float> =
-    tween(durationMillis = ALIGN_SCROLL_DURATION_MILLIS, easing = FastOutSlowInEasing)
-
 private const val FAB_SCROLL_DURATION_MILLIS: Int = 500
-private const val ALIGN_SCROLL_DURATION_MILLIS: Int = 150
 private const val NO_POSITION: Int = -1
-private const val MAX_ESTIMATED_SCROLLS: Int = 3

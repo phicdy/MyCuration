@@ -81,4 +81,19 @@ class ArticleListScrollTest {
             )
         ).isEqualTo(140)
     }
+
+    @Test
+    fun `scroll step moves to the eased share of the whole distance`() {
+        assertThat(scrollStepForProgress(progress = 0.5f, traveled = 100f, remaining = 300f)).isEqualTo(100f)
+    }
+
+    @Test
+    fun `scroll step at the end covers exactly the remaining distance`() {
+        assertThat(scrollStepForProgress(progress = 1f, traveled = 380f, remaining = 20f)).isEqualTo(20f)
+    }
+
+    @Test
+    fun `scroll step goes back when the estimate overshot`() {
+        assertThat(scrollStepForProgress(progress = 1f, traveled = 420f, remaining = -20f)).isEqualTo(-20f)
+    }
 }
