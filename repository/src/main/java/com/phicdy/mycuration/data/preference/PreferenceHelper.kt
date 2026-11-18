@@ -15,6 +15,7 @@ object PreferenceHelper {
     private const val KEY_ALL_READ_BACK = "allReadBack"
     private const val KEY_SEARCH_FEED_ID = "searchFeedId"
     private const val KEY_OPEN_INTERNAL_ID = "openInternal"
+    private const val KEY_OPEN_EXTERNAL_BROWSER_ADJACENT = "openExternalBrowserAdjacent"
     private const val KEY_SWIPE_DIRECTION = "swipeDirection"
     private const val KEY_LAUNCH_TAB = "launchTab"
     private const val KEY_LAST_UPDATE_DATE = "lastUpdateDate"
@@ -88,6 +89,13 @@ object PreferenceHelper {
         get() = pref.contains(KEY_OPEN_INTERNAL_ID) && pref.getBoolean(KEY_OPEN_INTERNAL_ID, false)
         set(isOpenInternal) {
             pref.put(KEY_OPEN_INTERNAL_ID, isOpenInternal)
+        }
+
+    /** Whether the external browser is opened in the adjacent window (split screen) on large windows. */
+    var isOpenExternalBrowserAdjacent: Boolean
+        get() = pref.getBoolean(KEY_OPEN_EXTERNAL_BROWSER_ADJACENT, false)
+        set(isOpenExternalBrowserAdjacent) {
+            pref.put(KEY_OPEN_EXTERNAL_BROWSER_ADJACENT, isOpenExternalBrowserAdjacent)
         }
 
     var swipeDirection: Int

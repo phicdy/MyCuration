@@ -33,8 +33,15 @@
             android:title="@string/article_sort" />
 
         <SwitchPreference
+            android:disableDependentsState="true"
             android:key="@string/key_internal_browser"
             android:title="@string/open_internal" />
+
+        <SwitchPreference
+            android:dependency="@string/key_internal_browser"
+            android:key="@string/key_external_browser_adjacent"
+            android:summary="@string/open_external_browser_adjacent_summary"
+            android:title="@string/open_external_browser_adjacent" />
 
         <ListPreference
             android:entries="@array/all_read_behavior"
