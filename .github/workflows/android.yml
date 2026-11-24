@@ -91,7 +91,10 @@ jobs:
         run: ./gradlew :feature_article_list:updateDebugScreenshotTestDefaultTestSuite
       - name: TEMP print render errors
         if: failure()
-        run: find feature_article_list/build -name '*.xml' -path '*test-results*' -exec grep -h -A40 -m1 '<failure' {} + | head -150
+        run: |
+          grep -rl 'ScreenshotRenderException' feature_article_list/build | head -20 || true
+          f=$(grep -rl --include='*.xml' 'ScreenshotRenderException' feature_article_list/build | head -1)
+          [ -n "$f" ] && grep -v '^\s*at \(org.junit\|org.gradle\|java.base\)' "$f" | head -200 || true
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
         if: always()
