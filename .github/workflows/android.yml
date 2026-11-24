@@ -89,6 +89,9 @@ jobs:
         run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
       - name: Generate screenshots
         run: ./gradlew :feature_article_list:updateDebugScreenshotTestDefaultTestSuite
+      - name: TEMP print render errors
+        if: failure()
+        run: find feature_article_list/build -name '*.xml' -path '*test-results*' -exec grep -h -A40 -m1 '<failure' {} + | head -150
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
         if: always()
