@@ -14,6 +14,10 @@ def debugKeyAlias = providers.environmentVariable("DEBUG_KEY_ALIAS").orNull
 def debugKeyPassword = providers.environmentVariable("DEBUG_KEY_PASSWORD").orNull
 def useFixedDebugKeystore = debugKeystorePath && debugKeystorePassword && debugKeyAlias && debugKeyPassword
 
+// CI builds the debug APK for phones only, so it limits native libraries to these ABIs
+// (comma separated, e.g. "arm64-v8a"). Local builds keep every ABI for emulators.
+def debugAbiFilters = providers.environmentVariable("DEBUG_ABI_FILTERS").orNull
+
 android {
     defaultConfig {
         applicationId "com.phicdy.mycuration"
@@ -44,6 +48,11 @@ android {
         debug {
             if (useFixedDebugKeystore) {
                 signingConfig signingConfigs.fixedDebug
+            }
+            if (debugAbiFilters) {
+                ndk {
+                    abiFilters.addAll(debugAbiFilters.split(",").collect { it.trim() })
+                }
             }
             firebaseCrashlytics {
                 mappingFileUploadEnabled false
