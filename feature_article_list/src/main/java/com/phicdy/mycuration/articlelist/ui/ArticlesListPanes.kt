@@ -26,7 +26,8 @@ import kotlinx.coroutines.flow.Flow
  * the list is shown; when it becomes large again, the detail pane shows the empty state.
  *
  * @param detailRequests articles to show in the detail pane, sent by the list
- * @param listPane the list; it gets whether two panes are shown and the selected article
+ * @param listPane the list; it gets whether two panes are shown, whether the window is large
+ * (see [TwoPanePolicy.isLargeWindow]) and the selected article
  * @param detailPane the detail; it gets the selected article, or null before a selection
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -35,11 +36,12 @@ internal fun ArticlesListPanes(
     isOpenInternal: Boolean,
     detailRequests: Flow<SelectedArticle>,
     modifier: Modifier = Modifier,
-    listPane: @Composable (isTwoPane: Boolean, selectedArticle: SelectedArticle?) -> Unit,
+    listPane: @Composable (isTwoPane: Boolean, isLargeWindow: Boolean, selectedArticle: SelectedArticle?) -> Unit,
     detailPane: @Composable (selectedArticle: SelectedArticle?) -> Unit,
 ) {
     val windowSize = currentWindowDpSize()
     val isTwoPane = windowSize.canShowTwoPanes(isOpenInternal)
+    val isLargeWindow = windowSize.isLargeWindow()
     val directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
         .toArticlesListDirective(windowSize, isTwoPane)
     val navigator = rememberListDetailPaneScaffoldNavigator<SelectedArticle>(scaffoldDirective = directive)
@@ -64,7 +66,7 @@ internal fun ArticlesListPanes(
         value = navigator.scaffoldValue,
         modifier = modifier,
         listPane = {
-            AnimatedPane { listPane(isTwoPane, selectedArticle) }
+            AnimatedPane { listPane(isTwoPane, isLargeWindow, selectedArticle) }
         },
         detailPane = {
             AnimatedPane { detailPane(selectedArticle) }
@@ -76,6 +78,11 @@ private fun DpSize.canShowTwoPanes(isOpenInternal: Boolean): Boolean = TwoPanePo
     widthDp = width.value.toInt(),
     heightDp = height.value.toInt(),
     isOpenInternal = isOpenInternal,
+)
+
+private fun DpSize.isLargeWindow(): Boolean = TwoPanePolicy.isLargeWindow(
+    widthDp = width.value.toInt(),
+    heightDp = height.value.toInt(),
 )
 
 /** Two panes only when eligible, with the list taking about 40% of the width. */

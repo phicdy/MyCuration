@@ -39,6 +39,14 @@ class SettingPresenterTest {
     }
 
     @Test
+    fun externalBrowserAdjacentIsOffByDefaultWhenActivityCreated() {
+        val presenter = SettingPresenter(mockView, helper, additionalSettingApi, SettingInitialData(arrayOf(), arrayOf(), arrayOf(),
+                arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf()))
+        presenter.activityCreate()
+        verify(mockView, times(1)).setExternalBrowserAdjacent(false)
+    }
+
+    @Test
     fun initListenerIsCalledWhenActivityCreated() {
         val presenter = SettingPresenter(mockView, helper, additionalSettingApi, SettingInitialData(arrayOf(), arrayOf(), arrayOf(),
                 arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf(), arrayOf()))

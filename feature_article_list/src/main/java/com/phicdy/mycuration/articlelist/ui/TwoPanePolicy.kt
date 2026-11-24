@@ -1,13 +1,14 @@
 package com.phicdy.mycuration.articlelist.ui
 
 /**
- * Decides whether the article list can show the tapped article next to the list.
+ * Decides whether the article list can show the tapped article next to the list, and whether the
+ * window is large enough to open the external browser next to the app.
  */
 internal object TwoPanePolicy {
-    /** Narrower windows, e.g. phones in portrait, show the list only. */
+    /** Narrower windows, e.g. phones in portrait, are not large. */
     const val MIN_WIDTH_DP: Int = 600
 
-    /** Lower windows, e.g. phones in landscape, show the list only. */
+    /** Lower windows, e.g. phones in landscape, are not large. */
     const val MIN_HEIGHT_DP: Int = 480
 
     /**
@@ -16,5 +17,9 @@ internal object TwoPanePolicy {
      * external browser.
      */
     fun canShowTwoPanes(widthDp: Int, heightDp: Int, isOpenInternal: Boolean): Boolean =
-        isOpenInternal && widthDp >= MIN_WIDTH_DP && heightDp >= MIN_HEIGHT_DP
+        isOpenInternal && isLargeWindow(widthDp, heightDp)
+
+    /** Whether the window is both wide and tall enough, e.g. tablets and unfolded foldables. */
+    fun isLargeWindow(widthDp: Int, heightDp: Int): Boolean =
+        widthDp >= MIN_WIDTH_DP && heightDp >= MIN_HEIGHT_DP
 }
