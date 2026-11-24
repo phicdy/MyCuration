@@ -14,8 +14,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -95,7 +93,7 @@ private fun ArticleDetailTopBar(
             }
             IconButton(onClick = onOpenInBrowserClick) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                    painter = painterResource(R.drawable.ic_open_in_new),
                     contentDescription = stringResource(R.string.open_in_browser),
                     tint = contentColor,
                 )

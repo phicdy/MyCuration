@@ -60,6 +60,8 @@ jobs:
           DEBUG_KEYSTORE_PASSWORD: ${{ secrets.DEBUG_KEYSTORE_PASSWORD }}
           DEBUG_KEY_ALIAS: ${{ secrets.DEBUG_KEY_ALIAS }}
           DEBUG_KEY_PASSWORD: ${{ secrets.DEBUG_KEY_PASSWORD }}
+          # Phones only; local builds keep every ABI for emulators
+          DEBUG_ABI_FILTERS: arm64-v8a
         run: ./gradlew :app:assembleDebug
       - name: Rename APK
         id: apk
@@ -80,6 +82,13 @@ jobs:
           cp "$apk" "$RUNNER_TEMP/apk/$name"
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "path=$RUNNER_TEMP/apk/$name" >> "$GITHUB_OUTPUT"
+          size_mb=$(awk -v bytes="$(stat -c %s "$apk")" 'BEGIN { printf "%.1f", bytes / 1048576 }')
+          echo "size_mb=$size_mb" >> "$GITHUB_OUTPUT"
+          {
+            echo 'largest<<LARGEST_ENTRIES_EOF'
+            unzip -lv "$apk" | awk 'NR > 3 && $8 != "" { printf "%.1f MB %s\n", $3 / 1048576, $8 }' | sort -rn | head -n 10
+            echo 'LARGEST_ENTRIES_EOF'
+          } >> "$GITHUB_OUTPUT"
       - name: Upload debug APK
         id: upload
         uses: actions/upload-artifact@v7
@@ -95,6 +104,8 @@ jobs:
           github.event.pull_request.head.repo.full_name == github.repository
         env:
           APK_NAME: ${{ steps.apk.outputs.name }}
+          APK_SIZE_MB: ${{ steps.apk.outputs.size_mb }}
+          LARGEST_ENTRIES: ${{ steps.apk.outputs.largest }}
           ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
           FIXED_KEYSTORE: ${{ steps.keystore.outputs.fixed }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -105,7 +116,7 @@ jobs:
             echo '<!-- debug-apk-comment -->'
             echo '## Debug APK'
             echo ''
-            echo "Download: [${APK_NAME}](${ARTIFACT_URL})"
+            echo "Download: [${APK_NAME}](${ARTIFACT_URL}) (${APK_SIZE_MB} MB, arm64-v8a only)"
             echo ''
             echo "- Commit: \`${HEAD_SHA:0:7}\`"
             echo "- Run: ${RUN_URL}"
@@ -114,6 +125,14 @@ jobs:
             else
               echo "- :warning: DEBUG_KEYSTORE_BASE64 is not set, so this APK is signed with the runner's random debug key and cannot be installed over a previous build."
             fi
+            echo ''
+            echo ''
+            echo '<details><summary>Largest entries (compressed size)</summary>'
+            echo ''
+            echo '```'
+            echo "$LARGEST_ENTRIES"
+            echo '```'
+            echo '</details>'
             echo ''
             echo '_The download link requires being logged in to GitHub._'
             echo 'DEBUG_APK_COMMENT_EOF'
