@@ -89,12 +89,6 @@ jobs:
         run: echo $GOOGLE_SERVICE | base64 --decode > ./app/google-services.json
       - name: Generate screenshots
         run: ./gradlew :feature_article_list:updateDebugScreenshotTestDefaultTestSuite
-      - name: TEMP print render errors
-        if: failure()
-        run: |
-          grep -rl 'ScreenshotRenderException' feature_article_list/build | head -20 || true
-          f=$(grep -rl --include='*.xml' 'ScreenshotRenderException' feature_article_list/build | head -1)
-          [ -n "$f" ] && grep -v '^\s*at \(org.junit\|org.gradle\|java.base\)' "$f" | head -200 || true
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
         if: always()
@@ -112,7 +106,6 @@ jobs:
         run: |
           count=$(find feature_article_list/src/screenshotTestDefaultDebug/reference -type f -name '*.png' 2>/dev/null | wc -l)
           echo "Found $count screenshot(s)"
-          find feature_article_list/src -type f -name '*.png' | head -5
           echo "count=$count" >> "$GITHUB_OUTPUT"
       - name: Publish screenshots to the screenshots branch
         id: publish
