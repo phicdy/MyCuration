@@ -8,8 +8,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.BundleCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
@@ -38,6 +41,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
     private lateinit var etFilterUrl: TextInputEditText
     private lateinit var tvTargetRss: TextView
 
+    private val selectTargetFeeds = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+        ::updateSelectedFeeds
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
@@ -61,7 +69,7 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
             val bundle = Bundle()
             bundle.putParcelableArrayList(SelectFilterTargetRssActivity.TARGET_RSS, presenter.selectedFeedList())
             intent.putExtras(bundle)
-            startActivityForResult(intent, TARGET_FEED_SELECT_REQUEST)
+            selectTargetFeeds.launch(intent)
         }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_register_filter)
@@ -71,14 +79,11 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_OK) return
-        if (requestCode == TARGET_FEED_SELECT_REQUEST) {
-            data?.extras?.let {
-                val list = it.getParcelableArrayList<Feed>(KEY_SELECTED_FEED) ?: arrayListOf()
-                presenter.setSelectedFeedList(list)
-            }
+    private fun updateSelectedFeeds(result: ActivityResult) {
+        if (result.resultCode != Activity.RESULT_OK) return
+        result.data?.extras?.let {
+            val list = BundleCompat.getParcelableArrayList(it, KEY_SELECTED_FEED, Feed::class.java) ?: arrayListOf()
+            presenter.setSelectedFeedList(list)
         }
     }
 
@@ -183,7 +188,6 @@ class RegisterFilterActivity : AppCompatActivity(), RegisterFilterView {
         const val KEY_EDIT_FILTER_ID = "editFilterId"
         const val KEY_SELECTED_FEED = "keySelectedFeed"
         private const val NEW_FILTER_ID = -1
-        private const val TARGET_FEED_SELECT_REQUEST = 1000
     }
 
     @Module
