@@ -1,5 +1,5 @@
 [versions]
-gradle = "9.4.1"
+gradle = "9.5.2"
 jetpack_compose_compiler = "1.5.14"
 kotlin = "2.4.21"
 ksp = "2.3.12"
@@ -28,7 +28,7 @@ flipper = "0.273.0"
 junit = "4.13.2"
 baselineprofile = "1.5.0"
 material3_adaptive = "1.3.0"
-screenshot = "0.0.1-alpha16"
+screenshot = "0.0.1-alpha17"
 
 [plugins]
 kotlin-gradle = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -38,7 +38,6 @@ android-test = { id = "com.android.test", version.ref = "gradle" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 android-application = { id = "com.android.application", version.ref = "gradle" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 
 [libraries]
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }

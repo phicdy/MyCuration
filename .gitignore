@@ -37,4 +37,4 @@ google-services.json
 *.iml
 
 # Compose Preview Screenshot Testing reference images (not committed yet)
-**/src/screenshotTestDebug/reference/
+**/src/screenshotTestDefaultDebug/reference/

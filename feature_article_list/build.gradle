@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.ksp)
-    alias(libs.plugins.screenshot)
 }
 
 apply plugin: 'dagger.hilt.android.plugin'
@@ -18,7 +17,19 @@ android {
         compose true
     }
     namespace 'com.phicdy.mycuration.articlelist'
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+    testOptions {
+        // Compose Preview Screenshot Testing with AGP test suites.
+        // Sources live in src/screenshotTest/kotlin.
+        screenshotTests.create('screenshotTest') { suite ->
+            suite.engineVersion = libs.versions.screenshot.get()
+            suite.targetVariants.add('debug')
+            suite.dependencies { deps ->
+                deps.implementation.add(project.dependencies.platform(libs.compose.bom))
+                deps.implementation.add(libs.compose.ui.tooling)
+                deps.implementation.add(libs.screenshot.validation.api)
+            }
+        }
+    }
 }
 
 dependencies {
@@ -56,8 +67,4 @@ dependencies {
 
     testImplementation libs.core.testing
     testImplementation libs.coroutines.test
-
-    screenshotTestImplementation platform(libs.compose.bom)
-    screenshotTestImplementation libs.screenshot.validation.api
-    screenshotTestImplementation libs.compose.ui.tooling
 }
