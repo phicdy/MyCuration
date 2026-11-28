@@ -9,10 +9,16 @@ import com.phicdy.mycuration.deleteAll
 import com.phicdy.mycuration.entity.Article
 import com.phicdy.mycuration.entity.Feed
 import com.phicdy.mycuration.repository.Database
-import com.phicdy.mycuration.util.UrlUtil
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import okhttp3.mockwebserver.Dispatcher
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.RecordedRequest
+import okio.Buffer
+import okio.GzipSink
+import okio.buffer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -26,6 +32,9 @@ class RssParserTest {
 
     @get:Rule
     var coroutineTestRule = CoroutineTestRule()
+
+    @get:Rule
+    val server = MockWebServer()
 
     private val callback = object : RssParseExecutor.RssParseCallback {
         override fun succeeded(rssUrl: String) {}
@@ -64,150 +73,88 @@ class RssParserTest {
 
     @Test
     fun testParseFeedInfoRSS1() = coroutineTestRule.testCoroutineScope.runTest {
-        val parser = RssParser()
-        val executor = RssParseExecutor(parser, rssRepository)
-        executor.start("https://news.yahoo.co.jp/rss/topics/top-picks.xml", callback)
+        serve("/rss1.rdf" to feed(RSS1))
 
-        val addedFeed =
-            rssRepository.getFeedByUrl("https://news.yahoo.co.jp/rss/topics/top-picks.xml")
-        assertNotNull(addedFeed)
-        assertEquals("https://news.yahoo.co.jp/rss/topics/top-picks.xml", addedFeed?.url)
-        assertEquals("https://news.yahoo.co.jp/topics/top-picks?source=rss", addedFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
-    }
-
-    @Test
-    fun testParseFeedInfoRSS1_rdf() = coroutineTestRule.testCoroutineScope.runTest {
-        val testUrl = "https://b.hatena.ne.jp/hotentry/it.rss"
-        val parser = RssParser()
-        val executor = RssParseExecutor(parser, rssRepository)
-        executor.start(testUrl, callback)
-
-        val addedFeed = rssRepository.getFeedByUrl(testUrl)
-        assertNotNull(addedFeed)
-        assertEquals(testUrl, addedFeed?.url)
-        assertEquals("https://b.hatena.ne.jp/hotentry/it", addedFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
+        addNewFeedAndCheckResult(urlOf("/rss1.rdf"), urlOf("/rss1.rdf"), SITE_URL)
     }
 
     @Test
     fun testParseFeedInfoRSS2() = coroutineTestRule.testCoroutineScope.runTest {
-        val parser = RssParser()
-        val executor = RssParseExecutor(parser, rssRepository)
-        executor.start("https://hiroki.jp/feed/", callback)
+        serve("/rss2" to feed(rss2(SITE_URL)), "/no-site-link" to feed(rss2()))
 
-        val addedFeed = rssRepository.getFeedByUrl("https://hiroki.jp/feed/")
-        assertNotNull(addedFeed)
-        assertEquals("https://hiroki.jp/feed/", addedFeed?.url)
-        assertEquals("https://hiroki.jp", addedFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
-
-        executor.start("https://www.infoq.com/jp/feed", callback)
-
-        val infoqFeed = rssRepository.getFeedByUrl("https://www.infoq.com/jp/feed")
-        assertNotNull(infoqFeed)
-        assertEquals("https://www.infoq.com/jp/feed", infoqFeed?.url)
-        assertEquals("https://www.infoq.com/jp", infoqFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, infoqFeed?.iconPath)
+        addNewFeedAndCheckResult(urlOf("/rss2"), urlOf("/rss2"), SITE_URL)
+        // The site URL is the protocol, host and port of the feed URL if the feed has no site link
+        addNewFeedAndCheckResult(urlOf("/no-site-link"), urlOf("/no-site-link"), "http://${server.hostName}:${server.port}")
     }
 
     @Test
     fun testParseFeedInfoATOM() = coroutineTestRule.testCoroutineScope.runTest {
-        // Publickey
-        val publicKeyFeedUrl = "https://www.publickey1.jp/atom.xml"
-        val parser = RssParser()
-        val executor = RssParseExecutor(parser, rssRepository)
-        executor.start(publicKeyFeedUrl, callback)
+        serve("/atom.xml" to feed(ATOM))
+        val executor = RssParseExecutor(RssParser(), rssRepository)
+        executor.start(urlOf("/atom.xml"), callback)
 
-        val publicKeyFeed = rssRepository.getFeedByUrl(publicKeyFeedUrl)
-        assertNotNull(publicKeyFeed)
-        assertEquals("Publickey", publicKeyFeed?.title)
-        assertEquals(publicKeyFeedUrl, publicKeyFeed?.url)
-        assertEquals("https://www.publickey1.jp/", publicKeyFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, publicKeyFeed?.iconPath)
-
-        // Google testing blog
-        executor.start("https://feeds.feedburner.com/blogspot/RLXA", callback)
-
-        val googleTestFeed =
-            rssRepository.getFeedByUrl("https://feeds.feedburner.com/blogspot/RLXA")
-        assertNotNull(googleTestFeed)
-        assertEquals("https://feeds.feedburner.com/blogspot/RLXA", googleTestFeed?.url)
-        assertEquals("http://testing.googleblog.com/feeds/posts/default", googleTestFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, googleTestFeed?.iconPath)
-
-        // MOONGIFT
-        executor.start("https://feeds.feedburner.com/moongift", callback)
-
-        val monngiftFeed = rssRepository.getFeedByUrl("https://feeds.feedburner.com/moongift")
-        assertNotNull(monngiftFeed)
-        assertEquals("https://feeds.feedburner.com/moongift", monngiftFeed?.url)
-        assertEquals("http://www.moongift.jp/", monngiftFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, monngiftFeed?.iconPath)
+        val atomFeed = rssRepository.getFeedByUrl(urlOf("/atom.xml"))
+        assertNotNull(atomFeed)
+        assertEquals("Publickey", atomFeed?.title)
+        assertEquals(urlOf("/atom.xml"), atomFeed?.url)
+        assertEquals(SITE_URL, atomFeed?.siteUrl)
+        assertEquals(Feed.DEDAULT_ICON_PATH, atomFeed?.iconPath)
     }
 
     @Test
     fun testParseFeedInfoTopHtml() = coroutineTestRule.testCoroutineScope.runTest {
-        // Test top URL
-        val parser = RssParser()
-        val executor = RssParseExecutor(parser, rssRepository)
-        executor.start("https://gigazine.net", callback)
+        serve("/" to page(rssLink(urlOf("/news/rss_2.0/"))), "/news/rss_2.0/" to feed(rss2(SITE_URL)))
 
-        val addedFeed = rssRepository.getFeedByUrl("https://gigazine.net/news/rss_2.0/")
-        assertNotNull(addedFeed)
-        assertEquals("https://gigazine.net/news/rss_2.0/", addedFeed?.url)
-        assertEquals("https://gigazine.net/", addedFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
+        addNewFeedAndCheckResult(urlOf("/"), urlOf("/news/rss_2.0/"), SITE_URL)
     }
 
     @Test
     fun testParseFeedInfoTopHtmlFeedURLStartWithSlash() = coroutineTestRule.testCoroutineScope.runTest {
-        // //smhn.info/feed is returned
-        val parser = RssParser()
-        val executor = RssParseExecutor(parser, rssRepository)
-        executor.start("https://smhn.info", callback)
+        // Like smhn.info, the link is "//<host>/<path>"
+        serve("/" to page(rssLink("//${server.hostName}:${server.port}/rss")), "/rss" to feed(rss2(SITE_URL)))
 
-        val smhnFeed = rssRepository.getFeedByUrl("https://smhn.info/feed")
-
-        assertNotNull(smhnFeed)
-        assertEquals("https://smhn.info/feed", smhnFeed?.url)
-        assertEquals("https://smhn.info", smhnFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, smhnFeed?.iconPath)
+        addNewFeedAndCheckResult(urlOf("/"), urlOf("/rss"), SITE_URL)
     }
 
     @Test
     fun testParseFeedInfoGzip() = coroutineTestRule.testCoroutineScope.runTest {
-        val parser = RssParser()
-        val executor = RssParseExecutor(parser, rssRepository)
-        executor.start("https://ground-sesame.hatenablog.jp", callback)
+        serve("/" to page(rssLink("/rss")), "/rss" to gzipFeed(rss2(SITE_URL)))
 
-        val surigomaFeed = rssRepository.getFeedByUrl("https://ground-sesame.hatenablog.jp/rss")
-        assertNotNull(surigomaFeed)
-        assertEquals("https://ground-sesame.hatenablog.jp/rss", surigomaFeed?.url)
-        assertEquals("https://ground-sesame.hatenablog.jp/", surigomaFeed?.siteUrl)
-
-        assertEquals(Feed.DEDAULT_ICON_PATH, surigomaFeed?.iconPath)
+        addNewFeedAndCheckResult(urlOf("/"), urlOf("/rss"), SITE_URL)
     }
 
     @Test
     fun testPathOnlyUrl() = coroutineTestRule.testCoroutineScope.runTest {
-        addNewFeedAndCheckResult("https://b.hatena.ne.jp/hotentry/game",
-                "https://b.hatena.ne.jp/hotentry/game.rss",
-                "https://b.hatena.ne.jp/hotentry/game")
+        serve("/hotentry/game" to page(rssLink("/hotentry/game.rss")), "/hotentry/game.rss" to feed(rss2(SITE_URL)))
+
+        addNewFeedAndCheckResult(urlOf("/hotentry/game"), urlOf("/hotentry/game.rss"), SITE_URL)
+    }
+
+    @Test
+    fun testCanonicalPathOnlyUrl() = coroutineTestRule.testCoroutineScope.runTest {
+        serve(
+            "/amp/article" to page("""<link rel="canonical" href="/article">"""),
+            "/article" to page(rssLink("/article.rss")),
+            "/article.rss" to feed(rss2(SITE_URL))
+        )
+
+        addNewFeedAndCheckResult(urlOf("/amp/article"), urlOf("/article.rss"), SITE_URL)
     }
 
     @Test
     fun testFeedPath() = coroutineTestRule.testCoroutineScope.runTest {
-        addNewFeedAndCheckResult("https://www.a-kimama.com",
-                "https://www.a-kimama.com/feed",
-                "https://www.a-kimama.com")
+        // No RSS link in the page, so "/feed" is tried
+        serve("/" to page(""), "/feed" to feed(rss2(SITE_URL)))
+
+        addNewFeedAndCheckResult(urlOf("/"), urlOf("/feed"), SITE_URL)
     }
 
     @Test
     fun testNotFound() {
+        // No RSS link in the page and "/feed" returns 404
+        serve("/" to page(""))
         val parser = RssParser()
-        val url = "https://www.amazon.co.jp/"
-        val result = parser.parseRssXml(UrlUtil.removeUrlParameter(url), true)
+        val result = parser.parseRssXml(urlOf("/"), true)
         assertThat(result.failedReason).isEqualTo(RssParseResult.FailedReason.NOT_FOUND)
     }
 
@@ -360,8 +307,9 @@ class RssParserTest {
 
     @Test
     fun parseFeedBurnerAndroidDeveloperBlog() {
-        val result = parser.parseRssXml("https://feeds.feedburner.com/blogspot/hsDu", false)
-        assertEquals("https://feeds.feedburner.com/blogspot/hsDu", result.feed?.url)
+        serve("/blogspot/hsDu" to feed(FeedBurnerAndroidDeveloperBlog().text))
+        val result = parser.parseRssXml(urlOf("/blogspot/hsDu"), false)
+        assertEquals(urlOf("/blogspot/hsDu"), result.feed?.url)
     }
 
     @Test
@@ -387,5 +335,48 @@ class RssParserTest {
         assertEquals(expectedSiteUrl, addedFeed?.siteUrl)
 
         assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
+    }
+
+    private fun urlOf(path: String): String = server.url(path).toString()
+
+    private fun serve(vararg routes: Pair<String, MockResponse>) {
+        val responses = mapOf(*routes)
+        server.dispatcher = object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse =
+                responses[request.path] ?: MockResponse().setResponseCode(404)
+        }
+    }
+
+    private fun feed(xml: String): MockResponse =
+        MockResponse().setHeader("Content-Type", XML_CONTENT_TYPE).setBody(xml)
+
+    private fun gzipFeed(xml: String): MockResponse =
+        MockResponse()
+            .setHeader("Content-Type", XML_CONTENT_TYPE)
+            .setHeader("Content-Encoding", "gzip")
+            .setBody(Buffer().apply { GzipSink(this).buffer().use { it.writeUtf8(xml) } })
+
+    private fun page(head: String): MockResponse =
+        MockResponse()
+            .setHeader("Content-Type", "text/html; charset=utf-8")
+            .setBody("<html><head>$head</head><body></body></html>")
+
+    private fun rssLink(href: String): String =
+        """<link rel="alternate" type="application/rss+xml" title="feed" href="$href">"""
+
+    private fun rss2(siteUrl: String? = null): String =
+        """<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>RSS 2.0</title>""" +
+            siteUrl?.let { "<link>$it</link>" }.orEmpty() +
+            "</channel></rss>"
+
+    companion object {
+        private const val SITE_URL = "https://example.com/"
+        private const val XML_CONTENT_TYPE = "application/xml; charset=utf-8"
+        private const val RSS1 = """<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+<channel rdf:about="$SITE_URL"><title>RSS 1.0</title><link>$SITE_URL</link></channel>
+</rdf:RDF>"""
+        private const val ATOM = """<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Publickey</title><link rel="alternate" href="$SITE_URL"/></feed>"""
     }
 }

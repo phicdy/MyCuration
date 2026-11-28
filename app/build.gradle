@@ -100,6 +100,7 @@ dependencies {
     androidTestImplementation libs.androidx.test.rules
     androidTestImplementation libs.androidx.test
     androidTestImplementation libs.spoon
+    androidTestImplementation libs.mockwebserver
     androidTestImplementation libs.espresso
     androidTestImplementation libs.assertj
     androidTestImplementation libs.coroutines.test
