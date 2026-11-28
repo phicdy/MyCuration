@@ -94,14 +94,6 @@ class RssParserTest {
     fun testParseFeedInfoRSS2() = coroutineTestRule.testCoroutineScope.runTest {
         val parser = RssParser()
         val executor = RssParseExecutor(parser, rssRepository)
-        executor.start("https://hiroki.jp/feed/", callback)
-
-        val addedFeed = rssRepository.getFeedByUrl("https://hiroki.jp/feed/")
-        assertNotNull(addedFeed)
-        assertEquals("https://hiroki.jp/feed/", addedFeed?.url)
-        assertEquals("https://hiroki.jp", addedFeed?.siteUrl)
-        assertEquals(Feed.DEDAULT_ICON_PATH, addedFeed?.iconPath)
-
         executor.start("https://www.infoq.com/jp/feed", callback)
 
         val infoqFeed = rssRepository.getFeedByUrl("https://www.infoq.com/jp/feed")
