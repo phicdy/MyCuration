@@ -56,7 +56,7 @@ class RssParser @Inject constructor() {
                     }
                 }
                 if (siteUrl.isBlank()) {
-                    siteUrl = url.protocol + "://" + url.host
+                    siteUrl = url.toSiteUrl()
                 }
                 var title = document.title()
                 if (title.isBlank()) {
@@ -83,7 +83,7 @@ class RssParser @Inject constructor() {
                     }
                 }
                 if (siteUrl.isBlank()) {
-                    siteUrl = url.protocol + "://" + url.host
+                    siteUrl = url.toSiteUrl()
                 }
                 var title = document.title()
                 if (title.isBlank()) {
@@ -120,7 +120,7 @@ class RssParser @Inject constructor() {
                 //</feed>
                 val links = document.getElementsByTag("link")
                 val siteUrl = if (links.isEmpty()) {
-                    url.protocol + "://" + url.host
+                    url.toSiteUrl()
                 } else {
                     links[0].attr("href")
                 }
@@ -144,11 +144,7 @@ class RssParser @Inject constructor() {
                     document.getElementsByAttributeValue("rel", "canonical").run {
                         if (isEmpty()) return@run
                         // Canonical setting sets the actual site URL for google search
-                        var pcUrl = this[0].attr("href")
-                        if (!pcUrl.startsWith("http://") && !pcUrl.startsWith("https")) {
-                            // Path only, add protocol and host
-                            pcUrl = URL(url.protocol, url.host, pcUrl).toString()
-                        }
+                        val pcUrl = url.resolve(this[0].attr("href"))
                         Timber.d("canonical setting is found, try to parse $pcUrl")
                         return parse(pcUrl)
                     }
@@ -156,8 +152,7 @@ class RssParser @Inject constructor() {
                 //<link rel="alternate" type="application/rss+xml" title="TechCrunch Japan &raquo; フィード" href="http://jp.techcrunch.com/feed/" />
                 val elements = document.getElementsByAttributeValue("type", "application/rss+xml")
                 if (elements.isEmpty()) {
-                    // The file part needs a leading slash, otherwise the URL becomes "https://example.comfeed"
-                    val feedPathUrl = URL(url.protocol, url.host, "/feed").toString()
+                    val feedPathUrl = url.resolve("/feed")
                     return if (url.toString() == feedPathUrl) {
                         // Already check URL that path is "feed"
                         Timber.d("RSS URL was not found")
@@ -166,16 +161,8 @@ class RssParser @Inject constructor() {
                         parseRssXml(feedPathUrl, false)
                     }
                 }
-                var feedUrl = elements[0].attr("href")
-                if (feedUrl.startsWith("//")) {
-                    // In http://smhn.info, feedUrl is "//smhn.info/feed"
-                    // "//smhn.info" is not needed, get path from after URL host
-                    val path = feedUrl.substring(2 + url.host.length)
-                    feedUrl = URL(url.protocol, url.host, path).toString()
-                } else if (!feedUrl.startsWith("http://") && !feedUrl.startsWith("https")) {
-                    // Path only, add protocol and host
-                    feedUrl = URL(url.protocol, url.host, feedUrl).toString()
-                }
+                // href can be absolute, path only ("/feed") or protocol relative ("//smhn.info/feed")
+                val feedUrl = url.resolve(elements[0].attr("href"))
                 Timber.d("RSS URL was found, $feedUrl")
                 return parseRssXml(feedUrl, false)
             } else {
