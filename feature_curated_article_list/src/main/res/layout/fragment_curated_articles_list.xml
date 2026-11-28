@@ -5,7 +5,8 @@
     <com.phicdy.mycuration.curatedarticlelist.CuratedArticleRecyclerView
         android:id="@+id/rv_article"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:clipToPadding="false" />
 
     <TextView
         android:id="@+id/emptyViewArticle"

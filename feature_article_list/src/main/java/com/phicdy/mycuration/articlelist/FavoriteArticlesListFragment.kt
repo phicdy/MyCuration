@@ -43,6 +43,7 @@ import com.phicdy.mycuration.articlelist.store.ScrollPositionStore
 import com.phicdy.mycuration.articlelist.store.ShareUrlStore
 import com.phicdy.mycuration.articlelist.store.SwipePositionStore
 import com.phicdy.mycuration.articlelist.util.bitmapFrom
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsPadding
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -171,6 +172,7 @@ class FavoriteArticlesListFragment : Fragment(), ArticleListAdapter.Listener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_articles_list, container, false)
         recyclerView = view.findViewById(R.id.rv_article) as ArticleRecyclerView
+        recyclerView.applySystemBarInsetsAsPadding(bottom = true)
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
         articlesListAdapter = ArticleListAdapter(viewLifecycleOwner.lifecycleScope, this, adProvider, updateFavoriteStatusActionCreator)

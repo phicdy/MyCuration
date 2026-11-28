@@ -14,4 +14,5 @@ android {
 dependencies {
     implementation project(':repository')
     implementation libs.appcompat
+    implementation libs.core
 }

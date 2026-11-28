@@ -35,6 +35,8 @@ import com.phicdy.mycuration.curationlist.CurationListFragment
 import com.phicdy.mycuration.data.preference.PreferenceHelper
 import com.phicdy.mycuration.domain.alarm.AlarmManagerTaskManager
 import com.phicdy.mycuration.feature.addcuration.AddCurationActivity
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsMargin
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsPadding
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.feedsearch.FeedSearchActivity
@@ -107,6 +109,7 @@ class TopActivity :
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_top)
+        applySystemBarInsets()
         initViewPager()
         initFab()
         initToolbar()
@@ -132,6 +135,13 @@ class TopActivity :
             }
         }
         onBackPressedDispatcher.addCallback(onBackPressedCallback)
+    }
+
+    /** The bottom navigation applies the navigation bar insets by itself. */
+    private fun applySystemBarInsets() {
+        findViewById<View>(R.id.app_bar_top).applySystemBarInsetsAsPadding(top = true)
+        findViewById<View>(R.id.fr_content).applySystemBarInsetsAsPadding()
+        findViewById<View>(R.id.fab_top).applySystemBarInsetsAsMargin()
     }
 
     private fun initViewPager() {

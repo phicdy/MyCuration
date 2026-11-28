@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsPadding
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.license.databinding.ActivityLicenseBinding
 
@@ -16,6 +17,8 @@ class LicenseActivity : AppCompatActivity() {
         WindowCompat.enableEdgeToEdge(window)
         binding = ActivityLicenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.appBarLicense.applySystemBarInsetsAsPadding(top = true)
+        binding.contentLicense.applySystemBarInsetsAsPadding(bottom = true)
 
         val toolbar = binding.toolbarLicense
         setSupportActionBar(toolbar)
