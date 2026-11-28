@@ -5,10 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import com.phicdy.mycuration.entity.Feed
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsPadding
 import com.phicdy.mycuration.feature.util.changeTheme
 import dagger.Module
 import dagger.Provides
@@ -31,7 +34,10 @@ class SelectFilterTargetRssActivity : AppCompatActivity(), SelectTargetRssView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_select_filter_target_rss)
+        findViewById<View>(R.id.app_bar).applySystemBarInsetsAsPadding(top = true)
+        findViewById<View>(R.id.f_select_target).applySystemBarInsetsAsPadding(bottom = true)
         title = getString(R.string.title_select_filter_rss)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)

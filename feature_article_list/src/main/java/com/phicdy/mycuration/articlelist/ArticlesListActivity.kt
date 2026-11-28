@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.fragment.compose.AndroidFragment
@@ -67,6 +68,7 @@ class ArticlesListActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
 
         // Set feed id and url from main activity
         val feedId = intent.getIntExtra(RSS_ID, Feed.ALL_FEED_ID)

@@ -2,10 +2,12 @@ package com.phicdy.mycuration.articlelist
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
 import com.google.android.material.snackbar.Snackbar
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsPadding
 import com.phicdy.mycuration.feature.util.changeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,6 +20,8 @@ class ArticleSearchResultActivity : AppCompatActivity(), ArticlesListFragment.On
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_article_search_result)
+        findViewById<View>(R.id.app_bar_article_search_result).applySystemBarInsetsAsPadding(top = true)
+        findViewById<View>(R.id.fr_article_search_result).applySystemBarInsetsAsPadding(bottom = true)
 
         // Set feed id and url from main activity
         fragment = supportFragmentManager

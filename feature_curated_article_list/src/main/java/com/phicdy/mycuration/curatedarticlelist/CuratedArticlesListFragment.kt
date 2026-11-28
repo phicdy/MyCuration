@@ -41,6 +41,7 @@ import com.phicdy.mycuration.curatedarticlelist.store.ScrollCuratedArticlePositi
 import com.phicdy.mycuration.curatedarticlelist.store.ShareCuratedArticleUrlStore
 import com.phicdy.mycuration.curatedarticlelist.store.SwipeCuratedArticlePositionStore
 import com.phicdy.mycuration.curatedarticlelist.util.bitmapFrom
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsPadding
 import com.phicdy.mycuration.feature_curated_article_list.R
 import com.phicdy.mycuration.tracker.TrackerHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -186,6 +187,7 @@ class CuratedArticlesListFragment : Fragment(), CoroutineScope, CuratedArticleLi
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_curated_articles_list, container, false)
         recyclerView = view.findViewById(R.id.rv_article) as CuratedArticleRecyclerView
+        recyclerView.applySystemBarInsetsAsPadding(bottom = true)
         emptyView = view.findViewById(R.id.emptyViewArticle) as TextView
         recyclerView.layoutManager = LinearLayoutManager(activity)
         articlesListAdapter = CuratedArticleListAdapter(this, this, adProvider)

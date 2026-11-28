@@ -14,6 +14,12 @@
         <item name="android:dropDownListViewStyle">@style/AppTheme.DropDownList</item>
         <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox
         </item>
+        <item name="appBarLayoutStyle">@style/AppTheme.AppBarLayout</item>
+    </style>
+
+    <!-- The app bar is drawn behind the status bar, so give it the same color as the toolbar -->
+    <style name="AppTheme.AppBarLayout" parent="Widget.Design.AppBarLayout">
+        <item name="android:background">@color/background_toolbar</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

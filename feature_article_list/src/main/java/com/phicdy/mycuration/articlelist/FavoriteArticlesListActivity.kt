@@ -6,12 +6,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsMargin
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsPadding
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.tracker.TrackerHelper
@@ -36,6 +39,7 @@ class FavoriteArticlesListActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_favorite_articles_list)
+        findViewById<View>(R.id.app_bar_article_list).applySystemBarInsetsAsPadding(top = true)
 
         if (savedInstanceState == null) {
             val fragment = FavoriteArticlesListFragment.newInstance()
@@ -49,6 +53,7 @@ class FavoriteArticlesListActivity : AppCompatActivity(),
         TrackerHelper.sendUiEvent(fbTitle)
         initToolbar()
         fab = findViewById(R.id.fab_article_list)
+        fab.applySystemBarInsetsAsMargin(bottom = true)
         fab.setOnClickListener {
             val fragment =
                 supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as? FavoriteArticlesListFragment

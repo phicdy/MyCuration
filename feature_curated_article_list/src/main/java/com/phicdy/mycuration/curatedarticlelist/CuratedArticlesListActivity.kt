@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -15,6 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.phicdy.mycuration.articlelist.ArticleSearchResultActivity
 import com.phicdy.mycuration.data.repository.CurationRepository
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsMargin
+import com.phicdy.mycuration.feature.util.applySystemBarInsetsAsPadding
 import com.phicdy.mycuration.feature.util.changeTheme
 import com.phicdy.mycuration.feature.util.getThemeColor
 import com.phicdy.mycuration.feature_curated_article_list.R
@@ -49,6 +52,8 @@ class CuratedArticlesListActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
         setContentView(R.layout.activity_curated_articles_list)
+        findViewById<View>(R.id.app_bar_article_list).applySystemBarInsetsAsPadding(top = true)
+        findViewById<View>(R.id.fab_article_list).applySystemBarInsetsAsMargin(bottom = true)
 
         // Set feed id and url from main activity
         val intent = intent
